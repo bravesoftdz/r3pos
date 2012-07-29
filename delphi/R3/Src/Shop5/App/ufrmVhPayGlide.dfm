@@ -13,9 +13,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
     inherited RzPage: TRzPageControl
       Width = 494
       Height = 257
-      ActivePage = TabSheet5
       ParentColor = False
-      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

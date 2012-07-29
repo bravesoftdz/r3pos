@@ -10,7 +10,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
   TextHeight = 12
   inherited RzPanel1: TRzPanel
     Width = 846
-    Height = 491
+    Height = 484
     inherited RzPanel2: TRzPanel
       Width = 836
       Height = 106
@@ -259,7 +259,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
     inherited DBGridEh1: TDBGridEh [1]
       Top = 148
       Width = 836
-      Height = 266
+      Height = 259
       PopupMenu = PopupMenu1
       TabOrder = 2
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -314,11 +314,11 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         end>
     end
     inherited stbHint: TRzPanel [2]
-      Top = 462
+      Top = 455
       Width = 836
     end
     inherited rzHelp: TRzPanel [3]
-      Top = 414
+      Top = 407
       Width = 836
     end
     inherited RzPanel3: TRzPanel [4]

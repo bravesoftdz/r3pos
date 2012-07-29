@@ -316,7 +316,7 @@ begin
 
      rs.SQL.Text :=
      ' select A.INDE_ID,A.GLIDE_NO,A.CLIENT_ID,B.CLIENT_NAME,A.DEPT_ID,C.DEPT_NAME,A.SHOP_ID,D.SHOP_NAME,A.ADVA_MNY,'+
-     ' E.BARCODE,E.VOUCHER_PRC,E.VOUCHER_STATUS,E.VOUCHER_TYPE,E.CLIENT_ID as CLIENT_ID_1 '+
+     ' E.BARCODE,E.VOUCHER_PRC,E.VOUCHER_STATUS,E.VOUCHER_TYPE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.SALES_STYLE,A.PLAN_DATE,A.INVOICE_FLAG,A.TAX_RATE,A.GUIDE_USER '+
      ' from SAL_INDENTORDER A inner join SAL_VOUCHERDATA E on A.TENANT_ID=E.TENANT_ID and A.INDE_ID=E.VOUCHER_ID '+
      ' left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
      ' left join CA_DEPT_INFO C on A.TENANT_ID=C.TENANT_ID and A.DEPT_ID=C.DEPT_ID '+
@@ -338,10 +338,10 @@ begin
      CdsVhPay.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      CdsVhPay.FieldByName('VHPAY_ID').AsString := TSequence.NewId;
      CdsVhPay.FieldByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
-     CdsVhPay.FieldByName('VOUCHER_PRC').AsInteger := rs.FieldByName('VOUCHER_PRC').AsInteger;
+     CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat := rs.FieldByName('VOUCHER_PRC').AsFloat;
      CdsVhPay.FieldByName('BARCODE').AsString := BarCode;
      CdsVhPay.FieldByName('VOUCHER_TYPE').AsString := rs.FieldByName('VOUCHER_TYPE').AsString;
-     CdsVhPay.FieldByName('CLIENT_ID').AsString := rs.FieldByName('CLIENT_ID_1').AsString;
+     CdsVhPay.FieldByName('CLIENT_ID').AsString := rs.FieldByName('CLIENT_ID').AsString;
      CdsVhPay.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
      CdsVhPay.FieldByName('DEPT_ID').AsString := rs.FieldByName('DEPT_ID').AsString;
      CdsVhPay.FieldByName('VHPAY_USER').AsString := Global.UserID;

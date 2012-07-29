@@ -306,7 +306,9 @@ end;
 
 procedure TfrmVoucherOrder.edtInputKeyPress(Sender: TObject;
   var Key: Char);
-var s:String;
+var
+  s:String;
+  rs:TZQuery;
 begin
   inherited;
   try
@@ -328,6 +330,18 @@ begin
          if IsNumberOrCharacter(s) then
          begin
             if cdsDetail.Locate('BARCODE',s,[]) then Raise Exception.Create('"'+cdsDetail.FieldbyName('BARCODE').asString+'"礼券号已经存在!');
+            rs := TZQuery.Create(nil);
+            try
+              rs.Close;
+              rs.SQL.Text := 'select count(*) from SAL_VOUCHERDATA where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE and VOUCHER_ID<>:VOUCHER_ID';
+              rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+              rs.ParamByName('BARCODE').AsString := s;
+              rs.ParamByName('VOUCHER_ID').AsString := AObj.FieldbyName('VOUCHER_ID').AsString;
+              Factor.Open(rs);
+              if rs.Fields[0].AsInteger>0 then Raise Exception.Create(s+'礼券已入库了，不能重复入库.');
+            finally
+              rs.free;
+            end;
             InitRecord;
          end;
        except

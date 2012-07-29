@@ -111,8 +111,6 @@ type
     CarryRule:integer;
     //保留小数位
     Deci:integer;
-    //
-    Adva_Mny:Currency;
     procedure ReadHeader;
     procedure IndeFrom(id:string);
     procedure WMNextRecord(var Message: TMessage);
@@ -276,7 +274,6 @@ begin
       Label40.Caption := '销售仓库';
       Label6.Caption := '业务员';
     end;
-  Adva_Mny := 0;
 end;
 
 procedure TfrmSalesOrder.InitPrice(GODS_ID, UNIT_ID: string);
@@ -2235,7 +2232,6 @@ procedure TfrmSalesOrder.GetGodsByVoucher;
 begin
     if not TfrmVhPayGlide.ScanSalesBarcode(Self,AObj.FieldByName('SALES_ID').AsString,CheckInfo) then
     begin
-       Adva_Mny := 0;
        CancelOrder;
     end;
 end;
@@ -2253,28 +2249,6 @@ begin
      edtCLIENT_ID.Text := _Aobj.FieldByName('CLIENT_NAME').AsString;
   end;
 
-  if edtSHOP_ID.AsString <> '' then
-  begin
-     if edtSHOP_ID.AsString <> _Aobj.FieldByName('SHOP_ID').AsString then
-        Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('SHOP_NAME').AsString+'"门店!');
-  end
-  else
-  begin
-     edtSHOP_ID.KeyValue := _Aobj.FieldByName('SHOP_ID').AsString;
-     edtSHOP_ID.Text := _Aobj.FieldByName('SHOP_NAME').AsString;
-  end;
-
-  if edtDEPT_ID.AsString <> '' then
-  begin
-     if edtDEPT_ID.AsString <> _Aobj.FieldByName('DEPT_ID').AsString then
-        Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('DEPT_NAME').AsString+'"部门!');
-  end
-  else
-  begin
-     edtDEPT_ID.KeyValue := _Aobj.FieldByName('DEPT_ID').AsString;
-     edtDEPT_ID.Text := _Aobj.FieldByName('DEPT_NAME').AsString;
-  end;
-
   if Trim(edtINDE_GLIDE_NO.Text) <> '' then
   begin
      if Trim(edtINDE_GLIDE_NO.Text) <> _Aobj.FieldByName('GLIDE_NO').AsString then
@@ -2287,8 +2261,26 @@ begin
   end;
 
   DecodeBarcode(copy(_Aobj.FieldByName('BARCODE').AsString,42,13));
-  Adva_Mny := Adva_Mny + _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
-  edtADVA_MNY.EditValue := Adva_Mny;
+  edtTable.Edit;
+  edtTable.FieldbyName('APRICE').AsFloat := _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
+  PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+  AObj.FieldbyName('ADVA_MNY').AsFloat := AObj.FieldbyName('ADVA_MNY').AsFloat + _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
+  edtADVA_MNY.Text := AObj.FieldbyName('ADVA_MNY').AsString;
+  edtLINKMAN.Text := _Aobj.FieldbyName('LINKMAN').AsString;
+  edtTELEPHONE.Text := _Aobj.FieldbyName('TELEPHONE').AsString;
+  edtSEND_ADDR.Text := _Aobj.FieldbyName('SEND_ADDR').AsString;
+  edtSALES_STYLE.KeyValue := _Aobj.FieldbyName('SALES_STYLE').AsString;
+  edtSALES_STYLE.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SALE_STYLE'),'CODE_ID','CODE_NAME',_Aobj.FieldByName('SALES_STYLE').AsString);
+  edtSHOP_ID.KeyValue := _Aobj.FieldByName('SHOP_ID').AsString;
+  edtSHOP_ID.Text := _Aobj.FieldByName('SHOP_NAME').AsString;
+
+  edtDEPT_ID.KeyValue := _Aobj.FieldByName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := _Aobj.FieldByName('DEPT_NAME').AsString;
+  edtPLAN_DATE.Date := fnTime.fnStrtoDate(_Aobj.FieldByName('PLAN_DATE').AsString);
+  edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',_Aobj.FieldByName('INVOICE_FLAG').asString);
+  edtTAX_RATE.Value := _Aobj.FieldByName('TAX_RATE').AsFloat*100;
+  edtGUIDE_USER.KeyValue := _Aobj.FieldByName('GUIDE_USER').AsString;
+  edtGUIDE_USER.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',_Aobj.FieldByName('GUIDE_USER').AsString);
 end;
 
 end.

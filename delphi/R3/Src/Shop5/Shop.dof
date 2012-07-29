@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=d:\shop
+OutputDir=
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=D:\Delphi\R3\Src\Shop5\temp
@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=3
 MinorVer=0
 Release=2
-Build=42
+Build=43
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=R3
-FileVersion=3.0.2.42
+FileVersion=3.0.2.43
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -159,8 +159,8 @@ Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp
 [HistoryLists\hlOutputDirectorry]
 Count=14
-Item0=d:\shop
-Item1=C:\r3
+Item0=C:\r3
+Item1=d:\shop
 Item2=d:\n26
 Item3=C:\Users\IBM\Desktop\R3_MM_DL_TEST\R3_MM_DL_TEST
 Item4=D:\rsp

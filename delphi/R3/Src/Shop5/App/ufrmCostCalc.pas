@@ -598,7 +598,7 @@ end;
 
 procedure TfrmCostCalc.Calc2;
 var
-  i,b:integer;
+  i,b,ept:integer;
   SQL,mySQL:string;
   e:TDate;
 procedure CreateRck;
@@ -791,8 +791,8 @@ begin
       Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
 
     end;
-
-    for i:= b to pt do
+    ept := round(e - bDate);
+    for i:= b to ept do
       begin
         if (bDate+i)>e then break;
         Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',bDate+i);

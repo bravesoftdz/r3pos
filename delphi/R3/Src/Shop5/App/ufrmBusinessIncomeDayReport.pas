@@ -69,6 +69,10 @@ begin
     Column.FieldName := 'SORT_TYPE_TEXT';
     Column.Title.Caption := '名称';
     Column.Width := 100;
+    Column := DBGridEh1.Columns.Add;
+    Column.FieldName := 'CALC_AMOUNT';
+    Column.Title.Caption := '销量';
+    Column.Width := 70;
     adoReport1.Close;
     adoReport1.FieldDefs.Clear;
     adoReport1.FieldDefs.Add('SEQNO',ftInteger,0,True);
@@ -76,6 +80,7 @@ begin
     adoReport1.FieldDefs.Add('SALES_TYPE_TEXT',ftString,20,True);
     adoReport1.FieldDefs.Add('SORT_TYPE',ftString,36,True);
     adoReport1.FieldDefs.Add('SORT_TYPE_TEXT',ftString,50,True);
+    adoReport1.FieldDefs.Add('CALC_AMOUNT',ftFloat,0,True);
     rs.First;
     while not rs.Eof do
     begin
@@ -180,7 +185,7 @@ begin
        Swhr := ' and A.SHOP_ID=:SHOP_ID ';
     if fndP1_DEPT_ID.AsString <> '' then
        Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT '+
+    rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
     ' from VIW_SALINDENTDATA A left join PUB_GOODSINFO B on A.GODS_ID=B.GODS_ID '+
     ' where A.TENANT_ID=:TENANT_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 '+Swhr+
     ' group by B.SORT_ID1,A.SALES_STYLE ');
@@ -211,8 +216,9 @@ begin
       if adoReport1.Locate('SALES_TYPE;SORT_TYPE',VarArrayOf(['1',sid]),[]) then
       begin
          adoReport1.Edit;
-         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
-         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+         adoReport1.FieldByName('CALC_AMOUNT').AsFloat := adoReport1.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
       end
       else
@@ -227,11 +233,13 @@ begin
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := sort.FieldByName('SORT_NAME').AsString
          else
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
-         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
-         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+         adoReport1.FieldByName('CALC_AMOUNT').AsFloat := rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
       end;
-      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      SumRecord.FieldByName('CALC_AMOUNT').AsFloat:=SumRecord.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
       rs.Next;
     end;
     if not rs.IsEmpty then
@@ -262,7 +270,7 @@ begin
        Swhr := ' and A.SHOP_ID=:SHOP_ID ';
     if fndP1_DEPT_ID.AsString <> '' then
        Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT '+
+    rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
     ' from VIW_SALESDATA A left join PUB_GOODSINFO B on A.GODS_ID=B.GODS_ID '+
     ' where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 '+Swhr+
     ' group by B.SORT_ID1,A.SALES_STYLE ');
@@ -293,8 +301,9 @@ begin
       if adoReport1.Locate('SALES_TYPE;SORT_TYPE',VarArrayOf(['2',sid]),[]) then
       begin
          adoReport1.Edit;
-         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
-         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+         adoReport1.FieldByName('CALC_AMOUNT').AsFloat := adoReport1.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
       end
       else
@@ -309,11 +318,13 @@ begin
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := sort.FieldByName('SORT_NAME').AsString
          else
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
-         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
-         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+         adoReport1.FieldByName('CALC_AMOUNT').AsFloat := rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
       end;
-      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      SumRecord.FieldByName('CALC_AMOUNT').AsFloat:=SumRecord.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
       rs.Next;
     end;
     if not rs.IsEmpty then

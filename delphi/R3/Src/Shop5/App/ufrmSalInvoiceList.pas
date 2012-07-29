@@ -300,6 +300,7 @@ procedure TfrmSalInvoiceList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
+  if cdsList.IsEmpty then Exit;
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -314,6 +315,7 @@ procedure TfrmSalInvoiceList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
+  if cdsList.IsEmpty then Exit;
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -779,7 +781,7 @@ begin
   result :=
   'select G.INVH_NO,A.INVOICE_NO,A.CREA_DATE,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.REMARK,'+
   'E.USER_NAME as CREA_USER_TEXT,F.CODE_NAME as INVOICE_FLAG_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,B.GODS_NAME,B.SEQNO,B.UNIT_NAME,'+
-  'B.AMOUNT,B.APRICE,B.AMOUNT*B.APRICE as AMONEY,B.NOTAX_MNY,B.TAX_MNY,A.INVO_NAME,A.ADDR_NAME '+
+  'B.AMOUNT,B.APRICE,B.NOTAX_MNY+B.TAX_MNY as AMONEY,B.NOTAX_MNY,B.TAX_MNY,A.INVOICE_MNY,A.INVO_NAME,A.ADDR_NAME '+
   ' from SAL_INVOICE_INFO A inner join SAL_INVOICE_LIST B on A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+

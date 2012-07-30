@@ -223,7 +223,7 @@ end;
 
 procedure TfrmSalesOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('12400001',3) then Raise Exception.Create('你没有编辑销售单的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('12400001',3) then Raise Exception.Create('你没有编辑销售单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -525,7 +525,7 @@ end;
 
 procedure TfrmSalesOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('12400001',2) then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('12400001',2) then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -765,19 +765,20 @@ begin
 end;
 
 procedure TfrmSalesOrderList.actInvoiceExecute(Sender: TObject);
-var Client_Id,InvoiceFlag,Sales_Id:String;
+var Client_Id,InvoiceFlag,Sales_Id,Address:String;
     R:Integer;
     SumMny:Real;
     rs:TZQuery;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
   if CurOrder<>nil then
      begin
        if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再开票...');
        Client_Id := TfrmSalesOrder(CurOrder).edtCLIENT_ID.AsString;
        InvoiceFlag := TfrmSalesOrder(CurOrder).cdsHeader.FieldByName('INVOICE_FLAG').AsString;
        Sales_Id := TfrmSalesOrder(CurOrder).cdsHeader.FieldByName('SALES_ID').AsString;
+       Address := TfrmSalesOrder(CurOrder).cdsHeader.FieldByName('SEND_ADDR').AsString;
      end
   else
      begin
@@ -785,6 +786,7 @@ begin
        Client_Id := cdsList.FieldbyName('CLIENT_ID').AsString;
        InvoiceFlag := cdsList.FieldByName('INVOICE_FLAG').AsString;
        Sales_Id := cdsList.FieldByName('SALES_ID').AsString;
+       Address := cdsList.FieldByName('SEND_ADDR').AsString;
      end;
   rs := TZQuery.Create(nil);
   try
@@ -811,7 +813,7 @@ begin
         InvoiceId := InvoiceFlag;
         IvioType := '1';
         Append;
-
+        edtADDR_NAME.Text := Address;
         R := 0;
         SumMny := 0;
         rs.First;

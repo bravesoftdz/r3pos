@@ -92,6 +92,7 @@ begin
       begin
          lab_LINKMAN.Caption := '联系人:'+rs.FieldByName('YQDZ_HZ_MC').AsString;
          lab_TELEPHONE.Caption := '联系电话:'+rs.FieldByName('YQDZ_LXDH').AsString;
+         Aobj.ReadFromDataSet(rs);
       end;
     finally
       rs.Free;

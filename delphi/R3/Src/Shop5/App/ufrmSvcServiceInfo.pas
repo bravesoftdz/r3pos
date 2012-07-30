@@ -147,7 +147,7 @@ begin
     Factor.Open(cdsTable,'TSvcServiceInfo',Params);
     Aobj.ReadFromDataSet(cdsTable);
     ReadFromObject(Aobj,Self);
-
+    if Aobj.FieldByName('FEE_FLAG').AsString = '1' then edtFEE_FLAG.ItemIndex := 1 else edtFEE_FLAG.ItemIndex := 0;
     dbState := dsBrowse;
 
   finally
@@ -187,6 +187,10 @@ begin
   end; 
 
   WriteToObject(Aobj,self);
+  if edtFEE_FLAG.ItemIndex = 0 then
+     Aobj.FieldByName('FEE_FLAG').AsString := '0'
+  else
+     Aobj.FieldByName('FEE_FLAG').AsString := '1';
   Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
   Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',Now());
 
@@ -348,7 +352,7 @@ begin
   end
   else
   begin
-     edtFEE_MNY.Text := '0';
+     //edtFEE_MNY.Text := '0';
      edtFEE_MNY.Enabled := True;
   end;
 end;

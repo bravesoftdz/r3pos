@@ -1,6 +1,6 @@
 inherited frmVhLeadOrder: TfrmVhLeadOrder
   Left = 226
-  Top = 202
+  Top = 197
   Width = 807
   Height = 541
   Caption = #31036#21048#39046#29992#31649#29702

@@ -35,6 +35,8 @@ type
     fndSHOP_ID: TzrComboBoxList;
     Label3: TLabel;
     fndDEPT_ID: TzrComboBoxList;
+    ToolButton11: TToolButton;
+    actInvoice: TAction;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -58,6 +60,7 @@ type
     procedure actRecvExecute(Sender: TObject);
     procedure frfSalesOrderGetValue(const ParName: String;
       var ParValue: Variant);
+    procedure actInvoiceExecute(Sender: TObject);
   private
     { Private declarations }
     oid:string;
@@ -77,7 +80,7 @@ type
 
 implementation
 uses ufrmSalesOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,ufrmRecvOrder,
-  uShopGlobal,uDsUtil, uMsgBox;
+  uShopGlobal,uDsUtil, uMsgBox, ufrmSalInvoice, ufrmBasic;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -756,6 +759,85 @@ begin
           Raise Exception.Create('');
 
        end;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmSalesOrderList.actInvoiceExecute(Sender: TObject);
+var Client_Id,InvoiceFlag,Sales_Id:String;
+    R:Integer;
+    SumMny:Real;
+    rs:TZQuery;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
+  if CurOrder<>nil then
+     begin
+       if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再开票...');
+       Client_Id := TfrmSalesOrder(CurOrder).edtCLIENT_ID.AsString;
+       InvoiceFlag := TfrmSalesOrder(CurOrder).cdsHeader.FieldByName('INVOICE_FLAG').AsString;
+       Sales_Id := TfrmSalesOrder(CurOrder).cdsHeader.FieldByName('SALES_ID').AsString;
+     end
+  else
+     begin
+       if cdsList.IsEmpty then Exit;
+       Client_Id := cdsList.FieldbyName('CLIENT_ID').AsString;
+       InvoiceFlag := cdsList.FieldByName('INVOICE_FLAG').AsString;
+       Sales_Id := cdsList.FieldByName('SALES_ID').AsString;
+     end;
+  rs := TZQuery.Create(nil);
+  try
+
+    try
+      rs.SQL.Text :=
+      'select 1 as ORDERTYPE,A.SALES_ID,B.GODS_NAME,A.AMOUNT,A.APRICE,A.AMONEY,C.UNIT_NAME,A.GODS_ID from SAL_SALESDATA A '+
+      ' left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
+      ' left join VIW_MEAUNITS C on A.TENANT_ID=C.TENANT_ID and A.UNIT_ID=C.UNIT_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID '+
+      ' and not exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.SALES_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
+
+      rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      rs.Params.ParamByName('SALES_ID').AsString := Sales_Id;
+      Factor.Open(rs);
+    Except
+      Raise;
+    end;
+    if rs.IsEmpty then Raise Exception.Create('当前单据中商品已全部开票!');
+    with TfrmSalInvoice.Create(self) do
+    begin
+      try
+        ClientId := Client_Id;
+        InvoiceId := InvoiceFlag;
+        IvioType := '1';
+        Append;
+
+        R := 0;
+        SumMny := 0;
+        rs.First;
+        while not rs.Eof do
+        begin
+          inc(R);
+          cdsDetail.Append;
+          cdsDetail.FieldByName('SEQNO').AsInteger := R;
+          cdsDetail.FieldByName('FROM_ID').AsString := rs.FieldByName('SALES_ID').AsString;
+          cdsDetail.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;
+          cdsDetail.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
+          cdsDetail.FieldByName('UNIT_NAME').AsString := rs.FieldByName('UNIT_NAME').AsString;
+          cdsDetail.FieldByName('AMOUNT').AsFloat := rs.FieldByName('AMOUNT').AsFloat;
+          cdsDetail.FieldByName('APRICE').AsFloat := rs.FieldByName('APRICE').AsFloat;
+          cdsDetail.FieldByName('FROM_TYPE').AsString := rs.FieldByName('ORDERTYPE').AsString;
+          SumMny := SumMny + rs.FieldByName('AMONEY').AsFloat;
+          cdsDetail.Post;
+          rs.Next;
+        end;
+      InvoiceMny := SumMny;
+      ShowModal;
+      finally
+        free;
+      end;
+    end;
+
   finally
     rs.Free;
   end;

@@ -463,7 +463,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
   inherited RzPanel4: TRzPanel
     Width = 828
     inherited Image3: TImage
-      Left = 624
+      Left = 667
       Width = 0
     end
     inherited Image14: TImage
@@ -474,31 +474,36 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
       Width = 184
     end
     inherited rzPanel5: TPanel
-      Left = 624
+      Left = 667
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#36864#36135
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 604
+      Width = 647
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 604
+          MinHeight = 647
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 604
+        Width = 647
         object ToolButton16: TToolButton
           Left = 518
           Top = 0
           Action = actRecv
         end
-        object ToolButton17: TToolButton
+        object ToolButton11: TToolButton
           Left = 561
+          Top = 0
+          Action = actInvoice
+        end
+        object ToolButton17: TToolButton
+          Left = 604
           Top = 0
           Action = actExit
         end
@@ -520,6 +525,10 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
       Caption = #36864#27454
       ImageIndex = 28
       OnExecute = actRecvExecute
+    end
+    object actInvoice: TAction
+      Caption = #24320#31080
+      OnExecute = actInvoiceExecute
     end
   end
   inherited ppmReport: TPopupMenu

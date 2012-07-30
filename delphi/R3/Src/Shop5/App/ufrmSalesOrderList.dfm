@@ -1,6 +1,6 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
   Left = 232
-  Top = 181
+  Top = 178
   Width = 836
   Height = 560
   Caption = #38144#21806#21333
@@ -9,19 +9,19 @@ inherited frmSalesOrderList: TfrmSalesOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 828
-    Height = 489
+    Height = 496
     inherited RzPanel2: TRzPanel
       Width = 818
-      Height = 479
+      Height = 486
       inherited RzPage: TRzPageControl
         Width = 812
-        Height = 473
+        Height = 480
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 810
-            Height = 446
+            Height = 453
             inherited RzPanel1: TRzPanel
               Width = 800
               Height = 121
@@ -316,7 +316,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 126
               Width = 800
-              Height = 315
+              Height = 322
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -463,7 +463,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
   inherited RzPanel4: TRzPanel
     Width = 828
     inherited Image3: TImage
-      Left = 624
+      Left = 667
       Width = 172
     end
     inherited Image14: TImage
@@ -473,31 +473,36 @@ inherited frmSalesOrderList: TfrmSalesOrderList
       Left = 536
     end
     inherited rzPanel5: TPanel
-      Left = 624
+      Left = 667
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#20986#36135
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 604
+      Width = 647
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 604
+          MinHeight = 647
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 604
+        Width = 647
         object ToolButton16: TToolButton
           Left = 518
           Top = 0
           Action = actRecv
         end
-        object ToolButton17: TToolButton
+        object ToolButton11: TToolButton
           Left = 561
+          Top = 0
+          Action = actInvoice
+        end
+        object ToolButton17: TToolButton
+          Left = 604
           Top = 0
           Action = actExit
         end
@@ -515,6 +520,10 @@ inherited frmSalesOrderList: TfrmSalesOrderList
       Caption = #25910#27454
       ImageIndex = 28
       OnExecute = actRecvExecute
+    end
+    object actInvoice: TAction
+      Caption = #24320#31080
+      OnExecute = actInvoiceExecute
     end
   end
   inherited dsList: TDataSource

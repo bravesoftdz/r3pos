@@ -236,7 +236,7 @@ procedure TfrmRecvOrder.SaveOrder;
 var
   n:integer;
   rs:TZQuery;
-  r:real;
+  r:currency;
 begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择缴款门店');
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
@@ -286,10 +286,10 @@ begin
     cdsDetail.EnableControls;
   end;
   cdsHeader.FieldbyName('RECV_MNY').AsFloat := r;
-  if (r > VoucherMny) and (r<>0) then
-  begin
-     if MessageBox(Handle,'收款总额与礼券总额不相等,是否保存!',pchar(Application.Title),MB_YESNOCANCEL+MB_ICONINFORMATION) <> 6 then Exit;
-  end;
+  //if (cdsHeader.FieldbyName('PAYM_ID').AsString='G') and (r > VoucherMny) and (r<>0) then
+  //begin
+  //   if MessageBox(Handle,'收款总额与礼券总额不相等,是否保存!',pchar(Application.Title),MB_YESNOCANCEL+MB_ICONINFORMATION) <> 6 then Exit;
+  //end;
   cdsHeader.Post;
   if n=0 then Raise Exception.Create('没有收款记录，不能保存...');
   Factor.BeginBatch;

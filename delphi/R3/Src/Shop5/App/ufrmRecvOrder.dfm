@@ -1,6 +1,6 @@
 inherited frmRecvOrder: TfrmRecvOrder
-  Left = 164
-  Top = 157
+  Left = 169
+  Top = 123
   ActiveControl = edtCLIENT_ID
   Caption = #25910#27454#21333
   ClientHeight = 465

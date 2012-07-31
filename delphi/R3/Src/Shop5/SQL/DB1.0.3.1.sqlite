@@ -1,5 +1,7 @@
 alter table MKT_KPI_MODIFY add KPI_DATE int NULL;
+alter table MKT_KPI_MODIFY add REMARK varchar(100) NULL;
 alter table MKT_KPI_RESULT_LIST add ADJS_RATE decimal(18, 3) NULL;
+alter table MKT_KPI_RESULT_LIST add REMARK varchar(100) NULL;
 
 alter table SAL_VOUCHERORDER add PRINT_TIMES int NULL;
 alter table SAL_VOUCHERORDER add PRINT_USER varchar(36) NULL;

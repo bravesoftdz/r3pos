@@ -346,7 +346,7 @@ end;
 
 function TShopGlobal.Getoffline: boolean;
 begin
-  result := (Factor=LocalFactory);
+  result := (Factor=LocalFactory) and (SFVersion<>'.LCL');
 end;
 
 function TShopGlobal.GetNetVersion: boolean;

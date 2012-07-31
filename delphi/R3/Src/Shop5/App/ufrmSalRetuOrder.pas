@@ -98,6 +98,12 @@ type
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure N2Click(Sender: TObject);
     procedure useLvlPriceClick(Sender: TObject);
+    procedure edtLINKMANKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtTELEPHONEKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtSEND_ADDRKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     //进位法则
@@ -113,6 +119,8 @@ type
     procedure SetdbState(const Value: TDataSetState); override;
     function IsKeyPress:boolean;override;
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
+    procedure FilterUserClick(Sender: TObject);
+    procedure GetUserInfo(Aobj_: TRecord_);    
   public
     { Public declarations }
     //结算金额
@@ -1865,6 +1873,52 @@ begin
   end;
   Calc;
   DBGridEh1.SetFocus;
+end;
+
+procedure TfrmSalRetuOrder.FilterUserClick(Sender: TObject);
+begin
+  with TfrmFilterUser.Create(Self) do
+  begin
+    try
+      OnGetUserInfo := GetUserInfo;
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmSalRetuOrder.GetUserInfo(Aobj_: TRecord_);
+begin
+  if Aobj_.FieldByName('YQDZ_USERID_OLD').AsString = '' then Exit;
+  edtLINKMAN.Text := Aobj_.FieldByName('YQDZ_HZ_MC').AsString;
+  edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
+  edtSEND_ADDR.Text := Aobj_.FieldByName('YQDZ_SM').AsString;
+  AObj.FieldByName('COMM_ID').AsString := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
+end;
+
+procedure TfrmSalRetuOrder.edtLINKMANKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key = VK_RETURN) then
+     FilterUserClick(Sender);
+end;
+
+procedure TfrmSalRetuOrder.edtTELEPHONEKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key = VK_RETURN) then
+     FilterUserClick(Sender);
+end;
+
+procedure TfrmSalRetuOrder.edtSEND_ADDRKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key = VK_RETURN) then
+     FilterUserClick(Sender);
 end;
 
 end.

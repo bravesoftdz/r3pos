@@ -7,10 +7,10 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 780
-    Height = 514
+    Width = 788
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 770
+      Width = 778
       Height = 140
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -309,6 +309,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Height = 20
         TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyDown = edtSEND_ADDRKeyDown
       end
       object edtTELEPHONE: TcxTextEdit
         Left = 251
@@ -317,6 +318,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Height = 20
         TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyDown = edtTELEPHONEKeyDown
       end
       object edtLINKMAN: TcxTextEdit
         Left = 448
@@ -325,6 +327,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Height = 20
         TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyDown = edtLINKMANKeyDown
       end
       object edtSALES_STYLE: TzrComboBoxList
         Left = 619
@@ -488,8 +491,8 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 410
-      Width = 770
+      Top = 421
+      Width = 778
       Height = 62
       TabOrder = 2
       object Label8: TLabel
@@ -690,8 +693,8 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 178
-      Width = 770
-      Height = 232
+      Width = 778
+      Height = 243
       TabOrder = 3
       Columns = <
         item
@@ -809,15 +812,15 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 145
-      Width = 770
+      Width = 778
     end
     inherited stbHint: TRzPanel
-      Top = 472
-      Width = 770
+      Top = 483
+      Width = 778
     end
     inherited rzHelp: TRzPanel
-      Top = 496
-      Width = 770
+      Top = 507
+      Width = 778
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

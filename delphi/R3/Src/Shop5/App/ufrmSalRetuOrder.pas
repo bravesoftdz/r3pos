@@ -173,7 +173,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer, ufrmMain, ufrmSalesOrder, ufrmFindOrder, ufrmCustomerInfo,ufrmTenantInfo;
+   ,uframeSelectCustomer, ufrmMain, ufrmSalesOrder, ufrmFindOrder, ufrmCustomerInfo,ufrmTenantInfo,ufrmFilterUser;
 {$R *.dfm}
 
 procedure TfrmSalRetuOrder.ReadHeader;

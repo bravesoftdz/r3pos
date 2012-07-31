@@ -328,6 +328,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Height = 20
         TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyDown = edtSEND_ADDRKeyDown
       end
       object edtTELEPHONE: TcxTextEdit
         Left = 251
@@ -336,6 +337,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Height = 20
         TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyDown = edtTELEPHONEKeyDown
       end
       object edtLINKMAN: TcxTextEdit
         Left = 448
@@ -344,6 +346,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Height = 20
         TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyDown = edtLINKMANKeyDown
       end
       object edtSALES_STYLE: TzrComboBoxList
         Left = 619

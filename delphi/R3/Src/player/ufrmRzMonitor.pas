@@ -363,7 +363,7 @@ begin
     begin
        WndParent:= FindWindow('Shell_TrayWnd',nil);
        //WndParent:= frmRzPlayer.Handle;
-    end;
+    end;  
 end;
 
 end.

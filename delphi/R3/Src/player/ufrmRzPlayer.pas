@@ -75,7 +75,6 @@ type
     procedure RzPlayStart(var Message: TMessage); message WM_PLAY_START;
     procedure RzPlayClose(var Message: TMessage); message WM_PLAY_CLOSE;
     procedure WMDisplayChange(var Message: TMessage); message WM_DISPLAYCHANGE;
-
     procedure Show;
     //清理资源
     procedure ClearRes;
@@ -257,8 +256,6 @@ begin
 
   Assert(SystemParametersInfo (SPI_SETLOWPOWERTIMEOUT, 0, nil, SPIF_SENDWININICHANGE));
   Assert(SystemParametersInfo (SPI_SETPOWEROFFTIMEOUT, 0, nil, SPIF_SENDWININICHANGE));
-//  Assert(SystemParametersInfo (SPI_SETSCREENSAVETIMEOUT, 0, nil, SPIF_SENDWININICHANGE));
-
 
   hWnd := FindWindow('Shell_TrayWnd',nil);
   hWnd := FindWindowEx(hWnd,0,'TrayNotifyWnd',nil);
@@ -291,6 +288,7 @@ end;
 procedure TfrmRzPlayer.RzInit(var Message: TMessage);
 begin
 //  ParentWindow := FindWindow('Progman',nil);
+//  Show;
   InitIpc;
   frmRzMonitor.Load;
   frmRzMonitor.Monitor := defaultMonitor;
@@ -301,7 +299,7 @@ begin
   XmlDown.Resume;
   Timer1.Enabled := true;
   Timer2.Enabled := true;
-  SetScreenSaverActive(0);
+  SetScreenSaverActive(false);
 end;
 
 procedure TfrmRzPlayer.SetdefaultMonitor(const Value: integer);
@@ -364,6 +362,7 @@ begin
   if ShutSystem then Exit;
 
   if username='' then Subscribe;
+//  PostMessage(HWND_BROADCAST,WM_SYSCOMMAND,SC_SCREENSAVE,0);
 //  if GetScreenSaverRunning then
 //     begin
 //       KillScreenSaver;
@@ -565,27 +564,44 @@ begin
   if(Msg.message=WM_SYSCOMMAND) and (Msg.wParam=SC_SCREENSAVE) then
      begin
        Handled:=true;  //阻止屏幕保护的启动
-       SendDebug('阻止屏幕保护的启动',4);
+       SendDebug('阻止屏幕保护的启动1',4);
      end
   else
   if(Msg.message=WM_SYSCOMMAND) and (Msg.wParam=SC_MONITORPOWER) then
      begin
        Handled:=true;  //阻止屏幕保护的启动
-       SendDebug('阻止电源选项的启动',4);
+       SendDebug('阻止电源选项的启动2',4);
      end
   else
   if (Msg.message=SC_SCREENSAVE) or (Msg.message=SC_MONITORPOWER) then
      begin
        Handled:=true;  //阻止屏幕保护的启动
-       SendDebug('阻止屏幕及电源选项的启动',4);
+       SendDebug('阻止屏幕及电源选项的启动3',4);
      end
   else
      Handled:=false; //进行该消息的缺省处理
 end;
-
+var
+  temp:TrzVideoMonitor;
 procedure TfrmRzPlayer.Button1Click(Sender: TObject);
+var Node:PSrcDefine;
+  i:integer;
 begin
-  frmRzMonitor.playFile.rePlay;
+  new(Node);
+  try
+    Node^.src := 'C:\ProgramData\rzico\res\vedio\_2382dd05-c861-4174-a6fc-2f1d64d1fb86.avi';
+    for i:= 1 to 10000 do
+    begin
+    if temp<>nil then
+       begin
+         freeAndNil(temp);
+       end;
+    temp := TrzVideoMonitor.Create(Memo1);
+    temp.Open(Node);
+    end;
+  finally
+    dispose(Node);
+  end;
 end;
 
 procedure TfrmRzPlayer.Timer2Timer(Sender: TObject);
@@ -615,6 +631,11 @@ begin
             Senddebug('+++++++++++++锁屏重播++++++++++++++',4);
           end;
        locked := false;
+     end;
+  if GetScreenSaverRunning then
+     begin
+       KillScreenSaver;
+       SetScreenSaverActive(false);
      end;
 end;
 
@@ -657,5 +678,4 @@ begin
      frmRzMonitor.playFile.rePlay;
   Senddebug('+++++++++++++屏幕调整++++++++++++++',4);
 end;
-
 end.

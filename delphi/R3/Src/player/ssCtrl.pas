@@ -4,7 +4,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, ActiveX;
 function GetScreenSaverActive:boolean;
-procedure SetScreenSaverActive(Active:integer);
+procedure SetScreenSaverActive(Active:bool);
 function GetScreenSaverTimeout:integer;
 function GetScreenSaverRunning:boolean;
 procedure KillScreenSaver;
@@ -24,12 +24,12 @@ begin
   if not SystemParametersInfo(SPI_GETSCREENSAVEACTIVE,0,@isActive, 0) then Raise Exception.Create('fail');
   result := isActive;
 end;
-procedure SetScreenSaverActive(Active:integer);
+procedure SetScreenSaverActive(Active:bool);
 var
-  nullVar:integer;
+  isActive:bool;
 begin
-  nullVar := 0;
-  if not SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,0,0, SPIF_SENDWININICHANGE ) then
+  isActive := Active;   //一定是BOOL而不是bool否则运行时错误
+  if not SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,0,@isActive, SPIF_SENDWININICHANGE ) then
      Raise Exception.Create('fail');
 end;
 

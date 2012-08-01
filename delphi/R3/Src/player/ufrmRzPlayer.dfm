@@ -1,6 +1,6 @@
 object frmRzPlayer: TfrmRzPlayer
-  Left = 541
-  Top = 244
+  Left = 423
+  Top = 225
   Width = 515
   Height = 373
   BorderIcons = [biMaximize]

@@ -41,8 +41,8 @@ begin
   r := AppSubscribe(pchar(appid),@ipc);
   if r=0 then
      begin
-       username := ipc.szUserName;
-       token := ipc.szToken;
+       username := StrPas(pchar(@ipc.szUserName));
+       token := StrPas(pchar(@ipc.szToken));
      end
   else
      SendDebug(StrPas(geterror(r)),1);

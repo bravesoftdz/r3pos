@@ -81,10 +81,12 @@ type
     procedure SetEnded(const Value: boolean);
     procedure SetplayTimes(const Value: integer);
   protected
+    procedure WndProc(var Message: TMessage);
     procedure PlayEnded;virtual;
     procedure TimerComplete(Sender:TObject);
     procedure Sort;
   public
+    Handle:THandle;
     constructor Create(AOwner: TWinControl); virtual;
     destructor Destroy; override;
 
@@ -119,12 +121,10 @@ type
   end;
   TrzVideoMonitor=class(TrzMonitor)
   private
-    Handle:THandle;
     Cursrc:PSrcDefine;
     FilterGraph:TFilterGraph;
     procedure FilterGraphGraphComplete(sender: TObject;Result: HRESULT; Renderer: IBaseFilter);
     procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
-    procedure WndProc(var Message: TMessage);
     procedure GraphPausedEvent(sender: TObject; Result: HRESULT);
     function WaitForSendMessage:boolean;
   public
@@ -138,12 +138,10 @@ type
   end;
   TrzMusicMonitor=class(TrzMonitor)
   private
-    Handle:THandle;
     Cursrc:PSrcDefine;
     FilterGraph:TFilterGraph;
     procedure FilterGraphGraphComplete(sender: TObject;Result: HRESULT; Renderer: IBaseFilter);
     procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
-    procedure WndProc(var Message: TMessage);
   public
     function Open(src:PSrcDefine):boolean;override;
     procedure Close;override;
@@ -423,7 +421,7 @@ begin
     5:s := formatdatetime('MM/DD/YY HH:NN:SS zzz',now())+' ['+inttostr(GetCurrentProcessId)+'] TRACE - '+s;
     6:s := formatdatetime('MM/DD/YY HH:NN:SS zzz',now())+' ['+inttostr(GetCurrentProcessId)+'] ALL - '+s;
     end;
-    if Application.MainForm.Visible then
+    if (Application.MainForm<>nil) and Application.MainForm.Visible then
        begin
          w := length(s);
          getmem(buf,w);
@@ -496,6 +494,7 @@ end;
 
 constructor TrzMonitor.Create(AOwner: TWinControl);
 begin
+  Handle := AllocateHwnd(WndProc);
   Parant :=  AOwner;
   FList := TList.Create;
   fdpyLength := 0;
@@ -520,6 +519,7 @@ end;
 
 destructor TrzMonitor.Destroy;
 begin
+  if Handle <> 0 then DeallocateHWnd(Handle);
   Timer.Free;
   Clear;
   FList.Free;
@@ -702,47 +702,49 @@ begin
   PlayEnded;
 end;
 
+procedure TrzMonitor.WndProc(var Message: TMessage);
+begin
+  Dispatch(Message);
+end;
+
 { TrzVideoMonitor }
 
 procedure TrzVideoMonitor.Close;
 begin
   display.Visible := false;
   Timer.Enabled := false;
-  if not WaitForSendMessage then exit;
-  FilterGraph.Active := False;
-  if not WaitForSendMessage then exit;
   FilterGraph.ClearGraph;
+  FilterGraph.Active := false;
   index := -1;
 end;
 
 constructor TrzVideoMonitor.Create(AOwner: TWinControl);
 begin
   inherited;
-  Handle := AllocateHwnd(WndProc);
+  rcProgram := nil;
   FilterGraph := TFilterGraph.Create(nil);
   FilterGraph.OnGraphComplete := FilterGraphGraphComplete;
-//  FilterGraph.OnGraphPaused  := GraphPausedEvent;
   display := TVideoWindow.Create(AOwner);
   with TVideoWindow(display) do
      begin
        Mode := vmVMR;
-       VMROptions.KeepAspectRatio := false;
-       VMROptions.Mode := vmrWindowless;
-       //VMROptions.Preferences := [vpRestrictToInitialMonitor];
        FilterGraph := self.FilterGraph;
+       VMROptions.KeepAspectRatio := false;
+       //VMROptions.Mode := vmrWindowless;
+       //FilterGraph := self.FilterGraph;
        Align := alNone;
        Parent := AOwner;
      end;
   MonitorType := mtVideo;
+//  FilterGraph.Active := true;
   SendDebug('--------------------创建视屏--------------------',4);
 end;
 
 destructor TrzVideoMonitor.Destroy;
 begin
-  if Handle <> 0 then DeallocateHWnd(Handle);
   Close;
-  display.Free;
   FilterGraph.Free;
+  display.Free;
   SendDebug('====================释放视屏====================',4);
   inherited;
 end;
@@ -766,20 +768,20 @@ var
 begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放视屏<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
   Cursrc := src;
+  if not WaitForSendMessage then Exit;
   hCurWindow:=GetForegroundWindow();
   Timer.Enabled := false;
   display.Visible := true;
-  if not WaitForSendMessage then exit;
+  if not FilterGraph.Active then FilterGraph.Active := true;
+  if not WaitForSendMessage then Exit;
   FilterGraph.ClearGraph;
-  if not WaitForSendMessage then exit;
-  FilterGraph.Active := False;
-  if not WaitForSendMessage then exit;
-  FilterGraph.Active := True;
-  if not WaitForSendMessage then exit;
   if fileExists(src^.src) then
      begin
+        if not WaitForSendMessage then Exit;
+//        TVideoWindow(display).FilterGraph:= nil;
+//        TVideoWindow(display).FilterGraph:= self.FilterGraph;
         FilterGraph.RenderFile(src^.src);
-        if not WaitForSendMessage then exit;
+        if not WaitForSendMessage then Exit;
         if src^.volume>=0 then FilterGraph.Volume := src^.volume*100;
         FilterGraph.Play;
         dpyStart := GetTickCount div 1000;
@@ -795,8 +797,11 @@ begin
      end
   else
      Raise Exception.Create('"'+src^.src+'"视屏文件没找到');
-  Plays.WriteInteger(rcProgram.rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(MonitorIdx),index);
-  Plays.WriteString('res',src^.SourceId,formatDatetime('YYYYMMDDHHNNSS',now()));
+  if rcProgram<>nil then
+  begin
+    Plays.WriteInteger(rcProgram.rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(MonitorIdx),index);
+    Plays.WriteString('res',src^.SourceId,formatDatetime('YYYYMMDDHHNNSS',now()));
+  end;
 end;
 
 procedure TrzVideoMonitor.Pause;
@@ -814,6 +819,7 @@ begin
 //  else
 //     begin
   try
+    Close;
     Open(curSrc);
   except
     PostMessage(Handle,WM_PLAY_END,0,0);
@@ -826,9 +832,8 @@ function TrzVideoMonitor.WaitForSendMessage: boolean;
 var
   _Start:Int64;
 begin
-  //_Start := GetTickCount;
+  _Start := GetTickCount;
   result := true;
-  Exit;
   while not Application.Terminated and InSendMessage() do
     begin
       Application.HandleMessage;
@@ -846,11 +851,6 @@ end;
 procedure TrzVideoMonitor.WMPlayEnd(var Message: TMessage);
 begin
   PlayEnded;
-end;
-
-procedure TrzVideoMonitor.WndProc(var Message: TMessage);
-begin
-  Dispatch(Message);
 end;
 
 { TrzPhotoMonitor }
@@ -910,6 +910,7 @@ end;
 procedure TrzPhotoMonitor.resume;
 begin
   inherited;
+  DoTimer;
 end;
 
 { TrzTextMonitor }
@@ -1018,6 +1019,7 @@ procedure TrzTextMonitor.resume;
 begin
   inherited;
   TRzMarqueeStatus(display).Scrolling := true;
+  DoTimer;
 end;
 
 procedure TrzTextMonitor.SetBackColor(const Value: TColor);
@@ -1067,6 +1069,7 @@ end;
 
 constructor TrzProgram.Create(AOwner: TWinControl;PlayList:TrzPlayList);
 begin
+  SendDebug('=============创建场景==============',4);
   Handle := AllocateHwnd(WndProc);
   rzPlayList := PlayList;
   FList := TList.Create;
@@ -1074,6 +1077,7 @@ begin
   Timer := TTimer.Create(nil);
   Timer.Enabled := false;
   Timer.OnTimer := TimerComplete;
+  root := nil;
 end;
 
 destructor TrzProgram.Destroy;
@@ -1082,7 +1086,9 @@ begin
   Timer.Free;
   Clear;
   FList.Free;
+  root := nil;
   inherited;
+  SendDebug('=============释放场景==============',4);
 end;
 
 procedure TrzProgram.Open(root: IXMLDOMNode);
@@ -1544,13 +1550,6 @@ begin
           resume;
         end;
     end;
-  for i:=0 to flist.Count -1 do
-    begin
-      with TrzMonitor(flist[i]) do
-        begin
-           DoTimer;
-        end;
-    end;
   Timer.Enabled := true;
 end;
 
@@ -1665,6 +1664,7 @@ begin
 end;
 constructor TrzPlayList.Create(AOwner: TWinControl;AFile:TrzFile);
 begin
+  SendDebug('---------========创建节目========--------',4);
   Handle := AllocateHwnd(WndProc);
   FList := TList.Create;
   Timer := TTimer.Create(nil);
@@ -1685,6 +1685,7 @@ begin
   Clear;
   FList.Free;
   inherited;
+  SendDebug('---------========释放节目========--------',4);
 end;
 
 procedure TrzPlayList.Open(root: IXMLDOMNode);
@@ -1812,14 +1813,20 @@ begin
 end;
 
 procedure TrzPlayList.Close;
+var i:integer;
 begin
   Timer.Enabled := false;
-//  findex := -1;
-  if assigned(curProgram) then
+  for i:=0 to FList.Count -1 do
      begin
-       curProgram.Close;
-       curProgram.Clear;
+        TrzProgram(Flist[i]).Close;
+        TrzProgram(Flist[i]).Clear;
      end;
+//  findex := -1;
+//  if assigned(curProgram) then
+//     begin
+//       curProgram.Close;
+//       curProgram.Clear;
+//     end;
 //  Ended := true;
 end;
 
@@ -1990,10 +1997,15 @@ begin
 end;
 
 procedure TrzFile.Close;
+var i:integer;
 begin
   Timer.Enabled := false;
+  for i:=0 to FList.Count-1 do
+     begin
+       TrzPlayList(FList[i]).Close;
+     end;
 //  findex := -1;
-  if assigned(curPlayList) then curPlayList.Close;
+//  if assigned(curPlayList) then curPlayList.Close;
 end;
 
 constructor TrzFile.Create(AOwner: TWinControl);
@@ -2436,9 +2448,8 @@ end;
 procedure TrzMusicMonitor.Close;
 begin
   Timer.Enabled := false;
-  FilterGraph.Active := False;
-  FilterGraph.Stop;
   FilterGraph.ClearGraph;
+  FilterGraph.Active := False;
   index := -1;
   inherited;
 
@@ -2447,16 +2458,15 @@ end;
 constructor TrzMusicMonitor.Create(AOwner: TWinControl);
 begin
   inherited;
-  Handle := AllocateHwnd(WndProc);
   FilterGraph := TFilterGraph.Create(nil);
   FilterGraph.OnGraphComplete := FilterGraphGraphComplete;
   MonitorType := mtMusic;
+//  FilterGraph.Active := true;
   SendDebug('--------------------创建音频--------------------',4);
 end;
 
 destructor TrzMusicMonitor.Destroy;
 begin
-  if Handle <> 0 then DeallocateHWnd(Handle);
   Close;
   FilterGraph.Free;
   SendDebug('====================释放音频====================',4);
@@ -2476,10 +2486,8 @@ begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放音频<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
   Cursrc := src;
   Timer.Enabled := false;
-  FilterGraph.Active := False;
-  FilterGraph.Stop;
+  if not FilterGraph.Active then FilterGraph.Active := true;
   FilterGraph.ClearGraph;
-  FilterGraph.Active := True;
   if fileExists(src^.src) then
      begin
         FilterGraph.RenderFile(src^.src);
@@ -2506,6 +2514,7 @@ procedure TrzMusicMonitor.resume;
 begin
   inherited;
   try
+    Close;
     Open(curSrc);
   except
     PostMessage(Handle,WM_PLAY_END,0,0);
@@ -2516,12 +2525,6 @@ end;
 procedure TrzMusicMonitor.WMPlayEnd(var Message: TMessage);
 begin
   PlayEnded;
-
-end;
-
-procedure TrzMusicMonitor.WndProc(var Message: TMessage);
-begin
-  Dispatch(Message);
 
 end;
 

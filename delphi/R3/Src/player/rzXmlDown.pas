@@ -52,7 +52,7 @@ type
     procedure AddPhoto(Root:IXMLDOMNode);
     procedure AddVideo(Root:IXMLDOMNode);
     procedure AddMusic(Root:IXMLDOMNode);
-    procedure Open(FileName:String);
+    procedure Open(FileName:String;readPlays:boolean=true);
     procedure DoRedirect(Sender: TObject; var dest: String;
       var NumRedirect: Integer; var Handled: Boolean;
       var VMethod: TIdHTTPMethod);
@@ -358,7 +358,7 @@ begin
   end;
 end;
 
-procedure TrzXmlDown.Open(FileName: String);
+procedure TrzXmlDown.Open(FileName: String;readPlays:boolean=true);
 var Node,Root:IXMLDOMNode;
     StartDate,EndDate,ProgramListType:string;
 begin
@@ -370,8 +370,11 @@ begin
   StartDate := Root.selectSingleNode('starteDate').text;
   EndDate := Root.selectSingleNode('endDate').text;
   ProgramListType := Root.selectSingleNode('playbillType').text;
-  msgId := Plays.readString(pid,'msgId','');
-  apply := Plays.readString(pid,'apply','');
+  if readPlays then
+     begin
+       msgId := Plays.readString(pid,'msgId','');
+       apply := Plays.readString(pid,'apply','');
+     end;
   Node := Root.selectSingleNode('playList');
   Node := Node.firstChild;
   while Node <> nil do
@@ -407,7 +410,7 @@ begin
     filename := AppData+'\temp\play'+formatDatetime('yyyymmddhhnnss',now())+'.xml';
     Getfile(src,filename);
     try
-      open(filename);
+      open(filename,false);
       result := true;
     finally
       deletefile(pchar(filename));
@@ -1018,6 +1021,7 @@ begin
        DownSrc(StrtoIntDef(ptype,0),url,msgId,pId,applyurl,token,nil);
   except
     stHeader.Free;
+    Raise;
   end;
 end;
 
@@ -1065,10 +1069,10 @@ begin
                      begin
                        Plays^.srcFlag := 1;
                        Plays^.src :=AppData+'\adv\'+down.pid+'.xml';
-                       if Down.pid<>'' then
+                       if Plays^.pid<>'' then
                           begin
-                            RzCtrls.Plays.WriteString(Down.pid,'msgId',Plays^.msgId);
-                            RzCtrls.Plays.WriteString(Down.pid,'apply',Plays^.applyUrl);
+                            RzCtrls.Plays.WriteString(Plays^.pid,'msgId',Plays^.msgId);
+                            RzCtrls.Plays.WriteString(Plays^.pid,'apply',Plays^.applyUrl);
                           end;
                        if Down.DownAllRes then
                           begin

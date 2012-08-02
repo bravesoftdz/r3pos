@@ -1125,4 +1125,52 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
+  object PUB_COLOR_RELATION: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select A.CODE_ID as COLOR_ID,A.SORT_ID,A.SEQ_NO,B.COLOR_NAME,B.C' +
+        'OLOR_SPELL from PUB_CODE_RELATION A left join PUB_COLOR_INFO B o' +
+        'n A.TENANT_ID=B.TENANT_ID and A.CODE_ID=B.COLOR_ID where A.TENAN' +
+        'T_ID=:TENANT_ID and A.SORT_TYPE=7')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 800
+    Top = 416
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_SIZE_RELATION: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select A.CODE_ID as SIZE_ID,A.SORT_ID,A.SEQ_NO,B.SIZE_NAME,B.SIZ' +
+        'E_SPELL from PUB_CODE_RELATION A left join PUB_SIZE_INFO B on A.' +
+        'TENANT_ID=B.TENANT_ID and A.CODE_ID=B.SIZE_ID where A.TENANT_ID=' +
+        ':TENANT_ID and A.SORT_TYPE=8')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 800
+    Top = 480
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
 end

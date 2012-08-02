@@ -56,6 +56,8 @@ type
     CA_MODULE: TZQuery;
     SYS_FEE_OPTION: TZQuery;
     MKT_ACTIVE_GROUP: TZQuery;
+    PUB_COLOR_RELATION: TZQuery;
+    PUB_SIZE_RELATION: TZQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     Fokline: boolean;

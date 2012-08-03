@@ -61,7 +61,7 @@ type
   end;
 
 implementation
-uses uGlobal,uXDictFactory,uShopGlobal;
+uses uGlobal,uXDictFactory,uShopGlobal, ufrmBasic, StrUtils;
 {$R *.dfm}
 
 { TframeDialogProperty }
@@ -75,11 +75,15 @@ var
 begin
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not bs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('无效商品代码,代码:'+AObj.FieldbyName('GODS_ID').AsString+'');
-  cs := Global.GetZQueryFromName('PUB_COLOR_INFO');
-  ss := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  cs := Global.GetZQueryFromName('PUB_COLOR_RELATION');
+  ss := Global.GetZQueryFromName('PUB_SIZE_RELATION');
   us := Global.GetZQueryFromName('PUB_MEAUNITS');
   if us.Locate('UNIT_ID',bs.FieldbyName('UNIT_ID').AsString,[]) then unitName := us.FieldbyName('UNIT_NAME').AsString;
+
   edtTable.Close;
+  edtTable.FieldDefs.Add('SEQ_NO',ftInteger,0);
+  edtTable.FieldDefs.Add('CODE_NAME',ftString,50);
+  edtTable.FieldDefs.Add('CODE_ID',ftString,36);
   DBGridEh1.FrozenCols := 0;
   edtTable.DisableControls;
   try
@@ -99,11 +103,13 @@ begin
        end
     else
        begin
-
+          ss.Filtered := False;
+          ss.Filter := 'SORT_ID='''+bs.FieldbyName('SORT_ID8').AsString+'''';
+          ss.Filtered := True;
           ss.First;
           while not ss.Eof do
              begin
-               if pos(','+bs.FieldbyName('SORT_ID8').AsString+',',','+ss.FieldbyName('SORT_ID8S').AsString+',')>0 then
+               //if pos(','+bs.FieldbyName('SORT_ID8').AsString+',',','+ss.FieldbyName('SORT_ID8S').AsString+',')>0 then
                begin
                Column := DBGridEh1.Columns.Add;
                Column.FieldName := 'SIZE_'+ss.FieldbyName('SIZE_ID').AsString;
@@ -112,7 +118,7 @@ begin
                Column.Footer.ValueType := fvtSum;
                Column.Alignment := taCenter;
                Column.ReadOnly := false;
-               edtTable.FieldDefs.Add('SIZE_'+ss.FieldbyName('SIZE_ID').AsString,ftBCD,0);
+               edtTable.FieldDefs.Add('SIZE_'+ss.FieldbyName('SIZE_ID').AsString,ftInteger,0);
                end;
                ss.Next;
              end;
@@ -123,7 +129,7 @@ begin
           Column.Footer.ValueType := fvtSum;
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
-          edtTable.FieldDefs.Add('SIZE_#',ftBCD,0);
+          edtTable.FieldDefs.Add('SIZE_#',ftInteger,0);
           Column := DBGridEh1.Columns.Add;
           Column.FieldName := 'SIZE_TOTAL';
           Column.Width := 40;
@@ -131,13 +137,14 @@ begin
           Column.Footer.ValueType := fvtSum;
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
+          edtTable.FieldDefs.Add('SIZE_TOTAL',ftInteger,0);
        end;
     // end
-    edtTable.CreateDataSet;
     Field := TBCDField.Create(edtTable);
     Field.FieldName := 'SIZE_TOTAL';
     Field.DataSet := edtTable;
     Field.Calculated := true;
+    edtTable.CreateDataSet;
     //处理颜色
     if (bs.FieldbyName('SORT_ID7').AsString = '') or (bs.FieldbyName('SORT_ID7').AsString = '#') then
        begin
@@ -147,14 +154,17 @@ begin
        end
     else
        begin
+          cs.Filtered := False;
+          cs.Filter := 'SORT_ID='''+bs.FieldbyName('SORT_ID7').AsString+'''';
+          cs.Filtered := True;
           cs.First;
           while not cs.Eof do
              begin
-               if pos(','+bs.FieldbyName('SORT_ID7').AsString+',',','+ss.FieldbyName('SORT_ID7S').AsString+',')>0 then
+               //if pos(','+bs.FieldbyName('SORT_ID7').AsString+',',','+cs.FieldbyName('SORT_ID7S').AsString+',')>0 then
                begin
                edtTable.Append;
-               edtTable.FieldbyName('CODE_NAME').AsString := cs.FieldbyName('CODE_NAME').AsString;
-               edtTable.FieldbyName('CODE_ID').AsString := cs.FieldbyName('CODE_ID').AsString;
+               edtTable.FieldbyName('CODE_NAME').AsString := cs.FieldbyName('COLOR_NAME').AsString;
+               edtTable.FieldbyName('CODE_ID').AsString := cs.FieldbyName('COLOR_ID').AsString;
                inc(r);
                edtTable.FieldbyName('SEQ_NO').AsInteger := r;
                end;
@@ -229,7 +239,7 @@ begin
   else
      if Column.Field.Calculated then Background := clYellow
   else
-     if cdsStorage.Locate('PROPERTY_01;PROPERTY_02',varArrayOf([copy(Column.FieldName,6,3),edtTable.FieldbyName('CODE_ID').asString]),[]) then
+     if cdsStorage.Locate('PROPERTY_01;PROPERTY_02',varArrayOf([copy(Column.FieldName,6,36),edtTable.FieldbyName('CODE_ID').asString]),[]) then
         begin
           if cdsStorage.FieldbyName('AMOUNT').asFloat>0 then
               Background := Shape1.Brush.Color;
@@ -285,7 +295,7 @@ begin
   inherited;
   if (gdSelected in State) or (gdFocused in State) and DBGridEh1.Focused then
      begin
-       if cdsStorage.Locate('PROPERTY_01;PROPERTY_02',varArrayOf([copy(Column.FieldName,6,3),edtTable.FieldbyName('CODE_ID').asString]),[]) then
+       if cdsStorage.Locate('PROPERTY_01;PROPERTY_02',varArrayOf([copy(Column.FieldName,6,36),edtTable.FieldbyName('CODE_ID').asString]),[]) then
           stbHint.Caption := '"'+edtTable.FieldbyName('CODE_NAME').AsString+' / '+copy(Column.Title.Caption,6,20)+ '" 可用库存为：'+cdsStorage.FieldbyName('AMOUNT').AsString+unitName
        else
           stbHint.Caption := '"'+edtTable.FieldbyName('CODE_NAME').AsString+' / '+copy(Column.Title.Caption,6,20)+ '" 可用库存为：0';
@@ -360,7 +370,7 @@ begin
                    if AObj.FindField(DataSet.Fields[j].FieldName)<>nil then
                       DataSet.Fields[j].Value := AObj.FieldbyName(DataSet.Fields[j].FieldName).NewValue;
                  end;
-               DataSet.FieldByName('PROPERTY_01').AsString := copy(edtTable.Fields[i].FieldName,6,3);
+               DataSet.FieldByName('PROPERTY_01').AsString := copy(edtTable.Fields[i].FieldName,6,36);
                DataSet.FieldByName('PROPERTY_02').AsString := edtTable.FieldbyName('CODE_ID').AsString;
                DataSet.FieldByName('AMOUNT').AsFloat := edtTable.Fields[i].AsFloat;
                amt := amt + edtTable.Fields[i].AsFloat;
@@ -437,7 +447,7 @@ begin
              (edtTable.Fields[i].asString <> '')
           then
              begin
-               AObj.FieldByName('PROPERTY_01').AsString := copy(edtTable.Fields[i].FieldName,6,3);
+               AObj.FieldByName('PROPERTY_01').AsString := copy(edtTable.Fields[i].FieldName,6,36);
                AObj.FieldByName('PROPERTY_02').AsString := edtTable.FieldbyName('CODE_ID').AsString;
                AObj.FieldByName('AMOUNT').AsFloat := edtTable.Fields[i].AsFloat;
              end;

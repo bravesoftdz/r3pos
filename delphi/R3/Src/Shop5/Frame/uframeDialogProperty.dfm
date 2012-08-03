@@ -1,6 +1,6 @@
 inherited frameDialogProperty: TframeDialogProperty
-  Left = 360
-  Top = 257
+  Left = 477
+  Top = 196
   Width = 468
   Height = 355
   ActiveControl = DBGridEh1
@@ -11,11 +11,11 @@ inherited frameDialogProperty: TframeDialogProperty
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 452
-    Height = 317
+    Width = 460
+    Height = 328
     inherited RzPage: TRzPageControl
-      Width = 442
-      Height = 261
+      Width = 450
+      Height = 272
       TabIndex = -1
       TabStop = False
       FixedDimension = 20
@@ -23,13 +23,13 @@ inherited frameDialogProperty: TframeDialogProperty
         TabVisible = False
         Caption = #39068#33394'/'#23610#30721
         inherited RzPanel2: TRzPanel
-          Width = 438
-          Height = 257
+          Width = 446
+          Height = 268
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 428
-            Height = 226
+            Width = 436
+            Height = 237
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -78,8 +78,8 @@ inherited frameDialogProperty: TframeDialogProperty
           end
           object stbHint: TPanel
             Left = 5
-            Top = 231
-            Width = 428
+            Top = 242
+            Width = 436
             Height = 21
             Align = alBottom
             BevelOuter = bvNone
@@ -96,8 +96,8 @@ inherited frameDialogProperty: TframeDialogProperty
       end
     end
     inherited btPanel: TRzPanel
-      Top = 266
-      Width = 442
+      Top = 277
+      Width = 450
       Height = 46
       object Shape2: TShape
         Left = 17

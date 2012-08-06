@@ -2,6 +2,14 @@ unit uDevFactory;
 
 interface
 uses Windows,Classes,spComm,SysUtils,zPrinters,ufrmShowPanel;
+
+
+  //2012.08.04 xhh修改调用API_COM.DLL
+type
+  TCom_Init=function(com:Integer; baud:Dword):integer;stdcall;  //初始化
+  TCom_Send=function(buf:PChar; len:Integer):Boolean;stdcall;  //发送命令
+  TCom_Rest=function():Boolean;stdcall; //关闭
+
 type
 TDevFactory=class
   private
@@ -27,6 +35,12 @@ TDevFactory=class
     FCopys: integer;
     FPrintFormat: integer;
     CashBoxStart:Int64;
+    //2012.08.04 xhh修改调用API_COM.DLL
+    FComHandle:THandle; //api_com.dll句柄
+    Com_Init:TCom_Init;  //初始化
+    Com_Send:TCom_Send;  //发送命令
+    Com_Rest:TCom_Rest;  //关闭
+
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -54,6 +68,8 @@ TDevFactory=class
     procedure SetPrintFormat(const Value: integer);
   protected
     frmShowPanel:TfrmShowPanel;
+    //2012.08.04 xhh修改调用API_COM.DLL
+    procedure DoCallApi_Com(CmdStr: string); //调用Api_Com.dll方法
   public
     F:TextFile;
     constructor Create;
@@ -157,6 +173,15 @@ begin
   inherited;
   FComm := TComm.Create(nil);
   frmShowPanel := TfrmShowPanel.Create(nil);
+  //2012.08.04 xhh修改调用API_COM.DLL
+  FComHandle:=0;
+  FComHandle:=LoadLibrary(Pchar(ExtractFilePath(Application.ExeName)+'API_COM.DLL'));
+  if FComHandle>0 then
+  begin
+    @Com_Init := GetProcAddress(FComHandle, Pchar('com_init'));  //初始化
+    @Com_Send := GetProcAddress(FComHandle, Pchar('com_send'));  //发送命令
+    @Com_Rest := GetProcAddress(FComHandle, Pchar('com_rest'));  //关闭
+  end;
 end;
 
 destructor TDevFactory.Destroy;
@@ -164,7 +189,37 @@ begin
   FComm.StopComm;
   frmShowPanel.Free;
   FComm.Free;
+  //2012.08.04 xhh修改调用API_COM.DLL
+  if FComHandle>0 then
+  begin
+    Com_Rest;
+    FreeLibrary(FComHandle);
+  end;
   inherited;
+end;
+
+procedure TDevFactory.DoCallApi_Com(CmdStr: string);
+var
+  Msg: string;
+  ReRun: Boolean;
+begin
+  Msg:='';
+  try
+    if FComHandle>0 then
+      ReRun:=Com_Send(Pchar(CmdStr),Length(CmdStr))
+    else
+      Msg:=' 无效句柄，（请检查安装目录下是否有api_com.dll）';
+  except
+    on E:Exception do
+    begin
+      ReRun:=False;
+      if Msg='' then Msg:='错误：'+E.Message;
+    end;
+  end;
+  if (ReRun=False) and (trim(Msg)<>'') then
+  begin
+    MessageBox(Application.Handle,Pchar(Msg),'友情提示...',MB_OK+MB_ICONINFORMATION);
+  end;
 end;
 
 function TDevFactory.EncodeDivStr: string;
@@ -226,6 +281,12 @@ begin
     except
     end;
   end;
+
+  //2012.08.05Add设置端口速率
+  if FComHandle>0 then
+  begin
+    Com_Init(DisplayComm,DisplayBaudRate);  
+  end;  
 end;
 
 class procedure TDevFactory.OpenCashBox;
@@ -338,24 +399,37 @@ procedure TDevFactory.SetLEDNumber(Value: Real);
 var S:string;
 begin
   if DisplayComm<=0 then Exit;
+
+  //2012.08.04修改用api_com.dll调用
+  S:=Chr(27)+Chr(81)+Chr(65)+FloatToStr(Value)+Chr(13);
+  DoCallApi_Com(S);
+ {
   FComm.StopComm;
   FComm.CommName := 'COM'+Inttostr(DisplayComm);
   FComm.BaudRate := DisplayBaudRate;
   FComm.StartComm;
   S:=Chr(27)+Chr(81)+Chr(65)+FloatToStr(Value)+Chr(13);
   FComm.WriteCommData(Pchar(S),Length(S)) ;
+  }
 end;
 
 procedure TDevFactory.SetLEDType(Value: Integer);
 var S:string;
 begin
   if DisplayComm<=0 then Exit;
+
+  //2012.07.14修改用api_com.dll调用
+  S:= Chr(27)+Chr(115)+IntToStr(Value);
+  DoCallApi_Com(S);
+
+ {
   FComm.StopComm;
   FComm.CommName := 'COM'+Inttostr(DisplayComm);
   FComm.BaudRate := DisplayBaudRate;
   FComm.StartComm;
   S:=Chr(27)+Chr(115)+Inttostr(Value);
   FComm.WriteCommData(Pchar(S),Length(S)) ;
+  }
 end;
 
 procedure TDevFactory.SetLPT(const Value: integer);

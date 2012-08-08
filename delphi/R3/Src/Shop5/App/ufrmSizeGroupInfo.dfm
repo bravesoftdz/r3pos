@@ -1,7 +1,7 @@
 inherited frmSizeGroupInfo: TfrmSizeGroupInfo
   Left = 408
   Top = 145
-  Caption = #23610#30721#19982#23610#30721#32452#31649#29702
+  Caption = #23610#30721#32452#31649#29702
   ClientHeight = 371
   ClientWidth = 562
   OnShow = FormShow
@@ -60,9 +60,6 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
             BorderOuter = fsNone
             Color = clWhite
             TabOrder = 1
-            DesignSize = (
-              358
-              307)
             object Label1: TLabel
               Left = -21
               Top = 16
@@ -74,7 +71,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
             end
             object Label2: TLabel
               Left = -21
-              Top = 50
+              Top = 42
               Width = 80
               Height = 12
               Alignment = taRightJustify
@@ -97,7 +94,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
             end
             object Label3: TLabel
               Left = 156
-              Top = 48
+              Top = 40
               Width = 6
               Height = 12
               Alignment = taRightJustify
@@ -109,67 +106,20 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               Font.Style = []
               ParentFont = False
             end
-            object BtnSizeGroup: TRzBitBtn
-              Left = 267
-              Top = 13
-              Width = 83
-              Height = 26
-              Anchors = [akTop, akRight]
-              Caption = #26032#22686#32452'(&A)'
-              Color = clSilver
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              HighlightColor = 16026986
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 0
-              TextStyle = tsRaised
-              ThemeAware = False
-              OnClick = BtnSizeGroupClick
-              NumGlyphs = 2
-              Spacing = 5
-            end
-            object BtnSize: TRzBitBtn
-              Left = 267
-              Top = 46
-              Width = 83
-              Height = 26
-              Anchors = [akTop, akRight]
-              Caption = #26032#22686#23610#30721'(&N)'
-              Color = clSilver
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              HighlightColor = 16026986
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 1
-              TextStyle = tsRaised
-              ThemeAware = False
-              OnClick = BtnSizeClick
-              NumGlyphs = 2
-              Spacing = 5
+            object Label4: TLabel
+              Left = 11
+              Top = 74
+              Width = 48
+              Height = 12
+              Caption = #21487#36873#23610#30721
             end
             object edtSORT_SPELL: TcxTextEdit
               Left = 65
-              Top = 44
+              Top = 36
               Width = 90
               Height = 20
               Properties.OnChange = edtSPELLPropertiesChange
-              TabOrder = 2
+              TabOrder = 0
             end
             object edtSORT_NAME: TcxTextEdit
               Left = 65
@@ -177,145 +127,31 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               Width = 121
               Height = 20
               Properties.OnChange = edtNAMEPropertiesChange
-              TabOrder = 3
+              TabOrder = 1
             end
             object RzPanel4: TRzPanel
               Left = 0
-              Top = 114
+              Top = 96
               Width = 358
-              Height = 193
+              Height = 211
               Align = alBottom
               BorderOuter = fsNone
               Color = clWhite
-              TabOrder = 4
-              object RzPanel5: TRzPanel
+              TabOrder = 2
+              object RzPanel6: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 86
-                Height = 193
-                Align = alLeft
-                BorderOuter = fsNone
-                Color = clWhite
-                TabOrder = 0
-                object BtnAddAll: TRzBitBtn
-                  Left = 2
-                  Top = 24
-                  Width = 83
-                  Height = 26
-                  Caption = '<< '#28155#21152#25152#26377
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 0
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = BtnAddAllClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object BtnAddSelected: TRzBitBtn
-                  Left = 2
-                  Top = 56
-                  Width = 83
-                  Height = 26
-                  Caption = ' < '#28155#21152#36873#20013
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 1
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = BtnAddSelectedClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object BtnDeleteSelected: TRzBitBtn
-                  Left = 2
-                  Top = 112
-                  Width = 83
-                  Height = 26
-                  Caption = #21024#38500#36873#20013' > '
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 2
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = BtnDeleteSelectedClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object BtnDeleteAll: TRzBitBtn
-                  Left = 2
-                  Top = 144
-                  Width = 83
-                  Height = 26
-                  Caption = #21024#38500#25152#26377' >>'
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 3
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = BtnDeleteAllClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-              end
-              object RzPanel6: TRzPanel
-                Left = 86
-                Top = 0
-                Width = 272
-                Height = 193
+                Width = 358
+                Height = 211
                 Align = alClient
                 BorderOuter = fsNone
                 Color = clWhite
-                TabOrder = 1
+                TabOrder = 0
                 object DBGridEh1: TDBGridEh
                   Left = 0
                   Top = 0
-                  Width = 272
-                  Height = 193
+                  Width = 358
+                  Height = 211
                   Align = alClient
                   AutoFitColWidths = True
                   DataSource = DsSizeInfo
@@ -388,6 +224,32 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
                     end>
                 end
               end
+            end
+            object BtnAddSelected: TRzBitBtn
+              Left = 298
+              Top = 68
+              Width = 57
+              Height = 22
+              Caption = #21152#20837#32452
+              Color = clSilver
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              HighlightColor = 16026986
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 3
+              TextStyle = tsRaised
+              ThemeAware = False
+              OnClick = BtnAddSelectedClick
+              NumGlyphs = 2
+              Spacing = 5
             end
           end
         end
@@ -501,6 +363,33 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = BtnCancelClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object BtnSizeGroup: TRzBitBtn
+        Left = 128
+        Top = 6
+        Width = 71
+        Height = 27
+        Anchors = [akTop, akRight]
+        Caption = #28155#21152#32452
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 4
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = BtnSizeGroupClick
         NumGlyphs = 2
         Spacing = 5
       end

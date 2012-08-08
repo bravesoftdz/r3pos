@@ -349,7 +349,11 @@ uses
   ufrmSvcServiceInfo in 'App\ufrmSvcServiceInfo.pas' {frmSvcServiceInfo},
   ufrmSvcServiceList in 'App\ufrmSvcServiceList.pas' {frmSvcServiceList},
   ObjSvcServiceInfo in 'Obj\ObjSvcServiceInfo.pas',
-  ufrmFilterUser in 'App\ufrmFilterUser.pas' {frmFilterUser};
+  ufrmFilterUser in 'App\ufrmFilterUser.pas' {frmFilterUser},
+  ufrmSizeGroupInfo in 'App\ufrmSizeGroupInfo.pas' {frmSizeGroupInfo},
+  ufrmColorGroupInfo in 'App\ufrmColorGroupInfo.pas' {frmColorGroupInfo},
+  ufrmSizeInfo in 'App\ufrmSizeInfo.pas' {frmSizeInfo},
+  ufrmColorInfo in 'App\ufrmColorInfo.pas' {frmColorInfo};
 
 {$R *.res}
 var

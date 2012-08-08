@@ -78,9 +78,10 @@ TDevFactory=class
 
     Class procedure OpenCashBox;
     Class procedure ShowAPrice(Value:Real;ShowN:string=''); //单价
-    Class procedure ShowAMoney(Value:Real); //收款
-    Class procedure ShowATotal(Value:Real); //总计
-    Class procedure ShowDibs(Value:Real);   //找零
+    Class procedure ShowAMoney(Value:Real);                 //收款
+    Class procedure ShowATotal(Value:Real);                 //总计
+    Class procedure ShowDibs(Value:Real);                   //找零
+
     //打印函数
     procedure BeginPrint;
     procedure WritePrint(s:string);
@@ -88,7 +89,6 @@ TDevFactory=class
     procedure EndPrint;                                                                     
 
     function EncodeDivStr:string;
-
     function ReadDefine(Define:string;Def:string=''):string;
 
     procedure Clear;
@@ -160,7 +160,8 @@ var S:string;
 begin
   if not DevFactory.Prepared then Exit;
   S:=Chr(12);
-  FComm.WriteCommData(Pchar(S),Length(Pchar(S))) ;
+  DoCallApi_Com(S);
+//  FComm.WriteCommData(Pchar(S),Length(Pchar(S))) ;
 end;
 
 procedure TDevFactory.CloseComm;

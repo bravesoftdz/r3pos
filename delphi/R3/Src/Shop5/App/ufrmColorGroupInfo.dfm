@@ -1,6 +1,6 @@
 inherited frmColorGroupInfo: TfrmColorGroupInfo
-  Left = 350
-  Top = 192
+  Left = 323
+  Top = 191
   Caption = #39068#33394#19982#39068#33394#32452#32452#31649#29702
   ClientHeight = 371
   ClientWidth = 562
@@ -179,11 +179,10 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
                 Color = clWhite
                 TabOrder = 0
                 object DBGridEh1: TDBGridEh
-                  Left = 0
+                  Left = 12
                   Top = 0
-                  Width = 358
+                  Width = 338
                   Height = 211
-                  Align = alClient
                   AutoFitColWidths = True
                   DataSource = DsSizeInfo
                   Flat = True

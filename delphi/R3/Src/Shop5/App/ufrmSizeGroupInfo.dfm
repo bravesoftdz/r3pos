@@ -148,11 +148,10 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
                 Color = clWhite
                 TabOrder = 0
                 object DBGridEh1: TDBGridEh
-                  Left = 0
+                  Left = 12
                   Top = 0
-                  Width = 358
-                  Height = 211
-                  Align = alClient
+                  Width = 335
+                  Height = 209
                   AutoFitColWidths = True
                   DataSource = DsSizeInfo
                   Flat = True
@@ -226,8 +225,8 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               end
             end
             object BtnAddSelected: TRzBitBtn
-              Left = 298
-              Top = 68
+              Left = 291
+              Top = 70
               Width = 57
               Height = 22
               Caption = #21152#20837#32452

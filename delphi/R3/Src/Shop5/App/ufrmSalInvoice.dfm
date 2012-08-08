@@ -38,7 +38,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderShadow = clActiveCaption
             Color = clWhite
             FlatColor = clBlue
-            TabOrder = 5
+            TabOrder = 4
             Visible = False
             object Image1: TImage
               Left = 15
@@ -777,43 +777,19 @@ inherited frmSalInvoice: TfrmSalInvoice
               MultiSelect = False
             end
           end
-          object RzPanel5: TRzPanel
+          object RzPanel6: TRzPanel
             Left = 5
-            Top = 372
+            Top = 364
             Width = 695
-            Height = 29
+            Height = 37
             Align = alBottom
             BorderOuter = fsNone
+            BorderColor = clGreen
+            BorderWidth = 1
             Color = clWhite
-            TabOrder = 4
-            object Label12: TLabel
-              Left = 23
-              Top = 12
-              Width = 46
-              Height = 12
-              Caption = #25910#27454#20154':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Label13: TLabel
-              Left = 174
-              Top = 12
-              Width = 33
-              Height = 12
-              Caption = #22797#26680':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
+            TabOrder = 3
             object Label15: TLabel
-              Left = 326
+              Left = 542
               Top = 12
               Width = 46
               Height = 12
@@ -825,23 +801,44 @@ inherited frmSalInvoice: TfrmSalInvoice
               Font.Style = [fsBold]
               ParentFont = False
             end
-            object Label16: TLabel
-              Left = 543
-              Top = 12
-              Width = 86
-              Height = 12
-              Caption = #38144#36135#21333#20301':('#31456')'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
+            object edtINVOICE_MNY: TcxTextEdit
+              Left = 95
+              Top = 10
+              Width = 114
+              Height = 20
+              TabOrder = 0
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel9: TRzPanel
+              Left = 1
+              Top = 1
+              Width = 88
+              Height = 35
+              Align = alLeft
+              BorderOuter = fsNone
+              BorderSides = [sdRight]
+              BorderColor = clGreen
+              BorderWidth = 1
+              Color = clWhite
+              TabOrder = 1
+              object Label1: TLabel
+                Left = 17
+                Top = 13
+                Width = 59
+                Height = 12
+                Caption = #24320#31080#37329#39069':'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clGreen
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
             end
             object edtCREA_USER: TzrComboBoxList
-              Left = 377
+              Left = 593
               Top = 8
-              Width = 131
+              Width = 88
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -849,7 +846,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = True
-              TabOrder = 0
+              TabOrder = 2
               InGrid = False
               KeyValue = Null
               FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -880,57 +877,11 @@ inherited frmSalInvoice: TfrmSalInvoice
               MultiSelect = False
             end
           end
-          object RzPanel6: TRzPanel
-            Left = 5
-            Top = 335
-            Width = 695
-            Height = 37
-            Align = alBottom
-            BorderOuter = fsNone
-            BorderColor = clGreen
-            BorderWidth = 1
-            Color = clWhite
-            TabOrder = 3
-            object edtINVOICE_MNY: TcxTextEdit
-              Left = 167
-              Top = 10
-              Width = 133
-              Height = 20
-              TabOrder = 0
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel9: TRzPanel
-              Left = 1
-              Top = 1
-              Width = 163
-              Height = 35
-              Align = alLeft
-              BorderOuter = fsNone
-              BorderSides = [sdRight]
-              BorderColor = clGreen
-              BorderWidth = 1
-              Color = clWhite
-              TabOrder = 1
-              object Label1: TLabel
-                Left = 97
-                Top = 13
-                Width = 59
-                Height = 12
-                Caption = #24320#31080#37329#39069':'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clGreen
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-            end
-          end
           object RzPanel7: TRzPanel
             Left = 5
             Top = 160
             Width = 695
-            Height = 175
+            Height = 204
             Align = alClient
             BorderOuter = fsNone
             BorderSides = [sdLeft, sdRight]
@@ -942,7 +893,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Left = 1
               Top = 1
               Width = 693
-              Height = 173
+              Height = 202
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               BorderStyle = bsNone

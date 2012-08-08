@@ -799,6 +799,7 @@ inherited frmStkInvoice: TfrmStkInvoice
             BorderWidth = 1
             Color = clWhite
             TabOrder = 3
+            Visible = False
             object edtINVOICE_MNY: TcxTextEdit
               Left = 167
               Top = 10

@@ -73,9 +73,9 @@ begin
   if Trim(Id) <> '' then
     Whe_Str := Whe_Str + ' and SALES_ID>'''+Id+''' ';
   if fndSHOP_ID.AsString <> '' then
-     Whe_Str := Whe_Str +' and SHOP_ID=:SHOP_ID';
+     Whe_Str := Whe_Str +' and SHOP_ID='''+fndSHOP_ID.AsString+''' ';
   //[2012.02.03 xhh修改:可以按树上下级查询]
-  if fndDEPT_ID.AsString <> '' then //w := w +' and A.DEPT_ID=:DEPT_ID';
+  if fndDEPT_ID.AsString <> '' then 
      Whe_Str := Whe_Str +ShopGlobal.GetDeptID('DEPT_ID',fndDEPT_ID.AsString);
 //  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
 //    Whe_Str := Whe_Str + ' and SHOP_ID='+QuotedStr(Global.SHOP_ID);

@@ -346,7 +346,8 @@ uses
   ufrmVoucherOrder in 'App\ufrmVoucherOrder.pas' {frmVoucherOrder},
   ObjVhLeadOrder in 'Obj\ObjVhLeadOrder.pas',
   ObjVhPayGlide in 'Obj\ObjVhPayGlide.pas',
-  ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas';
+  ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas',
+  ufrmFilterUser in 'App\ufrmFilterUser.pas' {frmFilterUser};
 
 {$R *.res}
 var

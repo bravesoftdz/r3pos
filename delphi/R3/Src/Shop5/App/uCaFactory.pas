@@ -3809,20 +3809,22 @@ end;
 function TCaFactory.CheckAdoUpgrade(TENANT_ID, PROD_ID,
   CurVeraion: string): TCaUpgrade;
 var
-  Params:TftParamList;
+  Params,prms:TftParamList;
   F:TIniFile;
 begin
 try
   Params := TftParamList.Create(nil);
+  prms := TftParamList.Create(nil);
   try
     Params.ParamByName('tenantId').AsInteger := StrtoInt(TENANT_ID);
     Params.ParamByName('prodId').AsString := PROD_ID;
     Params.ParamByName('curVeraion').AsString := CurVeraion;
-    TftParamList.Decode(Params,Global.RemoteFactory.ExecProc('TcheckUprade',Params));
-    result.UpGrade := Params.ParambyName('upgradeType').AsInteger;
-    result.URL := Params.ParambyName('pkgDownloadUrl').AsString;
-    result.Version := Params.ParambyName('newVersion').AsString;
+    TftParamList.Decode(prms,Global.RemoteFactory.ExecProc('TcheckUprade',Params));
+    result.UpGrade := prms.ParambyName('upgradeType').AsInteger;
+    result.URL := prms.ParambyName('pkgDownloadUrl').AsString;
+    result.Version := prms.ParambyName('newVersion').AsString;
   finally
+    prms.Free;
     Params.Free;
   end;
   //写安装目录到临时文件夹

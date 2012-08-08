@@ -83,6 +83,7 @@ type
     procedure WriteInvoiceId(InvoiceId:String);
     function IncInvoiceNo(InvoiceNo:String):String;
     procedure SetIvioType(const Value: String);
+    procedure LoadFormat;override;
   public
     { Public declarations }
     AObj:TRecord_;
@@ -228,7 +229,7 @@ procedure TfrmStkInvoice.SaveOrder;
 var Params:TftParamList;
     rs:TZQuery;
     n:Integer;
-    r:real;
+    totalmny:real;
 begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择开票客户');
   if Trim(edtINVOICE_NO.Text) = '' then Raise Exception.Create('发票号不能为空');
@@ -266,14 +267,6 @@ begin
       rs.Free;
     end;
   end;
-  WriteToObject(AObj,self);
-  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
-  cdsHeader.Edit;
-  AObj.WriteToDataSet(cdsHeader);
-  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  if dbState = dsInsert then
-     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
-  cdsHeader.Post;
   n := 1;
   cdsDetail.First;
   while not cdsDetail.Eof do
@@ -282,11 +275,21 @@ begin
     cdsDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsDetail.FieldByName('INVD_ID').AsString := cdsHeader.FieldByName('INVD_ID').AsString;
     cdsDetail.FieldByName('SEQNO').AsInteger := n;
+    totalmny := totalmny + cdsDetail.FieldByName('NOTAX_MNY').AsFloat+cdsDetail.FieldByName('TAX_MNY').AsFloat;
     Inc(n);
     cdsDetail.Post;
     cdsDetail.Next;
   end;
 
+  WriteToObject(AObj,self);
+  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
+  AObj.FieldByName('INVOICE_MNY').AsFloat := totalmny; 
+  cdsHeader.Edit;
+  AObj.WriteToDataSet(cdsHeader);
+  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  if dbState = dsInsert then
+     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
+  cdsHeader.Post;
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsHeader,'TStkInvoiceOrder');
@@ -393,8 +396,8 @@ begin
   while not cdsDetail.Eof do
   begin
     cdsDetail.Edit;
-    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
-    cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+    cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
+    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := (cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)-cdsDetail.FieldByName('TAX_MNY').AsFloat;
     cdsDetail.Post;
     cdsDetail.Next;
   end;
@@ -504,6 +507,12 @@ begin
     MoveTo(Rect.Right,Rect.Top);
     LineTo(Rect.Right,Rect.Bottom);
   end;
+end;
+
+procedure TfrmStkInvoice.LoadFormat;
+begin
+//  inherited;
+
 end;
 
 end.

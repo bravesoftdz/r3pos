@@ -35,6 +35,10 @@ type
     Label4: TLabel;
     BtnAddSelected: TRzBitBtn;
     BtnSizeGroup: TRzBitBtn;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    BtnSize: TRzBitBtn;
     procedure edtNAMEPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -48,12 +52,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure BtnAddAllClick(Sender: TObject);
     procedure BtnAddSelectedClick(Sender: TObject);
-    procedure BtnDeleteSelectedClick(Sender: TObject);
-    procedure BtnDeleteAllClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure N1Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
   private
     Fflag: integer;
     FInFlag: integer;
@@ -409,6 +412,10 @@ begin
             CdsSizeGroupInfo.Delete;
        end;
        ButtonChange5;
+     end
+  else
+     begin
+       N1Click(Sender);
      end;
 end;
 
@@ -805,43 +812,6 @@ begin
   end;
 end;
 
-procedure TfrmSizeGroupInfo.BtnAddAllClick(Sender: TObject);
-var Root:TTreeNode;
-    AObj2_:TRecord_;
-begin
-  inherited;
-  if locked then Exit;
-  if dbState = dsBrowse then Exit;
-  if rzTree.Selected = nil then Exit;
-  if CdsSizeInfo.IsEmpty then Exit;
-  if copy(TRecord_(rzTree.Selected.Data).FieldbyName('SORT_NAME').AsString,1,6) = '分组名' then Raise Exception.Create('请输入"'+rzTree.Selected.Text+'"分组名');;
-  if rzTree.Selected.Level = 0 then
-     Root := rzTree.Selected
-  else
-     Root := rzTree.Selected.Parent;
-  CdsSizeInfo.DisableControls;
-  try
-    CdsSizeInfo.First;
-    while not CdsSizeInfo.Eof do
-    begin
-      AObj2_ := TRecord_.Create;
-      AObj2_.ReadFromDataSet(CdsSizeInfo);
-      rzTree.Items.AddChildObject(Root,AObj2_.FieldByName('SORT_NAME').AsString,AObj2_);
-      CdsSizeGroupRelation.Append;
-      CdsSizeGroupRelation.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      CdsSizeGroupRelation.FieldByName('CODE_ID').AsString := AObj2_.FieldByName('CODE_ID').AsString;
-      CdsSizeGroupRelation.FieldByName('SORT_ID').AsString := TRecord_(Root.Data).FieldByName('SORT_ID').AsString;
-      CdsSizeGroupRelation.FieldByName('SORT_TYPE').AsInteger := 8;
-      CdsSizeGroupRelation.Post;
-      CdsSizeInfo.Next;
-    end;
-    CdsSizeInfo.First;
-    while not CdsSizeInfo.Eof do CdsSizeInfo.Delete;
-  finally
-    CdsSizeInfo.EnableControls;
-  end;
-end;
-
 procedure TfrmSizeGroupInfo.BtnAddSelectedClick(Sender: TObject);
 var Root:TTreeNode;
     AObj2_:TRecord_;
@@ -885,7 +855,20 @@ begin
   end;
 end;
 
-procedure TfrmSizeGroupInfo.BtnDeleteSelectedClick(Sender: TObject);
+procedure TfrmSizeGroupInfo.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+end;
+
+procedure TfrmSizeGroupInfo.N1Click(Sender: TObject);
 procedure DeleteAll(Node:TTreeNode);
 var C:TTreeNode;
 begin
@@ -938,7 +921,7 @@ begin
   end;
 end;
 
-procedure TfrmSizeGroupInfo.BtnDeleteAllClick(Sender: TObject);
+procedure TfrmSizeGroupInfo.N2Click(Sender: TObject);
 procedure DeleteAll(Node:TTreeNode);
 var C:TTreeNode;
 begin
@@ -995,19 +978,6 @@ begin
     CdsSizeInfo.EnableControls;
     locked := False;
   end;
-end;
-
-procedure TfrmSizeGroupInfo.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-var ARect:TRect;
-begin
-  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
-  begin
-    DBGridEh1.Canvas.Brush.Color := clAqua;
-  end;
-  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 end.

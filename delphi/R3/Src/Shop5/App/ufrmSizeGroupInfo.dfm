@@ -1,6 +1,6 @@
 inherited frmSizeGroupInfo: TfrmSizeGroupInfo
-  Left = 408
-  Top = 145
+  Left = 366
+  Top = 232
   Caption = #23610#30721#32452#31649#29702
   ClientHeight = 371
   ClientWidth = 562
@@ -45,6 +45,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               FrameVisible = True
               HideSelection = False
               Indent = 19
+              PopupMenu = PopupMenu1
               ReadOnly = True
               RowSelect = True
               TabOrder = 0
@@ -60,6 +61,9 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
             BorderOuter = fsNone
             Color = clWhite
             TabOrder = 1
+            DesignSize = (
+              358
+              307)
             object Label1: TLabel
               Left = -21
               Top = 16
@@ -119,7 +123,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               Width = 90
               Height = 20
               Properties.OnChange = edtSPELLPropertiesChange
-              TabOrder = 0
+              TabOrder = 1
             end
             object edtSORT_NAME: TcxTextEdit
               Left = 65
@@ -127,7 +131,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               Width = 121
               Height = 20
               Properties.OnChange = edtNAMEPropertiesChange
-              TabOrder = 1
+              TabOrder = 0
             end
             object RzPanel4: TRzPanel
               Left = 0
@@ -137,7 +141,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               Align = alBottom
               BorderOuter = fsNone
               Color = clWhite
-              TabOrder = 2
+              TabOrder = 4
               object RzPanel6: TRzPanel
                 Left = 0
                 Top = 0
@@ -250,6 +254,33 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
               NumGlyphs = 2
               Spacing = 5
             end
+            object BtnSize: TRzBitBtn
+              Left = 195
+              Top = 70
+              Width = 88
+              Height = 22
+              Anchors = [akTop, akRight]
+              Caption = #26032#22686#23610#30721'(&N)'
+              Color = clSilver
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              HighlightColor = 16026986
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 2
+              TextStyle = tsRaised
+              ThemeAware = False
+              OnClick = BtnSizeClick
+              NumGlyphs = 2
+              Spacing = 5
+            end
           end
         end
       end
@@ -278,7 +309,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 0
+        TabOrder = 1
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = BtnSaveClick
@@ -304,7 +335,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 3
+        TabOrder = 4
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = BtnExitClick
@@ -331,7 +362,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 2
+        TabOrder = 3
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = BtnDeleteClick
@@ -358,7 +389,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 1
+        TabOrder = 2
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = BtnCancelClick
@@ -385,7 +416,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 4
+        TabOrder = 0
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = BtnSizeGroupClick
@@ -427,5 +458,17 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
     DataSet = CdsSizeInfo
     Left = 14
     Top = 305
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 91
+    Top = 275
+    object N1: TMenuItem
+      Caption = #21024#38500#36873#20013
+      OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = #21024#38500#25152#26377
+      OnClick = N2Click
+    end
   end
 end

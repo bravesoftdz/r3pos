@@ -329,21 +329,21 @@ begin
         'sum(CHANGE4_AMT) as CHANGE4_AMT,sum(CHANGE4_MNY) as CHANGE4_MNY,sum(CHANGE4_RTL) as CHANGE4_RTL,'+
         'sum(CHANGE5_AMT) as CHANGE5_AMT,sum(CHANGE5_MNY) as CHANGE5_MNY,sum(CHANGE5_RTL) as CHANGE5_RTL,'+
         'max(c.COST_PRICE) as COST_PRICE,'+
-        'round(sum(SALE_AMT*c.COST_PRICE),2) as SALE_CST,'+
-        'sum(SALE_MNY)-round(sum(SALE_AMT*c.COST_PRICE),2) as SALE_PRF,'+
-        'round(sum(SALRT_AMT*c.COST_PRICE),2) as SALRT_CST,'+
-        'round(sum(DBIN_AMT*c.COST_PRICE),2) as DBIN_CST,'+
-        'round(sum(DBOUT_AMT*c.COST_PRICE),2) as DBOUT_CST,'+
-        'round(sum(CHANGE1_AMT*c.COST_PRICE),2) as CHANGE1_CST,'+
-        'round(sum(CHANGE2_AMT*c.COST_PRICE),2) as CHANGE2_CST,'+
-        'round(sum(CHANGE3_AMT*c.COST_PRICE),2) as CHANGE3_CST,'+
-        'round(sum(CHANGE4_AMT*c.COST_PRICE),2) as CHANGE4_CST,'+
-        'round(sum(CHANGE5_AMT*c.COST_PRICE),2) as CHANGE5_CST,'+
+        'sum(round(SALE_AMT*c.COST_PRICE,2)) as SALE_CST,'+
+        'sum(SALE_MNY)-sum(round(SALE_AMT*c.COST_PRICE,2)) as SALE_PRF,'+
+        'sum(round(SALRT_AMT*c.COST_PRICE,2)) as SALRT_CST,'+
+        'sum(round(DBIN_AMT*c.COST_PRICE,2)) as DBIN_CST,'+
+        'sum(round(DBOUT_AMT*c.COST_PRICE,2)) as DBOUT_CST,'+
+        'sum(round(CHANGE1_AMT*c.COST_PRICE,2)) as CHANGE1_CST,'+
+        'sum(round(CHANGE2_AMT*c.COST_PRICE,2)) as CHANGE2_CST,'+
+        'sum(round(CHANGE3_AMT*c.COST_PRICE,2)) as CHANGE3_CST,'+
+        'sum(round(CHANGE4_AMT*c.COST_PRICE,2)) as CHANGE4_CST,'+
+        'sum(round(CHANGE5_AMT*c.COST_PRICE,2)) as CHANGE5_CST,'+
         'round(sum(ORG_AMT)+sum(STOCK_AMT)-sum(SALE_AMT)+sum(DBIN_AMT)-sum(DBOUT_AMT)+sum(CHANGE1_AMT)+sum(CHANGE2_AMT)+sum(CHANGE3_AMT)+sum(CHANGE4_AMT)+sum(CHANGE5_AMT),3) as BAL_AMT,'+
         'round((sum(ORG_AMT)+sum(STOCK_AMT)-sum(SALE_AMT)+sum(DBIN_AMT)-sum(DBOUT_AMT)+sum(CHANGE1_AMT)+sum(CHANGE2_AMT)+sum(CHANGE3_AMT)+sum(CHANGE4_AMT)+sum(CHANGE5_AMT))*max(NEW_INPRICE),2) as BAL_MNY,'+
         'round((sum(ORG_AMT)+sum(STOCK_AMT)-sum(SALE_AMT)+sum(DBIN_AMT)-sum(DBOUT_AMT)+sum(CHANGE1_AMT)+sum(CHANGE2_AMT)+sum(CHANGE3_AMT)+sum(CHANGE4_AMT)+sum(CHANGE5_AMT))*max(NEW_OUTPRICE),2) as BAL_RTL,'+
-        'round(sum(ORG_CST)+sum(STOCK_MNY)-round(sum(SALE_AMT*c.COST_PRICE),2)+round(sum(DBIN_AMT*c.COST_PRICE),2)-round(sum(DBOUT_AMT*c.COST_PRICE),2)+'+
-        'round(sum(CHANGE1_AMT*c.COST_PRICE),2)+round(sum(CHANGE2_AMT*c.COST_PRICE),2)+round(sum(CHANGE3_AMT*c.COST_PRICE),2)+round(sum(CHANGE4_AMT*c.COST_PRICE),2)+round(sum(CHANGE5_AMT*c.COST_PRICE),2),2) as BAL_CST '+
+        'round(sum(ORG_CST)+sum(STOCK_MNY)-sum(round(SALE_AMT*c.COST_PRICE,2))+sum(round(DBIN_AMT*c.COST_PRICE,2))-sum(round(DBOUT_AMT*c.COST_PRICE,2))+'+
+        'sum(round(CHANGE1_AMT*c.COST_PRICE,2))+sum(round(CHANGE2_AMT*c.COST_PRICE,2))+sum(round(CHANGE3_AMT*c.COST_PRICE,2))+sum(round(CHANGE4_AMT*c.COST_PRICE,2))+sum(round(CHANGE5_AMT*c.COST_PRICE,2)),2) as BAL_CST '+
         'from('+
         'select '+
         '0 as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+

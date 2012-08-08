@@ -180,14 +180,12 @@ type
     procedure Open2(ID:String);
     procedure Open3(ID:String);
     procedure AutoAddColumn;
-    function EncodeSqlColumn(SortId:String):String;
-    function EncodeSqlGroup:String;
     procedure Shop_Type_Change(edtSHOP_VALUE:TzrComboBoxList);
     //2011.06.30 Am Add 导出Excel前表头
     function  DoBeforeExport: boolean; override;
 
     //2011.09.21 Add 金额的格式方式:
-    procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);    
+    procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
   public
     { Public declarations }
   end;
@@ -387,18 +385,17 @@ begin
   InitGrid;                                                       
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
-       Grid.Columns[13].Free;
-       Grid.Columns[12].Free;
-       DBGridEh1.Columns[15].Free;
-       DBGridEh1.Columns[14].Free;
+       FindColumn(Grid,'STOCK_MNY').Free;
+       FindColumn(Grid,'NEW_INPRICE').Free;
+       FindColumn(DBGridEh1,'STOCK_MNY').Free;
+       FindColumn(DBGridEh1,'NEW_INPRICE').Free;
      end;
 
   if Trim(CLVersion) <> 'FIG' then
      begin
-       Grid.Columns.Items[7].free;
-       Grid.Columns.Items[6].free;
+       FindColumn(Grid,'PROPERTY_02').Free;
      end;
-     
+
   {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     edtSHOP_ID.Properties.ReadOnly := False;
@@ -500,19 +497,25 @@ begin
 
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
+  if Trim(CLVersion) = 'FIG' then
+     AutoAddColumn
+  else
+     ColumnStr := '';
   StrSql :=
-  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,'+ColumnStr+'A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,'+
-  'cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT,'+TransInPrice(edtUNIT_ID.ItemIndex,'C','NEW_INPRICE')+','+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
-  ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+' '+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_02,B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+
+  'max(A.NEAR_INDATE) as NEAR_INDATE,max(A.NEAR_OUTDATE) as NEAR_OUTDATE'+ColumnStr+','+
+  'sum(A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as AMOUNT,'+
+  'sum(cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as ROAD_AMT,'+
+  'max('+TransInPrice(edtUNIT_ID.ItemIndex,'C','')+') as NEW_INPRICE,'+
+  'max('+TransPrice(edtUNIT_ID.ItemIndex,'C','')+') as NEW_OUTPRICE,'+
+  'max('+TransUnit(edtUNIT_ID.ItemIndex,'C','')+') as UNIT_ID '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
   ' left join VIW_SR_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.GODS_ID=D.GODS_ID and A.PROPERTY_01=D.PROPERTY_01 and A.PROPERTY_02=D.PROPERTY_02 and A.BATCH_NO=D.BATCH_NO '+
   ' '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
-  ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,C.GODS_CODE,C.GODS_NAME,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,B.SHOP_NAME,A.BATCH_NO ';
+  ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_02,B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE';
 
   Result :=
-  'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,round(jc.NEW_OUTPRICE*jc.AMOUNT,2) as SALE_MNY,round(jc.NEW_INPRICE*jc.AMOUNT,2) as STOCK_MNY from ('+StrSql+') jc '+
-  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c '+
-  'on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'select jc.*,jc.CALC_BARCODE as BARCODE,round(jc.NEW_OUTPRICE*jc.AMOUNT,2) as SALE_MNY,round(jc.NEW_INPRICE*jc.AMOUNT,2) as STOCK_MNY from ('+StrSql+') jc '+
   'order by jc.SHOP_ID,jc.GODS_CODE ';
   
 end;
@@ -521,8 +524,6 @@ procedure TfrmStorageTracking.Open(ID: String);
 begin
   if Locked then Exit;
   CdsStorage.Close;
-  if CLVersion = 'FIG' then
-     AutoAddColumn;
   CdsStorage.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql(ID));
   Factor.Open(CdsStorage);
 end;
@@ -1336,342 +1337,92 @@ begin
 end;
 
 procedure TfrmStorageTracking.AutoAddColumn;
-var rs,rs1,rs2:TZQuery;
+var rs,rs2:TZQuery;
     Column:TColumnEh;
-    i,j,k:Integer;
-    StrArr: array of String;
+    i,lv,mx:Integer;
+    fldArr: array [0..100] of String;
+    TleArr: array [0..100] of String;
 begin
-  Grid.FrozenCols := 0;
-  for i := Grid.Columns.Count-1 downto 0 do
-    Grid.Columns.Items[i].Free;
-
-  Column := Grid.Columns.Add;
-  Column.FieldName := 'SEQNO';
-  Column.Width := 27;
-  Column.Title.Caption := '序号';
-  Column.Footer.ValueType := fvtNon;
-  Column.Alignment := taCenter;
-  Column.ReadOnly := True;
-
-  Column := Grid.Columns.Add;
-  Column.FieldName := 'GODS_CODE';
-  Column.Width := 60;
-  Column.Title.Caption := '货号';
-  Column.Footer.ValueType := fvtNon;
-  Column.Alignment := taCenter;
-  Column.ReadOnly := True;
-
-  Column := Grid.Columns.Add;
-  Column.FieldName := 'GODS_NAME';
-  Column.Width := 122;
-  Column.Title.Caption := '商品名称';
-  Column.Footer.ValueType := fvtNon;
-  Column.Alignment := taCenter;
-  Column.ReadOnly := True;
-
-  Column := Grid.Columns.Add;
-  Column.FieldName := 'BARCODE';
-  Column.Width := 100;
-  Column.Title.Caption := '条码';
-  Column.Footer.ValueType := fvtNon;
-  Column.Alignment := taCenter;
-  Column.ReadOnly := True;
-
-  Column := Grid.Columns.Add;
-  Column.FieldName := 'UNIT_ID';
-  Column.Width := 26;
-  Column.Title.Caption := '单位';
-  Column.Footer.ValueType := fvtNon;
-  Column.Alignment := taCenter;
-  Column.ReadOnly := True;
-  
-  Column := Grid.Columns.Add;
-  Column.FieldName := 'PROPERTY_02';
-  Column.Width := 50;
-  Column.Title.Caption := '颜色';
-  Column.Footer.ValueType := fvtNon;
-  Column.Alignment := taCenter;
-  Column.ReadOnly := True;
-  j := 0;
-  //rs := TZQuery.Create(nil);
+  Grid.Columns.BeginUpdate;
   rs2 := TZQuery.Create(nil);
   try
-    rs2.SQL.Text := EncodeSqlGroup;
+    for i := Grid.Columns.Count-1 downto 0 do
+      begin
+        if copy(Grid.Columns[i].FieldName,1,5)='SIZE_' then
+           Grid.Columns.Delete(i);
+      end;
+    for i:= 0 to 100 do fldArr[i] := '';
+    for i:= 0 to 100 do TleArr[i] := '';
+    rs2.SQL.Text := 'select distinct SORT_ID8 from VIW_GOODSINFO where TENANT_ID='+inttostr(Global.TENANT_ID);
     Factor.Open(rs2);
     rs := ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
-    ColumnStr := '';
+    //求得最大列
+    mx := -1;
     rs2.First;
-    SetLength(StrArr,rs2.FieldByName('SUM_CODE').AsInteger);
     while not rs2.Eof do
     begin
-      //rs.SQL.Text := EncodeSqlColumn(rs2.FieldByName('SORT_ID').AsString);
-      //Factor.Open(rs);
       rs.Filtered := False;
-      rs.Filter := 'SORT_ID='''+rs2.FieldByName('SORT_ID').AsString+'''';
+      rs.Filter := 'SORT_ID='''+rs2.FieldByName('SORT_ID8').AsString+'''';
       rs.Filtered := True;
-      i := 7;
-      rs.First;                                        
+      lv := 0;
+      rs.First;
       while not rs.Eof do
       begin
-        if Grid.Columns.Count < i then
-        begin
-          Column := Grid.Columns.Add;
-          Column.FieldName := 'SIZE_'+AnsiReplaceText(rs.FieldbyName('SIZE_ID').AsString,'-','_');
-          Column.Width := 30;
-          Column.Title.Caption := '尺码|'+rs.FieldbyName('SIZE_NAME').AsString;
-          Column.Footer.ValueType := fvtNon;
-          Column.Alignment := taCenter;
-          Column.ReadOnly := false;
-          StrArr[j] := ''''+rs.FieldbyName('SIZE_ID').AsString+'''';
-          Inc(j);
-        end
-        else
-        begin
-          Column := Grid.Columns.Items[i-1];
-          Column.Title.Caption := Column.Title.Caption+'|'+rs.FieldbyName('SIZE_NAME').AsString;
-          StrArr[i-7] := StrArr[i-7]+','''+rs.FieldbyName('SIZE_ID').AsString+'''';
-        end;
-        Inc(i);
-
+        if lv > mx then mx := lv;
+        inc(lv);
         rs.Next;
       end;
-
-      while (i-7) < j do
-      begin
-        Column := Grid.Columns.Items[i-1];
-        Column.Title.Caption := Column.Title.Caption+'|/';
-        Inc(i);
-      end;
-
       rs2.Next;
     end;
-    for i := 0 to j-1 do
+    //准备列头数据
+    rs2.First;
+    while not rs2.Eof do
     begin
-      ColumnStr := ColumnStr + 'case when A.PROPERTY_01 in ('+StrArr[i]+') then sum(A.AMOUNT) else 0 end as SIZE_'+AnsiReplaceText(copy(StrArr[i],2,36 ),'-','_')+',';
+      rs.Filtered := False;
+      rs.Filter := 'SORT_ID='''+rs2.FieldByName('SORT_ID8').AsString+'''';
+      rs.Filtered := True;
+      lv := 0;
+      rs.First;
+      while not rs.Eof do
+      begin
+        if fldArr[lv]<>'' then fldArr[lv] := fldArr[lv]+',';
+        fldArr[lv] := fldArr[lv]+''''+rs.FieldbyName('SIZE_ID').AsString+'''';
+        if TleArr[lv]<>'' then TleArr[lv] := fldArr[lv]+'|';
+        TleArr[lv] := TleArr[lv]+rs.FieldbyName('SIZE_NAME').AsString;
+        inc(lv);
+        rs.Next;
+      end;
+      //不足最大列，要补足
+      for i:= lv to mx do
+      begin
+        TleArr[i] := TleArr[i]+'|';
+      end;
+      rs2.Next;
     end;
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'AMOUNT';
-    Column.Width := 60;
-    Column.Title.Caption := '库存量';
-    Column.DisplayFormat := '#0.###';
-    Column.Footer.ValueType := fvtSum;
-    Column.Footer.DisplayFormat := '#0.###';
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'NEW_OUTPRICE';
-    Column.Width := 55;
-    Column.Title.Caption := '当前售价';
-    Column.DisplayFormat := '#0.00#';
-    Column.Footer.ValueType := fvtNon;
-    Column.Footer.DisplayFormat := '#0.00#';
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'SALE_MNY';
-    Column.Width := 63;
-    Column.Title.Caption := '销售金额';
-    Column.DisplayFormat := '#,##0.00';
-    Column.Footer.ValueType := fvtSum;
-    Column.Footer.DisplayFormat := '#,##0.00';
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'NEW_INPRICE';
-    Column.Width := 57;
-    Column.Title.Caption := '最新进价';
-    Column.DisplayFormat := '#0.00#';
-    Column.Footer.ValueType := fvtNon;
-    Column.Footer.DisplayFormat := '#0.00#';
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'STOCK_MNY';
-    Column.Width := 59;
-    Column.Title.Caption := '进货成本';
-    Column.DisplayFormat := '#0.00#';
-    Column.Footer.ValueType := fvtSum;
-    Column.Footer.DisplayFormat := '#0.00#';
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'SHOP_NAME';
-    Column.Width := 59;
-    Column.Title.Caption := '门店名称';
-    Column.Footer.ValueType := fvtNon;
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-    Column := Grid.Columns.Add;
-    Column.FieldName := 'BATCH_NO';
-    Column.Width := 102;
-    Column.Title.Caption := '批号';
-    Column.Footer.ValueType := fvtNon;
-    Column.Alignment := taCenter;
-    Column.ReadOnly := True;
-
-
-  rs1 := Global.GetZQueryFromName('PUB_MEAUNITS');
-  Column := FindColumn(Grid,'UNIT_ID');
-  rs1.First;
-  while not rs1.Eof do
+    if mx>=0 then
     begin
-      Column.KeyList.Add(rs1.FieldbyName('UNIT_ID').AsString);
-      Column.PickList.Add(rs1.FieldbyName('UNIT_NAME').AsString);
-      rs1.Next;
+      Column := Grid.Columns.Add;
+      Column.FieldName := 'SIZE_#';
+      Column.Width := 30;
+      Column.Title.Caption := '尺码|无';
+      Column.Footer.ValueType := fvtNon;
+      Column.Alignment := taRightJustify;
+      Column.ReadOnly := true;
+      ColumnStr := ',sum(case when isnull(A.PROPERTY_01,''#'')=''#'' then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_#';
     end;
-
-  rs1 := Global.GetZQueryFromName('PUB_COLOR_INFO');
-  Column := FindColumn(Grid,'PROPERTY_02');
-  rs1.First;
-  while not rs1.Eof do
-    begin
-      Column.KeyList.Add(rs1.FieldbyName('COLOR_ID').AsString);
-      Column.PickList.Add(rs1.FieldbyName('COLOR_NAME').AsString);
-      rs1.Next;
-    end;
+    for i:= 0 to mx do
+      begin
+        Column := Grid.Columns.Add;
+        Column.FieldName := 'SIZE_'+formatFloat('000',mx);
+        Column.Width := 30;
+        Column.Title.Caption := '尺码|'+TleArr[lv];
+        Column.Footer.ValueType := fvtNon;
+        Column.Alignment := taRightJustify;
+        Column.ReadOnly := false;
+        ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[lv]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_'+formatFloat('000',mx);
+      end;
   finally
-    //rs.Free;
-    rs2.Free;
-    Grid.FrozenCols := 1;
+    Grid.Columns.EndUpdate;
   end;
-
 end;
-
-function TfrmStorageTracking.EncodeSqlColumn(SortId: String): String;
-var StrSql,StrWhere,StrJoin:String;
-    Item_Index:Integer;
-begin
-  case Factor.iDbType of
-    0: StrJoin := '+';
-    1,4,5: StrJoin := '||';
-  end;
-  StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
-
-  if edtSHOP_TYPE.ItemIndex = 0 then
-    begin
-      if edtSHOP_VALUE.asString <> '' then
-         begin
-           if FnString.TrimRight(edtSHOP_VALUE.asString,2)<>'00' then
-              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
-           else
-              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');
-         end;
-    end
-  else
-    begin
-      if edtSHOP_VALUE.asString <> '' then
-        StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtSHOP_VALUE.AsString);    
-    end;
-
-  if rzTree.Selected <> nil then
-    begin
-      if rzTree.Selected.Level > 1 then
-        StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString
-      else
-      if rzTree.Selected.Level > 0 then
-        StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
-    end;
-
-  //2011.10.10 add 判断索引
-  if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') then
-  begin
-    Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-    StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
-  end;
-
-  if edtGoodsName.AsString<>'' then
-    StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
-  if edtSHOP_ID.AsString<>'' then
-    StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
-
-  case edtSTOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<>0';
-  2: StrWhere := StrWhere + ' and round(A.AMOUNT,3)>0';
-  3: StrWhere := StrWhere + ' and round(A.AMOUNT,3)=0';
-  4: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<0';
-  end;
-
-  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
-
-  StrSql :=
-  'select C.TENANT_ID,C.SORT_ID8 from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
-  ' inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1);
-
-  Result := 'select distinct Q.SIZE_ID,Q.SIZE_NAME from ('+StrSql+
-  ') O inner join PUB_CODE_RELATION P on O.TENANT_ID=P.TENANT_ID and O.SORT_ID8=P.SORT_ID '+
-  ' left join PUB_SIZE_INFO Q on P.TENANT_ID=Q.TENANT_ID and P.CODE_ID=Q.SIZE_ID '+
-  ' where P.SORT_ID='''+SortId+''' order by Q.SEQ_NO ';
-end;
-
-function TfrmStorageTracking.EncodeSqlGroup: String;
-var StrSql,StrWhere,StrJoin:String;
-    Item_Index:Integer;
-begin
-  case Factor.iDbType of
-    0: StrJoin := '+';
-    1,4,5: StrJoin := '||';
-  end;
-  StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
-
-  if edtSHOP_TYPE.ItemIndex = 0 then
-    begin
-      if edtSHOP_VALUE.asString <> '' then
-         begin
-           if FnString.TrimRight(edtSHOP_VALUE.asString,2)<>'00' then
-              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
-           else
-              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');
-         end;
-    end
-  else
-    begin
-      if edtSHOP_VALUE.asString <> '' then
-        StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtSHOP_VALUE.AsString);    
-    end;
-
-  if rzTree.Selected <> nil then
-    begin
-      if rzTree.Selected.Level > 1 then
-        StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString
-      else
-      if rzTree.Selected.Level > 0 then
-        StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
-    end;
-
-  if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') then
-  begin
-    Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-    StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
-  end;
-
-  if edtGoodsName.AsString<>'' then
-    StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
-  if edtSHOP_ID.AsString<>'' then
-    StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
-
-  case edtSTOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<>0';
-  2: StrWhere := StrWhere + ' and round(A.AMOUNT,3)>0';
-  3: StrWhere := StrWhere + ' and round(A.AMOUNT,3)=0';
-  4: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<0';
-  end;
-
-  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
-
-  StrSql :=
-  'select C.TENANT_ID,C.SORT_ID8 from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
-  ' inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1);
-
-  Result := 'select distinct P.SORT_ID,P.SUM_CODE from ('+StrSql+
-  ') O inner join ( '+
-  'select TENANT_ID,SORT_ID,count(CODE_ID) as SUM_CODE from PUB_CODE_RELATION group by SORT_ID '+
-  ') P on O.TENANT_ID=P.TENANT_ID and O.SORT_ID8=P.SORT_ID order by P.SUM_CODE desc ';
-end;
-
 end.

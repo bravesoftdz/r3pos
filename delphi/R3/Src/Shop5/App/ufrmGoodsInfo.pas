@@ -273,7 +273,7 @@ implementation
 uses
   DBGrids,uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,
   uShopGlobal,ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
-  ufrmSupplierInfo,uGodsFactory;
+  ufrmSupplierInfo,uGodsFactory,ufrmSizeGroupInfo,ufrmColorGroupInfo;
 
 {$R *.dfm}
 
@@ -1093,15 +1093,35 @@ begin
 end;
 
 procedure TfrmGoodsInfo.edtSORT_ID7AddClick(Sender: TObject);
+var AObj:TRecord_;
 begin
   inherited;
-  AddSORT_IDClick(Sender, 7);
+  AObj := TRecord_.Create;
+  try
+    if TfrmColorGroupInfo.AddDialog(self,AObj) then
+    begin
+      edtSORT_ID7.KeyValue :=AObj.FieldbyName('SORT_ID').AsString;
+      edtSORT_ID7.Text := AObj.FieldbyName('SORT_NAME').asString;
+    end;
+  finally
+    AObj.Free;
+  end;
 end;
 
 procedure TfrmGoodsInfo.edtSORT_ID8AddClick(Sender: TObject);
+var AObj:TRecord_;
 begin
   inherited;
-  AddSORT_IDClick(Sender, 8);
+  AObj := TRecord_.Create;
+  try
+    if TfrmSizeGroupInfo.AddDialog(self,AObj) then
+    begin
+      edtSORT_ID8.KeyValue :=AObj.FieldbyName('SORT_ID').AsString;
+      edtSORT_ID8.Text := AObj.FieldbyName('SORT_NAME').asString;
+    end;
+  finally
+    AObj.Free;
+  end;
 end;
 
 procedure TfrmGoodsInfo.edtSMALLTO_CALCPropertiesChange(Sender: TObject);
@@ -2298,9 +2318,8 @@ procedure TfrmGoodsInfo.CheckCLVersionSetParams;
 begin
   lblSORT_ID7.Visible:=(trim(CLVersion)='FIG');
   edtSORT_ID7.Visible:=lblSORT_ID7.Visible;
-  lblSORT_ID7.Visible:=lblSORT_ID7.Visible;
+  lblSORT_ID8.Visible:=lblSORT_ID7.Visible;
   edtSORT_ID8.Visible:=lblSORT_ID7.Visible;
-
   if not lblSORT_ID7.Visible then
   begin
     GB_Small.Top:=22;
@@ -2309,6 +2328,8 @@ begin
   begin
     GB_Small.Top:=35;
     GB_Big.Top:=116;
+    edtSORT_ID7.DataSet:=Global.GetZQueryFromName('PUB_COLOR_GROUP');    //ÑÕÉ«
+    edtSORT_ID8.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');     //³ßÂë
   end;
 end;
                       

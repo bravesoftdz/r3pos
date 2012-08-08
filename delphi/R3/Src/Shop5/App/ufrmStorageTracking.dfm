@@ -1,9 +1,10 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 191
-  Top = 112
+  Left = 432
+  Top = 101
   Width = 934
   Height = 604
   Caption = #21830#21697#24211#23384
+  Menu = MainMenu1
   WindowState = wsNormal
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -96,7 +97,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                     FooterFont.Name = #23435#20307
                     FooterFont.Style = []
                     FooterRowCount = 1
-                    FrozenCols = 1
                     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                     Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
@@ -181,7 +181,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'PROPERTY_02_TEXT'
+                        FieldName = 'PROPERTY_02'
                         Footers = <>
                         Title.Caption = #39068#33394
                         Width = 50
@@ -688,15 +688,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 710
-                Height = 408
+                Width = 718
+                Height = 419
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel5: TPanel
                   Left = 1
-                  Top = 377
-                  Width = 708
+                  Top = 388
+                  Width = 716
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -764,8 +764,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 708
-                  Height = 376
+                  Width = 716
+                  Height = 387
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsdemand
@@ -990,7 +990,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel7: TPanel
                 Left = 178
                 Top = 0
-                Width = 712
+                Width = 720
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -1350,15 +1350,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel8: TPanel
                 Left = 0
                 Top = 0
-                Width = 710
-                Height = 408
+                Width = 718
+                Height = 419
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel9: TPanel
                   Left = 1
-                  Top = 377
-                  Width = 708
+                  Top = 388
+                  Width = 716
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -1418,8 +1418,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh2: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 708
-                  Height = 376
+                  Width = 716
+                  Height = 387
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsRate
@@ -1611,7 +1611,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel11: TPanel
                 Left = 178
                 Top = 0
-                Width = 712
+                Width = 720
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -2098,5 +2098,9 @@ inherited frmStorageTracking: TfrmStorageTracking
     DataSet = cdsRate
     Left = 295
     Top = 346
+  end
+  object MainMenu1: TMainMenu
+    Left = 466
+    Top = 279
   end
 end

@@ -912,7 +912,7 @@ begin
   try
       if not (cdsTable.State in [dsEdit,dsInsert]) then cdsTable.Edit;
       rs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
-      if not rs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+cdsTable.FieldbyName('GODS_NAME').AsString+'”');  
+      if not rs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+cdsTable.FieldbyName('GODS_NAME').AsString+'”');
       if not (cdsTable.State in [dsEdit,dsInsert]) then cdsTable.Edit;
       if cdsTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
          begin
@@ -1422,7 +1422,6 @@ begin
     AObj.ReadFromDataSet(cdsTable);
     if TframeDialogProperty.SimpleShowDialog(self,AObj,dbState) then
        begin
-         if cdsTable.FieldByName('AMOUNT').AsFloat = 0 then cdsTable.Delete;
          //不需添加记录,对当前记录进行修改属性
          //AddRecord(AObj,
          //  AObj.FieldbyName('UNIT_ID').AsString,
@@ -1434,6 +1433,7 @@ begin
          cdsTable.FieldbyName('PROPERTY_02').AsString := AObj.FieldbyName('PROPERTY_02').AsString;
          cdsTable.FieldbyName('AMOUNT').AsFloat := cdsTable.FieldbyName('AMOUNT').AsFloat + AObj.FieldbyName('AMOUNT').AsFloat;
          AMountToCalc(cdsTable.FieldbyName('AMOUNT').AsFloat);
+         if cdsTable.FieldByName('AMOUNT').AsFloat = 0 then cdsTable.Delete;
          if cdsTable.ControlsDisabled then Calc;
        end;
   finally

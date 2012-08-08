@@ -23,22 +23,22 @@ type
     Label2: TLabel;
     Label11: TLabel;
     Label3: TLabel;
-    BtnColorGroup: TRzBitBtn;
     BtnColor: TRzBitBtn;
     edtSORT_SPELL: TcxTextEdit;
     edtSORT_NAME: TcxTextEdit;
     RzPanel4: TRzPanel;
-    RzPanel5: TRzPanel;
     RzPanel6: TRzPanel;
-    BtnAddAll: TRzBitBtn;
-    BtnAddSelected: TRzBitBtn;
-    BtnDeleteSelected: TRzBitBtn;
-    BtnDeleteAll: TRzBitBtn;
     CdsColorInfo: TZQuery;
     CdsColorGroupInfo: TZQuery;
     CdsColorGroupRelation: TZQuery;
     DsSizeInfo: TDataSource;
     DBGridEh1: TDBGridEh;
+    BtnColorGroup: TRzBitBtn;
+    BtnAddSelected: TRzBitBtn;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    Label4: TLabel;
     procedure edtNAMEPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -52,12 +52,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure BtnAddAllClick(Sender: TObject);
     procedure BtnAddSelectedClick(Sender: TObject);
-    procedure BtnDeleteSelectedClick(Sender: TObject);
-    procedure BtnDeleteAllClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure N1Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
   private
     Fflag: integer;
     FInFlag: integer;
@@ -803,43 +802,6 @@ begin
   end;
 end;
 
-procedure TfrmColorGroupInfo.BtnAddAllClick(Sender: TObject);
-var Root:TTreeNode;
-    AObj2_:TRecord_;
-begin
-  inherited;
-  if locked then Exit;
-  if dbState = dsBrowse then Exit;
-  if rzTree.Selected = nil then Exit;
-  if CdsColorInfo.IsEmpty then Exit;
-  if copy(TRecord_(rzTree.Selected.Data).FieldbyName('SORT_NAME').AsString,1,6) = '分组名' then Raise Exception.Create('请输入"'+rzTree.Selected.Text+'"分组名');;
-  if rzTree.Selected.Level = 0 then
-     Root := rzTree.Selected
-  else
-     Root := rzTree.Selected.Parent;
-  CdsColorInfo.DisableControls;
-  try
-    CdsColorInfo.First;
-    while not CdsColorInfo.Eof do
-    begin
-      AObj2_ := TRecord_.Create;
-      AObj2_.ReadFromDataSet(CdsColorInfo);
-      rzTree.Items.AddChildObject(Root,AObj2_.FieldByName('SORT_NAME').AsString,AObj2_);
-      CdsColorGroupRelation.Append;
-      CdsColorGroupRelation.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      CdsColorGroupRelation.FieldByName('CODE_ID').AsString := AObj2_.FieldByName('CODE_ID').AsString;
-      CdsColorGroupRelation.FieldByName('SORT_ID').AsString := TRecord_(Root.Data).FieldByName('SORT_ID').AsString;
-      CdsColorGroupRelation.FieldByName('SORT_TYPE').AsInteger := 7;
-      CdsColorGroupRelation.Post;
-      CdsColorInfo.Next;
-    end;
-    CdsColorInfo.First;
-    while not CdsColorInfo.Eof do CdsColorInfo.Delete;
-  finally
-    CdsColorInfo.EnableControls;
-  end;
-end;
-
 procedure TfrmColorGroupInfo.BtnAddSelectedClick(Sender: TObject);
 var Root:TTreeNode;
     AObj2_:TRecord_;
@@ -883,7 +845,20 @@ begin
   end;
 end;
 
-procedure TfrmColorGroupInfo.BtnDeleteSelectedClick(Sender: TObject);
+procedure TfrmColorGroupInfo.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+end;
+
+procedure TfrmColorGroupInfo.N1Click(Sender: TObject);
 procedure DeleteAll(Node:TTreeNode);
 var C:TTreeNode;
 begin
@@ -936,7 +911,7 @@ begin
   end;
 end;
 
-procedure TfrmColorGroupInfo.BtnDeleteAllClick(Sender: TObject);
+procedure TfrmColorGroupInfo.N2Click(Sender: TObject);
 procedure DeleteAll(Node:TTreeNode);
 var C:TTreeNode;
 begin
@@ -993,19 +968,6 @@ begin
     CdsColorInfo.EnableControls;
     locked := False;
   end;
-end;
-
-procedure TfrmColorGroupInfo.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-var ARect:TRect;
-begin
-  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
-  begin
-    DBGridEh1.Canvas.Brush.Color := clAqua;
-  end;
-  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 end.

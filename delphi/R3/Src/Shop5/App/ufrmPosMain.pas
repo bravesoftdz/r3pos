@@ -426,8 +426,8 @@ begin
 
   basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
   dsGodsInfo.DataSet := basInfo;
-  DBGridEh1.Columns[4].Visible := (CLVersion='FIG');
-  DBGridEh1.Columns[5].Visible := (CLVersion='FIG');
+  DBGridEh1.Columns[4].Visible := (ShopGlobal.GetVersionFlag=1);
+  DBGridEh1.Columns[5].Visible := (ShopGlobal.GetVersionFlag=1);
   SaveAObj := TRecord_.Create;
   Width := 800;
   Height := 600;

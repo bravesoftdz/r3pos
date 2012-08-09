@@ -2316,7 +2316,7 @@ end;
 
 procedure TfrmGoodsInfo.CheckCLVersionSetParams;
 begin
-  lblSORT_ID7.Visible:=(trim(CLVersion)='FIG');
+  lblSORT_ID7.Visible:=(ShopGlobal.GetVersionFlag=1);
   edtSORT_ID7.Visible:=lblSORT_ID7.Visible;
   lblSORT_ID8.Visible:=lblSORT_ID7.Visible;
   edtSORT_ID8.Visible:=lblSORT_ID7.Visible;

@@ -272,7 +272,7 @@ begin
     end;
 
 
-  rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  {rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
   Column := FindColumn(Grid,'PROPERTY_01');
   rs.First;
   while not rs.Eof do
@@ -280,7 +280,7 @@ begin
       Column.KeyList.Add(rs.FieldbyName('SIZE_ID').AsString);
       Column.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
       rs.Next;
-    end;
+    end;}
 
   rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
   Column := FindColumn(Grid,'PROPERTY_02');
@@ -1381,9 +1381,14 @@ begin
       rs.Filtered := False;
       rs.Filter := 'SORT_ID='''+rs2.FieldByName('SORT_ID8').AsString+'''';
       rs.Filtered := True;
+      if rs.isEmpty then
+         begin
+            rs2.next;
+            continue;
+         end;
       lv := 0;
       rs.First;
-      while not rs.Eof do
+      while not rs.Eof do                      
       begin
         if fldArr[lv]<>'' then fldArr[lv] := fldArr[lv]+',';
         fldArr[lv] := fldArr[lv]+''''+rs.FieldbyName('SIZE_ID').AsString+'''';
@@ -1402,24 +1407,24 @@ begin
     if mx>=0 then
     begin
       Column := Grid.Columns.Add;
-      Column.FieldName := 'SIZE_#';
+      Column.FieldName := 'SIZE_W';
       Column.Width := 30;
       Column.Title.Caption := '³ßÂë|ÎÞ';
       Column.Footer.ValueType := fvtNon;
       Column.Alignment := taRightJustify;
       Column.ReadOnly := true;
-      ColumnStr := ',sum(case when isnull(A.PROPERTY_01,''#'')=''#'' then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_#';
+      ColumnStr := ',sum(case when isnull(A.PROPERTY_01,''#'')=''#'' then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_W';
     end;
     for i:= 0 to mx do
       begin
         Column := Grid.Columns.Add;
         Column.FieldName := 'SIZE_'+formatFloat('000',mx);
         Column.Width := 30;
-        Column.Title.Caption := '³ßÂë|'+TleArr[lv];
+        Column.Title.Caption := '³ßÂë|'+TleArr[i];
         Column.Footer.ValueType := fvtNon;
         Column.Alignment := taRightJustify;
         Column.ReadOnly := false;
-        ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[lv]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_'+formatFloat('000',mx);
+        ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_'+formatFloat('000',i);
       end;
   finally
     Grid.Columns.EndUpdate;

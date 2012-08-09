@@ -1387,7 +1387,7 @@ begin
       begin
         if fldArr[lv]<>'' then fldArr[lv] := fldArr[lv]+',';
         fldArr[lv] := fldArr[lv]+''''+rs.FieldbyName('SIZE_ID').AsString+'''';
-        if TleArr[lv]<>'' then TleArr[lv] := fldArr[lv]+'|';
+        if TleArr[lv]<>'' then TleArr[lv] := TleArr[lv]+'|';
         TleArr[lv] := TleArr[lv]+rs.FieldbyName('SIZE_NAME').AsString;
         inc(lv);
         rs.Next;
@@ -1395,7 +1395,7 @@ begin
       //不足最大列，要补足
       for i:= lv to mx do
       begin
-        TleArr[i] := TleArr[i]+'|';
+        TleArr[i] := TleArr[i]+'| ';
       end;
       rs2.Next;
     end;

@@ -110,7 +110,6 @@ type
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure mnuDeleteGodsClick(Sender: TObject);
     procedure mnuGodsPropertyClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure actCopyToNewClick(Sender: TObject);
     procedure uf(Sender: TObject);
     procedure munAppendRowClick(Sender: TObject);
@@ -3094,38 +3093,6 @@ end;
 procedure TframeOrderForm.SetCanAppend(const Value: boolean);
 begin
   FCanAppend := Value;
-end;
-
-procedure TframeOrderForm.FormCreate(Sender: TObject);
-function FindColumn(DBGrid: TDBGridEh;
-  FieldName: string): TColumnEh;
-var i:integer;
-begin
-  result := nil;
-  for i:=0 to DBGrid.Columns.Count - 1 do
-    begin
-      if DBGrid.Columns[i].FieldName = FieldName then
-         begin
-           result := DBGrid.Columns[i];
-           Exit;
-         end;
-    end;
-end;
-var i:integer;
-  Column:TColumnEh;
-begin
-  inherited;
-  for i:=0 to self.ComponentCount -1 do
-    begin
-      if self.Components[i] is TDBGridEh then
-         begin
-           Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
-           if Column<>nil then Column.Visible := (CLVersion='FIG');
-           Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
-           if Column<>nil then Column.Visible := (CLVersion='FIG');
-         end;
-    end;
-
 end;
 
 procedure TframeOrderForm.actCopyToNewClick(Sender: TObject);

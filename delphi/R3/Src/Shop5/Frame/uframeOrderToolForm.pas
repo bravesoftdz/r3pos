@@ -59,7 +59,6 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure ppmReportPopup(Sender: TObject);
     procedure mnmFormer5Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
   private
     { Private declarations }
@@ -650,24 +649,6 @@ begin
            Exit;
          end;
     end;
-end;
-
-procedure TframeOrderToolForm.FormCreate(Sender: TObject);
-var i:integer;
-  Column:TColumnEh;
-begin
-  inherited;
-{  for i:=0 to self.ComponentCount -1 do
-    begin
-      if self.Components[i] is TDBGridEh then
-         begin
-           Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
-           if Column<>nil then Column.Visible := (CLVersion='FIG');
-           Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
-           if Column<>nil then Column.Visible := (CLVersion='FIG');
-         end;
-    end;
-}    
 end;
 
 procedure TframeOrderToolForm.actExitExecute(Sender: TObject);

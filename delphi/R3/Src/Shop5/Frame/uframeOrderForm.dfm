@@ -5,7 +5,6 @@ inherited frameOrderForm: TframeOrderForm
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256
   OldCreateOrder = True
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]

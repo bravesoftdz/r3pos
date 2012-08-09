@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\r3
+OutputDir=D:\tr
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=D:\Delphi\R3\Src\Shop5\temp
@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=-DEBUG
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -159,8 +159,8 @@ Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp
 [HistoryLists\hlOutputDirectorry]
 Count=15
-Item0=C:\r3
-Item1=D:\tr
+Item0=D:\tr
+Item1=C:\r3
 Item2=d:\shop
 Item3=d:\n26
 Item4=C:\Users\IBM\Desktop\R3_MM_DL_TEST\R3_MM_DL_TEST

@@ -497,7 +497,7 @@ begin
 
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
-  if Trim(CLVersion) = 'FIG' then
+  if Trim(CLVersion) = '.FIG' then
      AutoAddColumn
   else
      ColumnStr := '';

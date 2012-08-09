@@ -391,7 +391,7 @@ begin
        FindColumn(DBGridEh1,'NEW_INPRICE').Free;
      end;
 
-  if Trim(CLVersion) <> 'FIG' then
+  if ShopGlobal.GetVersionFlag <> 1 then
      begin
        FindColumn(Grid,'PROPERTY_02').Free;
      end;
@@ -497,7 +497,7 @@ begin
 
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
-  if Trim(CLVersion) = '.FIG' then
+  if ShopGlobal.GetVersionFlag = 1 then
      AutoAddColumn
   else
      ColumnStr := '';
@@ -1254,7 +1254,7 @@ begin
     PosIdx:=StrToIntDef(RsState.fieldbyName('CODE_ID').AsString,0);
     if PosIdx>0 then
     begin
-      if CLVersion='FIG' then  //服装版全部
+      if ShopGlobal.GetVersionFlag = 1 then  //服装版全部
         ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
       else
       begin

@@ -203,6 +203,7 @@ begin
           finally
             free;
           end;
+          //actPrintExecute(Sender);
         end;
     finally
       CdsSalesList.Filtered := False;

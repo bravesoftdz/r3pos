@@ -1,6 +1,6 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 310
-  Top = 125
+  Left = 301
+  Top = 138
   Caption = #38144#39033#21457#31080
   ClientHeight = 483
   ClientWidth = 719
@@ -801,12 +801,25 @@ inherited frmSalInvoice: TfrmSalInvoice
               Font.Style = [fsBold]
               ParentFont = False
             end
-            object edtINVOICE_MNY: TcxTextEdit
+            object Label10: TLabel
               Left = 95
+              Top = 15
+              Width = 8
+              Height = 14
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -14
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object edtINVOICE_MNY: TcxTextEdit
+              Left = -17
               Top = 10
               Width = 114
               Height = 20
               TabOrder = 0
+              Visible = False
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object RzPanel9: TRzPanel

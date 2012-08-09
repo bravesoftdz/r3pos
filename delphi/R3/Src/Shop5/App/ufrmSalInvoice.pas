@@ -58,6 +58,7 @@ type
     edtIfDuplicate: TcxCheckBox;
     Label15: TLabel;
     edtCREA_USER: TzrComboBoxList;
+    Label10: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -113,6 +114,7 @@ type
     procedure AMountToCalc(Amount:Real);
     procedure CalcTaxMny;
     procedure LoadFormat;override;
+    procedure Calc;
   public
     { Public declarations }
     AObj:TRecord_;
@@ -172,6 +174,7 @@ begin
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
   edtINVOICE_MNY.Text := FormatFloat('#0.00',InvoiceMny);
+  Label10.Caption := FnNumber.SmallTOBig(InvoiceMny);
   AObj.FieldbyName('INVD_ID').asString := TSequence.NewId();
   AObj.FieldByName('INVOICE_STATUS').AsString := '1';
   AObj.FieldByName('EXPORT_STATUS').AsString := '1';
@@ -306,6 +309,15 @@ begin
       rs.Free;
     end;
   end;
+  WriteToObject(AObj,self);
+  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
+  AObj.FieldByName('INVOICE_MNY').AsFloat := totalmny; 
+  cdsHeader.Edit;
+  AObj.WriteToDataSet(cdsHeader);
+  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  if dbState = dsInsert then
+     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
+  cdsHeader.Post;
   n := 1;
   totalmny := 0;
   cdsDetail.First;
@@ -320,15 +332,6 @@ begin
     cdsDetail.Post;
     cdsDetail.Next;
   end;
-  WriteToObject(AObj,self);
-  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
-  AObj.FieldByName('INVOICE_MNY').AsFloat := totalmny; 
-  cdsHeader.Edit;
-  AObj.WriteToDataSet(cdsHeader);
-  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  if dbState = dsInsert then
-     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
-  cdsHeader.Post;
 
   Factor.BeginBatch;
   try
@@ -721,6 +724,7 @@ begin
                Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[cdsDetail.FieldbyName('GODS_NAME').AsString]));
              end;
           UpdateRecord(AObj,rs.FieldByName('UNIT_ID').AsString,pt);
+          Calc;
         end
         else
           Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
@@ -876,7 +880,10 @@ begin
         cdsDetail.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
         cdsDetail.FieldByName('AMOUNT').AsFloat := 1;
         cdsDetail.FieldByName('APRICE').AsFloat := InitPrice(cdsDetail.FieldbyName('GODS_ID').AsString,UNIT_ID);
-        cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
+        if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger = 1 then
+           cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat))
+        else
+           cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
         cdsDetail.FieldByName('NOTAX_MNY').AsFloat := (cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)-cdsDetail.FieldByName('TAX_MNY').AsFloat;
 
         if UNIT_ID='' then
@@ -954,7 +961,10 @@ begin
   cdsDetail.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
   cdsDetail.FieldByName('AMOUNT').AsFloat := 1;
   cdsDetail.FieldByName('APRICE').AsFloat := InitPrice(cdsDetail.FieldbyName('GODS_ID').AsString,UNIT_ID);
-  cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
+  if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger = 1 then
+     cdsDetail.FieldByName('TAX_MNY').AsFloat :=  0
+  else
+     cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
   cdsDetail.FieldByName('NOTAX_MNY').AsFloat := (cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)-cdsDetail.FieldByName('TAX_MNY').AsFloat;
 
   if UNIT_ID='' then
@@ -1024,7 +1034,8 @@ begin
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
   AMountToCalc(r);
-
+  Calc;
+  cdsDetail.Edit;
 end;
 
 procedure TfrmSalInvoice.AMountToCalc(Amount: Real);
@@ -1033,7 +1044,10 @@ begin
   locked := True;
   try
     if not (cdsDetail.State in [dsEdit,dsInsert]) then cdsDetail.Edit;
-    cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
+    if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger = 1 then
+       cdsDetail.FieldByName('TAX_MNY').AsFloat :=  0
+    else
+       cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
     cdsDetail.FieldByName('NOTAX_MNY').AsFloat := (cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)-cdsDetail.FieldByName('TAX_MNY').AsFloat;
     cdsDetail.Edit;
   finally
@@ -1066,6 +1080,8 @@ begin
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
   AMountToCalc(r);
+  Calc;
+  cdsDetail.Edit;
 end;
 
 procedure TfrmSalInvoice.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -1109,7 +1125,10 @@ begin
     while not cdsDetail.Eof do
     begin
       cdsDetail.Edit;
-      cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
+      if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger = 1 then
+         cdsDetail.FieldByName('TAX_MNY').AsFloat :=  0
+      else
+         cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
       cdsDetail.FieldByName('NOTAX_MNY').AsFloat := (cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)-cdsDetail.FieldByName('TAX_MNY').AsFloat;
       cdsDetail.Post;
       cdsDetail.Next;
@@ -1125,6 +1144,27 @@ procedure TfrmSalInvoice.LoadFormat;
 begin
 //  inherited;
 
+end;
+
+procedure TfrmSalInvoice.Calc;
+var rs:TZQuery;
+    SumMny:Currency;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Data := cdsDetail.Data;
+    SumMny := 0;
+    rs.First;
+    while not rs.Eof do
+    begin
+      SumMny := SumMny + rs.FieldByName('NOTAX_MNY').AsFloat;
+      rs.Next;
+    end;
+    Label10.Caption := FnNumber.SmallTOBig(SumMny);
+    //edtBOND_MNY.EditValue := SumMny;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

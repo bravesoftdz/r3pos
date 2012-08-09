@@ -349,11 +349,11 @@ begin
   if InFlag=1 then
   begin
      BtnSave.Enabled:=False;
-     Global.RefreshTable('PUB_SIZE_INFO');
+     Global.RefreshTable('PUB_SIZE_GROUP');
      ModalResult:=MROK;
      exit;
   end;
-  Global.RefreshTable('PUB_SIZE_INFO');
+  Global.RefreshTable('PUB_SIZE_GROUP');
   FormShow(nil);
   //ур╫з╣Ц
   if rzTree.Items.Count<>0 then

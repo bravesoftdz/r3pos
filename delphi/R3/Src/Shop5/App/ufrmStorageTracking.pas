@@ -1339,7 +1339,7 @@ end;
 procedure TfrmStorageTracking.AutoAddColumn;
 var rs,rs2:TZQuery;
     Column:TColumnEh;
-    i,lv,mx:Integer;
+    i,lv,mx,idx:Integer;
     fldArr: array [0..100] of String;
     TleArr: array [0..100] of String;
 begin
@@ -1406,6 +1406,7 @@ begin
     end;
     if mx>=0 then
     begin
+      idx := FindColumn(Grid,'PROPERTY_02').Index;
       Column := Grid.Columns.Add;
       Column.FieldName := 'SIZE_W';
       Column.Width := 30;
@@ -1413,17 +1414,19 @@ begin
       Column.Footer.ValueType := fvtNon;
       Column.Alignment := taRightJustify;
       Column.ReadOnly := true;
+      Column.Index := Idx+1;
       ColumnStr := ',sum(case when isnull(A.PROPERTY_01,''#'')=''#'' then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_W';
     end;
     for i:= 0 to mx do
       begin
         Column := Grid.Columns.Add;
-        Column.FieldName := 'SIZE_'+formatFloat('000',mx);
+        Column.FieldName := 'SIZE_'+formatFloat('000',i);
         Column.Width := 30;
         Column.Title.Caption := '³ßÂë|'+TleArr[i];
         Column.Footer.ValueType := fvtNon;
         Column.Alignment := taRightJustify;
         Column.ReadOnly := false;
+        Column.Index := Idx+1+i+1;
         ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_'+formatFloat('000',i);
       end;
   finally

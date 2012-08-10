@@ -1959,26 +1959,26 @@ begin
     begin
       if HasPrice then
          r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
-                        DataSet.FieldbyName('BATCH_NO').AsString,
-                        DataSet.FieldbyName('UNIT_ID').AsString,
-                        DataSet.FieldbyName('BOM_ID').AsString,
-                        DataSet.FieldbyName('LOCUS_NO').AsString,
-                        DataSet.FieldbyName('IS_PRESENT').AsString,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+              VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
+                        DataSet.FieldbyName('BATCH_NO').asString,
+                        DataSet.FieldbyName('UNIT_ID').asString,
+                        DataSet.FieldbyName('BOM_ID').Value,
+                        DataSet.FieldbyName('LOCUS_NO').Value,
+                        DataSet.FieldbyName('IS_PRESENT').asInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
       else
          r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
-                        DataSet.FieldbyName('BATCH_NO').AsString,
-                        DataSet.FieldbyName('UNIT_ID').AsString,
-                        DataSet.FieldbyName('BOM_ID').AsString,
-                        DataSet.FieldbyName('LOCUS_NO').AsString,
-                        DataSet.FieldbyName('IS_PRESENT').AsString]),[]);
+              VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
+                        DataSet.FieldbyName('BATCH_NO').asString,
+                        DataSet.FieldbyName('UNIT_ID').asString,
+                        DataSet.FieldbyName('BOM_ID').Value,
+                        DataSet.FieldbyName('LOCUS_NO').Value,
+                        DataSet.FieldbyName('IS_PRESENT').asInteger]),[]);
       if r then
       begin
         edtTable.Edit;
         for i:=0 to edtTable.Fields.Count -1 do
           begin
-            if DataSet.FindField(edtTable.Fields[i].FieldName)<>nil then
+            if (edtTable.Fields[i].FieldName<>'SEQNO') and (DataSet.FindField(edtTable.Fields[i].FieldName)<>nil) then
             begin
               if CheckSumField(edtTable.Fields[i].FieldName) then
                 edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value
@@ -2043,17 +2043,17 @@ begin
                      VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
                               edtTable.FieldbyName('BATCH_NO').AsString,
                               edtTable.FieldbyName('UNIT_ID').AsString,
-                              edtTable.FieldbyName('LOCUS_NO').AsString,
-                              edtTable.FieldbyName('BOM_ID').AsString,
-                              edtTable.FieldbyName('IS_PRESENT').AsString,edtTable.FieldbyName('APRICE').AsCurrency]),[])
+                              edtTable.FieldbyName('LOCUS_NO').Value,
+                              edtTable.FieldbyName('BOM_ID').Value,
+                              edtTable.FieldbyName('IS_PRESENT').AsInteger,edtTable.FieldbyName('APRICE').AsCurrency]),[])
              else
                 lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',
                      VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
                               edtTable.FieldbyName('BATCH_NO').AsString,
                               edtTable.FieldbyName('UNIT_ID').AsString,
-                              edtTable.FieldbyName('IS_PRESENT').AsString,
-                              edtTable.FieldbyName('LOCUS_NO').AsString,
-                              edtTable.FieldbyName('BOM_ID').AsString
+                              edtTable.FieldbyName('IS_PRESENT').AsInteger,
+                              edtTable.FieldbyName('LOCUS_NO').Value,
+                              edtTable.FieldbyName('BOM_ID').Value
                               ]),[]);
              if lc then Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[edtTable.FieldbyName('GODS_NAME').AsString]));
            end;

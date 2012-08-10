@@ -17,19 +17,21 @@ inherited frmColorInfo: TfrmColorInfo
     inherited RzPage: TRzPageControl
       Width = 339
       Height = 294
+      TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
+        TabVisible = False
         Caption = ''
         inherited RzPanel2: TRzPanel
           Width = 335
-          Height = 267
+          Height = 290
         end
         object DBGridEh1: TDBGridEh
           Left = 0
           Top = 0
           Width = 335
-          Height = 267
+          Height = 290
           Align = alClient
           AutoFitColWidths = True
           DataSource = dsClientSort

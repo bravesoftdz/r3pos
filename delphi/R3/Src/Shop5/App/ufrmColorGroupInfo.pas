@@ -99,6 +99,7 @@ var
   AObj:TRecord_;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002497',3) then Raise Exception.Create('你没有修改颜色组的权限,请和管理员联系.');  
   if locked then Exit;
   if dbState=dsBrowse then Exit;
   if rzTree.Selected = nil then Exit;
@@ -191,6 +192,16 @@ begin
       if CdsColorInfo.Locate('CODE_ID',CdsColorGroupRelation.FieldByName('CODE_ID').AsString,[]) then CdsColorInfo.Delete;
       CdsColorGroupRelation.Next;
     end;
+    if rzTree.Selected.Level = 0 then
+    begin
+       edtSORT_NAME.Enabled := True;
+       edtSORT_SPELL.Enabled := True;
+    end
+    else
+    begin
+       edtSORT_NAME.Enabled := False;
+       edtSORT_SPELL.Enabled := False;
+    end;
 
   finally
     CdsColorInfo.EnableControls;
@@ -202,6 +213,7 @@ end;
 procedure TfrmColorGroupInfo.BtnColorGroupClick(Sender: TObject);
 var i:integer;
 begin
+  if not ShopGlobal.GetChkRight('100002497',2) then Raise Exception.Create('你没有新增颜色组的权限,请和管理员联系.');
   for i:=0 to rzTree.Items.Count -1 do
   begin
     if rzTree.Items[i].Level <> 0 then Continue;
@@ -249,6 +261,7 @@ var
   i:integer;
 begin
   //locked := true;
+  if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');    
   AObj_ := TRecord_.Create;
   try
     if TfrmColorInfo.AddDialog(Self,AObj_) then
@@ -403,6 +416,7 @@ begin
   if rzTree.Selected = nil then Exit;
   if (rzTree.Selected.Level=0) then
      begin
+       if not ShopGlobal.GetChkRight('100002497',4) then Raise Exception.Create('你没有新增颜色组的权限,请和管理员联系.');
        if MessageBox(Handle,pchar('是否删除"'+rzTree.Selected.Text+'"颜色组?'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        ID:=TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
        DeleteAll(rzTree.Selected);
@@ -413,7 +427,12 @@ begin
             CdsColorGroupInfo.Delete;
        end;
        ButtonChange5;
+     end
+  else
+     begin
+       N1Click(Sender);
      end;
+  rzTreeChange(Sender,rzTree.Selected);
 end;
 
 procedure TfrmColorGroupInfo.BtnExitClick(Sender: TObject);
@@ -451,6 +470,7 @@ begin
   inherited;
   i:=MessageBox(Handle,Pchar('是否把数据恢复至上次保存的结果？'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   Cancel(i);
+  rzTreeChange(Sender,rzTree.Selected);
 end;
 
 procedure TfrmColorGroupInfo.FormClose(Sender: TObject;
@@ -909,6 +929,7 @@ begin
     CdsColorInfo.EnableControls;
     locked := False;
   end;
+  ButtonChange5;
 end;
 
 procedure TfrmColorGroupInfo.N2Click(Sender: TObject);
@@ -968,6 +989,7 @@ begin
     CdsColorInfo.EnableControls;
     locked := False;
   end;
+  ButtonChange5;
 end;
 
 end.

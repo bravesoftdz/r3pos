@@ -89,6 +89,7 @@ end;
 procedure TfrmColorInfo.btnAppendClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');  
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsCOLOR_INFO.State in [dsEdit,dsInsert] then cdsCOLOR_INFO.Post;
   if not cdsCOLOR_INFO.IsEmpty then
@@ -123,6 +124,7 @@ end;
 procedure TfrmColorInfo.btnDeleteClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002483',4) then Raise Exception.Create('你没有删除颜色的权限,请和管理员联系.');  
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if MessageBox(Handle,pchar('确认要删除"'+cdsCOLOR_INFO.FieldbyName('COLOR_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsCOLOR_INFO.Delete;

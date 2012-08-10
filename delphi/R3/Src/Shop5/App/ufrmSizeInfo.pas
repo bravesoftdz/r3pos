@@ -89,6 +89,7 @@ end;
 procedure TfrmSizeInfo.btnAppendClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002490',2) then Raise Exception.Create('你没有新增尺码的权限,请和管理员联系.');
   //if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsSIZE_INFO.State in [dsEdit,dsInsert] then cdsSIZE_INFO.Post;
   if not cdsSIZE_INFO.IsEmpty then
@@ -123,6 +124,7 @@ end;
 procedure TfrmSizeInfo.btnDeleteClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002490',4) then Raise Exception.Create('你没有删除尺码的权限,请和管理员联系.');
   //if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if MessageBox(Handle,pchar('确认要删除"'+cdsSIZE_INFO.FieldbyName('SIZE_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsSIZE_INFO.Delete;

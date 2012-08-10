@@ -191,7 +191,17 @@ begin
       if CdsSizeInfo.Locate('CODE_ID',CdsSizeGroupRelation.FieldByName('CODE_ID').AsString,[]) then CdsSizeInfo.Delete;
       CdsSizeGroupRelation.Next;
     end;
-
+    if rzTree.Selected.Level = 0 then
+    begin
+       edtSORT_NAME.Enabled := True;
+       edtSORT_SPELL.Enabled := True;
+    end
+    else
+    begin
+       edtSORT_NAME.Enabled := False;
+       edtSORT_SPELL.Enabled := False;
+    end;
+    
   finally
     CdsSizeInfo.EnableControls;
     locked := false;
@@ -202,6 +212,7 @@ end;
 procedure TfrmSizeGroupInfo.BtnSizeGroupClick(Sender: TObject);
 var i:integer;
 begin
+  if not ShopGlobal.GetChkRight('100002504',2) then Raise Exception.Create('你没有新增尺码组的权限,请和管理员联系.');
   for i:=0 to rzTree.Items.Count -1 do
   begin
     if copy(TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString,1,6) = '分组名' then
@@ -248,6 +259,7 @@ var
   i:integer;
 begin
   //locked := true;
+  if not ShopGlobal.GetChkRight('100002490',2) then Raise Exception.Create('你没有新增尺码的权限,请和管理员联系.');
   AObj_ := TRecord_.Create;
   try
     if TfrmSizeInfo.AddDialog(Self,AObj_) then
@@ -402,6 +414,7 @@ begin
   if rzTree.Selected = nil then Exit;
   if (rzTree.Selected.Level=0) then
      begin
+       if not ShopGlobal.GetChkRight('100002504',4) then Raise Exception.Create('你没有删除尺码组的权限,请和管理员联系.');
        if MessageBox(Handle,pchar('是否删除"'+rzTree.Selected.Text+'"尺码组?'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        ID:=TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
        DeleteAll(rzTree.Selected);
@@ -417,6 +430,7 @@ begin
      begin
        N1Click(Sender);
      end;
+  rzTreeChange(Sender,rzTree.Selected);
 end;
 
 procedure TfrmSizeGroupInfo.BtnExitClick(Sender: TObject);
@@ -454,6 +468,7 @@ begin
   inherited;
   i:=MessageBox(Handle,Pchar('是否把数据恢复至上次保存的结果？'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   Cancel(i);
+  rzTreeChange(Sender,rzTree.Selected);
 end;
 
 procedure TfrmSizeGroupInfo.FormClose(Sender: TObject;
@@ -919,6 +934,7 @@ begin
     CdsSizeInfo.EnableControls;
     locked := False;
   end;
+  ButtonChange5;
 end;
 
 procedure TfrmSizeGroupInfo.N2Click(Sender: TObject);
@@ -978,6 +994,7 @@ begin
     CdsSizeInfo.EnableControls;
     locked := False;
   end;
+  ButtonChange5;
 end;
 
 end.

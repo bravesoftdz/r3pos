@@ -290,7 +290,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
       Width = 552
       Color = clWhite
       object BtnSave: TRzBitBtn
-        Left = 216
+        Left = 304
         Top = 6
         Width = 71
         Height = 27
@@ -343,7 +343,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         Spacing = 5
       end
       object BtnDelete: TRzBitBtn
-        Left = 389
+        Left = 216
         Top = 6
         Width = 70
         Height = 26
@@ -370,7 +370,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
         Spacing = 5
       end
       object BtnCancel: TRzBitBtn
-        Left = 303
+        Left = 388
         Top = 6
         Width = 70
         Height = 26

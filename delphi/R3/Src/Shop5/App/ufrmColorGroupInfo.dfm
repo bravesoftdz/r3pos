@@ -290,10 +290,10 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
       Width = 552
       Color = clWhite
       object BtnSave: TRzBitBtn
-        Left = 216
-        Top = 6
+        Left = 301
+        Top = 7
         Width = 71
-        Height = 27
+        Height = 26
         Anchors = [akTop, akRight]
         Caption = #20445#23384'(&S)'
         Color = clSilver
@@ -318,7 +318,7 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
       end
       object BtnExit: TRzBitBtn
         Left = 473
-        Top = 6
+        Top = 7
         Width = 70
         Height = 26
         Caption = #20851#38381'(&C)'
@@ -343,8 +343,8 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
         Spacing = 5
       end
       object BtnDelete: TRzBitBtn
-        Left = 389
-        Top = 6
+        Left = 213
+        Top = 7
         Width = 70
         Height = 26
         Anchors = [akTop, akRight]
@@ -370,8 +370,8 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
         Spacing = 5
       end
       object BtnCancel: TRzBitBtn
-        Left = 303
-        Top = 6
+        Left = 388
+        Top = 7
         Width = 70
         Height = 26
         Anchors = [akTop, akRight]
@@ -398,7 +398,7 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
       end
       object BtnColorGroup: TRzBitBtn
         Left = 129
-        Top = 6
+        Top = 7
         Width = 71
         Height = 26
         Anchors = [akTop, akRight]

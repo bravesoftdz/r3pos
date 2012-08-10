@@ -3,6 +3,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
   Width = 870
   Caption = 'frameOrderToolForm'
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 12

@@ -647,11 +647,11 @@ begin
     if Components[i] is TDBGridEh then
     begin
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
-      if Column<>nil then //Column.Visible := (CLVersion='FIG');
-        Column.Free;
+      if (Column<>nil) and (ShopGlobal.GetVersionFlag<>1) then
+         Column.Free;
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
-      if Column<>nil then //Column.Visible := (CLVersion='FIG');
-        Column.Free;
+      if (Column<>nil) and (ShopGlobal.GetVersionFlag<>1) then
+         Column.Free;
       //DBGridEh设置为多表头
       if not TDBGridEh(Components[i]).UseMultiTitle then
         TDBGridEh(Components[i]).UseMultiTitle:=true;
@@ -1908,7 +1908,7 @@ begin
     PosIdx:=StrToIntDef(RsState.fieldbyName('CODE_ID').AsString,0);
     if PosIdx>0 then
     begin
-      if CLVersion='FIG' then  //服装版全部
+      if ShopGlobal.GetVersionFlag=1 then  //服装版全部
         ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
       else
       begin

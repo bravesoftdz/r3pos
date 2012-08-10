@@ -122,6 +122,7 @@ type
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure Excel1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -3899,6 +3900,12 @@ begin
   finally
       Locked := false
   end;
+end;
+
+procedure TframeOrderForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  //
 end;
 
 end.

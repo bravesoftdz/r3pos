@@ -60,6 +60,7 @@ type
     procedure ppmReportPopup(Sender: TObject);
     procedure mnmFormer5Click(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     idx:integer;
@@ -667,6 +668,12 @@ begin
   if Message.LParam=0 then
      sid := StrPas(Pchar(Message.LParam));
   OpenForm(id,sid);
+end;
+
+procedure TframeOrderToolForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  //
 end;
 
 end.

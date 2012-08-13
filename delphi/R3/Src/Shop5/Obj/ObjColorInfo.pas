@@ -83,6 +83,23 @@ begin
            Raise Exception.Create('"'+FieldbyName('COLOR_NAME').AsString+'"颜色名称不能重复设置');
         rs.Next;
       end;
+
+    rs.SQL.Text := ' select COLOR_ID,COMM,SEQ_NO from PUB_COLOR_INFO where BARCODE_FLAG=:BARCODE_FLAG and TENANT_ID=:TENANT_ID ';
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
+    rs.ParamByName('BARCODE_FLAG').AsString := Fieldbyname('BARCODE_FLAG').AsString;
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的 条码标号，重新启动原有编码
+           begin
+             FieldbyName('COLOR_ID').AsString := rs.FieldbyName('COLOR_ID').AsString;
+             AGlobal.ExecSQL('delete from PUB_COLOR_INFO where COLOR_ID=:COLOR_ID and TENANT_ID=:TENANT_ID ',self);
+           end
+        else
+           Raise Exception.Create('"'+FieldbyName('BARCODE_FLAG').AsString+'"条码标号名称不能重复设置');
+        rs.Next;
+      end;
   finally
     rs.Free;
   end;
@@ -102,6 +119,14 @@ begin
     rs.ParamByName('COLOR_NAME').AsString := Fieldbyname('COLOR_NAME').AsString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsString <> '' then Raise Exception.Create('"'+FieldbyName('COLOR_NAME').AsString+'"颜色名称不能重复设置');
+
+    rs.SQL.Text := 'select COLOR_ID from PUB_COLOR_INFO where COMM not in (''02'',''12'') and BARCODE_FLAG=:BARCODE_FLAG '+
+    ' and COLOR_ID<>:COLOR_ID and TENANT_ID=:TENANT_ID ';
+    rs.ParamByName('COLOR_ID').AsString := Fieldbyname('COLOR_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
+    rs.ParamByName('BARCODE_FLAG').AsString := Fieldbyname('BARCODE_FLAG').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsString <> '' then Raise Exception.Create('"'+FieldbyName('BARCODE_FLAG').AsString+'"条码标号不能重复设置');
   finally
     rs.Free;
   end;

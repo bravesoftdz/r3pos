@@ -48,6 +48,9 @@ type
     procedure FormActivate(Sender: TObject);
     procedure cdsSIZE_INFOBeforeEdit(DataSet: TDataSet);
     procedure cdsSIZE_INFOBeforeInsert(DataSet: TDataSet);
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
   private
     IsCompany:Boolean;
     IsOffline:Boolean;
@@ -56,6 +59,9 @@ type
     procedure SetFlag(const Value: integer);
     procedure SetdbState(const Value: TDataSetState);
     procedure SetMaxCount(const Value: Integer);
+    procedure JudgeBarcodeFlag(BarcodeFlag:String);
+    function GetBarcodeFlag:String;    
+    procedure FocusNextColumn;
   protected
     function CheckCanExport:boolean;
     { Private declarations }
@@ -565,5 +571,107 @@ begin
   FMaxCount := Value;
 end;
 
+
+procedure TfrmSizeInfo.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if Trim(Text) = '' then
+     Text := GetBarcodeFlag;
+  if Length(Text) < 2 then
+  begin
+    cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString:='';
+    Raise Exception.Create('条码标号不能少于2个字符');
+  end;
+  if Length(Text) > 2 then
+  begin
+    cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString:='';
+    Raise Exception.Create('条码标号不能超出2个字符');
+  end;
+  JudgeBarcodeFlag(Text);
+  cdsSIZE_INFO.Edit;
+end;
+
+procedure TfrmSizeInfo.FocusNextColumn;
+var i:Integer;
+begin
+  i:=DbGridEh1.Col;
+  Inc(i);
+  while True do
+    begin
+      if i>=DbGridEh1.Columns.Count then i:= 1;
+      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
+         inc(i)
+      else
+         begin
+           if Trim(cdsSIZE_INFO.FieldbyName('SIZE_ID').asString)='' then
+              i := 1;
+           if (i=1) and (Trim(cdsSIZE_INFO.FieldbyName('SIZE_ID').asString)<>'') then
+              begin
+                 cdsSIZE_INFO.Next ;
+                 if cdsSIZE_INFO.Eof then
+                    begin
+                      cdsSIZE_INFO.Append;
+                    end;
+                 DbGridEh1.SetFocus;
+                 DbGridEh1.Col := 1 ;
+              end
+           else
+              DbGridEh1.Col := i;
+           Exit;
+         end;
+    end;
+end;
+
+procedure TfrmSizeInfo.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+var BarFlag:String;
+begin
+  inherited;
+  if (Key = #13) then
+  begin
+    Key := #0;
+    if (DBGridEh1.SelectedField.FieldName = 'BARCODE_FLAG') and (Trim(DBGridEh1.SelectedField.AsString) = '') then
+    begin
+      BarFlag := GetBarcodeFlag;
+      cdsSIZE_INFO.Edit;
+      cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString := BarFlag;
+      cdsSIZE_INFO.Post;
+    end;
+    FocusNextColumn;
+  end;
+end;
+
+function TfrmSizeInfo.GetBarcodeFlag: String;
+var i,SeqNo:Integer;
+    BarFlag:String;
+begin
+  cdsSIZE_INFO.DisableControls;
+  try
+    i := 1;
+    SeqNo := cdsSIZE_INFO.RecNo;
+    BarFlag := FormatFloat('00',i);
+    cdsSIZE_INFO.First;
+    while not cdsSIZE_INFO.Eof do
+    begin
+      BarFlag := FormatFloat('00',i);
+      if not cdsSIZE_INFO.Locate('BARCODE_FLAG',BarFlag,[]) then
+      Begin
+         Result := BarFlag;
+         Exit;
+      end;
+      Inc(i);
+      cdsSIZE_INFO.Next;
+    end;
+    cdsSIZE_INFO.RecNo := SeqNo;
+  finally
+    cdsSIZE_INFO.EnableControls;
+  end;
+end;
+
+procedure TfrmSizeInfo.JudgeBarcodeFlag(BarcodeFlag: String);
+begin
+  if cdsSIZE_INFO.Locate('BARCODE_FLAG',BarcodeFlag,[]) then
+     Raise Exception.Create('条码标号"'+BarcodeFlag+'"重复!');
+end;
 
 end.

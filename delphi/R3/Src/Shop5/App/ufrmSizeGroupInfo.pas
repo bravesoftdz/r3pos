@@ -566,7 +566,7 @@ begin
     if tmp.FieldByName('UPCOMP_ID').AsString<>'' then
        raise Exception.Create('不是总店，不能编辑尺码和尺码组!');
   end; }
-  //if not ShopGlobal.GetChkRight('200024') then Raise Exception.Create('你没有编辑尺码和尺码组的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('200024') then Raise Exception.Create('你没有编辑尺码和尺码组的权限,请和管理员联系.');
   with TfrmSizeGroupInfo.Create(Owner) do
   begin
     try

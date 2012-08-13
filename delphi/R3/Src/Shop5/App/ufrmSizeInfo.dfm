@@ -45,7 +45,7 @@ inherited frmSizeInfo: TfrmSizeInfo
           FrozenCols = 1
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
+          OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
           PopupMenu = PopupMenu1
           RowHeight = 20
           TabOrder = 1
@@ -61,6 +61,7 @@ inherited frmSizeInfo: TfrmSizeInfo
           DigitalNumber = 12
           OnDrawColumnCell = DBGridEh1DrawColumnCell
           OnKeyDown = DBGridEh1KeyDown
+          OnKeyPress = DBGridEh1KeyPress
           Columns = <
             item
               EditButtons = <>
@@ -95,6 +96,7 @@ inherited frmSizeInfo: TfrmSizeInfo
               Footers = <>
               Title.Caption = #26465#30721#26631#21495
               Title.Color = clWhite
+              OnUpdateData = DBGridEh1Columns3UpdateData
             end>
         end
       end

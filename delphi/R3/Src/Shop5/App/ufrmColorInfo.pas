@@ -48,6 +48,9 @@ type
     procedure FormActivate(Sender: TObject);
     procedure cdsCOLOR_INFOBeforeEdit(DataSet: TDataSet);
     procedure cdsCOLOR_INFOBeforeInsert(DataSet: TDataSet);
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
   private
     IsCompany:Boolean;
     IsOffline:Boolean;
@@ -56,6 +59,9 @@ type
     procedure SetFlag(const Value: integer);
     procedure SetdbState(const Value: TDataSetState);
     procedure SetMaxCount(const Value: Integer);
+    procedure JudgeBarcodeFlag(BarcodeFlag:String);
+    function GetBarcodeFlag:String;
+    procedure FocusNextColumn;
   protected
     function CheckCanExport:boolean;
     { Private declarations }
@@ -89,7 +95,7 @@ end;
 procedure TfrmColorInfo.btnAppendClick(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');  
+  if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsCOLOR_INFO.State in [dsEdit,dsInsert] then cdsCOLOR_INFO.Post;
   if not cdsCOLOR_INFO.IsEmpty then
@@ -124,7 +130,7 @@ end;
 procedure TfrmColorInfo.btnDeleteClick(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002483',4) then Raise Exception.Create('你没有删除颜色的权限,请和管理员联系.');  
+  if not ShopGlobal.GetChkRight('100002483',4) then Raise Exception.Create('你没有删除颜色的权限,请和管理员联系.');
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if MessageBox(Handle,pchar('确认要删除"'+cdsCOLOR_INFO.FieldbyName('COLOR_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsCOLOR_INFO.Delete;
@@ -207,7 +213,7 @@ procedure TfrmColorInfo.cdsCOLOR_INFONewRecord(DataSet: TDataSet);
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
-  if (FMaxCount>0) and (cdsCOLOR_INFO.RecordCount>=FMaxCount) then Raise Exception.Create('  当前已达到限定的记录数据，不能增加...  '); 
+  if (FMaxCount>0) and (cdsCOLOR_INFO.RecordCount>=FMaxCount) then Raise Exception.Create('  当前已达到限定的记录数据，不能增加...  ');
   cdsCOLOR_INFO.FieldByName('SEQ_NO').AsString:=IntToStr(cdsCOLOR_INFO.RecordCount+1);
   cdsCOLOR_INFO.FieldByName('COLOR_ID').AsString := TSequence.NewId;
   cdsCOLOR_INFO.FieldByName('SORT_ID7S').AsString := '#';
@@ -473,6 +479,7 @@ end;
 
 procedure TfrmColorInfo.DBGridEh1KeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var BarFlag:String;
 begin
   inherited;
   if (ssCtrl in Shift) and  (Key=VK_UP) then
@@ -499,6 +506,7 @@ begin
     if dbState = dsBrowse then exit;
     CtrlEndExecute(nil);
   end;
+
 end;
 
 class function TfrmColorInfo.ShowDialog(Owner: TForm): boolean;
@@ -565,5 +573,107 @@ begin
   FMaxCount := Value;
 end;
 
+
+procedure TfrmColorInfo.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if Trim(Text) = '' then
+     Text := GetBarcodeFlag;
+  if Length(Text) < 3 then
+  begin
+    cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString:='';
+    Raise Exception.Create('条码标号不能少于3个字符');
+  end;
+  if Length(Text) > 3 then
+  begin
+    cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString:='';
+    Raise Exception.Create('条码标号不能超出3个字符');
+  end;
+  JudgeBarcodeFlag(Text);
+  cdsCOLOR_INFO.Edit;
+end;
+
+procedure TfrmColorInfo.JudgeBarcodeFlag(BarcodeFlag: String);
+begin
+  if cdsCOLOR_INFO.Locate('BARCODE_FLAG',BarcodeFlag,[]) then
+     Raise Exception.Create('条码标号"'+BarcodeFlag+'"重复!');
+end;
+
+function TfrmColorInfo.GetBarcodeFlag: String;
+var i,SeqNo:Integer;
+    BarFlag:String;
+begin
+  cdsCOLOR_INFO.DisableControls;
+  try
+    i := 1;
+    SeqNo := cdsCOLOR_INFO.RecNo;
+    BarFlag := FormatFloat('000',i);
+    cdsCOLOR_INFO.First;
+    while not cdsCOLOR_INFO.Eof do
+    begin
+      BarFlag := FormatFloat('000',i);
+      if not cdsCOLOR_INFO.Locate('BARCODE_FLAG',BarFlag,[]) then
+      Begin
+         Result := BarFlag;
+         Exit;
+      end;
+      Inc(i);
+      cdsCOLOR_INFO.Next;
+    end;
+    cdsCOLOR_INFO.RecNo := SeqNo;
+  finally
+    cdsCOLOR_INFO.EnableControls;
+  end;
+end;
+
+procedure TfrmColorInfo.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+var BarFlag:String;
+begin
+  inherited;
+  if (Key = #13) then
+  begin
+    Key := #0;
+    if (DBGridEh1.SelectedField.FieldName = 'BARCODE_FLAG') and (Trim(DBGridEh1.SelectedField.AsString) = '') then
+    begin
+      BarFlag := GetBarcodeFlag;
+      cdsCOLOR_INFO.Edit;
+      cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString := BarFlag;
+      cdsCOLOR_INFO.Post;
+    end;
+    FocusNextColumn;
+  end;
+end;
+
+procedure TfrmColorInfo.FocusNextColumn;
+var i:Integer;
+begin
+  i:=DbGridEh1.Col;
+  Inc(i);
+  while True do
+    begin
+      if i>=DbGridEh1.Columns.Count then i:= 1;
+      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
+         inc(i)
+      else
+         begin
+           if Trim(cdsCOLOR_INFO.FieldbyName('COLOR_ID').asString)='' then
+              i := 1;
+           if (i=1) and (Trim(cdsCOLOR_INFO.FieldbyName('COLOR_ID').asString)<>'') then
+              begin
+                 cdsCOLOR_INFO.Next ;
+                 if cdsCOLOR_INFO.Eof then
+                    begin
+                      cdsCOLOR_INFO.Append;
+                    end;
+                 DbGridEh1.SetFocus;
+                 DbGridEh1.Col := 1 ;
+              end
+           else
+              DbGridEh1.Col := i;
+           Exit;
+         end;
+    end;
+end;
 
 end.

@@ -99,7 +99,7 @@ var
   AObj:TRecord_;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002497',3) then Raise Exception.Create('你没有修改颜色组的权限,请和管理员联系.');  
+  if not ShopGlobal.GetChkRight('100002497',3) then Raise Exception.Create('你没有修改颜色组的权限,请和管理员联系.');
   if locked then Exit;
   if dbState=dsBrowse then Exit;
   if rzTree.Selected = nil then Exit;
@@ -261,7 +261,7 @@ var
   i:integer;
 begin
   //locked := true;
-  if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');    
+  if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');
   AObj_ := TRecord_.Create;
   try
     if TfrmColorInfo.AddDialog(Self,AObj_) then
@@ -561,7 +561,7 @@ end;
 class function TfrmColorGroupInfo.AddDialog(Owner: TForm;
   var AObj1: TRecord_): boolean;
 begin
-  //if not ShopGlobal.GetChkRight('200024') then Raise Exception.Create('你没有编辑尺码和尺码组的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('200024') then Raise Exception.Create('你没有编辑尺码和尺码组的权限,请和管理员联系.');
   with TfrmColorGroupInfo.Create(Owner) do
   begin
     try

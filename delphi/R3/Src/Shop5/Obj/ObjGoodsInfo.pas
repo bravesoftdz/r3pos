@@ -327,7 +327,7 @@ begin
   inherited;
   SelectSQL.Text :=
     'select RELATION_FLAG,ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from VIW_BARCODE '+
-    ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and BARCODE_TYPE in (''0'',''1'',''2'',''3'') and GODS_ID=:GODS_ID order by BARCODE_TYPE,BARCODE ';
+    ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and BARCODE_TYPE in (''0'',''1'',''2'',''3'') and GODS_ID=:GODS_ID and BATCH_NO=''#'' and PROPERTY_01=''#'' and PROPERTY_02=''#'' order by BARCODE ';
 end;
 
 
@@ -379,8 +379,7 @@ begin
   inherited;
   SelectSQL.Text :=
     'select 0 as SEQNO,RELATION_FLAG,ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from VIW_BARCODE '+
-    ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and BARCODE_TYPE=''3'' and GODS_ID=:GODS_ID and BATCH_NO=''#'' and PROPERTY_01=''#'' and '+
-    ' PROPERTY_02=''#'' order by BARCODE ';
+    ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and BARCODE_TYPE=''3'' and GODS_ID=:GODS_ID order by BARCODE ';
 end;   
 
 { TGoodsPrice }

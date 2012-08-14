@@ -362,10 +362,12 @@ begin
   begin
      BtnSave.Enabled:=False;
      Global.RefreshTable('PUB_SIZE_GROUP');
+     Global.RefreshTable('PUB_SIZE_RELATION');
      ModalResult:=MROK;
      exit;
   end;
   Global.RefreshTable('PUB_SIZE_GROUP');
+  Global.RefreshTable('PUB_SIZE_RELATION');
   FormShow(nil);
   //ур╫з╣Ц
   if rzTree.Items.Count<>0 then

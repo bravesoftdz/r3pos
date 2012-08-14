@@ -183,6 +183,7 @@ begin
     cdsCOLOR_INFO.EnableControls;
   end;  
   Save;
+  Global.RefreshTable('PUB_SIZE_INFO');
   if Flag=1 then
     ModalResult:=MROK;
   btnSave.Enabled:=False;

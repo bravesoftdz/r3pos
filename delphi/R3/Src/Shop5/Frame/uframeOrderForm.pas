@@ -3799,7 +3799,7 @@ var s:string;
 begin
   s := uppercase(FieldName);
   result := (s='AMOUNT') or (s='CALC_AMOUNT') or (s='AMONEY') or (s='CALC_MONEY') or (s='AGIO_MONEY') or
-            (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY');
+            (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY') or (s='SHIP_AMOUNT');
 end;
 
 function TframeOrderForm.GetbasInfo: TDataSet;

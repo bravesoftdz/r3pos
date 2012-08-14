@@ -363,10 +363,12 @@ begin
   if InFlag=1 then
   begin
      BtnSave.Enabled:=False;
+     Global.RefreshTable('PUB_COLOR_RELATION');
      Global.RefreshTable('PUB_COLOR_GROUP');
      ModalResult:=MROK;
      exit;
   end;
+  Global.RefreshTable('PUB_COLOR_RELATION');
   Global.RefreshTable('PUB_COLOR_GROUP');
   FormShow(nil);
   //ур╫з╣Ц

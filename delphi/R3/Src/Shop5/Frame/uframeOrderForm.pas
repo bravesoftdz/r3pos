@@ -1937,7 +1937,11 @@ begin
   Field := edtTable.FindField('AMOUNT');
   if Field<>nil then
      begin
-       if PropertyEnabled then Field.AsFloat := 0;
+       if PropertyEnabled then
+          begin
+            edtTable.Edit;
+            Field.AsFloat := 0;
+          end;
        AMountToCalc(Field.AsFloat);
      end
 end;
@@ -1981,7 +1985,7 @@ begin
             if (edtTable.Fields[i].FieldName<>'SEQNO') and (DataSet.FindField(edtTable.Fields[i].FieldName)<>nil) then
             begin
               if CheckSumField(edtTable.Fields[i].FieldName) then
-                edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value
+                edtTable.Fields[i].AsFloat := edtTable.Fields[i].AsFloat + DataSet.FieldbyName(edtTable.Fields[i].FieldName).AsFloat
               else
                 edtTable.Fields[i].Value := DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
             end;

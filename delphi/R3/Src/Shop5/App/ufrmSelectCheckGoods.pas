@@ -184,9 +184,9 @@ begin
      'select top 600 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b '+
      '  where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m '+
+     '(select GODS_ID,BATCH_NO,sum(RCK_AMOUNT) as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m '+
      ' where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
-     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE group by GODS_ID,BATCH_NO) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID';
   1:
@@ -194,8 +194,8 @@ begin
      'select * from '+
      '(select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
-     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     '(select GODS_ID,BATCH_NO,sum(RCK_AMOUNT) as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE group by GODS_ID,BATCH_NO) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID) where ROWNUM<=600 order by ROWNUM';
   4:
@@ -203,17 +203,17 @@ begin
      'select tp.* from ('+
      'select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
-     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     '(select GODS_ID,BATCH_NO,sum(RCK_AMOUNT) as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE group by GODS_ID,BATCH_NO) r '+
      ' where l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
   5:
   result :=
      'select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
      '(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE '+
      ' from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l,'+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m '+
+     '(select GODS_ID,BATCH_NO,sum(RCK_AMOUNT) as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m '+
      ' where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
-     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE group by GODS_ID,BATCH_NO) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID limit 600 ';
   end;

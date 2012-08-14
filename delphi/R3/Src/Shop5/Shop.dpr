@@ -353,7 +353,9 @@ uses
   ufrmSizeGroupInfo in 'App\ufrmSizeGroupInfo.pas' {frmSizeGroupInfo},
   ufrmColorGroupInfo in 'App\ufrmColorGroupInfo.pas' {frmColorGroupInfo},
   ufrmSizeInfo in 'App\ufrmSizeInfo.pas' {frmSizeInfo},
-  ufrmColorInfo in 'App\ufrmColorInfo.pas' {frmColorInfo};
+  ufrmColorInfo in 'App\ufrmColorInfo.pas' {frmColorInfo},
+  ObjColorInfo in 'Obj\ObjColorInfo.pas',
+  ObjSizeInfo in 'Obj\ObjSizeInfo.pas';
 
 {$R *.res}
 var

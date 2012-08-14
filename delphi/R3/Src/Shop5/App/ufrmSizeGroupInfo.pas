@@ -868,6 +868,7 @@ begin
   finally
     CdsSizeInfo.EnableControls;
   end;
+  ButtonChange2;
 end;
 
 procedure TfrmSizeGroupInfo.DBGridEh1DrawColumnCell(Sender: TObject;

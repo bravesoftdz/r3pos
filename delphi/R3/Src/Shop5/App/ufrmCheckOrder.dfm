@@ -316,7 +316,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           Width = 59
         end
         item
-          ButtonStyle = cbsNone
+          ButtonStyle = cbsEllipsis
           DisplayFormat = '#0.###'
           EditButtons = <>
           FieldName = 'AMOUNT'

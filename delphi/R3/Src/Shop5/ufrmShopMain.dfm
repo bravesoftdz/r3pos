@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 207
-  Top = 167
+  Left = -1
+  Top = 220
   Width = 817
   Height = 561
   Caption = ''
@@ -5691,6 +5691,26 @@ inherited frmShopMain: TfrmShopMain
       Tag = 100002469
       Caption = #21806#21518#26381#21153
       OnExecute = actfrmSvcServiceListExecute
+    end
+    object actfrmColorInfo: TAction
+      Tag = 100002483
+      Caption = #39068#33394#31649#29702
+      OnExecute = actfrmColorInfoExecute
+    end
+    object actfrmSizeInfo: TAction
+      Tag = 100002490
+      Caption = #23610#30721#31649#29702
+      OnExecute = actfrmSizeInfoExecute
+    end
+    object actfrmColorGroup: TAction
+      Tag = 100002497
+      Caption = #39068#33394#32452#31649#29702
+      OnExecute = actfrmColorGroupExecute
+    end
+    object actfrmSizeGroup: TAction
+      Tag = 100002504
+      Caption = #23610#30721#32452#31649#29702
+      OnExecute = actfrmSizeGroupExecute
     end
   end
   inherited PopupMenu: TPopupMenu

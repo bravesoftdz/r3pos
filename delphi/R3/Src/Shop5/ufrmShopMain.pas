@@ -322,6 +322,10 @@ type
     actfrmFvchIntfSet: TAction;
     actfrmBusinessIncomeDayReport: TAction;
     actfrmSvcServiceList: TAction;
+    actfrmColorInfo: TAction;
+    actfrmSizeInfo: TAction;
+    actfrmColorGroup: TAction;
+    actfrmSizeGroup: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -475,10 +479,13 @@ type
     procedure actfrmVoucherOrderListExecute(Sender: TObject);
     procedure actfrmVhSendOrderListExecute(Sender: TObject);
     procedure actfrmVhLeadOrderListExecute(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure actfrmFvchIntfSetExecute(Sender: TObject);
     procedure actfrmBusinessIncomeDayReportExecute(Sender: TObject);
     procedure actfrmSvcServiceListExecute(Sender: TObject);
+    procedure actfrmColorInfoExecute(Sender: TObject);
+    procedure actfrmSizeInfoExecute(Sender: TObject);
+    procedure actfrmColorGroupExecute(Sender: TObject);
+    procedure actfrmSizeGroupExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -557,7 +564,7 @@ uses
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
   ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,
-  ufrmBusinessIncomeDayReport,ufrmSvcServiceList;
+  ufrmBusinessIncomeDayReport,ufrmSvcServiceList,ufrmColorInfo,ufrmSizeInfo,ufrmColorGroupInfo,ufrmSizeGroupInfo;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4709,12 +4716,6 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.Button3Click(Sender: TObject);
-begin
-  inherited;
-  actfrmBusinessIncomeDayReport.OnExecute(nil);
-end;
-
 procedure TfrmShopMain.actfrmFvchIntfSetExecute(Sender: TObject);
 begin
   inherited;
@@ -4769,6 +4770,67 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmColorInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  TfrmColorInfo.ShowDialog(self);
+end;
+
+procedure TfrmShopMain.actfrmSizeInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  TfrmSizeInfo.ShowDialog(self);
+
+end;
+
+procedure TfrmShopMain.actfrmColorGroupExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  with TfrmColorGroupInfo.Create(self) do
+     begin
+       try
+         ShowModal;
+       finally
+         free;
+       end;
+     end;
+
+end;
+
+procedure TfrmShopMain.actfrmSizeGroupExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  with TfrmSizeGroupInfo.Create(self) do
+     begin
+       try
+         ShowModal;
+       finally
+         free;
+       end;
+     end;
+
 end;
 
 end.

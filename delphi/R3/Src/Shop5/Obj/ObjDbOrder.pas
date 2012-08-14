@@ -289,8 +289,8 @@ begin
   SelectSQL.Text :=
                'select b.GODS_NAME,b.GODS_CODE,j.TENANT_ID,j1.PLAN_DATE,j1.CLIENT_ID,j.SHOP_ID,j.SALES_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.AMOUNT,j.ORG_PRICE,j.POLICY_TYPE,'+
                'j.IS_PRESENT,j.BARTER_INTEGRAL,j.COST_PRICE,j.APRICE,j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,'+
-               'j.COST_PRICE/case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_APRICE,'+
-               'round(j.COST_PRICE*j.CALC_AMOUNT,2)/case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_MONEY,'+
+               'j.COST_PRICE*case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_APRICE,'+
+               'round(j.COST_PRICE*j.CALC_AMOUNT,2) as COST_MONEY,'+
                'j.HAS_INTEGRAL,j.REMARK,b.BARCODE from SAL_SALESDATA j inner join SAL_SALESORDER j1 on j.TENANT_ID=j1.TENANT_ID and j.SALES_ID=j1.SALES_ID '+
                ' inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
   IsSQLUpdate := True;

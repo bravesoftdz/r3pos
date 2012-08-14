@@ -315,7 +315,7 @@ begin
       ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
       ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
       ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+      ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
       ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
       ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
       ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+

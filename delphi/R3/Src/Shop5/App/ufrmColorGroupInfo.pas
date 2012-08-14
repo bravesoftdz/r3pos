@@ -863,6 +863,7 @@ begin
   finally
     CdsColorInfo.EnableControls;
   end;
+  ButtonChange2;
 end;
 
 procedure TfrmColorGroupInfo.DBGridEh1DrawColumnCell(Sender: TObject;

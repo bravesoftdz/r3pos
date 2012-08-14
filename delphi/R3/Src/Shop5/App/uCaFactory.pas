@@ -1445,7 +1445,7 @@ end;
 function TCaFactory.SyncAll(flag:integer): boolean;
 begin
   AutoCoLogo;
-  if CheckDebugSync then Exit;
+  if not Audited then Exit;
   frmLogo.Show;
   try
     frmLogo.ProgressBar1.Max := 11;
@@ -3939,8 +3939,7 @@ end;
 
 function TCaFactory.downloadCaModule(TenantId, flag: integer): boolean;
 begin
-  //如果演示版直接不认证
-  if CheckDebugSync then
+  if not Audited then
      begin
        result := true;
        Exit;

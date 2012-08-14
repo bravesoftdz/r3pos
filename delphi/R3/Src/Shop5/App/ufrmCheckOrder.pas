@@ -603,7 +603,9 @@ end;
 procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string);
 begin
   PrintQry.Close;
-  PrintQry.SQL.Text:='select GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,RCK_AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
+  PrintQry.SQL.Text:=
+    'select j.GODS_ID,j.BATCH_NO,sum(RCK_AMOUNT) as RCK_CALC_AMOUNT,sum(RCK_AMOUNT/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.0)) as RCK_AMOUNT from STO_PRINTDATA j,VIW_GOODSINFO b '+
+    'where j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.PRINT_DATE=:PRINT_DATE group by j.GODS_ID,j.BATCH_NO';
   if PrintQry.Params.FindParam('TENANT_ID')<>nil then
     PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;
   if PrintQry.Params.FindParam('SHOP_ID')<>nil then
@@ -962,7 +964,7 @@ begin
         edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
         edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
         edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-        edtTable.FieldByName('IS_PRESENT').asInteger := pt;
+        edtTable.FieldByName('IS_PRESENT').asInteger := 0;
         if UNIT_ID='' then
            edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
         else
@@ -1058,31 +1060,20 @@ end;
 
 procedure TfrmCheckOrder.RefreshRckAMount(CalcValue: real=0);
 var
-  rs: TZQuery;
   IsExists: Boolean;
-  SourceScale: real;
-  GodsID,BatchNo,PROPERTY_01,PROPERTY_02: string;
+  GodsID,BatchNo: string;
 begin
   if (PrintQry.Active) and (edtTable.Active) then
   begin
-    GodsID:=trim(edtTable.FieldbyName('GODS_ID').AsString);  
-    if CalcValue=0 then  //等于0则需要重新计算值
-      SourceScale:=GetCalcUnitValue(GodsID)
-    else
-      SourceScale:=CalcValue; //直接外部传入的换算值      
-
+    GodsID:=trim(edtTable.FieldbyName('GODS_ID').AsString);
     BatchNo:=trim(edtTable.FieldbyName('BATCH_NO').AsString);
-    PROPERTY_01:=trim(edtTable.FieldbyName('PROPERTY_01').AsString);
-    PROPERTY_02:=trim(edtTable.FieldbyName('PROPERTY_02').AsString);
-    if PROPERTY_01='' then PROPERTY_01:='#';
-    if PROPERTY_02='' then PROPERTY_02:='#';
-    IsExists:=PrintQry.Locate('GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02',VarArrayOf([GodsID,BatchNo,PROPERTY_01,PROPERTY_02]),[]);
+    IsExists:=PrintQry.Locate('GODS_ID;BATCH_NO',VarArrayOf([GodsID,BatchNo]),[]);
 
     edtTable.Edit;
     if IsExists then
     begin
-      edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat/SourceScale;
-      edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat;
+      edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_CALC_AMOUNT').AsFloat / CalcValue;
+      edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_CALC_AMOUNT').AsFloat;
     end else
     begin
       edtTable.FieldbyName('RCK_AMOUNT').AsFloat := 0;

@@ -1347,8 +1347,47 @@ begin
 end;
 
 procedure TfrmSalesOrder.ReadFrom(DataSet: TDataSet);
+var
+  i:integer;
+  r:boolean;
 begin
-  inherited
+  if AObj.FieldbyName('SALES_TYPE').AsInteger=4 then
+     begin
+       inherited;
+       Exit;
+     end;
+  edtTable.DisableControls;
+  try
+  edtProperty.Close;
+  edtTable.Close;
+  edtProperty.CreateDataSet;
+  edtTable.CreateDataSet;
+  RowID := 0;
+  DataSet.First;
+  while not DataSet.Eof do
+    begin
+      edtTable.Append;
+      for i:=0 to edtTable.Fields.Count -1 do
+        begin
+           if DataSet.FindField(edtTable.Fields[i].FieldName)<>nil then
+              edtTable.Fields[i].Value := DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
+        end;
+      inc(RowID);
+      edtTable.FieldbyName('SEQNO').AsInteger := RowID;
+      edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+      edtTable.Post;
+
+      edtProperty.Append;
+      for i:=0 to edtProperty.Fields.Count -1 do
+        edtProperty.Fields[i].Value := DataSet.FieldbyName(edtProperty.Fields[i].FieldName).Value;
+      edtProperty.FieldByName('SEQNO').AsInteger := edtTable.FieldbyName('SEQNO').AsInteger;
+      edtProperty.Post;
+      DataSet.Next;
+    end;
+    edtTable.SortedFields := 'SEQNO';
+  finally
+    edtTable.EnableControls;
+  end;
 end;
 
 procedure TfrmSalesOrder.ShowOweInfo;

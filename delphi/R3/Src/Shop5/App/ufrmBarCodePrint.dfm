@@ -599,22 +599,22 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       item
         Name = 'BARCODE'
         DataType = ftString
-        Size = 20
+        Size = 50
       end
       item
         Name = 'PROPERTY_02'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'PROPERTY_01'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'GODS_NAME'
         DataType = ftString
-        Size = 20
+        Size = 50
       end
       item
         Name = 'GODS_ID'
@@ -629,17 +629,17 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       item
         Name = 'UNIT_NAME'
         DataType = ftString
-        Size = 20
+        Size = 10
       end
       item
         Name = 'BRAND'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'PROVIDE'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'NEW_OUTPRICE1'
@@ -680,17 +680,17 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       item
         Name = 'PROPERTY_02'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'PROPERTY_01'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'GODS_NAME'
         DataType = ftString
-        Size = 30
+        Size = 50
       end
       item
         Name = 'GODS_ID'
@@ -705,17 +705,17 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       item
         Name = 'UNIT_NAME'
         DataType = ftString
-        Size = 20
+        Size = 10
       end
       item
         Name = 'BRAND'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'PROVIDE'
         DataType = ftString
-        Size = 20
+        Size = 36
       end
       item
         Name = 'NEW_OUTPRICE1'

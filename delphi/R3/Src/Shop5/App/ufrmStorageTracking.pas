@@ -1425,7 +1425,7 @@ begin
         Column.Title.Caption := '³ßÂë|'+TleArr[i];
         Column.Footer.ValueType := fvtNon;
         Column.Alignment := taRightJustify;
-        Column.ReadOnly := false;
+        Column.ReadOnly := true;
         Column.Index := Idx+1+i+1;
         ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_'+formatFloat('000',i);
       end;

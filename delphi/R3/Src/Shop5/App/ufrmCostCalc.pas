@@ -817,22 +817,6 @@ begin
           'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST,'+
           'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST '+
           ') '+
-          'select jc.*,'+
-          'round(SALE_AMT*COST_PRICE,2) as SALE_CST,'+
-          'SALE_MNY-round(SALE_AMT*COST_PRICE,2) as SALE_PRF,'+
-          'round(SALRT_AMT*COST_PRICE,2) as SALRT_CST,'+
-          'round(DBIN_AMT*COST_PRICE,2) as DBIN_CST,'+
-          'round(DBOUT_AMT*COST_PRICE,2) as DBOUT_CST,'+
-          'round(CHANGE1_AMT*COST_PRICE,2) as CHANGE1_CST,'+
-          'round(CHANGE2_AMT*COST_PRICE,2) as CHANGE2_CST,'+
-          'round(CHANGE3_AMT*COST_PRICE,2) as CHANGE3_CST,'+
-          'round(CHANGE4_AMT*COST_PRICE,2) as CHANGE4_CST,'+
-          'round(CHANGE5_AMT*COST_PRICE,2) as CHANGE5_CST,'+
-          'round(ORG_AMT+STOCK_AMT-SALE_AMT+DBIN_AMT-DBOUT_AMT+CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT,3) as BAL_AMT,'+
-          'round((ORG_AMT+STOCK_AMT-SALE_AMT+DBIN_AMT-DBOUT_AMT+CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*NEW_INPRICE,2) as BAL_MNY,'+
-          'round((ORG_AMT+STOCK_AMT-SALE_AMT+DBIN_AMT-DBOUT_AMT+CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*NEW_OUTPRICE,2) as BAL_RTL,'+
-          'round(ORG_CST+STOCK_MNY-round(SALE_AMT*COST_PRICE,2)+round(DBIN_AMT*COST_PRICE,2)-round(DBOUT_AMT*COST_PRICE,2)+'+
-          'round(CHANGE1_AMT*COST_PRICE,2)+round(CHANGE2_AMT*COST_PRICE,2)+round(CHANGE3_AMT*COST_PRICE,2)+round(CHANGE4_AMT*COST_PRICE,2)+round(CHANGE5_AMT*COST_PRICE,2),2) as BAL_CST from ( '+
           'select '+
           'j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO,'+
           'max(j.NEW_INPRICE) as NEW_INPRICE,max(j.NEW_OUTPRICE) as NEW_OUTPRICE,'+
@@ -846,7 +830,22 @@ begin
           'sum(j.CHANGE2_AMT) as CHANGE2_AMT,sum(j.CHANGE2_MNY) as CHANGE2_MNY,sum(j.CHANGE2_RTL) as CHANGE2_RTL,'+
           'sum(j.CHANGE3_AMT) as CHANGE3_AMT,sum(j.CHANGE3_MNY) as CHANGE3_MNY,sum(j.CHANGE3_RTL) as CHANGE3_RTL,'+
           'sum(j.CHANGE4_AMT) as CHANGE4_AMT,sum(j.CHANGE4_MNY) as CHANGE4_MNY,sum(j.CHANGE4_RTL) as CHANGE4_RTL,'+
-          'sum(j.CHANGE5_AMT) as CHANGE5_AMT,sum(j.CHANGE5_MNY) as CHANGE5_MNY,sum(j.CHANGE5_RTL) as CHANGE5_RTL,max(isnull(c.COST_PRICE,0)) as COST_PRICE '+
+          'sum(j.CHANGE5_AMT) as CHANGE5_AMT,sum(j.CHANGE5_MNY) as CHANGE5_MNY,sum(j.CHANGE5_RTL) as CHANGE5_RTL,max(isnull(c.COST_PRICE,0)) as COST_PRICE,'+
+          'sum(round(j.SALE_AMT*isnull(c.COST_PRICE,0),2)) as SALE_CST,'+
+          'sum(j.SALE_MNY)-sum(round(j.SALE_AMT*isnull(c.COST_PRICE,0),2)) as SALE_PRF,'+
+          'sum(round(j.SALRT_AMT*isnull(c.COST_PRICE,0),2)) as SALRT_CST,'+
+          'sum(round(j.DBIN_AMT*isnull(c.COST_PRICE,0),2)) as DBIN_CST,'+
+          'sum(round(j.DBOUT_AMT*isnull(c.COST_PRICE,0),2)) as DBOUT_CST,'+
+          'sum(round(j.CHANGE1_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE1_CST,'+
+          'sum(round(j.CHANGE2_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE2_CST,'+
+          'sum(round(j.CHANGE3_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE3_CST,'+
+          'sum(round(j.CHANGE4_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE4_CST,'+
+          'sum(round(j.CHANGE5_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE5_CST,'+
+          'sum(j.ORG_AMT+j.STOCK_AMT-j.SALE_AMT+j.DBIN_AMT-j.DBOUT_AMT+j.CHANGE1_AMT+j.CHANGE2_AMT+j.CHANGE3_AMT+j.CHANGE4_AMT+j.CHANGE5_AMT) as BAL_AMT,'+
+          'sum(round((j.ORG_AMT+j.STOCK_AMT-j.SALE_AMT+j.DBIN_AMT-j.DBOUT_AMT+j.CHANGE1_AMT+j.CHANGE2_AMT+j.CHANGE3_AMT+j.CHANGE4_AMT+j.CHANGE5_AMT)*j.NEW_INPRICE,2)) as BAL_MNY,'+
+          'sum(round((j.ORG_AMT+j.STOCK_AMT-j.SALE_AMT+j.DBIN_AMT-j.DBOUT_AMT+j.CHANGE1_AMT+j.CHANGE2_AMT+j.CHANGE3_AMT+j.CHANGE4_AMT+j.CHANGE5_AMT)*j.NEW_OUTPRICE,2)) as BAL_RTL,'+
+          'sum(j.ORG_CST+j.STOCK_MNY-round(j.SALE_AMT*isnull(c.COST_PRICE,0),2)+round(j.DBIN_AMT*isnull(c.COST_PRICE,0),2)-round(j.DBOUT_AMT*isnull(c.COST_PRICE,0),2)+'+
+          'round(j.CHANGE1_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE2_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE3_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE4_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE5_AMT*isnull(c.COST_PRICE,0),2)) as BAL_CST '+
           'from('+
           'select '+
           '0 as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -878,7 +877,7 @@ begin
           '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
           'from '+tempTableName1+' A where A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i-1)+' '+
           ') j left outer join '+tempTableName2+' c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and j.BATCH_NO=c.BATCH_NO '+
-          'group by j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO ) jc ';
+          'group by j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO ';
         Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
 
       end;

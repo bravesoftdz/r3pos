@@ -39,6 +39,7 @@ type
     procedure RzBmpButton5Click(Sender: TObject);
     procedure RzGroup3Items0Click(Sender: TObject);
     procedure RzBmpButton9Click(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     FHookLocked: boolean;
     procedure SetHookLocked(const Value: boolean);
@@ -351,6 +352,16 @@ begin
            Exit;
          end;
     end;
+end;
+
+procedure TfrmShopDesk.FormActivate(Sender: TObject);
+var
+  Action:TAction;
+begin
+  inherited;
+  Action := FindAction('actfrmPosMain');
+  if Action=nil then Exit;
+  RzBmpButton8.Visible := Action.Enabled;
 end;
 
 end.

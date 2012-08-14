@@ -100,6 +100,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                     Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                    ReadOnly = True
                     RowHeight = 23
                     SumList.Active = True
                     TabOrder = 0
@@ -144,7 +145,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         EditButtons = <>
                         FieldName = 'GODS_CODE'
                         Footers = <>
-                        ReadOnly = True
                         Title.Caption = #36135#21495
                         Width = 60
                       end
@@ -153,7 +153,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'GODS_NAME'
                         Footer.ValueType = fvtCount
                         Footers = <>
-                        ReadOnly = True
                         Title.Caption = #21830#21697#21517#31216
                         Width = 122
                       end
@@ -168,7 +167,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         EditButtons = <>
                         FieldName = 'UNIT_ID'
                         Footers = <>
-                        ReadOnly = True
                         Title.Caption = #21333#20301
                         Width = 26
                       end
@@ -188,7 +186,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footer.DisplayFormat = '#0.###'
                         Footer.ValueType = fvtSum
                         Footers = <>
-                        ReadOnly = True
                         Title.Caption = #24211#23384#37327
                         Width = 60
                       end
@@ -774,6 +771,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                  ReadOnly = True
                   RowHeight = 23
                   SumList.Active = True
                   TabOrder = 1
@@ -818,7 +816,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #36135#21495
                       Width = 60
                     end
@@ -827,7 +824,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #21830#21697#21517#31216
                       Width = 122
                     end
@@ -842,7 +838,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       EditButtons = <>
                       FieldName = 'UNIT_ID'
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #21333#20301
                       Width = 26
                     end
@@ -855,7 +850,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #24211#23384#37327
                       Width = 58
                     end
@@ -1428,6 +1422,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                  ReadOnly = True
                   RowHeight = 23
                   SumList.Active = True
                   TabOrder = 1
@@ -1472,7 +1467,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #36135#21495
                       Width = 60
                     end
@@ -1481,7 +1475,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #21830#21697#21517#31216
                       Width = 122
                     end
@@ -1496,7 +1489,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       EditButtons = <>
                       FieldName = 'UNIT_ID'
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #21333#20301
                       Width = 26
                     end
@@ -1509,7 +1501,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      ReadOnly = True
                       Title.Caption = #24211#23384#37327
                       Width = 58
                     end

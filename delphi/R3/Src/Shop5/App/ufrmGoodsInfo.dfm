@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 444
-  Top = 199
+  Left = 350
+  Top = 151
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 429
@@ -817,7 +817,21 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 FieldName = 'BARCODE'
                 Footers = <>
                 Title.Caption = #26465#24418#30721
-                Width = 368
+                Width = 110
+              end
+              item
+                EditButtons = <>
+                FieldName = 'PROPERTY_01'
+                Footers = <>
+                Title.Caption = #23610#30721
+                Width = 40
+              end
+              item
+                EditButtons = <>
+                FieldName = 'PROPERTY_02'
+                Footers = <>
+                Title.Caption = #39068#33394
+                Width = 40
               end>
           end
           object fndUNIT_ID: TzrComboBoxList

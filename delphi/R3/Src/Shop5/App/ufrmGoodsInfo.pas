@@ -232,6 +232,8 @@ type
 
     procedure UpdateToGlobal(AObj:TRecord_); //更新Global
     procedure SetInputMode;  //设置默认聚焦;
+    procedure AddMenuItem;
+    procedure AutoCreateBarcodeClick(Sender:TObject);
   public
      //SEQNO控制号
      RowID:integer;
@@ -273,7 +275,7 @@ implementation
 uses
   DBGrids,uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,
   uShopGlobal,ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
-  ufrmSupplierInfo,uGodsFactory,ufrmSizeGroupInfo,ufrmColorGroupInfo;
+  ufrmSupplierInfo,uGodsFactory,ufrmSizeGroupInfo,ufrmColorGroupInfo, Math;
 
 {$R *.dfm}
 
@@ -364,6 +366,7 @@ end;
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
 var
   SetCol: TColumnEh;
+  rs:TZQuery;
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
@@ -406,6 +409,26 @@ begin
     fndUNIT_ID.DropWidth:=SetCol.Width+17;
   //输入模式
   InputMode:=StrtoIntDef(ShopGlobal.GetParameter('INPUT_MODE'),0);
+
+  rs := ShopGlobal.GetZQueryFromName('PUB_COLOR_INFO');
+  SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_02');
+  rs.First;
+  while not rs.Eof do
+  begin
+    SetCol.KeyList.Add(rs.FieldbyName('COLOR_ID').AsString);
+    SetCol.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
+    rs.Next;
+  end;
+
+  rs := ShopGlobal.GetZQueryFromName('PUB_SIZE_INFO');
+  SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_01');
+  rs.First;
+  while not rs.Eof do
+  begin
+    SetCol.KeyList.Add(rs.FieldbyName('SIZE_ID').AsString);
+    SetCol.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
+    rs.Next;
+  end;
 end;
 
 procedure TfrmGoodsInfo.FormDestroy(Sender: TObject);
@@ -915,7 +938,7 @@ begin
     if (UnitBarCode<>Trim(edtBARCODE1.Text)) or(SmallBarCode<>Trim(edtBARCODE2.Text)) or (BigBarCode<>Trim(edtBARCODE3.Text)) then
       Result:=True;
   end;
-  
+
   if not Result then
     result:=(cdsGoods.UpdateStatus <> usUnmodified);
 
@@ -1535,8 +1558,8 @@ begin
         ExtBarCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
         ExtBarCode.FieldByName('UNIT_ID').AsString:=EditQry.FieldByName('UNIT_ID').AsString;
         ExtBarCode.FieldByName('BARCODE').AsString:=EditQry.FieldByName('BARCODE').AsString;
-        ExtBarCode.FieldByName('PROPERTY_01').AsString:='#';
-        ExtBarCode.FieldByName('PROPERTY_02').AsString:='#';
+        ExtBarCode.FieldByName('PROPERTY_01').AsString:=EditQry.FieldByName('PROPERTY_01').AsString;
+        ExtBarCode.FieldByName('PROPERTY_02').AsString:=EditQry.FieldByName('PROPERTY_02').AsString;
         ExtBarCode.FieldByName('BARCODE_TYPE').AsString:='3';
         ExtBarCode.FieldByName('BATCH_NO').AsString:='#';
         ExtBarCode.Post;
@@ -2332,6 +2355,7 @@ begin
     GB_Big.Top:=116;
     edtSORT_ID7.DataSet:=Global.GetZQueryFromName('PUB_COLOR_GROUP');    //颜色
     edtSORT_ID8.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');     //尺码
+    AddMenuItem;
   end;
 end;
                       
@@ -3191,6 +3215,7 @@ end;
 procedure TfrmGoodsInfo.N1Click(Sender: TObject);
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if ExtBarCode.Active then
     ExtBarCode.Delete;
 end;
@@ -3292,6 +3317,57 @@ begin
       end;
     end;
     if abs(r)>999999999 then Raise Exception.Create('  输入的数值过大，无效...  ');
+  end;
+end;
+
+procedure TfrmGoodsInfo.AddMenuItem;
+begin
+  ExtPm.Items.Add(NewItem('生成条码',0,False,True,AutoCreateBarcodeClick,0,'AutoCreateBarcode'));
+end;
+
+procedure TfrmGoodsInfo.AutoCreateBarcodeClick(Sender: TObject);
+var Cs,Ss:TZQuery;
+    CreateBarcode:String;
+begin
+  if dbState = dsBrowse then Exit;
+  if edtSORT_ID7.AsString = '' then Exit;
+  if edtSORT_ID8.AsString = '' then Exit;
+  Cs := ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
+  Ss := ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
+  if dbState = dsEdit then
+     CreateBarcode := AObj.FieldByName('GODS_CODE').AsString
+  else
+     CreateBarcode := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+  try                                        
+    Cs.Filtered := False;
+    Cs.Filter := 'SORT_ID='''+edtSORT_ID7.AsString+'''';
+    Cs.Filtered := True;
+    Ss.Filtered := False;
+    Ss.Filter := 'SORT_ID='''+edtSORT_ID8.AsString+'''';
+    Ss.Filtered := True;
+    Cs.First;
+    while not Cs.Eof do
+    begin
+      Ss.First;
+      while not  Ss.Eof do
+      begin
+        if not ExtBarCode.Locate('PROPERTY_01,PROPERTY_02',VarArrayOf([Ss.FieldByName('SIZE_ID').AsString,Cs.FieldByName('COLOR_ID').AsString]),[]) then
+        begin
+          InitRecord;
+          ExtBarCode.Edit;
+          ExtBarCode.FieldByName('UNIT_ID').AsString:=edtCALC_UNITS.AsString;
+          ExtBarCode.FieldByName('BARCODE').AsString:=GetBarCode(CreateBarcode,Ss.FieldByName('BARCODE_FLAG').AsString,Cs.FieldByName('BARCODE_FLAG').AsString);
+          ExtBarCode.FieldByName('PROPERTY_01').AsString:=Ss.FieldByName('SIZE_ID').AsString;
+          ExtBarCode.FieldByName('PROPERTY_02').AsString:=Cs.FieldByName('COLOR_ID').AsString;
+          ExtBarCode.Post;
+        end;
+        Ss.Next;
+      end;
+      Cs.Next;
+    end;
+  finally
+    Cs.Filtered := False;
+    Ss.Filtered := False;
   end;
 end;
 

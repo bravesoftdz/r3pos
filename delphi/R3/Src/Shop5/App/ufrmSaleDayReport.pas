@@ -401,7 +401,12 @@ begin
                               'DBGridEh4.SALE_TTL','DBGridEh4.SALE_TAX','DBGridEh4.SALE_MNY','DBGridEh4.SALE_CST','DBGridEh4.SALE_ALLPRF','DBGridEh4.SALE_PRF',
                               'DBGridEh5.SALE_TTL','DBGridEh5.SALE_TAX','DBGridEh5.SALE_MNY','DBGridEh5.SALE_CST','DBGridEh5.SALE_ALLPRF','DBGridEh5.SALE_PRF',
                               'DBGridEh6.AMONEY','DBGridEh6.NOTAX_MONEY','DBGridEh6.TAX_MONEY','DBGridEh6.AGIO_MONEY','DBGridEh7.COST_MONEY','DBGridEh6.PROFIT_MONEY','DBGridEh6.AVG_PROFIT']);
+                                        
+  //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
+  if ShopGlobal.GetVersionFlag=1 then
+    CreateGridColForFIG(DBGridEh6,7);
 end;
+
 
 function TfrmSaleDayReport.GetDeptSQL(chk: boolean): string;
 var

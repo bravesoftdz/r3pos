@@ -314,6 +314,9 @@ begin
                               'DBGridEh3.STOCK_TTL','DBGridEh3.STOCK_TAX','DBGridEh3.STOCK_MNY','DBGridEh3.STOCK_RTL','DBGridEh3.STOCK_AGO','DBGridEh3.AVG_AGIO',
                               'DBGridEh4.STOCK_TTL','DBGridEh4.STOCK_TAX','DBGridEh4.STOCK_MNY','DBGridEh4.STOCK_RTL','DBGridEh4.STOCK_AGO','DBGridEh4.AVG_AGIO',
                               'DBGridEh5.CALC_MONEY','DBGridEh5.TAX_MONEY','DBGridEh5.NOTAX_MONEY','DBGridEh5.RTL_MONEY','DBGridEh5.AGIO_MONEY']);
+  //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
+  if ShopGlobal.GetVersionFlag=1 then
+    CreateGridColForFIG(DBGridEh5,7);
 end;
 
 function TfrmStockDayReport.GetGroupSQL(chk:boolean=true): string;

@@ -369,6 +369,10 @@ begin
                               'DBGridEh4.INDE_TTL','DBGridEh4.INDE_TAX','DBGridEh4.INDE_MNY',
                               'DBGridEh5.INDE_TTL','DBGridEh5.INDE_TAX','DBGridEh5.INDE_MNY',
                               'DBGridEh6.AMONEY','DBGridEh6.NOTAX_MONEY','DBGridEh6.TAX_MONEY','DBGridEh6.AGIO_MONEY','DBGridEh7.COST_MONEY','DBGridEh6.PROFIT_MONEY','DBGridEh6.AVG_PROFIT']);
+
+  //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
+  if ShopGlobal.GetVersionFlag=1 then
+    CreateGridColForFIG(DBGridEh6,7);
 end;
 
 function TfrmSalIndentDayReport.GetDeptSQL(chk: boolean): string;

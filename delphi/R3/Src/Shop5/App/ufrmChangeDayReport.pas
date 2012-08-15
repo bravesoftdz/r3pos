@@ -328,6 +328,10 @@ begin
                               'DBGridEh3.AMONEY','DBGridEh3.COST_MONEY','DBGridEh3.PROFIT_MONEY',
                               'DBGridEh4.AMONEY','DBGridEh4.COST_MONEY','DBGridEh4.PROFIT_MONEY',
                               'DBGridEh5.AMONEY','DBGridEh5.COST_PRICE','DBGridEh5.COST_MONEY','DBGridEh5.PROFIT_MONEY']);
+
+  //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
+  if ShopGlobal.GetVersionFlag=1 then
+    CreateGridColForFIG(DBGridEh5,8);                              
 end;
 
 function TfrmChangeDayReport.GetGroupSQL(chk:boolean=true): string;

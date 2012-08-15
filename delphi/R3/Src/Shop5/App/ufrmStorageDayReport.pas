@@ -234,6 +234,9 @@ begin
                               'DBGridEh2.BAL_CST','DBGridEh2.BAL_RTL',
                               'DBGridEh3.BAL_CST','DBGridEh3.BAL_RTL',
                               'DBGridEh4.BAL_CST','DBGridEh4.BAL_RTL']);
+  //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
+  if ShopGlobal.GetVersionFlag=1 then
+    CreateGridColForFIG(DBGridEh4,4);                              
 end;
 
 function TfrmStorageDayReport.GetGroupSQL(chk:boolean=true): string;

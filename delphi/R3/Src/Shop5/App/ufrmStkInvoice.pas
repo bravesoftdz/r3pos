@@ -55,6 +55,7 @@ type
     DBGridEh1: TDBGridEh;
     DataSource1: TDataSource;
     edtINVH_ID: TcxTextEdit;
+    Label10: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -368,6 +369,7 @@ end;
 procedure TfrmStkInvoice.SetInvoiceMny(const Value: Real);
 begin
   FInvoiceMny := Value;
+  Label10.Caption := FnNumber.SmallTOBig(Value);
 end;
 
 procedure TfrmStkInvoice.btnCloseClick(Sender: TObject);

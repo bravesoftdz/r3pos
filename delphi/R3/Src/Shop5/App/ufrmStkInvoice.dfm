@@ -800,12 +800,25 @@ inherited frmStkInvoice: TfrmStkInvoice
             Color = clWhite
             TabOrder = 3
             Visible = False
+            object Label10: TLabel
+              Left = 170
+              Top = 13
+              Width = 8
+              Height = 14
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -14
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
             object edtINVOICE_MNY: TcxTextEdit
-              Left = 167
+              Left = 39
               Top = 10
               Width = 133
               Height = 20
               TabOrder = 0
+              Visible = False
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object RzPanel9: TRzPanel

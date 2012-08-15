@@ -93,6 +93,7 @@ begin
 end;
 
 procedure TfrmColorInfo.btnAppendClick(Sender: TObject);
+var Barcode:String;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002483',2) then Raise Exception.Create('你没有新增颜色的权限,请和管理员联系.');
@@ -113,6 +114,13 @@ begin
         raise Exception.Create('颜色名称不能为空！');
       if cdsCOLOR_INFO.FieldByName('COLOR_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
+      if cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString = '' then
+      begin
+         Barcode := GetBarcodeFlag;
+         cdsCOLOR_INFO.Edit;
+         cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString := Barcode;
+         cdsCOLOR_INFO.Post;
+      end;
       cdsCOLOR_INFO.Next;
     end;
   finally
@@ -159,6 +167,7 @@ begin
 end;
 
 procedure TfrmColorInfo.btnSaveClick(Sender: TObject);
+var Barcode:String;
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
@@ -177,6 +186,13 @@ begin
         raise Exception.Create('颜色名称不能为空！');
       if cdsCOLOR_INFO.FieldByName('COLOR_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
+      if cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString = '' then
+      begin
+         Barcode := GetBarcodeFlag;
+         cdsCOLOR_INFO.Edit;
+         cdsCOLOR_INFO.FieldByName('BARCODE_FLAG').AsString := Barcode;
+         cdsCOLOR_INFO.Post;
+      end;
       cdsCOLOR_INFO.Next;
     end;
   finally

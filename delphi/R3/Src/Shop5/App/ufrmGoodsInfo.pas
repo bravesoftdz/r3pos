@@ -628,7 +628,7 @@ begin
   if trim(AObj.FieldByName('RELATION_ID').AsString)='0' then
   begin
     WriteBarCode;     //写条形码[计量、大小单位]
-    if (ShopGlobal.GetVersionFlag = 1) and (ExtBarCode.RecordCount > 0) then AutoCreateBarcodeClick(nil);
+    CheckExtBarcode;
     WriteExtBarCode;  //写附加条码
   end;
 
@@ -3408,7 +3408,7 @@ begin
     if r>0 then ExtBarCode.RecNo := r;
     if not Controls then  ExtBarCode.EnableControls;
   end;
-  AutoCreateBarcodeClick(nil);
+  if (ShopGlobal.GetVersionFlag=1) and ExtBarCode.IsEmpty then AutoCreateBarcodeClick(nil);
 end;
 
 end.

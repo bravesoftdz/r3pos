@@ -235,6 +235,7 @@ type
     procedure AddMenuItem;
     procedure AutoCreateBarcodeClick(Sender:TObject);
     procedure ClearBarcodeClick(Sender:TObject);
+    procedure CheckExtBarcode;
   public
      //SEQNO控制号
      RowID:integer;
@@ -467,7 +468,7 @@ begin
       AObj.ReadFromDataSet(cdsGoods);
 
       //附加条码SEQNO
-      if ExtBarCode.Active then
+      {if ExtBarCode.Active then
       begin
         ExtBarCode.First;
         while not ExtBarCode.Eof do
@@ -478,7 +479,7 @@ begin
           ExtBarCode.Next;
         end;
         RowID:=ExtBarCode.RecordCount;
-      end;
+      end;}
       //根据单位:数据集DataSet
       if (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0') or (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='') then //自主经营
         UpdateUNITSData 
@@ -627,6 +628,7 @@ begin
   if trim(AObj.FieldByName('RELATION_ID').AsString)='0' then
   begin
     WriteBarCode;     //写条形码[计量、大小单位]
+    if (ShopGlobal.GetVersionFlag = 1) and (ExtBarCode.RecordCount > 0) then AutoCreateBarcodeClick(nil);
     WriteExtBarCode;  //写附加条码
   end;
 
@@ -3052,7 +3054,7 @@ procedure TfrmGoodsInfo.ExtBarCodeGridDrawColumnCell(Sender: TObject;
 var
   ARect:TRect;
 begin
-  if Column.FieldName = 'SEQNO' then
+  if Column.FieldName = 'SEQ_NO' then
   begin
     ARect := Rect;
     ExtBarCodeGrid.canvas.FillRect(ARect);
@@ -3382,6 +3384,31 @@ begin
     Dec(RowID);
     ExtBarCode.Delete;
   end;
+end;
+
+procedure TfrmGoodsInfo.CheckExtBarcode;
+var
+  Controls:boolean;
+  r:integer;
+begin
+  if ExtBarCode.State in [dsEdit,dsInsert] then ExtBarCode.Post;
+  Controls := ExtBarCode.ControlsDisabled;
+  r := ExtBarCode.RecNo;
+  ExtBarCode.DisableControls;
+  try
+  ExtBarCode.First;
+  while not ExtBarCode.Eof do
+    begin
+      if (ExtBarCode.FieldByName('BARCODE').AsString = '') then
+         ExtBarCode.Delete
+      else
+         ExtBarCode.Next;
+    end;
+  finally
+    if r>0 then ExtBarCode.RecNo := r;
+    if not Controls then  ExtBarCode.EnableControls;
+  end;
+  AutoCreateBarcodeClick(nil);
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 350
-  Top = 151
+  Left = 691
+  Top = 147
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 429
@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
+      ActivePage = TabSheet4
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 3
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -790,12 +792,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
+            OnDrawColumnCell = ExtBarCodeGridDrawColumnCell
             OnKeyPress = ExtBarCodeGridKeyPress
             OnMouseDown = ExtBarCodeGridMouseDown
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'SEQNO'
+                FieldName = 'SEQ_NO'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #24207#21495

@@ -174,7 +174,7 @@ begin
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
   edtINVOICE_MNY.Text := FormatFloat('#0.00',InvoiceMny);
-  Label10.Caption := FnNumber.SmallTOBig(InvoiceMny);
+  //Label10.Caption := FnNumber.SmallTOBig(InvoiceMny);
   AObj.FieldbyName('INVD_ID').asString := TSequence.NewId();
   AObj.FieldByName('INVOICE_STATUS').AsString := '1';
   AObj.FieldByName('EXPORT_STATUS').AsString := '1';
@@ -426,6 +426,7 @@ end;
 procedure TfrmSalInvoice.SetInvoiceMny(const Value: Real);
 begin
   FInvoiceMny := Value;
+  Label10.Caption := FnNumber.SmallTOBig(Value);
 end;
 
 procedure TfrmSalInvoice.btnCloseClick(Sender: TObject);

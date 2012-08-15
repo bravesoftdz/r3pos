@@ -98,6 +98,7 @@ type
     fndP4_STOR_AMT: TcxComboBox;
     Label38: TLabel;
     fndP4_RPTTYPE: TcxComboBox;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -130,6 +131,7 @@ type
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh4TitleClick(Column: TColumnEh);
+    procedure Button1Click(Sender: TObject);
   private
     IsOnDblClick: Boolean;
     BAL_Date: integer;  //查询库存日期[查询库存日期，查询当前天的下一天期初]
@@ -725,7 +727,7 @@ begin
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,'+SORT_ID+' as SORT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
-       ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID '+
+       ' A.PROPERTY_01,A.BATCH_NO,A.PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID '+
        ',AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
@@ -770,7 +772,7 @@ begin
       ' A.TENANT_ID '+
       ','+SORT_ID+' as SORT_ID '+
       ',A.GODS_ID '+
-      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
+      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,A.PROPERTY_01,A.BATCH_NO,A.PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
@@ -1158,6 +1160,12 @@ function TfrmStorageDayReport.GetDataRight: string;
 begin
   //主数据：STO_STORAGE、RCK_GOODS_DAYS
   result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+end;
+
+procedure TfrmStorageDayReport.Button1Click(Sender: TObject);
+begin
+  inherited;
+CreateGridColForFIG(DBGridEh4,4);
 end;
 
 end.

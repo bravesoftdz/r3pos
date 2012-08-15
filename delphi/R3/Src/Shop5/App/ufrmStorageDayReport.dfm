@@ -1466,6 +1466,15 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #20379#24212#21830#36827#38144#23384#32479#35745#34920)
                   TabOrder = 9
                 end
+                object Button1: TButton
+                  Left = 568
+                  Top = 32
+                  Width = 75
+                  Height = 25
+                  Caption = 'Button1'
+                  TabOrder = 12
+                  OnClick = Button1Click
+                end
               end
               object RzPanel15: TRzPanel
                 Left = 0

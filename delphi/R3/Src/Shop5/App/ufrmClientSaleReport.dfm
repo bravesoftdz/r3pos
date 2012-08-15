@@ -1,6 +1,5 @@
 inherited frmClientSaleReport: TfrmClientSaleReport
   Left = 196
-  Top = 105
   Width = 1079
   Height = 589
   Caption = #23458#25143#38144#21806#25253#34920
@@ -15,10 +14,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       inherited RzPage: TRzPageControl
         Width = 856
         Height = 509
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite

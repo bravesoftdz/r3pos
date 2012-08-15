@@ -331,7 +331,7 @@ begin
 
   //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
   if ShopGlobal.GetVersionFlag=1 then
-    CreateGridColForFIG(DBGridEh5,7);                              
+    CreateGridColForFIG(DBGridEh5,8);                              
 end;
 
 function TfrmChangeDayReport.GetGroupSQL(chk:boolean=true): string;

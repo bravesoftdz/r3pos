@@ -102,6 +102,9 @@ begin
 
   //2011.09.22 Add 千分位；
   SetGridColumnDisplayFormat(['DBGridEh1.AMONEY']);
+  //2012.08.15创建尺码、颜色
+  if ShopGlobal.GetVersionFlag=1 then
+    CreateGridColForFIG(DBGridEh1,3);  
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;

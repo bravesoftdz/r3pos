@@ -1,5 +1,5 @@
 inherited frmStorageDayReport: TfrmStorageDayReport
-  Top = 106
+  Left = 191
   Width = 1083
   Height = 622
   Caption = #21830#21697#24211#23384#25253#34920

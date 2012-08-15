@@ -177,6 +177,8 @@ type
     procedure SaveGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
     //返回当前企业的经营商品所属企业:
     function  GetGodsOwnerTenIds(CxFieldName: string; vType: integer=0): string;
+    //创建DBGrid的Col列
+    function  CreateGridColForFIG(var SetGrid:TDBGridEh;const BegIdx:integer):Boolean; //服装版 创建颜色、尺码
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -2136,6 +2138,58 @@ begin
     result:=' '+CxFieldName+' in('+TenIds+')';
   finally
     Rs.Free;
+  end;
+end;
+
+function TframeBaseReport.CreateGridColForFIG(var SetGrid: TDBGridEh;const BegIdx:integer): Boolean;
+var
+  RsList:TZQuery;
+  SetCol:TColumnEh;
+begin
+  Result:=False;
+  SetGrid.Columns.BeginUpdate;
+  try
+    //创建尺码列
+    SetCol := SetGrid.Columns.Add;
+    SetCol.FieldName:='PROPERTY_01';
+    SetCol.Title.Caption:='尺码';
+    SetCol.Width:=60;
+    SetCol.Index:=BegIdx;
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    RsList:=Global.GetZQueryFromName('PUB_SIZE_INFO');
+    if (RsList<>nil)and(not RsList.IsEmpty) then
+    begin
+      RsList.First;
+      while not RsList.Eof do
+      begin
+        SetCol.KeyList.Add(trim(RsList.FieldByName('SIZE_ID').AsString));
+        SetCol.PickList.Add(trim(RsList.FieldByName('SIZE_NAME').AsString));
+        RsList.Next;
+      end;
+    end;
+ 
+    //创建颜色列
+    SetCol := SetGrid.Columns.Add;
+    SetCol.FieldName:='PROPERTY_02';
+    SetCol.Title.Caption:='颜色';
+    SetCol.Width := 60;
+    SetCol.Index := BegIdx+1;
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    RsList:=Global.GetZQueryFromName('PUB_COLOR_INFO');
+    if (RsList<>nil)and(not RsList.IsEmpty) then
+    begin
+      RsList.First;
+      while not RsList.Eof do
+      begin
+        SetCol.KeyList.Add(trim(RsList.FieldByName('COLOR_ID').AsString));
+        SetCol.PickList.Add(trim(RsList.FieldByName('COLOR_NAME').AsString));
+        RsList.Next;
+      end;                    
+    end;    
+  finally
+    SetGrid.Columns.EndUpdate;
   end;
 end;
 

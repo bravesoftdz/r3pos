@@ -5,7 +5,6 @@ inherited frmShopDesk: TfrmShopDesk
   ClientHeight = 520
   ClientWidth = 942
   OldCreateOrder = True
-  OnActivate = FormActivate
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12

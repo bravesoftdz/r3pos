@@ -7,10 +7,10 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 942
-    Height = 525
+    Width = 934
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 932
+      Width = 924
       Height = 137
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -511,8 +511,8 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 432
-      Width = 932
+      Top = 421
+      Width = 924
       Height = 51
       TabOrder = 2
       object Label8: TLabel
@@ -697,8 +697,8 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 175
-      Width = 932
-      Height = 227
+      Width = 924
+      Height = 216
       TabOrder = 3
       Columns = <
         item
@@ -826,15 +826,15 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 142
-      Width = 932
+      Width = 924
     end
     inherited stbHint: TRzPanel
-      Top = 483
-      Width = 932
+      Top = 472
+      Width = 924
     end
     inherited rzHelp: TRzPanel
-      Top = 507
-      Width = 932
+      Top = 496
+      Width = 924
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox
@@ -842,15 +842,15 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
     object pnlFEE: TPanel
       Left = 5
-      Top = 402
-      Width = 932
+      Top = 391
+      Width = 924
       Height = 30
       Align = alBottom
       BevelOuter = bvNone
       Color = clWindowFrame
       TabOrder = 8
       DesignSize = (
-        932
+        924
         30)
       object Label20: TLabel
         Left = 28

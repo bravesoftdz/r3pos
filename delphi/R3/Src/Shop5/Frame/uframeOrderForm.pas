@@ -1186,7 +1186,7 @@ begin
     Raise Exception.Create('AMOUNT×Ö¶ÎÃ»ÕÒµ½');
   if b then
      begin
-       if edtProperty.Locate('SEQNO;PROPERTY_01;PROPERTY_02',VarArrayOf([edtTable.FieldbyName('SEQNO').AsInteger,PROPERTY_01,PROPERTY_01]),[]) then
+       if edtProperty.Locate('SEQNO;PROPERTY_01;PROPERTY_02',VarArrayOf([edtTable.FieldbyName('SEQNO').AsInteger,PROPERTY_01,PROPERTY_02]),[]) then
          begin
            edtProperty.Edit;
            edtTable.Edit;
@@ -1200,7 +1200,7 @@ begin
            edtTable.Edit;
            edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat + amt
          end;
-       edtProperty.FieldByName('SEQNO').AsString := edtTable.FieldbyName('SEQNO').AsString;
+       edtProperty.FieldByName('SEQNO').AsInteger := edtTable.FieldbyName('SEQNO').AsInteger;
        edtProperty.FieldByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
        edtProperty.FieldByName('BOM_ID').AsString := edtTable.FieldbyName('BOM_ID').AsString;
        edtProperty.FieldByName('BATCH_NO').AsString := edtTable.FieldbyName('BATCH_NO').AsString;
@@ -3799,7 +3799,7 @@ var s:string;
 begin
   s := uppercase(FieldName);
   result := (s='AMOUNT') or (s='CALC_AMOUNT') or (s='AMONEY') or (s='CALC_MONEY') or (s='AGIO_MONEY') or
-            (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY') or (s='SHIP_AMOUNT');
+            (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY') or (s='SHIP_AMOUNT') or (s='FNSH_AMOUNT');
 end;
 
 function TframeOrderForm.GetbasInfo: TDataSet;

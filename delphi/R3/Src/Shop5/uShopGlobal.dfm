@@ -1131,9 +1131,9 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select A.CODE_ID as COLOR_ID,A.SORT_ID,A.SEQ_NO,B.COLOR_NAME,B.C' +
-        'OLOR_SPELL from PUB_CODE_RELATION A left join PUB_COLOR_INFO B o' +
-        'n A.TENANT_ID=B.TENANT_ID and A.CODE_ID=B.COLOR_ID where A.TENAN' +
-        'T_ID=:TENANT_ID and A.SORT_TYPE=7'
+        'OLOR_SPELL,BARCODE_FLAG from PUB_CODE_RELATION A left join PUB_C' +
+        'OLOR_INFO B on A.TENANT_ID=B.TENANT_ID and A.CODE_ID=B.COLOR_ID ' +
+        'where A.TENANT_ID=:TENANT_ID and A.SORT_TYPE=7'
       'order by A.SEQ_NO')
     Params = <
       item
@@ -1156,9 +1156,9 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select A.CODE_ID as SIZE_ID,A.SORT_ID,A.SEQ_NO,B.SIZE_NAME,B.SIZ' +
-        'E_SPELL from PUB_CODE_RELATION A left join PUB_SIZE_INFO B on A.' +
-        'TENANT_ID=B.TENANT_ID and A.CODE_ID=B.SIZE_ID where A.TENANT_ID=' +
-        ':TENANT_ID and A.SORT_TYPE=8'
+        'E_SPELL,BARCODE_FLAG from PUB_CODE_RELATION A left join PUB_SIZE' +
+        '_INFO B on A.TENANT_ID=B.TENANT_ID and A.CODE_ID=B.SIZE_ID where' +
+        ' A.TENANT_ID=:TENANT_ID and A.SORT_TYPE=8'
       'order by A.SEQ_NO')
     Params = <
       item

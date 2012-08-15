@@ -515,7 +515,9 @@ procedure TfrmGoodsInfo.UpdateToGlobal(AObj: TRecord_);
 var
   Temp:TZQuery;
   CurObj: TRecord_;
+  Controls:boolean;
   IsExist,IsRun: Boolean; GodsID: string;
+  r:integer;
 begin
   Temp := Global.GetZQueryFromName('PUB_GOODSINFO');
   Temp.Filtered :=false;
@@ -551,6 +553,9 @@ begin
     CurObj.Free;
   end;
   //刷新附加条形码
+  Controls := ExtBarCode.ControlsDisabled;
+  r := ExtBarCode.RecNo;
+  ExtBarCode.DisableControls;
   try
     IsRun:=true;
     CurObj:=TRecord_.Create;
@@ -561,7 +566,7 @@ begin
     GodsID:=trim(AObj.FieldbyName('GODS_ID').AsString);
     while IsRun do
     begin
-      if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',3]),[]) then Temp.Delete
+      if Temp.Locate('GODS_ID;BARCODE_TYPE',VarArrayOf([GodsID,'3']),[]) then Temp.Delete
       else IsRun:=False;
     end;
     //循环添加:
@@ -576,6 +581,8 @@ begin
     end; 
   finally
     CurObj.Free;
+    if r>0 then ExtBarCode.RecNo := r;
+    if not Controls then  ExtBarCode.EnableControls;
   end; 
 end;
 
@@ -1520,9 +1527,16 @@ procedure TfrmGoodsInfo.WriteExtBarCode;
 var
   Str,Unit_ID: string;
   EditQry,Rs: TZQuery;
+  Controls:boolean;
+  r:integer;
 begin
   //不是自主经营则退出
   if cdsGoods.FieldByName('RELATION_ID').AsString<>'0' then Exit;
+  if ExtBarCode.State in [dsEdit,dsInsert] then ExtBarCode.Post;
+  Controls := ExtBarCode.ControlsDisabled;
+  r := ExtBarCode.RecNo;
+  ExtBarCode.DisableControls;
+  EditQry:=TZQuery.Create(nil);
   try
     //判断单位是否是商品的单位
     Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
@@ -1540,7 +1554,6 @@ begin
       ExtBarCode.Next;
     end;
 
-    EditQry:=TZQuery.Create(nil);
     EditQry.Data:=ExtBarCode.Data;
     ExtBarCode.First;
     while not ExtBarCode.Eof do
@@ -1571,6 +1584,8 @@ begin
     end;
   finally
     EditQry.Free;
+    if r>0 then ExtBarCode.RecNo := r;
+    if not Controls then  ExtBarCode.EnableControls;
   end;
 end;
 
@@ -3381,8 +3396,16 @@ begin
   ExtBarCode.First;
   while not ExtBarCode.Eof do
   begin
-    Dec(RowID);
-    ExtBarCode.Delete;
+    if (ExtBarCode.FieldbyName('PROPERTY_01').AsString<>'#')
+       or
+       (ExtBarCode.FieldbyName('PROPERTY_02').AsString<>'#')
+    then
+       begin
+         Dec(RowID);
+         ExtBarCode.Delete;
+       end
+    else
+       ExtBarCode.Next;
   end;
 end;
 

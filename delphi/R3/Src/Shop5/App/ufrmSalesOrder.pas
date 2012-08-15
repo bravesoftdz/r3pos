@@ -1351,7 +1351,7 @@ var
   i:integer;
   r:boolean;
 begin
-  if AObj.FieldbyName('SALES_TYPE').AsInteger=4 then
+  if AObj.FieldbyName('SALES_TYPE').AsInteger<>4 then
      begin
        inherited;
        Exit;

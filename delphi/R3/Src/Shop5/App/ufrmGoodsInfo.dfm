@@ -809,7 +809,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 FieldName = 'UNIT_ID'
                 Footers = <>
                 Title.Caption = #21333#20301
-                Width = 63
+                Width = 35
                 Control = fndUNIT_ID
                 OnBeforeShowControl = ExtBarCodeGridColumns1BeforeShowControl
               end
@@ -818,7 +818,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 FieldName = 'BARCODE'
                 Footers = <>
                 Title.Caption = #26465#24418#30721
-                Width = 110
+                Width = 300
               end
               item
                 EditButtons = <>
@@ -832,7 +832,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 FieldName = 'PROPERTY_02'
                 Footers = <>
                 Title.Caption = #39068#33394
-                Width = 40
+                Width = 50
               end>
           end
           object fndUNIT_ID: TzrComboBoxList

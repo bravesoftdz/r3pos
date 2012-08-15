@@ -2153,7 +2153,7 @@ begin
     SetCol := SetGrid.Columns.Add;
     SetCol.FieldName:='PROPERTY_01';
     SetCol.Title.Caption:='³ßÂë';
-    SetCol.Width:=60;
+    SetCol.Width:=32;
     SetCol.Index:=BegIdx;
     SetCol.KeyList.Clear;
     SetCol.PickList.Clear;
@@ -2173,7 +2173,7 @@ begin
     SetCol := SetGrid.Columns.Add;
     SetCol.FieldName:='PROPERTY_02';
     SetCol.Title.Caption:='ÑÕÉ«';
-    SetCol.Width := 60;
+    SetCol.Width := 36;
     SetCol.Index := BegIdx+1;
     SetCol.KeyList.Clear;
     SetCol.PickList.Clear;

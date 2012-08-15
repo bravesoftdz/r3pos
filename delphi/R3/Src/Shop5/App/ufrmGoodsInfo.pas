@@ -234,6 +234,7 @@ type
     procedure SetInputMode;  //设置默认聚焦;
     procedure AddMenuItem;
     procedure AutoCreateBarcodeClick(Sender:TObject);
+    procedure ClearBarcodeClick(Sender:TObject);
   public
      //SEQNO控制号
      RowID:integer;
@@ -3323,6 +3324,7 @@ end;
 procedure TfrmGoodsInfo.AddMenuItem;
 begin
   ExtPm.Items.Add(NewItem('生成条码',0,False,True,AutoCreateBarcodeClick,0,'AutoCreateBarcode'));
+  ExtPm.Items.Add(NewItem('批量清除',0,False,True,ClearBarcodeClick,0,'ClearBarcode'));
 end;
 
 procedure TfrmGoodsInfo.AutoCreateBarcodeClick(Sender: TObject);
@@ -3368,6 +3370,17 @@ begin
   finally
     Cs.Filtered := False;
     Ss.Filtered := False;
+  end;
+end;
+
+procedure TfrmGoodsInfo.ClearBarcodeClick(Sender: TObject);
+begin
+  if dbState = dsBrowse then Exit;
+  ExtBarCode.First;
+  while not ExtBarCode.Eof do
+  begin
+    Dec(RowID);
+    ExtBarCode.Delete;
   end;
 end;
 

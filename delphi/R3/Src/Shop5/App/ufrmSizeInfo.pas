@@ -93,6 +93,7 @@ begin
 end;
 
 procedure TfrmSizeInfo.btnAppendClick(Sender: TObject);
+var Barcode:String;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002490',2) then Raise Exception.Create('你没有新增尺码的权限,请和管理员联系.');
@@ -113,6 +114,13 @@ begin
         raise Exception.Create('尺码名称不能为空！');
       if cdsSIZE_INFO.FieldByName('SIZE_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
+      if cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString = '' then
+      begin
+         Barcode := GetBarcodeFlag;
+         cdsSIZE_INFO.Edit;
+         cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString := Barcode;
+         cdsSIZE_INFO.Post;
+      end;
       cdsSIZE_INFO.Next;
     end;
   finally
@@ -159,6 +167,7 @@ begin
 end;
 
 procedure TfrmSizeInfo.btnSaveClick(Sender: TObject);
+var Barcode:String;
 begin
   inherited;
   //if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
@@ -177,6 +186,13 @@ begin
         raise Exception.Create('尺码名称不能为空！');
       if cdsSIZE_INFO.FieldByName('SIZE_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
+      if cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString = '' then
+      begin
+         Barcode := GetBarcodeFlag;
+         cdsSIZE_INFO.Edit;
+         cdsSIZE_INFO.FieldByName('BARCODE_FLAG').AsString := Barcode;
+         cdsSIZE_INFO.Post;
+      end;
       cdsSIZE_INFO.Next;
     end;
   finally

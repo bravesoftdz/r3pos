@@ -437,6 +437,7 @@ end;
 procedure TfrmSalInvoice.btnOkClick(Sender: TObject);
 begin
   inherited;
+  
   SaveOrder;
   ModalResult := MROK;
 end;

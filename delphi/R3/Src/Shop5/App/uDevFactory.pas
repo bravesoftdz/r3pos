@@ -284,10 +284,10 @@ begin
   end;
 
   //2012.08.05Add设置端口速率
-  if FComHandle>0 then
+  if (FComHandle>0)and(DisplayComm>0)then 
   begin
     Com_Init(DisplayComm,DisplayBaudRate);  
-  end;  
+  end;
 end;
 
 class procedure TDevFactory.OpenCashBox;

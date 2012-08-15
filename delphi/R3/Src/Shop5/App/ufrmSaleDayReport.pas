@@ -404,7 +404,7 @@ begin
                                         
   //2012.08.15´´½¨³ßÂë¡¢ÑÕÉ«
   if ShopGlobal.GetVersionFlag=1 then
-    CreateGridColForFIG(DBGridEh6,7);
+    CreateGridColForFIG(DBGridEh6,6);
 end;
 
 

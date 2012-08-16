@@ -433,7 +433,7 @@ begin
         end;
     end;
   end;
-  if MessageBox(Handle,'是否立即打印发票?','友情提示',mb_yesno)=6 then SavePrint(AObj.FieldbyName('INVH_ID').AsString);
+  if (AObj.FieldByName('INVH_ID').AsString <> '') and (MessageBox(Handle,'是否立即打印发票?','友情提示',mb_yesno)=6) then SavePrint(AObj.FieldbyName('INVH_ID').AsString);
 end;
 
 procedure TfrmSalInvoiceList.ChangeButton;

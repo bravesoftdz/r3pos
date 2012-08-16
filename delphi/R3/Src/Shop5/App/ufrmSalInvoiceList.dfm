@@ -1,6 +1,6 @@
 inherited frmSalInvoiceList: TfrmSalInvoiceList
-  Left = 203
-  Top = 151
+  Left = 271
+  Top = 145
   Width = 908
   Height = 567
   Caption = #38144#39033#21457#31080#31649#29702

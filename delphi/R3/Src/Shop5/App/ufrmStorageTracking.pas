@@ -114,6 +114,15 @@ type
     actSetup: TAction;
     ToolButton8: TToolButton;
     MainMenu1: TMainMenu;
+    Lab_Count: TLabel;
+    Lab_Mny: TLabel;
+    Btn_Clear: TRzBitBtn;
+    Btn_DeleteLast: TRzBitBtn;
+    Btn_Commit: TRzBitBtn;
+    edtProperty: TZQuery;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    CdsCommitData: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -156,11 +165,25 @@ type
     procedure rzP2_TreeChange(Sender: TObject; Node: TTreeNode);
     procedure rzP3_TreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormShow(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
+    procedure Btn_ClearClick(Sender: TObject);
+    procedure
+    N1Click(Sender: TObject);
+    procedure Btn_DeleteLastClick(Sender: TObject);
+    procedure Btn_CommitClick(Sender: TObject);
+  private
+    FSumAmoney: Currency;
+    FSumAmount: Currency;
+    procedure SetSumAmoney(const Value: Currency);
+    procedure SetSumAmount(const Value: Currency);
   private
     Locked:boolean;
     IsEnd: boolean;
     MaxId:string;
     ColumnStr:String;
+    Flag:Integer;
+    procedure OpenDialogProperty;
+    procedure OpenDialogNumber;
     procedure LoadTree(Tree:TRzTreeView);
     procedure InitGrid;
     procedure PrintView;
@@ -186,6 +209,9 @@ type
 
     //2011.09.21 Add 金额的格式方式:
     procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
+    procedure InitPrice(GODS_ID,UNIT_ID:string);
+    property SumAmount:Currency read FSumAmount write SetSumAmount;
+    property SumAmoney:Currency read FSumAmoney write SetSumAmoney;
   public
     { Public declarations }
   end;
@@ -193,7 +219,8 @@ type
 
 implementation
 uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,uDsUtil,StrUtils,
-  ObjCommon,ufrmBasic, Math, ufrmCostCalc, ufrmOptionDefine;
+  ObjCommon,ufrmBasic, Math, ufrmCostCalc, ufrmOptionDefine, uframeDialogProperty, ufrmInputNumber,
+  ufrmDemandOrderList, ufrmDemandOrder, ufrmMain;
 {$R *.dfm}
 
 { TfrmStorageTrackingWarning }
@@ -395,7 +422,10 @@ begin
      begin
        FindColumn(Grid,'PROPERTY_02').Free;
      end;
-
+  CdsCommitData.Close;
+  edtProperty.Close;
+  CdsCommitData.CreateDataSet;
+  edtProperty.CreateDataSet;
   {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     edtSHOP_ID.Properties.ReadOnly := False;
@@ -895,7 +925,7 @@ begin
   ' '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
 
   StrSql :=
-  'select j1.TENANT_ID,j1.GODS_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,'+
+  'select j1.TENANT_ID,j1.GODS_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,''#'' as BATCH_NO,'+
   'sum(j1.AMOUNT) as AMOUNT,'+
   'sum(E1.AMOUNT) as ROAD_AMT,'+
   'sum(E.LOWER_AMOUNT) as LOWER_AMOUNT,'+
@@ -909,8 +939,8 @@ begin
   'group by j1.TENANT_ID,j1.GODS_ID';
 
   result :=
-  'select jc.TENANT_ID,jc.GODS_ID,F.GODS_CODE,isnull(c.BARCODE,f.BARCODE) as BARCODE,F.GODS_NAME,jc.PROPERTY_01,jc.PROPERTY_02,'+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+' as UNIT_ID,'+
-  'cast(jc.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as AMOUNT,'+
+  'select 0 as SEQNO,jc.TENANT_ID,jc.GODS_ID,F.GODS_CODE,isnull(c.BARCODE,f.BARCODE) as BARCODE,F.GODS_NAME,jc.PROPERTY_01,jc.PROPERTY_02,''#'' as BATCH_NO,'+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+' as UNIT_ID,'+
+  'cast(jc.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as STOCK_AMT,'+
   'cast(jc.ROAD_AMT as  decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) AS ROAD_AMT,'+
   'F.NEW_INPRICE*'+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as NEW_INPRICE,'+
   'cast(jc.LOWER_AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as LOWER_AMOUNT,'+
@@ -918,7 +948,7 @@ begin
   'cast(jc.NEAR_SALE_AMT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as NEAR_SALE_AMT,'+
   'cast(jc.DAY_SALE_AMT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as DAY_SALE_AMT,'+
   'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.0,1) else 0 end as CAN_SALE_DAY,'+
-  'cast(case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as STOCK_AMT,'+
+  'cast(case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as AMOUNT,'+
   'case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end*F.NEW_INPRICE as STOCK_MNY '+
   'from ('+StrSql+') jc inner join VIW_GOODSINFO F on jc.TENANT_ID=F.TENANT_ID and jc.GODS_ID=F.GODS_ID '+
   'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and '+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+'=c.UNIT_ID '+
@@ -1433,4 +1463,157 @@ begin
     Grid.Columns.EndUpdate;
   end;
 end;
+procedure TfrmStorageTracking.DBGridEh1DblClick(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'AMOUNT' then
+  begin
+     rs := ShopGlobal.GetZQueryFromName('PUB_GOODSINFO');
+     if rs.Locate('GODS_ID',cdsDemand.FieldByName('GODS_ID').AsString,[]) then
+     begin
+       if Length(rs.FieldByName('SORT_ID7').AsString) > 1 then
+          OpenDialogProperty
+       else
+          OpenDialogNumber;
+     end;
+  end;
+end;
+
+procedure TfrmStorageTracking.OpenDialogNumber;
+var Amount:Currency;
+begin
+  try
+    Amount := cdsDemand.FieldByName('AMOUNT').AsFloat;
+    if TfrmInputNumber.ShowDialog(Self,Amount) then
+       begin
+         if cdsDemand.State = dsBrowse then cdsDemand.Edit;
+         cdsDemand.FieldbyName('AMOUNT').AsFloat := Amount;
+         //AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+         cdsDemand.Post;
+       end;
+  finally
+    DBGridEh1.SetFocus;
+  end;
+end;
+
+procedure TfrmStorageTracking.OpenDialogProperty;
+var AObj:TRecord_;
+begin
+  AObj := TRecord_.Create;
+  try
+    AObj.ReadFromDataSet(cdsDemand);
+    AObj.FieldByName('SEQNO').AsInteger := cdsDemand.RecNo;
+    if TframeDialogProperty.ShowDialog(self,AObj,edtProperty,dsEdit) then
+       begin
+         if cdsDemand.State = dsBrowse then cdsDemand.Edit;
+         cdsDemand.FieldbyName('AMOUNT').AsFloat := AObj.FieldbyName('AMOUNT').AsFloat;
+         //AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+         cdsDemand.Post;
+       end
+    else
+       begin
+         if cdsDemand.State = dsBrowse then cdsDemand.Edit;
+         cdsDemand.FieldbyName('AMOUNT').AsFloat := AObj.FieldbyName('AMOUNT').AsFloat;
+         cdsDemand.Post;
+       end;
+  finally
+    AObj.Free;
+    DBGridEh1.SetFocus;
+  end;
+end;
+
+procedure TfrmStorageTracking.Btn_ClearClick(Sender: TObject);
+begin
+  inherited;
+  if CdsCommitData.IsEmpty then Exit;
+  CdsCommitData.First;
+  while not CdsCommitData.Eof do  CdsCommitData.Delete;
+  SumAmount := 0;
+  SumAmoney := 0;
+  Flag := 0;
+  Btn_DeleteLast.Enabled := False;
+end;
+
+procedure TfrmStorageTracking.N1Click(Sender: TObject);
+begin
+  inherited;
+  if cdsDemand.IsEmpty then Exit;
+  if CdsCommitData.Locate('BARCODE',cdsDemand.FieldByName('BARCODE').AsString,[]) then
+     Raise Exception.Create('"'+cdsDemand.FieldByName('GODS_NAME').AsString+'"已加入购物车!');
+  Inc(Flag);
+  CdsCommitData.Append;
+  CdsCommitData.FieldByName('BARCODE').AsString := cdsDemand.FieldByName('BARCODE').AsString;
+  CdsCommitData.FieldByName('AMOUNT').AsFloat := cdsDemand.FieldByName('AMOUNT').AsFloat;
+  CdsCommitData.FieldByName('AMONEY').AsFloat := 0;
+  CdsCommitData.FieldByName('FLAG').AsInteger := Flag;
+  CdsCommitData.Post;
+  InitPrice(cdsDemand.FieldByName('GODS_ID').AsString,cdsDemand.FieldByName('UNIT_ID').AsString);
+  SumAmount := SumAmount + cdsDemand.FieldByName('AMOUNT').AsFloat;
+  SumAmoney := SumAmoney + CdsCommitData.FieldByName('AMONEY').AsFloat;
+  Btn_DeleteLast.Enabled := True;
+end;
+
+procedure TfrmStorageTracking.Btn_DeleteLastClick(Sender: TObject);
+begin
+  inherited;
+  if CdsCommitData.IsEmpty then Exit;
+  if Flag = 0 then Exit;
+  if CdsCommitData.Locate('FLAG',Flag,[]) then
+  Begin
+     SumAmount := SumAmount - cdsDemand.FieldByName('AMOUNT').AsFloat;
+     SumAmoney := SumAmoney - CdsCommitData.FieldByName('AMONEY').AsFloat;
+     CdsCommitData.Delete;
+     Dec(Flag);
+     Btn_DeleteLast.Enabled := False;
+  end;
+end;
+
+procedure TfrmStorageTracking.InitPrice(GODS_ID, UNIT_ID: string);
+var
+  bs:TZQuery;
+  str,OutLevel:string;
+begin
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');
+
+  if not (CdsCommitData.State in [dsEdit,dsInsert]) then CdsCommitData.Edit;
+  if cdsDemand.FieldByName('UNIT_ID').AsString = bs.FieldByName('CALC_UNITS').AsString then
+    begin
+      CdsCommitData.FieldByName('AMONEY').AsFloat := bs.FieldbyName('NEW_OUTPRICE').AsFloat*cdsDemand.FieldByName('AMOUNT').AsFloat;
+    end
+  else if cdsDemand.FieldByName('UNIT_ID').AsString = bs.FieldByName('SMALL_UNITS').AsString then
+    begin
+      CdsCommitData.FieldByName('AMONEY').AsFloat := bs.FieldbyName('NEW_OUTPRICE1').AsFloat*cdsDemand.FieldByName('AMOUNT').AsFloat;
+    end
+  else if cdsDemand.FieldByName('UNIT_ID').AsString = bs.FieldByName('BIG_UNITS').AsString then
+    begin
+      CdsCommitData.FieldByName('AMONEY').AsFloat := bs.FieldbyName('NEW_OUTPRICE2').AsFloat*cdsDemand.FieldByName('AMOUNT').AsFloat;
+    end;
+  CdsCommitData.Post;
+end;
+
+procedure TfrmStorageTracking.SetSumAmoney(const Value: Currency);
+begin
+  FSumAmoney := Value;
+  Lab_Mny.Caption := '总额:'+ formatFloat('#0.00',Value);
+end;
+
+procedure TfrmStorageTracking.SetSumAmount(const Value: Currency);
+begin
+  FSumAmount := Value;
+  Lab_Count.Caption := '总量:'+ formatFloat('#0.00',Value);
+end;
+
+procedure TfrmStorageTracking.Btn_CommitClick(Sender: TObject);
+var frmDemandOrderList:TfrmDemandOrderList;
+begin
+  inherited;
+  if not frmMain.FindAction('actfrmDemandOrderList1').Enabled then Exit;
+  frmMain.FindAction('actfrmDemandOrderList1').OnExecute(nil);
+  frmDemandOrderList := TfrmDemandOrderList(frmMain.FindChildForm(TfrmDemandOrderList));
+  SendMessage(frmDemandOrderList.Handle,WM_USER+3,0,2);
+  PostMessage(frmDemandOrderList.CurOrder.Handle,WM_USER+7,integer(self),0);
+end;
+
 end.

@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 169
-  Top = 154
+  Left = 366
+  Top = 137
   Width = 934
   Height = 604
   Caption = #21830#21697#24211#23384
@@ -12,40 +12,40 @@ inherited frmStorageTracking: TfrmStorageTracking
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 918
-    Height = 529
+    Width = 926
+    Height = 540
     inherited RzPanel2: TRzPanel
-      Width = 908
-      Height = 519
+      Width = 916
+      Height = 530
       inherited RzPage: TRzPageControl
-        Width = 902
-        Height = 513
+        Width = 910
+        Height = 524
         ActivePage = TabSheet2
         TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 900
-            Height = 486
+            Width = 908
+            Height = 497
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 890
-              Height = 476
+              Width = 898
+              Height = 487
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 0
               object Splitter1: TSplitter
                 Left = 177
                 Top = 68
-                Height = 408
+                Height = 419
               end
               object RzPanel7: TRzPanel
                 Left = 0
                 Top = 68
                 Width = 177
-                Height = 408
+                Height = 419
                 Align = alLeft
                 BorderOuter = fsNone
                 TabOrder = 0
@@ -53,7 +53,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Left = 0
                   Top = 0
                   Width = 177
-                  Height = 408
+                  Height = 419
                   SelectionPen.Color = clBtnShadow
                   Align = alClient
                   FrameSides = [sdLeft, sdRight, sdBottom]
@@ -70,24 +70,24 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel6: TRzPanel
                 Left = 180
                 Top = 68
-                Width = 710
-                Height = 408
+                Width = 718
+                Height = 419
                 Align = alClient
                 BorderOuter = fsNone
                 TabOrder = 1
                 object Panel1: TPanel
                   Left = 0
                   Top = 0
-                  Width = 710
-                  Height = 408
+                  Width = 718
+                  Height = 419
                   Align = alClient
                   Caption = 'Panel1'
                   TabOrder = 0
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 1
-                    Width = 708
-                    Height = 406
+                    Width = 716
+                    Height = 417
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
                     DataSource = DsStorage
@@ -264,7 +264,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 890
+                Width = 898
                 Height = 68
                 Align = alTop
                 BorderOuter = fsNone
@@ -290,7 +290,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel2: TPanel
                   Left = 178
                   Top = 0
-                  Width = 712
+                  Width = 720
                   Height = 68
                   Align = alClient
                   Alignment = taLeftJustify
@@ -632,8 +632,8 @@ inherited frmStorageTracking: TfrmStorageTracking
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 900
-            Height = 486
+            Width = 908
+            Height = 497
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -641,13 +641,13 @@ inherited frmStorageTracking: TfrmStorageTracking
             object Splitter2: TSplitter
               Left = 182
               Top = 73
-              Height = 408
+              Height = 419
             end
             object RzPanel10: TRzPanel
               Left = 5
               Top = 73
               Width = 177
-              Height = 408
+              Height = 419
               Align = alLeft
               BorderOuter = fsNone
               TabOrder = 0
@@ -655,7 +655,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 Left = 0
                 Top = 0
                 Width = 177
-                Height = 408
+                Height = 419
                 SelectionPen.Color = clBtnShadow
                 Align = alClient
                 FrameSides = [sdLeft, sdRight, sdBottom]
@@ -672,24 +672,24 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel11: TRzPanel
               Left = 185
               Top = 73
-              Width = 710
-              Height = 408
+              Width = 718
+              Height = 419
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 1
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 710
-                Height = 408
+                Width = 718
+                Height = 419
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel5: TPanel
                   Left = 1
-                  Top = 377
-                  Width = 708
-                  Height = 30
+                  Top = 358
+                  Width = 716
+                  Height = 60
                   Align = alBottom
                   BevelOuter = bvNone
                   Color = clWhite
@@ -700,6 +700,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Font.Style = [fsBold]
                   ParentFont = False
                   TabOrder = 0
+                  DesignSize = (
+                    716
+                    60)
                   object Label4: TLabel
                     Left = 4
                     Top = 8
@@ -752,12 +755,112 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Alignment = taCenter
                     Caption = #26032#21697#19978#24066
                   end
+                  object Lab_Count: TLabel
+                    Left = 520
+                    Top = 12
+                    Width = 33
+                    Height = 12
+                    Anchors = [akTop, akRight]
+                    Caption = #24635#37327':'
+                  end
+                  object Lab_Mny: TLabel
+                    Left = 520
+                    Top = 36
+                    Width = 33
+                    Height = 12
+                    Anchors = [akTop, akRight]
+                    Caption = #24635#39069':'
+                  end
+                  object Btn_Clear: TRzBitBtn
+                    Left = 438
+                    Top = 33
+                    Width = 67
+                    Height = 24
+                    Anchors = [akTop, akRight]
+                    Caption = #28165#38500
+                    Color = clSilver
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = [fsBold]
+                    HighlightColor = 16026986
+                    HotTrack = True
+                    HotTrackColor = 3983359
+                    HotTrackColorType = htctActual
+                    ParentFont = False
+                    TextShadowColor = clWhite
+                    TextShadowDepth = 4
+                    TabOrder = 0
+                    TextStyle = tsRaised
+                    ThemeAware = False
+                    OnClick = Btn_ClearClick
+                    ImageIndex = 12
+                    NumGlyphs = 2
+                    Spacing = 5
+                  end
+                  object Btn_DeleteLast: TRzBitBtn
+                    Left = 438
+                    Top = 6
+                    Width = 67
+                    Height = 24
+                    Anchors = [akTop, akRight]
+                    Caption = #21024#38500#19978#27425
+                    Color = clSilver
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = [fsBold]
+                    HighlightColor = 16026986
+                    HotTrack = True
+                    HotTrackColor = 3983359
+                    HotTrackColorType = htctActual
+                    ParentFont = False
+                    TextShadowColor = clWhite
+                    TextShadowDepth = 4
+                    TabOrder = 1
+                    TextStyle = tsRaised
+                    ThemeAware = False
+                    OnClick = Btn_DeleteLastClick
+                    ImageIndex = 12
+                    NumGlyphs = 2
+                    Spacing = 5
+                  end
+                  object Btn_Commit: TRzBitBtn
+                    Left = 630
+                    Top = 29
+                    Width = 67
+                    Height = 24
+                    Anchors = [akTop, akRight]
+                    Caption = #25552#20132
+                    Color = clSilver
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = [fsBold]
+                    HighlightColor = 16026986
+                    HotTrack = True
+                    HotTrackColor = 3983359
+                    HotTrackColorType = htctActual
+                    ParentFont = False
+                    TextShadowColor = clWhite
+                    TextShadowDepth = 4
+                    TabOrder = 2
+                    TextStyle = tsRaised
+                    ThemeAware = False
+                    OnClick = Btn_CommitClick
+                    ImageIndex = 12
+                    NumGlyphs = 2
+                    Spacing = 5
+                  end
                 end
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 708
-                  Height = 376
+                  Width = 716
+                  Height = 357
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsdemand
@@ -773,6 +876,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                  PopupMenu = PopupMenu1
                   ReadOnly = True
                   RowHeight = 23
                   SumList.Active = True
@@ -787,6 +891,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
+                  OnDblClick = DBGridEh1DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -847,7 +952,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
-                      FieldName = 'AMOUNT'
+                      FieldName = 'STOCK_AMT'
                       Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
@@ -918,7 +1023,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
-                      FieldName = 'STOCK_AMT'
+                      FieldName = 'AMOUNT'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24314#35758#34917#36135
@@ -953,7 +1058,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel12: TRzPanel
               Left = 5
               Top = 5
-              Width = 890
+              Width = 898
               Height = 68
               Align = alTop
               BorderOuter = fsNone
@@ -979,7 +1084,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel7: TPanel
                 Left = 178
                 Top = 0
-                Width = 712
+                Width = 720
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -1291,8 +1396,8 @@ inherited frmStorageTracking: TfrmStorageTracking
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 900
-            Height = 486
+            Width = 908
+            Height = 497
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1300,13 +1405,13 @@ inherited frmStorageTracking: TfrmStorageTracking
             object Splitter3: TSplitter
               Left = 182
               Top = 73
-              Height = 408
+              Height = 419
             end
             object RzPanel14: TRzPanel
               Left = 5
               Top = 73
               Width = 177
-              Height = 408
+              Height = 419
               Align = alLeft
               BorderOuter = fsNone
               TabOrder = 0
@@ -1314,7 +1419,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 Left = 0
                 Top = 0
                 Width = 177
-                Height = 408
+                Height = 419
                 SelectionPen.Color = clBtnShadow
                 Align = alClient
                 FrameSides = [sdLeft, sdRight, sdBottom]
@@ -1331,8 +1436,8 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel15: TRzPanel
               Left = 185
               Top = 73
-              Width = 710
-              Height = 408
+              Width = 718
+              Height = 419
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 1
@@ -1571,7 +1676,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel16: TRzPanel
               Left = 5
               Top = 5
-              Width = 890
+              Width = 898
               Height = 68
               Align = alTop
               BorderOuter = fsNone
@@ -1908,16 +2013,16 @@ inherited frmStorageTracking: TfrmStorageTracking
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 918
+    Width = 926
     inherited Image3: TImage
       Left = 294
       Width = 0
     end
     inherited Image14: TImage
-      Left = 898
+      Left = 906
     end
     inherited Image1: TImage
-      Left = 286
+      Left = 294
       Width = 612
     end
     inherited rzPanel5: TPanel
@@ -2088,5 +2193,105 @@ inherited frmStorageTracking: TfrmStorageTracking
   object MainMenu1: TMainMenu
     Left = 466
     Top = 279
+  end
+  object edtProperty: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 328
+    Top = 312
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 522
+    Top = 328
+    object N1: TMenuItem
+      Caption = #28155#21152#21040#36141#29289#36710
+      OnClick = N1Click
+    end
+  end
+  object CdsCommitData: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'BARCODE'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMONEY'
+        DataType = ftFloat
+      end
+      item
+        Name = 'FLAG'
+        DataType = ftInteger
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 424
+    Top = 408
   end
 end

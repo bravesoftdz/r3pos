@@ -1210,6 +1210,8 @@ inherited frmSalInvoice: TfrmSalInvoice
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
+    OnGetValue = frfSalinvoiceGetValue
+    OnUserFunction = frfSalinvoiceUserFunction
     Left = 87
     Top = 301
     ReportForm = {

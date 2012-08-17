@@ -274,7 +274,7 @@ begin
   begin
     cdsDetail.Edit;
     cdsDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsDetail.FieldByName('INVD_ID').AsString := cdsHeader.FieldByName('INVD_ID').AsString;
+    cdsDetail.FieldByName('INVD_ID').AsString := AObj.FieldByName('INVD_ID').AsString;
     cdsDetail.FieldByName('SEQNO').AsInteger := n;
     totalmny := totalmny + cdsDetail.FieldByName('NOTAX_MNY').AsFloat+cdsDetail.FieldByName('TAX_MNY').AsFloat;
     Inc(n);

@@ -81,6 +81,10 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure edtINVOICE_FLAGPropertiesChange(Sender: TObject);
+    procedure frfSalinvoiceGetValue(const ParName: String;
+      var ParValue: Variant);
+    procedure frfSalinvoiceUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -312,15 +316,6 @@ begin
       rs.Free;
     end;
   end;
-  WriteToObject(AObj,self);
-  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
-  AObj.FieldByName('INVOICE_MNY').AsFloat := totalmny; 
-  cdsHeader.Edit;
-  AObj.WriteToDataSet(cdsHeader);
-  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  if dbState = dsInsert then
-     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
-  cdsHeader.Post;
   n := 1;
   totalmny := 0;
   cdsDetail.First;
@@ -328,13 +323,24 @@ begin
   begin
     cdsDetail.Edit;
     cdsDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsDetail.FieldByName('INVD_ID').AsString := cdsHeader.FieldByName('INVD_ID').AsString;
+    cdsDetail.FieldByName('INVD_ID').AsString := AObj.FieldByName('INVD_ID').AsString;
     cdsDetail.FieldByName('SEQNO').AsInteger := n;
     totalmny := totalmny + cdsDetail.FieldByName('NOTAX_MNY').AsFloat+cdsDetail.FieldByName('TAX_MNY').AsFloat;
     Inc(n);
     cdsDetail.Post;
     cdsDetail.Next;
   end;
+
+  WriteToObject(AObj,self);
+  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
+  AObj.FieldByName('INVOICE_MNY').AsFloat := totalmny;
+  cdsHeader.Edit;
+  AObj.WriteToDataSet(cdsHeader);
+  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  if dbState = dsInsert then
+     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
+
+  cdsHeader.Post;
 
   Factor.BeginBatch;
   try
@@ -1208,6 +1214,27 @@ begin
   ' left join SAL_INVOICE_BOOK G on A.TENANT_ID=G.TENANT_ID and A.INVH_ID=G.INVH_ID'+
   ' left join VIW_CUSTOMER H on A.TENANT_ID=H.TENANT_ID and A.CLIENT_ID=H.CLIENT_ID '+
   ' where A.TENANT_ID='+tenantid+' and A.INVD_ID='+QuotedStr(id)+' and F.TYPE_CODE=''INVOICE_FLAG'' order by SEQNO' ;
+end;
+
+procedure TfrmSalInvoice.frfSalinvoiceGetValue(const ParName: String;
+  var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
+  if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+
+end;
+
+procedure TfrmSalInvoice.frfSalinvoiceUserFunction(const Name: String; p1,
+  p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
 end;
 
 end.

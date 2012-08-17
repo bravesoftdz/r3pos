@@ -364,7 +364,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('销售查询开始日期不能大于结束日期');
 
-  strWhere := strWhere + ' where B.TENANT_ID=:TENANT_ID and B.SALES_TYPE=1 and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 ';
+  strWhere := strWhere + ' where B.TENANT_ID=:TENANT_ID and B.SALES_TYPE=1 and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 and B.SALES_ID not in (select FROM_ID from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_TYPE=3) ';
 
   //分批取数据的条件:
   if trim(id)<>'' then

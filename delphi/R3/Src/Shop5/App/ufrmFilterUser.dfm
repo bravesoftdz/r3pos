@@ -315,7 +315,7 @@ inherited frmFilterUser: TfrmFilterUser
             TabOrder = 5
             InGrid = False
             KeyValue = Null
-            FilterFields = 'YQDZ_ID,YQDZ_MIAOSHU'
+            FilterFields = 'YQDZ_MIAOSHU'
             KeyField = 'YQDZ_ID'
             ListField = 'YQDZ_MIAOSHU'
             Columns = <

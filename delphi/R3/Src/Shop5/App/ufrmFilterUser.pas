@@ -205,7 +205,7 @@ begin
   inherited;
   if fndMANSION.AsString = '' then Exit;
   cdsHouseNumber.Close;
-  str := ' select YQDZ_ID,YQDZ_MIAOSHU from YONGQIDIZHI where Substring(YQDZ_YQDZM_ID,1,11)='+QuotedStr(Trim(fndMANSION.AsString));
+  str := ' select YQDZ_ID,YQDZ_MIAOSHU from YONGQIDIZHI where YQDZ_YQDZM_ID like '''+Trim(fndMANSION.AsString)+'%''';
   cdsHouseNumber.SQL.Text := ParseSQL(Factor.iDbType,str);
   Factor.Open(cdsHouseNumber);
 

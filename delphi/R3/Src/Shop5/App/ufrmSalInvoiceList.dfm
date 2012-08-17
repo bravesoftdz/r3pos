@@ -10,25 +10,25 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 900
-    Height = 503
+    Height = 496
     inherited RzPanel2: TRzPanel
       Width = 890
-      Height = 493
+      Height = 486
       inherited RzPage: TRzPageControl
         Width = 884
-        Height = 487
+        Height = 480
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#39033#21457#31080#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 882
-            Height = 460
+            Height = 453
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
               Width = 872
-              Height = 450
+              Height = 443
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -395,7 +395,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 Left = 6
                 Top = 125
                 Width = 860
-                Height = 319
+                Height = 312
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
@@ -403,7 +403,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   Left = 1
                   Top = 1
                   Width = 858
-                  Height = 317
+                  Height = 310
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite

@@ -359,7 +359,7 @@ begin
   else
   begin
     if (AObj.FieldByName('INVH_ID').AsString <> '') and (MessageBox(Handle,'是否立即打印发票?','友情提示',mb_yesno)=6) then
-       SavePrint(AObj.FieldbyName('INVH_ID').AsString);
+       SavePrint(AObj.FieldbyName('INVD_ID').AsString);
   end;
 end;
 

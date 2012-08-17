@@ -737,10 +737,10 @@ begin
 end;
 
 procedure TfrmSalIndentOrderList.actInvoiceExecute(Sender: TObject);
-var Client_Id,InvoiceFlag,Sales_Id,Address:String;
+var Client_Id,InvoiceFlag,Sales_Id,Address,LinkMan:String;
     R:Integer;
     SumMny:Real;
-    rs:TZQuery;
+    rs,rs1:TZQuery;
 begin
   inherited;
 //  if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
@@ -750,7 +750,22 @@ begin
        Client_Id := TfrmSalIndentOrder(CurOrder).edtCLIENT_ID.AsString;
        InvoiceFlag := TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('INVOICE_FLAG').AsString;
        Sales_Id := TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('INDE_ID').AsString;
-       Address := TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('SEND_ADDR').AsString;
+       if TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('SEND_ADDR').AsString <> '' then
+          Address := TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('SEND_ADDR').AsString
+       else
+       begin
+          rs1 := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+          if rs1.Locate('CLIENT_ID',Client_Id,[]) then
+             Address := rs1.FieldByName('ADDRESS').AsString;
+       end;
+       if TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('LINKMAN').AsString <> '' then
+          LinkMan := TfrmSalIndentOrder(CurOrder).cdsHeader.FieldByName('LINKMAN').AsString
+       else
+       begin
+          rs1 := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+          if rs1.Locate('CLIENT_ID',Client_Id,[]) then
+             LinkMan := rs1.FieldByName('CLIENT_NAME').AsString;
+       end;
      end
   else
      begin
@@ -758,7 +773,22 @@ begin
        Client_Id := cdsList.FieldbyName('CLIENT_ID').AsString;
        InvoiceFlag := cdsList.FieldByName('INVOICE_FLAG').AsString;
        Sales_Id := cdsList.FieldByName('INDE_ID').AsString;
-       Address := cdsList.FieldByName('SEND_ADDR').AsString;
+       if cdsList.FieldByName('SEND_ADDR').AsString <> '' then
+          Address := cdsList.FieldByName('SEND_ADDR').AsString
+       else
+       begin
+          rs1 := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+          if rs1.Locate('CLIENT_ID',Client_Id,[]) then
+             Address := rs1.FieldByName('ADDRESS').AsString;
+       end;
+       if cdsList.FieldByName('LINKMAN').AsString <> '' then
+          LinkMan := cdsList.FieldByName('LINKMAN').AsString
+       else
+       begin
+          rs1 := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+          if rs1.Locate('CLIENT_ID',Client_Id,[]) then
+             LinkMan := rs1.FieldByName('CLIENT_NAME').AsString;
+       end;
      end;
   rs := TZQuery.Create(nil);
   try
@@ -786,6 +816,7 @@ begin
         IvioType := '1';
         Append;
         edtADDR_NAME.Text := Address;
+        edtINVO_NAME.Text := LinkMan;
         R := 0;
         SumMny := 0;
         rs.First;

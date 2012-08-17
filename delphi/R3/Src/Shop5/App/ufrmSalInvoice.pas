@@ -9,7 +9,7 @@ uses
   RzButton, cxDropDownEdit, cxTextEdit, cxCalendar, cxControls, ZBase,
   cxContainer, cxEdit, cxMaskEdit, cxButtonEdit, zrComboBoxList, StdCtrls,
   Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  cxCheckBox, RzLabel;
+  cxCheckBox, RzLabel, FR_Class;
 
 type
   TfrmSalInvoice = class(TframeDialogForm)
@@ -59,6 +59,7 @@ type
     Label15: TLabel;
     edtCREA_USER: TzrComboBoxList;
     Label10: TLabel;
+    frfSalinvoice: TfrReport;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -115,6 +116,8 @@ type
     procedure CalcTaxMny;
     procedure LoadFormat;override;
     procedure Calc;
+    procedure SavePrint(id:string);
+    function PrintSQL2(tenantid,id:string):string;
   public
     { Public declarations }
     AObj:TRecord_;
@@ -136,7 +139,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, IniFiles, ufrmBasic, uXDictFactory,
-  Math, uframeSelectGoods;
+  Math, uframeSelectGoods, ufrmFastReport;
 {$R *.dfm}
 
 { TfrmSalInvoice }
@@ -345,7 +348,13 @@ begin
   WriteInvoiceId(edtINVH_ID.AsString);
   WriteInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString,edtINVOICE_NO.Text);
   dbState := dsBrowse;
-  if Assigned(OnSave) then OnSave(AObj);
+  if Assigned(OnSave) then
+     OnSave(AObj)
+  else
+  begin
+    if (AObj.FieldByName('INVH_ID').AsString <> '') and (MessageBox(Handle,'是否立即打印发票?','友情提示',mb_yesno)=6) then
+       SavePrint(AObj.FieldbyName('INVH_ID').AsString);
+  end;
 end;
 
 procedure TfrmSalInvoice.Setcid(const Value: string);
@@ -456,7 +465,11 @@ begin
   while not cdsDetail.Eof do
   begin
     cdsDetail.Edit;
-    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+    if InvoiceId = '3' then
+       cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate)*Tax_Rate
+    else
+       cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate)*Tax_Rate;
+
     cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
     cdsDetail.Post;
     cdsDetail.Next;
@@ -1167,6 +1180,34 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmSalInvoice.SavePrint(id: string);
+begin
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         PrintReport(PrintSQL2(inttostr(Global.TENANT_ID),id),frfSalinvoice);
+      finally
+         free;
+      end;
+    end;
+end;
+
+function TfrmSalInvoice.PrintSQL2(tenantid, id: string): string;
+begin
+  result :=
+  'select G.INVH_NO,A.INVOICE_NO,A.CREA_DATE,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.REMARK,'+
+  'E.USER_NAME as CREA_USER_TEXT,F.CODE_NAME as INVOICE_FLAG_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,B.GODS_NAME,B.SEQNO,B.UNIT_NAME,'+
+  'B.AMOUNT,B.APRICE,B.NOTAX_MNY+B.TAX_MNY as AMONEY,B.NOTAX_MNY,B.TAX_MNY,A.INVOICE_MNY,A.INVO_NAME,A.ADDR_NAME '+
+  ' from SAL_INVOICE_INFO A inner join SAL_INVOICE_LIST B on A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
+  ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+  ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
+  ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+
+  ' left join PUB_PARAMS F on A.INVOICE_FLAG=F.CODE_ID '+
+  ' left join SAL_INVOICE_BOOK G on A.TENANT_ID=G.TENANT_ID and A.INVH_ID=G.INVH_ID'+
+  ' left join VIW_CUSTOMER H on A.TENANT_ID=H.TENANT_ID and A.CLIENT_ID=H.CLIENT_ID '+
+  ' where A.TENANT_ID='+tenantid+' and A.INVD_ID='+QuotedStr(id)+' and F.TYPE_CODE=''INVOICE_FLAG'' order by SEQNO' ;
 end;
 
 end.

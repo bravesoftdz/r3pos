@@ -80,6 +80,7 @@ type
     function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
     function CheckInput:boolean;override;
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
   public
     { Public declarations }
     //结算金额
@@ -118,7 +119,7 @@ implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmMain,
      ufrmUsersInfo,ufrmCodeInfo,uframeListDialog,uframeSelectCustomer,ufrmSalesOrderList,
      ufrmSalesOrder,ufrmSupplierInfo,ufrmTenantInfo,ufrmChangeOrderList,ufrmDbOrderList,
-     ufrmStkIndentOrderList;
+     ufrmStkIndentOrderList, ufrmStorageTracking;
 {$R *.dfm}
 
 procedure TfrmDemandOrder.ReadHeader;
@@ -1023,6 +1024,77 @@ procedure TfrmDemandOrder.edtSHOP_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtSHOP_ID.Text)<>'' then TabSheet.Caption := edtSHOP_ID.Text;
+end;
+
+procedure TfrmDemandOrder.WMFillData(var Message: TMessage);
+var
+  frmStorageTracking:TfrmStorageTracking;
+  i:integer;
+  Amnt:Currency;
+  Godsid:String;
+  IsSame:Boolean;
+  rs:TZQuery;
+begin
+  if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
+  frmStorageTracking := TfrmStorageTracking(Message.WParam);
+  with TfrmStorageTracking(frmStorageTracking) do
+    begin
+      case Message.LParam of
+      0:begin
+          self.edtTable.DisableControls;
+          rs := TZQuery.Create(nil);
+          try
+            self.edtProperty.Close;
+            self.edtTable.Close;
+            self.edtProperty.CreateDataSet;
+            self.edtTable.CreateDataSet;
+            self.RowID := 0;
+            rs.Data := edtProperty.Data;
+            Godsid := '';
+            IsSame := True;
+            edtProperty.Filtered := False;
+            edtProperty.First;
+            while not edtProperty.Eof do
+            begin
+
+              if Godsid <> edtProperty.FieldByName('GODS_ID').AsString then
+              begin
+                 Godsid := edtProperty.FieldByName('GODS_ID').AsString;
+                 IsSame := False;
+              end;
+              if not IsSame then
+              begin
+                DecodeBarcode(edtProperty.FieldByName('BARCODE').AsString);
+                rs.Filtered := False;
+                rs.Filter := 'SEQNO='''+edtProperty.FieldByName('SEQNO').AsString+'''';
+                rs.Filtered := True;
+                Amnt := 0;
+                rs.First;
+                while not rs.Eof do
+                begin
+                  self.edtProperty.Append;
+                  for i:=0 to self.edtProperty.Fields.Count -1 do
+                    self.edtProperty.Fields[i].Value := rs.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+                  self.edtProperty.FieldByName('SEQNO').AsInteger := RowID;
+                  self.edtProperty.Post;
+                  Amnt := Amnt + edtProperty.FieldByName('AMOUNT').AsFloat;
+                  AmountToCalc(Amnt);
+                  rs.Next;
+                end;
+                edtTable.FieldByName('AMOUNT').AsFloat := Amnt;
+                IsSame := True;
+              end;
+              edtProperty.Next;
+            end;
+
+          finally
+            self.edtTable.EnableControls;
+          end;
+        end;
+      end;
+
+    end;
+  inherited;
 end;
 
 end.

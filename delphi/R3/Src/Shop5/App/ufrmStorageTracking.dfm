@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 366
-  Top = 137
+  Left = 156
+  Top = 85
   Width = 934
   Height = 604
   Caption = #21830#21697#24211#23384
@@ -2206,6 +2206,11 @@ inherited frmStorageTracking: TfrmStorageTracking
         Size = 36
       end
       item
+        Name = 'BARCODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
         Name = 'GODS_CODE'
         DataType = ftString
         Size = 20
@@ -2251,6 +2256,14 @@ inherited frmStorageTracking: TfrmStorageTracking
       end
       item
         Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMONEY'
+        DataType = ftFloat
+      end
+      item
+        Name = 'CALC_AMOUNT'
         DataType = ftFloat
       end>
     CachedUpdates = True

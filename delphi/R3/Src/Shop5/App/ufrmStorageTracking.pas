@@ -167,8 +167,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure Btn_ClearClick(Sender: TObject);
-    procedure
-    N1Click(Sender: TObject);
+    procedure N1Click(Sender: TObject);
     procedure Btn_DeleteLastClick(Sender: TObject);
     procedure Btn_CommitClick(Sender: TObject);
   private
@@ -209,7 +208,7 @@ type
 
     //2011.09.21 Add 金额的格式方式:
     procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
-    procedure InitPrice(GODS_ID,UNIT_ID:string);
+    procedure InitPrice(AObj: TRecord_);
     property SumAmount:Currency read FSumAmount write SetSumAmount;
     property SumAmoney:Currency read FSumAmoney write SetSumAmoney;
   public
@@ -422,10 +421,9 @@ begin
      begin
        FindColumn(Grid,'PROPERTY_02').Free;
      end;
-  CdsCommitData.Close;
   edtProperty.Close;
-  CdsCommitData.CreateDataSet;
   edtProperty.CreateDataSet;
+  Btn_DeleteLast.Enabled := False;
   {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     edtSHOP_ID.Properties.ReadOnly := False;
@@ -1464,59 +1462,112 @@ begin
   end;
 end;
 procedure TfrmStorageTracking.DBGridEh1DblClick(Sender: TObject);
-var rs:TZQuery;
 begin
   inherited;
-  if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'AMOUNT' then
-  begin
-     rs := ShopGlobal.GetZQueryFromName('PUB_GOODSINFO');
-     if rs.Locate('GODS_ID',cdsDemand.FieldByName('GODS_ID').AsString,[]) then
-     begin
-       if Length(rs.FieldByName('SORT_ID7').AsString) > 1 then
-          OpenDialogProperty
-       else
-          OpenDialogNumber;
-     end;
-  end;
+  N1Click(Sender);
 end;
 
 procedure TfrmStorageTracking.OpenDialogNumber;
-var Amount:Currency;
+var Amount,TAmount,TAmoney:Currency;
+    AObj:TRecord_;
+    IsExist:Boolean;
 begin
+  AObj := TRecord_.Create;
   try
-    Amount := cdsDemand.FieldByName('AMOUNT').AsFloat;
+    AObj.ReadFromDataSet(cdsDemand);
+    AObj.FieldByName('SEQNO').AsInteger := cdsDemand.RecNo;
+    TAmount := 0;
+    TAmoney := 0;
+    edtProperty.Filtered := false;
+    edtProperty.Filter := 'SEQNO='''+AObj.FieldbyName('SEQNO').AsString+'''';
+    edtProperty.Filtered := true;
+    IsExist := False;
+    edtProperty.First;
+    while not edtProperty.Eof do
+    begin
+      IsExist := True;
+      TAmount := TAmount + edtProperty.FieldByName('AMOUNT').AsFloat;
+      TAmoney := TAmoney + edtProperty.FieldByName('AMONEY').AsFloat;
+      edtProperty.Next;
+    end;
+    if IsExist then
+       Amount := TAmount
+    else
+       Amount := AObj.FieldByName('AMOUNT').AsFloat;
+
     if TfrmInputNumber.ShowDialog(Self,Amount) then
        begin
-         if cdsDemand.State = dsBrowse then cdsDemand.Edit;
-         cdsDemand.FieldbyName('AMOUNT').AsFloat := Amount;
-         //AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
-         cdsDemand.Post;
+         SumAmount := SumAmount - TAmount;
+         SumAmoney := SumAmoney - TAmoney;
+         AObj.FieldByName('AMOUNT').AsFloat := Amount;
+         if IsExist then
+         begin
+           edtProperty.Edit;
+           edtProperty.FieldByName('AMOUNT').AsFloat := AObj.FieldByName('AMOUNT').AsFloat;
+           edtProperty.Post;
+         end
+         else
+         begin
+           edtProperty.Append;
+           edtProperty.FieldByName('SEQNO').AsInteger := AObj.FieldByName('SEQNO').AsInteger;
+           edtProperty.FieldByName('GODS_ID').AsString := AObj.FieldByName('GODS_ID').AsString;
+           edtProperty.FieldByName('BARCODE').AsString := AObj.FieldByName('BARCODE').AsString;
+           edtProperty.FieldByName('GODS_CODE').AsString := AObj.FieldByName('GODS_CODE').AsString;
+           edtProperty.FieldByName('UNIT_ID').AsString := AObj.FieldByName('UNIT_ID').AsString;
+           edtProperty.FieldByName('BATCH_NO').AsString := AObj.FieldByName('BATCH_NO').AsString;
+           edtProperty.FieldByName('IS_PRESENT').AsInteger := 0;
+           edtProperty.FieldByName('PROPERTY_01').AsString := AObj.FieldByName('PROPERTY_01').AsString;
+           edtProperty.FieldByName('PROPERTY_02').AsString := AObj.FieldByName('PROPERTY_02').AsString;
+           edtProperty.FieldByName('AMOUNT').AsFloat := AObj.FieldByName('AMOUNT').AsFloat;
+           edtProperty.Post;
+           Flag := AObj.FieldbyName('SEQNO').AsInteger;
+           Btn_DeleteLast.Enabled := True;
+         end;
+         SumAmount := SumAmount + AObj.FieldbyName('AMOUNT').AsFloat;
+         InitPrice(AObj);
        end;
   finally
+    AObj.Free;
     DBGridEh1.SetFocus;
   end;
 end;
 
 procedure TfrmStorageTracking.OpenDialogProperty;
 var AObj:TRecord_;
+    TAmount,TAmoney:Currency
+    IsExist:Boolean;
 begin
   AObj := TRecord_.Create;
   try
     AObj.ReadFromDataSet(cdsDemand);
     AObj.FieldByName('SEQNO').AsInteger := cdsDemand.RecNo;
+    TAmount := 0;
+    TAmoney := 0;
+    edtProperty.Filtered := false;
+    edtProperty.Filter := 'SEQNO='''+AObj.FieldbyName('SEQNO').AsString+'''';
+    edtProperty.Filtered := true;
+    IsExist := False;
+    edtProperty.First;
+    while not edtProperty.Eof do
+    begin
+      IsExist := True;
+      TAmount := TAmount + edtProperty.FieldByName('AMOUNT').AsFloat;
+      TAmoney := TAmoney + edtProperty.FieldByName('AMONEY').AsFloat;
+      edtProperty.Next;
+    end;
+    edtProperty.Filtered := False;
     if TframeDialogProperty.ShowDialog(self,AObj,edtProperty,dsEdit) then
+    begin
+       SumAmount := SumAmount - TAmount;
+       SumAmoney := SumAmoney - TAmoney;
+       if not IsExist then
        begin
-         if cdsDemand.State = dsBrowse then cdsDemand.Edit;
-         cdsDemand.FieldbyName('AMOUNT').AsFloat := AObj.FieldbyName('AMOUNT').AsFloat;
-         //AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
-         cdsDemand.Post;
-       end
-    else
-       begin
-         if cdsDemand.State = dsBrowse then cdsDemand.Edit;
-         cdsDemand.FieldbyName('AMOUNT').AsFloat := AObj.FieldbyName('AMOUNT').AsFloat;
-         cdsDemand.Post;
+         Flag := AObj.FieldbyName('SEQNO').AsInteger;
+         Btn_DeleteLast.Enabled := True;
        end;
+       SumAmount := SumAmount + AObj.FieldbyName('AMOUNT').AsFloat;
+       InitPrice(AObj);
+    end;
   finally
     AObj.Free;
     DBGridEh1.SetFocus;
@@ -1526,9 +1577,9 @@ end;
 procedure TfrmStorageTracking.Btn_ClearClick(Sender: TObject);
 begin
   inherited;
-  if CdsCommitData.IsEmpty then Exit;
-  CdsCommitData.First;
-  while not CdsCommitData.Eof do  CdsCommitData.Delete;
+  if edtProperty.IsEmpty then Exit;
+  edtProperty.First;
+  while not edtProperty.Eof do  edtProperty.Delete;
   SumAmount := 0;
   SumAmoney := 0;
   Flag := 0;
@@ -1536,61 +1587,77 @@ begin
 end;
 
 procedure TfrmStorageTracking.N1Click(Sender: TObject);
+var rs:TZQuery;
 begin
   inherited;
   if cdsDemand.IsEmpty then Exit;
-  if CdsCommitData.Locate('BARCODE',cdsDemand.FieldByName('BARCODE').AsString,[]) then
-     Raise Exception.Create('"'+cdsDemand.FieldByName('GODS_NAME').AsString+'"已加入购物车!');
-  Inc(Flag);
-  CdsCommitData.Append;
-  CdsCommitData.FieldByName('BARCODE').AsString := cdsDemand.FieldByName('BARCODE').AsString;
-  CdsCommitData.FieldByName('AMOUNT').AsFloat := cdsDemand.FieldByName('AMOUNT').AsFloat;
-  CdsCommitData.FieldByName('AMONEY').AsFloat := 0;
-  CdsCommitData.FieldByName('FLAG').AsInteger := Flag;
-  CdsCommitData.Post;
-  InitPrice(cdsDemand.FieldByName('GODS_ID').AsString,cdsDemand.FieldByName('UNIT_ID').AsString);
-  SumAmount := SumAmount + cdsDemand.FieldByName('AMOUNT').AsFloat;
-  SumAmoney := SumAmoney + CdsCommitData.FieldByName('AMONEY').AsFloat;
+  rs := ShopGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',cdsDemand.FieldByName('GODS_ID').AsString,[]) then
+  begin
+   if Length(rs.FieldByName('SORT_ID7').AsString) > 1 then
+      OpenDialogProperty
+   else
+      OpenDialogNumber;
+  end;
   Btn_DeleteLast.Enabled := True;
 end;
 
 procedure TfrmStorageTracking.Btn_DeleteLastClick(Sender: TObject);
 begin
   inherited;
-  if CdsCommitData.IsEmpty then Exit;
+  if edtProperty.IsEmpty then Exit;
   if Flag = 0 then Exit;
-  if CdsCommitData.Locate('FLAG',Flag,[]) then
-  Begin
-     SumAmount := SumAmount - cdsDemand.FieldByName('AMOUNT').AsFloat;
-     SumAmoney := SumAmoney - CdsCommitData.FieldByName('AMONEY').AsFloat;
-     CdsCommitData.Delete;
-     Dec(Flag);
-     Btn_DeleteLast.Enabled := False;
+  edtProperty.Filtered := false;
+  edtProperty.Filter := 'SEQNO='''+IntToStr(Flag)+'''';
+  edtProperty.Filtered := true;
+  edtProperty.First;
+  while not edtProperty.Eof do
+  begin
+    SumAmount := SumAmount - edtProperty.FieldByName('AMOUNT').AsFloat;
+    SumAmoney := SumAmoney - edtProperty.FieldByName('AMONEY').AsFloat;
+    edtProperty.Next;
   end;
+  edtProperty.First;
+  while not edtProperty.Eof do edtProperty.Delete;
+  edtProperty.Filtered := False;
+  Flag := 0;
+  Btn_DeleteLast.Enabled := False;
 end;
 
-procedure TfrmStorageTracking.InitPrice(GODS_ID, UNIT_ID: string);
+procedure TfrmStorageTracking.InitPrice(AObj: TRecord_);
 var
   bs:TZQuery;
+  APrice:Currency;
   str,OutLevel:string;
 begin
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
-  if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');
+  if not bs.Locate('GODS_ID',AObj.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');
 
-  if not (CdsCommitData.State in [dsEdit,dsInsert]) then CdsCommitData.Edit;
   if cdsDemand.FieldByName('UNIT_ID').AsString = bs.FieldByName('CALC_UNITS').AsString then
     begin
-      CdsCommitData.FieldByName('AMONEY').AsFloat := bs.FieldbyName('NEW_OUTPRICE').AsFloat*cdsDemand.FieldByName('AMOUNT').AsFloat;
+      APrice := bs.FieldbyName('NEW_OUTPRICE').AsFloat;
     end
   else if cdsDemand.FieldByName('UNIT_ID').AsString = bs.FieldByName('SMALL_UNITS').AsString then
     begin
-      CdsCommitData.FieldByName('AMONEY').AsFloat := bs.FieldbyName('NEW_OUTPRICE1').AsFloat*cdsDemand.FieldByName('AMOUNT').AsFloat;
+      APrice := bs.FieldbyName('NEW_OUTPRICE1').AsFloat;
     end
   else if cdsDemand.FieldByName('UNIT_ID').AsString = bs.FieldByName('BIG_UNITS').AsString then
     begin
-      CdsCommitData.FieldByName('AMONEY').AsFloat := bs.FieldbyName('NEW_OUTPRICE2').AsFloat*cdsDemand.FieldByName('AMOUNT').AsFloat;
+      APrice := bs.FieldbyName('NEW_OUTPRICE2').AsFloat;
     end;
-  CdsCommitData.Post;
+  Flag := AObj.FieldbyName('SEQNO').AsInteger;
+  edtProperty.Filtered := false;
+  edtProperty.Filter := 'SEQNO='''+AObj.FieldbyName('SEQNO').AsString+'''';
+  edtProperty.Filtered := true;
+  edtProperty.First;
+  while not edtProperty.Eof do
+  begin
+    edtProperty.Edit;
+    edtProperty.FieldByName('AMONEY').AsFloat := APrice * edtProperty.FieldByName('AMOUNT').AsFloat;
+    SumAmoney := SumAmoney + edtProperty.FieldByName('AMONEY').AsFloat;
+    edtProperty.Post;
+    edtProperty.Next;
+  end;
 end;
 
 procedure TfrmStorageTracking.SetSumAmoney(const Value: Currency);
@@ -1609,11 +1676,11 @@ procedure TfrmStorageTracking.Btn_CommitClick(Sender: TObject);
 var frmDemandOrderList:TfrmDemandOrderList;
 begin
   inherited;
-  if not frmMain.FindAction('actfrmDemandOrderList1').Enabled then Exit;
-  frmMain.FindAction('actfrmDemandOrderList1').OnExecute(nil);
+  if not frmMain.FindAction('Action9').Enabled then Exit;
+  frmMain.FindAction('Action9').OnExecute(nil);
   frmDemandOrderList := TfrmDemandOrderList(frmMain.FindChildForm(TfrmDemandOrderList));
   SendMessage(frmDemandOrderList.Handle,WM_USER+3,0,2);
-  PostMessage(frmDemandOrderList.CurOrder.Handle,WM_USER+7,integer(self),0);
+  PostMessage(frmDemandOrderList.CurOrder.Handle,WM_USER+7,integer(Self),0);
 end;
 
 end.

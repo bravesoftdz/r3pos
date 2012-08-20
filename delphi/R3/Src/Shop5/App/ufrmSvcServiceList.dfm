@@ -1,6 +1,6 @@
 inherited frmSvcServiceList: TfrmSvcServiceList
-  Left = 356
-  Top = 70
+  Left = 334
+  Top = 150
   Width = 908
   Height = 549
   Caption = #21806#21518#26381#21153
@@ -10,27 +10,25 @@ inherited frmSvcServiceList: TfrmSvcServiceList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 900
-    Height = 478
+    Height = 485
     inherited RzPanel2: TRzPanel
       Width = 890
-      Height = 468
+      Height = 475
       inherited RzPage: TRzPageControl
         Width = 884
-        Height = 462
-        ActivePage = TabSheet2
-        TabIndex = 1
+        Height = 469
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 882
-            Height = 435
+            Height = 442
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
               Width = 872
-              Height = 425
+              Height = 432
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -373,7 +371,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Left = 6
                 Top = 107
                 Width = 860
-                Height = 312
+                Height = 319
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
@@ -381,7 +379,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Left = 1
                   Top = 1
                   Width = 858
-                  Height = 310
+                  Height = 317
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -412,6 +410,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
+                  OnDblClick = DBGridEh1DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   Columns = <
                     item
@@ -531,7 +530,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             Left = 0
             Top = 0
             Width = 882
-            Height = 435
+            Height = 442
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -832,7 +831,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               Left = 6
               Top = 117
               Width = 870
-              Height = 312
+              Height = 319
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -840,7 +839,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Left = 1
                 Top = 1
                 Width = 868
-                Height = 310
+                Height = 317
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

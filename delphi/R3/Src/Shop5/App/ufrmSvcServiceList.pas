@@ -83,6 +83,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RzPageChange(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
   private
     { Private declarations }
     procedure ChangeButton;
@@ -673,6 +674,12 @@ begin
   inherited;
   actFind.OnExecute(nil);
   ChangeButton;
+end;
+
+procedure TfrmSvcServiceList.DBGridEh1DblClick(Sender: TObject);
+begin
+  inherited;
+  actNewExecute(Sender);
 end;
 
 end.

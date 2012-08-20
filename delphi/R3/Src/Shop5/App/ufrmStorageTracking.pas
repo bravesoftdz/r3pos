@@ -1534,7 +1534,7 @@ end;
 
 procedure TfrmStorageTracking.OpenDialogProperty;
 var AObj:TRecord_;
-    TAmount,TAmoney:Currency
+    TAmount,TAmoney:Currency;
     IsExist:Boolean;
 begin
   AObj := TRecord_.Create;

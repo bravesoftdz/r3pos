@@ -97,9 +97,10 @@ begin
           Column.Footer.ValueType := fvtSum;
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
-          Field := TBCDField.Create(edtTable);
-          Field.FieldName := 'SIZE_#';
-          Field.DataSet := edtTable;
+          edtTable.FieldDefs.Add('SIZE_#',ftInteger,0);
+          //Field := TBCDField.Create(edtTable);
+          //Field.FieldName := 'SIZE_#';
+          //Field.DataSet := edtTable;
        end
     else
        begin

@@ -112,6 +112,8 @@ begin
          end;
     end;
   if item<>nil then item.Selected := true;
+  RzTree.SetFocus;
+  Key := #0;
 end;
 
 procedure TframeTreeFindDialog.edtSearchEnter(Sender: TObject);

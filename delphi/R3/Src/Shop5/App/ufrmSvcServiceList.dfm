@@ -1,6 +1,6 @@
 inherited frmSvcServiceList: TfrmSvcServiceList
-  Left = 334
-  Top = 150
+  Left = 295
+  Top = 145
   Width = 908
   Height = 549
   Caption = #21806#21518#26381#21153

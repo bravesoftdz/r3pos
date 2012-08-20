@@ -111,6 +111,7 @@ procedure TfrmSvcServiceList.actNewExecute(Sender: TObject);
 var Client_Id,InvoiceFlag:String;
     IsExist:Boolean;
     R:Integer;
+    rs:TZQuery;
 begin
   inherited;
   case RzPage.ActivePageIndex of
@@ -133,6 +134,28 @@ begin
           Append;
           ClientId := CdsSalesList.FieldByName('CLIENT_ID').AsString;
           GodsName := CdsSalesList.FieldByName('GODS_NAME').AsString;
+
+          if CdsSalesList.FieldByName('LINKMAN').AsString = '' then
+          begin
+             rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+             if rs.Locate('CLIENT_ID',CdsSalesList.FieldByName('CLIENT_ID').AsString,[]) then
+                LinkMan := rs.FieldByName('LINKMAN').AsString;
+          end;
+          
+          if CdsSalesList.FieldByName('SEND_ADDR').AsString = '' then
+          begin
+             rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+             if rs.Locate('CLIENT_ID',CdsSalesList.FieldByName('CLIENT_ID').AsString,[]) then
+                Address := rs.FieldByName('ADDRESS').AsString;
+          end;
+
+          if CdsSalesList.FieldByName('TELEPHONE').AsString = '' then
+          begin
+             rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+             if rs.Locate('CLIENT_ID',CdsSalesList.FieldByName('CLIENT_ID').AsString,[]) then
+                Telephone := rs.FieldByName('TELEPHONE2').AsString;
+          end;
+
           OnSave := AddRecord;
           //登记选择第一分页 [查询] 时执行
           ShowModal;
@@ -395,7 +418,7 @@ begin
   ' case when isnull(I.SERIAL_NO_NUM,0)=0 then ''未登记'' '+
   '      when (isnull(I.SERIAL_NO_NUM,0)<>0) and (isnull(I.SERIAL_NO_NUM,0) < A.AMOUNT) then ''部分登记'' '+
   '      when isnull(I.SERIAL_NO_NUM,0) = A.AMOUNT then ''完成登记'' '+
-  ' end as STATUS,'+
+  ' end as STATUS,B.LINKMAN,B.SEND_ADDR,B.TELEPHONE,'+
   'A.GODS_ID,E.GODS_NAME,D.SHOP_NAME as SHOP_ID_TEXT,B.CREA_DATE,B.INVOICE_FLAG,A.AMOUNT,A.APRICE,A.AMONEY,G.USER_NAME as GUIDE_USER_TEXT '+
   ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
   ' left join VIW_CUSTOMER C on B.TENANT_ID=C.TENANT_ID and B.CLIENT_ID=C.CLIENT_ID '+

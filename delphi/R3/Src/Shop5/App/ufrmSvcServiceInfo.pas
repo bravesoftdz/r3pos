@@ -74,9 +74,15 @@ type
   private
     FClientId: String;
     FGodsName: String;
+    FAddress: String;
+    FLinkMan: String;
+    FTelephone: String;
     procedure SetClientId(const Value: String);
     procedure SetGodsName(const Value: String);
     procedure LoadParams;
+    procedure SetAddress(const Value: String);
+    procedure SetLinkMan(const Value: String);
+    procedure SetTelephone(const Value: String);
     { Private declarations }
   public
     { Public declarations }
@@ -94,6 +100,9 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断安装及维保档案是否有修改
     property ClientId:String read FClientId write SetClientId;
     property GodsName:String read FGodsName write SetGodsName;
+    property LinkMan:String read FLinkMan write SetLinkMan;
+    property Telephone:String read FTelephone write SetTelephone;
+    property Address:String read FAddress write SetAddress;
   end;
 
 implementation
@@ -486,6 +495,24 @@ begin
   edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
   edtADDRESS.Text := Aobj_.FieldByName('YQDZ_SM').AsString;
   edtCLIENT_CODE.Text := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
+end;
+
+procedure TfrmSvcServiceInfo.SetAddress(const Value: String);
+begin
+  FAddress := Value;
+  edtADDRESS.Text := Value;
+end;
+
+procedure TfrmSvcServiceInfo.SetLinkMan(const Value: String);
+begin
+  FLinkMan := Value;
+  edtLINKMAN.Text := Value;
+end;
+
+procedure TfrmSvcServiceInfo.SetTelephone(const Value: String);
+begin
+  FTelephone := Value;
+  edtTELEPHONE.Text := Value;
 end;
 
 end.

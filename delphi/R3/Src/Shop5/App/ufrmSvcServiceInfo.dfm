@@ -1,6 +1,6 @@
 inherited frmSvcServiceInfo: TfrmSvcServiceInfo
-  Left = 402
-  Top = 213
+  Left = 403
+  Top = 245
   Caption = #21806#21518#26381#21153
   ClientHeight = 343
   ClientWidth = 529
@@ -123,11 +123,9 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 89
       Width = 519
       Height = 217
-      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
-      TabIndex = 1
       TabOrder = 4
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

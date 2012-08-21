@@ -1,6 +1,6 @@
 inherited frmSalIndentOrderList: TfrmSalIndentOrderList
-  Left = 253
-  Top = 152
+  Left = 268
+  Top = 149
   Width = 836
   Height = 607
   Caption = #38144#21806#35746#21333
@@ -24,7 +24,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
             Height = 500
             inherited RzPanel1: TRzPanel
               Width = 800
-              Height = 115
+              Height = 110
               Caption = '.'
               object RzLabel2: TRzLabel
                 Left = 33
@@ -64,25 +64,20 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                 Height = 12
                 Caption = #38376#24215#21517#31216
               end
-              object Label1: TLabel
-                Left = 201
-                Top = 89
-                Width = 120
-                Height = 12
-                Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
               object Label3: TLabel
                 Left = 33
                 Top = 47
                 Width = 48
                 Height = 12
                 Caption = #25152#23646#37096#38376
+              end
+              object RzLabel1: TRzLabel
+                Left = 191
+                Top = 89
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #21457#31080#21495
               end
               object D1: TcxDateEdit
                 Left = 89
@@ -103,7 +98,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                 TabOrder = 1
               end
               object btnOk: TRzBitBtn
-                Left = 541
+                Left = 533
                 Top = 79
                 Width = 67
                 Height = 26
@@ -132,13 +127,13 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
               object fndINDE_ID: TcxTextEdit
                 Left = 89
                 Top = 85
-                Width = 104
+                Width = 98
                 Height = 20
                 TabOrder = 5
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object fndSTATUS: TcxRadioGroup
-                Left = 344
+                Left = 336
                 Top = 17
                 Width = 185
                 Height = 88
@@ -318,11 +313,19 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndINVOICE_NO: TcxTextEdit
+                Left = 231
+                Top = 85
+                Width = 94
+                Height = 20
+                TabOrder = 8
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 120
+              Top = 115
               Width = 800
-              Height = 375
+              Height = 380
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -391,6 +394,21 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                   Footers = <>
                   Title.Caption = #31080#25454#31867#22411
                   Width = 53
+                end
+                item
+                  DisplayFormat = '00000000'
+                  EditButtons = <>
+                  FieldName = 'INVOICE_NO'
+                  Footers = <>
+                  Title.Caption = #21457#31080#21495
+                  Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'INVOICE_STATUS'
+                  Footers = <>
+                  Title.Caption = #21457#31080#29366#24577
+                  Width = 60
                 end
                 item
                   EditButtons = <>
@@ -508,7 +526,13 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       end
     end
   end
+  inherited mmMenu: TMainMenu
+    Left = 656
+    Top = 72
+  end
   inherited actList: TActionList
+    Left = 688
+    Top = 72
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end

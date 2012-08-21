@@ -398,7 +398,7 @@ begin
   while not cdsDetail.Eof do
   begin
     cdsDetail.Edit;
-    cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)*(1+Tax_Rate)/Tax_Rate);
+    cdsDetail.FieldByName('TAX_MNY').AsString :=  formatFloat('#0.00',(cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)/(1+Tax_Rate)*Tax_Rate);
     cdsDetail.FieldByName('NOTAX_MNY').AsFloat := (cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat)-cdsDetail.FieldByName('TAX_MNY').AsFloat;
     cdsDetail.Post;
     cdsDetail.Next;

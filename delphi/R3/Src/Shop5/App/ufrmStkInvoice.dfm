@@ -38,7 +38,7 @@ inherited frmStkInvoice: TfrmStkInvoice
             BorderShadow = clActiveCaption
             Color = clWhite
             FlatColor = clBlue
-            TabOrder = 5
+            TabOrder = 4
             Visible = False
             object Image1: TImage
               Left = 15
@@ -685,43 +685,31 @@ inherited frmStkInvoice: TfrmStkInvoice
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
           end
-          object RzPanel5: TRzPanel
+          object RzPanel6: TRzPanel
             Left = 5
-            Top = 372
+            Top = 364
             Width = 695
-            Height = 29
+            Height = 37
             Align = alBottom
             BorderOuter = fsNone
+            BorderColor = clGreen
+            BorderWidth = 1
             Color = clWhite
-            TabOrder = 4
-            object Label12: TLabel
-              Left = 23
-              Top = 12
-              Width = 46
-              Height = 12
-              Caption = #20184#27454#20154':'
+            TabOrder = 3
+            object Label10: TLabel
+              Left = 103
+              Top = 13
+              Width = 8
+              Height = 14
               Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Label13: TLabel
-              Left = 174
-              Top = 12
-              Width = 33
-              Height = 12
-              Caption = #22797#26680':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
+              Font.Color = clWindowText
+              Font.Height = -14
               Font.Name = #23435#20307
               Font.Style = [fsBold]
               ParentFont = False
             end
             object Label15: TLabel
-              Left = 326
+              Left = 534
               Top = 12
               Width = 46
               Height = 12
@@ -733,23 +721,45 @@ inherited frmStkInvoice: TfrmStkInvoice
               Font.Style = [fsBold]
               ParentFont = False
             end
-            object Label16: TLabel
-              Left = 543
-              Top = 12
-              Width = 86
-              Height = 12
-              Caption = #38144#36135#21333#20301':('#31456')'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
+            object edtINVOICE_MNY: TcxTextEdit
+              Left = -33
+              Top = 10
+              Width = 133
+              Height = 20
+              TabOrder = 0
+              Visible = False
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel9: TRzPanel
+              Left = 1
+              Top = 1
+              Width = 96
+              Height = 35
+              Align = alLeft
+              BorderOuter = fsNone
+              BorderSides = [sdRight]
+              BorderColor = clGreen
+              BorderWidth = 1
+              Color = clWhite
+              TabOrder = 1
+              object Label1: TLabel
+                Left = 33
+                Top = 13
+                Width = 59
+                Height = 12
+                Caption = #21457#31080#37329#39069':'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clGreen
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
             end
             object edtCREA_USER: TzrComboBoxList
-              Left = 377
+              Left = 585
               Top = 8
-              Width = 131
+              Width = 99
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -757,7 +767,7 @@ inherited frmStkInvoice: TfrmStkInvoice
                   Default = True
                 end>
               Properties.ReadOnly = True
-              TabOrder = 0
+              TabOrder = 2
               InGrid = False
               KeyValue = Null
               FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -788,71 +798,11 @@ inherited frmStkInvoice: TfrmStkInvoice
               MultiSelect = False
             end
           end
-          object RzPanel6: TRzPanel
-            Left = 5
-            Top = 335
-            Width = 695
-            Height = 37
-            Align = alBottom
-            BorderOuter = fsNone
-            BorderColor = clGreen
-            BorderWidth = 1
-            Color = clWhite
-            TabOrder = 3
-            Visible = False
-            object Label10: TLabel
-              Left = 170
-              Top = 13
-              Width = 8
-              Height = 14
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -14
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object edtINVOICE_MNY: TcxTextEdit
-              Left = 39
-              Top = 10
-              Width = 133
-              Height = 20
-              TabOrder = 0
-              Visible = False
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel9: TRzPanel
-              Left = 1
-              Top = 1
-              Width = 163
-              Height = 35
-              Align = alLeft
-              BorderOuter = fsNone
-              BorderSides = [sdRight]
-              BorderColor = clGreen
-              BorderWidth = 1
-              Color = clWhite
-              TabOrder = 1
-              object Label1: TLabel
-                Left = 97
-                Top = 13
-                Width = 59
-                Height = 12
-                Caption = #21457#31080#37329#39069':'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clGreen
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-            end
-          end
           object RzPanel7: TRzPanel
             Left = 5
             Top = 175
             Width = 695
-            Height = 160
+            Height = 189
             Align = alClient
             BorderOuter = fsNone
             BorderSides = [sdLeft, sdRight]
@@ -864,7 +814,7 @@ inherited frmStkInvoice: TfrmStkInvoice
               Left = 1
               Top = 1
               Width = 693
-              Height = 158
+              Height = 187
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               BorderStyle = bsNone

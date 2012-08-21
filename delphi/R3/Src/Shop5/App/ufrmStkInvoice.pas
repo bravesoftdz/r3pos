@@ -36,18 +36,12 @@ type
     Label2: TLabel;
     Label4: TLabel;
     edtINVOICE_NO: TcxTextEdit;
-    RzPanel5: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel7: TRzPanel;
     edtINVOICE_MNY: TcxTextEdit;
-    Label12: TLabel;
-    Label13: TLabel;
-    Label15: TLabel;
-    Label16: TLabel;
     RzPanel8: TRzPanel;
     RzLabel3: TRzLabel;
     edtIfDuplicate: TcxCheckBox;
-    edtCREA_USER: TzrComboBoxList;
     Label3: TLabel;
     edtINVOICE_FLAG: TcxComboBox;
     RzPanel9: TRzPanel;
@@ -56,6 +50,8 @@ type
     DataSource1: TDataSource;
     edtINVH_ID: TcxTextEdit;
     Label10: TLabel;
+    Label15: TLabel;
+    edtCREA_USER: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);

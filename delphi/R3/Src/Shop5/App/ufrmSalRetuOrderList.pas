@@ -116,7 +116,7 @@ begin
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,-A.SALE_AMT as AMOUNT,-A.SALE_MNY as AMONEY,''2'' as RECV_TYPE, '+
             'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME,B.INVOICE_NO,B.INVOICE_STATUS '+
             'from SAL_SALESORDER A left join (select distinct H.TENANT_ID,H.INVD_ID,H.INVOICE_NO,H.INVOICE_STATUS,I.FROM_ID '+
-            ' from SAL_INVOICE_INFO H left join SAL_INVOICE_LIST I on H.TENANT_ID=I.TENANT_ID and H.INVD_ID=I.INVD_ID) B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.FROM_ID '+
+            ' from SAL_INVOICE_INFO H left join SAL_INVOICE_LIST I on H.TENANT_ID=I.TENANT_ID and H.INVD_ID=I.INVD_ID where H.INVOICE_STATUS=''1'') B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.FROM_ID '+
             w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,-c.RECV_MNY as RECV_MNY,-c.RECK_MNY as RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SALES_ID=c.SALES_ID and jc.RECV_TYPE=c.RECV_TYPE';

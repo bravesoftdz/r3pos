@@ -1,6 +1,6 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
-  Left = 232
-  Top = 178
+  Left = 370
+  Top = 161
   Width = 836
   Height = 560
   Caption = #38144#21806#21333
@@ -24,7 +24,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
             Height = 453
             inherited RzPanel1: TRzPanel
               Width = 800
-              Height = 121
+              Height = 111
               Caption = '.'
               object RzLabel2: TRzLabel
                 Left = 33
@@ -64,25 +64,20 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                 Height = 12
                 Caption = #38376#24215#21517#31216
               end
-              object Label1: TLabel
-                Left = 201
-                Top = 89
-                Width = 120
-                Height = 12
-                Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
               object Label3: TLabel
                 Left = 33
                 Top = 47
                 Width = 48
                 Height = 12
                 Caption = #25152#23646#37096#38376
+              end
+              object RzLabel1: TRzLabel
+                Left = 187
+                Top = 89
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #21457#31080#21495
               end
               object D1: TcxDateEdit
                 Left = 89
@@ -132,7 +127,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
               object fndSALES_ID: TcxTextEdit
                 Left = 89
                 Top = 85
-                Width = 104
+                Width = 91
                 Height = 20
                 TabOrder = 5
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -312,11 +307,19 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndINVOICE_NO: TcxTextEdit
+                Left = 231
+                Top = 85
+                Width = 94
+                Height = 20
+                TabOrder = 8
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 126
+              Top = 116
               Width = 800
-              Height = 322
+              Height = 332
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -422,6 +425,21 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                   Width = 53
                 end
                 item
+                  DisplayFormat = '00000000'
+                  EditButtons = <>
+                  FieldName = 'INVOICE_NO'
+                  Footers = <>
+                  Title.Caption = #21457#31080#21495
+                  Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'INVOICE_STATUS'
+                  Footers = <>
+                  Title.Caption = #21457#31080#29366#24577
+                  Width = 60
+                end
+                item
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
@@ -509,7 +527,12 @@ inherited frmSalesOrderList: TfrmSalesOrderList
       end
     end
   end
+  inherited mmMenu: TMainMenu
+    Left = 216
+    Top = 224
+  end
   inherited actList: TActionList
+    Top = 176
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end

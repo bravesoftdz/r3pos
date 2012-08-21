@@ -1,6 +1,6 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 287
-  Top = 215
+  Left = 339
+  Top = 191
   Caption = #38144#39033#21457#31080
   ClientHeight = 483
   ClientWidth = 719

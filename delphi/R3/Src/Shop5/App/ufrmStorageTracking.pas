@@ -1421,7 +1421,7 @@ begin
         if fldArr[lv]<>'' then fldArr[lv] := fldArr[lv]+',';
         fldArr[lv] := fldArr[lv]+''''+rs.FieldbyName('SIZE_ID').AsString+'''';
         if TleArr[lv]<>'' then TleArr[lv] := TleArr[lv]+'|';
-        TleArr[lv] := TleArr[lv]+rs.FieldbyName('SIZE_NAME').AsString;
+        TleArr[lv] := TleArr[lv]+trim(rs.FieldbyName('SIZE_NAME').AsString);
         inc(lv);
         rs.Next;
       end;
@@ -1676,8 +1676,8 @@ procedure TfrmStorageTracking.Btn_CommitClick(Sender: TObject);
 var frmDemandOrderList:TfrmDemandOrderList;
 begin
   inherited;
-  if not frmMain.FindAction('Action9').Enabled then Exit;
-  frmMain.FindAction('Action9').OnExecute(nil);
+  if not frmMain.FindAction('actfrmDemandOrderList1').Enabled then Exit;
+  frmMain.FindAction('actfrmDemandOrderList1').OnExecute(nil);
   frmDemandOrderList := TfrmDemandOrderList(frmMain.FindChildForm(TfrmDemandOrderList));
   SendMessage(frmDemandOrderList.Handle,WM_USER+3,0,2);
   PostMessage(frmDemandOrderList.CurOrder.Handle,WM_USER+7,integer(Self),0);

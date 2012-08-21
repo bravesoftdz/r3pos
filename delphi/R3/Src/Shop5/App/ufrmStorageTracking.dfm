@@ -12,40 +12,38 @@ inherited frmStorageTracking: TfrmStorageTracking
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 926
-    Height = 540
+    Width = 918
+    Height = 529
     inherited RzPanel2: TRzPanel
-      Width = 916
-      Height = 530
+      Width = 908
+      Height = 519
       inherited RzPage: TRzPageControl
-        Width = 910
-        Height = 524
-        ActivePage = TabSheet2
-        TabIndex = 1
+        Width = 902
+        Height = 513
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 908
-            Height = 497
+            Width = 900
+            Height = 486
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 898
-              Height = 487
+              Width = 890
+              Height = 476
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 0
               object Splitter1: TSplitter
                 Left = 177
                 Top = 68
-                Height = 419
+                Height = 408
               end
               object RzPanel7: TRzPanel
                 Left = 0
                 Top = 68
                 Width = 177
-                Height = 419
+                Height = 408
                 Align = alLeft
                 BorderOuter = fsNone
                 TabOrder = 0
@@ -53,7 +51,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Left = 0
                   Top = 0
                   Width = 177
-                  Height = 419
+                  Height = 408
                   SelectionPen.Color = clBtnShadow
                   Align = alClient
                   FrameSides = [sdLeft, sdRight, sdBottom]
@@ -70,24 +68,24 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel6: TRzPanel
                 Left = 180
                 Top = 68
-                Width = 718
-                Height = 419
+                Width = 710
+                Height = 408
                 Align = alClient
                 BorderOuter = fsNone
                 TabOrder = 1
                 object Panel1: TPanel
                   Left = 0
                   Top = 0
-                  Width = 718
-                  Height = 419
+                  Width = 710
+                  Height = 408
                   Align = alClient
                   Caption = 'Panel1'
                   TabOrder = 0
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 1
-                    Width = 716
-                    Height = 417
+                    Width = 708
+                    Height = 406
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
                     DataSource = DsStorage
@@ -164,6 +162,13 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footers = <>
                         Title.Caption = #26465#30721
                         Width = 100
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'SHOP_NAME'
+                        Footers = <>
+                        Title.Caption = #38376#24215#21517#31216
+                        Width = 83
                       end
                       item
                         EditButtons = <>
@@ -246,13 +251,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'SHOP_NAME'
-                        Footers = <>
-                        Title.Caption = #38376#24215#21517#31216
-                        Width = 83
-                      end
-                      item
-                        EditButtons = <>
                         FieldName = 'BATCH_NO'
                         Footers = <>
                         Title.Caption = #25209#21495
@@ -264,7 +262,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 898
+                Width = 890
                 Height = 68
                 Align = alTop
                 BorderOuter = fsNone
@@ -290,7 +288,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel2: TPanel
                   Left = 178
                   Top = 0
-                  Width = 720
+                  Width = 712
                   Height = 68
                   Align = alClient
                   Alignment = taLeftJustify
@@ -632,8 +630,8 @@ inherited frmStorageTracking: TfrmStorageTracking
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 908
-            Height = 497
+            Width = 900
+            Height = 486
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -641,13 +639,13 @@ inherited frmStorageTracking: TfrmStorageTracking
             object Splitter2: TSplitter
               Left = 182
               Top = 73
-              Height = 419
+              Height = 408
             end
             object RzPanel10: TRzPanel
               Left = 5
               Top = 73
               Width = 177
-              Height = 419
+              Height = 408
               Align = alLeft
               BorderOuter = fsNone
               TabOrder = 0
@@ -655,7 +653,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 Left = 0
                 Top = 0
                 Width = 177
-                Height = 419
+                Height = 408
                 SelectionPen.Color = clBtnShadow
                 Align = alClient
                 FrameSides = [sdLeft, sdRight, sdBottom]
@@ -672,23 +670,23 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel11: TRzPanel
               Left = 185
               Top = 73
-              Width = 718
-              Height = 419
+              Width = 710
+              Height = 408
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 1
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 718
-                Height = 419
+                Width = 710
+                Height = 408
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel5: TPanel
                   Left = 1
-                  Top = 358
-                  Width = 716
+                  Top = 347
+                  Width = 708
                   Height = 60
                   Align = alBottom
                   BevelOuter = bvNone
@@ -701,7 +699,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ParentFont = False
                   TabOrder = 0
                   DesignSize = (
-                    716
+                    708
                     60)
                   object Label4: TLabel
                     Left = 4
@@ -711,9 +709,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object RzStatusPane3: TRzStatusPane
                     Left = 118
-                    Top = 2
+                    Top = 5
                     Width = 88
-                    Height = 25
+                    Height = 48
                     FillColor = clMaroon
                     ParentFillColor = False
                     Color = clYellow
@@ -729,9 +727,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object RzStatusPane4: TRzStatusPane
                     Left = 214
-                    Top = 2
+                    Top = 5
                     Width = 88
-                    Height = 25
+                    Height = 48
                     Color = clRed
                     ParentColor = False
                     Alignment = taCenter
@@ -739,9 +737,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object RzStatusPane5: TRzStatusPane
                     Left = 22
-                    Top = 2
+                    Top = 5
                     Width = 88
-                    Height = 25
+                    Height = 48
                     FillColor = clPurple
                     ParentFillColor = False
                     Color = clYellow
@@ -773,9 +771,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object Btn_Clear: TRzBitBtn
                     Left = 438
-                    Top = 33
-                    Width = 67
-                    Height = 24
+                    Top = 30
+                    Width = 62
+                    Height = 22
                     Anchors = [akTop, akRight]
                     Caption = #28165#38500
                     Color = clSilver
@@ -801,9 +799,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object Btn_DeleteLast: TRzBitBtn
                     Left = 438
-                    Top = 6
-                    Width = 67
-                    Height = 24
+                    Top = 7
+                    Width = 62
+                    Height = 22
                     Anchors = [akTop, akRight]
                     Caption = #21024#38500#19978#27425
                     Color = clSilver
@@ -859,8 +857,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 716
-                  Height = 357
+                  Width = 708
+                  Height = 346
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsdemand
@@ -1058,7 +1056,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel12: TRzPanel
               Left = 5
               Top = 5
-              Width = 898
+              Width = 890
               Height = 68
               Align = alTop
               BorderOuter = fsNone
@@ -1084,7 +1082,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel7: TPanel
                 Left = 178
                 Top = 0
-                Width = 720
+                Width = 712
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -1396,8 +1394,8 @@ inherited frmStorageTracking: TfrmStorageTracking
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 908
-            Height = 497
+            Width = 900
+            Height = 486
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1405,13 +1403,13 @@ inherited frmStorageTracking: TfrmStorageTracking
             object Splitter3: TSplitter
               Left = 182
               Top = 73
-              Height = 419
+              Height = 408
             end
             object RzPanel14: TRzPanel
               Left = 5
               Top = 73
               Width = 177
-              Height = 419
+              Height = 408
               Align = alLeft
               BorderOuter = fsNone
               TabOrder = 0
@@ -1419,7 +1417,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 Left = 0
                 Top = 0
                 Width = 177
-                Height = 419
+                Height = 408
                 SelectionPen.Color = clBtnShadow
                 Align = alClient
                 FrameSides = [sdLeft, sdRight, sdBottom]
@@ -1436,8 +1434,8 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel15: TRzPanel
               Left = 185
               Top = 73
-              Width = 718
-              Height = 419
+              Width = 710
+              Height = 408
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 1
@@ -1676,7 +1674,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel16: TRzPanel
               Left = 5
               Top = 5
-              Width = 898
+              Width = 890
               Height = 68
               Align = alTop
               BorderOuter = fsNone
@@ -2013,16 +2011,16 @@ inherited frmStorageTracking: TfrmStorageTracking
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 926
+    Width = 918
     inherited Image3: TImage
       Left = 294
       Width = 0
     end
     inherited Image14: TImage
-      Left = 906
+      Left = 898
     end
     inherited Image1: TImage
-      Left = 294
+      Left = 286
       Width = 612
     end
     inherited rzPanel5: TPanel

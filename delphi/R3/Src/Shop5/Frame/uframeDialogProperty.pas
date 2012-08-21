@@ -131,13 +131,13 @@ begin
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
           edtTable.FieldDefs.Add('SIZE_#',ftInteger,0);
-          Column := DBGridEh1.Columns.Add;
-          Column.FieldName := 'SIZE_TOTAL';
-          Column.Width := 40;
-          Column.Title.Caption := '小计';
-          Column.Footer.ValueType := fvtSum;
-          Column.Alignment := taCenter;
-          Column.ReadOnly := false;
+          //Column := DBGridEh1.Columns.Add;
+          //Column.FieldName := 'SIZE_TOTAL';
+          //Column.Width := 40;
+          //Column.Title.Caption := '小计';
+          //Column.Footer.ValueType := fvtSum;
+          //Column.Alignment := taCenter;
+          //Column.ReadOnly := false;
           edtTable.FieldDefs.Add('SIZE_TOTAL',ftInteger,0);
        end;
     // end

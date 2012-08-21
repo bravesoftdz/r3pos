@@ -355,7 +355,8 @@ uses
   ufrmSizeInfo in 'App\ufrmSizeInfo.pas' {frmSizeInfo},
   ufrmColorInfo in 'App\ufrmColorInfo.pas' {frmColorInfo},
   ObjColorInfo in 'Obj\ObjColorInfo.pas',
-  ObjSizeInfo in 'Obj\ObjSizeInfo.pas';
+  ObjSizeInfo in 'Obj\ObjSizeInfo.pas',
+  ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber};
 
 {$R *.res}
 var

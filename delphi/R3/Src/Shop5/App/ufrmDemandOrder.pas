@@ -1034,6 +1034,7 @@ var
   Godsid:String;
   IsSame:Boolean;
   rs:TZQuery;
+  FillObj:TRecord_;
 begin
   if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
   frmStorageTracking := TfrmStorageTracking(Message.WParam);
@@ -1064,7 +1065,14 @@ begin
               end;
               if not IsSame then
               begin
-                DecodeBarcode(edtProperty.FieldByName('BARCODE').AsString);
+                FillObj := TRecord_.Create(edtProperty);
+                try
+                  FillObj.ReadFromDataSet(edtProperty);
+                  AddRecord(FillObj,edtProperty.FieldbyName('UNIT_ID').AsString,true);
+                  //DecodeBarcode(edtProperty.FieldByName('BARCODE').AsString);
+                finally
+                  FillObj.Free;
+                end;
                 rs.Filtered := False;
                 rs.Filter := 'SEQNO='''+edtProperty.FieldByName('SEQNO').AsString+'''';
                 rs.Filtered := True;

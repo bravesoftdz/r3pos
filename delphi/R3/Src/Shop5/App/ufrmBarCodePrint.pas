@@ -296,9 +296,9 @@ begin
         adoPrintTemp.FieldByName('BRAND').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_BRAND_INFO'),'SORT_ID','SORT_NAME',rs.FieldByName('SORT_ID4').AsString);
         adoPrintTemp.FieldByName('PROVIDE').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_CLIENTINFO'),'CLIENT_ID','CLIENT_NAME',rs.FieldByName('SORT_ID3').AsString);
         adoPrintTemp.FieldByName('UNIT_NAME').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',rs.FieldByName('UNIT_ID').AsString);
-        if length(adoPrint.FieldByName('PROPERTY_01').AsString)=3 then
+        if Column1.KeyList.IndexOf(adoPrint.FieldByName('PROPERTY_01').AsString)>=0 then
         adoPrintTemp.FieldByName('PROPERTY_01').AsString := Column1.PickList[Column1.KeyList.IndexOf(adoPrint.FieldByName('PROPERTY_01').AsString)];
-        if length(adoPrint.FieldByName('PROPERTY_02').AsString)=3 then
+        if Column2.KeyList.IndexOf(adoPrint.FieldByName('PROPERTY_02').AsString)>=0 then
         adoPrintTemp.FieldByName('PROPERTY_02').AsString := Column2.PickList[Column2.KeyList.IndexOf(adoPrint.FieldByName('PROPERTY_02').AsString)];
         adoPrintTemp.Post;
       end;

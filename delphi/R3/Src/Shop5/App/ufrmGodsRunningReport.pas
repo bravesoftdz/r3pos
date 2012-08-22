@@ -442,14 +442,14 @@ begin
     begin
       if MaxReckDate>=BegDate then  //已结账，全部走台账表
       begin
-        Str:='select A.BAL_AMT*1.0/'+UnitCalc+' as BAL_AMT,A.BAL_RTL as BAL_RTL from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
+        Str:='select sum(A.BAL_AMT*1.0/'+UnitCalc+')as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
              ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and A.GODS_ID='''+GodsID+''' '+
              ' and A.CREA_DATE='+BegDate+' '+Shop_Cnd;
       end else //走两部分联合[union]
       begin
         Str:=
            'select sum(BAL_AMT) as BAL_AMT,sum(BAL_RTL) as BAL_RTL from '+
-           '(select (A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,A.BAL_RTL as BAL_RTL '+
+           '(select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
            ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
            ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
            ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+MaxReckDate+' '+

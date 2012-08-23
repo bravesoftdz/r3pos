@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = -1
-  Top = 220
+  Left = 106
+  Top = 157
   Width = 817
   Height = 561
   Caption = ''

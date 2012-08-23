@@ -797,7 +797,7 @@ begin
         if (bDate+i)>e then break;
         Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',bDate+i);
         Update;
-        PrgPercent := (i*100 div pt) div 3+5;
+        PrgPercent := (i*100 div (ept-b+1)) div 3+5;
         //生成数据
         SQL :=
           'insert into '+tempTableName1+'('+

@@ -6,7 +6,6 @@ update PUB_PARAMS set CODE_NAME='重点品牌' where TYPE_CODE='SORT_TYPE' and CODE_
 update PUB_PARAMS set CODE_NAME='省内外' where TYPE_CODE='SORT_TYPE' and CODE_ID='6';
 update PUB_PARAMS set CODE_NAME='生产厂家' where TYPE_CODE='SORT_TYPE' and CODE_ID='9';
 
-update CA_MODULE set MODU_NAME='商品库存' where MODU_ID='14500001';
 
 --日均销量
 alter table STO_STORAGE add	DAY_SALE_AMT decimal(18, 3) null;

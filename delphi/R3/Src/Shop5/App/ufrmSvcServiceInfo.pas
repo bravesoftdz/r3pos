@@ -312,31 +312,20 @@ procedure TfrmSvcServiceInfo.SetClientId(const Value: String);
 var rs:TZQuery;
 begin
   FClientId := Value;
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select CLIENT_ID,CLIENT_CODE,CLIENT_NAME,LINKMAN,TELEPHONE1,ADDRESS from VIW_CUSTOMER where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID ';
-    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('CLIENT_ID').AsString := Value;
-    Factor.Open(rs);
-    if not rs.IsEmpty then
-    begin
-       edtCLIENT_CODE.Text := rs.FieldByName('CLIENT_CODE').AsString;
-       edtLINKMAN.Text := rs.FieldByName('LINKMAN').AsString;
-       edtTELEPHONE.Text := rs.FieldByName('TELEPHONE1').AsString;
-       edtADDRESS.Text := rs.FieldByName('ADDRESS').AsString;
-       edtCLIENT_ID.KeyValue := FClientId;
-       edtCLIENT_ID.Text := rs.FieldByName('CLIENT_NAME').AsString;
-    end
-    else
-    begin
-       edtCLIENT_CODE.Text := rs.FieldByName('CLIENT_CODE').AsString;
-       edtLINKMAN.Text := rs.FieldByName('LINKMAN').AsString;
-       edtTELEPHONE.Text := rs.FieldByName('TELEPHONE1').AsString;
-       edtADDRESS.Text := rs.FieldByName('ADDRESS').AsString;
-    end;
-  finally
-    rs.Free;
+  rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+  if rs.Locate('CLIENT_ID',Value,[]) then
+  begin
+     edtCLIENT_CODE.Text := rs.FieldByName('CLIENT_CODE').AsString;
+     if Trim(edtLINKMAN.Text) = '' then
+        edtLINKMAN.Text := rs.FieldByName('LINKMAN').AsString;
+     if Trim(edtTELEPHONE.Text) = '' then
+        edtTELEPHONE.Text := rs.FieldByName('TELEPHONE2').AsString;
+     if Trim(edtADDRESS.Text) = '' then
+        edtADDRESS.Text := rs.FieldByName('ADDRESS').AsString;
+     edtCLIENT_ID.KeyValue := FClientId;
+     edtCLIENT_ID.Text := rs.FieldByName('CLIENT_NAME').AsString;
   end;
+
 end;
 
 procedure TfrmSvcServiceInfo.SetGodsName(const Value: String);

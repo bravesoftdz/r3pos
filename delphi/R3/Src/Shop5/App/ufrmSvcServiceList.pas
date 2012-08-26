@@ -132,29 +132,11 @@ begin
           SalesId := CdsSalesList.FieldByName('SALES_ID').AsString;
           GodsId := CdsSalesList.FieldByName('GODS_ID').AsString;
           Append;
-          ClientId := CdsSalesList.FieldByName('CLIENT_ID').AsString;
           GodsName := CdsSalesList.FieldByName('GODS_NAME').AsString;
-
-          if CdsSalesList.FieldByName('LINKMAN').AsString = '' then
-          begin
-             rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
-             if rs.Locate('CLIENT_ID',CdsSalesList.FieldByName('CLIENT_ID').AsString,[]) then
-                LinkMan := rs.FieldByName('LINKMAN').AsString;
-          end;
-          
-          if CdsSalesList.FieldByName('SEND_ADDR').AsString = '' then
-          begin
-             rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
-             if rs.Locate('CLIENT_ID',CdsSalesList.FieldByName('CLIENT_ID').AsString,[]) then
-                Address := rs.FieldByName('ADDRESS').AsString;
-          end;
-
-          if CdsSalesList.FieldByName('TELEPHONE').AsString = '' then
-          begin
-             rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
-             if rs.Locate('CLIENT_ID',CdsSalesList.FieldByName('CLIENT_ID').AsString,[]) then
-                Telephone := rs.FieldByName('TELEPHONE2').AsString;
-          end;
+          LinkMan := CdsSalesList.FieldByName('LINKMAN').AsString;
+          Address := CdsSalesList.FieldByName('SEND_ADDR').AsString;
+          Telephone := CdsSalesList.FieldByName('TELEPHONE').AsString;
+          ClientId := CdsSalesList.FieldByName('CLIENT_ID').AsString;
 
           OnSave := AddRecord;
           //登记选择第一分页 [查询] 时执行

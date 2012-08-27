@@ -136,6 +136,7 @@ begin
           LinkMan := CdsSalesList.FieldByName('LINKMAN').AsString;
           Address := CdsSalesList.FieldByName('SEND_ADDR').AsString;
           Telephone := CdsSalesList.FieldByName('TELEPHONE').AsString;
+          UserNo := CdsSalesList.FieldByName('COMM_ID').AsString;
           ClientId := CdsSalesList.FieldByName('CLIENT_ID').AsString;
 
           OnSave := AddRecord;
@@ -400,7 +401,7 @@ begin
   ' case when isnull(I.SERIAL_NO_NUM,0)=0 then ''未登记'' '+
   '      when (isnull(I.SERIAL_NO_NUM,0)<>0) and (isnull(I.SERIAL_NO_NUM,0) < A.AMOUNT) then ''部分登记'' '+
   '      when isnull(I.SERIAL_NO_NUM,0) = A.AMOUNT then ''完成登记'' '+
-  ' end as STATUS,B.LINKMAN,B.SEND_ADDR,B.TELEPHONE,'+
+  ' end as STATUS,B.LINKMAN,B.SEND_ADDR,B.TELEPHONE,B.COMM_ID,'+
   'A.GODS_ID,E.GODS_NAME,D.SHOP_NAME as SHOP_ID_TEXT,B.CREA_DATE,B.INVOICE_FLAG,A.AMOUNT,A.APRICE,A.AMONEY,G.USER_NAME as GUIDE_USER_TEXT '+
   ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
   ' left join VIW_CUSTOMER C on B.TENANT_ID=C.TENANT_ID and B.CLIENT_ID=C.CLIENT_ID '+

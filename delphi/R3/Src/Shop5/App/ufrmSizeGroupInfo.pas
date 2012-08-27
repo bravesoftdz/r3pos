@@ -221,9 +221,9 @@ begin
        edtSORT_NAME.SetFocus;
        Raise Exception.Create('请输入"'+rzTree.Items[i].Text+'"分组名');
     end;
-    if TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString = '' then
+    if rzTree.Items[i].Level = 0 then
        begin
-          if rzTree.Items[i].Level = 0 then
+          if TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString = '' then
           begin
              rzTree.Items[i].Selected:=True;
              edtSORT_NAME.SetFocus;

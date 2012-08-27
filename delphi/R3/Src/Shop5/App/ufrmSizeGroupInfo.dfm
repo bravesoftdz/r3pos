@@ -156,6 +156,7 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
                   Top = 0
                   Width = 335
                   Height = 209
+                  AllowedOperations = [alopUpdateEh]
                   AutoFitColWidths = True
                   DataSource = DsSizeInfo
                   Flat = True

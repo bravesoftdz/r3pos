@@ -77,12 +77,14 @@ type
     FAddress: String;
     FLinkMan: String;
     FTelephone: String;
+    FUserNo: String;
     procedure SetClientId(const Value: String);
     procedure SetGodsName(const Value: String);
     procedure LoadParams;
     procedure SetAddress(const Value: String);
     procedure SetLinkMan(const Value: String);
     procedure SetTelephone(const Value: String);
+    procedure SetUserNo(const Value: String);
     { Private declarations }
   public
     { Public declarations }
@@ -103,6 +105,7 @@ type
     property LinkMan:String read FLinkMan write SetLinkMan;
     property Telephone:String read FTelephone write SetTelephone;
     property Address:String read FAddress write SetAddress;
+    property UserNo:String read FUserNo write SetUserNo;
   end;
 
 implementation
@@ -315,7 +318,6 @@ begin
   rs := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
   if rs.Locate('CLIENT_ID',Value,[]) then
   begin
-     edtCLIENT_CODE.Text := rs.FieldByName('CLIENT_CODE').AsString;
      if Trim(edtLINKMAN.Text) = '' then
         edtLINKMAN.Text := rs.FieldByName('LINKMAN').AsString;
      if Trim(edtTELEPHONE.Text) = '' then
@@ -502,6 +504,12 @@ procedure TfrmSvcServiceInfo.SetTelephone(const Value: String);
 begin
   FTelephone := Value;
   edtTELEPHONE.Text := Value;
+end;
+
+procedure TfrmSvcServiceInfo.SetUserNo(const Value: String);
+begin
+  FUserNo := Value;
+  edtCLIENT_CODE.Text := Value;
 end;
 
 end.

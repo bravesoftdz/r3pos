@@ -507,14 +507,14 @@ begin
   edtSORT1.Enabled:=True;
   edtSORT2.Enabled:=True;
   edtDelete.Enabled:=True;
-  edtSORT_NAME.Enabled:=True;
+  //edtSORT_NAME.Enabled:=True;
   if rzTree.Items.Count=0 then
   begin
     edtSORT_NAME.Text:='';
     edtSORT_SPELL.Text:='';
     edtDelete.Enabled:=False;
     edtSORT2.Enabled:=False;
-    dbState:=dsBrowse;
+    //dbState:=dsBrowse;
   end;
 end;
 
@@ -753,7 +753,7 @@ begin
     if rzTree.Items.Count>0 then
     begin
       rzTree.SetFocus;
-      if SORT_ID<>'' then
+      if SORT_ID<>'' then                                                                         
       begin
         rzNode:=FindNode(SORT_ID);
         if rzNode<>nil  then
@@ -799,7 +799,7 @@ begin
       try
         FIsChange:=0;
         Sort_Type := SORTTYPE;
-        if not ShopGlobal.GetChkRight('32100001',1) then Raise Exception.Create('你没有查看'+Caption+'的权限,请和管理员联系.');
+        //if not ShopGlobal.GetChkRight('32100001',1) then Raise Exception.Create('你没有查看'+Caption+'的权限,请和管理员联系.');
         ShowModal;
         result:=(FIsChange=1);
       finally

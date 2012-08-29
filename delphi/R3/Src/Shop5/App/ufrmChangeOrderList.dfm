@@ -3,26 +3,26 @@ inherited frmChangeOrderList: TfrmChangeOrderList
   Top = 133
   Width = 832
   Height = 572
-  Caption = #35843#25972#21333
+  Caption = '调整单'
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 824
-    Height = 508
+    Width = 816
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 814
-      Height = 498
+      Width = 806
+      Height = 487
       inherited RzPage: TRzPageControl
-        Width = 808
-        Height = 492
+        Width = 800
+        Height = 481
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #35843#25972#21333#26597#35810
+          Caption = '调整单查询'
           inherited RzPanel3: TRzPanel
-            Width = 806
-            Height = 465
+            Width = 798
+            Height = 454
             inherited RzPanel1: TRzPanel
-              Width = 796
+              Width = 788
               Height = 92
               object RzLabel2: TRzLabel
                 Left = 33
@@ -30,14 +30,14 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #19994#21153#26085#26399
+                Caption = '业务日期'
               end
               object RzLabel3: TRzLabel
                 Left = 200
                 Top = 4
                 Width = 12
                 Height = 12
-                Caption = #33267
+                Caption = '至'
               end
               object RzLabel5: TRzLabel
                 Left = 33
@@ -45,18 +45,18 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #27969#27700#21333#21495
+                Caption = '流水单号'
               end
               object Label1: TLabel
                 Left = 201
                 Top = 65
                 Width = 120
                 Height = 12
-                Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
+                Caption = '支持模块,输后4位查询'
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -12
-                Font.Name = #23435#20307
+                Font.Name = '宋体'
                 Font.Style = []
                 ParentFont = False
               end
@@ -66,21 +66,21 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #32463' '#25163' '#20154
+                Caption = '经 手 人'
               end
               object Label40: TLabel
                 Left = 33
                 Top = 24
                 Width = 48
                 Height = 12
-                Caption = #38376#24215#21517#31216
+                Caption = '门店名称'
               end
               object D1: TcxDateEdit
                 Left = 89
                 Top = 0
                 Width = 104
                 Height = 20
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                ImeName = '中文(简体) - 搜狗五笔输入法'
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -89,7 +89,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Top = 0
                 Width = 109
                 Height = 20
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                ImeName = '中文(简体) - 搜狗五笔输入法'
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
@@ -99,7 +99,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 104
                 Height = 20
                 TabOrder = 3
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                ImeName = '中文(简体) - 搜狗五笔输入法'
               end
               object btnOk: TRzBitBtn
                 Left = 480
@@ -107,12 +107,12 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 67
                 Height = 26
                 Action = actFind
-                Caption = #26597#35810
+                Caption = '查询'
                 Color = clSilver
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
                 Font.Height = -12
-                Font.Name = #23435#20307
+                Font.Name = '宋体'
                 Font.Style = [fsBold]
                 HighlightColor = 16026986
                 HotTrack = True
@@ -137,16 +137,16 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Properties.Columns = 2
                 Properties.Items = <
                   item
-                    Caption = #20840#37096
+                    Caption = '全部'
                   end
                   item
-                    Caption = #24453#23457#26680
+                    Caption = '待审核'
                   end
                   item
-                    Caption = #24050#23457#26680
+                    Caption = '已审核'
                   end
                   item
-                    Caption = #26410#25171#21360
+                    Caption = '未打印'
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -173,13 +173,13 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                     EditButtons = <>
                     FieldName = 'ACCOUNT'
                     Footers = <>
-                    Title.Caption = #24080#21495
+                    Title.Caption = '帐号'
                   end
                   item
                     EditButtons = <>
                     FieldName = 'USER_NAME'
                     Footers = <>
-                    Title.Caption = #22995#21517
+                    Title.Caption = '姓名'
                     Width = 130
                   end>
                 DropWidth = 180
@@ -215,13 +215,13 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                     EditButtons = <>
                     FieldName = 'SHOP_NAME'
                     Footers = <>
-                    Title.Caption = #21517#31216
+                    Title.Caption = '名称'
                   end
                   item
                     EditButtons = <>
                     FieldName = 'SHOP_ID'
                     Footers = <>
-                    Title.Caption = #20195#30721
+                    Title.Caption = '代码'
                     Width = 20
                   end>
                 DropWidth = 185
@@ -237,8 +237,8 @@ inherited frmChangeOrderList: TfrmChangeOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 97
-              Width = 796
-              Height = 363
+              Width = 788
+              Height = 352
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -249,7 +249,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                   EditButtons = <>
                   FieldName = 'SEQNO'
                   Footers = <>
-                  Title.Caption = #24207#21495
+                  Title.Caption = '序号'
                   Width = 28
                 end
                 item
@@ -257,70 +257,63 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                   EditButtons = <>
                   FieldName = 'CHANGE_DATE'
                   Footers = <>
-                  Title.Caption = #19994#21153#26085#26399
+                  Title.Caption = '业务日期'
                   Width = 72
                 end
                 item
                   EditButtons = <>
                   FieldName = 'GLIDE_NO'
                   Footers = <>
-                  Title.Caption = #21333#21495
+                  Title.Caption = '单号'
                   Width = 105
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DEPT_NAME'
                   Footers = <>
-                  Title.Caption = #37096#38376
+                  Title.Caption = '部门'
                   Width = 101
                 end
                 item
                   EditButtons = <>
                   FieldName = 'SHOP_ID'
                   Footers = <>
-                  Title.Caption = #38376#24215#21517#31216
+                  Title.Caption = '门店名称'
                   Width = 102
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DUTY_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #32463#25163#20154
+                  Title.Caption = '经手人'
                   Width = 71
                 end
                 item
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #25968#37327
+                  Title.Caption = '数量'
                   Width = 69
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'AMONEY'
-                  Footers = <>
-                  Title.Caption = #36827#36135#25104#26412
-                  Width = 86
                 end
                 item
                   EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
-                  Title.Caption = #22791#27880
+                  Title.Caption = '备注'
                   Width = 198
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #21046#21333#20154
+                  Title.Caption = '制单人'
                   Width = 61
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>
-                  Title.Caption = #24405#20837#26102#38388
+                  Title.Caption = '录入时间'
                   Width = 137
                 end>
             end
@@ -330,36 +323,35 @@ inherited frmChangeOrderList: TfrmChangeOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 824
+    Width = 816
     inherited Image3: TImage
-      Left = 581
-      Width = 0
+      Left = 585
     end
     inherited Image14: TImage
-      Left = 804
+      Left = 796
     end
     inherited Image1: TImage
-      Left = 581
+      Left = 573
       Width = 223
     end
     inherited rzPanel5: TPanel
-      Left = 581
+      Left = 585
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 565
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
+          MinHeight = 565
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
+        Width = 565
         object ToolButton11: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actExit
         end

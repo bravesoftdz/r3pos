@@ -1444,10 +1444,10 @@ end;
 
 function TCaFactory.SyncAll(flag:integer): boolean;
 begin
-  AutoCoLogo;
-  if not Audited then Exit;
   frmLogo.Show;
   try
+    AutoCoLogo;
+    if not Audited then Exit;
     frmLogo.ProgressBar1.Max := 11;
     frmLogo.Label1.Caption := '下载企业关系...';
     frmLogo.Label1.Update;

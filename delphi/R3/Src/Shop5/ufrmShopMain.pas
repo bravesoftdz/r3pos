@@ -326,6 +326,7 @@ type
     actfrmSizeInfo: TAction;
     actfrmColorGroup: TAction;
     actfrmSizeGroup: TAction;
+    actfrmBatchAdjustPrice: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -486,6 +487,7 @@ type
     procedure actfrmSizeInfoExecute(Sender: TObject);
     procedure actfrmColorGroupExecute(Sender: TObject);
     procedure actfrmSizeGroupExecute(Sender: TObject);
+    procedure actfrmBatchAdjustPriceExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -564,7 +566,7 @@ uses
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
   ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,
-  ufrmBusinessIncomeDayReport,ufrmSvcServiceList,ufrmColorInfo,ufrmSizeInfo,ufrmColorGroupInfo,ufrmSizeGroupInfo;
+  ufrmBusinessIncomeDayReport,ufrmSvcServiceList,ufrmColorInfo,ufrmSizeInfo,ufrmColorGroupInfo,ufrmSizeGroupInfo,ufrmBatchAdjustPrice;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -834,6 +836,7 @@ begin
                    if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(false);
                  end;
             end;
+         frmLogo.Show;
          Global.LoadBasic();
          ShopGlobal.LoadRight;
          CheckEnabled;
@@ -1012,7 +1015,7 @@ begin
         end;
         try
           if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
-          if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then Exit;
+          if not SyncFactory.SyncLockCheck then Exit;
           if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
           SyncFactory.SyncAll;
         except
@@ -1524,6 +1527,7 @@ begin
           if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
              begin
                if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
+               frmLogo.Show;
                InitTenant;
              end;
         end
@@ -1536,6 +1540,8 @@ begin
                   begin
                     if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步
                     begin
+                      frmLogo.Show;
+                      frmLogo.ShowTitle := '同步基础档案..';
                       SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
                       SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
                       SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSysDefine',0);
@@ -1548,6 +1554,7 @@ begin
                     if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
                   end;
              end;
+          frmLogo.Show;
           InitTenant;
         end;
     finally
@@ -4831,6 +4838,28 @@ begin
        end;
      end;
 
+end;
+
+procedure TfrmShopMain.actfrmBatchAdjustPriceExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmBatchAdjustPrice);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBatchAdjustPrice.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

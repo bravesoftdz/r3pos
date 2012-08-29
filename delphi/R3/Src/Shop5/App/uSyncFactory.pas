@@ -1364,7 +1364,12 @@ begin
     cs_d.Free;
   end;
 
-  //下传
+  if (SFVersion='.NET') and not Global.Debug then //连锁版只下载日账，不上传
+     begin
+       SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+       Exit;
+     end;
+  //上传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1576,7 +1581,7 @@ begin
        SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
        Exit;
      end;
-  //下传
+  //上传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);

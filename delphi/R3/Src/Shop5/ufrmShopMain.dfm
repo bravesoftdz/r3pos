@@ -5712,6 +5712,11 @@ inherited frmShopMain: TfrmShopMain
       Caption = #23610#30721#32452#31649#29702
       OnExecute = actfrmSizeGroupExecute
     end
+    object actfrmBatchAdjustPrice: TAction
+      Tag = 12100001
+      Caption = #25209#37327#35843#20215
+      OnExecute = actfrmBatchAdjustPriceExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

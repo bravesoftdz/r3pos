@@ -1,16 +1,16 @@
 inherited frmDbOrder: TfrmDbOrder
-  Left = 577
-  Top = 137
+  Left = 36
+  Top = 116
   Width = 885
   Height = 552
   Caption = #35843#25320#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 877
-    Height = 525
+    Width = 869
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 867
+      Width = 859
       Height = 116
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -374,8 +374,8 @@ inherited frmDbOrder: TfrmDbOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 421
-      Width = 867
+      Top = 410
+      Width = 859
       Height = 62
       TabOrder = 2
       object Label8: TLabel
@@ -471,8 +471,8 @@ inherited frmDbOrder: TfrmDbOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 154
-      Width = 867
-      Height = 267
+      Width = 859
+      Height = 256
       TabOrder = 3
       Columns = <
         item
@@ -529,24 +529,6 @@ inherited frmDbOrder: TfrmDbOrder
           OnUpdateData = DBGridEh1Columns4UpdateData
         end
         item
-          DisplayFormat = '#0.0##'
-          EditButtons = <>
-          FieldName = 'COST_APRICE'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #25104#26412#20215
-          Width = 57
-        end
-        item
-          DisplayFormat = '#0.00'
-          EditButtons = <>
-          FieldName = 'COST_MONEY'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #36827#36135#25104#26412
-          Width = 66
-        end
-        item
           EditButtons = <>
           FieldName = 'APRICE'
           Footers = <>
@@ -560,7 +542,7 @@ inherited frmDbOrder: TfrmDbOrder
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
-          Title.Caption = #38144#21806#39069
+          Title.Caption = #21487#38144#21806#39069
           Width = 71
         end
         item
@@ -593,15 +575,15 @@ inherited frmDbOrder: TfrmDbOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 121
-      Width = 867
+      Width = 859
     end
     inherited stbHint: TRzPanel
-      Top = 483
-      Width = 867
+      Top = 472
+      Width = 859
     end
     inherited rzHelp: TRzPanel
-      Top = 507
-      Width = 867
+      Top = 496
+      Width = 859
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

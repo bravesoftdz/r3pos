@@ -736,7 +736,7 @@ begin
     else
        begin
          e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-         if e<=(bDate+b-1) then
+         if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
        end;
     Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM',bDate+b);
@@ -1261,7 +1261,7 @@ begin
       else
          begin
            e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-           if e<=(bDate+b-1) then
+           if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
               e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
          end;
       SQL := 'delete from RCK_GOODS_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+formatDatetime('YYYYMM',e);
@@ -1399,7 +1399,7 @@ begin
         else
            begin
              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-             if e<=(bDate+b-1) then
+             if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
                 e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
            end;
         SQL :=
@@ -1732,7 +1732,7 @@ begin
       else
          begin
            e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-           if e<=(bDate+b-1) then
+           if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
               e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
          end;
       //计算账户账款

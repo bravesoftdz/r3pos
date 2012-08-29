@@ -2,7 +2,7 @@ inherited frmMktRequReport: TfrmMktRequReport
   Left = 218
   Width = 986
   Height = 586
-  Caption = #36153#29992#30003#39046#25253#34920
+  Caption = #36153#29992#30003#35831#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -21,7 +21,7 @@ inherited frmMktRequReport: TfrmMktRequReport
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = #37096#38376#36153#29992#30003#39046#27719#24635#34920
+          Caption = #37096#38376#36153#29992#30003#35831#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 753
             Height = 468
@@ -37,7 +37,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #30003#39046#26085#26399
+                  Caption = #30003#35831#26085#26399
                 end
                 object Label7: TLabel
                   Left = 24
@@ -379,7 +379,7 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = #22320#21306#36153#29992#30003#39046#27719#24635#34920
+          Caption = #22320#21306#36153#29992#30003#35831#27719#24635#34920
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -442,7 +442,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #30003#39046#26085#26399
+                  Caption = #30003#35831#26085#26399
                 end
                 object RzLabel7: TRzLabel
                   Left = 168
@@ -802,7 +802,7 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = #23458#25143#36153#29992#30003#39046#27719#24635#34920
+          Caption = #23458#25143#36153#29992#30003#35831#27719#24635#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -873,7 +873,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #30003#39046#26085#26399
+                  Caption = #30003#35831#26085#26399
                 end
                 object BtnKpi: TRzBitBtn
                   Left = 513
@@ -1225,7 +1225,7 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #25351#26631#36153#29992#30003#39046#27719#24635#34920
+          Caption = #25351#26631#36153#29992#30003#35831#27719#24635#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -1280,7 +1280,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #30003#39046#26085#26399
+                Caption = #30003#35831#26085#26399
               end
               object RzLabel8: TRzLabel
                 Left = 168
@@ -1639,7 +1639,7 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
         object TabSheet5: TRzTabSheet
           Color = clCream
-          Caption = #23458#25143#36153#29992#30003#39046#26126#32454#34920
+          Caption = #23458#25143#36153#29992#30003#35831#26126#32454#34920
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
@@ -1710,7 +1710,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #30003#39046#26085#26399
+                  Caption = #30003#35831#26085#26399
                 end
                 object RzLabel10: TRzLabel
                   Left = 168

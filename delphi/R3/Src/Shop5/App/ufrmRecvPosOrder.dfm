@@ -1,6 +1,6 @@
 inherited frmRecvPosOrder: TfrmRecvPosOrder
-  Left = 361
-  Top = 212
+  Left = 498
+  Top = 171
   Caption = #32564#27454#21333
   ClientHeight = 445
   ClientWidth = 656
@@ -240,7 +240,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       TabOrder = 2
       object Label1: TLabel
         Left = 182
-        Top = 62
+        Top = 40
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -272,7 +272,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       end
       object Label3: TLabel
         Left = 182
-        Top = 40
+        Top = 62
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -302,7 +302,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
-        Top = 58
+        Top = 36
         Width = 120
         Height = 20
         Properties.AutoSelect = False
@@ -312,7 +312,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
           end>
         Properties.ReadOnly = True
         Properties.OnChange = edtACCOUNT_IDPropertiesChange
-        TabOrder = 2
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -335,6 +335,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         LocateStyle = lsDark
         Buttons = [zbNew]
         DropListStyle = lsFixed
+        OnSaveValue = edtACCOUNT_IDSaveValue
         MultiSelect = False
       end
       object edtITEM_ID: TzrComboBoxList
@@ -664,12 +665,12 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       end
       object edtPAYM_ID: TcxComboBox
         Left = 236
-        Top = 36
+        Top = 58
         Width = 120
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 1
+        TabOrder = 2
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 236

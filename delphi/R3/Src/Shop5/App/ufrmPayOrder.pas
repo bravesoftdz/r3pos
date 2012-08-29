@@ -67,6 +67,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure cdsDetailBeforeEdit(DataSet: TDataSet);
     procedure edtRECV_USERPropertiesChange(Sender: TObject);
+    procedure edtACCOUNT_IDSaveValue(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
@@ -183,17 +184,18 @@ begin
   AObj.FieldbyName('PAY_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
   //edtPAYM_ID.ItemIndex := ShopGlobal.LoadFormatIni('ufrmPayOrderData_cache','PAYM_ID');
+  edtACCOUNT_ID.DataSet.Locate('ACCOUNT_ID',ShopGlobal.LoadFormatIni('cache','ACCOUNT_ID'),[]);
+  edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
+  edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
   if edtPAYM_ID.Properties.Items.Count > 0 then
   begin
-    i := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',ShopGlobal.LoadFormatIni('cache','PAYM_ID'));
+    i := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',edtACCOUNT_ID.DataSet.FieldbyName('PAYM_ID').asString);
     if i < 0 then
       edtPAYM_ID.ItemIndex := 0
     else
       edtPAYM_ID.ItemIndex := i;
   end;
-  edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
-  edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
-  edtITEM_ID.DataSet.Locate('CODE_ID','2',[]); 
+  edtITEM_ID.DataSet.Locate('CODE_ID','2',[]);
   edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
   edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
@@ -289,7 +291,8 @@ procedure TfrmPayOrder.btnOkClick(Sender: TObject);
 begin
   inherited;
   SaveOrder;
-  ShopGlobal.SaveFormatIni('cache','PAYM_ID',TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  //ShopGlobal.SaveFormatIni('cache','PAYM_ID',TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  ShopGlobal.SaveFormatIni('cache','ACCOUNT_ID',edtACCOUNT_ID.DataSet.FieldByName('ACCOUNT_ID').AsString);
   ModalResult := MROK;
 end;
 
@@ -584,6 +587,13 @@ begin
      begin
        if Value then Label14.Caption := '×´Ì¬:ÉóºË' else Label14.Caption := '×´Ì¬:´ýÉó';
      end;
+end;
+
+procedure TfrmPayOrder.edtACCOUNT_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  if edtACCOUNT_ID.AsString = '' then Exit; 
+  edtPAYM_ID.ItemIndex := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',edtACCOUNT_ID.DataSet.FieldByName('PAYM_ID').AsString);
 end;
 
 end.

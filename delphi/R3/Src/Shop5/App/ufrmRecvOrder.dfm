@@ -1,6 +1,6 @@
 inherited frmRecvOrder: TfrmRecvOrder
-  Left = 169
-  Top = 123
+  Left = 328
+  Top = 155
   ActiveControl = edtCLIENT_ID
   Caption = #25910#27454#21333
   ClientHeight = 465
@@ -244,7 +244,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         132)
       object Label1: TLabel
         Left = 182
-        Top = 63
+        Top = 40
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -283,7 +283,7 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object Label3: TLabel
         Left = 182
-        Top = 40
+        Top = 63
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -322,14 +322,14 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object Label4: TLabel
         Left = 344
-        Top = 40
+        Top = 63
         Width = 30
         Height = 12
         Caption = #37329#39069':'
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
-        Top = 59
+        Top = 36
         Width = 120
         Height = 20
         Properties.AutoSelect = False
@@ -339,7 +339,7 @@ inherited frmRecvOrder: TfrmRecvOrder
           end>
         Properties.ReadOnly = True
         Properties.OnChange = edtACCOUNT_IDPropertiesChange
-        TabOrder = 3
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -362,6 +362,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         LocateStyle = lsDark
         Buttons = [zbNew]
         DropListStyle = lsFixed
+        OnSaveValue = edtACCOUNT_IDSaveValue
         MultiSelect = False
       end
       object edtITEM_ID: TzrComboBoxList
@@ -762,13 +763,13 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object edtPAYM_ID: TcxComboBox
         Left = 236
-        Top = 36
+        Top = 59
         Width = 69
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtPAYM_IDPropertiesChange
-        TabOrder = 1
+        TabOrder = 2
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 506
@@ -813,11 +814,11 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object edtBANK_CODE: TcxTextEdit
         Left = 335
-        Top = 36
+        Top = 59
         Width = 106
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 2
+        TabOrder = 3
         Visible = False
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtBANK_CODEExit
@@ -867,7 +868,7 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object BtnVoucher: TRzBitBtn
         Left = 305
-        Top = 35
+        Top = 58
         Width = 36
         Height = 22
         Anchors = [akTop, akRight]

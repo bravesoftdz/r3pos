@@ -74,6 +74,7 @@ type
     procedure edtPAYM_IDPropertiesChange(Sender: TObject);
     procedure edtBANK_CODEExit(Sender: TObject);
     procedure BtnVoucherClick(Sender: TObject);
+    procedure edtACCOUNT_IDSaveValue(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
@@ -199,17 +200,18 @@ begin
 //  end;
   AObj.FieldbyName('RECV_ID').asString := TSequence.NewId();
   lblCaption.Caption :='单号:..新增..';
+  edtACCOUNT_ID.DataSet.Locate('ACCOUNT_ID',ShopGlobal.LoadFormatIni('cache','ACCOUNT_ID'),[]);
+  edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
+  edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
   if edtPAYM_ID.Properties.Items.Count > 0 then
   begin
-    i := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',ShopGlobal.LoadFormatIni('cache','PAYM_ID'));
+    i := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',edtACCOUNT_ID.DataSet.FieldbyName('PAYM_ID').asString);
     if i < 0 then
       edtPAYM_ID.ItemIndex := 0
     else
       edtPAYM_ID.ItemIndex := i;
   end;
-  edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
-  edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
-  edtITEM_ID.DataSet.Locate('CODE_ID','1',[]); 
+  edtITEM_ID.DataSet.Locate('CODE_ID','1',[]);
   edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
   edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
@@ -314,7 +316,8 @@ procedure TfrmRecvOrder.btnOkClick(Sender: TObject);
 begin
   inherited;
   SaveOrder;
-  ShopGlobal.SaveFormatIni('cache','PAYM_ID',TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  //ShopGlobal.SaveFormatIni('cache','PAYM_ID',TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  ShopGlobal.SaveFormatIni('cache','ACCOUNT_ID',edtACCOUNT_ID.DataSet.FieldByName('ACCOUNT_ID').AsString);
   ModalResult := MROK;
 end;
 
@@ -666,6 +669,14 @@ begin
   end;
   VoucherMny := VoucherMny + TfrmVhPayGlide.ScanBarcode(Self,AObj.FieldbyName('RECV_ID').asString,edtSHOP_ID.AsString,edtDEPT_ID.AsString,edtCLIENT_ID.AsString,SumMny);
   Label4.Caption := '金额:'+FloatToStr(VoucherMny);
+end;
+
+procedure TfrmRecvOrder.edtACCOUNT_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  if edtACCOUNT_ID.AsString = '' then Exit; 
+  edtPAYM_ID.ItemIndex := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',edtACCOUNT_ID.DataSet.FieldByName('PAYM_ID').AsString);
+
 end;
 
 end.

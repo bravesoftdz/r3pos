@@ -1,6 +1,6 @@
 inherited frmPayOrder: TfrmPayOrder
-  Left = 370
-  Top = 138
+  Left = 353
+  Top = 144
   ActiveControl = edtCLIENT_ID
   Caption = #20184#27454#21333
   ClientHeight = 465
@@ -243,7 +243,7 @@ inherited frmPayOrder: TfrmPayOrder
       TabOrder = 2
       object Label1: TLabel
         Left = 182
-        Top = 60
+        Top = 38
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -282,7 +282,7 @@ inherited frmPayOrder: TfrmPayOrder
       end
       object Label3: TLabel
         Left = 182
-        Top = 38
+        Top = 60
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -312,7 +312,7 @@ inherited frmPayOrder: TfrmPayOrder
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
-        Top = 56
+        Top = 34
         Width = 120
         Height = 20
         Properties.AutoSelect = False
@@ -322,7 +322,7 @@ inherited frmPayOrder: TfrmPayOrder
           end>
         Properties.ReadOnly = True
         Properties.OnChange = edtACCOUNT_IDPropertiesChange
-        TabOrder = 0
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -352,6 +352,7 @@ inherited frmPayOrder: TfrmPayOrder
         LocateStyle = lsDark
         Buttons = [zbNew]
         DropListStyle = lsFixed
+        OnSaveValue = edtACCOUNT_IDSaveValue
         MultiSelect = False
       end
       object edtPAY_DATE: TcxDateEdit
@@ -361,7 +362,7 @@ inherited frmPayOrder: TfrmPayOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtRECV_DATEPropertiesChange
-        TabOrder = 2
+        TabOrder = 5
       end
       object edtREMARK: TcxTextEdit
         Left = 236
@@ -369,7 +370,7 @@ inherited frmPayOrder: TfrmPayOrder
         Width = 277
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 1
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object RzPanel4: TRzPanel
@@ -382,7 +383,7 @@ inherited frmPayOrder: TfrmPayOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 3
+        TabOrder = 9
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -653,7 +654,7 @@ inherited frmPayOrder: TfrmPayOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
+        TabOrder = 0
         InGrid = False
         KeyValue = Null
         FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
@@ -715,12 +716,12 @@ inherited frmPayOrder: TfrmPayOrder
       end
       object edtPAYM_ID: TcxComboBox
         Left = 236
-        Top = 34
+        Top = 56
         Width = 120
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 5
+        TabOrder = 2
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 492
@@ -775,7 +776,7 @@ inherited frmPayOrder: TfrmPayOrder
           end>
         Properties.ReadOnly = True
         Properties.OnChange = edtITEM_IDPropertiesChange
-        TabOrder = 7
+        TabOrder = 3
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_NAME;CODE_SPELL'
@@ -820,7 +821,7 @@ inherited frmPayOrder: TfrmPayOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 9
+        TabOrder = 7
         InGrid = False
         KeyValue = Null
         FilterFields = 'DEPT_NAME;DEPT_SPELL'

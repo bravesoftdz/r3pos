@@ -8,7 +8,7 @@ uses
   RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, cxButtonEdit, zrComboBoxList,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   RzButton, Grids, DBGridEh, RzTreeVw, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset, ZBase;
+  ZAbstractDataset, ZDataset, ZBase, PrnDbgeh;
 
 type
   TfrmBatchAdjustPrice = class(TframeToolForm)
@@ -42,6 +42,9 @@ type
     edtValue: TcxTextEdit;
     Label1: TLabel;
     Btn_OK: TRzBitBtn;
+    PrintDBGridEh1: TPrintDBGridEh;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure edtSHOP_TYPEPropertiesChange(Sender: TObject);
     procedure edtGoods_TypePropertiesChange(Sender: TObject);
@@ -59,9 +62,13 @@ type
     procedure GridCellClick(Column: TColumnEh);
     procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
       Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure actPrintExecute(Sender: TObject);
+    procedure actPreviewExecute(Sender: TObject);
   private
     FdbState: TDataSetState;
     { Private declarations }
+    function CheckCanExport:Boolean;
+    procedure PrintView;
     procedure InitGrid;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;
     procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
@@ -256,7 +263,7 @@ end;
 procedure TfrmBatchAdjustPrice.actFindExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('12100001',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12100001',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
   cdsPrice.Close;
   cdsPrice.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql);
   Factor.Open(cdsPrice);
@@ -379,7 +386,7 @@ end;
 procedure TfrmBatchAdjustPrice.actNewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('12100001',2) then Raise Exception.Create('你没有调价的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12100001',2) then Raise Exception.Create('你没有调价的权限,请和管理员联系.');
   if cdsPrice.IsEmpty then Exit;
   dbState := dsEdit;
 end;
@@ -435,6 +442,7 @@ procedure TfrmBatchAdjustPrice.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   RzPanel7.Visible := Value <> dsBrowse;
+  RzPanel9.Visible := Value = dsBrowse;
   Grid.ReadOnly := Value = dsBrowse;
   Panel2.Enabled := Value = dsBrowse;
   actNew.Enabled := Value = dsBrowse;
@@ -445,6 +453,7 @@ end;
 
 procedure TfrmBatchAdjustPrice.Btn_OKClick(Sender: TObject);
 var RateValue:Currency;
+    i:Integer;
 begin
   inherited;
   if not FnString.IsNumberChar(Trim(edtValue.Text)) then
@@ -454,6 +463,7 @@ begin
      Raise Exception.Create('"'+Trim(edtValue.Text)+'"中存在非数字字符!');
   end;
   RateValue := edtValue.EditValue;
+  i:=cdsPrice.RecNo;
   cdsPrice.DisableControls;
   try
    cdsPrice.First;
@@ -469,7 +479,8 @@ begin
    end;
 
   finally
-   cdsPrice.EnableControls;
+    cdsPrice.RecNo := i;
+    cdsPrice.EnableControls;
   end;
 end;
 
@@ -505,6 +516,45 @@ begin
        Grid.Canvas.Font.Style := [fsBold];
        Grid.Canvas.TextRect(R,(Rect.Right-Rect.Left-Grid.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
      end;
+end;
+
+procedure TfrmBatchAdjustPrice.actPrintExecute(Sender: TObject);
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('12100001',4) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
+
+  PrintView;
+  PrintDBGridEh1.Print;
+end;
+
+procedure TfrmBatchAdjustPrice.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '批量调价';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  Grid.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := Grid;
+end;
+
+procedure TfrmBatchAdjustPrice.actPreviewExecute(Sender: TObject);
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('12100001',4) then Raise Exception.Create('你没有预览的权限,请和管理员联系.');
+  PrintView;
+  with TfrmEhLibReport.Create(self) do
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
+    end;
+  end;
+end;
+
+function TfrmBatchAdjustPrice.CheckCanExport: Boolean;
+begin
+  Result := ShopGlobal.GetChkRight('12100001',5);
 end;
 
 end.

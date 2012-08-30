@@ -560,8 +560,8 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
   inherited RzPanel4: TRzPanel
     Width = 922
     inherited Image3: TImage
-      Left = 212
-      Width = 670
+      Left = 298
+      Width = 584
     end
     inherited Image14: TImage
       Left = 902
@@ -570,21 +570,21 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
       Left = 882
     end
     inherited rzPanel5: TPanel
-      Left = 212
+      Left = 298
     end
     inherited CoolBar1: TCoolBar
-      Width = 192
+      Width = 278
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 192
+          MinHeight = 278
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 192
+        Width = 278
         ButtonWidth = 43
         object ToolButton1: TToolButton
           Left = 0
@@ -617,8 +617,18 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
           ImageIndex = 15
           Style = tbsDivider
         end
-        object ToolButton5: TToolButton
+        object ToolButton7: TToolButton
           Left = 149
+          Top = 0
+          Action = actPrint
+        end
+        object ToolButton8: TToolButton
+          Left = 192
+          Top = 0
+          Action = actPreview
+        end
+        object ToolButton5: TToolButton
+          Left = 235
           Top = 0
           Action = actExit
         end
@@ -642,6 +652,12 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
     inherited actCancel: TAction
       OnExecute = actCancelExecute
     end
+    inherited actPrint: TAction
+      OnExecute = actPrintExecute
+    end
+    inherited actPreview: TAction
+      OnExecute = actPreviewExecute
+    end
     inherited actFind: TAction
       OnExecute = actFindExecute
     end
@@ -657,5 +673,44 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
     DataSet = cdsPrice
     Left = 295
     Top = 410
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #29992#25143#26723#26696#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 368
+    Top = 376
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

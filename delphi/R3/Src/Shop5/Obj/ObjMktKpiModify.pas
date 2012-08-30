@@ -81,10 +81,10 @@ procedure TMktKpiModify.InitClass;
 function GetUnitTO_CALC: string;
 var str:string;
 begin
-  str:='( case when J.UNIT_ID=E.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
-       ' when J.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
-       ' when J.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
-       ' else 1.0 end )';
+  str:='( case when J.UNIT_ID=E.CALC_UNITS then 1.000 '+            //默认单位为 计量单位
+       ' when J.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.000 as decimal(18,3)) '+  //默认单位为 小单位
+       ' when J.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.000 as decimal(18,3)) '+      //默认单位为 大单位
+       ' else 1.000 end )';
   result:=str;
 end;
 var Str:String;

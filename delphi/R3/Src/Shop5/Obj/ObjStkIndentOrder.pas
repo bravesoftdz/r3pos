@@ -113,7 +113,7 @@ var
 begin
   inherited;
   SelectSQL.Text := 'select j.TENANT_ID,j.SHOP_ID,j.INDE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.AMOUNT,j.ORG_PRICE,j.IS_PRESENT,j.APRICE,j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,'+
-               'case when j.CALC_AMOUNT=0 then 0 else j.FNSH_AMOUNT / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.0) as decimal(18,3))*1.0) end as FNSH_AMOUNT,j.BOND_MNY,'+
+               'case when j.CALC_AMOUNT=0 then 0 else j.FNSH_AMOUNT / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.000) as decimal(18,3))*1.000) end as FNSH_AMOUNT,j.BOND_MNY,'+
                'j.REMARK,b.GODS_NAME,b.GODS_CODE,j.ORG_PRICE*j.AMOUNT as RTL_MONEY from STK_INDENTDATA j inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.INDE_ID=:INDE_ID order by SEQNO';
   IsSQLUpdate := True;
   Str := 'insert into STK_INDENTDATA(TENANT_ID,SHOP_ID,SEQNO,INDE_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,BOND_MNY,REMARK) '
@@ -398,7 +398,7 @@ begin
      ParseSQL(iDbType,
      'select s.*,round(AMOUNT*APRICE,2) as AMONEY,round(AMOUNT*APRICE,2) as CALC_MONEY,round(AMOUNT*ORG_PRICE,2)-round(AMOUNT*APRICE,2) as AGIO_MONEY from( '+
      'select j.TENANT_ID,j.SHOP_ID,j.INDE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.ORG_PRICE,j.IS_PRESENT,j.APRICE,j.AGIO_RATE,'+
-      'case when j.CALC_AMOUNT=0 then 0 else (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0)) / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.0) as decimal(18,3))*1.0) end as AMOUNT,isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0) as CALC_AMOUNT,'+
+      'case when j.CALC_AMOUNT=0 then 0 else (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0)) / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.000) as decimal(18,3))*1.000) end as AMOUNT,isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0) as CALC_AMOUNT,'+
      'j.REMARK,b.GODS_NAME,b.GODS_CODE,j.ORG_PRICE*j.AMOUNT as RTL_MONEY from STK_INDENTDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
       'where j.TENANT_ID=:TENANT_ID and j.INDE_ID=:INDE_ID and (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0))>0 ) s order by SEQNO');
 end;

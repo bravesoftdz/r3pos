@@ -8,22 +8,22 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 883
-    Height = 507
+    Width = 875
+    Height = 496
     inherited RzPanel2: TRzPanel
-      Width = 873
-      Height = 497
+      Width = 865
+      Height = 486
       inherited RzPage: TRzPageControl
-        Width = 867
-        Height = 491
+        Width = 859
+        Height = 480
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 865
-            Height = 464
+            Width = 857
+            Height = 453
             inherited RzPanel1: TRzPanel
-              Width = 855
+              Width = 847
               Height = 91
               object RzLabel2: TRzLabel
                 Left = 57
@@ -234,8 +234,8 @@ inherited frmCheckOrderList: TfrmCheckOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 96
-              Width = 855
-              Height = 363
+              Width = 847
+              Height = 352
               OnDblClick = actInfoExecute
               Columns = <
                 item
@@ -316,40 +316,39 @@ inherited frmCheckOrderList: TfrmCheckOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 883
-    inherited Image1: TImage
-      Left = 581
-      Width = 282
-    end
+    Width = 875
     inherited Image3: TImage
-      Left = 581
-      Width = 282
+      Left = 585
     end
     inherited Image14: TImage
-      Left = 863
+      Left = 855
+    end
+    inherited Image1: TImage
+      Left = 573
+      Width = 282
     end
     inherited rzPanel5: TPanel
-      Left = 581
+      Left = 585
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #30424#28857#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 565
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
+          MinHeight = 565
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
+        Width = 565
         object ToolButton11: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actExit
         end

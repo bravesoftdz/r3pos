@@ -495,7 +495,7 @@ begin
      'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
      'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,jc.PRINT_TIMES,'+
      'jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,B.UNIT_ID,'+
-     'round(jc.RCK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end,3) as RCK_AMOUNT,'+
+     'round(jc.RCK_AMOUNT*1.000/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end,3) as RCK_AMOUNT,'+
      'jc.RCK_AMOUNT as RCK_CALC_AMOUNT,'+
      ''''' as AMOUNT,'+
      ''''' as LOSS_AMOUNT,'+
@@ -524,10 +524,10 @@ begin
      'select je.*,d.USER_NAME as CHK_USER_TEXT from ( '+
      'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
      'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,jc.PRINT_TIMES,B.UNIT_ID,'+
-     ' round(isnull(jc.RCK_AMOUNT,0)*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end,3) as RCK_AMOUNT,'+
-     ' round((isnull(jc.RCK_AMOUNT,0)-isnull(jc.AMOUNT,0))*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) as AMOUNT, '+
-     'case when isnull(jc.AMOUNT,0)>0 then round(isnull(jc.AMOUNT,0)*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) else null end as LOSS_AMOUNT, '+
-     'case when isnull(jc.AMOUNT,0)<0 then round(- isnull(jc.AMOUNT,0)*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) else null end as PROFIT_AMOUNT, '+
+     ' round(isnull(jc.RCK_AMOUNT,0)*1.000/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end,3) as RCK_AMOUNT,'+
+     ' round((isnull(jc.RCK_AMOUNT,0)-isnull(jc.AMOUNT,0))*1.000/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) as AMOUNT, '+
+     'case when isnull(jc.AMOUNT,0)>0 then round(isnull(jc.AMOUNT,0)*1.000/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) else null end as LOSS_AMOUNT, '+
+     'case when isnull(jc.AMOUNT,0)<0 then round(- isnull(jc.AMOUNT,0)*1.000/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) else null end as PROFIT_AMOUNT, '+
      'b.GODS_NAME,b.GODS_CODE,b.BARCODE from ( '+
      'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,A.CHK_USER,A.CHK_DATE,A.PRINT_TIMES,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,'+
      'B.RCK_AMOUNT,B.CHK_AMOUNT,isnull(E.AMOUNT,0) as AMOUNT  from STO_PRINTORDER A inner join STO_PRINTDATA B on A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.PRINT_DATE=B.PRINT_DATE left join '+

@@ -282,7 +282,7 @@ begin
 
   GodsFields:=
     ' b.RELATION_Flag,j.TENANT_ID,j.RELATION_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS,m.UNIT_NAME,j.RTL_OUTPRICE,j.NEW_LOWPRICE,j.NEW_OUTPRICE,j.NEW_INPRICE,'+
-    '(case when j.NEW_OUTPRICE<>0 then cast(Round((j.NEW_INPRICE*100.0)/(j.NEW_OUTPRICE*1.0),0) as int) else null end) as PROFIT_RATE,SORT_ID3,SORT_ID4,GODS_TYPE ';
+    '(case when j.NEW_OUTPRICE<>0 then cast(Round((j.NEW_INPRICE*100.0)/(j.NEW_OUTPRICE*1.000),0) as int) else null end) as PROFIT_RATE,SORT_ID3,SORT_ID4,GODS_TYPE ';
   case Factor.iDbType of
    0:
     begin

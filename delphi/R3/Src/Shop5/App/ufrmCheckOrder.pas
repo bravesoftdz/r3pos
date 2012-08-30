@@ -604,7 +604,7 @@ procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string);
 begin
   PrintQry.Close;
   PrintQry.SQL.Text:=
-    'select j.GODS_ID,j.BATCH_NO,sum(RCK_AMOUNT) as RCK_CALC_AMOUNT,sum(RCK_AMOUNT/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.0)) as RCK_AMOUNT from STO_PRINTDATA j,VIW_GOODSINFO b '+
+    'select j.GODS_ID,j.BATCH_NO,sum(RCK_AMOUNT) as RCK_CALC_AMOUNT,sum(RCK_AMOUNT/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.000)) as RCK_AMOUNT from STO_PRINTDATA j,VIW_GOODSINFO b '+
     'where j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.PRINT_DATE=:PRINT_DATE group by j.GODS_ID,j.BATCH_NO';
   if PrintQry.Params.FindParam('TENANT_ID')<>nil then
     PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;

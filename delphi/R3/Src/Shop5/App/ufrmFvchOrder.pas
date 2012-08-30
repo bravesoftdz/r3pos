@@ -422,7 +422,7 @@ begin
       SumMny:=SumMny+RsData.FieldByName('AMONEY').AsFloat;
       RsData.Next;
     end;
-    if SumAmt<>0 then SumPri:=Roundto((SumMny*1.00)/(SumAmt*1.00),-2);
+    if SumAmt<>0 then SumPri:=Roundto((SumMny*1.000)/(SumAmt*1.000),-2);
   finally
     RsData.Free;
   end;

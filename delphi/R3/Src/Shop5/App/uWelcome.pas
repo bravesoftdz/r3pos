@@ -503,7 +503,7 @@ procedure TWelcome.LoadDays;
 var
   CalcUnit,str:string;
 begin
-  CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)';
+  CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.000 else cast(SMALLTO_CALC*1.000 as decimal(18,3)) end)';
   //进货情况
   str:=
     'select a.STOCK_DATE as STOCK_DATE,count(distinct a.GODS_ID) as GODS_COUNT,sum(CALC_AMOUNT/'+CalcUnit+') as STK_AMT,sum(NOTAX_MONEY) as NOTAX_MONEY,(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as STK_MNY '+
@@ -564,7 +564,7 @@ var
 begin
   if CurMonth=Month then Exit;
   CurMonth := '';
-  CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)';
+  CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.000 else cast(SMALLTO_CALC*1.000 as decimal(18,3)) end)';
 
   //取会员情况:
   CustRs.Close;

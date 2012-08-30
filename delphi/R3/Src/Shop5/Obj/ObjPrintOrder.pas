@@ -108,11 +108,11 @@ begin
     ParseSQL(iDbType,
     'select j.ROWS_ID as ROWS_ID,j.TENANT_ID as TENANT_ID,j.SHOP_ID as SHOP_ID,j.PRINT_DATE as PRINT_DATE,j.GODS_ID as GODS_ID,j.PROPERTY_01 as PROPERTY_01,null as LOCUS_NO,null as BOM_ID,0 as IS_PRESENT,'+
     'j.PROPERTY_02 as PROPERTY_02,j.BATCH_NO as BATCH_NO,j.LOCUS_NO as LOCUS_NO,j.BOM_ID as BOM_ID,B.UNIT_ID,0 as IS_PRESENT,0 as SEQNO,'+
-    'j.RCK_AMOUNT*1.0/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.0) as RCK_AMOUNT,'+  //账面库存量
+    'j.RCK_AMOUNT*1.000/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.000) as RCK_AMOUNT,'+  //账面库存量
     'j.RCK_AMOUNT as RCK_CALC_AMOUNT,'+  //账面库存量
-    'j.CHK_AMOUNT*1.0/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.0) as AMOUNT,'+  //盘点库存量
+    'j.CHK_AMOUNT*1.000/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.000) as AMOUNT,'+  //盘点库存量
     'j.CHK_AMOUNT as CALC_AMOUNT,'+  //盘点库存量
-    '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*1.0/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.0) as PAL_AMOUNT,'+  //盈亏数量
+    '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*1.000/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end*1.000) as PAL_AMOUNT,'+  //盈亏数量
     ' b.GODS_NAME as GODS_NAME,b.GODS_CODE as GODS_CODE,'+
     ' b.NEW_INPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_INPRICE,'+
     ' b.NEW_OUTPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE,'+

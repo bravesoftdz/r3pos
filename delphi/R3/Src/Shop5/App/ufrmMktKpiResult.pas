@@ -331,7 +331,7 @@ begin
             ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
             ' left join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
   Result := ParseSQL(Factor.iDbType,
-            'select H.*,case when H.PLAN_AMT <> 0 then (H.FISH_AMT*1.0/H.PLAN_AMT*1.0)*100 else 0.00 end as FISH_RATE from ('+Result+') H  ');
+            'select H.*,case when H.PLAN_AMT <> 0 then (H.FISH_AMT*1.000/H.PLAN_AMT*1.000)*100 else 0.00 end as FISH_RATE from ('+Result+') H  ');
 
   Result := result + ' order by KPI_YEAR,KPI_ID';
 {  case Factor.iDbType of

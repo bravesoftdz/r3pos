@@ -293,7 +293,7 @@ begin
       mySQL :=
         ParseSQL(Factor.iDbType,
         'select 0 as TENANT_ID,GODS_ID,BATCH_NO,'+
-        'case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.0),6) else 0 end as COST_PRICE '+
+        'case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.000),6) else 0 end as COST_PRICE '+
         'from '+tempTableName1+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
         'group by TENANT_ID,GODS_ID,BATCH_NO');
       //生成数据
@@ -785,7 +785,7 @@ begin
       SQL :=
         'insert into '+tempTableName2+'(TENANT_ID,GODS_ID,BATCH_NO,SHOP_ID,CREA_DATE,COST_PRICE) '+
         'select 0 as TENANT_ID,GODS_ID,BATCH_NO,''#'' as SHOP_ID,0,'+
-        'case when sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(BAL_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.0),6) else 0 end as COST_PRICE '+
+        'case when sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(BAL_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.000),6) else 0 end as COST_PRICE '+
         'from '+tempTableName1+' '+
         'group by GODS_ID,BATCH_NO';
       Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
@@ -915,7 +915,7 @@ begin
     'max(isnull(B.NEW_INPRICE,0)),max(isnull(B.NEW_OUTPRICE,0)),'+
     '0,0,0,0,'+
     'sum(STOCK_AMT),sum(STOCK_MNY),sum(STOCK_TAX),sum(round(STOCK_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(STOCK_AGO),sum(STKRT_AMT),sum(STKRT_MNY),sum(STKRT_TAX),'+
-    'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),case when sum(SALE_AMT)<>0 then sum(SALE_CST)/(sum(SALE_AMT)*1.0) else 0 end,sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
+    'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),case when sum(SALE_AMT)<>0 then sum(SALE_CST)/(sum(SALE_AMT)*1.000) else 0 end,sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
     'sum(DBIN_AMT),sum(round(DBIN_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(DBIN_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(DBIN_CST),'+
     'sum(DBOUT_AMT),sum(round(DBOUT_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(DBOUT_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(DBOUT_CST),'+
     'sum(CHANGE1_AMT),sum(round(CHANGE1_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE1_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE1_CST),'+
@@ -1156,7 +1156,7 @@ begin
         'sum(ORG_AMT) as ORG_AMT,sum(ORG_AMT)*max(NEW_INPRICE) as ORG_MNY,sum(ORG_AMT)*max(NEW_OUTPRICE) as ORG_RTL,sum(ORG_CST) as ORG_CST,'+
         'sum(STOCK_AMT) as STOCK_AMT,sum(STOCK_MNY) as STOCK_MNY,sum(STOCK_TAX) as STOCK_TAX,sum(STOCK_RTL) as STOCK_RTL,sum(STOCK_AGO) as STOCK_AGO,sum(STKRT_AMT) as STKRT_AMT,sum(STKRT_MNY) as STKRT_MNY,sum(STKRT_TAX) as STKRT_TAX,'+
         'sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL,sum(SALE_AGO) as SALE_AGO,sum(SALE_MNY) as SALE_MNY,sum(SALE_TAX) as SALE_TAX,sum(SALE_CST) as SALE_CST,'+
-        'round(case when sum(SALE_AMT)<>0 then cast(sum(SALE_CST) as decimal(18,3))/(cast(sum(SALE_AMT) as decimal(18,3))*1.0) else 0 end,6) as COST_PRICE,sum(SALE_PRF) as SALE_PRF,'+
+        'round(case when sum(SALE_AMT)<>0 then cast(sum(SALE_CST) as decimal(18,3))/(cast(sum(SALE_AMT) as decimal(18,3))*1.000) else 0 end,6) as COST_PRICE,sum(SALE_PRF) as SALE_PRF,'+
         'sum(SALRT_AMT) as SALRT_AMT,sum(SALRT_MNY) as SALRT_MNY,sum(SALRT_TAX) as SALRT_TAX,sum(SALRT_CST) as SALRT_CST,'+
         'sum(DBIN_AMT) as DBIN_AMT,sum(DBIN_MNY) as DBIN_MNY,sum(DBIN_RTL) as DBIN_RTL,sum(DBIN_CST) as DBIN_CST,'+
         'sum(DBOUT_AMT) as DBOUT_AMT,sum(DBOUT_MNY) as DBOUT_MNY,sum(DBOUT_RTL) as DBOUT_RTL,sum(DBOUT_CST) as DBOUT_CST,'+
@@ -2074,7 +2074,7 @@ begin
   PrgPercent := 20;
   //日均销量测算
   SQL :=
-    'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)*1.0/'+GetDayDiff(Factor.iDbType,'min(SALES_DATE)','max(SALES_DATE)')+',3) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)*1.000/'+GetDayDiff(Factor.iDbType,'min(SALES_DATE)','max(SALES_DATE)')+',3) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
     ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
@@ -2292,7 +2292,7 @@ begin
     Factor.ExecSQL(
        ParseSQL(Factor.iDbType,
        'update STO_STORAGE set COST_PRICE=('+
-       'select case when sum(BAL_AMT)<>0 then round(sum(BAL_CST)*1.0/sum(BAL_AMT),6) else 0 end from RCK_GOODS_DAYS '+
+       'select case when sum(BAL_AMT)<>0 then round(sum(BAL_CST)*1.000/sum(BAL_AMT),6) else 0 end from RCK_GOODS_DAYS '+
        'where TENANT_ID=STO_STORAGE.TENANT_ID and GODS_ID=STO_STORAGE.GODS_ID and BATCH_NO=STO_STORAGE.BATCH_NO and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+pt)+' '+
        ') where TENANT_ID='+inttostr(Global.TENANT_ID)
        )

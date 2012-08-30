@@ -94,7 +94,7 @@ begin
   SelectSQL.Text :=
   ParseSQL(iDbType,'select j.TENANT_ID,j.SHOP_ID,j.SEQNO,j.DEMA_ID,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.LOCUS_NO,j.BOM_ID,j.BATCH_NO,'+
   'j.IS_PRESENT,j.UNIT_ID,j.AMOUNT,j.ORG_PRICE,j.APRICE,b.GODS_NAME,b.GODS_CODE,j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,'+
-  'case when isnull(j.CALC_AMOUNT,0)=0 then 0 else j.SHIP_AMOUNT/(cast(j.CALC_AMOUNT/(j.AMOUNT*1.0) as decimal(18,3))*1.0) end as SHIP_AMOUNT,'+
+  'case when isnull(j.CALC_AMOUNT,0)=0 then 0 else j.SHIP_AMOUNT/(cast(j.CALC_AMOUNT/(j.AMOUNT*1.000) as decimal(18,3))*1.000) end as SHIP_AMOUNT,'+
   'j.REMARK from MKT_DEMANDDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.DEMA_ID=:DEMA_ID order by SEQNO');
   IsSQLUpdate := True;
   Str :=

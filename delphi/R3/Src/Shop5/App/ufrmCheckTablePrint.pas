@@ -201,13 +201,13 @@ begin
     ',GODS_NAME,GODS_CODE'+           //--货品名称、货品编码
     ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+   //--批号、物流码
     'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
-    ',(RCK_AMOUNT*1.00/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
-    ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT*1.00/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
+    ',(RCK_AMOUNT*1.000/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
+    ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT*1.000/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
     ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
-    ',isnull(B.NEW_INPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.0 end) as NEW_INPRICE '+      //--成本价
-    ',isnull(B.NEW_OUTPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.0 end) as NEW_OUTPRICE '+    //--零售价
-    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_INPRICE,0))*1.00 end) as PAL_INAMONEY ' +    //--损益成本金额
-    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_OUTPRICE,0))*1.00 end) as PAL_OUTAMONEY ' +  //--损益销售金额
+    ',isnull(B.NEW_INPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.000 end) as NEW_INPRICE '+      //--成本价
+    ',isnull(B.NEW_OUTPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.000 end) as NEW_OUTPRICE '+    //--零售价
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.000 * isnull(B.NEW_INPRICE,0))*1.000 end) as PAL_INAMONEY ' +    //--损益成本金额
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.000 * isnull(B.NEW_OUTPRICE,0))*1.000 end) as PAL_OUTAMONEY ' +  //--损益销售金额
     ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +
     'where A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.PRINT_DATE=D.PRINT_DATE and '+
     ' A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID '+

@@ -532,8 +532,8 @@ begin
   StrSql :=
   'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_02,B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+
   'max(A.NEAR_INDATE) as NEAR_INDATE,max(A.NEAR_OUTDATE) as NEAR_OUTDATE'+ColumnStr+','+
-  'sum(A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as AMOUNT,'+
-  'sum(cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as ROAD_AMT,'+
+  'sum(A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000)) as AMOUNT,'+
+  'sum(cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000)) as ROAD_AMT,'+
   'max('+TransInPrice(edtUNIT_ID.ItemIndex,'C','')+') as NEW_INPRICE,'+
   'max('+TransPrice(edtUNIT_ID.ItemIndex,'C','')+') as NEW_OUTPRICE,'+
   'max('+TransUnit(edtUNIT_ID.ItemIndex,'C','')+') as UNIT_ID '+
@@ -766,10 +766,10 @@ var
 begin
   AliasTab:='';
   if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
-  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC end';
-  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
+  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.000 else '+AliasTab+'SMALLTO_CALC end';
+  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.000 else '+AliasTab+'BIGTO_CALC end';
 
-  str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+   //默认单位为 计量单位
+  str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.000 '+   //默认单位为 计量单位
        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
        ' else 1.0 end ';
@@ -938,15 +938,15 @@ begin
 
   result :=
   'select 0 as SEQNO,jc.TENANT_ID,jc.GODS_ID,F.GODS_CODE,isnull(c.BARCODE,f.BARCODE) as BARCODE,F.GODS_NAME,jc.PROPERTY_01,jc.PROPERTY_02,''#'' as BATCH_NO,'+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+' as UNIT_ID,'+
-  'cast(jc.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as STOCK_AMT,'+
-  'cast(jc.ROAD_AMT as  decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) AS ROAD_AMT,'+
+  'cast(jc.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) as STOCK_AMT,'+
+  'cast(jc.ROAD_AMT as  decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) AS ROAD_AMT,'+
   'F.NEW_INPRICE*'+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as NEW_INPRICE,'+
-  'cast(jc.LOWER_AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as LOWER_AMOUNT,'+
-  'cast(jc.UPPER_AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as UPPER_AMOUNT,'+
-  'cast(jc.NEAR_SALE_AMT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as NEAR_SALE_AMT,'+
-  'cast(jc.DAY_SALE_AMT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as DAY_SALE_AMT,'+
-  'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.0,1) else 0 end as CAN_SALE_DAY,'+
-  'cast(case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as AMOUNT,'+
+  'cast(jc.LOWER_AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) as LOWER_AMOUNT,'+
+  'cast(jc.UPPER_AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) as UPPER_AMOUNT,'+
+  'cast(jc.NEAR_SALE_AMT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) as NEAR_SALE_AMT,'+
+  'cast(jc.DAY_SALE_AMT as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) as DAY_SALE_AMT,'+
+  'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.000,1) else 0 end as CAN_SALE_DAY,'+
+  'cast(case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000) as AMOUNT,'+
   'case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end*F.NEW_INPRICE as STOCK_MNY '+
   'from ('+StrSql+') jc inner join VIW_GOODSINFO F on jc.TENANT_ID=F.TENANT_ID and jc.GODS_ID=F.GODS_ID '+
   'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and '+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+'=c.UNIT_ID '+
@@ -1056,7 +1056,7 @@ begin
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
   StrSql :=
-  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as AMOUNT '+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000)) as AMOUNT '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSINFO_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
   ' '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+'  group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
 
@@ -1064,16 +1064,16 @@ begin
   'select j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE as CALC_BARCODE,''#'' as PROPERTY_01,''#'' as PROPERTY_02,max('+TransUnit(edtP3_UNIT_ID.ItemIndex,'F','')+') as UNIT_ID,sum(AMOUNT) as AMOUNT,'+
   'max(E.LOWER_RATE) as LOWER_RATE,'+
   'max(E.UPPER_RATE) as UPPER_RATE,'+
-  'sum(E.NEAR_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as NEAR_SALE_AMT,'+
-  'sum(E.DAY_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as DAY_SALE_AMT,'+
-  'sum(E.MTH_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as MTH_SALE_AMT '+
+  'sum(E.NEAR_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000)) as NEAR_SALE_AMT,'+
+  'sum(E.DAY_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000)) as DAY_SALE_AMT,'+
+  'sum(E.MTH_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.000)) as MTH_SALE_AMT '+
   'from ('+StrSql+') j1 inner join VIW_GOODSINFO F on j1.TENANT_ID=F.TENANT_ID and j1.GODS_ID=F.GODS_ID left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
   'group by j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE';
 
   Result :=
   'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,'+
-  'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.0,1) else 0 end as CAN_SALE_DAY,'+
-  'case when isnull(jc.MTH_SALE_AMT,0)<>0 then cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.MTH_SALE_AMT,0) as decimal(18,3))*1.0 else 0 end as RATE '+
+  'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.000,1) else 0 end as CAN_SALE_DAY,'+
+  'case when isnull(jc.MTH_SALE_AMT,0)<>0 then cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.MTH_SALE_AMT,0) as decimal(18,3))*1.000 else 0 end as RATE '+
   'from ('+StrSql+') jc '+
   'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c '+
   'on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
@@ -1443,7 +1443,7 @@ begin
       Column.Alignment := taRightJustify;
       Column.ReadOnly := true;
       Column.Index := Idx+1;
-      ColumnStr := ',sum(case when isnull(A.PROPERTY_01,''#'')=''#'' then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_W';
+      ColumnStr := ',sum(case when isnull(A.PROPERTY_01,''#'')=''#'' then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000) else 0 end) as SIZE_W';
     end;
     for i:= 0 to mx do
       begin
@@ -1455,7 +1455,7 @@ begin
         Column.Alignment := taRightJustify;
         Column.ReadOnly := true;
         Column.Index := Idx+1+i+1;
-        ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) else 0 end) as SIZE_'+formatFloat('000',i);
+        ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000) else 0 end) as SIZE_'+formatFloat('000',i);
       end;
   finally
     Grid.Columns.EndUpdate;

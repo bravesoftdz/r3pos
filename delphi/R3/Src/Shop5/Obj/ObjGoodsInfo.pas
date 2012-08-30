@@ -55,7 +55,7 @@ type
 
 
 implementation
-
+uses uGlobal;
  { TGoodsInfo }
 
 function TGoodsInfo.IsRootShop: Boolean;
@@ -407,7 +407,27 @@ begin
     Str:='insert Into PUB_GOODSPRICE(TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP) '+
       ' Values (:TENANT_ID,:PRICE_ID,:SHOP_ID,:GODS_ID,:PRICE_METHOD,:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
     AGlobal.ExecSQL(Str,self);
-  end;                     
+  end;
+
+  Params.ParamByName('ROWS_ID').AsString:=NewId('');
+  Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date());
+  Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;
+  Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;
+  Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;
+  Params.ParamByName('PRICING_USER').AsString:=Global.UserID;
+  Params.ParamByName('PRICE_METHOD').AsString:='1';
+  Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('ORG_OUTPRICE').AsOldFloat;
+  Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('ORG_OUTPRICE1').AsOldFloat;
+  Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('ORG_OUTPRICE2').AsOldFloat;
+  Params.ParamByName('NEW_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;
+  Params.ParamByName('NEW_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsFloat;
+  Params.ParamByName('NEW_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsFloat;
+
+  Str:='Insert Into LOG_PRICING_INFO (ROWS_ID,PRICING_DATE,PRICING_USER,TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,'+
+       ' ORG_OUTPRICE,ORG_OUTPRICE1,ORG_OUTPRICE2,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP)'+
+       'Values (:ROWS_ID,:PRICING_DATE,:PRICING_USER,:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,:PRICE_METHOD,'+
+       ':ORG_OUTPRICE,:ORG_OUTPRICE1,:ORG_OUTPRICE2,:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+')';
+  AGlobal.ExecSQL(Str,Params);
 end;
 
 function TGoodsPrice.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;

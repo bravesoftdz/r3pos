@@ -12,13 +12,12 @@ inherited frmPriceingInfo: TfrmPriceingInfo
       inherited TabSheet1: TRzTabSheet
         TabVisible = False
         inherited RzPanel2: TRzPanel
-          Height = 333
           object DBGridEh1: TDBGridEh
             Tag = -1
             Left = 5
             Top = 5
             Width = 524
-            Height = 323
+            Height = 300
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             Color = clWhite

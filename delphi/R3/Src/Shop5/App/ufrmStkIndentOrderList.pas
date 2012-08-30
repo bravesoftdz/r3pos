@@ -297,7 +297,7 @@ begin
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TStkIndnetOrderGetNext',Params);
+             Factor.Open(Temp,'TStkIndentOrderGetNext',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally

@@ -36,7 +36,7 @@ inherited frmDemandOrder: TfrmDemandOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #38376#24215#21517#31216
+        Caption = #22635#25253#38376#24215
       end
       object Label6: TLabel [3]
         Left = 404

@@ -255,6 +255,13 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   Width = 80
                 end
                 item
+                  EditButtons = <>
+                  FieldName = 'SHOP_NAME'
+                  Footers = <>
+                  Title.Caption = #22635#25253#38376#24215
+                  Width = 139
+                end
+                item
                   DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'DEMA_DATE'

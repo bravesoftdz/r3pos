@@ -398,7 +398,7 @@ begin
          rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',cDate);
          Factor.Open(rs);
          if rs.Fields[0].AsString <> '' then
-            Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期'); 
+            Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期');
          isfirst := true;
        end;
 
@@ -682,7 +682,7 @@ begin
     if Factor.iDbType <> 5 then Factor.RollbackTrans;
     Raise;
   end;
-end;  
+end;
 begin
   //初始化期初
   SQL :=
@@ -915,7 +915,7 @@ begin
     'max(isnull(B.NEW_INPRICE,0)),max(isnull(B.NEW_OUTPRICE,0)),'+
     '0,0,0,0,'+
     'sum(STOCK_AMT),sum(STOCK_MNY),sum(STOCK_TAX),sum(round(STOCK_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(STOCK_AGO),sum(STKRT_AMT),sum(STKRT_MNY),sum(STKRT_TAX),'+
-    'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),case when sum(SALE_AMT)<>0 then sum(SALE_CST)/(sum(SALE_AMT)*1.000000) else 0 end,sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
+    'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),case when sum(SALE_AMT)<>0 then sum(SALE_CST)*1.000000/sum(SALE_AMT) else 0 end,sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
     'sum(DBIN_AMT),sum(round(DBIN_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(DBIN_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(DBIN_CST),'+
     'sum(DBOUT_AMT),sum(round(DBOUT_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(DBOUT_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(DBOUT_CST),'+
     'sum(CHANGE1_AMT),sum(round(CHANGE1_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE1_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE1_CST),'+

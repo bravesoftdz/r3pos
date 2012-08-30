@@ -108,6 +108,7 @@ begin
   result := 'select ja.*,a.USER_NAME as CHK_USER_TEXT  from ('+result+') ja left outer join VIW_USERS a on ja.TENANT_ID=a.TENANT_ID and ja.CHK_USER=a.USER_ID';
   result := 'select jb.*,b.USER_NAME as DEMA_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DEMA_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ';
+  result := 'select jd.*,d.SHOP_NAME from ('+result+') jd left outer join CA_SHOP_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.SHOP_ID=d.SHOP_ID ';
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by DEMA_ID';
   1:result :=

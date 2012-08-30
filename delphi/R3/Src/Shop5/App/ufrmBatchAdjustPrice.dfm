@@ -1,6 +1,6 @@
 inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
-  Left = 397
-  Top = 153
+  Left = 265
+  Top = 147
   Width = 930
   Height = 564
   Caption = #25209#37327#35843#20215
@@ -79,6 +79,7 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
                     DigitalNumber = 12
                     OnCellClick = GridCellClick
                     OnDrawColumnCell = GridDrawColumnCell
+                    OnDrawFooterCell = GridDrawFooterCell
                     Columns = <
                       item
                         EditButtons = <>
@@ -97,7 +98,6 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
                       item
                         EditButtons = <>
                         FieldName = 'GODS_NAME'
-                        Footer.ValueType = fvtCount
                         Footers = <>
                         Title.Caption = #21830#21697#21517#31216
                         Width = 180
@@ -137,9 +137,9 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
                       end
                       item
                         Alignment = taRightJustify
-                        DisplayFormat = '#0.00#'
+                        DisplayFormat = '#0.00'
                         EditButtons = <>
-                        FieldName = 'NEW_OUTPRICE_A'
+                        FieldName = 'ORG_OUTPRICE'
                         Footer.Alignment = taRightJustify
                         Footers = <>
                         ReadOnly = True
@@ -148,7 +148,7 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
                       end
                       item
                         Alignment = taRightJustify
-                        DisplayFormat = '#0.00'
+                        DisplayFormat = '#0.00%'
                         EditButtons = <>
                         FieldName = 'OUTPRICE_A_RATE'
                         Footers = <>

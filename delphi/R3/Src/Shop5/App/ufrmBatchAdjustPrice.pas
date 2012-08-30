@@ -57,6 +57,8 @@ type
     procedure actCancelExecute(Sender: TObject);
     procedure Btn_OKClick(Sender: TObject);
     procedure GridCellClick(Column: TColumnEh);
+    procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
+      Column: TColumnEh; Rect: TRect; State: TGridDrawState);
   private
     FdbState: TDataSetState;
     { Private declarations }
@@ -73,7 +75,7 @@ type
 
 implementation
 uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,uDsUtil,StrUtils,
-  ObjCommon,ufrmBasic, Math, uframeMDForm, ufrmPriceingInfo;
+  ObjCommon,ufrmBasic, Math, uframeMDForm, ufrmPriceingInfo, uXDictFactory;
 {$R *.dfm}
 
 { TfrmBatchAdjustPrice }
@@ -254,6 +256,7 @@ end;
 procedure TfrmBatchAdjustPrice.actFindExecute(Sender: TObject);
 begin
   inherited;
+  //if not ShopGlobal.GetChkRight('12100001',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
   cdsPrice.Close;
   cdsPrice.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql);
   Factor.Open(cdsPrice);
@@ -297,8 +300,8 @@ begin
     StrWhere := StrWhere + ' and B.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
 
   StrSql := 'select A.TENANT_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,A.BARCODE,C.SHOP_NAME,A.CALC_UNITS as UNIT_ID,isnull(A.NEW_OUTPRICE,0) as NEW_OUTPRICE_1,'+
-  'isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE_A,isnull(B.NEW_OUTPRICE,0)/A.NEW_OUTPRICE*100 as OUTPRICE_A_RATE,'+
-  'isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE,isnull(B.NEW_OUTPRICE,0)/A.NEW_OUTPRICE*100 as NEW_OUTPRICE_RATE,'+
+  'isnull(B.NEW_OUTPRICE,0) as ORG_OUTPRICE,isnull(B.NEW_OUTPRICE1,0) as ORG_OUTPRICE1,isnull(B.NEW_OUTPRICE2,0) as ORG_OUTPRICE2,A.SMALLTO_CALC,A.BIGTO_CALC,'+
+  'isnull(B.NEW_OUTPRICE,0)/A.NEW_OUTPRICE*100 as OUTPRICE_A_RATE,isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE,isnull(B.NEW_OUTPRICE,0)/A.NEW_OUTPRICE*100 as NEW_OUTPRICE_RATE,'+
   'isnull(B.PRICE_ID,''#'') as PRICE_ID,isnull(B.SHOP_ID,'''+ShopGlobal.SHOP_ID+''') as SHOP_ID,isnull(B.PRICE_METHOD,''1'') as PRICE_METHOD,B.NEW_OUTPRICE1,B.NEW_OUTPRICE2 '+
   'from VIW_GOODSINFO A left join PUB_GOODSPRICE B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
   ' left join CA_SHOP_INFO C on B.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID '+ StrWhere;
@@ -335,7 +338,7 @@ begin
         Grid.canvas.FillRect(ARect);
         Grid.Canvas.Font.Color := clBlue;
         Grid.Canvas.Font.Style := [fsUnderline];
-        Num := ' 详情 ';
+        Num := '详情';
         DrawText(Grid.Canvas.Handle,pchar(Num),length(Num),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
       finally
         Grid.Canvas.Font.Assign(AFont);
@@ -357,7 +360,9 @@ begin
          r := StrtoFloat(Text);
       //if abs(r)>100 then Raise Exception.Create('输入的数值过大，无效');
       cdsPrice.Edit;
-      cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat := cdsPrice.FieldByName('NEW_OUTPRICE_1').AsFloat * r / 100;
+      cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrToFloat(FormatFloat('#0.00',(cdsPrice.FieldByName('NEW_OUTPRICE_1').AsFloat * r / 100)));
+      cdsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat*cdsPrice.FieldByName('SMALLTO_CALC').AsFloat;
+      cdsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat*cdsPrice.FieldByName('BIGTO_CALC').AsFloat;
       cdsPrice.Post;
       cdsPrice.Edit;
     except
@@ -374,6 +379,7 @@ end;
 procedure TfrmBatchAdjustPrice.actNewExecute(Sender: TObject);
 begin
   inherited;
+  //if not ShopGlobal.GetChkRight('12100001',2) then Raise Exception.Create('你没有调价的权限,请和管理员联系.');
   if cdsPrice.IsEmpty then Exit;
   dbState := dsEdit;
 end;
@@ -386,10 +392,10 @@ begin
   if Factor.UpdateBatch(cdsPrice,'TGoodsPrice') then
   begin
      dbState := dsBrowse;
-     Raise Exception.Create('调价商品已保存!');
+     MessageBox(Handle,pchar('调价商品已保存!'),pchar(Application.Title),MB_OK);
   end
   else
-     Raise Exception.Create('调价商品未保存!');
+     MessageBox(Handle,pchar('调价商品未保存!'),pchar(Application.Title),MB_OK);
 end;
 
 procedure TfrmBatchAdjustPrice.GridColumns9UpdateData(Sender: TObject;
@@ -455,7 +461,9 @@ begin
    begin
      cdsPrice.Edit;
      cdsPrice.FieldByName('NEW_OUTPRICE_RATE').AsFloat := RateValue;
-     cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat := cdsPrice.FieldByName('NEW_OUTPRICE_1').AsFloat * RateValue / 100;
+     cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrToFloat(FormatFloat('#0.00',(cdsPrice.FieldByName('NEW_OUTPRICE_1').AsFloat * RateValue / 100)));
+     cdsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat*cdsPrice.FieldByName('SMALLTO_CALC').AsFloat;
+     cdsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := cdsPrice.FieldByName('NEW_OUTPRICE').AsFloat*cdsPrice.FieldByName('BIGTO_CALC').AsFloat;
      cdsPrice.Post;
      cdsPrice.Next;
    end;
@@ -474,6 +482,29 @@ begin
   begin
      TfrmPriceingInfo.ShowDialog(Self,cdsPrice.FieldByName('GODS_ID').AsString,cdsPrice.FieldByName('SHOP_ID').AsString);
   end;
+end;
+
+procedure TfrmBatchAdjustPrice.GridDrawFooterCell(Sender: TObject; DataCol,
+  Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+       {if FindColumn(Grid,'BARCODE') = nil then
+          R.Right := Rect.Right
+       else
+          R.Right := Rect.Right + FindColumn(Grid,'BARCODE').Width;
+        }
+       Grid.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s笔',[Inttostr(cdsPrice.RecordCount)]);
+       Grid.Canvas.Font.Style := [fsBold];
+       Grid.Canvas.TextRect(R,(Rect.Right-Rect.Left-Grid.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
+     end;
 end;
 
 end.

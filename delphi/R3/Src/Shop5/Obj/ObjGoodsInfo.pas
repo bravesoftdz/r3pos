@@ -414,7 +414,6 @@ begin
   Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;
   Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;
   Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;
-  Params.ParamByName('PRICING_USER').AsString:=Global.UserID;
   Params.ParamByName('PRICE_METHOD').AsString:='1';
   Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('ORG_OUTPRICE').AsOldFloat;
   Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('ORG_OUTPRICE1').AsOldFloat;

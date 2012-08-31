@@ -8,7 +8,7 @@ uses
   RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, cxTextEdit, Grids, DBGridEh,
   cxRadioGroup, cxButtonEdit, zrComboBoxList, RzButton, cxControls,
   cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, DB, ZBase,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, ObjCommon;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, ObjCommon, PrnDbgeh;
 
 type
   TfrmSvcServiceList = class(TframeToolForm)
@@ -28,7 +28,6 @@ type
     fndP1_DEPT_ID: TzrComboBoxList;
     Panel1: TPanel;
     RzLabel5: TRzLabel;
-    Label1: TLabel;
     fndSALES_ID: TcxTextEdit;
     DBGridEh1: TDBGridEh;
     ToolButton1: TToolButton;
@@ -66,6 +65,11 @@ type
     fndCLIENT_CODE: TcxTextEdit;
     Label30: TLabel;
     fndP2_GODS_ID: TzrComboBoxList;
+    RzLabel8: TRzLabel;
+    fndINVOICE_NO: TcxTextEdit;
+    fndINVOICE_NO1: TcxTextEdit;
+    RzLabel9: TRzLabel;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -88,6 +92,7 @@ type
     { Private declarations }
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
+    procedure PrintView;
   public
     { Public declarations }
     IsEnd1,IsEnd2: boolean;
@@ -104,7 +109,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSvcServiceInfo,
-  uframeMDForm, uframeDialogForm, ufrmBasic;
+  uframeMDForm, uframeDialogForm, ufrmBasic, ufrmEhLibReport;
 {$R *.dfm}
 
 procedure TfrmSvcServiceList.actNewExecute(Sender: TObject);
@@ -221,15 +226,26 @@ end;
 procedure TfrmSvcServiceList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
-  Raise Exception.Create('此功能暂时没有开放.')
+  if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
+  //Raise Exception.Create('此功能暂时没有开放.')
+  PrintView;
+  PrintDBGridEh1.Print;
 end;
 
 procedure TfrmSvcServiceList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002314',7) then Raise Exception.Create('你没有导出的权限,请和管理员联系.');
-  Raise Exception.Create('此功能暂时没有开放.')
+  if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
+  //Raise Exception.Create('此功能暂时没有开放.')
+  PrintView;
+  with TfrmEhLibReport.Create(Self) do
+    begin
+      try
+        Preview(PrintDBGridEh1);
+      finally
+        Free;
+      end;
+    end;
 end;
 
 procedure TfrmSvcServiceList.actFindExecute(Sender: TObject);
@@ -359,7 +375,7 @@ end;
 
 function TfrmSvcServiceList.CheckCanExport: boolean;
 begin
-
+  Result := ShopGlobal.GetChkRight('100002314',7);
 end;
 
 function TfrmSvcServiceList.EncodeSQL1(id: string): string;
@@ -389,6 +405,8 @@ begin
      strWhere := strWhere + ' and B.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+''' ';
   if fndSALES_STYLE.AsString <> '' then
      strWhere := strWhere + ' and B.SALES_STYLE=:SALES_STYLE ';
+  if Trim(fndINVOICE_NO.Text) <> '' then
+     strWhere := strWhere + ' and J.INVOICE_NO = '+Trim(fndINVOICE_NO.Text);
 
   case fndSTATUS.ItemIndex of
     1:strWhere := strWhere + ' and isnull(I.SERIAL_NO_NUM,0) = 0 ';
@@ -401,7 +419,7 @@ begin
   ' case when isnull(I.SERIAL_NO_NUM,0)=0 then ''未登记'' '+
   '      when (isnull(I.SERIAL_NO_NUM,0)<>0) and (isnull(I.SERIAL_NO_NUM,0) < A.AMOUNT) then ''部分登记'' '+
   '      when isnull(I.SERIAL_NO_NUM,0) = A.AMOUNT then ''完成登记'' '+
-  ' end as STATUS,B.LINKMAN,B.SEND_ADDR,B.TELEPHONE,B.COMM_ID,'+
+  ' end as STATUS,B.LINKMAN,B.SEND_ADDR,B.TELEPHONE,B.COMM_ID,J.INVOICE_NO,'+
   'A.GODS_ID,E.GODS_NAME,D.SHOP_NAME as SHOP_ID_TEXT,B.CREA_DATE,B.INVOICE_FLAG,A.AMOUNT,A.APRICE,A.AMONEY,G.USER_NAME as GUIDE_USER_TEXT '+
   ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
   ' left join VIW_CUSTOMER C on B.TENANT_ID=C.TENANT_ID and B.CLIENT_ID=C.CLIENT_ID '+
@@ -410,10 +428,10 @@ begin
   ' left join VIW_MEAUNITS F on A.TENANT_ID=F.TENANT_ID and A.UNIT_ID=F.UNIT_ID '+
   ' left join VIW_USERS G on B.TENANT_ID=G.TENANT_ID and B.GUIDE_USER=G.USER_ID '+
   ' left join VIW_USERS H on B.TENANT_ID=H.TENANT_ID and B.CREA_USER=H.USER_ID '+
-  ' left join ( '+
-  ' select TENANT_ID,SALES_ID,GODS_ID,count(distinct SERIAL_NO) as SERIAL_NO_NUM from SVC_SERVICE_INFO '+
-  ' group by TENANT_ID,SALES_ID,GODS_ID '+
-  ' ) I on A.TENANT_ID=I.TENANT_ID and A.SALES_ID=I.SALES_ID and A.GODS_ID=I.GODS_ID '+strWhere+ShopGlobal.GetDataRight('B.SHOP_ID',1)+ShopGlobal.GetDataRight('B.DEPT_ID',2)+' ';
+  ' left join (select TENANT_ID,SALES_ID,GODS_ID,count(distinct SERIAL_NO) as SERIAL_NO_NUM from SVC_SERVICE_INFO group by TENANT_ID,SALES_ID,GODS_ID '+
+  ' ) I on A.TENANT_ID=I.TENANT_ID and A.SALES_ID=I.SALES_ID and A.GODS_ID=I.GODS_ID '+
+  ' left join (select distinct M.TENANT_ID,M.INVD_ID,M.INVOICE_NO,M.INVOICE_STATUS,N.FROM_ID from SAL_INVOICE_INFO M left join SAL_INVOICE_LIST N '+
+  ' on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID where M.INVOICE_STATUS=''1'') J on A.TENANT_ID=J.TENANT_ID and A.SALES_ID=J.FROM_ID '+strWhere+ShopGlobal.GetDataRight('B.SHOP_ID',1)+ShopGlobal.GetDataRight('B.DEPT_ID',2)+' ';
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
@@ -452,15 +470,20 @@ begin
      strWhere := strWhere + ' and A.CLIENT_CODE=:CLIENT_CODE';
   if fndP2_GODS_ID.asString<>'' then
      strWhere := strWhere + ' and A.GODS_ID=:GODS_ID';
+  if Trim(fndINVOICE_NO1.Text) <> '' then
+     strWhere := strWhere + ' and G.INVOICE_NO = '+Trim(fndINVOICE_NO1.Text);
 
   strSql:=
   'select A.TENANT_ID,A.SRVR_ID,F.GLIDE_NO,A.GODS_NAME,A.SERIAL_NO,A.RECV_DATE,A.RECV_USER,D.USER_NAME as RECV_USER_TEXT,A.SRVR_DATE,'+
-  'E.USER_NAME as SRVR_USER_TEXT,A.CREA_DATE,A.CREA_USER,C.USER_NAME as CREA_USER_TEXT,B.CLIENT_NAME as CLIENT_ID_TEXT '+
+  'E.USER_NAME as SRVR_USER_TEXT,A.CREA_DATE,A.CREA_USER,C.USER_NAME as CREA_USER_TEXT,B.CLIENT_NAME as CLIENT_ID_TEXT,A.CLIENT_CODE,'+
+  'G.INVOICE_NO,A.LINKMAN,A.TELEPHONE,A.ADDRESS '+
   ' from SVC_SERVICE_INFO A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
   ' left join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.CREA_USER=C.USER_ID '+
   ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.RECV_USER=D.USER_ID '+
   ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.SRVR_USER=E.USER_ID '+
-  ' left join SAL_SALESORDER F on A.TENANT_ID=E.TENANT_ID and A.SALES_ID=F.SALES_ID '+strWhere;
+  ' left join SAL_SALESORDER F on A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID '+
+  ' left join (select distinct H.TENANT_ID,H.INVD_ID,H.INVOICE_NO,H.INVOICE_STATUS,I.FROM_ID '+
+  ' from SAL_INVOICE_INFO H left join SAL_INVOICE_LIST I on H.TENANT_ID=I.TENANT_ID and H.INVD_ID=I.INVD_ID where H.INVOICE_STATUS=''1'') G on A.TENANT_ID=G.TENANT_ID and A.SALES_ID=G.FROM_ID '+strWhere;
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by SRVR_ID';
@@ -686,6 +709,28 @@ procedure TfrmSvcServiceList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   actNewExecute(Sender);
+end;
+
+procedure TfrmSvcServiceList.PrintView;
+begin
+  case RzPage.ActivePageIndex of
+    0:begin
+      PrintDBGridEh1.PageHeader.CenterText.Text := '销售记录';
+
+      PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+      PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]','']);
+      DBGridEh1.DataSource.DataSet.Filtered := False;
+      PrintDBGridEh1.DBGridEh := DBGridEh1;
+    end;
+    1:begin
+      PrintDBGridEh1.PageHeader.CenterText.Text := '服务记录';
+
+      PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+      PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]','']);
+      DBGridEh2.DataSource.DataSet.Filtered := False;
+      PrintDBGridEh1.DBGridEh := DBGridEh2;
+    end;
+  end;
 end;
 
 end.

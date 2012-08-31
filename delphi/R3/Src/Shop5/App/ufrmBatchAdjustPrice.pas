@@ -392,17 +392,23 @@ begin
 end;
 
 procedure TfrmBatchAdjustPrice.actSaveExecute(Sender: TObject);
+var Params:TftParamList;
 begin
   inherited;
   if cdsPrice.IsEmpty then Exit;
-
-  if Factor.UpdateBatch(cdsPrice,'TGoodsPrice') then
-  begin
-     dbState := dsBrowse;
-     MessageBox(Handle,pchar('调价商品已保存!'),pchar(Application.Title),MB_OK);
-  end
-  else
-     MessageBox(Handle,pchar('调价商品未保存!'),pchar(Application.Title),MB_OK);
+  Params := TftParamList.Create;
+  Params.ParamByName('PRICING_USER').AsString := Global.UserID;
+  try
+    if Factor.UpdateBatch(cdsPrice,'TGoodsPrice',Params) then
+    begin
+       dbState := dsBrowse;
+       MessageBox(Handle,pchar('调价商品已保存!'),pchar(Application.Title),MB_OK);
+    end
+    else
+       MessageBox(Handle,pchar('调价商品未保存!'),pchar(Application.Title),MB_OK);
+  finally
+    Params.Free;
+  end;
 end;
 
 procedure TfrmBatchAdjustPrice.GridColumns9UpdateData(Sender: TObject;

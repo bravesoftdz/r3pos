@@ -143,7 +143,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 8
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -211,7 +211,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     item
                       Caption = #23436#25104#30331#35760
                     end>
-                  TabOrder = 7
+                  TabOrder = 8
                   Caption = #29366#24577
                 end
                 object fndP1_CUST_ID: TzrComboBoxList
@@ -366,7 +366,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Top = 73
                   Width = 121
                   Height = 20
-                  TabOrder = 9
+                  TabOrder = 7
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
               end

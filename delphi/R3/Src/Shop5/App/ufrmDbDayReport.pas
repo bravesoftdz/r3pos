@@ -303,6 +303,8 @@ begin
   //2012.08.15创建尺码、颜色
   if ShopGlobal.GetVersionFlag=1 then
     CreateGridColForFIG(DBGridEh5,9);
+  //2012.08.29释放:流水表的成本价字段(关掉以免误解)
+  SetNotShowCostPrice(DBGridEh5, ['DB_PRC']); 
 end;
 
 function TfrmDbDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -389,12 +391,12 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
-    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
-    ',case when cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
+    ',case when cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
+    ',case when cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.000/cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -549,12 +551,12 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
-    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
-    ',case when cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
+    ',case when cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
+    ',case when cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.000/cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -662,10 +664,10 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lvField+',C.RELATION_ID '+
-    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -683,12 +685,12 @@ begin
           'select '+
           ' sum(nvl(DBIN_AMT,0)) as DBIN_AMT '+
           ',sum(nvl(DBIN_CST,0)) as DBIN_CST '+
-          ',case when cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(DBIN_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3)) else 0 end as DBIN_PRC '+
+          ',case when cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(DBIN_CST,0)) as decimal(18,3))*1.000/cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(nvl(DBIN_RTL,0)) as DBIN_RTL '+
           ',sum(nvl(DBOUT_AMT,0)) as DBOUT_AMT '+
           ',sum(nvl(DBOUT_CST,0)) as DBOUT_CST '+
           ',sum(nvl(DBOUT_RTL,0)) as DBOUT_RTL '+
-          ',case when cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(DBOUT_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3)) else 0 end as DBOUT_PRC '+
+          ',case when cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(DBOUT_CST,0)) as decimal(18,3))*1.000/cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3)) else 0 end as DBOUT_PRC '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)-6)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
@@ -706,7 +708,7 @@ begin
         'select '+
           ' sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when cast(sum(DBIN_AMT) as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
+          ',case when cast(sum(DBIN_AMT) as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(DBIN_RTL) as DBIN_RTL '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
           ',sum(DBOUT_CST) as DBOUT_CST '+
@@ -838,14 +840,14 @@ begin
     ' A.TENANT_ID '+
     ','+SORT_ID+' as SORT_ID'+
     ',A.GODS_ID '+
-    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',case when cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',case when cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
-    ',case when cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',case when cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.000/cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
@@ -1375,6 +1377,8 @@ begin
 end;
 
 procedure TfrmDbDayReport.fndP6_DBINClick(Sender: TObject);
+var
+  SetCol:TColumnEh;
 begin
   inherited;
   if ShopGlobal.GetProdFlag = 'E' then
@@ -1390,6 +1394,22 @@ begin
     else if fndP6_DBOUT.Checked then
       LblShopName.Caption:='调出门店';
   end;
+  SetCol:=self.FindColumn(DBGridEh5,'DB_AMT');
+  if SetCol<>nil then
+  begin
+    if fndP6_DBIN.Checked then
+      SetCol.Title.Caption:='调入数量'
+    else if fndP6_DBOUT.Checked then
+      SetCol.Title.Caption:='调出数量';  
+  end; 
+  SetCol:=self.FindColumn(DBGridEh5,'DB_CST');
+  if SetCol<>nil then
+  begin
+    if fndP6_DBIN.Checked then
+      SetCol.Title.Caption:='调入金额'
+    else if fndP6_DBOUT.Checked then
+      SetCol.Title.Caption:='调出金额';  
+  end; 
 end;
 
 function TfrmDbDayReport.GetGodsSortIdx: string;

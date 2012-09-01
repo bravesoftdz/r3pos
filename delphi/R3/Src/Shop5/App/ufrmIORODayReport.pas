@@ -402,7 +402,7 @@ begin
 
   //经手人:
   if trim(fndP4_USER_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.IROR_USER='''+trim(fndP4_USER_ID.AsString)+''' ';
+    strWhere:=strWhere+' and A.IORO_USER='''+trim(fndP4_USER_ID.AsString)+''' ';
 
   //供应商+客户+企业资料
   case Factor.iDbType of

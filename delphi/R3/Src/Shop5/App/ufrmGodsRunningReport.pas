@@ -214,7 +214,7 @@ begin
         'select '+
         'isnull(i.BARCODE,j.BARCODE) as BARCODE'+
         ',j.*'+
-        ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.0/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.0/OUT_AMT else AMONEY end) end) as APRICE'+
+        ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.000/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.000/OUT_AMT else AMONEY end) end) as APRICE'+
         ',h.CLIENT_NAME as CLIENT_NAME'+
         ',e.USER_NAME as CREA_USER_TXT from '+
         ' ('+strSql+') j '+
@@ -228,7 +228,7 @@ begin
     begin
       strSql :=
         'select j.*'+
-        ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.0/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.0/OUT_AMT else AMONEY end) end) as APRICE'+
+        ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.000/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.000/OUT_AMT else AMONEY end) end) as APRICE'+
         ',h.CLIENT_NAME as CLIENT_NAME'+
         ',e.USER_NAME as CREA_USER_TXT from '+
         ' ('+strSql+') j '+
@@ -433,7 +433,7 @@ begin
                         ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
                         ' when ORDER_TYPE=12 then DBIN_AMT '+
                         ' when ORDER_TYPE=22 then -DBOUT_AMT '+
-                        ' else (CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*1.0 end as decimal(18,3))*1.0/'+UnitCalc+')as BAL_AMT,'+
+                        ' else (CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*1.0 end as decimal(18,3))*1.000/'+UnitCalc+')as BAL_AMT,'+
                ' sum(cast(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end as decimal(18,3))) as BAL_RTL '+
          'from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
          ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' '+
@@ -442,14 +442,14 @@ begin
     begin
       if MaxReckDate>=BegDate then  //已结账，全部走台账表
       begin
-        Str:='select sum(A.BAL_AMT*1.0/'+UnitCalc+')as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
+        Str:='select sum(A.BAL_AMT*1.000/'+UnitCalc+')as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
              ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and A.GODS_ID='''+GodsID+''' '+
              ' and A.CREA_DATE='+BegDate+' '+Shop_Cnd;
       end else //走两部分联合[union]
       begin
         Str:=
            'select sum(BAL_AMT) as BAL_AMT,sum(BAL_RTL) as BAL_RTL from '+
-           '(select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
+           '(select sum(A.BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
            ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
            ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
            ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+MaxReckDate+' '+
@@ -458,7 +458,7 @@ begin
                             ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
                             ' when ORDER_TYPE=12 then DBIN_AMT '+
                             ' when ORDER_TYPE=22 then -DBOUT_AMT '+
-                            ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.0/'+UnitCalc+')as BAL_AMT,'+
+                            ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.000/'+UnitCalc+')as BAL_AMT,'+
                  ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
            ' from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
            ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' and '+

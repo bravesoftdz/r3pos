@@ -431,8 +431,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
-    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+   //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+   //数量
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -597,8 +597,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
-    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(-sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(-sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -707,8 +707,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
-    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -883,8 +883,8 @@ begin
     ' A.TENANT_ID as TENANT_ID '+
     ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID as GODS_ID '+
-    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利

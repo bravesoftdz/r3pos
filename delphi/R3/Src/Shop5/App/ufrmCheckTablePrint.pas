@@ -203,7 +203,7 @@ begin
     'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
     ',(RCK_AMOUNT*1.000/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
     ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT*1.000/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
-    ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
+    ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.000/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
     ',isnull(B.NEW_INPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.000 end) as NEW_INPRICE '+      //--成本价
     ',isnull(B.NEW_OUTPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.000 end) as NEW_OUTPRICE '+    //--零售价
     ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.000 * isnull(B.NEW_INPRICE,0))*1.000 end) as PAL_INAMONEY ' +    //--损益成本金额

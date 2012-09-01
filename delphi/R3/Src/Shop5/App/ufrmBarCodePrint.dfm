@@ -1,6 +1,6 @@
 inherited frmBarCodePrint: TfrmBarCodePrint
-  Left = 779
-  Top = 185
+  Left = 475
+  Top = 173
   Width = 513
   Height = 393
   BorderIcons = [biSystemMenu]

@@ -424,8 +424,8 @@ begin
   end;
   result :=
    'select j.*,case when j.IS_PRESENT=2 then ''(¶Ò»»)'' when j.IS_PRESENT=1 then ''(ÔùËÍ)'' else '''' end as IS_PRESENT_TEXT,'+
-   'j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_TAX_MNY,'+
-   'j.STOCK_MNY-j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_NOTAX_MNY,'+
+//   'j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_TAX_MNY,'+
+//   'j.STOCK_MNY-j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_NOTAX_MNY,'+
    '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID and STOCK_ID='''+id+''') as ORDER_OWE_MNY,'+
    '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID) as TOTAL_OWE_MNY '+
    'from ('+

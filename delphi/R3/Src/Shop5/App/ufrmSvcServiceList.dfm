@@ -9,26 +9,26 @@ inherited frmSvcServiceList: TfrmSvcServiceList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 485
+    Width = 892
+    Height = 474
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 475
+      Width = 882
+      Height = 464
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 469
+        Width = 876
+        Height = 458
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 442
+            Width = 874
+            Height = 431
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 872
-              Height = 432
+              Width = 864
+              Height = 421
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -37,7 +37,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object RzPanel6: TRzPanel
                 Left = 6
                 Top = 6
-                Width = 860
+                Width = 852
                 Height = 101
                 Align = alTop
                 BorderOuter = fsNone
@@ -373,16 +373,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object Panel1: TPanel
                 Left = 6
                 Top = 107
-                Width = 860
-                Height = 319
+                Width = 852
+                Height = 308
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 858
-                  Height = 317
+                  Width = 850
+                  Height = 306
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -500,14 +500,14 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #23548#36141#21592
-                      Width = 60
+                      Width = 48
                     end
                     item
                       EditButtons = <>
                       FieldName = 'STATUS'
                       Footers = <>
                       Title.Caption = #29366#24577
-                      Width = 80
+                      Width = 66
                     end
                     item
                       EditButtons = <>
@@ -521,14 +521,14 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       FieldName = 'CREA_USER_TEXT'
                       Footers = <>
                       Title.Caption = #21046#21333#21592
-                      Width = 60
+                      Width = 44
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #24405#20837#26102#38388
-                      Width = 120
+                      Width = 145
                     end>
                 end
               end
@@ -540,8 +540,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 442
+            Width = 874
+            Height = 431
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -550,7 +550,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 111
               Align = alTop
               BorderOuter = fsNone
@@ -857,16 +857,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object Panel2: TPanel
               Left = 6
               Top = 117
-              Width = 870
-              Height = 319
+              Width = 862
+              Height = 308
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 317
+                Width = 860
+                Height = 306
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -924,38 +924,31 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'GODS_NAME'
+                    Footers = <>
+                    Title.Caption = #21830#21697#21517#31216
+                    Width = 148
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'CLIENT_ID_TEXT'
                     Footers = <>
                     Title.Caption = #23458#25143#21517#31216
-                    Width = 150
+                    Width = 158
                   end
                   item
                     EditButtons = <>
                     FieldName = 'CLIENT_CODE'
                     Footers = <>
                     Title.Caption = #23458#25143#21495
-                    Width = 80
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'GODS_NAME'
-                    Footers = <>
-                    Title.Caption = #21830#21697#21517#31216
-                    Width = 150
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SERIAL_NO'
-                    Footers = <>
-                    Title.Caption = #24207#21015#21495
-                    Width = 120
+                    Width = 73
                   end
                   item
                     EditButtons = <>
                     FieldName = 'LINKMAN'
                     Footers = <>
                     Title.Caption = #32852#31995#20154
-                    Width = 60
+                    Width = 53
                   end
                   item
                     EditButtons = <>
@@ -969,7 +962,14 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     FieldName = 'ADDRESS'
                     Footers = <>
                     Title.Caption = #23458#25143#22320#22336
-                    Width = 120
+                    Width = 219
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SERIAL_NO'
+                    Footers = <>
+                    Title.Caption = #24207#21015#21495
+                    Width = 207
                   end
                   item
                     Alignment = taRightJustify
@@ -985,7 +985,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     FieldName = 'RECV_USER_TEXT'
                     Footers = <>
                     Title.Caption = #21463#29702#20154
-                    Width = 70
+                    Width = 49
                   end
                   item
                     DisplayFormat = '0000-00-00'
@@ -1000,7 +1000,14 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     FieldName = 'SRVR_USER_TEXT'
                     Footers = <>
                     Title.Caption = #22788#29702#20154
-                    Width = 76
+                    Width = 57
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_USER_TEXT'
+                    Footers = <>
+                    Title.Caption = #21046#21333#21592
+                    Width = 51
                   end
                   item
                     EditButtons = <>
@@ -1008,13 +1015,6 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     Footers = <>
                     Title.Caption = #21046#21333#26102#38388
                     Width = 150
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CREA_USER_TEXT'
-                    Footers = <>
-                    Title.Caption = #21046#21333#21592
-                    Width = 70
                   end>
               end
             end
@@ -1024,16 +1024,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image3: TImage
       Left = 374
-      Width = 486
+      Width = 478
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited Image1: TImage
-      Left = 860
+      Left = 852
     end
     inherited rzPanel5: TPanel
       Left = 374

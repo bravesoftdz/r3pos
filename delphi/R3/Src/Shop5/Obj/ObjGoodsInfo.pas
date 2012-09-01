@@ -55,7 +55,6 @@ type
 
 
 implementation
-uses uGlobal;
  { TGoodsInfo }
 
 function TGoodsInfo.IsRootShop: Boolean;
@@ -271,7 +270,7 @@ begin
     ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,SORT_ID9,SORT_ID10,'+
     ' SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,SORT_ID17,SORT_ID18,SORT_ID19,SORT_ID20,GODS_TYPE,'+
     ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,REMARK,'+
-    ' case when NEW_OUTPRICE<>0 then (case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end)*100.0/(NEW_OUTPRICE*1.000) else null end as PROFIT_RATE '+
+    ' case when NEW_OUTPRICE<>0 then (case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end)*100.000/(NEW_OUTPRICE*1.000) else null end as PROFIT_RATE '+
     'from VIW_GOODSPRICE J '+
     ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID '+
     ' where J.COMM not in (''02'',''12'') and J.TENANT_ID=:TENANT_ID and J.SHOP_ID=:SHOP_ID and J.GODS_ID=:GODS_ID order by J.GODS_CODE ';
@@ -446,7 +445,7 @@ begin
     ' from (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE Where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
     ' Left Join '+
     ' (select P.*,'+
-    '(case when G.NEW_OUTPRICE>0 then cast(round((P.NEW_OUTPRICE*100)/(G.NEW_OUTPRICE*1.000),0) as integer) else null end) as PROFIT_RATE from PUB_GOODSPRICE P,VIW_GOODSINFO G '+
+    '(case when G.NEW_OUTPRICE>0 then cast(round((P.NEW_OUTPRICE*100.000)/(G.NEW_OUTPRICE*1.000),0) as integer) else null end) as PROFIT_RATE from PUB_GOODSPRICE P,VIW_GOODSINFO G '+
     ' where P.TENANT_ID=G.TENANT_ID and P.GODS_ID=G.GODS_ID and P.TENANT_ID=:TENANT_ID and P.SHOP_ID=:SHOP_ID and P.PRICE_ID<>''#'' and P.COMM not in (''02'',''12'') and P.GODS_ID=:GODS_ID) B '+
     ' On A.PRICE_ID=B.PRICE_ID '+
     ' order by A.PRICE_ID';

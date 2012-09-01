@@ -98,7 +98,6 @@ type
     fndP4_STOR_AMT: TcxComboBox;
     Label38: TLabel;
     fndP4_RPTTYPE: TcxComboBox;
-    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -131,7 +130,6 @@ type
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh4TitleClick(Column: TColumnEh);
-    procedure Button1Click(Sender: TObject);
   private
     IsOnDblClick: Boolean;
     BAL_Date: integer;  //查询库存日期[查询库存日期，查询当前天的下一天期初]
@@ -293,8 +291,8 @@ begin
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
       ',sum(BAL_RTL) as BAL_RTL'+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,B.REGION_ID,AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+     //库存数量
@@ -323,9 +321,9 @@ begin
       ' A.TENANT_ID '+
       ',B.REGION_ID '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,B.REGION_ID';
@@ -441,8 +439,8 @@ begin
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
       ',sum(BAL_RTL) as BAL_RTL'+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(19,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when cast(sum(BAL_AMT) as decimal(19,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(19,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,B.SHOP_ID,AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+     //库存数量
@@ -470,9 +468,9 @@ begin
       ' A.TENANT_ID '+
       ',A.SHOP_ID '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then sum(BAL_CST)*1.00/sum(BAL_AMT*1.00/'+UnitCalc+') else 0 end as BAL_PRC '+
+      ',case when cast(sum(BAL_AMT*1.00/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_CST)*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then sum(BAL_RTL*1.00)/sum(BAL_AMT*1.00/'+UnitCalc+') else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT*1.00/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_RTL*1.00)/cast(sum(BAL_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';
@@ -594,9 +592,9 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(BAL_AMT,0)) as BAL_AMT '+
-          ',case when sum(nvl(BAL_AMT,0))<>0 then cast(sum(nvl(BAL_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',case when cast(sum(nvl(BAL_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(BAL_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(nvl(BAL_CST,0)) as BAL_CST '+
-          ',case when sum(nvl(BAL_AMT,0))<>0 then cast(sum(nvl(BAL_RTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+          ',case when cast(sum(nvl(BAL_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(BAL_RTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
           ',sum(nvl(BAL_RTL,0)) as BAL_RTL '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)-6)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
@@ -614,9 +612,9 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(BAL_AMT) as BAL_AMT '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(BAL_CST) as BAL_CST '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+          ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
           ',sum(BAL_RTL) as BAL_RTL '+
           ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
@@ -626,9 +624,9 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(BAL_AMT) as BAL_AMT '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(BAL_CST) as BAL_CST '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+          ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
           ',sum(BAL_RTL) as BAL_RTL '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
@@ -722,8 +720,8 @@ begin
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
       ',sum(BAL_RTL) as BAL_RTL'+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,'+SORT_ID+' as SORT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
@@ -772,14 +770,15 @@ begin
       ' A.TENANT_ID '+
       ','+SORT_ID+' as SORT_ID '+
       ',A.GODS_ID '+
-      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,A.PROPERTY_01,A.BATCH_NO,A.PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
+      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,A.BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
-      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-      'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,A.BATCH_NO,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
 
     case StrtoInt(GodsSortIdx) of
      0:
@@ -1160,12 +1159,6 @@ function TfrmStorageDayReport.GetDataRight: string;
 begin
   //主数据：STO_STORAGE、RCK_GOODS_DAYS
   result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
-end;
-
-procedure TfrmStorageDayReport.Button1Click(Sender: TObject);
-begin
-  inherited;
-CreateGridColForFIG(DBGridEh4,4);
 end;
 
 end.

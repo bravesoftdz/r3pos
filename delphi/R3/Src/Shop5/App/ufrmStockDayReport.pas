@@ -408,17 +408,17 @@ begin
 
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   strSql :=
-    'SELECT '+
+    'SELECT '+                      
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
+    ',case when cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))+sum(STOCK_AGO)<>0 then cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3))*100.00/cast((sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as decimal(18,3)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
+    ',case when cast((sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3))*100.00/cast((sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -579,13 +579,13 @@ begin
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
+    ',case when cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
+    ',case when cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -698,8 +698,8 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
+    ',case when cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -716,13 +716,13 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(STOCK_AMT,0)) as STOCK_AMT '+
-          ',case when sum(nvl(STOCK_AMT,0))<>0 then cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3)) else 0 end as STOCK_PRC '+
+          ',case when cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3)) else 0 end as STOCK_PRC '+
           ',sum(nvl(STOCK_TTL,0)) as STOCK_TTL '+
           ',sum(nvl(STOCK_MNY,0)) as STOCK_MNY '+
           ',sum(nvl(STOCK_TAX,0)) as STOCK_TAX '+
           ',sum(nvl(STOCK_RTL,0)) as STOCK_RTL '+
-          ',case when sum(nvl(STOCK_TTL,0))<>0 then cast(sum(nvl(STOCK_TTL,0))-sum(nvl(STOCK_AGO,0)) as decimal(18,3))*100.00/cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3)) else 0 end as STOCK_RATE '+
-          ',case when sum(nvl(STOCK_AMT,0))<>0 then cast(sum(nvl(STOCK_AGO,0)) as decimal(18,3))*1.00/cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3)) else 0 end as AVG_AGIO '+
+          ',case when cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3))<>0 then cast(sum(nvl(STOCK_TTL,0))-sum(nvl(STOCK_AGO,0)) as decimal(18,3))*100.00/cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(STOCK_AGO,0)) as decimal(18,3))*1.00/cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3)) else 0 end as AVG_AGIO '+
           ',sum(nvl(STOCK_AGO,0)) as STOCK_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)-6)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
@@ -740,13 +740,13 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
+          ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
+          ',case when cast(sum(STOCK_TTL) as decimal(18,3))<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
           ',sum(STOCK_AGO) as STOCK_AGO '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j '+
         ' left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID '+
@@ -758,13 +758,13 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
+          ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+    //DB2此字段计算报错
+          ',case when cast(sum(STOCK_TTL) as decimal(18,3))<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+    //DB2此字段计算报错
           ',sum(STOCK_AGO) as STOCK_AGO '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
@@ -877,14 +877,14 @@ begin
     ','+SORT_ID+' as SORT_ID '+    
     ',A.GODS_ID '+
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
+    ',case when cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
     ',(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as STOCK_MNY_TAX_AGO '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as AVG_AGIO '+
+    ',case when cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+

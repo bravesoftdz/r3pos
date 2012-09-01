@@ -331,7 +331,9 @@ begin
 
   //2012.08.15创建尺码、颜色
   if ShopGlobal.GetVersionFlag=1 then
-    CreateGridColForFIG(DBGridEh5,8);                              
+    CreateGridColForFIG(DBGridEh5,8);
+  //2012.08.29释放:流水表的成本价字段(关掉以免误解)
+  SetNotShowCostPrice(DBGridEh5, ['COST_PRICE']);                                
 end;
 
 function TfrmChangeDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -430,7 +432,7 @@ begin
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+   //数量
-    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -596,7 +598,7 @@ begin
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(-sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(-sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -706,7 +708,7 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -725,7 +727,7 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(AMOUNT,0)) as AMOUNT '+      //数量
-          ',case when sum(nvl(AMOUNT,0))<>0 then sum(nvl(AMONEY,0))/sum(nvl(AMOUNT,0)) else sum(nvl(AMONEY,0)) end as APRICE '+  //--均价
+          ',case when cast(sum(nvl(AMOUNT,0))as decimal(18,3))<>0 then sum(nvl(AMONEY,0))/cast(sum(nvl(AMOUNT,0))as decimal(18,3)) else sum(nvl(AMONEY,0)) end as APRICE '+  //--均价
           ',sum(nvl(AMONEY,0)) as AMONEY '+      //--可销售额
           ',sum(nvl(COST_MONEY,0)) as COST_MONEY '+  //--进货成本
           ',sum(nvl(AMONEY,0))-sum(nvl(COST_MONEY,0)) as PROFIT_MONEY '+  //差额毛利
@@ -745,7 +747,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else sum(AMONEY) end as APRICE '+  //--均价
+          ',case when cast(sum(AMOUNT)as decimal(18,3))<>0 then sum(AMONEY)/cast(sum(AMOUNT)as decimal(18,3)) else sum(AMONEY) end as APRICE '+  //--均价
           ',sum(AMONEY) as AMONEY '+      //--可销售额
           ',sum(COST_MONEY) as COST_MONEY '+  //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
@@ -759,7 +761,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else sum(AMONEY) end as APRICE '+  //--均价
+          ',case when cast(sum(AMOUNT)as decimal(18,3))<>0 then sum(AMONEY)/cast(sum(AMOUNT)as decimal(18,3)) else sum(AMONEY) end as APRICE '+  //--均价
           ',sum(AMONEY) as AMONEY '+      //--可销售额
           ',sum(COST_MONEY) as COST_MONEY '+    //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
@@ -882,7 +884,7 @@ begin
     ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID as GODS_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利

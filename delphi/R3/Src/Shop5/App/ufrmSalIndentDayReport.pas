@@ -443,7 +443,7 @@ begin
   SQLData:=
      '(select M.TENANT_ID,M.SHOP_ID,M.DEPT_ID,INDE_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as INDE_AMT,(CALC_MONEY+AGIO_MONEY) as INDE_RTL,FNSH_AMOUNT as FNSH_AMT '+
      ',round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
-     ',(S.CALC_MONEY-round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
+     ',(S.CALC_MONEY-round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
      ' from SAL_INDENTDATA S,SAL_INDENTORDER M '+
      ' where S.TENANT_ID=M.TENANT_ID and S.SHOP_ID=M.SHOP_ID and S.INDE_ID=M.INDE_ID and M.TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')';
 
@@ -452,8 +452,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.DEPT_ID '+
-    ',sum(INDE_AMT*1.00/'+UnitCalc+') as INDE_AMT '+
-    ',case when sum(INDE_AMT)<>0 then cast(sum(INDE_MNY)+sum(INDE_TAX) as decimal(18,3))*1.00/cast(sum(INDE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as INDE_PRC '+
+    ',sum(INDE_AMT*1.000/'+UnitCalc+') as INDE_AMT '+
+    ',case when cast(sum(INDE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(INDE_MNY)+sum(INDE_TAX) as decimal(18,3))*1.000/cast(sum(INDE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as INDE_PRC '+
     ',sum(INDE_MNY)+sum(INDE_TAX) as INDE_TTL '+ //价税合计
     ',sum(INDE_MNY) as INDE_MNY '+  //未税金额
     ',sum(INDE_TAX) as INDE_TAX '+  //税额
@@ -537,7 +537,7 @@ begin
   //取数SQL:
   SQLData:=
      '(select M.TENANT_ID,M.SHOP_ID,M.DEPT_ID,INDE_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as INDE_AMT,(CALC_MONEY+AGIO_MONEY) as INDE_RTL,FNSH_AMOUNT as FNSH_AMT '+
-     ',round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
+     ',round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
      ',(S.CALC_MONEY-round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
      ' from SAL_INDENTDATA S,SAL_INDENTORDER M '+
      ' where S.TENANT_ID=M.TENANT_ID and S.SHOP_ID=M.SHOP_ID and S.INDE_ID=M.INDE_ID and M.TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')';
@@ -547,8 +547,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
-    ',sum(INDE_AMT*1.00/'+UnitCalc+') as INDE_AMT '+
-    ',case when sum(INDE_AMT)<>0 then cast(sum(INDE_MNY)+sum(INDE_TAX) as decimal(18,3))*1.00/cast(sum(INDE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as INDE_PRC '+
+    ',sum(INDE_AMT*1.000/'+UnitCalc+') as INDE_AMT '+
+    ',case when cast(sum(INDE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(INDE_MNY)+sum(INDE_TAX) as decimal(18,3))*1.000/cast(sum(INDE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as INDE_PRC '+
     ',sum(INDE_MNY)+sum(INDE_TAX) as INDE_TTL '+ //价税合计
     ',sum(INDE_MNY) as INDE_MNY '+  //未税金额
     ',sum(INDE_TAX) as INDE_TAX '+  //税额
@@ -711,7 +711,7 @@ begin
   SQLData:=
      '(select M.TENANT_ID,M.SHOP_ID,M.DEPT_ID,INDE_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as INDE_AMT,(CALC_MONEY+AGIO_MONEY) as INDE_RTL,FNSH_AMOUNT as FNSH_AMT '+
      ',round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
-     ',(S.CALC_MONEY-round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
+     ',(S.CALC_MONEY-round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
      ' from SAL_INDENTDATA S,SAL_INDENTORDER M '+
      ' where S.TENANT_ID=M.TENANT_ID and S.SHOP_ID=M.SHOP_ID and S.INDE_ID=M.INDE_ID and M.TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')';
 
@@ -720,8 +720,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
-    ',sum(INDE_AMT*1.00/'+UnitCalc+') as INDE_AMT '+
-    ',case when sum(INDE_AMT)<>0 then cast(sum(INDE_MNY)+sum(INDE_TAX) as decimal(18,3))*1.00/cast(sum(INDE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as INDE_PRC '+
+    ',sum(INDE_AMT*1.000/'+UnitCalc+') as INDE_AMT '+
+    ',case when cast(sum(INDE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(INDE_MNY)+sum(INDE_TAX) as decimal(18,3))*1.000/cast(sum(INDE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as INDE_PRC '+
     ',sum(INDE_MNY)+sum(INDE_TAX) as INDE_TTL '+ //价税合计
     ',sum(INDE_MNY) as INDE_MNY '+  //未税金额
     ',sum(INDE_TAX) as INDE_TAX '+  //税额
@@ -814,7 +814,7 @@ begin
   //取数SQL:
   SQLData:=
      '(select M.TENANT_ID,M.SHOP_ID,M.DEPT_ID,INDE_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as INDE_AMT,(CALC_MONEY+AGIO_MONEY) as INDE_RTL,FNSH_AMOUNT as FNSH_AMT '+
-     ',round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
+     ',round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
      ',(S.CALC_MONEY-round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
      ' from SAL_INDENTDATA S,SAL_INDENTORDER M '+
      ' where S.TENANT_ID=M.TENANT_ID and S.SHOP_ID=M.SHOP_ID and S.INDE_ID=M.INDE_ID and M.TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')';
@@ -824,7 +824,7 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
-    ',sum(INDE_AMT*1.00/'+UnitCalc+') as INDE_AMT '+  //销售数量
+    ',sum(INDE_AMT*1.000/'+UnitCalc+') as INDE_AMT '+  //销售数量
     ',sum(INDE_MNY)+sum(INDE_TAX) as INDE_TTL '+ //价税金额
     ',sum(INDE_MNY) as INDE_MNY '+   //未税金额
     ',sum(INDE_TAX) as INDE_TAX '+   //税额
@@ -844,7 +844,7 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(INDE_AMT,0)) as INDE_AMT '+
-          ',case when sum(nvl(INDE_AMT,0))<>0 then cast(sum(nvl(INDE_TTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(INDE_AMT,0)) as decimal(18,3)) else 0 end as INDE_PRC '+
+          ',case when cast(sum(nvl(INDE_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(INDE_TTL,0)) as decimal(18,3))*1.000/cast(sum(nvl(INDE_AMT,0)) as decimal(18,3)) else 0 end as INDE_PRC '+
           ',sum(nvl(INDE_TTL,0)) as INDE_TTL '+
           ',sum(nvl(INDE_MNY,0)) as INDE_MNY '+
           ',sum(nvl(INDE_TAX,0)) as INDE_TAX '+
@@ -865,7 +865,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(INDE_AMT) as INDE_AMT '+
-          ',case when sum(INDE_AMT)<>0 then cast(sum(INDE_TTL) as decimal(18,3))*1.00/cast(sum(INDE_AMT) as decimal(18,3)) else 0 end as INDE_PRC '+
+          ',case when cast(sum(INDE_AMT) as decimal(18,3))<>0 then cast(sum(INDE_TTL) as decimal(18,3))*1.000/cast(sum(INDE_AMT) as decimal(18,3)) else 0 end as INDE_PRC '+
           ',sum(INDE_TTL) as INDE_TTL '+
           ',sum(INDE_MNY) as INDE_MNY '+
           ',sum(INDE_TAX) as INDE_TAX '+
@@ -878,7 +878,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(INDE_AMT) as INDE_AMT '+
-          ',case when sum(INDE_AMT)<>0 then cast(sum(INDE_TTL) as decimal(18,3))*1.00/cast(sum(INDE_AMT) as decimal(18,3)) else 0 end as INDE_PRC '+
+          ',case when cast(sum(INDE_AMT) as decimal(18,3))<>0 then cast(sum(INDE_TTL) as decimal(18,3))*1.000/cast(sum(INDE_AMT) as decimal(18,3)) else 0 end as INDE_PRC '+
           ',sum(INDE_TTL) as INDE_TTL '+
           ',sum(INDE_MNY) as INDE_MNY '+
           ',sum(INDE_TAX) as INDE_TAX '+
@@ -966,7 +966,7 @@ begin
   //取数SQL:
   SQLData:=
     '(select M.TENANT_ID,M.SHOP_ID,M.DEPT_ID,INDE_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as INDE_AMT,(CALC_MONEY+AGIO_MONEY) as INDE_RTL,FNSH_AMOUNT as FNSH_AMT '+
-    ',round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
+    ',round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as INDE_TAX '+
     ',(S.CALC_MONEY-round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as INDE_MNY '+
     ' from SAL_INDENTDATA S,SAL_INDENTORDER M '+
     ' where S.TENANT_ID=M.TENANT_ID and S.SHOP_ID=M.SHOP_ID and S.INDE_ID=M.INDE_ID and M.TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')';
@@ -985,8 +985,8 @@ begin
     ' A.TENANT_ID '+
     ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID '+
-    ',sum(INDE_AMT*1.00/'+UnitCalc+') as INDE_AMT '+    //销售数量
-    ',case when sum(INDE_AMT)<>0 then cast(isnull(sum(INDE_MNY),0)+isnull(sum(INDE_TAX),0) as decimal(18,3))*1.00/cast(sum(INDE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as INDE_PRC '+
+    ',sum(INDE_AMT*1.000/'+UnitCalc+') as INDE_AMT '+    //销售数量
+    ',case when cast(sum(INDE_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then cast(isnull(sum(INDE_MNY),0)+isnull(sum(INDE_TAX),0) as decimal(18,3))*1.000/cast(sum(INDE_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as INDE_PRC '+
     ',sum(INDE_MNY)+sum(INDE_TAX) as INDE_TTL '+  //价税合计
     ',sum(INDE_MNY) as INDE_MNY '+  //未税金额
     ',sum(INDE_TAX) as INDE_TAX '+  //税额
@@ -1120,8 +1120,8 @@ begin
       ',CALC_AMOUNT'+
       ',CALC_MONEY'+
       ',FNSH_AMOUNT as FNSH_AMT'+
-      ',round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as TAX_MONEY '+
-      ',(S.CALC_MONEY-round(S.CALC_MONEY/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as NOTAX_MONEY '+
+      ',round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2) as TAX_MONEY '+
+      ',(S.CALC_MONEY-round(S.CALC_MONEY*1.000/(1+case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end)*case when M.INVOICE_FLAG in (''2'',''3'') then M.TAX_RATE else 0 end,2)) as NOTAX_MONEY '+
     ' from SAL_INDENTDATA S,SAL_INDENTORDER M '+
     ' where S.TENANT_ID=M.TENANT_ID and S.SHOP_ID=M.SHOP_ID and S.INDE_ID=M.INDE_ID and M.TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')';
 

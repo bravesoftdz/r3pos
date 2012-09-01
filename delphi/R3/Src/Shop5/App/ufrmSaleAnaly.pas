@@ -408,7 +408,7 @@ var
   LStrList,RStrList,StrList: TStringList;
 begin
   MnyUnit:=trim(fndP1_Sale_UNIT.Text);
-  if fndP1_Sale_UNIT.ItemIndex=0 then CalcCount:=1.00 else CalcCount:=10000.00;
+  if fndP1_Sale_UNIT.ItemIndex=0 then CalcCount:=1.000 else CalcCount:=10000.000;
   Chart1.Series[0].Clear;
   AnalyInfo.Clear;
   if adoReport1.IsEmpty then Exit;
@@ -649,7 +649,7 @@ begin
     UnitID:='/C.UNIT_CALC';  //+GetUnitTO_CALC(fndP1UNIT_ID.ItemIndex,'C');
     UnitName:='C.UNITID';    //GetUnitID(fndP1UNIT_ID.ItemIndex,'C');
     GroupUnitName:=',C.UNITID';
-    UnitFields:=',(case when '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+'=0 then 1.00 '+
+    UnitFields:=',(case when '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+'=0 then 1.000 '+
                       ' else '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+' end) as UNIT_CALC '+
                 ',('+GetUnitID(fndP2UNIT_ID.ItemIndex,'')+')as UNITID ';
   end else
@@ -833,7 +833,7 @@ begin
   //商品分类:
   if (trim(fndP3_SORT_ID.Text)<>'') and (trim(srid3)<>'') then
   begin
-    GoodTab:='(select TENANT_ID,RELATION_ID,LEVEL_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+',(case when '+AmtUnitID+'=0 then 1.00 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO_SORTEXT where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
+    GoodTab:='(select TENANT_ID,RELATION_ID,LEVEL_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+',(case when '+AmtUnitID+'=0 then 1.000 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO_SORTEXT where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid3+' ';
      else
@@ -842,7 +842,7 @@ begin
     if trim(sid3)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid3+'%'' ';
   end else
-    GoodTab:='(select TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+',(case when '+AmtUnitID+'=0 then 1.00 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
+    GoodTab:='(select TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+',(case when '+AmtUnitID+'=0 then 1.000 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
 
   //分类取出Max(字段)
   case EdtvType.ItemIndex of

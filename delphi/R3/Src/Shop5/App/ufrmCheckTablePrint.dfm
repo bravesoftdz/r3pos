@@ -7,14 +7,14 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1062
-    Height = 550
+    Width = 1070
+    Height = 561
     inherited RzPanel2: TRzPanel
-      Width = 1052
-      Height = 540
+      Width = 1060
+      Height = 551
       inherited RzPage: TRzPageControl
-        Width = 847
-        Height = 534
+        Width = 855
+        Height = 545
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,14 +22,14 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
           Color = clCream
           Caption = #30424#28857#23545#29031#34920
           inherited RzPanel3: TRzPanel
-            Width = 845
-            Height = 507
+            Width = 853
+            Height = 518
             Caption = '`'
             inherited Panel4: TPanel
-              Width = 835
-              Height = 497
+              Width = 843
+              Height = 508
               inherited w1: TRzPanel
-                Width = 835
+                Width = 843
                 Height = 76
                 object Label3: TLabel
                   Left = 24
@@ -268,11 +268,11 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
               end
               inherited RzPanel7: TRzPanel
                 Top = 76
-                Width = 835
-                Height = 421
+                Width = 843
+                Height = 432
                 inherited DBGridEh1: TDBGridEh
-                  Width = 831
-                  Height = 417
+                  Width = 839
+                  Height = 428
                   FrozenCols = 3
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -405,8 +405,8 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 850
-        Height = 534
+        Left = 858
+        Height = 545
         inherited Panel2: TPanel
           Height = 502
           inherited Image5: TImage
@@ -436,37 +436,37 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1062
+    Width = 1070
     inherited Image3: TImage
-      Left = 438
+      Left = 434
     end
     inherited Image14: TImage
-      Left = 1042
+      Left = 1050
     end
     inherited Image1: TImage
-      Left = 426
+      Left = 434
       Width = 616
     end
     inherited rzPanel5: TPanel
-      Left = 438
+      Left = 434
       inherited lblToolCaption: TRzLabel
         Width = 60
         Caption = #30424#28857#23545#29031#34920
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 418
+      Width = 414
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 418
+          MinHeight = 414
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 418
+        Width = 414
         ButtonWidth = 55
         inherited ToolButton1: TToolButton
           Caption = #26597#35810'(&S)'
@@ -484,16 +484,16 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
           Left = 173
         end
         inherited ToolButton9: TToolButton
-          Left = 245
+          Left = 241
         end
         inherited ToolButton10: TToolButton
-          Left = 300
+          Left = 296
         end
         inherited ToolButton8: TToolButton
-          Left = 355
+          Left = 351
         end
         inherited ToolButton4: TToolButton
-          Left = 363
+          Left = 359
         end
       end
     end

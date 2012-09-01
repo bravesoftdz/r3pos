@@ -470,7 +470,7 @@ begin
       ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_CST)*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_RTL*1.00)/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_RTL*1.000)/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';

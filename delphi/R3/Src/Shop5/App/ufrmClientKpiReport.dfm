@@ -7,14 +7,14 @@ inherited frmClientKpiReport: TfrmClientKpiReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 875
-    Height = 511
+    Width = 883
+    Height = 522
     inherited RzPanel2: TRzPanel
-      Width = 865
-      Height = 501
+      Width = 873
+      Height = 512
       inherited RzPage: TRzPageControl
-        Width = 660
-        Height = 495
+        Width = 668
+        Height = 506
         ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
@@ -24,13 +24,13 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           Color = clCream
           Caption = #37096#38376#36820#21033#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 658
-            Height = 468
+            Width = 666
+            Height = 479
             inherited Panel4: TPanel
-              Width = 648
-              Height = 458
+              Width = 656
+              Height = 469
               inherited w1: TRzPanel
-                Width = 648
+                Width = 656
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -302,11 +302,11 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 648
-                Height = 380
+                Width = 656
+                Height = 391
                 inherited DBGridEh1: TDBGridEh
-                  Width = 644
-                  Height = 376
+                  Width = 652
+                  Height = 387
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -1707,8 +1707,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 658
-            Height = 468
+            Width = 666
+            Height = 479
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1716,8 +1716,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 648
-              Height = 458
+              Width = 656
+              Height = 469
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1725,7 +1725,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 648
+                Width = 656
                 Height = 96
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2048,8 +2048,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 96
-                Width = 648
-                Height = 362
+                Width = 656
+                Height = 373
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2057,8 +2057,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 644
-                  Height = 358
+                  Width = 652
+                  Height = 369
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2211,8 +2211,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 663
-        Height = 495
+        Left = 671
+        Height = 506
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2228,15 +2228,15 @@ inherited frmClientKpiReport: TfrmClientKpiReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 875
+    Width = 883
     inherited Image3: TImage
       Width = 371
     end
     inherited Image14: TImage
-      Left = 855
+      Left = 863
     end
     inherited Image1: TImage
-      Left = 320
+      Left = 328
       Width = 535
     end
     inherited rzPanel5: TPanel

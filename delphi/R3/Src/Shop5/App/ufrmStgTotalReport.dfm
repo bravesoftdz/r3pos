@@ -6,25 +6,25 @@ inherited frmStgTotalReport: TfrmStgTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 923
-    Height = 468
+    Width = 931
+    Height = 479
     inherited RzPanel2: TRzPanel
-      Width = 913
-      Height = 458
+      Width = 921
+      Height = 469
       inherited RzPage: TRzPageControl
-        Width = 708
-        Height = 452
+        Width = 716
+        Height = 463
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 706
-            Height = 425
+            Width = 714
+            Height = 436
             inherited Panel4: TPanel
-              Width = 696
-              Height = 415
+              Width = 704
+              Height = 426
               inherited w1: TRzPanel
-                Width = 696
+                Width = 704
                 Height = 102
                 object Label3: TLabel
                   Left = 287
@@ -419,11 +419,11 @@ inherited frmStgTotalReport: TfrmStgTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 102
-                Width = 696
-                Height = 313
+                Width = 704
+                Height = 324
                 inherited DBGridEh1: TDBGridEh
-                  Width = 692
-                  Height = 309
+                  Width = 700
+                  Height = 320
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -432,8 +432,8 @@ inherited frmStgTotalReport: TfrmStgTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 711
-        Height = 452
+        Left = 719
+        Height = 463
         Visible = False
         inherited Panel2: TPanel
           Height = 429
@@ -448,9 +448,9 @@ inherited frmStgTotalReport: TfrmStgTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 923
+    Width = 931
     inherited Image14: TImage
-      Left = 903
+      Left = 911
     end
     inherited Image1: TImage
       Width = 561

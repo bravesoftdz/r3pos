@@ -530,7 +530,7 @@ begin
       ' D.UNIT_NAME as UNIT_NAME,'+
       ' sum(A.PLAN_AMT) as PLAN_AMT,'+     //签约量
       ' sum(A.FISH_AMT) as FISH_AMT,'+     //完成量
-      ' (case when sum(A.PLAN_AMT)<>0 then cast(sum(A.FISH_AMT)/(sum(A.PLAN_AMT)*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
+      ' (case when sum(A.PLAN_AMT)<>0 then cast(sum(A.FISH_AMT)/(sum(A.PLAN_AMT)*1.000) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
       ' sum(A.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
       ' sum(A.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY, '+  //保证金额
@@ -621,7 +621,7 @@ begin
 
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
-     '(case when K.PLAN_AMT<>0 then cast(K.FISH_AMT/K.PLAN_AMT*1.00 as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+
+     '(case when K.PLAN_AMT<>0 then cast(K.FISH_AMT/K.PLAN_AMT*1.000 as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+
      'case when K.KPI_DATA in (''1'',''4'') then IDX.UNIT_NAME else ''元'' end as UNIT_NAME,'+
      ' isnull(IDX.KPI_NAME,''无'') as KPI_NAME,'+
      ' isnull(TMS.TIMES_NAME,''无'') as TIMES_NAME '+
@@ -958,8 +958,8 @@ var
 begin
   //考核结果表:
   UnitCalc:=
-    '(case when K.UNIT_ID=G.SMALL_UNITS then cast(isnull(G.SMALLTO_CALC,1.0)*1.00 as decimal(18,3)) '+
-         ' when K.UNIT_ID=G.BIG_UNITS then cast(isnull(G.BIGTO_CALC,1.0)*1.00 as decimal(18,3)) '+
+    '(case when K.UNIT_ID=G.SMALL_UNITS then cast(isnull(G.SMALLTO_CALC,1.0)*1.000 as decimal(18,3)) '+
+         ' when K.UNIT_ID=G.BIG_UNITS then cast(isnull(G.BIGTO_CALC,1.0)*1.000 as decimal(18,3)) '+
          ' else 1.0 end)';
   Str:=
     'select '+

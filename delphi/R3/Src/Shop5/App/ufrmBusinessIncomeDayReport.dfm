@@ -8,22 +8,22 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 887
-    Height = 488
+    Height = 495
     inherited RzPanel2: TRzPanel
       Width = 877
-      Height = 478
+      Height = 485
       inherited RzPage: TRzPageControl
         Width = 672
-        Height = 472
+        Height = 479
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #33829#19994#26085#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 670
-            Height = 445
+            Height = 452
             inherited Panel4: TPanel
               Width = 660
-              Height = 435
+              Height = 442
               inherited w1: TRzPanel
                 Width = 660
                 Height = 82
@@ -181,10 +181,10 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
               inherited RzPanel7: TRzPanel
                 Top = 82
                 Width = 660
-                Height = 353
+                Height = 360
                 inherited DBGridEh1: TDBGridEh
                   Width = 656
-                  Height = 349
+                  Height = 356
                   FooterRowCount = 0
                 end
               end
@@ -194,7 +194,7 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 675
-        Height = 472
+        Height = 479
         inherited Panel2: TPanel
           Height = 447
           inherited Panel5: TPanel

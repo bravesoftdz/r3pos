@@ -7,14 +7,14 @@ inherited frmIORODayReport: TfrmIORODayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1006
-    Height = 536
+    Width = 1014
+    Height = 547
     inherited RzPanel2: TRzPanel
-      Width = 996
-      Height = 526
+      Width = 1004
+      Height = 537
       inherited RzPage: TRzPageControl
-        Width = 791
-        Height = 520
+        Width = 799
+        Height = 531
         ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
@@ -24,13 +24,13 @@ inherited frmIORODayReport: TfrmIORODayReport
           Color = clCream
           Caption = #22320#21306#25910#25903#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 789
-            Height = 493
+            Width = 797
+            Height = 504
             inherited Panel4: TPanel
-              Width = 779
-              Height = 483
+              Width = 787
+              Height = 494
               inherited w1: TRzPanel
-                Width = 779
+                Width = 787
                 Height = 67
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -163,11 +163,11 @@ inherited frmIORODayReport: TfrmIORODayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 67
-                Width = 779
-                Height = 416
+                Width = 787
+                Height = 427
                 inherited DBGridEh1: TDBGridEh
-                  Width = 775
-                  Height = 412
+                  Width = 783
+                  Height = 423
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -877,8 +877,8 @@ inherited frmIORODayReport: TfrmIORODayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 789
-            Height = 493
+            Width = 797
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -886,8 +886,8 @@ inherited frmIORODayReport: TfrmIORODayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 779
-              Height = 483
+              Width = 787
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -895,7 +895,7 @@ inherited frmIORODayReport: TfrmIORODayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 779
+                Width = 787
                 Height = 121
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1343,8 +1343,8 @@ inherited frmIORODayReport: TfrmIORODayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 121
-                Width = 779
-                Height = 362
+                Width = 787
+                Height = 373
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1352,8 +1352,8 @@ inherited frmIORODayReport: TfrmIORODayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 775
-                  Height = 358
+                  Width = 783
+                  Height = 369
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsadoReport4
@@ -1529,8 +1529,8 @@ inherited frmIORODayReport: TfrmIORODayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 794
-        Height = 520
+        Left = 802
+        Height = 531
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1546,9 +1546,9 @@ inherited frmIORODayReport: TfrmIORODayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1006
+    Width = 1014
     inherited Image14: TImage
-      Left = 986
+      Left = 994
     end
     inherited Image1: TImage
       Width = 644

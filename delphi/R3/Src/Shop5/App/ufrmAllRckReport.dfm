@@ -1,31 +1,31 @@
 inherited frmAllRckReport: TfrmAllRckReport
   Left = -8
   Top = -8
-  Width = 1296
+  Width = 1292
   Height = 776
   Caption = #32508#21512#21488#36134
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1280
-    Height = 701
+    Width = 1284
+    Height = 712
     inherited RzPanel2: TRzPanel
-      Width = 1270
-      Height = 691
+      Width = 1274
+      Height = 702
       inherited RzPage: TRzPageControl
-        Width = 1065
-        Height = 685
+        Width = 1069
+        Height = 696
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32508#21512#21488#36134
           inherited RzPanel3: TRzPanel
-            Width = 1063
-            Height = 658
+            Width = 1067
+            Height = 669
             inherited Panel4: TPanel
-              Width = 1053
-              Height = 648
+              Width = 1057
+              Height = 659
               inherited w1: TRzPanel
-                Width = 1053
+                Width = 1057
                 Height = 82
                 object LblRckType: TLabel
                   Left = 9
@@ -225,12 +225,12 @@ inherited frmAllRckReport: TfrmAllRckReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 1053
-                Height = 566
+                Width = 1057
+                Height = 577
                 inherited DBGridEh1: TDBGridEh
                   Tag = 1
-                  Width = 1049
-                  Height = 562
+                  Width = 1053
+                  Height = 573
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -270,8 +270,8 @@ inherited frmAllRckReport: TfrmAllRckReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1068
-        Height = 685
+        Left = 1072
+        Height = 696
         Visible = False
         inherited Panel2: TPanel
           Height = 662
@@ -286,15 +286,15 @@ inherited frmAllRckReport: TfrmAllRckReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1280
+    Width = 1284
     inherited Image3: TImage
-      Width = 326
+      Width = 334
     end
     inherited Image14: TImage
-      Left = 1260
+      Left = 1264
     end
     inherited Image1: TImage
-      Left = 680
+      Left = 684
       Width = 580
     end
     inherited CoolBar1: TCoolBar

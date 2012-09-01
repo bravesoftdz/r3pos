@@ -1,20 +1,20 @@
 inherited frmChangeDayReport: TfrmChangeDayReport
-  Left = 73
-  Top = 64
+  Left = 188
+  Top = 119
   Width = 1131
   Height = 645
   Caption = #21830#21697#35843#25972#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1115
-    Height = 570
+    Width = 1123
+    Height = 581
     inherited RzPanel2: TRzPanel
-      Width = 1105
-      Height = 560
+      Width = 1113
+      Height = 571
       inherited RzPage: TRzPageControl
-        Width = 900
-        Height = 554
+        Width = 908
+        Height = 565
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,13 +22,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           Color = clCream
           Caption = #22320#21306#35843#25972#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 898
-            Height = 527
+            Width = 906
+            Height = 538
             inherited Panel4: TPanel
-              Width = 888
-              Height = 517
+              Width = 896
+              Height = 528
               inherited w1: TRzPanel
-                Width = 888
+                Width = 896
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -319,11 +319,11 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 888
-                Height = 439
+                Width = 896
+                Height = 450
                 inherited DBGridEh1: TDBGridEh
-                  Width = 884
-                  Height = 435
+                  Width = 892
+                  Height = 446
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -335,6 +335,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -342,6 +343,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'REGION_ID'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
@@ -350,6 +352,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'CODE_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
                     end
@@ -361,6 +364,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25968#37327
                       Width = 63
                     end
@@ -370,7 +374,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#22343#20215
                       Width = 65
                     end
                     item
@@ -381,6 +386,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21487#38144#21806#39069
                       Width = 84
                     end
@@ -392,7 +398,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#37329#39069
                       Width = 80
                     end
                     item
@@ -403,6 +410,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
                     end>
@@ -417,8 +425,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 898
-            Height = 527
+            Width = 906
+            Height = 538
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -426,8 +434,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 888
-              Height = 517
+              Width = 896
+              Height = 528
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -435,14 +443,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 888
+                Width = 896
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  888
+                  896
                   78)
                 object RzLabel4: TRzLabel
                   Left = 24
@@ -481,7 +489,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label15: TLabel
-                  Left = 747
+                  Left = 763
                   Top = 56
                   Width = 48
                   Height = 12
@@ -592,7 +600,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 5
                 end
                 object fndP2_UNIT_ID: TcxComboBox
-                  Left = 797
+                  Left = 813
                   Top = 52
                   Width = 80
                   Height = 20
@@ -734,8 +742,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 888
-                Height = 439
+                Width = 896
+                Height = 450
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -743,8 +751,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 884
-                  Height = 435
+                  Width = 892
+                  Height = 446
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -794,6 +802,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -801,6 +810,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SHOP_ID'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38376#24215#20195#30721
                       Width = 62
                     end
@@ -809,6 +819,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'SHOP_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
                     end
@@ -820,6 +831,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25968#37327
                       Width = 63
                     end
@@ -830,7 +842,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'APRICE'
                       Footer.Alignment = taRightJustify
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#22343#20215
                       Width = 65
                     end
                     item
@@ -841,6 +854,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21487#38144#21806#39069
                       Width = 84
                     end
@@ -852,7 +866,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#37329#39069
                       Width = 80
                     end
                     item
@@ -863,6 +878,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
                     end>
@@ -877,8 +893,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 898
-            Height = 527
+            Width = 906
+            Height = 538
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -886,8 +902,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 888
-              Height = 517
+              Width = 896
+              Height = 528
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -895,14 +911,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 888
+                Width = 896
                 Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  888
+                  896
                   79)
                 object RzLabel6: TRzLabel
                   Left = 24
@@ -934,7 +950,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
-                  Left = 746
+                  Left = 762
                   Top = 56
                   Width = 48
                   Height = 12
@@ -1019,7 +1035,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 5
                 end
                 object fndP3_UNIT_ID: TcxComboBox
-                  Left = 795
+                  Left = 811
                   Top = 52
                   Width = 80
                   Height = 20
@@ -1122,8 +1138,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 79
-                Width = 888
-                Height = 438
+                Width = 896
+                Height = 449
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1132,8 +1148,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 884
-                  Height = 434
+                  Width = 892
+                  Height = 445
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1183,6 +1199,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -1191,6 +1208,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'SORT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #20998#31867#21517#31216
                       Width = 185
                     end
@@ -1202,6 +1220,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25968#37327
                       Width = 63
                     end
@@ -1211,7 +1230,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#22343#20215
                       Width = 65
                     end
                     item
@@ -1222,6 +1242,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21487#38144#21806#39069
                       Width = 84
                     end
@@ -1233,7 +1254,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#37329#39069
                       Width = 80
                     end
                     item
@@ -1244,6 +1266,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
                     end>
@@ -1258,8 +1281,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 898
-            Height = 527
+            Width = 906
+            Height = 538
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1267,8 +1290,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 888
-              Height = 517
+              Width = 896
+              Height = 528
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1276,14 +1299,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 888
+                Width = 896
                 Height = 101
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  888
+                  896
                   101)
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -1322,7 +1345,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 745
+                  Left = 761
                   Top = 78
                   Width = 48
                   Height = 12
@@ -1398,7 +1421,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 6
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 795
+                  Left = 811
                   Top = 74
                   Width = 80
                   Height = 20
@@ -1586,8 +1609,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 101
-                Width = 888
-                Height = 416
+                Width = 896
+                Height = 427
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1596,8 +1619,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 884
-                  Height = 412
+                  Width = 892
+                  Height = 423
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1648,6 +1671,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -1656,6 +1680,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
                     end
@@ -1663,6 +1688,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #26465#30721
                       Width = 82
                     end
@@ -1670,6 +1696,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #36135#21495
                       Width = 82
                     end
@@ -1677,6 +1704,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21333#20301
                       Width = 19
                     end
@@ -1688,6 +1716,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25968#37327
                       Width = 63
                     end
@@ -1697,7 +1726,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#22343#20215
                       Width = 65
                     end
                     item
@@ -1708,6 +1738,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21487#38144#21806#39069
                       Width = 84
                     end
@@ -1719,7 +1750,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#37329#39069
                       Width = 80
                     end
                     item
@@ -1730,6 +1762,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
                     end>
@@ -1744,8 +1777,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 898
-            Height = 527
+            Width = 906
+            Height = 538
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1753,8 +1786,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 888
-              Height = 517
+              Width = 896
+              Height = 528
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1762,7 +1795,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 888
+                Width = 896
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2028,8 +2061,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 888
-                Height = 439
+                Width = 896
+                Height = 450
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2037,8 +2070,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 884
-                  Height = 435
+                  Width = 892
+                  Height = 446
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2087,6 +2120,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -2095,6 +2129,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CHANGE_DATE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #26085#26399
                     end
                     item
@@ -2102,6 +2137,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'GLIDE_NO'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21333#21495
                       Width = 92
                     end
@@ -2109,6 +2145,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38376#24215#21517#31216
                       Width = 103
                     end
@@ -2116,6 +2153,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'DEPT_ID'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #37096#38376#21517#31216
                       Width = 74
                     end
@@ -2123,6 +2161,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #26465#30721
                       Width = 82
                     end
@@ -2130,6 +2169,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
                     end
@@ -2137,6 +2177,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #36135#21495
                       Width = 82
                     end
@@ -2144,6 +2185,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21333#20301
                       Width = 18
                     end
@@ -2155,6 +2197,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25968#37327
                       Width = 63
                     end
@@ -2164,6 +2207,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38646#21806#20215
                       Width = 66
                     end
@@ -2175,6 +2219,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21487#38144#21806#39069
                       Width = 84
                     end
@@ -2184,6 +2229,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'COST_PRICE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25104#26412#20215
                       Width = 80
                     end
@@ -2195,7 +2241,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Alignment = taCenter
+                      Title.Caption = #25104#26412#37329#39069
                       Width = 80
                     end
                     item
@@ -2206,6 +2253,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
                     end
@@ -2213,6 +2261,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'BATCH_NO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #25209#21495
                       Width = 73
                     end
@@ -2220,6 +2269,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'IS_PRESENT'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #36192#21697
                       Width = 35
                     end
@@ -2227,6 +2277,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CREA_USER_TEXT'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21046#21333#20154
                       Width = 45
                     end
@@ -2234,6 +2285,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CREA_DATE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21046#21333#26102#38388
                       Width = 118
                     end>
@@ -2244,8 +2296,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 903
-        Height = 554
+        Left = 911
+        Height = 565
         inherited Panel2: TPanel
           Height = 522
           inherited RzPanel1: TRzPanel [3]
@@ -2261,15 +2313,15 @@ inherited frmChangeDayReport: TfrmChangeDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1115
+    Width = 1123
     inherited Image3: TImage
-      Width = 219
+      Width = 231
     end
     inherited Image14: TImage
-      Left = 1095
+      Left = 1103
     end
     inherited Image1: TImage
-      Left = 573
+      Left = 581
       Width = 522
     end
     inherited rzPanel5: TPanel

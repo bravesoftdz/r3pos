@@ -1053,7 +1053,7 @@ begin
 
       strSql :=
         'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME,ja.DAY_SALE_AMT as DAY_SALE_AMT,'+
-        ' (case when ja.SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
+        ' (case when ja.SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.000)/(ja.DAY_SALE_AMT*1.000) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
         ' from ('+strSql+') ja '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         ' on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and '+
@@ -1835,8 +1835,8 @@ begin
     ' ,''#'' as PROPERTY_01 '+
     ' ,''#'' as BATCH_NO '+
     ' ,''#'' as PROPERTY_02 '+
-    ' ,(case when j.STOCK_AMT<>0 then cast((j.STOCK_TTL*1.00)/(j.STOCK_AMT*1.00) as decimal(18,3)) else (r.NEW_INPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') end) as NEW_INPRICE '+
-    ' ,(case when j.SALE_AMT<>0 then cast((j.SALE_TTL*1.00)/(j.SALE_AMT*1.00) as decimal(18,3)) else (r.NEW_OUTPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') end) as NEW_OUTPRICE '+
+    ' ,(case when j.STOCK_AMT<>0 then cast((j.STOCK_TTL*1.000)/(j.STOCK_AMT*1.000) as decimal(18,3)) else (r.NEW_INPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') end) as NEW_INPRICE '+
+    ' ,(case when j.SALE_AMT<>0 then cast((j.SALE_TTL*1.000)/(j.SALE_AMT*1.000) as decimal(18,3)) else (r.NEW_OUTPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') end) as NEW_OUTPRICE '+
     ' ,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     ' ,isnull(r.SORT_ID2,''#'') as SORT_ID '+
     ' ,(isnull(E.DAY_SALE_AMT,0)*'+IntToStr(Safe_Day)+') as DAY_SALE_AMT '+
@@ -1846,7 +1846,7 @@ begin
 
   strSql :=
     'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME,ja.DAY_SALE_AMT as DAY_SALE_AMT,'+
-    ' (case when ja.DAY_SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
+    ' (case when ja.DAY_SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.000)/(ja.DAY_SALE_AMT*1.000) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
     ' from ('+strSql+') ja '+
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
     ' on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and '+

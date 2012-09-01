@@ -390,11 +390,11 @@ begin
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
     ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
-    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',case when cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
     ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',case when cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -550,11 +550,11 @@ begin
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
     ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
-    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',case when cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
     ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',case when cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -683,12 +683,12 @@ begin
           'select '+
           ' sum(nvl(DBIN_AMT,0)) as DBIN_AMT '+
           ',sum(nvl(DBIN_CST,0)) as DBIN_CST '+
-          ',case when sum(nvl(DBIN_AMT,0))<>0 then cast(sum(nvl(DBIN_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3)) else 0 end as DBIN_PRC '+
+          ',case when cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(DBIN_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(nvl(DBIN_RTL,0)) as DBIN_RTL '+
           ',sum(nvl(DBOUT_AMT,0)) as DBOUT_AMT '+
           ',sum(nvl(DBOUT_CST,0)) as DBOUT_CST '+
-          ',sum(nvl(DBOUT_RTL,0)) as DBOUT_RTL '+  
-          ',case when sum(nvl(DBOUT_AMT,0))<>0 then cast(sum(nvl(DBOUT_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3)) else 0 end as DBOUT_PRC '+
+          ',sum(nvl(DBOUT_RTL,0)) as DBOUT_RTL '+
+          ',case when cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(DBOUT_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3)) else 0 end as DBOUT_PRC '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)-6)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
@@ -706,12 +706,12 @@ begin
         'select '+
           ' sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
+          ',case when cast(sum(DBIN_AMT) as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(DBIN_RTL) as DBIN_RTL '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
           ',sum(DBOUT_CST) as DBOUT_CST '+
           ',sum(DBOUT_RTL) as DBOUT_RTL '+           
-          ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_CST '+
+          ',case when cast(sum(DBOUT_AMT) as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_CST '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
@@ -721,12 +721,12 @@ begin
         'select '+
           ' sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
+          ',case when cast(sum(DBIN_AMT) as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(DBIN_RTL) as DBIn_RTL '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
           ',sum(DBOUT_CST) as DBOUT_CST '+
           ',sum(DBOUT_RTL) as DBOUT_RTL '+           
-          ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_PRC '+
+          ',case when cast(sum(DBOUT_AMT) as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_PRC '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j '+
           'left outer join '+
@@ -840,12 +840,12 @@ begin
     ',A.GODS_ID '+
     ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',case when cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
     ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
-    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',case when cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';

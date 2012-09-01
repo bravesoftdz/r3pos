@@ -1035,14 +1035,14 @@ begin
     ' A.TENANT_ID '+
     ','+SORT_ID+' as SORT_ID '+      
     ',A.GODS_ID '+
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
-    ',case when cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3))<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+    //销售数量
+    ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+   //价税合计
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //零售金额，暂时没使用
     ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利
-    ',case when cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when cast(sum(SALE_MNY) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
@@ -1193,7 +1193,7 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+IntToStr(GodsStateIdx)+lvField+',C.RELATION_ID '+
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+  //销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+  //销售数量
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税金额
     ',sum(SALE_MNY) as SALE_MNY '+   //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+   //税额
@@ -1215,14 +1215,14 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(SALE_AMT,0)) as SALE_AMT '+
-          ',case when cast(sum(nvl(SALE_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(SALE_TTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(SALE_AMT,0)) as decimal(18,3)) else 0 end as SALE_PRC '+
+          ',case when cast(sum(nvl(SALE_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(SALE_TTL,0)) as decimal(18,3))*1.000/cast(sum(nvl(SALE_AMT,0)) as decimal(18,3)) else 0 end as SALE_PRC '+
           ',sum(nvl(SALE_TTL,0)) as SALE_TTL '+
           ',sum(nvl(SALE_MNY,0)) as SALE_MNY '+
           ',sum(nvl(SALE_TAX,0)) as SALE_TAX '+
           ',sum(nvl(SALE_RTL,0)) as SALE_RTL '+
           ',sum(nvl(SALE_PRF,0)) as SALE_ALLPRF '+   //毛利
           ',case when cast(sum(nvl(SALE_MNY,0)) as decimal(18,3))<>0 then cast(sum(nvl(SALE_PRF,0)) as decimal(18,3))*100.00/cast(sum(nvl(SALE_MNY,0)) as decimal(18,3)) else 0 end as SALE_RATE '+
-          ',case when cast(sum(nvl(SALE_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(SALE_PRF,0)) as decimal(18,3))*1.00/cast(sum(nvl(SALE_AMT,0)) as decimal(18,3)) else 0 end as SALE_PRF '+
+          ',case when cast(sum(nvl(SALE_AMT,0)) as decimal(18,3))<>0 then cast(sum(nvl(SALE_PRF,0)) as decimal(18,3))*1.000/cast(sum(nvl(SALE_AMT,0)) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(nvl(SALE_CST,0)) as SALE_CST '+
           ',sum(nvl(SALE_AGO,0)) as SALE_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
@@ -1241,14 +1241,14 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(SALE_AMT) as SALE_AMT '+
-          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
+          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.000/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
           ',sum(SALE_TTL) as SALE_TTL '+
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
           ',sum(SALE_PRF) as SALE_ALLPRF '+   //毛利          
           ',case when cast(sum(SALE_MNY) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
-          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
+          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.000/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
@@ -1259,14 +1259,14 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(SALE_AMT) as SALE_AMT '+
-          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
+          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.000/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
           ',sum(SALE_TTL) as SALE_TTL '+
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
           ',sum(SALE_PRF) as SALE_ALLPRF '+   //毛利          
           ',case when cast(sum(SALE_MNY) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
-          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
+          ',case when cast(sum(SALE_AMT) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.000/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
           ',isnull(r.SORT_ID,''#'') as SID '+
@@ -1491,14 +1491,14 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',isnull(A.GUIDE_USER,''#'') as GUIDE_USER '+
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
-    ',case when cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+
+    ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //暂时没使用
     ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利
-    ',case when cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when cast(sum(SALE_MNY) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
@@ -1628,14 +1628,14 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',isnull(A.DEPT_ID,''#'')as DEPT_ID'+
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
-    ',case when cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+
+    ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //暂时没使用
     ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利
-    ',case when cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when cast(sum(SALE_MNY) as decimal(18,3))<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+

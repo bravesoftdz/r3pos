@@ -306,15 +306,15 @@ begin
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
       ',sum(BAL_RTL) as BAL_RTL'+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,B.REGION_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
        ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'C')+' as UNIT_ID '+
       ',C.RELATION_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.SORT_ID7,C.SORT_ID8,C.SORT_ID9,C.SORT_ID10 '+
       ',C.SORT_ID11,C.SORT_ID12,C.SORT_ID13,C.SORT_ID14,C.SORT_ID15,C.SORT_ID16,C.SORT_ID17,C.SORT_ID18,C.SORT_ID19,C.SORT_ID20 '+
-       ',AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+     //库存数量
+       ',AMOUNT*1.000/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -348,10 +348,10 @@ begin
       ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
       ',C.RELATION_ID as SORT_ID24,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.SORT_ID7,C.SORT_ID8,C.SORT_ID9,C.SORT_ID10 '+
       ',C.SORT_ID11,C.SORT_ID12,C.SORT_ID13,C.SORT_ID14,C.SORT_ID15,C.SORT_ID16,C.SORT_ID17,C.SORT_ID18,C.SORT_ID19,C.SORT_ID20 '+
-      ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,B.SHOP_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'C')+' '+

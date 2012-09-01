@@ -376,12 +376,12 @@ begin
     ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
     ',max(isnull(R.NEW_INPRICE,C.NEW_INPRICE)*'+UnitCalc+') as NEW_INPRICE'+
     ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
-    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.000/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
@@ -396,7 +396,7 @@ begin
     ',0 as PRIOR_STOCK_TAX '+   //进项税额
     ',0 as PRIOR_STOCK_TTL '+   //进货金额
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+   //销售数量
     ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
     ',sum(SALE_TAX) as SALE_TAX '+   //销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
@@ -417,7 +417,7 @@ begin
     ',0 as PRIOR_MONTH_CST '+   //上月销售成本
     ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
 
-    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.000/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
@@ -441,7 +441,7 @@ begin
     ',0 as STOCK_TAX '+   //进项税额
     ',0 as STOCK_TTL '+   //进货金额  
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
@@ -459,7 +459,7 @@ begin
     ',0 as SALE_CST '+   //销售成本
     ',0 as SALE_PRF '+   //销售毛利
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
     ',sum(SALE_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
     ',sum(SALE_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
@@ -503,7 +503,7 @@ begin
     ',0 as YEAR_STOCK_TAX '+   //进项税额
     ',0 as YEAR_STOCK_TTL '+  //进货金额
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
@@ -522,7 +522,7 @@ begin
     ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
     ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
     ',sum(SALE_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
     ',sum(SALE_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
@@ -762,12 +762,12 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
     ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
-    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.000/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
@@ -784,7 +784,7 @@ begin
     ',0 as PRIOR_STOCK_TAX '+   //进项税额
     ',0 as PRIOR_STOCK_TTL '+  //进货金额
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+   //销售数量
     ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
     ',sum(SALE_TAX) as SALE_TAX '+   //销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
@@ -805,7 +805,7 @@ begin
     ',0 as PRIOR_MONTH_CST '+   //上月销售成本
     ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
 
-    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.000/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
@@ -831,7 +831,7 @@ begin
     ',0 as STOCK_TTL '+  //进货金额
 
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
@@ -849,7 +849,7 @@ begin
     ',0 as SALE_CST '+   //销售成本
     ',0 as SALE_PRF '+   //销售毛利
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
     ',sum(SALE_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
     ',sum(SALE_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
@@ -895,7 +895,7 @@ begin
     ',0 as YEAR_STOCK_TTL '+  //进货金额
 
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
@@ -914,7 +914,7 @@ begin
     ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
     ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
     ',sum(SALE_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
     ',sum(SALE_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
@@ -1089,12 +1089,12 @@ begin
     ',isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
     ',max(isnull(R.NEW_INPRICE,C.NEW_INPRICE)*'+UnitCalc+') as NEW_INPRICE'+
     ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
-    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.000/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
@@ -1109,7 +1109,7 @@ begin
     ',0 as PRIOR_STOCK_TAX '+   //进项税额
     ',0 as PRIOR_STOCK_TTL '+   //进货金额
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+   //销售数量
     ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
     ',sum(SALE_TAX) as SALE_TAX '+   //销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
@@ -1130,7 +1130,7 @@ begin
     ',0 as PRIOR_MONTH_CST '+   //上月销售成本
     ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
 
-    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.000/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
@@ -1193,7 +1193,7 @@ begin
     ',0 as STOCK_TTL '+  //进货金额
 
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
@@ -1211,7 +1211,7 @@ begin
     ',0 as SALE_CST '+   //销售成本
     ',0 as SALE_PRF '+   //销售毛利
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
     ',sum(SALE_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
     ',sum(SALE_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
@@ -1292,7 +1292,7 @@ begin
     ',0 as YEAR_STOCK_TAX '+   //进项税额
     ',0 as YEAR_STOCK_TTL '+  //进货金额
 
-    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_AMT*1.000/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
     ',sum(STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
@@ -1311,7 +1311,7 @@ begin
     ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
     ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
     ',sum(SALE_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
     ',sum(SALE_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额

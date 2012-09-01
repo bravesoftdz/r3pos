@@ -359,14 +359,14 @@ begin
     ',isnull(A.SALES_STYLE,''#'') as SALES_STYLE'+
     ',isnull(B.REGION_ID,''#'') as SREGION_ID,'+
     'A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
-    ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+    //销售数量
+    ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+   //价税合计
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //零售金额，暂时没使用
     ',sum(SALE_PRF) as SALE_PRF '+  //毛利
-    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_AVG_PRF '+ //单位毛利
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_AVG_PRF '+ //单位毛利
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+

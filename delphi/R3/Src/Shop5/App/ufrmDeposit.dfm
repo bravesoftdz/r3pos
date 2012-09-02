@@ -1,10 +1,11 @@
 inherited frmDeposit: TfrmDeposit
-  Left = 392
-  Top = 251
+  Left = 506
+  Top = 241
   Caption = #20805#20540#31649#29702
   ClientHeight = 292
   ClientWidth = 496
   Color = clWhite
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
@@ -118,7 +119,7 @@ inherited frmDeposit: TfrmDeposit
           end
           object RzLabel6: TRzLabel
             Left = 3
-            Top = 94
+            Top = 118
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -132,7 +133,7 @@ inherited frmDeposit: TfrmDeposit
             ParentFont = False
           end
           object RzLabel7: TRzLabel
-            Left = 4
+            Left = 231
             Top = 118
             Width = 100
             Height = 12
@@ -146,13 +147,30 @@ inherited frmDeposit: TfrmDeposit
             Font.Style = []
             ParentFont = False
           end
+          object Label1: TLabel
+            Left = 55
+            Top = 92
+            Width = 48
+            Height = 12
+            Alignment = taRightJustify
+            Caption = #25910#27454#24080#25143
+          end
+          object Label2: TLabel
+            Left = 283
+            Top = 92
+            Width = 48
+            Height = 12
+            Alignment = taRightJustify
+            Caption = #25910#25903#31185#30446
+          end
           object edtBALANCE: TcxTextEdit
             Tag = 1
             Left = 341
             Top = 34
             Width = 100
             Height = 20
-            TabOrder = 2
+            TabStop = False
+            TabOrder = 8
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtGLIDE_INFO: TcxMemo
@@ -160,7 +178,7 @@ inherited frmDeposit: TfrmDeposit
             Top = 141
             Width = 249
             Height = 65
-            TabOrder = 6
+            TabOrder = 7
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIC_AMONEY: TcxTextEdit
@@ -175,7 +193,7 @@ inherited frmDeposit: TfrmDeposit
             Style.Font.Height = -12
             Style.Font.Name = #23435#20307
             Style.Font.Style = [fsBold]
-            TabOrder = 4
+            TabOrder = 2
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnExit = edtIC_AMONEYExit
           end
@@ -185,7 +203,8 @@ inherited frmDeposit: TfrmDeposit
             Top = 62
             Width = 100
             Height = 20
-            TabOrder = 3
+            TabStop = False
+            TabOrder = 9
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCUST_CODE: TcxTextEdit
@@ -207,23 +226,96 @@ inherited frmDeposit: TfrmDeposit
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPAY: TcxTextEdit
-            Left = 112
+            Left = 341
             Top = 114
             Width = 121
             Height = 20
             Properties.OnChange = edtPAYPropertiesChange
-            TabOrder = 5
+            TabOrder = 6
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPAY_CASH: TcxComboBox
             Left = 112
-            Top = 88
+            Top = 114
             Width = 121
             Height = 20
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtPAY_CASHPropertiesChange
-            TabOrder = 7
+            TabOrder = 4
+          end
+          object edtACCOUNT_ID: TzrComboBoxList
+            Left = 112
+            Top = 88
+            Width = 121
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 3
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
+            KeyField = 'ACCOUNT_ID'
+            ListField = 'ACCT_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'ACCT_NAME'
+                Footers = <>
+                Title.Caption = #24080#25143#21517#31216
+                Width = 60
+              end>
+            DropWidth = 157
+            DropHeight = 180
+            ShowTitle = True
+            AutoFitColWidth = True
+            OnAddClick = edtACCOUNT_IDAddClick
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew]
+            DropListStyle = lsFixed
+            OnSaveValue = edtACCOUNT_IDSaveValue
+            MultiSelect = False
+          end
+          object edtITEM_ID: TzrComboBoxList
+            Left = 341
+            Top = 88
+            Width = 121
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 5
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CODE_NAME;CODE_SPELL'
+            KeyField = 'CODE_ID'
+            ListField = 'CODE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CODE_NAME'
+                Footers = <>
+                Title.Caption = #24080#25143#21517#31216
+                Width = 60
+              end>
+            DropWidth = 180
+            DropHeight = 180
+            ShowTitle = True
+            AutoFitColWidth = True
+            OnAddClick = edtITEM_IDAddClick
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew]
+            DropListStyle = lsFixed
+            MultiSelect = False
           end
         end
       end

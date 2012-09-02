@@ -7,7 +7,7 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, cxMemo, cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls,
   RzLabel, DB, ZBase, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  cxMaskEdit, cxDropDownEdit;
+  cxMaskEdit, cxDropDownEdit, cxButtonEdit, zrComboBoxList;
 
 type
   TfrmDeposit = class(TframeDialogForm)
@@ -31,6 +31,10 @@ type
     cdsTable1: TZQuery;
     cdsTable: TZQuery;
     edtPAY_CASH: TcxComboBox;
+    Label1: TLabel;
+    edtACCOUNT_ID: TzrComboBoxList;
+    Label2: TLabel;
+    edtITEM_ID: TzrComboBoxList;
     procedure btnOkClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -40,6 +44,10 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure edtPAY_CASHPropertiesChange(Sender: TObject);
     procedure edtPAYPropertiesChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edtACCOUNT_IDAddClick(Sender: TObject);
+    procedure edtACCOUNT_IDSaveValue(Sender: TObject);
+    procedure edtITEM_IDAddClick(Sender: TObject);
   private
     cid:string;
     { Private declarations }
@@ -50,7 +58,7 @@ type
   end;
 
 implementation
-uses uGlobal,uDsUtil,uFnUtil, uShopUtil, ufrmBasic;
+uses uGlobal,uShopGlobal,uDsUtil,uFnUtil, uShopUtil, ufrmBasic, ufrmAccountInfo, ufrmCodeInfo;
 {$R *.dfm}
 
 { TfrmDeposit }
@@ -102,18 +110,33 @@ end;
 
 procedure TfrmDeposit.btnOkClick(Sender: TObject);
 var Str_Pay:String;
+    Params,Params1:TftParamList;
+    rs1,rs2,rs3:TZQuery;
 begin
   inherited;
+  if edtACCOUNT_ID.AsString = '' then
+  begin
+     if edtACCOUNT_ID.CanFocus then edtACCOUNT_ID.SetFocus;
+     Raise Exception.Create('请选择帐户名称');
+  end;
+  if edtITEM_ID.AsString = '' then
+  begin
+     if edtITEM_ID.CanFocus then edtITEM_ID.SetFocus;
+     Raise Exception.Create('请选择收支科目名称');
+  end;
   if Trim(edtIC_AMONEY.Text)='' then
   begin
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
     Raise Exception.Create('充值金额不能为空!');
-  end;
-  try
-    StrToFloat(Trim(edtIC_AMONEY.Text));
-  except
-    if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
-    Raise Exception.Create('充值金额不是有效的数字!');
+  end
+  else
+  begin
+    try
+      StrToFloat(Trim(edtIC_AMONEY.Text));
+    except
+      if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
+      Raise Exception.Create('充值金额不是有效的数字!');
+    end;
   end;
   if StrToFloat(Trim(edtIC_AMONEY.Text))<0 then
   begin
@@ -167,9 +190,71 @@ begin
   cdsTable1.FieldByName('PAY_J').AsFloat :=0;
   cdsTable1.FieldByName(Str_Pay).AsFloat :=StrToFloatDef(edtPAY.Text,0);
   cdsTable1.Post;
-  if Factor.UpdateBatch(cdsTable1,'TDeposit',nil) then
-  begin
-    MessageBox(Handle,pchar('充值成功!'),pchar(Application.Title),MB_OK);
+  Params1 := TftParamList.Create;
+  Params := TftParamList.Create;
+  rs1 := TZQuery.Create(nil);
+  rs2 := TZQuery.Create(nil);
+  try
+    Factor.BeginBatch;
+    try
+      Params1.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params1.ParamByName('RECV_ID').asString := '';
+      Factor.AddBatch(rs1,'TRecvOrder',Params1);
+      Factor.AddBatch(rs2,'TRecvData',Params1);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
+    rs3 := ShopGlobal.GetDeptInfo;
+    rs1.Append;
+    rs1.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs1.FieldbyName('SHOP_ID').AsString := ShopGlobal.SHOP_ID;
+    rs1.FieldbyName('RECV_ID').AsString := TSequence.NewId;
+    rs1.FieldbyName('DEPT_ID').AsString := rs3.FieldbyName('DEPT_ID').AsString;
+    rs1.FieldbyName('RECV_FLAG').AsString := '0';
+    rs1.FieldbyName('ACCOUNT_ID').AsString := edtACCOUNT_ID.AsString;
+    rs1.FieldbyName('PAYM_ID').AsString := TRecord_(edtPAY_CASH.Properties.Items.Objects[edtPAY_CASH.ItemIndex]).FieldbyName('CODE_ID').AsString;
+    rs1.FieldbyName('RECV_MNY').AsFloat := StrToFloatDef(edtPAY.Text,0);
+    rs1.FieldbyName('CLIENT_ID').AsString := cid;
+    rs1.FieldbyName('ITEM_ID').AsString := edtITEM_ID.AsString;
+    rs1.FieldbyName('RECV_DATE').AsInteger := StrToInt(FormatDatetime('YYYYMMDD',date()));
+    rs1.FieldbyName('RECV_USER').AsString := Global.UserID;
+    rs1.FieldbyName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',date());
+    rs1.FieldbyName('CHK_USER').AsString := Global.UserID;
+    rs1.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+    rs1.FieldbyName('CREA_USER').AsString := Global.UserID;
+    rs1.FieldbyName('REMARK').AsString := '储值卡充值';
+    rs1.Post;
+    rs2.Append;
+    rs2.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs2.FieldbyName('SHOP_ID').AsString := rs1.FieldbyName('SHOP_ID').AsString;
+    rs2.FieldbyName('RECV_ID').AsString := rs1.FieldbyName('RECV_ID').AsString;
+    rs2.FieldbyName('SEQNO').AsInteger := 1;
+    rs2.FieldbyName('ABLE_ID').AsString := cdsTable1.FieldByName('GLIDE_ID').AsString;
+    rs2.FieldbyName('RECV_TYPE').AsString := '1';
+    rs2.FieldbyName('RECV_MNY').AsFloat := rs1.FieldbyName('RECV_MNY').AsFloat;
+    rs2.Post;
+    Params.ParamByName('PAYM_ID').AsString := TRecord_(edtPAY_CASH.Properties.Items.Objects[edtPAY_CASH.ItemIndex]).FieldbyName('CODE_ID').AsString;
+    Params.ParamByName('ACCT_MNY').AsFloat := StrToFloatDef(edtPAY.Text,0);
+    Params.ParamByName('RECV_MNY').AsFloat := 0;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsTable1,'TDeposit',Params);
+      Factor.AddBatch(rs1,'TRecvOrder');
+      Factor.AddBatch(rs2,'TRecvData');
+      Factor.CommitBatch;
+      ShopGlobal.SaveFormatIni('cache','ACCOUNT_ID',edtACCOUNT_ID.DataSet.FieldByName('ACCOUNT_ID').AsString);
+      MessageBox(Handle,pchar('充值成功!'),pchar(Application.Title),MB_OK);
+    except
+      Factor.CancelBatch;
+      raise;
+    end;
+  finally
+    Params1.Free;
+    Params.Free;
+    rs1.Free;
+    rs2.Free;
   end;
   ModalResult:=MROK;
 end;
@@ -181,10 +266,25 @@ begin
 end;
 
 procedure TfrmDeposit.FormShow(Sender: TObject);
+var i:Integer;
 begin
   inherited;
   InitCmb;
-  edtPAY_CASH.ItemIndex := 0;
+  edtACCOUNT_ID.DataSet.Locate('ACCOUNT_ID',ShopGlobal.LoadFormatIni('cache','ACCOUNT_ID'),[]);
+  edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
+  edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
+  if edtPAY_CASH.Properties.Items.Count > 0 then
+  begin
+    i := TdsItems.FindItems(edtPAY_CASH.Properties.Items,'CODE_ID',edtACCOUNT_ID.DataSet.FieldbyName('PAYM_ID').asString);
+    if i < 0 then
+      edtPAY_CASH.ItemIndex := 0
+    else
+      edtPAY_CASH.ItemIndex := i;
+  end;
+  edtITEM_ID.DataSet.Locate('CODE_ID','1',[]);
+  edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
+  edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
+    
   if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
 end;
 
@@ -260,5 +360,56 @@ begin
     FloatToStr(StrToFloatDef(edtIC_AMONEY.Text,0)-StrToFloatDef(edtPAY.Text,0));
 
 end;                           
+
+procedure TfrmDeposit.FormCreate(Sender: TObject);
+begin
+  inherited;
+  edtACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  edtITEM_ID.DataSet := Global.GetZQueryFromName('ACC_ITEM_INFO');
+end;
+
+procedure TfrmDeposit.edtACCOUNT_IDAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增账户的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmAccountInfo.AddDialog(self,r) then
+       begin
+         edtACCOUNT_ID.KeyValue := r.FieldbyName('ACCOUNT_ID').AsString;
+         edtACCOUNT_ID.Text := r.FieldbyName('ACCT_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;  
+end;
+
+procedure TfrmDeposit.edtACCOUNT_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  if edtACCOUNT_ID.AsString = '' then Exit;
+  edtPAY_CASH.ItemIndex := TdsItems.FindItems(edtPAY_CASH.Properties.Items,'CODE_ID',edtACCOUNT_ID.DataSet.FieldByName('PAYM_ID').AsString);
+
+end;
+
+procedure TfrmDeposit.edtITEM_IDAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21200001',2) then Raise Exception.Create('你没有新增科目的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmCodeInfo.AddDialog(self,r,3) then
+       begin
+         edtITEM_ID.KeyValue := r.FieldbyName('CODE_ID').AsString;
+         edtITEM_ID.Text := r.FieldbyName('CODE_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;
+end;
 
 end.

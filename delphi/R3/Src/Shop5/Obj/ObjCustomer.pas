@@ -379,8 +379,24 @@ begin
      'COMM=' + GetCommStr(iDbType) + ','+
      'TIME_STAMP='+GetTimeStamp(iDbType)+
      ' where IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=''#'' ';
-
   AGlobal.ExecSQL(ParseSQL(iDbType,SQL),self);
+  
+  Params.ParamByName('ABLE_ID').AsString := FieldByName('GLIDE_ID').AsString;
+  Params.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+  Params.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
+  Params.ParamByName('DEPT_ID').AsString := '';
+  Params.ParamByName('RECV_TYPE').AsString := '1';
+  Params.ParamByName('CLIENT_ID').AsString := FieldByName('CLIENT_ID').AsString;
+  Params.ParamByName('ACCT_INFO').AsString := '¥¢÷µø®≥‰÷µ';
+  Params.ParamByName('RECK_MNY').AsFloat := 0;
+  Params.ParamByName('REVE_MNY').AsFloat := 0;
+  Params.ParamByName('ABLE_DATE').AsInteger := FieldByName('CREA_DATE').AsInteger;
+  Params.ParamByName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  Params.ParamByName('CREA_USER').AsString := FieldByName('CREA_USER').AsString;
+
+  SQL:='insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,PAYM_ID,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+  'values(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:ACCT_INFO,:PAYM_ID,:RECV_TYPE,:ACCT_MNY,:RECV_MNY,:REVE_MNY,:RECK_MNY,:ABLE_DATE,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(SQL,Params);
   Result := True;
 end;
 

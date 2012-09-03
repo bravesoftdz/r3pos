@@ -294,11 +294,11 @@ var i,SeqNo:integer;
     rzNode:TTreeNode;
 begin
   inherited;
-  CdsColorGroupInfo.First;
-  while not CdsColorGroupInfo.Eof do CdsColorGroupInfo.Delete;
+  CdsColorGroupRelation.filtered := false;
   for i:=0 to rzTree.Items.Count -1 do
     begin
-      if rzTree.Items[i].Level = 1 then Continue;
+      if rzTree.Items[i].Level =0 then
+      begin
       if copy(TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString,1,6) = '分组名' then
       begin
          rzTree.Items[i].Selected:=True;
@@ -323,29 +323,25 @@ begin
         edtSORT_SPELL.SetFocus;
         raise Exception.Create('颜色组'+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString+'的拼音码不能为空!');
       end;
-
-       CdsColorGroupInfo.Append;
-       CdsColorGroupInfo.FieldByName('SORT_ID').AsString := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString;
-       CdsColorGroupInfo.FieldByName('SORT_NAME').AsString := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString;
-       CdsColorGroupInfo.FieldByName('SORT_SPELL').AsString := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_SPELL').AsString;
-       CdsColorGroupInfo.FieldByName('TENANT_ID').AsInteger := TRecord_(rzTree.Items[i].Data).FieldbyName('TENANT_ID').AsInteger;
-       CdsColorGroupInfo.FieldByName('SORT_TYPE').AsInteger := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_TYPE').AsInteger;
-       CdsColorGroupInfo.FieldByName('SEQ_NO').AsInteger := TRecord_(rzTree.Items[i].Data).FieldbyName('SEQ_NO').AsInteger;
-       CdsColorGroupInfo.Post;
-       SeqNo := 0;
-       CdsColorGroupRelation.Filtered := False;
-       CdsColorGroupRelation.Filter := 'SORT_ID='''+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString+'''';
-       CdsColorGroupRelation.Filtered := True;
-       CdsColorGroupRelation.indexfieldnames:='SEQ_NO';
-       CdsColorGroupRelation.First;
-       while not CdsColorGroupRelation.Eof do
-       begin
-         Inc(SeqNo);
-         CdsColorGroupRelation.Edit;
-         CdsColorGroupRelation.FieldByName('SEQ_NO').AsInteger := SeqNo;
-         CdsColorGroupRelation.Post;
-         CdsColorGroupRelation.Next;
-       end;
+      end;
+      if rzTree.Items[i].Level =1 then
+         begin
+           if CdsColorGroupRelation.Locate('SORT_ID;CODE_ID',VarArrayOf([TRecord_(rzTree.Items[i].Parent.Data).FieldbyName('SORT_ID').AsString,TRecord_(rzTree.Items[i].Data).FieldbyName('CODE_ID').AsString]),[]) then
+              begin
+                CdsColorGroupRelation.Edit;
+                CdsColorGroupRelation.FieldbyName('SEQ_NO').AsInteger := rzTree.Items[i].Index + 1;
+                CdsColorGroupRelation.Post;
+              end;
+         end
+      else
+         begin
+           if CdsColorGroupInfo.Locate('SORT_ID',TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString,[]) then
+              begin
+                CdsColorGroupInfo.Edit;
+                CdsColorGroupInfo.FieldbyName('SEQ_NO').AsInteger := rzTree.Items[i].Index + 1;
+                CdsColorGroupInfo.Post;
+              end;
+         end;
     end;
   Factor.BeginBatch;
   try
@@ -416,6 +412,11 @@ procedure TfrmColorGroupInfo.BtnDeleteClick(Sender: TObject);
 procedure DeleteAll(Node:TTreeNode);
 var C:TTreeNode;
 begin
+  if Node.Level=1 then
+     begin
+       if CdsColorGroupRelation.Locate('SORT_ID;CODE_ID',VarArrayOf([TRecord_(Node.Data).FieldbyName('SORT_ID').asString,TRecord_(Node.Data).FieldbyName('CODE_ID').asString]),[]) then
+          CdsColorGroupRelation.Delete;
+     end;
   TRecord_(Node.Data).Free;
   Node.Data := nil;
   C := Node.getFirstChild;
@@ -702,7 +703,7 @@ var Params:TftParamList;
     Root:TTreeNode;
     i:Integer;
 begin
-o  Params := TftParamList.Create;
+  Params := TftParamList.Create;
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.BeginBatch;
@@ -866,17 +867,17 @@ begin
     CdsColorInfo.First;
     while not CdsColorInfo.Eof do
     begin
-      AObj2_ := TRecord_.Create;
-      AObj2_.ReadFromDataSet(CdsColorInfo);
-      rzTree.Items.AddChildObject(Root,AObj2_.FieldByName('SORT_NAME').AsString,AObj2_);
       Inc(SeqNo);
       CdsColorGroupRelation.Append;
       CdsColorGroupRelation.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      CdsColorGroupRelation.FieldByName('CODE_ID').AsString := AObj2_.FieldByName('CODE_ID').AsString;
+      CdsColorGroupRelation.FieldByName('CODE_ID').AsString := CdsColorInfo.FieldByName('CODE_ID').AsString;
       CdsColorGroupRelation.FieldByName('SORT_ID').AsString := TRecord_(Root.Data).FieldByName('SORT_ID').AsString;
       CdsColorGroupRelation.FieldByName('SORT_TYPE').AsInteger := 7;
       CdsColorGroupRelation.FieldByName('SEQ_NO').AsInteger := SeqNo;
       CdsColorGroupRelation.Post;
+      AObj2_ := TRecord_.Create;
+      AObj2_.ReadFromDataSet(CdsColorGroupRelation);
+      rzTree.Items.AddChildObject(Root,CdsColorInfo.FieldByName('SORT_NAME').AsString,AObj2_);
 
       CdsColorInfo.Next;
     end;
@@ -1027,6 +1028,7 @@ begin
     rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naAddFirst)
   else
     rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naInsert);
+  ButtonChange2;
 
 end;
 
@@ -1037,6 +1039,7 @@ begin
   if rzTree.Selected.Level = 0 then Exit;
   if rzTree.Selected.Index = 0 then Exit;
   rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naAddFirst);
+  ButtonChange2;
 end;
 
 procedure TfrmColorGroupInfo.CtrDownExecute(Sender: TObject);
@@ -1046,6 +1049,7 @@ begin
   if rzTree.Selected.Level = 0 then Exit;
   if rzTree.Selected.getNextSibling = nil then Exit;
   rzTree.Selected.getNextSibling.MoveTo(rzTree.Selected,naInsert);
+  ButtonChange2;
 end;
 
 procedure TfrmColorGroupInfo.CtrEndExecute(Sender: TObject);
@@ -1055,6 +1059,7 @@ begin
   if rzTree.Selected.Level = 0 then Exit;
   if rzTree.Selected.getNextSibling = nil then Exit;
   rzTree.Selected.MoveTo(rzTree.Selected.getNextSibling,naAdd);
+  ButtonChange2;
 end;
 
 end.

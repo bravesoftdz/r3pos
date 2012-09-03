@@ -39,6 +39,15 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     BtnSize: TRzBitBtn;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    CtrUp: TAction;
+    CtrDown: TAction;
+    CtrHome: TAction;
+    CtrEnd: TAction;
     procedure edtNAMEPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -57,6 +66,10 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure CtrUpExecute(Sender: TObject);
+    procedure CtrDownExecute(Sender: TObject);
+    procedure CtrHomeExecute(Sender: TObject);
+    procedure CtrEndExecute(Sender: TObject);
   private
     Fflag: integer;
     FInFlag: integer;
@@ -279,11 +292,11 @@ var i,SeqNo:integer;
     rzNode:TTreeNode;
 begin
   inherited;
-  CdsSizeGroupInfo.First;
-  while not CdsSizeGroupInfo.Eof do CdsSizeGroupInfo.Delete;
+  CdsSizeGroupRelation.filtered := false;
   for i:=0 to rzTree.Items.Count -1 do
     begin
-      if rzTree.Items[i].Level = 1 then Continue;
+      if rzTree.Items[i].Level =0 then
+      begin
       if copy(TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString,1,6) = '分组名' then
       begin
          rzTree.Items[i].Selected:=True;
@@ -308,28 +321,25 @@ begin
         edtSORT_SPELL.SetFocus;
         raise Exception.Create('尺码组'+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString+'的拼音码不能为空!');
       end;
-
-       CdsSizeGroupInfo.Append;
-       CdsSizeGroupInfo.FieldByName('SORT_ID').AsString := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString;
-       CdsSizeGroupInfo.FieldByName('SORT_NAME').AsString := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString;
-       CdsSizeGroupInfo.FieldByName('SORT_SPELL').AsString := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_SPELL').AsString;
-       CdsSizeGroupInfo.FieldByName('TENANT_ID').AsInteger := TRecord_(rzTree.Items[i].Data).FieldbyName('TENANT_ID').AsInteger;
-       CdsSizeGroupInfo.FieldByName('SORT_TYPE').AsInteger := TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_TYPE').AsInteger;
-       CdsSizeGroupInfo.FieldByName('SEQ_NO').AsInteger := TRecord_(rzTree.Items[i].Data).FieldbyName('SEQ_NO').AsInteger;
-       CdsSizeGroupInfo.Post;
-       SeqNo := 0;
-       CdsSizeGroupRelation.Filtered := False;
-       CdsSizeGroupRelation.Filter := 'SORT_ID='''+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString+'''';
-       CdsSizeGroupRelation.Filtered := True;
-       CdsSizeGroupRelation.First;
-       while not CdsSizeGroupRelation.Eof do
-       begin
-         Inc(SeqNo);
-         CdsSizeGroupRelation.Edit;
-         CdsSizeGroupRelation.FieldByName('SEQ_NO').AsInteger := SeqNo;
-         CdsSizeGroupRelation.Post;
-         CdsSizeGroupRelation.Next;
-       end;
+      end;
+      if rzTree.Items[i].Level =1 then
+         begin
+           if CdsSizeGroupRelation.Locate('SORT_ID;CODE_ID',VarArrayOf([TRecord_(rzTree.Items[i].Parent.Data).FieldbyName('SORT_ID').AsString,TRecord_(rzTree.Items[i].Data).FieldbyName('CODE_ID').AsString]),[]) then
+              begin
+                CdsSizeGroupRelation.Edit;
+                CdsSizeGroupRelation.FieldbyName('SEQ_NO').AsInteger := rzTree.Items[i].Index + 1;
+                CdsSizeGroupRelation.Post;
+              end;
+         end
+      else
+         begin
+           if CdsSizeGroupInfo.Locate('SORT_ID',TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString,[]) then
+              begin
+                CdsSizeGroupInfo.Edit;
+                CdsSizeGroupInfo.FieldbyName('SEQ_NO').AsInteger := rzTree.Items[i].Index + 1;
+                CdsSizeGroupInfo.Post;
+              end;
+         end;
     end;
   Factor.BeginBatch;
   try
@@ -400,6 +410,11 @@ procedure TfrmSizeGroupInfo.BtnDeleteClick(Sender: TObject);
 procedure DeleteAll(Node:TTreeNode);
 var C:TTreeNode;
 begin
+  if Node.Level=1 then
+     begin
+       if CdsSizeGroupRelation.Locate('SORT_ID;CODE_ID',VarArrayOf([TRecord_(Node.Data).FieldbyName('SORT_ID').asString,TRecord_(Node.Data).FieldbyName('CODE_ID').asString]),[]) then
+          CdsSizeGroupRelation.Delete;
+     end;
   TRecord_(Node.Data).Free;
   Node.Data := nil;
   C := Node.getFirstChild;
@@ -793,7 +808,7 @@ begin
       begin
          CODE_Level:=1;
          CODE_NAME:=TRecord_(rzTree.Selected.Parent.Data).FieldByName('SORT_NAME').AsString;
-         CODE_ID:=TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString;
+         CODE_ID:=TRecord_(rzTree.Selected.Data).FieldByName('CODE_ID').AsString;
       end;
     end;
     //Global.RefreshTable('PUB_SIZE_INFO');
@@ -852,15 +867,15 @@ begin
     CdsSizeInfo.First;
     while not CdsSizeInfo.Eof do
     begin
-      AObj2_ := TRecord_.Create;
-      AObj2_.ReadFromDataSet(CdsSizeInfo);
-      rzTree.Items.AddChildObject(Root,AObj2_.FieldByName('SORT_NAME').AsString,AObj2_);
       CdsSizeGroupRelation.Append;
       CdsSizeGroupRelation.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      CdsSizeGroupRelation.FieldByName('CODE_ID').AsString := AObj2_.FieldByName('CODE_ID').AsString;
+      CdsSizeGroupRelation.FieldByName('CODE_ID').AsString := CdsSizeInfo.FieldByName('CODE_ID').AsString;
       CdsSizeGroupRelation.FieldByName('SORT_ID').AsString := TRecord_(Root.Data).FieldByName('SORT_ID').AsString;
       CdsSizeGroupRelation.FieldByName('SORT_TYPE').AsInteger := 8;
       CdsSizeGroupRelation.Post;
+      AObj2_ := TRecord_.Create;
+      AObj2_.ReadFromDataSet(CdsSizeGroupRelation);
+      rzTree.Items.AddChildObject(Root,CdsSizeInfo.FieldByName('SORT_NAME').AsString,AObj2_);
 
       CdsSizeInfo.Next;
     end;
@@ -998,6 +1013,54 @@ begin
     locked := False;
   end;
   ButtonChange5;
+end;
+
+procedure TfrmSizeGroupInfo.CtrUpExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.Index = 0 then Exit;
+
+  if rzTree.Selected.Index=1 then
+    rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naAddFirst)
+  else
+    rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naInsert);
+  ButtonChange2;
+
+end;
+
+procedure TfrmSizeGroupInfo.CtrDownExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.getNextSibling = nil then Exit;
+  rzTree.Selected.getNextSibling.MoveTo(rzTree.Selected,naInsert);
+  ButtonChange2;
+
+end;
+
+procedure TfrmSizeGroupInfo.CtrHomeExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.Index = 0 then Exit;
+  rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naAddFirst);
+  ButtonChange2;
+
+end;
+
+procedure TfrmSizeGroupInfo.CtrEndExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.getNextSibling = nil then Exit;
+  rzTree.Selected.MoveTo(rzTree.Selected.getNextSibling,naAdd);
+  ButtonChange2;
+
 end;
 
 end.

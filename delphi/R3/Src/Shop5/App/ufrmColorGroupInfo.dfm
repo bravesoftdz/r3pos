@@ -434,18 +434,22 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
     Top = 276
     object CtrUp: TAction
       Caption = #21521#19978
+      ShortCut = 16469
       OnExecute = CtrUpExecute
     end
     object CtrDown: TAction
       Caption = #21521#19979
+      ShortCut = 16457
       OnExecute = CtrDownExecute
     end
     object CtrHome: TAction
       Caption = #32622#39030
+      ShortCut = 16456
       OnExecute = CtrHomeExecute
     end
     object CtrEnd: TAction
       Caption = #32622#24213
+      ShortCut = 16453
       OnExecute = CtrEndExecute
     end
   end

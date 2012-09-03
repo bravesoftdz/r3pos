@@ -5383,9 +5383,9 @@ CREATE TABLE STK_STOCKDATA (
         --货品代码
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
-	PROPERTY_01 varchar (20) NOT NULL ,
+	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色<不分时用 # 号>
-	PROPERTY_02 varchar (20) NOT NULL ,
+	PROPERTY_02 varchar (36) NOT NULL ,
         --批号
 	BATCH_NO varchar (36) NOT NULL ,
         --物流跟踪号

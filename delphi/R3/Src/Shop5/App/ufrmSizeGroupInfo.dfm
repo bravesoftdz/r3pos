@@ -433,6 +433,26 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
   inherited actList: TActionList
     Left = 54
     Top = 276
+    object CtrUp: TAction
+      Caption = #21521#19978
+      ShortCut = 16469
+      OnExecute = CtrUpExecute
+    end
+    object CtrDown: TAction
+      Caption = #21521#19979
+      ShortCut = 16457
+      OnExecute = CtrDownExecute
+    end
+    object CtrHome: TAction
+      Caption = #32622#39030
+      ShortCut = 16456
+      OnExecute = CtrHomeExecute
+    end
+    object CtrEnd: TAction
+      Caption = #32622#24213
+      ShortCut = 16453
+      OnExecute = CtrEndExecute
+    end
   end
   object CdsSizeInfo: TZQuery
     FieldDefs = <>
@@ -470,6 +490,21 @@ inherited frmSizeGroupInfo: TfrmSizeGroupInfo
     object N2: TMenuItem
       Caption = #21024#38500#25152#26377
       OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object N5: TMenuItem
+      Action = CtrUp
+    end
+    object N4: TMenuItem
+      Action = CtrDown
+    end
+    object N6: TMenuItem
+      Action = CtrHome
+    end
+    object N7: TMenuItem
+      Action = CtrEnd
     end
   end
 end

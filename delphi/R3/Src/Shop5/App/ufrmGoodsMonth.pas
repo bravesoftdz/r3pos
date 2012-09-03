@@ -537,7 +537,10 @@ begin
     Locked := True;
     if not (CdsGoodsMonth.State in [dsEdit,dsInsert]) then CdsGoodsMonth.Edit;
     CdsGoodsMonth.FieldByName('ADJ_MNY').AsFloat := Acst;
-    CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := Acst/CdsGoodsMonth.FieldByName('BAL_AMT').AsFloat;
+    if CdsGoodsMonth.FieldByName('BAL_AMT').AsFloat<>0 then
+    CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := Acst/CdsGoodsMonth.FieldByName('BAL_AMT').AsFloat
+    else
+    CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := 0;
     CdsGoodsMonth.FieldByName('ADJ_CST').AsFloat := Acst - CdsGoodsMonth.FieldByName('BAL_CST').AsFloat;
     CdsGoodsMonth.Post;
     CdsGoodsMonth.Edit;

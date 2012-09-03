@@ -6,30 +6,28 @@ inherited frmMktRequReport: TfrmMktRequReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 970
-    Height = 511
+    Width = 978
+    Height = 522
     inherited RzPanel2: TRzPanel
-      Width = 960
-      Height = 501
+      Width = 968
+      Height = 512
       inherited RzPage: TRzPageControl
-        Width = 755
-        Height = 495
-        ActivePage = TabSheet5
+        Width = 763
+        Height = 506
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #37096#38376#36153#29992#30003#35831#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 753
-            Height = 468
+            Width = 761
+            Height = 479
             inherited Panel4: TPanel
-              Width = 743
-              Height = 458
+              Width = 751
+              Height = 469
               inherited w1: TRzPanel
-                Width = 743
+                Width = 751
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -302,11 +300,11 @@ inherited frmMktRequReport: TfrmMktRequReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 743
-                Height = 380
+                Width = 751
+                Height = 391
                 inherited DBGridEh1: TDBGridEh
-                  Width = 739
-                  Height = 376
+                  Width = 747
+                  Height = 387
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -1643,8 +1641,8 @@ inherited frmMktRequReport: TfrmMktRequReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 753
-            Height = 468
+            Width = 761
+            Height = 479
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1652,8 +1650,8 @@ inherited frmMktRequReport: TfrmMktRequReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 743
-              Height = 458
+              Width = 751
+              Height = 469
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1661,7 +1659,7 @@ inherited frmMktRequReport: TfrmMktRequReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 743
+                Width = 751
                 Height = 100
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1989,8 +1987,8 @@ inherited frmMktRequReport: TfrmMktRequReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 743
-                Height = 358
+                Width = 751
+                Height = 369
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1998,8 +1996,8 @@ inherited frmMktRequReport: TfrmMktRequReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 739
-                  Height = 354
+                  Width = 747
+                  Height = 365
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2176,8 +2174,8 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 758
-        Height = 495
+        Left = 766
+        Height = 506
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2193,15 +2191,15 @@ inherited frmMktRequReport: TfrmMktRequReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 970
+    Width = 978
     inherited Image3: TImage
-      Width = 61
+      Width = 73
     end
     inherited Image14: TImage
-      Left = 950
+      Left = 958
     end
     inherited Image1: TImage
-      Left = 415
+      Left = 423
       Width = 535
     end
     inherited rzPanel5: TPanel

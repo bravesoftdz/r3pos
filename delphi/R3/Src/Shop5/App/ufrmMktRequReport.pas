@@ -460,8 +460,8 @@ begin
   //过滤企业ID和数据权限:
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
   //申领日期
-  vBegDate:=FormatDatetime('YYYYMMDD',P3_D1.Date);
-  vEndDate:=FormatDatetime('YYYYMMDD',P3_D2.Date);
+  vBegDate:=FormatDatetime('YYYYMMDD',P4_D1.Date);
+  vEndDate:=FormatDatetime('YYYYMMDD',P4_D2.Date);
   if vBegDate < vEndDate then
     strWhere:=strWhere+' and A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' '
   else if vBegDate = vEndDate then
@@ -608,8 +608,8 @@ begin
   //过滤企业ID和数据权限:
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
   //申领日期
-  vBegDate:=FormatDatetime('YYYYMMDD',P4_D1.Date);
-  vEndDate:=FormatDatetime('YYYYMMDD',P4_D2.Date);
+  vBegDate:=FormatDatetime('YYYYMMDD',P5_D1.Date);
+  vEndDate:=FormatDatetime('YYYYMMDD',P5_D2.Date);
   if vBegDate < vEndDate then
     strWhere:=strWhere+' and A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' '
   else if vBegDate = vEndDate then

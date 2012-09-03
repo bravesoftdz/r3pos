@@ -39,6 +39,15 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     Label4: TLabel;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    CtrUp: TAction;
+    CtrDown: TAction;
+    CtrHome: TAction;
+    CtrEnd: TAction;
     procedure edtNAMEPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -57,6 +66,10 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure CtrUpExecute(Sender: TObject);
+    procedure CtrHomeExecute(Sender: TObject);
+    procedure CtrDownExecute(Sender: TObject);
+    procedure CtrEndExecute(Sender: TObject);
   private
     Fflag: integer;
     FInFlag: integer;
@@ -91,7 +104,7 @@ type
 
 implementation
 uses uTreeUtil,uShopUtil,uGlobal,uFnUtil,uDsUtil, uShopGlobal,ufrmColorInfo,
-  ufrmBasic;
+  ufrmBasic, StdConvs;
 {$R *.dfm}
 
 procedure TfrmColorGroupInfo.edtNAMEPropertiesChange(Sender: TObject);
@@ -99,7 +112,7 @@ var
   AObj:TRecord_;
 begin
   inherited;
-//  if not ShopGlobal.GetChkRight('100002497',3) then Raise Exception.Create('你没有修改颜色组的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002497',3) then Raise Exception.Create('你没有修改颜色组的权限,请和管理员联系.');
   if locked then Exit;
   if dbState=dsBrowse then Exit;
   if rzTree.Selected = nil then Exit;
@@ -323,6 +336,7 @@ begin
        CdsColorGroupRelation.Filtered := False;
        CdsColorGroupRelation.Filter := 'SORT_ID='''+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_ID').AsString+'''';
        CdsColorGroupRelation.Filtered := True;
+       CdsColorGroupRelation.indexfieldnames:='SEQ_NO';
        CdsColorGroupRelation.First;
        while not CdsColorGroupRelation.Eof do
        begin
@@ -688,7 +702,7 @@ var Params:TftParamList;
     Root:TTreeNode;
     i:Integer;
 begin
-  Params := TftParamList.Create;
+o  Params := TftParamList.Create;
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.BeginBatch;
@@ -827,6 +841,7 @@ end;
 procedure TfrmColorGroupInfo.BtnAddSelectedClick(Sender: TObject);
 var Root:TTreeNode;
     AObj2_:TRecord_;
+    SeqNo:Integer;
 begin
   inherited;
   if locked then Exit;
@@ -840,6 +855,10 @@ begin
      Root := rzTree.Selected.Parent;
   CdsColorInfo.DisableControls;
   try
+    CdsColorGroupRelation.Filtered := False;
+    CdsColorGroupRelation.Filter := 'SORT_ID='+QuotedStr(TRecord_(Root.Data).FieldByName('SORT_ID').AsString);
+    CdsColorGroupRelation.Filtered := True;
+    SeqNo := CdsColorGroupRelation.RecordCount;
     CdsColorInfo.CommitUpdates;
     CdsColorInfo.Filtered := False;
     CdsColorInfo.Filter := 'FLAG=''1''';
@@ -850,11 +869,13 @@ begin
       AObj2_ := TRecord_.Create;
       AObj2_.ReadFromDataSet(CdsColorInfo);
       rzTree.Items.AddChildObject(Root,AObj2_.FieldByName('SORT_NAME').AsString,AObj2_);
+      Inc(SeqNo);
       CdsColorGroupRelation.Append;
       CdsColorGroupRelation.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       CdsColorGroupRelation.FieldByName('CODE_ID').AsString := AObj2_.FieldByName('CODE_ID').AsString;
       CdsColorGroupRelation.FieldByName('SORT_ID').AsString := TRecord_(Root.Data).FieldByName('SORT_ID').AsString;
       CdsColorGroupRelation.FieldByName('SORT_TYPE').AsInteger := 7;
+      CdsColorGroupRelation.FieldByName('SEQ_NO').AsInteger := SeqNo;
       CdsColorGroupRelation.Post;
 
       CdsColorInfo.Next;
@@ -993,6 +1014,47 @@ begin
     locked := False;
   end;
   ButtonChange5;
+end;
+
+procedure TfrmColorGroupInfo.CtrUpExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.Index = 0 then Exit;
+
+  if rzTree.Selected.Index=1 then
+    rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naAddFirst)
+  else
+    rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naInsert);
+
+end;
+
+procedure TfrmColorGroupInfo.CtrHomeExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.Index = 0 then Exit;
+  rzTree.Selected.MoveTo(rzTree.Selected.getPrevSibling,naAddFirst);
+end;
+
+procedure TfrmColorGroupInfo.CtrDownExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.getNextSibling = nil then Exit;
+  rzTree.Selected.getNextSibling.MoveTo(rzTree.Selected,naInsert);
+end;
+
+procedure TfrmColorGroupInfo.CtrEndExecute(Sender: TObject);
+begin
+  inherited;
+  if rzTree.Items.Count <= 1 then Exit;
+  if rzTree.Selected.Level = 0 then Exit;
+  if rzTree.Selected.getNextSibling = nil then Exit;
+  rzTree.Selected.MoveTo(rzTree.Selected.getNextSibling,naAdd);
 end;
 
 end.

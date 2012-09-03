@@ -1,6 +1,6 @@
 inherited frmColorGroupInfo: TfrmColorGroupInfo
-  Left = 323
-  Top = 191
+  Left = 376
+  Top = 159
   Caption = #39068#33394#19982#39068#33394#32452#32452#31649#29702
   ClientHeight = 371
   ClientWidth = 562
@@ -432,6 +432,22 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
   inherited actList: TActionList
     Left = 54
     Top = 276
+    object CtrUp: TAction
+      Caption = #21521#19978
+      OnExecute = CtrUpExecute
+    end
+    object CtrDown: TAction
+      Caption = #21521#19979
+      OnExecute = CtrDownExecute
+    end
+    object CtrHome: TAction
+      Caption = #32622#39030
+      OnExecute = CtrHomeExecute
+    end
+    object CtrEnd: TAction
+      Caption = #32622#24213
+      OnExecute = CtrEndExecute
+    end
   end
   object CdsColorInfo: TZQuery
     FieldDefs = <>
@@ -469,6 +485,21 @@ inherited frmColorGroupInfo: TfrmColorGroupInfo
     object N2: TMenuItem
       Caption = #21024#38500#25152#26377
       OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object N4: TMenuItem
+      Action = CtrUp
+    end
+    object N5: TMenuItem
+      Action = CtrDown
+    end
+    object N6: TMenuItem
+      Action = CtrHome
+    end
+    object N7: TMenuItem
+      Action = CtrEnd
     end
   end
 end

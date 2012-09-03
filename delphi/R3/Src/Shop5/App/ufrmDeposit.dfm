@@ -74,7 +74,7 @@ inherited frmDeposit: TfrmDeposit
           end
           object RzLabel3: TRzLabel
             Left = 3
-            Top = 66
+            Top = 118
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -119,7 +119,7 @@ inherited frmDeposit: TfrmDeposit
           end
           object RzLabel6: TRzLabel
             Left = 3
-            Top = 118
+            Top = 90
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -139,17 +139,17 @@ inherited frmDeposit: TfrmDeposit
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #25903#20184#29616#37329
+            Caption = #25903#20184#37329#39069
             Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
+            Font.Color = clNavy
             Font.Height = -12
             Font.Name = #23435#20307
-            Font.Style = []
+            Font.Style = [fsBold]
             ParentFont = False
           end
           object Label1: TLabel
             Left = 55
-            Top = 92
+            Top = 64
             Width = 48
             Height = 12
             Alignment = taRightJustify
@@ -170,7 +170,7 @@ inherited frmDeposit: TfrmDeposit
             Width = 100
             Height = 20
             TabStop = False
-            TabOrder = 8
+            TabOrder = 2
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtGLIDE_INFO: TcxMemo
@@ -178,12 +178,12 @@ inherited frmDeposit: TfrmDeposit
             Top = 141
             Width = 249
             Height = 65
-            TabOrder = 7
+            TabOrder = 9
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIC_AMONEY: TcxTextEdit
             Left = 112
-            Top = 62
+            Top = 114
             Width = 121
             Height = 20
             ParentFont = False
@@ -193,7 +193,7 @@ inherited frmDeposit: TfrmDeposit
             Style.Font.Height = -12
             Style.Font.Name = #23435#20307
             Style.Font.Style = [fsBold]
-            TabOrder = 2
+            TabOrder = 7
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnExit = edtIC_AMONEYExit
           end
@@ -204,7 +204,7 @@ inherited frmDeposit: TfrmDeposit
             Width = 100
             Height = 20
             TabStop = False
-            TabOrder = 9
+            TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCUST_CODE: TcxTextEdit
@@ -230,23 +230,29 @@ inherited frmDeposit: TfrmDeposit
             Top = 114
             Width = 121
             Height = 20
+            ParentFont = False
             Properties.OnChange = edtPAYPropertiesChange
-            TabOrder = 6
+            Style.Font.Charset = GB2312_CHARSET
+            Style.Font.Color = clNavy
+            Style.Font.Height = -12
+            Style.Font.Name = #23435#20307
+            Style.Font.Style = [fsBold]
+            TabOrder = 8
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPAY_CASH: TcxComboBox
             Left = 112
-            Top = 114
+            Top = 86
             Width = 121
             Height = 20
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtPAY_CASHPropertiesChange
-            TabOrder = 4
+            TabOrder = 5
           end
           object edtACCOUNT_ID: TzrComboBoxList
             Left = 112
-            Top = 88
+            Top = 60
             Width = 121
             Height = 20
             Properties.AutoSelect = False
@@ -292,7 +298,7 @@ inherited frmDeposit: TfrmDeposit
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 5
+            TabOrder = 6
             InGrid = False
             KeyValue = Null
             FilterFields = 'CODE_NAME;CODE_SPELL'
@@ -331,7 +337,7 @@ inherited frmDeposit: TfrmDeposit
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #20445#23384'(&S)'
+        Caption = #20805#20540'(&S)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack

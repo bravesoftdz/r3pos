@@ -138,10 +138,10 @@ begin
       Raise Exception.Create('充值金额不是有效的数字!');
     end;
   end;
-  if StrToFloat(Trim(edtIC_AMONEY.Text))<0 then
+  if StrToFloat(Trim(edtIC_AMONEY.Text))<>0 then
   begin
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
-    Raise Exception.Create('充值金额不能小于0!');
+    Raise Exception.Create('充值金额不能为0!');
   end;
   if Trim(edtPAY.Text)='' then
   begin
@@ -149,10 +149,10 @@ begin
     Raise Exception.Create('支付现金不能为空!');
   end;
   edtPAY.Text:= FloatToStr(StrToFloatDef(Trim(edtPAY.Text),0));
-  if StrToFloat(Trim(edtPAY.Text))<0 then
+  if StrToFloat(Trim(edtPAY.Text))<>0 then
   begin
     if edtPAY.CanFocus then edtPAY_CASH.SetFocus;
-    Raise Exception.Create('支付不能小于0!');
+    Raise Exception.Create('支付不能为0!');
   end;
 
   if StrToFloat(edtPAY.Text)>StrToFloat(edtIC_AMONEY.Text) then
@@ -195,6 +195,7 @@ begin
   rs1 := TZQuery.Create(nil);
   rs2 := TZQuery.Create(nil);
   try
+    Params.ParamByName('RECV_MNY').AsFloat := cdsTable1.FieldByName(Str_Pay).AsFloat;
     Factor.BeginBatch;
     try
       Params1.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
@@ -207,14 +208,16 @@ begin
       Raise;
     end;
     rs3 := ShopGlobal.GetDeptInfo;
+    Params.ParamByName('DEPT_ID').AsString := rs3.FieldbyName('DEPT_ID').AsString;
     rs1.Append;
     rs1.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs1.FieldbyName('SHOP_ID').AsString := ShopGlobal.SHOP_ID;
     rs1.FieldbyName('RECV_ID').AsString := TSequence.NewId;
-    rs1.FieldbyName('DEPT_ID').AsString := rs3.FieldbyName('DEPT_ID').AsString;
+    rs1.FieldbyName('DEPT_ID').AsString := Params.ParamByName('DEPT_ID').AsString;
     rs1.FieldbyName('RECV_FLAG').AsString := '0';
     rs1.FieldbyName('ACCOUNT_ID').AsString := edtACCOUNT_ID.AsString;
     rs1.FieldbyName('PAYM_ID').AsString := TRecord_(edtPAY_CASH.Properties.Items.Objects[edtPAY_CASH.ItemIndex]).FieldbyName('CODE_ID').AsString;
+    Params.ParamByName('PAYM_ID').AsString := rs1.FieldbyName('PAYM_ID').AsString;
     rs1.FieldbyName('RECV_MNY').AsFloat := StrToFloatDef(edtPAY.Text,0);
     rs1.FieldbyName('CLIENT_ID').AsString := cid;
     rs1.FieldbyName('ITEM_ID').AsString := edtITEM_ID.AsString;
@@ -232,12 +235,11 @@ begin
     rs2.FieldbyName('RECV_ID').AsString := rs1.FieldbyName('RECV_ID').AsString;
     rs2.FieldbyName('SEQNO').AsInteger := 1;
     rs2.FieldbyName('ABLE_ID').AsString := cdsTable1.FieldByName('GLIDE_ID').AsString;
-    rs2.FieldbyName('RECV_TYPE').AsString := '1';
+    rs2.FieldbyName('RECV_TYPE').AsString := '5';
     rs2.FieldbyName('RECV_MNY').AsFloat := rs1.FieldbyName('RECV_MNY').AsFloat;
     rs2.Post;
     Params.ParamByName('PAYM_ID').AsString := TRecord_(edtPAY_CASH.Properties.Items.Objects[edtPAY_CASH.ItemIndex]).FieldbyName('CODE_ID').AsString;
     Params.ParamByName('ACCT_MNY').AsFloat := StrToFloatDef(edtPAY.Text,0);
-    Params.ParamByName('RECV_MNY').AsFloat := 0;
     Factor.BeginBatch;
     try
       Factor.AddBatch(cdsTable1,'TDeposit',Params);

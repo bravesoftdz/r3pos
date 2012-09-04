@@ -9,26 +9,26 @@ inherited frmSvcServiceList: TfrmSvcServiceList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 474
+    Width = 900
+    Height = 485
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 464
+      Width = 890
+      Height = 475
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 458
+        Width = 884
+        Height = 469
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 431
+            Width = 882
+            Height = 442
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 864
-              Height = 421
+              Width = 872
+              Height = 432
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -37,8 +37,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object RzPanel6: TRzPanel
                 Left = 6
                 Top = 6
-                Width = 852
-                Height = 101
+                Width = 860
+                Height = 120
                 Align = alTop
                 BorderOuter = fsNone
                 BorderColor = clWhite
@@ -105,6 +105,32 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Alignment = taRightJustify
                   Caption = #21457' '#31080' '#21495
                 end
+                object Label25: TLabel
+                  Left = 24
+                  Top = 100
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#25351#26631
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
+                object Label1: TLabel
+                  Left = 291
+                  Top = 101
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
                 object P1_D1: TcxDateEdit
                   Left = 80
                   Top = 5
@@ -125,7 +151,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object btnOk: TRzBitBtn
                   Left = 504
-                  Top = 67
+                  Top = 90
                   Width = 67
                   Height = 27
                   Action = actFind
@@ -369,20 +395,119 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   TabOrder = 7
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
+                object edtGoods_Type: TcxComboBox
+                  Left = 80
+                  Top = 96
+                  Width = 73
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  ParentFont = False
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.OnChange = edtGoods_TypePropertiesChange
+                  TabOrder = 10
+                end
+                object edtGoods_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 154
+                  Top = 96
+                  Width = 119
+                  Height = 20
+                  ParentFont = False
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 11
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
+                object edtGoodsName: TzrComboBoxList
+                  Left = 347
+                  Top = 97
+                  Width = 149
+                  Height = 20
+                  TabStop = False
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 12
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
               end
               object Panel1: TPanel
                 Left = 6
-                Top = 107
-                Width = 852
-                Height = 308
+                Top = 126
+                Width = 860
+                Height = 300
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 850
-                  Height = 306
+                  Width = 858
+                  Height = 298
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -1024,16 +1149,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image3: TImage
       Left = 374
-      Width = 478
+      Width = 486
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited Image1: TImage
-      Left = 852
+      Left = 860
     end
     inherited rzPanel5: TPanel
       Left = 374

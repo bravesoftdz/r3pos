@@ -70,6 +70,11 @@ type
     fndINVOICE_NO1: TcxTextEdit;
     RzLabel9: TRzLabel;
     PrintDBGridEh1: TPrintDBGridEh;
+    Label25: TLabel;
+    Label1: TLabel;
+    edtGoods_Type: TcxComboBox;
+    edtGoods_ID: TzrComboBoxList;
+    edtGoodsName: TzrComboBoxList;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -88,11 +93,14 @@ type
     procedure FormShow(Sender: TObject);
     procedure RzPageChange(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
+    procedure edtGoods_TypePropertiesChange(Sender: TObject);
   private
     { Private declarations }
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
     procedure PrintView;
+    procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
+    function  GetGodsStateValue(DefineState: string='11111111111111111111'): string;    
   public
     { Public declarations }
     IsEnd1,IsEnd2: boolean;
@@ -382,6 +390,7 @@ function TfrmSvcServiceList.EncodeSQL1(id: string): string;
 var
   strSql,strWhere,StrField: string;
   Column:TColumnEh;
+  Item_Index:Integer;  
 begin
   if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
@@ -407,6 +416,14 @@ begin
      strWhere := strWhere + ' and B.SALES_STYLE=:SALES_STYLE ';
   if Trim(fndINVOICE_NO.Text) <> '' then
      strWhere := strWhere + ' and J.INVOICE_NO = '+Trim(fndINVOICE_NO.Text);
+     
+  if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') then
+  begin
+    Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
+    StrWhere := StrWhere + ' and E.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
+  end;
+  if edtGoodsName.AsString<>'' then
+    StrWhere := StrWhere + ' and E.GODS_ID='+QuotedStr(edtGoodsName.AsString);
 
   case fndSTATUS.ItemIndex of
     1:strWhere := strWhere + ' and isnull(I.SERIAL_NO_NUM,0) = 0 ';
@@ -683,7 +700,9 @@ begin
   fndP1_CUST_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndP1_DEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   RzPage.ActivePageIndex := 0;
-
+  AddGoodTypeItems(edtGoods_Type,GetGodsStateValue);
+  edtGoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
+  edtGoods_Type.ItemIndex := 0;
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label3.Caption := '仓库名称';
@@ -729,6 +748,122 @@ begin
       PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]','']);
       DBGridEh2.DataSource.DataSet.Filtered := False;
       PrintDBGridEh1.DBGridEh := DBGridEh2;
+    end;
+  end;
+end;
+
+procedure TfrmSvcServiceList.AddGoodTypeItems(GoodSortList: TcxComboBox;
+  SetFlag: string);
+ procedure AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
+ var CurObj: TRecord_;
+ begin
+   if (not Rs.Active) or (Rs.IsEmpty) then Exit;
+   Rs.First;
+   while not Rs.Eof do
+   begin
+     if trim(Rs.FieldByName('CODE_ID').AsString)=trim(CodeID) then
+     begin
+       CurObj:=TRecord_.Create;
+       CurObj.ReadFromDataSet(Rs);
+       Cbx.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
+       break;
+     end;
+     Rs.Next;
+   end;
+ end;
+var
+  rs: TZQuery;
+  i,InValue: integer;
+begin
+  GoodSortList.Properties.BeginUpdate;
+  try
+    rs:=Global.GetZQueryFromName('PUB_STAT_INFO');
+    ClearCbxPickList(GoodSortList);  //清除节点及Object对象
+    for i:=1 to length(SetFlag) do
+    begin
+      InValue:=StrtoIntDef(SetFlag[i],0);
+      if InValue=1 then
+        AddItems(GoodSortList, rs, inttostr(i));
+    end;
+  finally
+    rs.Filtered:=False;
+    rs.Filter:='';
+    GoodSortList.Properties.EndUpdate; 
+  end;
+end;
+
+function TfrmSvcServiceList.GetGodsStateValue(DefineState: string): string;
+var
+  ReStr: string;
+  PosIdx: integer;
+  RsState: TZQuery;
+begin
+  ReStr:='00000000000000000000';
+  RsState:=Global.GetZQueryFromName('PUB_STAT_INFO');
+  RsState.First;
+  while not RsState.Eof do
+  begin
+    PosIdx:=StrToIntDef(RsState.fieldbyName('CODE_ID').AsString,0);
+    if PosIdx>0 then
+    begin
+      if ShopGlobal.GetVersionFlag = 1 then  //服装版全部
+        ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
+      else
+      begin
+        if (PosIdx<7) or (PosIdx>8) then
+          ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
+      end;
+    end;
+    RsState.Next;
+  end;
+  result:=ReStr;
+end;
+
+procedure TfrmSvcServiceList.edtGoods_TypePropertiesChange(
+  Sender: TObject);
+var
+  CodeID: string;
+  ItemsIdx: integer;
+begin
+  inherited;
+  if (edtGoods_Type.ItemIndex<>-1) then
+  begin
+    CodeID:=trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).fieldbyName('CODE_ID').AsString);
+    ItemsIdx:=StrtoIntDef(CodeID,0);
+  end;
+  if ItemsIdx<=0 then Exit;
+  //清除上次选项
+  edtGoods_ID.Text:='';
+  edtGoods_ID.KeyValue:='';
+  case ItemsIdx of
+   3:
+    begin
+      edtGoods_ID.KeyField:='CLIENT_ID';
+      edtGoods_ID.ListField:='CLIENT_NAME';
+      edtGoods_ID.FilterFields:='CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
+    end;
+   else
+    begin
+      edtGoods_ID.KeyField:='SORT_ID';
+      edtGoods_ID.ListField:='SORT_NAME';
+      edtGoods_ID.FilterFields:='SORT_ID;SORT_NAME;SORT_SPELL';
+    end;
+  end;
+  edtGoods_ID.Columns[0].FieldName:=edtGoods_ID.ListField;
+  if edtGoods_ID.Columns.Count>1 then
+    edtGoods_ID.Columns[1].FieldName:=edtGoods_ID.KeyField;
+  case ItemsIdx of
+   3: //主供应商;
+    begin
+      edtGoods_ID.RangeField:='';
+      edtGoods_ID.RangeValue:='';
+      edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+    end;
+   else
+    begin
+      edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+      edtGoods_ID.RangeField:='SORT_TYPE';
+      edtGoods_ID.RangeValue:=InttoStr(ItemsIdx);
     end;
   end;
 end;

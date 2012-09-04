@@ -80,7 +80,7 @@ begin
       1:begin
       DevFactory.WritePrint('');
       DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
-      DevFactory.WritePrint(FormatText('收银:'+Global.UserName,DevFactory.Width-13)+' 日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
+      DevFactory.WritePrint(FormatText('收银:'+Global.UserName,DevFactory.Width-17)+' 日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
       end;
       2:begin

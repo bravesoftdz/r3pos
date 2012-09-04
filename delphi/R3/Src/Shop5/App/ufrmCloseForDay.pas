@@ -46,8 +46,6 @@ type
     Bevel1: TBevel;
     edtRECV_MNY: TcxTextEdit;
     Label1: TLabel;
-    Label2: TLabel;
-    edtPAY_MNY: TcxTextEdit;
     labMNY: TLabel;
     Label3: TLabel;
     edtHIS_MNY: TcxTextEdit;
@@ -132,16 +130,16 @@ begin
 //    if rs.Fields[0].AsString<>'' then
 //      Is_Print := True;
 //    edtPAY_MNY.Text := rs.Fields[0].AsString;
-    if cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',reckDate)),'2']),[]) then
-       begin
-         edtPAY_MNY.Text := formatfloat('#0.00',cdsTable.FieldbyName('PAY_A').asFloat);
-         Is_Print := true;
-       end
-    else
-       begin
-         edtPAY_MNY.Text := formatfloat('#0.00',0);
-       end;
-       
+//    if cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',reckDate)),'2']),[]) then
+//       begin
+//         edtPAY_MNY.Text := formatfloat('#0.00',cdsTable.FieldbyName('PAY_A').asFloat);
+//         Is_Print := true;
+//       end
+//    else
+//       begin
+//         edtPAY_MNY.Text := formatfloat('#0.00',0);
+//       end;
+
     //获得批发金额
     rs.Close;
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and RECV_FLAG=''0'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
@@ -161,7 +159,7 @@ begin
     rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Factor.Open(rs);
     labMNY.Caption := '店内现金:'+formatFloat('#0.0#',Balance+rs.FieldbyName('BALANCE').AsFloat);
-    lblCASH.Caption :='当日现金:'+formatFloat('#0.0#',StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
+    lblCASH.Caption :='当日现金:'+formatFloat('#0.0#',StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
   finally
     rs.Free;
   end;
@@ -509,22 +507,7 @@ begin
   'sum(PAY_I) as PAY_I,'+
   'sum(PAY_J) as PAY_J '+
   ' from SAL_SALESORDER A'+
-  ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE>:LAST_SALES_DATE and SALES_DATE<=:SALES_DATE group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE'+
-  ' union all '+
-  'select TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE as CLSE_DATE,''2'' as CLSE_TYPE,'+
-  'sum(PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as CLSE_MNY,'+
-  'sum(PAY_A) as PAY_A,'+
-  'sum(PAY_B) as PAY_B,'+
-  'sum(PAY_C) as PAY_C,'+
-  'sum(PAY_D) as PAY_D,'+
-  'sum(PAY_E) as PAY_E,'+
-  'sum(PAY_F) as PAY_F,'+
-  'sum(PAY_G) as PAY_G,'+
-  'sum(PAY_H) as PAY_H,'+
-  'sum(PAY_I) as PAY_I,'+
-  'sum(PAY_J) as PAY_J '+
-  ' from SAL_IC_GLIDE A'+
-  ' where IC_GLIDE_TYPE = ''1'' and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and CREA_DATE>:LAST_SALES_DATE and CREA_DATE<=:SALES_DATE group by TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE';
+  ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE>:LAST_SALES_DATE and SALES_DATE<=:SALES_DATE group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
   Str :=
   'select A.* from ('+Str+') A where CLSE_DATE=:SALES_DATE or not exists('+
   'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.CLSE_DATE'+

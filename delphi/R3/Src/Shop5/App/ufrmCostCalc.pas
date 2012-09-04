@@ -1932,22 +1932,7 @@ begin
     'sum(PAY_I) as PAY_I,'+
     'sum(PAY_J) as PAY_J '+
     ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2 group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE'+
-    ' union all '+
-    'select TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE as CLSE_DATE,''2'' as CLSE_TYPE,'+
-    'sum(PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as CLSE_MNY,'+
-    'sum(PAY_A) as PAY_A,'+
-    'sum(PAY_B) as PAY_B,'+
-    'sum(PAY_C) as PAY_C,'+
-    'sum(PAY_D) as PAY_D,'+
-    'sum(PAY_E) as PAY_E,'+
-    'sum(PAY_F) as PAY_F,'+
-    'sum(PAY_G) as PAY_G,'+
-    'sum(PAY_H) as PAY_H,'+
-    'sum(PAY_I) as PAY_I,'+
-    'sum(PAY_J) as PAY_J '+
-    ' from SAL_IC_GLIDE A'+
-    ' where IC_GLIDE_TYPE = ''1'' and TENANT_ID=:TENANT_ID and CREA_DATE>=:D1 and CREA_DATE<=:D2 group by TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE';
+    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2 group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
 
     Str :=
     'select A.* from ('+Str+') A where not exists('+

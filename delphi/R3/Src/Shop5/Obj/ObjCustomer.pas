@@ -385,11 +385,7 @@ begin
   Params.ParamByName('SALES_ID').AsString := FieldByName('GLIDE_ID').AsString;
   Params.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
   Params.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
-//  Params.ParamByName('DEPT_ID').AsString := FieldByName('DEPT_ID').AsString;
-//  Params.ParamByName('PAYM_ID').AsString := FieldByName('PAYM_ID').AsString;
-  Params.ParamByName('RECV_TYPE').AsString := '5';
   Params.ParamByName('CLIENT_ID').AsString := FieldByName('CLIENT_ID').AsString;
-  Params.ParamByName('ACCT_INFO').AsString := '¥¢÷µø®≥‰÷µ';
   Params.ParamByName('ACCT_MNY').AsFloat := Params.ParamByName('RECV_MNY').AsFloat;
   Params.ParamByName('RECK_MNY').AsFloat := Params.ParamByName('RECV_MNY').AsFloat;
   Params.ParamByName('RECV_MNY').AsFloat := 0;

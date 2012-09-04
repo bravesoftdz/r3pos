@@ -240,6 +240,8 @@ begin
     rs2.Post;
     Params.ParamByName('PAYM_ID').AsString := TRecord_(edtPAY_CASH.Properties.Items.Objects[edtPAY_CASH.ItemIndex]).FieldbyName('CODE_ID').AsString;
     Params.ParamByName('ACCT_MNY').AsFloat := StrToFloatDef(edtPAY.Text,0);
+    Params.ParamByName('RECV_TYPE').AsString := '5';
+    Params.ParamByName('ACCT_INFO').AsString := '¥¢÷µø®≥‰÷µ';
     Factor.BeginBatch;
     try
       Factor.AddBatch(cdsTable1,'TDeposit',Params);

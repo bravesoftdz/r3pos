@@ -138,7 +138,7 @@ begin
       Raise Exception.Create('充值金额不是有效的数字!');
     end;
   end;
-  if StrToFloat(Trim(edtIC_AMONEY.Text))<>0 then
+  if StrToFloat(Trim(edtIC_AMONEY.Text))=0 then
   begin
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
     Raise Exception.Create('充值金额不能为0!');
@@ -149,7 +149,7 @@ begin
     Raise Exception.Create('支付现金不能为空!');
   end;
   edtPAY.Text:= FloatToStr(StrToFloatDef(Trim(edtPAY.Text),0));
-  if StrToFloat(Trim(edtPAY.Text))<>0 then
+  if StrToFloat(Trim(edtPAY.Text))=0 then
   begin
     if edtPAY.CanFocus then edtPAY_CASH.SetFocus;
     Raise Exception.Create('支付不能为0!');

@@ -1,6 +1,6 @@
 inherited frmSvcServiceList: TfrmSvcServiceList
-  Left = 328
-  Top = 169
+  Left = 332
+  Top = 184
   Width = 908
   Height = 549
   Caption = #21806#21518#26381#21153
@@ -75,7 +75,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Caption = #23458#25143#21517#31216
                 end
                 object Label8: TLabel
-                  Left = 208
+                  Left = 267
                   Top = 31
                   Width = 48
                   Height = 12
@@ -90,7 +90,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Caption = #27969#27700#21333#21495
                 end
                 object Label6: TLabel
-                  Left = 207
+                  Left = 267
                   Top = 54
                   Width = 48
                   Height = 12
@@ -98,7 +98,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Caption = #38144#21806#26041#24335
                 end
                 object RzLabel8: TRzLabel
-                  Left = 208
+                  Left = 267
                   Top = 77
                   Width = 48
                   Height = 12
@@ -119,7 +119,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   ParentFont = False
                 end
                 object Label1: TLabel
-                  Left = 291
+                  Left = 267
                   Top = 101
                   Width = 48
                   Height = 12
@@ -150,7 +150,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 504
+                  Left = 576
                   Top = 90
                   Width = 67
                   Height = 27
@@ -180,7 +180,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Tag = -1
                   Left = 80
                   Top = 27
-                  Width = 121
+                  Width = 183
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -219,8 +219,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   MultiSelect = False
                 end
                 object fndSTATUS: TcxRadioGroup
-                  Left = 391
-                  Top = 9
+                  Left = 463
+                  Top = 32
                   Width = 105
                   Height = 85
                   ItemIndex = 0
@@ -243,7 +243,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 object fndP1_CUST_ID: TzrComboBoxList
                   Left = 80
                   Top = 50
-                  Width = 121
+                  Width = 183
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -311,9 +311,9 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   MultiSelect = False
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
-                  Left = 264
+                  Left = 323
                   Top = 27
-                  Width = 121
+                  Width = 135
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -347,15 +347,15 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 object fndSALES_ID: TcxTextEdit
                   Left = 80
                   Top = 73
-                  Width = 121
+                  Width = 183
                   Height = 20
                   TabOrder = 6
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
                 object fndSALES_STYLE: TzrComboBoxList
-                  Left = 264
+                  Left = 323
                   Top = 50
-                  Width = 121
+                  Width = 135
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -388,9 +388,9 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   MultiSelect = False
                 end
                 object fndINVOICE_NO: TcxTextEdit
-                  Left = 264
+                  Left = 323
                   Top = 73
-                  Width = 121
+                  Width = 135
                   Height = 20
                   TabOrder = 7
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -410,7 +410,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Tag = -1
                   Left = 154
                   Top = 96
-                  Width = 119
+                  Width = 109
                   Height = 20
                   ParentFont = False
                   Properties.AutoSelect = False
@@ -444,9 +444,9 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtGoodsName: TzrComboBoxList
-                  Left = 347
+                  Left = 323
                   Top = 97
-                  Width = 149
+                  Width = 135
                   Height = 20
                   TabStop = False
                   Properties.AutoSelect = False

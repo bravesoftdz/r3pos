@@ -1005,6 +1005,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1072,7 +1074,7 @@ begin
     rs_l.Free;
     cs_l.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1165,6 +1167,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1222,7 +1226,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1305,6 +1309,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1363,7 +1369,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   if (SFVersion='.NET') and not Global.Debug then //连锁版只下载日账，不上传
      begin
        SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
@@ -1682,6 +1688,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
@@ -1702,7 +1710,7 @@ begin
     rs.Free;
     cs.Free;
   end;
-
+  end;
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
   try
@@ -1758,6 +1766,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1816,7 +1826,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2120,6 +2130,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2178,7 +2190,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2595,6 +2607,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2653,7 +2667,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2762,6 +2776,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2829,7 +2845,7 @@ begin
     rs_l.Free;
     cs_l.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2922,6 +2938,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2979,7 +2997,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -3134,6 +3152,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -3191,7 +3211,7 @@ begin
     rs_d.Free;
     cs_d.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -3273,6 +3293,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -3340,7 +3362,7 @@ begin
     rs_l.Free;
     cs_l.Free;
   end;
-
+  end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -3635,6 +3657,8 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  if not (SFVersion='.NET') then //连锁版不下载业务单据
+  begin
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
@@ -3657,7 +3681,7 @@ begin
     rs.Free;
     cs.Free;
   end;
-
+  end;
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
   try

@@ -705,6 +705,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('SFVersion').AsString := SFVersion;
   Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
@@ -3068,6 +3069,10 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  if (SFVersion='.NET') then
+     Params.ParamByName('ZERO_OUT').AsString := '1'
+  else
+     Params.ParamByName('ZERO_OUT').AsString := '0';
   Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
@@ -3092,7 +3097,7 @@ begin
     rs.Free;
     cs.Free;
   end;
-  if onlyDown then
+  if onlyDown or (SFVersion='.NET') then
      begin
        SetSynTimeStamp(tbName,SyncTimeStamp);
        Exit;

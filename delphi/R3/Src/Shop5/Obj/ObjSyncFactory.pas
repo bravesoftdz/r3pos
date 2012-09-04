@@ -3924,6 +3924,12 @@ begin
         end;
      end
   else
+  if (FieldbyName('DEFINE').asString='ZERO_OUT') and (Params.ParamByName('ZERO_OUT').AsString='1') then
+     begin
+        FieldbyName('VALUE').AsString := '1';
+        result := inherited BeforeInsertRecord(AGlobal);
+     end
+  else
      result := inherited BeforeInsertRecord(AGlobal);
 end;
 

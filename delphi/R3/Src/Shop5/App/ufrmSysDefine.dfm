@@ -15,7 +15,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 418
     Height = 242
-    ActivePage = tabBasic
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet

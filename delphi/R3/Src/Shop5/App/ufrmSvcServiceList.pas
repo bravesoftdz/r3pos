@@ -75,6 +75,7 @@ type
     edtGoods_Type: TcxComboBox;
     edtGoods_ID: TzrComboBoxList;
     edtGoodsName: TzrComboBoxList;
+    edtSORT_ID: TcxButtonEdit;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -94,8 +95,12 @@ type
     procedure RzPageChange(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure edtGoods_TypePropertiesChange(Sender: TObject);
+    procedure edtSORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure edtSORT_IDKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
+    LevelId,RelationId:String;
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
     procedure PrintView;
@@ -117,7 +122,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSvcServiceInfo,
-  uframeMDForm, uframeDialogForm, ufrmBasic, ufrmEhLibReport;
+  uframeMDForm, uframeDialogForm, ufrmBasic, ufrmEhLibReport, ufrmSelectGoodSort;
 {$R *.dfm}
 
 procedure TfrmSvcServiceList.actNewExecute(Sender: TObject);
@@ -388,7 +393,7 @@ end;
 
 function TfrmSvcServiceList.EncodeSQL1(id: string): string;
 var
-  strSql,strWhere,StrField: string;
+  strSql,strWhere,StrField,StrTable: string;
   Column:TColumnEh;
   Item_Index:Integer;  
 begin
@@ -417,11 +422,25 @@ begin
   if Trim(fndINVOICE_NO.Text) <> '' then
      strWhere := strWhere + ' and J.INVOICE_NO = '+Trim(fndINVOICE_NO.Text);
      
-  if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') then
+  if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') and edtGoods_ID.Visible then
   begin
     Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
     StrWhere := StrWhere + ' and E.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
   end;
+
+  if (edtGoods_Type.ItemIndex>=0) and (trim(edtSORT_ID.Text) <> '') and edtSORT_ID.Visible then
+  begin
+    StrTable := 'VIW_GOODSPRICE_SORTEXT';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and E.RELATION_ID='+RelationId+' ';
+     else
+        strWhere:=strWhere+' and E.RELATION_ID='''+RelationId+''' ';
+    end;
+    if trim(LevelId)<>'' then
+      strWhere := strWhere+' and E.LEVEL_ID like '''+LevelId+'%'' ';
+  end else
+    StrTable:='VIW_GOODSINFO';
+
   if edtGoodsName.AsString<>'' then
     StrWhere := StrWhere + ' and E.GODS_ID='+QuotedStr(edtGoodsName.AsString);
 
@@ -441,7 +460,7 @@ begin
   ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
   ' left join VIW_CUSTOMER C on B.TENANT_ID=C.TENANT_ID and B.CLIENT_ID=C.CLIENT_ID '+
   ' left join CA_SHOP_INFO D on B.TENANT_ID=D.TENANT_ID and B.SHOP_ID=D.SHOP_ID '+
-  ' left join VIW_GOODSINFO E on A.TENANT_ID=E.TENANT_ID and A.GODS_ID=E.GODS_ID '+
+  ' left join '+StrTable+' E on A.TENANT_ID=E.TENANT_ID and A.GODS_ID=E.GODS_ID '+
   ' left join VIW_MEAUNITS F on A.TENANT_ID=F.TENANT_ID and A.UNIT_ID=F.UNIT_ID '+
   ' left join VIW_USERS G on B.TENANT_ID=G.TENANT_ID and B.GUIDE_USER=G.USER_ID '+
   ' left join VIW_USERS H on B.TENANT_ID=H.TENANT_ID and B.CREA_USER=H.USER_ID '+
@@ -866,6 +885,43 @@ begin
       edtGoods_ID.RangeValue:=InttoStr(ItemsIdx);
     end;
   end;
+  if ItemsIdx = 1 then
+  begin
+     edtSORT_ID.Visible := True;
+     edtGoods_ID.Visible := False;
+  end
+  else
+  begin
+     edtSORT_ID.Visible := False;
+     edtGoods_ID.Visible := True;
+  end;
+end;
+
+procedure TfrmSvcServiceList.edtSORT_IDPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+var rs:TRecord_;
+begin
+  inherited;
+  rs := TRecord_.Create;
+  try
+    if TfrmSelectGoodSort.FindDialog(self,rs) then
+    begin
+      LevelId := rs.FieldbyName('LEVEL_ID').AsString;
+      RelationId := rs.FieldbyName('RELATION_ID').AsString;
+      edtSORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
+    end;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmSvcServiceList.edtSORT_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  LevelId := '';
+  RelationId := '';
+  edtSORT_ID.Text := '';
 end;
 
 end.

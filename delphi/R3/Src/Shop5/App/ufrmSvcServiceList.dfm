@@ -1,6 +1,6 @@
 inherited frmSvcServiceList: TfrmSvcServiceList
-  Left = 332
-  Top = 184
+  Left = 307
+  Top = 144
   Width = 908
   Height = 549
   Caption = #21806#21518#26381#21153
@@ -494,6 +494,21 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   MultiSelect = False
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
+                object edtSORT_ID: TcxButtonEdit
+                  Left = 154
+                  Top = 96
+                  Width = 109
+                  Height = 20
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                      Kind = bkEllipsis
+                    end>
+                  Properties.ReadOnly = True
+                  Properties.OnButtonClick = edtSORT_IDPropertiesButtonClick
+                  TabOrder = 13
+                  OnKeyPress = edtSORT_IDKeyPress
+                end
               end
               object Panel1: TPanel
                 Left = 6
@@ -665,8 +680,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 431
+            Width = 882
+            Height = 442
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -675,7 +690,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 111
               Align = alTop
               BorderOuter = fsNone
@@ -982,16 +997,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object Panel2: TPanel
               Left = 6
               Top = 117
-              Width = 862
-              Height = 308
+              Width = 870
+              Height = 319
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 306
+                Width = 868
+                Height = 317
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

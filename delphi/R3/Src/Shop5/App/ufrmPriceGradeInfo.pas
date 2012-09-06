@@ -90,6 +90,7 @@ type
     locked:boolean;
     PRICE_ID:string;
     { Public declarations }
+    procedure InitData;
     procedure Append;
     procedure Open;
     procedure Save;
@@ -106,7 +107,7 @@ type
 
 implementation
 uses uGlobal,uTreeutil,uShopUtil,uFnUtil,ufrmSelectGoodSort,uShopGlobal,uDsUtil,Math,
-  ufrmBasic;
+  ufrmBasic, ObjCommon;
 {$R *.dfm}
 
 procedure TfrmPriceGradeInfo.edtAGIO_TYPEPropertiesChange(Sender: TObject);
@@ -260,6 +261,11 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsPRICEGRADE.Close;
     Factor.Open(cdsPRICEGRADE,'TPRICEGRADEInfo',Params);
+    if cdsPRICEGRADE.IsEmpty then
+    begin
+       InitData;
+       Factor.Open(cdsPRICEGRADE,'TPRICEGRADEInfo',Params);
+    end;
     CreateLevelTree(cdsPRICEGRADE,rzTree,'44444444','PRICE_ID','PRICE_NAME','LEVEL_ID',1,3);
     dbState := dsEdit;
     rzTree.SetFocus;
@@ -933,6 +939,15 @@ begin
         Free;
       end;
     end;
+end;
+
+procedure TfrmPriceGradeInfo.InitData;
+var str:String;
+begin
+  //数据集为空,对"会员等级"进行初始化
+  str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,PRICE_TYPE,COMM,TIME_STAMP) '
+  +'VALUES('+IntToStr(Global.TENANT_ID)+','''+NewId(Global.SHOP_ID)+''',''普通会员'',''PTHY'',0,0,0,100,0,0,1,''1'',''00'',5497000)';
+  Factor.ExecSQL(str); 
 end;
 
 end.

@@ -277,41 +277,42 @@ begin
     0: StrJoin := '+';
     1,4,5: StrJoin := '||';
   end;
-  StrWhere := ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID);
+  StrWhere := ' where A1.TENANT_ID='+IntToStr(Global.TENANT_ID);
 
   if edtSHOP_TYPE.ItemIndex = 0 then
     begin
       if edtSHOP_VALUE.asString <> '' then
          begin
            if FnString.TrimRight(edtSHOP_VALUE.asString,2)<>'00' then
-              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
+              StrWhere := StrWhere + ' and C1.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
            else
-              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');
+              StrWhere := StrWhere + ' and C1.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');
          end;
     end
   else
     begin
       if edtSHOP_VALUE.asString <> '' then
-        StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtSHOP_VALUE.AsString);    
+        StrWhere := StrWhere + ' and C1.SHOP_TYPE='+QuotedStr(edtSHOP_VALUE.AsString);
     end;
 
   if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') then
   begin
     Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-    StrWhere := StrWhere + ' and A.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
+    StrWhere := StrWhere + ' and A1.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
   end;
 
   if edtGoodsName.AsString<>'' then
-    StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
+    StrWhere := StrWhere + ' and A1.GODS_ID='+QuotedStr(edtGoodsName.AsString);
   if edtSHOP_ID.AsString<>'' then
-    StrWhere := StrWhere + ' and B.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
+    StrWhere := StrWhere + ' and C1.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
 
-  StrSql := 'select A.TENANT_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,A.BARCODE,C.SHOP_NAME,A.CALC_UNITS as UNIT_ID,isnull(A.NEW_OUTPRICE,0) as NEW_OUTPRICE_1,'+
+  StrSql :=
+  'select A.TENANT_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,A.BARCODE,A.SHOP_NAME,A.CALC_UNITS as UNIT_ID,isnull(A.NEW_OUTPRICE,0) as NEW_OUTPRICE_1,'+
   'isnull(B.NEW_OUTPRICE,0) as ORG_OUTPRICE,isnull(B.NEW_OUTPRICE1,0) as ORG_OUTPRICE1,isnull(B.NEW_OUTPRICE2,0) as ORG_OUTPRICE2,A.SMALLTO_CALC,A.BIGTO_CALC,'+
-  'isnull(B.NEW_OUTPRICE,0)*1.00/A.NEW_OUTPRICE*100 as OUTPRICE_A_RATE,isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE,isnull(B.NEW_OUTPRICE,0)*1.00/A.NEW_OUTPRICE*100 as NEW_OUTPRICE_RATE,'+
-  'isnull(B.PRICE_ID,''#'') as PRICE_ID,isnull(B.SHOP_ID,'''+ShopGlobal.SHOP_ID+''') as SHOP_ID,isnull(B.PRICE_METHOD,''1'') as PRICE_METHOD,B.NEW_OUTPRICE1,B.NEW_OUTPRICE2 '+
-  'from VIW_GOODSINFO A left join PUB_GOODSPRICE B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
-  ' left join CA_SHOP_INFO C on B.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID '+ StrWhere;
+  'isnull(B.NEW_OUTPRICE,0)*1.00/A.NEW_OUTPRICE*100.00 as OUTPRICE_A_RATE,isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE,isnull(B.NEW_OUTPRICE,0)*1.00/A.NEW_OUTPRICE*100.00 as NEW_OUTPRICE_RATE,'+
+  '''#'' as PRICE_ID,A.SHOP_ID,isnull(B.PRICE_METHOD,''1'') as PRICE_METHOD,B.NEW_OUTPRICE1,B.NEW_OUTPRICE2 '+
+  'from (select A1.*,C1.SHOP_ID,C1.SHOP_NAME,C1.REGION_ID,''#'' as PRICE_ID from VIW_GOODSINFO A1 inner join CA_SHOP_INFO C1 on A1.TENANT_ID=C1.TENANT_ID '+ StrWhere+') A left outer join PUB_GOODSPRICE B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID and A.PRICE_ID=B.PRICE_ID '+
+  ' ';
   Result := StrSql;
 end;
 

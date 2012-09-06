@@ -408,24 +408,27 @@ begin
     AGlobal.ExecSQL(Str,self);
   end;
 
-  Params.ParamByName('ROWS_ID').AsString:=NewId('');
-  Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date());
-  Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;
-  Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;
-  Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;
-  Params.ParamByName('PRICE_METHOD').AsString:='1';
-  Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('ORG_OUTPRICE').AsOldFloat;
-  Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('ORG_OUTPRICE1').AsOldFloat;
-  Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('ORG_OUTPRICE2').AsOldFloat;
-  Params.ParamByName('NEW_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;
-  Params.ParamByName('NEW_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsFloat;
-  Params.ParamByName('NEW_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsFloat;
+  if FieldbyName('PRICE_ID').AsString='#' then
+  begin
+    Params.ParamByName('ROWS_ID').AsString:=NewId('');
+    Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date());
+    Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;
+    Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;
+    Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;
+    Params.ParamByName('PRICE_METHOD').AsString:='1';
+    Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('ORG_OUTPRICE').AsOldFloat;
+    Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('ORG_OUTPRICE1').AsOldFloat;
+    Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('ORG_OUTPRICE2').AsOldFloat;
+    Params.ParamByName('NEW_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;
+    Params.ParamByName('NEW_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsFloat;
+    Params.ParamByName('NEW_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsFloat;
 
-  Str:='Insert Into LOG_PRICING_INFO (ROWS_ID,PRICING_DATE,PRICING_USER,TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,'+
-       ' ORG_OUTPRICE,ORG_OUTPRICE1,ORG_OUTPRICE2,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP)'+
-       'Values (:ROWS_ID,:PRICING_DATE,:PRICING_USER,:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,:PRICE_METHOD,'+
-       ':ORG_OUTPRICE,:ORG_OUTPRICE1,:ORG_OUTPRICE2,:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+')';
-  AGlobal.ExecSQL(Str,Params);
+    Str:='Insert Into LOG_PRICING_INFO (ROWS_ID,PRICING_DATE,PRICING_USER,TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,'+
+         ' ORG_OUTPRICE,ORG_OUTPRICE1,ORG_OUTPRICE2,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP)'+
+         'Values (:ROWS_ID,:PRICING_DATE,:PRICING_USER,:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,:PRICE_METHOD,'+
+         ':ORG_OUTPRICE,:ORG_OUTPRICE1,:ORG_OUTPRICE2,:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+')';
+    AGlobal.ExecSQL(Str,Params);
+  end;
 end;
 
 function TGoodsPrice.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
@@ -441,7 +444,8 @@ begin
   inherited;
   OperChar:=GetStrJoin(iDbType);
   SelectSQL.Text:=
-    'select PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
+    'select PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,'+
+    ' NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
     ' from (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE Where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
     ' Left Join '+
     ' (select P.*,'+

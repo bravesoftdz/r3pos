@@ -430,7 +430,7 @@ begin
 
   if (edtGoods_Type.ItemIndex>=0) and (trim(edtSORT_ID.Text) <> '') and edtSORT_ID.Visible then
   begin
-    StrTable := 'VIW_GOODSPRICE_SORTEXT';
+    StrTable := 'VIW_GOODSINFO_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and E.RELATION_ID='+RelationId+' ';
      else

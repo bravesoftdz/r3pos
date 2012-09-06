@@ -8,48 +8,48 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 922
-    Height = 500
+    Width = 914
+    Height = 489
     inherited RzPanel2: TRzPanel
-      Width = 912
-      Height = 490
+      Width = 904
+      Height = 479
       inherited RzPage: TRzPageControl
-        Width = 906
-        Height = 484
+        Width = 898
+        Height = 473
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 904
-            Height = 457
+            Width = 896
+            Height = 446
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 894
-              Height = 447
+              Width = 886
+              Height = 436
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 0
               object RzPanel6: TRzPanel
                 Left = 0
                 Top = 68
-                Width = 894
-                Height = 379
+                Width = 886
+                Height = 368
                 Align = alClient
                 BorderOuter = fsNone
                 TabOrder = 0
                 object Panel1: TPanel
                   Left = 0
                   Top = 0
-                  Width = 894
-                  Height = 379
+                  Width = 886
+                  Height = 368
                   Align = alClient
                   Caption = 'Panel1'
                   TabOrder = 0
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 35
-                    Width = 892
-                    Height = 343
+                    Width = 884
+                    Height = 332
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
                     DataSource = dsPrice
@@ -188,7 +188,7 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
                   object RzPanel7: TRzPanel
                     Left = 1
                     Top = 1
-                    Width = 892
+                    Width = 884
                     Height = 34
                     Align = alTop
                     BorderOuter = fsNone
@@ -265,7 +265,7 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 894
+                Width = 886
                 Height = 68
                 Align = alTop
                 BorderOuter = fsNone
@@ -274,7 +274,7 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
                 object Panel2: TPanel
                   Left = 0
                   Top = 0
-                  Width = 894
+                  Width = 886
                   Height = 68
                   Align = alClient
                   Alignment = taLeftJustify
@@ -558,16 +558,16 @@ inherited frmBatchAdjustPrice: TfrmBatchAdjustPrice
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 922
+    Width = 914
     inherited Image3: TImage
       Left = 298
-      Width = 584
+      Width = 576
     end
     inherited Image14: TImage
-      Left = 902
+      Left = 894
     end
     inherited Image1: TImage
-      Left = 882
+      Left = 874
     end
     inherited rzPanel5: TPanel
       Left = 298

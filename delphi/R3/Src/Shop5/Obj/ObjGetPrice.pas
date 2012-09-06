@@ -31,8 +31,9 @@ begin
   if Params.ParamByName('CLIENT_ID').AsString = '' then
      begin
        result := Price;
-     end
-  else
+       Params.ParamByName('PRICE_ID').AsString := '#';
+     end;
+//  else
      begin
        rs := TZQuery.Create(nil);
        ss := TZQuery.Create(nil);
@@ -40,6 +41,11 @@ begin
          rs.SQL.Text := 'select A.PRICE_ID,A.AGIO_TYPE,A.AGIO_PERCENT,A.AGIO_SORTS from PUB_PRICEGRADE A where A.PRICE_ID=:PRICE_ID and A.TENANT_ID=:TENANT_ID';
          rs.Params.AssignValues(Params);
          AGlobal.Open(rs);
+         if rs.IsEmpty then
+            begin
+              result := Price;
+              Exit;
+            end;
          case rs.FieldbyName('AGIO_TYPE').AsInteger of
          0:result := Price;//≤ª¥Ú’€
          1:begin
@@ -109,7 +115,7 @@ begin
          rs.Free;
          ss.Free;
        end;
-      end;
+    end;
 end;
 var
   tmp:TZQuery;

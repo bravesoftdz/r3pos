@@ -819,6 +819,7 @@ begin
          Global.SysDate := lDate;
          result := true;
        end;
+       Logined := Logined;
      end
   else
      result := true;

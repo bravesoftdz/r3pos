@@ -2692,36 +2692,28 @@ var
 begin
   inherited;
   MsgStr:='';
-  try
     if Text='' then
       r := 0
     else
-       r := StrtoFloat(Text);
+      r := StrtoFloat(Text);
     if r>100 then MsgStr:='输入的折扣率不能大于100，无效';
 
-    if (VarIsNull(Value)) then
-    begin
-      r:=0;
-      Text:='0';
-    end else
-      r:=Value;
     if r>100 then
     begin
       r:=100;
-      Text:='100';
+      Value := 100;
+      Text := '100';
     end;
 
-    if (PriceGrid.DataSource.DataSet.Active) and (Value<>CdsMemberPrice.FieldByName('PROFIT_RATE').AsVariant) then
+    if (PriceGrid.DataSource.DataSet.Active) and (r<>CdsMemberPrice.FieldByName('PROFIT_RATE').asFloat) then
     begin
       if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
-      CdsMemberPrice.FieldByName('PROFIT_RATE').AsString:=FloattoStr(r);
+      CdsMemberPrice.FieldByName('PROFIT_RATE').asFloat:=r;
       CdsMemberPrice.Post;
       CALC_MenberProfitPrice(CdsMemberPrice,0);
       if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
     end;
     if MsgStr<>'' then  Raise Exception.Create(MsgStr);
-  except
-  end;   
 end;
 
 procedure TfrmGoodsInfo.PriceGridColumns3UpdateData(Sender: TObject;
@@ -2746,12 +2738,10 @@ begin
   end;
   if abs(r)>999999999 then Raise Exception.Create('  输入的数值过大，无效...  ');
 
-  if (VarIsNull(Value)) then r:=0 else r:=Value;
-
-  if (PriceGrid.DataSource.DataSet.Active) and (Value<>CdsMemberPrice.FieldByName('NEW_OUTPRICE').AsVariant) then
+  if (PriceGrid.DataSource.DataSet.Active) and (r<>CdsMemberPrice.FieldByName('NEW_OUTPRICE').asFloat) then
   begin
     if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
-    CdsMemberPrice.FieldByName('NEW_OUTPRICE').AsString:=FloattoStr(r);
+    CdsMemberPrice.FieldByName('NEW_OUTPRICE').asFloat:=r;
     CdsMemberPrice.Post;
     CALC_MenberProfitPrice(CdsMemberPrice,1);
     if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
@@ -3353,11 +3343,17 @@ begin
   if edtSORT_ID8.AsString = '' then Exit;
   Cs := ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
   Ss := ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
-  if dbState = dsEdit then
+  if (length(AObj.FieldByName('GODS_CODE').AsString)=6) and fnString.IsNumberChar(AObj.FieldByName('GODS_CODE').AsString) then
      CreateBarcode := AObj.FieldByName('GODS_CODE').AsString
   else
      CreateBarcode := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
-  try                                        
+  try
+    ExtBarCode.First;
+    while not ExtBarCode.Eof do
+       begin
+         if ExtBarCode.FieldByName('BARCODE').AsString='' then
+            ExtBarCode.Delete else ExtBarCode.Next; 
+       end;
     Cs.Filtered := False;
     Cs.Filter := 'SORT_ID='''+edtSORT_ID7.AsString+'''';
     Cs.Filtered := True;
@@ -3372,8 +3368,8 @@ begin
       begin
         if not ExtBarCode.Locate('PROPERTY_01,PROPERTY_02',VarArrayOf([Ss.FieldByName('SIZE_ID').AsString,Cs.FieldByName('COLOR_ID').AsString]),[]) then
         begin
-          InitRecord;
-          ExtBarCode.Edit;
+          //InitRecord;
+          ExtBarCode.Append;
           ExtBarCode.FieldByName('UNIT_ID').AsString:=edtCALC_UNITS.AsString;
           ExtBarCode.FieldByName('BARCODE').AsString:=GetBarCode(CreateBarcode,Ss.FieldByName('BARCODE_FLAG').AsString,Cs.FieldByName('BARCODE_FLAG').AsString);
           ExtBarCode.FieldByName('PROPERTY_01').AsString:=Ss.FieldByName('SIZE_ID').AsString;

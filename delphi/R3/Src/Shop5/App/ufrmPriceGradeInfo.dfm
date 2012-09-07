@@ -220,7 +220,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
               Top = 8
               Width = 381
               Height = 193
-              PageIndex = 2
+              PageIndex = 1
               TabOrder = 0
               object TPage
                 Left = 0

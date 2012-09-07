@@ -946,7 +946,7 @@ var str:String;
 begin
   //数据集为空,对"会员等级"进行初始化
   str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,PRICE_TYPE,COMM,TIME_STAMP) '
-  +'VALUES('+IntToStr(Global.TENANT_ID)+','''+NewId(Global.SHOP_ID)+''',''普通会员'',''PTHY'',0,0,0,100,0,0,1,''1'',''00'',5497000)';
+  +'VALUES('+IntToStr(Global.TENANT_ID)+',''#'',''普通会员'',''PTHY'',0,0,0,70,1,70,1,''1'',''00'',5497000)';
   Factor.ExecSQL(str); 
 end;
 

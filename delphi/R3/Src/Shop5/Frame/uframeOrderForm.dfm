@@ -628,6 +628,10 @@ inherited frameOrderForm: TframeOrderForm
       Caption = #21830#21697#23646#24615
       OnClick = mnuGodsPropertyClick
     end
+    object GodsCompare: TMenuItem
+      Caption = #25195#30721#39564#36135
+      OnClick = GodsCompareClick
+    end
     object Excel1: TMenuItem
       Caption = 'Excel'#23548#20837'...'
       OnClick = Excel1Click

@@ -6,40 +6,36 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls,
-  RzButton, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase;
+  RzButton, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase,
+  RzStatus;
 
 type
   TfrmGodsComPare = class(TframeDialogForm)
     pnlBarCode: TRzPanel;
     lblInput: TLabel;
-    lblHint: TLabel;
     edtInput: TcxTextEdit;
     DBGridEh1: TDBGridEh;
-    RzBitBtn2: TRzBitBtn;
     DsGods: TDataSource;
     CdsGods: TZQuery;
+    RzStatusPane5: TRzStatusPane;
+    RzStatusPane4: TRzStatusPane;
     procedure RzBitBtn2Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure edtInputKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
-    FInputFlag: integer;
-    FInputMode: integer;
-    fndStr:String;
     { Private declarations }
+    fndStr:string;
     procedure ReadFrom(DataSet:TDataSet);
     function EnCodeBarcode:string;
-    procedure SetInputFlag(const Value: integer);
-    procedure SetInputMode(const Value: integer);
-    function CheckSumField(FieldName:string):boolean;
     procedure InitGrid;
-    procedure DecodeBarcode(BarCode: string);
+    function DecodeBarcode(BarCode: string):integer;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;
   protected
     procedure BarcodeFilterRecord(DataSet: TDataSet;var Accept: Boolean);
@@ -47,8 +43,6 @@ type
   public
     { Public declarations }
     class function ShowDialog(AOwner:TForm;DataSet:TDataSet):boolean;
-    property InputFlag:integer read FInputFlag write SetInputFlag;
-    property InputMode:integer read FInputMode write SetInputMode;
   end;
 
 
@@ -62,6 +56,11 @@ var
   rs,basInfo:TZQuery;
 begin
   rs := Global.GetZQueryFromName('PUB_BARCODE');
+  if rs.Locate('GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02',VarArrayOf([CdsGods.FieldbyName('GODS_ID').asString,CdsGods.FieldbyName('UNIT_ID').asString,CdsGods.FieldbyName('PROPERTY_01').asString,CdsGods.FieldbyName('PROPERTY_02').asString]),[]) then
+     begin
+       result :=  rs.FieldbyName('BARCODE').asString;
+       Exit;
+     end;
   basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
   if basInfo.Locate('GODS_ID',CdsGods.FieldbyName('GODS_ID').AsString,[]) then
      begin
@@ -70,7 +69,7 @@ begin
           b := basInfo.FieldbyName('BARCODE').asString
        else
           begin
-            if rs.Locate('GODS_ID,UNIT_ID',VarArrayOf([CdsGods.FieldbyName('GODS_ID').asString,CdsGods.FieldbyName('UNIT_ID').asString]),[]) then
+            if rs.Locate('GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02',VarArrayOf([CdsGods.FieldbyName('GODS_ID').asString,CdsGods.FieldbyName('UNIT_ID').asString,'#','#']),[]) then
                b := rs.FieldbyName('BARCODE').asString
             else
                b := basInfo.FieldbyName('BARCODE').asString;
@@ -94,27 +93,6 @@ begin
   DataSet.First;
   while not DataSet.Eof do
     begin
-     {r := CdsGods.Locate('GODS_ID;BATCH_NO;UNIT_ID',
-          VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
-                    DataSet.FieldbyName('BATCH_NO').asString,
-                    DataSet.FieldbyName('UNIT_ID').asString]),[]);
-      if r then
-      begin
-        CdsGods.Edit;
-        for i:=0 to CdsGods.Fields.Count -1 do
-          begin
-            if (CdsGods.Fields[i].FieldName<>'SEQNO') and (DataSet.FindField(CdsGods.Fields[i].FieldName)<>nil) then
-            begin
-              if CheckSumField(CdsGods.Fields[i].FieldName) then
-                CdsGods.Fields[i].AsFloat := CdsGods.Fields[i].AsFloat + DataSet.FieldbyName(CdsGods.Fields[i].FieldName).AsFloat
-              else
-                CdsGods.Fields[i].Value := DataSet.FieldbyName(CdsGods.Fields[i].FieldName).Value;
-            end;
-          end;
-        CdsGods.Post;
-      end
-      else}
-      begin
         CdsGods.Append;
         for i:=0 to CdsGods.Fields.Count -1 do
           begin
@@ -125,7 +103,6 @@ begin
         CdsGods.FieldbyName('SEQNO').AsInteger := RowID;
         CdsGods.FieldbyName('BARCODE').AsString := EnCodeBarcode;
         CdsGods.Post;
-      end;
       DataSet.Next;
     end;
     CdsGods.SortedFields := 'SEQNO';
@@ -161,19 +138,6 @@ begin
      end;
 end;
 
-procedure TfrmGodsComPare.edtInputKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  inherited;
-  if (Shift = []) and(Key = VK_TAB) then
-     begin
-       if InputMode = 0 then InputMode := 1 else InputMode := 0;
-       InputFlag := 0;
-       Key := 0;
-       Exit;
-     end;
-end;
-
 procedure TfrmGodsComPare.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
   s:string;
@@ -186,49 +150,45 @@ begin
       begin
         Key := #0;
         if (dbState = dsBrowse) then Exit;
+        edtInput.SelectAll;
         s := trim(edtInput.Text);
         if s = '' then Exit;
-        DecodeBarcode(s);
+        if ((length(s) in [1,2,3,4]) and FnString.IsNumberChar(s)) then
+           begin
+             if not cdsGods.IsEmpty then
+                begin
+                  cdsGods.Edit;
+                  cdsGods.FieldByName('SCANAMOUNT').AsFloat := StrtoFloatDef(s,0);
+                  cdsGods.Post;
+                end
+             else
+                Raise Exception.Create('请先扫描码再输数量'); 
+           end
+        else
+           case DecodeBarCode(trim(s)) of
+             1:begin
+                 //PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,1);
+               end;
+             2:begin
+                 MessageBox(Handle,'输入的条码无效..','友情提示...',MB_OK+MB_ICONQUESTION);//PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,1);
+               end;
+             3:begin
+                 edtInput.Text := '';
+                 Exit;
+               end;
+           else
+              edtInput.Text := '';
+           end;
       end;
 
   finally
-    edtInput.SelectAll;
     if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
-end;
-
-procedure TfrmGodsComPare.SetInputFlag(const Value: integer);
-begin
-  FInputFlag := Value;
-end;
-
-procedure TfrmGodsComPare.SetInputMode(const Value: integer);
-begin
-  FInputMode := Value;
-  case InputMode of
-  0:begin
-     lblInput.Caption := '条码输入';
-     lblHint.Caption := '切换成“货号”输入按 tab 键  <F2>激活输入框';
-    end;
-  1:begin
-     lblInput.Caption := '货号输入';
-     lblHint.Caption := '切换成“条码”输入按 tab 键  <F2>激活输入框';
-    end;
-  end;  
-end;
-
-function TfrmGodsComPare.CheckSumField(FieldName: string): boolean;
-var s:string;
-begin
-  s := uppercase(FieldName);
-  result := (s='AMOUNT') or (s='CALC_AMOUNT') or (s='AMONEY') or (s='CALC_MONEY') or (s='AGIO_MONEY') or
-            (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY') or (s='SHIP_AMOUNT') or (s='FNSH_AMOUNT');
 end;
 
 procedure TfrmGodsComPare.FormShow(Sender: TObject);
 begin
   inherited;
-  InputMode := 0;
   InitGrid;
 end;
 
@@ -258,6 +218,8 @@ begin
         rs.Next;
       end;
   end;
+  Column.KeyList.Add('#');
+  Column.PickList.Add('无');
 
   rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
   Column := FindColumn(DBGridEh1,'PROPERTY_02');
@@ -271,6 +233,8 @@ begin
         rs.Next;
       end;
   end;
+  Column.KeyList.Add('#');
+  Column.PickList.Add('无');
 end;
 
 function TfrmGodsComPare.FindColumn(DBGrid: TDBGridEh;
@@ -330,7 +294,7 @@ begin
      end;
 end;
 
-procedure TfrmGodsComPare.DecodeBarcode(BarCode: string);
+function TfrmGodsComPare.DecodeBarcode(BarCode: string):integer;
 function CheckDupBar(rs:TZQuery):boolean;
 var
   r:integer;
@@ -358,19 +322,15 @@ var
   mny:real;
   Pri:real;
 begin
+  result := 2;
   if BarCode='' then Exit;
   fndStr := BarCode;
   try
-    if InputMode=0 then
-    begin
-      rs := Global.GetZQueryFromName('PUB_BARCODE');
-      rs.OnFilterRecord := BarcodeFilterRecord;
-      rs.Filtered := true;
-    end
-    else
-      rs := nil;
+    rs := Global.GetZQueryFromName('PUB_BARCODE');
+    rs.OnFilterRecord := BarcodeFilterRecord;
+    rs.Filtered := true;
 
-    if not assigned(rs) or ((InputMode=0) and rs.IsEmpty) then
+    if not assigned(rs) or (rs.IsEmpty) then
        begin
           //看看货号是否存在
           rs := Global.GetZQueryFromName('PUB_GOODSINFO');
@@ -383,6 +343,7 @@ begin
              end;
           if (rs.RecordCount > 1) and not TframeListDialog.FindDSDialog(self,rs,'GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价',nil) then
              begin
+               result := 3;
                Exit;
              end
           else
@@ -410,6 +371,7 @@ begin
                   if not TframeListDialog.FindDialog(self,'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID in ('+fndStr+') and COMM not in (''02'',''12'')','GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价',AObj) then
                      begin
                        fndStr := '';
+                       result := 3;
                        Exit;
                      end
                   else
@@ -418,55 +380,50 @@ begin
                   AObj.free;
                 end;
              end;
-               
-             vgds := rs.FieldbyName('GODS_ID').AsString;
-             vP1 := rs.FieldbyName('PROPERTY_01').AsString;
-             vP2 := rs.FieldbyName('PROPERTY_02').AsString;
-             if vP1='' then vP1 := '#';
-             if vP2='' then vP2 := '#';
-             uid := rs.FieldbyName('UNIT_ID').AsString;
-             vBtNo := rs.FieldbyName('BATCH_NO').AsString;
-       end;
+            if result <> 3 then
+             begin
+               vgds := rs.FieldbyName('GODS_ID').AsString;
+               vP1 := rs.FieldbyName('PROPERTY_01').AsString;
+               vP2 := rs.FieldbyName('PROPERTY_02').AsString;
+               if vP1='' then vP1 := '#';
+               if vP2='' then vP2 := '#';
+               uid := rs.FieldbyName('UNIT_ID').AsString;
+               vBtNo := rs.FieldbyName('BATCH_NO').AsString;
+       end;  end;
   finally
     if Assigned(rs) then
     begin
     rs.OnFilterRecord := nil;
     rs.filtered := false;
     end;
-//    rs.Free;
   end;
 
-  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   AObj := TRecord_.Create;
   try
-
+    result := 0;
     if CdsGods.Locate('GODS_ID,UNIT_ID,BATCH_NO,PROPERTY_01,PROPERTY_02',VarArrayOf([vgds,uid,vBtNo,vP1,vP2]),[]) then
     begin
        CdsGods.Edit;
        CdsGods.FieldByName('SCANAMOUNT').AsFloat := CdsGods.FieldByName('SCANAMOUNT').AsFloat + 1;
        CdsGods.Post;
-       if CdsGods.FieldByName('SCANAMOUNT').AsFloat > CdsGods.FieldByName('AMOUNT').AsFloat then
-       begin
-       end;
     end
     else
     begin
+       rs := Global.GetZQueryFromName('PUB_GOODSINFO');
        if rs.Locate('GODS_ID',vgds,[]) then
-       begin
-         AObj.ReadFromDataSet(rs);
+       begin         
          CdsGods.Append;
          CdsGods.FieldByName('SEQNO').AsInteger := CdsGods.RecordCount;
-         CdsGods.FieldByName('GODS_ID').AsString := AObj.FieldByName('GODS_ID').AsString;
-         CdsGods.FieldByName('GODS_CODE').AsString := AObj.FieldByName('GODS_CODE').AsString;
-         CdsGods.FieldByName('GODS_NAME').AsString := AObj.FieldByName('GODS_NAME').AsString;
-         CdsGods.FieldByName('BARCODE').AsString := AObj.FieldByName('BARCODE').AsString;
-         CdsGods.FieldByName('UNIT_ID').AsString := AObj.FieldByName('UNIT_ID').AsString;
+         CdsGods.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;
+         CdsGods.FieldByName('GODS_CODE').AsString := rs.FieldByName('GODS_CODE').AsString;
+         CdsGods.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
+         CdsGods.FieldByName('UNIT_ID').AsString := uid;
          CdsGods.FieldByName('BATCH_NO').AsString := vBtNo;
          CdsGods.FieldByName('PROPERTY_01').AsString := vP1;
          CdsGods.FieldByName('PROPERTY_02').AsString := vP2;
+         CdsGods.FieldByName('BARCODE').AsString := EnCodeBarcode;
          CdsGods.FieldByName('AMOUNT').AsFloat := 0;
          CdsGods.FieldByName('SCANAMOUNT').AsFloat := 1;
-         CdsGods.FieldByName('STATUS').AsString := '';
          CdsGods.Post;
        end;
     end;
@@ -489,6 +446,19 @@ procedure TfrmGodsComPare.GodsInfoFilterRecord(DataSet: TDataSet;
 begin
   Accept :=
     (pos(fndStr,DataSet.FieldbyName('GODS_CODE').AsString)>0)
+end;
+
+procedure TfrmGodsComPare.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if CdsGods.FieldbyName('AMOUNT').asFloat=CdsGods.FieldbyName('SCANAMOUNT').asFloat then
+     Background := RzStatusPane5.FillColor
+  else
+  if (CdsGods.FieldbyName('AMOUNT').asFloat<>CdsGods.FieldbyName('SCANAMOUNT').asFloat) and (CdsGods.FieldbyName('SCANAMOUNT').AsString<>'') then
+     Background := RzStatusPane4.FillColor;
+
 end;
 
 end.

@@ -1,27 +1,30 @@
 inherited frmGodsComPare: TfrmGodsComPare
   Left = 310
-  Top = 192
-  Caption = #21333#25454#21830#21697#23545#27604
-  ClientWidth = 774
+  Top = 135
+  Caption = #25195#30721#39564#36135
+  ClientHeight = 385
+  ClientWidth = 603
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 774
+    Width = 603
+    Height = 385
     inherited RzPage: TRzPageControl
-      Width = 764
+      Width = 593
+      Height = 335
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         TabVisible = False
         inherited RzPanel2: TRzPanel
-          Width = 760
-          Height = 333
+          Width = 589
+          Height = 331
           object pnlBarCode: TRzPanel
             Left = 5
             Top = 5
-            Width = 750
+            Width = 579
             Height = 33
             Align = alTop
             BorderOuter = fsFlat
@@ -41,19 +44,6 @@ inherited frmGodsComPare: TfrmGodsComPare
               Font.Style = [fsBold]
               ParentFont = False
             end
-            object lblHint: TLabel
-              Left = 325
-              Top = 11
-              Width = 206
-              Height = 12
-              Caption = #35831#25353' [F2] '#20809#26631#28608#27963#26465#30721#36755#20837#26694'...'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold, fsUnderline]
-              ParentFont = False
-            end
             object edtInput: TcxTextEdit
               Left = 113
               Top = 3
@@ -67,15 +57,14 @@ inherited frmGodsComPare: TfrmGodsComPare
               Style.Font.Name = #40657#20307
               Style.Font.Style = [fsBold]
               TabOrder = 0
-              OnKeyDown = edtInputKeyDown
               OnKeyPress = edtInputKeyPress
             end
           end
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 38
-            Width = 750
-            Height = 290
+            Width = 579
+            Height = 288
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DsGods
@@ -106,6 +95,7 @@ inherited frmGodsComPare: TfrmGodsComPare
             DecimalNumber = 2
             DigitalNumber = 12
             OnDrawFooterCell = DBGridEh1DrawFooterCell
+            OnGetCellParams = DBGridEh1GetCellParams
             Columns = <
               item
                 EditButtons = <>
@@ -171,54 +161,49 @@ inherited frmGodsComPare: TfrmGodsComPare
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #24320#21333#25968
-                Width = 70
+                Width = 48
               end
               item
                 EditButtons = <>
                 FieldName = 'SCANAMOUNT'
                 Footers = <>
                 Title.Caption = #25195#25551#25968
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'STATUS'
-                Footers = <>
-                Title.Caption = #29366#24577
-                Width = 100
+                Width = 49
               end>
           end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Width = 764
-      object RzBitBtn2: TRzBitBtn
-        Left = 687
-        Top = 10
-        Width = 67
-        Height = 26
-        Anchors = [akTop, akRight]
-        Caption = #20851#38381'(&C)'
-        Color = clSilver
+      Top = 340
+      Width = 593
+      object RzStatusPane5: TRzStatusPane
+        Left = 22
+        Top = 3
+        Width = 88
+        Height = 37
+        FillColor = clRed
+        ParentFillColor = False
+        Color = clYellow
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
         Font.Name = #23435#20307
         Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
+        ParentColor = False
         ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 0
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = RzBitBtn2Click
-        NumGlyphs = 2
-        Spacing = 5
+        Alignment = taCenter
+        Caption = #26680#23545#26080#35823
+      end
+      object RzStatusPane4: TRzStatusPane
+        Left = 118
+        Top = 3
+        Width = 88
+        Height = 37
+        Color = clYellow
+        ParentColor = False
+        Alignment = taCenter
+        Caption = #26680#23545#38169#35823
       end
     end
   end
@@ -280,11 +265,6 @@ inherited frmGodsComPare: TfrmGodsComPare
       item
         Name = 'SCANAMOUNT'
         DataType = ftFloat
-      end
-      item
-        Name = 'STATUS'
-        DataType = ftString
-        Size = 50
       end>
     CachedUpdates = True
     Params = <>

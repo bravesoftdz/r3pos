@@ -347,7 +347,12 @@ uses
   ObjVhLeadOrder in 'Obj\ObjVhLeadOrder.pas',
   ObjVhPayGlide in 'Obj\ObjVhPayGlide.pas',
   ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas',
-  ufrmFilterUser in 'App\ufrmFilterUser.pas' {frmFilterUser};
+  ufrmFilterUser in 'App\ufrmFilterUser.pas' {frmFilterUser},
+  ufrmColorGroupInfo in 'App\ufrmColorGroupInfo.pas' {frmColorGroupInfo},
+  ufrmSizeGroupInfo in 'App\ufrmSizeGroupInfo.pas' {frmSizeGroupInfo},
+  ufrmSizeInfo in 'App\ufrmSizeInfo.pas' {frmSizeInfo},
+  ufrmColorInfo in 'App\ufrmColorInfo.pas' {frmColorInfo},
+  ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber};
 
 {$R *.res}
 var

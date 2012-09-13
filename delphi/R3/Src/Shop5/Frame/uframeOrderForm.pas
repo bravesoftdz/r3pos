@@ -70,6 +70,7 @@ type
     munUnitConvert: TMenuItem;
     mnuIsPressent: TMenuItem;
     Excel1: TMenuItem;
+    GodsCompare: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -123,6 +124,7 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure Excel1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure GodsCompareClick(Sender: TObject);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -204,7 +206,7 @@ type
 
     //Excel导入中各继承模块字段名 (2011.06.22)
     FieldsString,FormatString:String;
-    
+
     Locked:boolean;
     AObj:TRecord_;
     //重复条码控制
@@ -229,6 +231,7 @@ type
     procedure InitRecord;virtual;
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
+    function GetDetail:TDataSet;virtual;
 
     procedure CheckLowerPrice(aprc:Currency);
     function CheckInput:boolean;virtual;
@@ -251,7 +254,7 @@ type
     procedure ClearInvaid;virtual;
     //检测数据合法性
     procedure CheckInvaid;virtual;
-    
+
     //检测是否是汇总字段
     function CheckSumField(FieldName:string):boolean;virtual;
 
@@ -307,7 +310,7 @@ type
 
 implementation
 uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory,
-uframeDialogProperty, uframeSelectGoods, ufrmGoodsInfo, uframeListDialog, ufrmExcelFactory;
+uframeDialogProperty, uframeSelectGoods, ufrmGoodsInfo, uframeListDialog, ufrmExcelFactory,ufrmGodsComPare;
 {$R *.dfm}
 var ExportForm:TframeOrderForm;
 
@@ -3012,7 +3015,7 @@ var
   b:string;
   pbar:TZQuery;
 begin
-  pbar := Global.GetZQueryFromName('PUB_BARCODE'); 
+  pbar := Global.GetZQueryFromName('PUB_BARCODE');
   basInfo.Filtered := false;
   if basInfo.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
@@ -3021,7 +3024,7 @@ begin
           b := basInfo.FieldbyName('BARCODE').asString
        else
           begin
-            if pbar.Locate('GODS_ID,UNIT_ID',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString]),[]) then
+            if pbar.Locate('GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString,'#','#']),[]) then
                b := pbar.FieldbyName('BARCODE').asString
             else
                b := basInfo.FieldbyName('BARCODE').asString;
@@ -3910,6 +3913,30 @@ procedure TframeOrderForm.FormCreate(Sender: TObject);
 begin
   inherited;
   //
+end;
+
+procedure TframeOrderForm.GodsCompareClick(Sender: TObject);
+begin
+  inherited;
+  if GetDetail<>nil then
+     TfrmGodsComPare.ShowDialog(self,GetDetail)
+  else
+     Raise Exception.Create('此模块不支持验货操作');
+end;
+
+function TframeOrderForm.GetDetail: TDataSet;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to self.ComponentCount-1 do
+    begin
+      if self.Components[i].Name = 'cdsDetail' then
+         begin
+           result := TDataSet(Components[i]);
+           break;
+         end;
+    end;
 end;
 
 end.

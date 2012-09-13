@@ -358,7 +358,8 @@ uses
   ObjSizeInfo in 'Obj\ObjSizeInfo.pas',
   ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber},
   ufrmBatchAdjustPrice in 'App\ufrmBatchAdjustPrice.pas' {frmBatchAdjustPrice},
-  ufrmPriceingInfo in 'App\ufrmPriceingInfo.pas' {frmPriceingInfo};
+  ufrmPriceingInfo in 'App\ufrmPriceingInfo.pas' {frmPriceingInfo},
+  ufrmGodsComPare in 'App\ufrmGodsComPare.pas' {frmGodsComPare};
 
 {$R *.res}
 var

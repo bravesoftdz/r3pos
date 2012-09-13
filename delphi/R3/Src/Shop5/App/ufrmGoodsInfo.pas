@@ -421,7 +421,8 @@ begin
     SetCol.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
     rs.Next;
   end;
-
+  SetCol.KeyList.Add('#');
+  SetCol.PickList.Add('不分色');
   rs := ShopGlobal.GetZQueryFromName('PUB_SIZE_INFO');
   SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_01');
   rs.First;
@@ -431,6 +432,8 @@ begin
     SetCol.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
     rs.Next;
   end;
+  SetCol.KeyList.Add('#');
+  SetCol.PickList.Add('不分码');
 end;
 
 procedure TfrmGoodsInfo.FormDestroy(Sender: TObject);
@@ -3341,6 +3344,7 @@ begin
   if dbState = dsBrowse then Exit;
   if edtSORT_ID7.AsString = '' then Exit;
   if edtSORT_ID8.AsString = '' then Exit;
+  if (edtSORT_ID8.AsString = '#') and (edtSORT_ID7.AsString = '#') then Exit;
   Cs := ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
   Ss := ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
   if (length(AObj.FieldByName('GODS_CODE').AsString)=6) and fnString.IsNumberChar(AObj.FieldByName('GODS_CODE').AsString) then
@@ -3379,6 +3383,36 @@ begin
         Ss.Next;
       end;
       Cs.Next;
+    end;
+    Ss.First;
+    while not  Ss.Eof do
+    begin
+      if not ExtBarCode.Locate('PROPERTY_01,PROPERTY_02',VarArrayOf([Ss.FieldByName('SIZE_ID').AsString,'#']),[]) then
+      begin
+        //InitRecord;
+        ExtBarCode.Append;
+        ExtBarCode.FieldByName('UNIT_ID').AsString:=edtCALC_UNITS.AsString;
+        ExtBarCode.FieldByName('BARCODE').AsString:=GetBarCode(CreateBarcode,Ss.FieldByName('BARCODE_FLAG').AsString,'#');
+        ExtBarCode.FieldByName('PROPERTY_01').AsString:=Ss.FieldByName('SIZE_ID').AsString;
+        ExtBarCode.FieldByName('PROPERTY_02').AsString:='#';
+        ExtBarCode.Post;
+      end;
+      Ss.Next;
+    end;
+    cs.First;
+    while not cs.Eof do
+    begin
+      if not ExtBarCode.Locate('PROPERTY_01,PROPERTY_02',VarArrayOf(['#',Cs.FieldByName('COLOR_ID').AsString]),[]) then
+      begin
+        //InitRecord;
+        ExtBarCode.Append;
+        ExtBarCode.FieldByName('UNIT_ID').AsString:=edtCALC_UNITS.AsString;
+        ExtBarCode.FieldByName('BARCODE').AsString:=GetBarCode(CreateBarcode,'#',cs.FieldByName('BARCODE_FLAG').AsString);
+        ExtBarCode.FieldByName('PROPERTY_01').AsString:='#';
+        ExtBarCode.FieldByName('PROPERTY_02').AsString:=cs.FieldByName('COLOR_ID').AsString;
+        ExtBarCode.Post;
+      end;
+      cs.Next;
     end;
   finally
     Cs.Filtered := False;

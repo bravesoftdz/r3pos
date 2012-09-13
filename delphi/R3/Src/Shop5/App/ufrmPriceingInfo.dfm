@@ -16,8 +16,8 @@ inherited frmPriceingInfo: TfrmPriceingInfo
             Tag = -1
             Left = 5
             Top = 5
-            Width = 524
-            Height = 300
+            Width = 516
+            Height = 289
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             Color = clWhite

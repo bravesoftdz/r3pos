@@ -266,7 +266,7 @@ var BytesTransd:cardinal;
     Buf:PPER_IO_OPERATION_DATA;
     ASocket:TServerClientSocket;
 begin
-  while (not Terminated)  do
+  while (not Terminated) do
     begin
       BytesTransd := 0;
       ASocket := nil;

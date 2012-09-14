@@ -169,9 +169,11 @@ type
     FThreadLock:TRTLCriticalSection;
     FMaxCache: integer;
     FDBCacheLockCount: integer;
+    FTimerOut: integer;
     procedure SetMaxCache(const Value: integer);
     procedure SetDBCacheLockCount(const Value: integer);
     function GetCount: integer;
+    procedure SetTimerOut(const Value: integer);
   protected
     F:TIniFile;
     procedure Enter;
@@ -192,6 +194,7 @@ type
     property MaxCache:integer read FMaxCache write SetMaxCache;
     property DBCacheLockCount:integer read FDBCacheLockCount write SetDBCacheLockCount;
     property Count:integer read GetCount;
+    property TimerOut:integer read FTimerOut write SetTimerOut;
   end;
 
 var
@@ -1122,6 +1125,7 @@ begin
   InitializeCriticalSection(FThreadLock);
   FList := TList.Create;
   MaxCache := 10;
+  TimerOut := 30;
 end;
 
 destructor TZConnCache.Destroy;
@@ -1233,6 +1237,11 @@ begin
     begin
       FreeCache(i);
     end;
+end;
+
+procedure TZConnCache.SetTimerOut(const Value: integer);
+begin
+  FTimerOut := Value;
 end;
 
 initialization

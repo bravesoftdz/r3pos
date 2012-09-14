@@ -241,15 +241,15 @@ function TdbHelp.CheckError(s:string): boolean;
 begin
   result := false;
 //  if ZConn.Protocol='sqlite-3' then exit;
-  result := not ZConn.InTransaction and (
-     (pos('网络错误',s)>0) or
-     (pos('连接断开',s)>0) or
-     (pos('连接关闭',s)>0) or
-     (pos('通信链路故障',s)>0) or
+  result := ( //not ZConn.InTransaction and (
+     (pos('网络',s)>0) or
+     (pos('连接',s)>0) or
+     (pos('通信',s)>0) or
      (pos('ORA-12170',s)>0) or
      (pos('SQL0952N',s)>0) or
      (pos('SQL30081N',s)>0) or
      (pos('CLI0106E',s)>0) or
+     (pos('ORA-03114',s)>0) or
      (pos('database is locked',s)>0)
   );
 end;
@@ -471,7 +471,7 @@ end;
 procedure TdbHelp.RollbackTrans;
 begin
   try
-//    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback'); 
+//    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback');
     ZConn.Rollback;
     ZConn.TransactIsolationLevel := tiNone;
   except

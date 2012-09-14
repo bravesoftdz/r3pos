@@ -1316,37 +1316,37 @@ begin
         ftSmallint,ftInteger,ftWord:
            begin
              ss.Read(p1,sizeof(p1));
-             Params[i].AsInteger := p1;
+             param.AsInteger := p1;
            end;
         ftBoolean:
            begin
              ss.Read(p2,sizeof(p2));
-             Params[i].AsBoolean := p2;
+             param.AsBoolean := p2;
            end;
         ftCurrency,ftBCD:
            begin
              ss.Read(p3,sizeof(p3));
-             Params[i].AsCurrency := p3;
+             param.AsCurrency := p3;
            end;
         ftDate,ftTime,ftDateTime:
            begin
              ss.Read(p4,sizeof(p4));
-             Params[i].AsDateTime := p4;
+             param.AsDateTime := p4;
            end;
         ftFloat:
            begin
              ss.Read(p5,sizeof(p5));
-             Params[i].AsFloat := p5;
+             param.AsFloat := p5;
            end;
         ftLargeint:
            begin
              ss.Read(p6,sizeof(p6));
-             Params[i].asString := inttostr(p6);
+             param.asString := inttostr(p6);
            end;
         ftFMTBcd:
            begin
              ss.Read(p7,sizeof(p7));
-             Params[i].AsFMTBCD := p7;
+             param.AsFMTBCD := p7;
            end;
         else
            Raise Exception.Create('不支持的数据参数类型'); 

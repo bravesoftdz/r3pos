@@ -102,17 +102,23 @@ begin
 end;
 
 procedure TframeSelectGoods.InitGrid;
-var rs: TZQuery;
+var
+  rs: TZQuery;
+  SetCol:TColumnEh;
 begin
   inherited;
-  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-  rs.First;
-  while not rs.Eof do
+  SetCol:=FindDBColumn(DBGridEh1,'UNIT_ID');
+  if SetCol<>nil then
+  begin
+    rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+    rs.First;
+    while not rs.Eof do
     begin
-      DBGridEh1.Columns[5].KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
-      DBGridEh1.Columns[5].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
+      SetCol.KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
+      SetCol.PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
       rs.Next;
     end;
+  end;
   rs := Global.GetZQueryFromName('PUB_STAT_INFO');
   TdsItems.AddDataSetToItems(rs,fndGODS_FLAG1.Properties.Items,'CODE_NAME');
   fndGODS_FLAG1.ItemIndex := 0;
@@ -297,9 +303,12 @@ begin
 end;
 
 procedure TframeSelectGoods.SetMultiSelect(const Value: boolean);
+var
+  SetCol:TColumnEh;
 begin
   FMultiSelect := Value;
-  DBGridEh1.Columns[0].Visible := Value;
+  SetCol:=FindDBColumn(DBGridEh1,'A');
+  if SetCol<>nil then SetCol.Visible := Value;
   N2.Enabled:=Value;
   N3.Enabled:=Value;
   N4.Enabled:=Value;
@@ -414,6 +423,8 @@ begin
 end;
 
 procedure TframeSelectGoods.FormCreate(Sender: TObject);
+var
+  SetCol:TColumnEh;
 begin
   inherited;
   Lock := false;
@@ -422,7 +433,10 @@ begin
   N4.Enabled:=False;
   // 判断是否有查询库存权限
   if not ShopGlobal.GetChkRight('14500001',1) then
-     DBGridEh1.Columns[3].Free;
+  begin
+    SetCol:=FindDBColumn(DBGridEh1,'AMOUNT');
+    if SetCol<>nil then SetCol.Free;
+  end;
 end;
 
 procedure TframeSelectGoods.chkMultSelectClick(Sender: TObject);

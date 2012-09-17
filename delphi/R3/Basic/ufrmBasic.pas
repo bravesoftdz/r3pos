@@ -131,6 +131,7 @@ constructor TfrmBasic.Create(AOwner: TComponent);
 var i,c:integer;
 begin
   inherited;
+//  DefaultMonitor :=  dmMainForm;
   UIFactory.InitForm(self); 
   PageHandle := 0;
   ContainerHanle := 0;

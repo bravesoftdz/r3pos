@@ -553,7 +553,7 @@ begin
     else
        begin
          ConStr := F.ReadString('db','Connstr','');
-         if debug and (ConStr='') then
+         if debug or (ConStr='') then
             begin
               if not FileExists(Global.InstallPath+'data\r3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\r3.db'),false);
               Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db');

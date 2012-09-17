@@ -564,16 +564,13 @@ class function FnString.GetBarProCode(ID, Size, Color: string): string;
   end;
 var s,m:string;
 begin
-  if not( Length(ID) in [6,7]) then
-     Raise Exception.Create('条码种子位必须是6或7位');
-  if Length(Size)>3 then
-     Raise Exception.Create('尺码属于不能大于3位');
-  if Length(Color)>2 then
-     Raise Exception.Create('颜色属于不能大于2位');
-  if Length(ID)=6 then
-     s := '9'+FnString.FormatStringEx(ID,6)+FnString.FormatStringEx(Size,3)+FnString.FormatStringEx(Color,2)
-  else
-     s := '8'+FnString.FormatStringEx(ID,7)+FnString.FormatStringEx(Size,2)+FnString.FormatStringEx(Color,2);
+  if not( Length(ID) in [6]) then
+     Raise Exception.Create('条码种子位必须是6位');
+  if Length(Size)<>2 then
+     Raise Exception.Create('尺码属于必须是2位数字');
+  if Length(Color)<>3 then
+     Raise Exception.Create('颜色属于必须是3位数字');
+  s := '9'+FnString.FormatStringEx(ID,6)+FnString.FormatStringEx(Size,2)+FnString.FormatStringEx(Color,3);
   Result := GetCodeFlag(s);
 end;
 

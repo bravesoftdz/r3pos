@@ -1000,7 +1000,10 @@ begin
 
   //业务员
   if Trim(fndP4_GUIDE_USER.Text) <> '' then
+  begin
     StrCnd := StrCnd + ' and isnull(GUIDE_USER,'''')='''+fndP4_GUIDE_USER.AsString+''' ';
+    strWhere := strWhere + ' and isnull(GUIDE_USER,'''')='''+fndP4_GUIDE_USER.AsString+''' ';
+  end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
@@ -1169,7 +1172,10 @@ begin
 
   //业务员
   if Trim(fndP3_GUIDE_USER.Text) <> '' then
+  begin
+    strWhere := strWhere + ' and isnull(GUIDE_USER,'''')='''+fndP3_GUIDE_USER.AsString+''' ';
     StrCnd := StrCnd + ' and isnull(GUIDE_USER,'''')='''+fndP3_GUIDE_USER.AsString+''' ';
+  end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
@@ -1467,7 +1473,10 @@ begin
 
   //业务员
   if Trim(fndP2_GUIDE_USER.Text) <> '' then
+  begin
+    strWhere:=strWhere + ' and isnull(GUIDE_USER,'''')='''+fndP2_GUIDE_USER.AsString+''' ';
     StrCnd := StrCnd + ' and isnull(GUIDE_USER,'''')='''+fndP2_GUIDE_USER.AsString+''' ';
+  end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
@@ -1604,7 +1613,10 @@ begin
     end;
   //业务员
   if Trim(fndP1_GUIDE_USER.Text) <> '' then
+  begin
+    strWhere:=strWhere + ' and GUIDE_USER='''+fndP1_GUIDE_USER.AsString+''' ';
     StrCnd := StrCnd + ' and GUIDE_USER='''+fndP1_GUIDE_USER.AsString+''' ';
+  end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin

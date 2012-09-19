@@ -783,6 +783,7 @@ begin
      begin
        dbResolver.DisConnect;
        ConnCache.Push(dbResolver);
+       dbResolver := nil;
      end;
   inherited;
 end;

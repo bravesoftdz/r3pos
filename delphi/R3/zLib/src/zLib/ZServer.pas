@@ -51,6 +51,7 @@ type
   protected
     function CheckIdTransact:boolean;
     procedure PushCache;
+    procedure ForcePushCache;
 
     function  DoSKTOpenCommandText(Token,LocaleID: Integer;
       Flags: Word; var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;
@@ -231,6 +232,7 @@ end;
 
 destructor TDoInvokeDispatch.Destroy;
 begin
+  ForcePushCache;
   inherited;
 end;
 
@@ -734,6 +736,16 @@ begin
   end;
 end;
 
+procedure TDoInvokeDispatch.ForcePushCache;
+begin
+  if Assigned(Session) and Assigned(Session.dbResolver) then
+     begin
+       ConnCache.Push(Session.dbResolver);
+       Session.dbResolver := nil;
+       dbLock := false;
+     end;
+end;
+
 procedure TDoInvokeDispatch.PushCache;
 begin
   if not Assigned(Session) then Raise Exception.Create('dbid连接参数没有设置，无法找到对应的Session');
@@ -753,6 +765,7 @@ end;
 
 procedure TDoInvokeDispatch.SetSession(const Value: TZSession);
 begin
+  ForcePushCache;
   FSession := Value;
 end;
 

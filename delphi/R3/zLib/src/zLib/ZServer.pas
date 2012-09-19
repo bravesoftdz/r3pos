@@ -740,7 +740,7 @@ procedure TDoInvokeDispatch.ForcePushCache;
 begin
   if Assigned(Session) and Assigned(Session.dbResolver) then
      begin
-       Session.dbResolver.DisConnect;
+       //Session.dbResolver.DisConnect;
        ConnCache.Push(Session.dbResolver);
        Session.dbResolver := nil;
        dbLock := false;
@@ -781,7 +781,7 @@ destructor TZSession.Destroy;
 begin
   if Assigned(dbResolver) then
      begin
-       dbResolver.DisConnect;
+       //dbResolver.DisConnect;
        ConnCache.Push(dbResolver);
        dbResolver := nil;
      end;

@@ -218,8 +218,8 @@ begin
     Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsOldFloat;  //门店(原)小包装售价
     Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsOldFloat;  //门店(原)大包装售价
     Params.ParamByName('NEW_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;       //门店(新)计量售价
-    Params.ParamByName('NEW_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;      //门店(新)小包装售价
-    Params.ParamByName('NEW_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;      //门店(新)大包装售价
+    Params.ParamByName('NEW_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsFloat;      //门店(新)小包装售价
+    Params.ParamByName('NEW_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsFloat;      //门店(新)大包装售价
 
     Str:='Insert Into LOG_PRICING_INFO (ROWS_ID,PRICING_DATE,PRICING_USER,TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,'+
          ' ORG_OUTPRICE,ORG_OUTPRICE1,ORG_OUTPRICE2,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP)'+

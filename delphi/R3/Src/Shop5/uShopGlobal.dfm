@@ -188,8 +188,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select  GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,UNIT_ID,C' +
-        'ALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
+        'select 0 as A,GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,UNI' +
+        'T_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
       '       NEW_INPRICE,'
       '       NEW_INPRICE1,'
       '       NEW_INPRICE2,'

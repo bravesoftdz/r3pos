@@ -1,30 +1,31 @@
 inherited frmStgTotalReport: TfrmStgTotalReport
+  Left = 187
   Top = 102
-  Width = 939
+  Width = 941
   Height = 543
   Caption = #24211#23384#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 931
+    Width = 933
     Height = 479
     inherited RzPanel2: TRzPanel
-      Width = 921
+      Width = 923
       Height = 469
       inherited RzPage: TRzPageControl
-        Width = 716
+        Width = 718
         Height = 463
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 714
+            Width = 716
             Height = 436
             inherited Panel4: TPanel
-              Width = 704
+              Width = 706
               Height = 426
               inherited w1: TRzPanel
-                Width = 704
+                Width = 706
                 Height = 102
                 object Label3: TLabel
                   Left = 287
@@ -48,13 +49,6 @@ inherited frmStgTotalReport: TfrmStgTotalReport
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
-                object Label24: TLabel
-                  Left = 287
-                  Top = 80
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label25: TLabel
                   Left = 24
                   Top = 80
@@ -63,7 +57,7 @@ inherited frmStgTotalReport: TfrmStgTotalReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 563
+                  Left = 565
                   Top = 80
                   Width = 48
                   Height = 12
@@ -89,6 +83,13 @@ inherited frmStgTotalReport: TfrmStgTotalReport
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
+                end
+                object Label13: TLabel
+                  Left = 287
+                  Top = 80
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object rptTemplate: TcxComboBox
                   Left = 342
@@ -224,7 +225,7 @@ inherited frmStgTotalReport: TfrmStgTotalReport
                   TabOrder = 7
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 612
+                  Left = 614
                   Top = 76
                   Width = 80
                   Height = 20
@@ -279,9 +280,9 @@ inherited frmStgTotalReport: TfrmStgTotalReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 342
+                  Left = 154
                   Top = 76
-                  Width = 121
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -416,13 +417,64 @@ inherited frmStgTotalReport: TfrmStgTotalReport
                     #23567#20110#38646)
                   TabOrder = 6
                 end
+                object fndP1_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 342
+                  Top = 76
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 15
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 102
-                Width = 704
+                Width = 706
                 Height = 324
                 inherited DBGridEh1: TDBGridEh
-                  Width = 700
+                  Width = 702
                   Height = 320
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
@@ -432,7 +484,7 @@ inherited frmStgTotalReport: TfrmStgTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 719
+        Left = 721
         Height = 463
         Visible = False
         inherited Panel2: TPanel
@@ -448,11 +500,15 @@ inherited frmStgTotalReport: TfrmStgTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 931
+    Width = 933
+    inherited Image3: TImage
+      Width = 2
+    end
     inherited Image14: TImage
-      Left = 911
+      Left = 913
     end
     inherited Image1: TImage
+      Left = 352
       Width = 561
     end
   end

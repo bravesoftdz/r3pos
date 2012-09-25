@@ -18,7 +18,6 @@ type
     btnNew: TRzBitBtn;
     btnEdit: TRzBitBtn;
     RzBitBtn1: TRzBitBtn;
-    Label4: TLabel;
     Label5: TLabel;
     Label16: TLabel;
     Label23: TLabel;
@@ -47,6 +46,8 @@ type
     P1_DateControl: TfrmDateControl;
     Label45: TLabel;
     fndP1_SALES_STYLE: TcxComboBox;
+    Label13: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -310,13 +311,13 @@ begin
     end;
   end;
 
-  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+  if (fndP1_STAT_ID.Visible) and (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'')  and (trim(srid1)<>'') then
+  if (fndP1_SORT_ID.Visible) and (trim(fndP1_SORT_ID.Text)<>'')  and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
     case Factor.iDbType of
@@ -328,6 +329,10 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
+  //2012.09.24增加商品条件
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere := strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID'); 
+
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin

@@ -23,7 +23,6 @@ type
     RzLabel8: TRzLabel;
     RzLabel9: TRzLabel;
     Label21: TLabel;
-    Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
     Label12: TLabel;
@@ -37,6 +36,8 @@ type
     fndP1_SHOP_VALUE: TzrComboBoxList;
     fndP1_SHOP_TYPE: TcxComboBox;
     P1_DateControl: TfrmDateControl;
+    Label13: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -288,7 +289,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
-
+  //2012.09.24商品名称
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID');  
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'

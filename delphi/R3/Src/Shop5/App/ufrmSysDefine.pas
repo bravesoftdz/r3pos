@@ -130,6 +130,8 @@ type
     chkAUTO_SYNC: TcxCheckBox;
     edtSEND_HINT: TcxCheckBox;
     edtRECEIVE_HINT: TcxCheckBox;
+    TabSheet5: TTabSheet;
+    CB_REPORT_GODS_MULTI: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -445,6 +447,10 @@ begin
       else
          edtInLevel1.Checked := true;
     end;
+    //2012.09.22报表启用商品多选
+    if Define = 'REPORT_GODS_MULTI' then
+      CB_REPORT_GODS_MULTI.Checked:=(trim(Value)='1');
+
     cdsTable.Next;
   end;
 
@@ -594,6 +600,11 @@ begin
     SetValue('InLevel', '1')
   else if  edtInLevel2.Checked then
     SetValue('InLevel', '2');
+  //2012.09.22报表启用商品多选
+  if CB_REPORT_GODS_MULTI.Checked then
+    SetValue('REPORT_GODS_MULTI', '1')
+  else
+    SetValue('REPORT_GODS_MULTI', '0');
   WriteBarCodeRule;
 end;
 

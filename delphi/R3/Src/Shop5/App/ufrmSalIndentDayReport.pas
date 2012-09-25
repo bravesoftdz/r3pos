@@ -29,7 +29,6 @@ type
     RzPanel13: TRzPanel;
     dsadoReport4: TDataSource;
     dsadoReport5: TDataSource;
-    Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label5: TLabel;
@@ -50,7 +49,6 @@ type
     RzLabel10: TRzLabel;
     RzLabel11: TRzLabel;
     Label17: TLabel;
-    Label18: TLabel;
     Label22: TLabel;
     Label28: TLabel;
     P6_D1: TcxDateEdit;
@@ -86,7 +84,6 @@ type
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
     Label10: TLabel;
-    Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
     P3_D1: TcxDateEdit;
@@ -118,7 +115,6 @@ type
     RzPanel19: TRzPanel;
     RzLabel1: TRzLabel;
     RzLabel12: TRzLabel;
-    Label3: TLabel;
     Label4: TLabel;
     Label16: TLabel;
     Label23: TLabel;
@@ -143,7 +139,6 @@ type
     RzLabel8: TRzLabel;
     RzLabel9: TRzLabel;
     Label21: TLabel;
-    Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
     Label12: TLabel;
@@ -181,6 +176,12 @@ type
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
     P6_DateControl: TfrmDateControl;
+    Label3: TLabel;
+    fndP4_GODS_ID: TzrComboBoxList;
+    Label6: TLabel;
+    fndP5_GODS_ID: TzrComboBoxList;
+    Label13: TLabel;
+    fndP6_GODS_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
@@ -416,13 +417,13 @@ begin
   end;
 
   //商品指标:
-  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+  if (fndP1_STAT_ID.Visible) and (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+  if (fndP1_SORT_ID.Visible) and (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -437,7 +438,7 @@ begin
 
   //2011.05.11 Add 商品名称:
   if trim(fndP1_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID');
     
   //取数SQL:
   SQLData:=
@@ -529,7 +530,7 @@ begin
 
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP2_GODS_ID.AsString,'A.GODS_ID');
   //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
   if trim(fndP2_DEPT_ID.AsString)<>'' then   
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
@@ -705,7 +706,7 @@ begin
 
   //2011.05.11 Add 商品名称:
   if trim(fndP3_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP3_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP3_GODS_ID.AsString,'A.GODS_ID');
 
   //取数SQL:
   SQLData:=
@@ -810,7 +811,10 @@ begin
   //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
   if trim(fndP4_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
-
+  //2012.09.25 Add 商品名称:
+  if trim(fndP4_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP4_GODS_ID.AsString,'A.GODS_ID');
+                                            
   //取数SQL:
   SQLData:=
      '(select M.TENANT_ID,M.SHOP_ID,M.DEPT_ID,INDE_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as INDE_AMT,(CALC_MONEY+AGIO_MONEY) as INDE_RTL,FNSH_AMOUNT as FNSH_AMT '+
@@ -962,6 +966,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //2011.05.11 Add 商品名称:
+  if trim(fndP5_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP5_GODS_ID.AsString,'A.GODS_ID');
 
   //取数SQL:
   SQLData:=
@@ -1049,8 +1056,10 @@ begin
   end;
 
   //GodsID不为空：
-  if trim(GodsID)<>'' then
-    StrCnd:=StrCnd+' and S.GODS_ID='''+GodsID+''' ';
+  //if trim(GodsID)<>'' then StrCnd:=StrCnd+' and S.GODS_ID='''+GodsID+''' ';
+  //2011.05.11 Add 商品名称:
+  if trim(fndP6_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP6_GODS_ID.AsString,'A.GODS_ID');
 
   //月份日期:
   if (P6_D1.Text<>'') and (P6_D1.Date=P6_D2.Date) then
@@ -1224,6 +1233,7 @@ begin
   Copy_ParamsValue('SHOP_TYPE',4,5);  //门店群组
   Copy_ParamsValue(fndP4_SHOP_ID, fndP5_SHOP_ID);  //门店名称
   Copy_ParamsValue(fndP4_DEPT_ID, fndP5_DEPT_ID);  //部门名称
+  Copy_ParamsValue(fndP4_GODS_ID,fndP5_GODS_ID);   //商品名称  
   fndP5_UNIT_ID.ItemIndex:=fndP4_UNIT_ID.ItemIndex; //显示单位
   fndP5_SALES_STYLE.ItemIndex:=fndP4_SALES_STYLE.ItemIndex;
 
@@ -1242,6 +1252,8 @@ begin
   inherited;
   if adoReport5.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport5.FieldbyName('GODS_ID').AsString);
+  SetGodsIDValue(fndP6_GODS_ID,GodsID);
+    
   P6_D1.Date:=P5_D1.Date;
   P6_D2.Date:=P5_D2.Date;
   sid6:=sid5;
@@ -1252,7 +1264,6 @@ begin
   Copy_ParamsValue('SHOP_TYPE',5,6); //管理群组
   Copy_ParamsValue('TYPE_ID',5,6);   //商品指标
   fndP6_SALES_STYLE.ItemIndex:=fndP5_SALES_STYLE.ItemIndex;
-
   
   RzPage.ActivePageIndex:=5;
   actFindExecute(nil);
@@ -1469,6 +1480,7 @@ begin
   P3_D2.Date:=P2_D2.Date;
   Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID);  //部门
   Copy_ParamsValue('TYPE_ID',2,3);          //指标
+  Copy_ParamsValue(fndP2_GODS_ID,fndP3_GODS_ID); //商品名称  
   fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
 
   fndP3_SHOP_TYPE.ItemIndex:=0;  //管理群组
@@ -1488,6 +1500,7 @@ begin
   P4_D2.Date:=P3_D2.Date;
   Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID); //部门名称
   Copy_ParamsValue('SHOP_TYPE',3,4);   //管理群组
+  Copy_ParamsValue(fndP3_GODS_ID,fndP4_GODS_ID); //商品名称
   fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex; //显示单位
   fndP4_SALES_STYLE.ItemIndex:=fndP3_SALES_STYLE.ItemIndex;
 

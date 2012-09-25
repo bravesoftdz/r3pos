@@ -1,5 +1,6 @@
 inherited frmStorageDayReport: TfrmStorageDayReport
-  Left = 191
+  Left = 190
+  Top = 105
   Width = 1083
   Height = 622
   Caption = #21830#21697#24211#23384#25253#34920
@@ -39,13 +40,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Alignment = taRightJustify
                   Caption = #24211#23384#26085#26399
                 end
-                object Label6: TLabel
-                  Left = 288
-                  Top = 57
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label7: TLabel
                   Left = 24
                   Top = 57
@@ -68,6 +62,13 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
+                object lblGodsName: TLabel
+                  Left = 292
+                  Top = 57
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
+                end
                 object P1_D1: TcxDateEdit
                   Left = 154
                   Top = 9
@@ -78,8 +79,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 478
-                  Top = 42
+                  Left = 486
+                  Top = 40
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -174,9 +175,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 344
+                  Left = 154
                   Top = 53
-                  Width = 121
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -255,6 +256,57 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #26085#32467#24211#23384)
                   TabOrder = 0
                 end
+                object fndP1_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 346
+                  Top = 53
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 9
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 80
@@ -274,6 +326,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -281,6 +334,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'REGION_ID'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
@@ -289,6 +343,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'CODE_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
                     end
@@ -300,6 +355,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
@@ -310,6 +366,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BAL_PRC'
                       Footer.DisplayFormat = '#0.00#'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22343#20215
                       Width = 91
                     end
@@ -321,6 +378,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
                     end
@@ -331,6 +389,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BAL_OUTPRC'
                       Footer.DisplayFormat = '#0.00#'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38646#21806#22343#20215
                       Width = 79
                     end
@@ -342,6 +401,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97
                     end>
@@ -398,13 +458,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
-                object Label13: TLabel
-                  Left = 288
-                  Top = 56
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label14: TLabel
                   Left = 24
                   Top = 56
@@ -419,6 +472,13 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Height = 12
                   Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
+                end
+                object Label3: TLabel
+                  Left = 292
+                  Top = 57
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P2_D1: TcxDateEdit
                   Left = 154
@@ -566,9 +626,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
-                  Left = 344
+                  Left = 154
                   Top = 52
-                  Width = 121
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -603,6 +663,57 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #24403#21069#24211#23384
                     #26085#32467#24211#23384)
                   TabOrder = 0
+                end
+                object fndP2_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 346
+                  Top = 53
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 9
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel10: TRzPanel
@@ -668,6 +779,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -675,6 +787,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'SHOP_CODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38376#24215#20195#30721
                       Width = 59
                     end
@@ -683,6 +796,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'SHOP_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38376#24215#21517#31216
                       Width = 146
                     end
@@ -694,6 +808,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
@@ -703,6 +818,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22343#20215
                       Width = 91
                     end
@@ -713,6 +829,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BAL_CST'
                       Footer.DisplayFormat = '#0.00'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
                     end
@@ -722,6 +839,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38646#21806#22343#20215
                       Width = 79
                     end
@@ -732,6 +850,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97
                     end>
@@ -765,14 +884,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 80
+                Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
                   848
-                  80)
+                  79)
                 object RzLabel6: TRzLabel
                   Left = 24
                   Top = 12
@@ -783,21 +902,21 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object Label9: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 57
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
                   Left = 705
-                  Top = 57
+                  Top = 56
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -809,6 +928,13 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label6: TLabel
+                  Left = 288
+                  Top = 56
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P3_D1: TcxDateEdit
                   Left = 154
@@ -839,7 +965,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 7
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -849,7 +975,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 53
+                  Top = 52
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -858,7 +984,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -891,17 +1017,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
-                  Top = 53
+                  Top = 30
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
-                  TabOrder = 5
+                  TabOrder = 4
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 755
-                  Top = 53
+                  Top = 52
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -911,7 +1037,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 6
+                  TabOrder = 7
                 end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -980,12 +1106,63 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #26085#32467#24211#23384)
                   TabOrder = 0
                 end
+                object fndP3_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 52
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 6
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 80
+                Top = 79
                 Width = 848
-                Height = 425
+                Height = 426
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -995,7 +1172,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 421
+                  Height = 422
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1045,6 +1222,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -1053,6 +1231,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'SORT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #20998#31867#21517#31216
                       Width = 171
                     end
@@ -1064,6 +1243,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
@@ -1073,6 +1253,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22343#20215
                       Width = 91
                     end
@@ -1084,6 +1265,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
                     end
@@ -1093,6 +1275,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38646#21806#20215
                       Width = 79
                     end
@@ -1104,6 +1287,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97
                     end>
@@ -1160,13 +1344,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
-                object Label24: TLabel
-                  Left = 289
-                  Top = 56
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label25: TLabel
                   Left = 24
                   Top = 78
@@ -1204,10 +1381,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object Label38: TLabel
                   Left = 289
-                  Top = 78
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #32479#35745#31867#22411
+                end
+                object Label13: TLabel
+                  Left = 288
+                  Top = 78
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P4_D1: TcxDateEdit
                   Left = 154
@@ -1238,7 +1422,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1266,7 +1450,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 10
+                  TabOrder = 11
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -1280,7 +1464,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 9
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1312,9 +1496,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 52
-                  Width = 121
+                  Left = 154
+                  Top = 74
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -1323,7 +1507,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 8
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
@@ -1454,7 +1638,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object fndP4_RPTTYPE: TcxComboBox
                   Left = 344
-                  Top = 74
+                  Top = 52
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1464,7 +1648,58 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #21830#21697#36827#38144#23384#32479#35745#34920
                     #32676#32452#36827#38144#23384#32479#35745#34920
                     #20379#24212#21830#36827#38144#23384#32479#35745#34920)
-                  TabOrder = 9
+                  TabOrder = 6
+                end
+                object fndP4_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 74
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 10
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel15: TRzPanel
@@ -1531,6 +1766,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24207#21495
                       Width = 30
                     end
@@ -1539,6 +1775,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
                     end
@@ -1546,6 +1783,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #26465#30721
                       Width = 82
                     end
@@ -1553,6 +1791,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #36135#21495
                       Width = 82
                     end
@@ -1560,6 +1799,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #21333#20301
                       Width = 30
                     end
@@ -1572,6 +1812,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
@@ -1582,6 +1823,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BAL_PRC'
                       Footer.Alignment = taRightJustify
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #22343#20215
                       Width = 91
                     end
@@ -1594,6 +1836,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
                     end
@@ -1604,6 +1847,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BAL_OUTPRC'
                       Footer.Alignment = taRightJustify
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38646#21806#20215
                       Width = 79
                     end
@@ -1616,6 +1860,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Alignment = taCenter
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97
                     end>

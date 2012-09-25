@@ -15,7 +15,6 @@ type
   TfrmCheckTablePrint = class(TframeBaseReport)
     Label3: TLabel;
     Label4: TLabel;
-    Label6: TLabel;
     Label8: TLabel;
     Label19: TLabel;
     btnOk: TRzBitBtn;
@@ -164,7 +163,7 @@ begin
   if fndP1_PRINT_DATE.AsString = '' then Raise Exception.Create('请选择盘点日期...');
   strWhere := strWhere + ' and A.PRINT_DATE='+fndP1_PRINT_DATE.AsString+' ';  
 
-  if trim(fndP1_SORT_ID.Text)<>'' then
+  if (fndP1_SORT_ID.Visible) and (trim(fndP1_SORT_ID.Text)<>'') and (srid1<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -178,7 +177,7 @@ begin
     GoodTab:='VIW_GOODSPRICEEXT'; 
 
   //商品属性:
-  if fndP1_STAT_ID.AsString<>'' then
+  if (fndP1_STAT_ID.Visible) and (fndP1_STAT_ID.AsString<>'') then
   begin
     CodeID:=trim(TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).fieldbyName('CODE_ID').asString);
     strWhere := strWhere +' and (B.SORT_ID'+CodeID+'='+QuotedStr(fndP1_STAT_ID.AsString)+')';

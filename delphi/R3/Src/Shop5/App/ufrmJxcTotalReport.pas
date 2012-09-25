@@ -16,7 +16,6 @@ type
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
-    Label6: TLabel;
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
     btnOk: TRzBitBtn;
@@ -30,7 +29,6 @@ type
     Panel1: TPanel;
     RzPanel9: TRzPanel;
     Label10: TLabel;
-    Label13: TLabel;
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
     Label14: TLabel;
@@ -63,7 +61,6 @@ type
     Panel6: TPanel;
     RzPanel14: TRzPanel;
     Label21: TLabel;
-    Label24: TLabel;
     RzLabel8: TRzLabel;
     RzLabel9: TRzLabel;
     Label25: TLabel;
@@ -100,6 +97,14 @@ type
     adoReport4: TZQuery;
     Label38: TLabel;
     fndP4_RPTTYPE: TcxComboBox;
+    Label30: TLabel;
+    fndP4_GODS_ID: TzrComboBoxList;
+    Label4: TLabel;
+    fndP3_GODS_ID: TzrComboBoxList;
+    Label6: TLabel;
+    fndP2_GODS_ID: TzrComboBoxList;
+    Label12: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -280,12 +285,12 @@ begin
   end;
 
   //商品指标:
-  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+  if (fndP1_STAT_ID.Visible) and (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then   //and (trim(sid1)<>'') 
+  if (fndP1_SORT_ID.Visible) and (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then   //and (trim(sid1)<>'') 
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -297,6 +302,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //2012.09.24商品名称
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID');
 
   //检测是否计算
   CheckCalc(strtoInt(P1_D1.asString),StrtoInt(P1_D2.asString));
@@ -439,12 +447,12 @@ begin
     end;
   //商品指标:
 
-  if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
+  if (fndP2_STAT_ID.Visible) and (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
   end;
   //商品分类:
-  if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
+  if (fndP2_SORT_ID.Visible) and (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -456,6 +464,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //2012.09.24商品名称
+  if trim(fndP2_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP2_GODS_ID.AsString,'A.GODS_ID');    
 
   //检测是否计算
   CheckCalc(strtoInt(P2_D1.asString),StrtoInt(P2_D2.asString));
@@ -561,6 +572,10 @@ begin
    else
      GoodTab:='VIW_GOODSPRICE';
   end;
+  //2012.09.24商品名称
+  if trim(fndP3_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP3_GODS_ID.AsString,'A.GODS_ID');
+      
   //检测是否计算
   CheckCalc(strtoInt(P3_D1.asString),StrtoInt(P3_D2.asString));
   mx := GetMaxMonth(StrtoInt(P3_D2.asString));
@@ -777,13 +792,13 @@ begin
     end;
   end;
   //商品指标:
-  if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
+  if (fndP4_STAT_ID.Visible) and (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP4_TYPE_ID)+'='''+fndP4_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
+  if (fndP4_SORT_ID.Visible) and (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -809,6 +824,9 @@ begin
       SORT_ID:='case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end';
       //SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
   end;
+  //2012.09.24商品名称
+  if trim(fndP4_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP4_GODS_ID.AsString,'A.GODS_ID');  
 
   //检测是否计算
   CheckCalc(strtoInt(P4_D1.asString),StrtoInt(P4_D2.asString));

@@ -18,7 +18,6 @@ type
     btnNew: TRzBitBtn;
     btnEdit: TRzBitBtn;
     RzBitBtn1: TRzBitBtn;
-    Label4: TLabel;
     Label5: TLabel;
     Label16: TLabel;
     Label23: TLabel;
@@ -37,6 +36,8 @@ type
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
     P1_DateControl: TfrmDateControl;
+    Label13: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -340,12 +341,15 @@ begin
   //门店条件
   if (fndP1_SHOP_ID.AsString<>'') then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+  //2012.09.24商品名称
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID'); 
 
   //计量单位换算:
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   //检测是否计算
   CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
-  
+
   mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
 
   //同期:

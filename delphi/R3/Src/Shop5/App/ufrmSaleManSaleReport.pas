@@ -15,7 +15,6 @@ type
   TfrmSaleManSaleReport = class(TframeBaseReport)
     RzLabel1: TRzLabel;
     RzLabel12: TRzLabel;
-    Label3: TLabel;
     Label4: TLabel;
     Label16: TLabel;
     Label23: TLabel;
@@ -43,7 +42,6 @@ type
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
     Label10: TLabel;
-    Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
     Label34: TLabel;
@@ -101,7 +99,6 @@ type
     RzLabel8: TRzLabel;
     RzLabel9: TRzLabel;
     Label21: TLabel;
-    Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
     Label12: TLabel;
@@ -128,7 +125,6 @@ type
     RzLabel10: TRzLabel;
     RzLabel11: TRzLabel;
     Label17: TLabel;
-    Label18: TLabel;
     Label22: TLabel;
     Label28: TLabel;
     Label29: TLabel;
@@ -185,6 +181,12 @@ type
     fndP4_SALES_STYLE: TcxComboBox;
     Label51: TLabel;
     fndP5_SALES_STYLE: TcxComboBox;
+    Label3: TLabel;
+    fndP3_GODS_ID: TzrComboBoxList;
+    Label13: TLabel;
+    fndP4_GODS_ID: TzrComboBoxList;
+    Label18: TLabel;
+    fndP5_GODS_ID: TzrComboBoxList;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -414,6 +416,8 @@ begin
   fndP3_GUIDE_USER.KeyValue:=trim(adoReport2.fieldByName('GUIDE_USER').AsString);
   fndP3_GUIDE_USER.Text :=trim(adoReport2.fieldByName('USER_NAME').AsString);
   fndP3_SALES_TYPE.ItemIndex:=fndP2_SALES_TYPE.ItemIndex;
+  fndP3_GODS_ID.KeyValue := fndP2_GODS_ID.KeyValue;
+  fndP3_GODS_ID.Text := fndP2_GODS_ID.Text;      
 
   RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
@@ -518,6 +522,9 @@ begin
 
   fndP4_GUIDE_USER.KeyValue := fndP3_GUIDE_USER.KeyValue;
   fndP4_GUIDE_USER.Text := fndP3_GUIDE_USER.Text;
+  fndP4_GODS_ID.KeyValue := fndP3_GODS_ID.KeyValue;
+  fndP4_GODS_ID.Text := fndP3_GODS_ID.Text;
+
 
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
@@ -545,6 +552,8 @@ begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
+  SetGodsIDValue(fndP5_GODS_ID,GodsID);
+  
   P5_D1.Date:=P4_D1.Date;
   P5_D2.Date:=P4_D2.Date;
   sid5:=sid4;
@@ -787,8 +796,10 @@ begin
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
 
   //GodsID不为空：
-  if trim(GodsID)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
+  //if trim(GodsID)<>'' then strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
+  //2012.09.23增加商品查询条件
+  if trim(fndP5_GODS_ID.AsString)<>'' then
+    strWhere := strWhere+GetGodsIdsCnd(fndP5_GODS_ID.AsString,'A.GODS_ID');
 
   //月份日期:
   if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
@@ -814,13 +825,13 @@ begin
   end;
 
   //商品指标:
-  if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
+  if (fndP5_STAT_ID.Visible) and (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP5_TYPE_ID)+'='''+fndP5_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
+  if (fndP5_SORT_ID.Visible) and (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -848,7 +859,16 @@ begin
   else if fndP5_SALRETU.Checked then //销售退货:3
     strWhere := strWhere+' and SALES_TYPE=3 ';
 
-  SQLData := 'VIW_SALESDATA';
+  SQLData:= //'VIW_SALESDATA';
+    '(select '+
+     ' A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.CREA_DATE,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BARTER_INTEGRAL,'+
+     ' B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE,'+
+     ' B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.ORG_PRICE,B.COST_PRICE,B.APRICE,B.AMOUNT,A.TAX_RATE,isnull(B.REMARK,A.REMARK) as REMARK,'+
+     ' round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as TAX_MONEY,'+
+     ' B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,'+
+     ' B.AGIO_MONEY,round(B.CALC_AMOUNT*B.COST_PRICE,2) as COST_MONEY,'+
+     ' B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2)-round(B.CALC_AMOUNT*B.COST_PRICE,2) as PRF_MONEY '+
+    ' from SAL_SALESORDER A,SAL_SALESDATA B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.SALES_TYPE in (1,3,4) and A.COMM not in (''02'',''12''))';
 
   strSql :=
     'SELECT '+
@@ -865,6 +885,7 @@ begin
     ',A.CLIENT_ID '+
     ',A.CREA_DATE '+
     ',A.CREA_USER '+
+    ',A.REMARK '+    
     ',A.SHOP_ID '+
     ',A.GUIDE_USER '+
     ',A.SALES_TYPE '+
@@ -980,12 +1001,12 @@ begin
     end;}
 
   //商品指标:
-  if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
+  if (fndP4_STAT_ID.Visible) and (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP4_TYPE_ID)+'='''+fndP4_STAT_ID.AsString+''' ';
   end;
   //商品分类:
-  if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(srid4)<>'') then
+  if (fndP4_SORT_ID.Visible) and (trim(fndP4_SORT_ID.Text)<>'')  and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -997,7 +1018,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
-
+  //2012.09.24 Add 商品条件
+  if trim(fndP4_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP4_GODS_ID.AsString,'A.GODS_ID');
   //业务员
   if Trim(fndP4_GUIDE_USER.Text) <> '' then
   begin
@@ -1169,7 +1192,9 @@ begin
   //2011.05.11 Add 部门名称:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
-
+  //2012.09.23 Add 商品名称
+  if trim(fndP3_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP3_GODS_ID.AsString,'A.GODS_ID');
   //业务员
   if Trim(fndP3_GUIDE_USER.Text) <> '' then
   begin
@@ -1438,13 +1463,13 @@ begin
     end;
   end;
   //商品指标:
-  if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
+  if (fndP2_STAT_ID.Visible) and (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
+  if (fndP2_SORT_ID.Visible) and (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -1462,7 +1487,7 @@ begin
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP2_GODS_ID.AsString,'A.GODS_ID');
 
   //门店名称
   if Trim(fndP2_SHOP_ID.Text) <> '' then
@@ -1580,13 +1605,13 @@ begin
   end;
 
   //商品指标:
-  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+  if (fndP1_STAT_ID.Visible) and (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+  if (fndP1_SORT_ID.Visible) and (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -1601,7 +1626,7 @@ begin
 
   //2011.05.11 Add 商品名称:
   if trim(fndP1_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID');
   //2011.05.11 Add 部门名称:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);

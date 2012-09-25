@@ -22,7 +22,6 @@ type
     btnDelete: TRzBitBtn;
     RzLabel8: TRzLabel;
     Label21: TLabel;
-    Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
     Label12: TLabel;
@@ -37,6 +36,8 @@ type
     fndP1_ReckType: TcxComboBox;
     Label4: TLabel;
     fndP1_STOR_AMT: TcxComboBox;
+    Label13: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -293,6 +294,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //2012.09.24商品名称
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID');  
 
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   //日期条件

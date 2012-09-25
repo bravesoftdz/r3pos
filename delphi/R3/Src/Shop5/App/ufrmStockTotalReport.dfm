@@ -26,7 +26,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
               Height = 426
               inherited w1: TRzPanel
                 Width = 720
-                Height = 104
+                Height = 101
                 object Label3: TLabel
                   Left = 24
                   Top = 37
@@ -56,14 +56,6 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
-                object Label24: TLabel
-                  Left = 291
-                  Top = 80
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label25: TLabel
                   Left = 24
                   Top = 80
@@ -86,6 +78,13 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label13: TLabel
+                  Left = 293
+                  Top = 80
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object rptTemplate: TcxComboBox
                   Left = 80
@@ -115,7 +114,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 12
+                  TabOrder = 13
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -141,7 +140,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 13
+                  TabOrder = 14
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -168,7 +167,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -194,7 +193,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 14
+                  TabOrder = 15
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -240,7 +239,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 9
+                  TabOrder = 10
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -285,9 +284,9 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 344
+                  Left = 154
                   Top = 76
-                  Width = 124
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -399,16 +398,67 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Top = 9
                   Width = 170
                   Height = 20
-                  TabOrder = 11
+                  TabOrder = 12
+                end
+                object fndP1_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 76
+                  Width = 124
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 9
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 104
+                Top = 101
                 Width = 720
-                Height = 322
+                Height = 325
                 inherited DBGridEh1: TDBGridEh
                   Width = 716
-                  Height = 318
+                  Height = 321
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end

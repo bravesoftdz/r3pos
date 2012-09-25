@@ -38,18 +38,12 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
-                object Label6: TLabel
-                  Left = 281
-                  Top = 10
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label8: TLabel
-                  Left = 281
-                  Top = 31
+                  Left = 689
+                  Top = 55
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label19: TLabel
@@ -67,9 +61,9 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Caption = #30424#28857#26085#26399
                 end
                 object btnOk: TRzBitBtn
-                  Left = 486
+                  Left = 424
                   Top = 38
-                  Width = 67
+                  Width = 70
                   Height = 29
                   Action = actFind
                   Caption = #26597#35810
@@ -94,17 +88,18 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Spacing = 5
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 337
-                  Top = 27
-                  Width = 121
+                  Left = 745
+                  Top = 51
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 3
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 337
-                  Top = 6
-                  Width = 121
+                  Left = 154
+                  Top = 48
+                  Width = 111
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -207,9 +202,9 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   MultiSelect = False
                 end
                 object fndP1_SHOW_ZERO: TcxCheckBox
-                  Left = 277
+                  Left = 269
                   Top = 48
-                  Width = 173
+                  Width = 144
                   Height = 21
                   Properties.DisplayUnchecked = 'False'
                   Properties.Caption = #26159#21542#26174#31034#38646#24211#23384#30340#21830#21697

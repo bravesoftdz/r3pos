@@ -102,6 +102,16 @@ type
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
     fndP5_PAYM_ID: TzrComboBoxList;
+    Label44: TLabel;
+    fndP1_GUIDE_USER: TzrComboBoxList;
+    Label14: TLabel;
+    fndP2_GUIDE_USER: TzrComboBoxList;
+    Label15: TLabel;
+    fndP3_GUIDE_USER: TzrComboBoxList;
+    Label16: TLabel;
+    fndP4_GUIDE_USER: TzrComboBoxList;
+    Label17: TLabel;
+    fndP5_GUIDE_USER: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -133,7 +143,7 @@ type
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
 
     //返回基础数据的报表
-    function GetRcevBaseData(fndBegDate,fndEndDate: TcxDateEdit): string;
+    function GetRcevBaseData(fndBegDate,fndEndDate: TcxDateEdit;GuideUser:string=''): string;
     //按管理收款汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店收款汇总表
@@ -284,7 +294,10 @@ begin
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //返回基础表：
-  RecvData:=GetRcevBaseData(P1_D1,P1_D2);
+  if trim(fndP1_GUIDE_USER.AsString)<>'' then
+    RecvData:=GetRcevBaseData(P1_D1,P1_D2,trim(fndP1_GUIDE_USER.AsString))
+  else
+    RecvData:=GetRcevBaseData(P1_D1,P1_D2);
 
   //按根据条件门店汇总:
   strSql:=
@@ -303,12 +316,6 @@ begin
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by B.REGION_ID ';
-
-  // ',sum(ALL_MNY) as ALL_MNY '+
-  // ',sum(ADVA_MNY) as ADVA_MNY '+
-  // ',sum(RECV_MNY) as RECV_MNY '+
-  // ',sum(RETURN_MNY) as RETURN_MNY  '+
-
 
   strSql:=
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
@@ -399,7 +406,10 @@ begin
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //返回基础表：
-  RecvData:=GetRcevBaseData(P2_D1,P2_D2);
+  if trim(fndP2_GUIDE_USER.AsString)<>'' then
+    RecvData:=GetRcevBaseData(P2_D1,P2_D2,trim(fndP2_GUIDE_USER.AsString))
+  else
+    RecvData:=GetRcevBaseData(P2_D1,P2_D2);
 
   //按根据条件门店汇总:
   strSql:=
@@ -435,7 +445,10 @@ begin
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //返回基础表：
-  RecvData:=GetRcevBaseData(P3_D1,P3_D2);
+  if trim(fndP3_GUIDE_USER.AsString)<>'' then
+    RecvData:=GetRcevBaseData(P3_D1,P3_D2,trim(fndP3_GUIDE_USER.AsString))
+  else
+    RecvData:=GetRcevBaseData(P3_D1,P3_D2);
 
   //按根据条件门店汇总:
   strSql:=
@@ -467,7 +480,10 @@ begin
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //返回基础表：
-  RecvData:=GetRcevBaseData(P4_D1,P4_D2);
+  if trim(fndP4_GUIDE_USER.AsString)<>'' then
+    RecvData:=GetRcevBaseData(P4_D1,P4_D2,trim(fndP4_GUIDE_USER.AsString))
+  else
+    RecvData:=GetRcevBaseData(P4_D1,P4_D2);
 
   //按根据条件门店汇总:
   strSql:=
@@ -506,6 +522,8 @@ begin
   fndP2_SHOP_TYPE.ItemIndex:=0;
   fndP2_SHOP_VALUE.KeyValue:=trim(adoReport1.fieldbyName('REGION_ID').AsString);
   fndP2_SHOP_VALUE.Text:=trim(adoReport1.fieldbyName('CODE_NAME').AsString);
+  Copy_ParamsValue(fndP1_GUIDE_USER,fndP2_GUIDE_USER); //业务员
+
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -523,6 +541,8 @@ begin
   Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
   fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
   fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
+  Copy_ParamsValue(fndP2_GUIDE_USER,fndP3_GUIDE_USER); //业务员
+
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -539,6 +559,7 @@ begin
   P4_D2.Date:=P4_D1.Date;
   Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组
   Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //门店名称
+  Copy_ParamsValue(fndP3_GUIDE_USER,fndP4_GUIDE_USER); //业务员
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -559,6 +580,8 @@ begin
   P5_D2.Date:=P4_D2.Date;
   Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
   Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //门店名称
+  Copy_ParamsValue(fndP4_GUIDE_USER,fndP5_GUIDE_USER); //业务员
+    
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -701,58 +724,108 @@ begin
   end;
 end;
 
-function TfrmRecvDayReport.GetRcevBaseData(fndBegDate, fndEndDate: TcxDateEdit): string;
+function TfrmRecvDayReport.GetRcevBaseData(fndBegDate, fndEndDate: TcxDateEdit;GuideUser:string=''): string;
 var
   vBegDate,vEndDate,Str,DataRitht: string; //开始日期|结束日期
 begin
   DataRitht:=ShopGlobal.GetDataRight('SHOP_ID',1);
-  if fndBegDate.Date=fndEndDate.Date then
+  if trim(GuideUser)='' then
   begin
-    vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
-    Str:='select TENANT_ID,SHOP_ID,RECV_DATE,ABLE_USER as CREA_USER,CHK_DATE '+
-       ',(case when ABLE_DATE<>'+vBegDate+' then RECV_MNY else 0 end) as ORG_ALL_MNY '+   //收款合计:往日
-       ',(case when ABLE_DATE='+vBegDate+'  then RECV_MNY else 0 end) as NEW_ALL_MNY '+   //收款合计:本期
-       ', RECV_MNY as ALL_MNY '+                                                         //收款小计
-       ',(case when (RECV_TYPE=''3'') and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
-       ',(case when (RECV_TYPE=''3'') and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
-       ',(case when  RECV_TYPE=''3'' then RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
-       ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
-       ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
-       ',(case when  RECV_TYPE in (''1'',''4'') then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
-       ',(case when (RECV_TYPE=''2'') and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
-       ',(case when (RECV_TYPE=''2'') and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
-       ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
-       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
-       ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate+' '+DataRitht;
-  end else     
-  if fndBegDate.Date<fndEndDate.Date then
+    if fndBegDate.Date=fndEndDate.Date then
+    begin
+      vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
+      Str:='select TENANT_ID,SHOP_ID,RECV_DATE,ABLE_USER as CREA_USER,CHK_DATE '+
+         ',(case when ABLE_DATE<>'+vBegDate+' then RECV_MNY else 0 end) as ORG_ALL_MNY '+   //收款合计:往日
+         ',(case when ABLE_DATE='+vBegDate+'  then RECV_MNY else 0 end) as NEW_ALL_MNY '+   //收款合计:本期
+         ', RECV_MNY as ALL_MNY '+                                                         //收款小计
+         ',(case when (RECV_TYPE=''3'') and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
+         ',(case when (RECV_TYPE=''3'') and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
+         ',(case when  RECV_TYPE=''3'' then RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
+         ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
+         ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
+         ',(case when  RECV_TYPE in (''1'',''4'') then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
+         ',(case when (RECV_TYPE=''2'') and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
+         ',(case when (RECV_TYPE=''2'') and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
+         ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+         ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
+         ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
+         ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate+' '+DataRitht;
+    end else     
+    if fndBegDate.Date<fndEndDate.Date then
+    begin
+      vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
+      vEndDate:=FormatDatetime('YYYYMMDD',fndEndDate.Date);
+      Str:='select TENANT_ID,SHOP_ID,RECV_DATE,ABLE_USER as CREA_USER,CHK_DATE '+
+        ',(case when (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_ALL_MNY '+   //收款合计:往日
+        ',(case when (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_ALL_MNY '+   //收款合计:本期
+        ', RECV_MNY as ALL_MNY '+                                                         //收款小计
+        ',(case when (RECV_TYPE=''3'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
+        ',(case when (RECV_TYPE=''3'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
+        ',(case when  RECV_TYPE=''3'' then RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
+        ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
+        ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
+        ',(case when  RECV_TYPE in (''1'',''4'') then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
+        ',(case when (RECV_TYPE=''2'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
+        ',(case when (RECV_TYPE=''2'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
+        ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+         ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
+         ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
+        ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE>='+vBegDate+' and RECV_DATE<='+vEndDate+' '+DataRitht;
+    end;
+  end else
   begin
-    vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
-    vEndDate:=FormatDatetime('YYYYMMDD',fndEndDate.Date);
-    Str:='select TENANT_ID,SHOP_ID,RECV_DATE,ABLE_USER as CREA_USER,CHK_DATE '+
-      ',(case when (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_ALL_MNY '+   //收款合计:往日
-      ',(case when (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_ALL_MNY '+   //收款合计:本期
-      ', RECV_MNY as ALL_MNY '+                                                         //收款小计
-      ',(case when (RECV_TYPE=''3'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
-      ',(case when (RECV_TYPE=''3'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
-      ',(case when  RECV_TYPE=''3'' then RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
-      ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
-      ',(case when (RECV_TYPE in (''1'',''4'')) and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
-      ',(case when  RECV_TYPE in (''1'',''4'') then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
-      ',(case when (RECV_TYPE=''2'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
-      ',(case when (RECV_TYPE=''2'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
-      ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
-       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
-      ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE>='+vBegDate+' and RECV_DATE<='+vEndDate+' '+DataRitht;
+    if fndBegDate.Date=fndEndDate.Date then
+    begin
+      vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
+      Str:='select A.TENANT_ID,A.SHOP_ID,A.RECV_DATE,A.ABLE_USER as CREA_USER,A.CHK_DATE '+
+         ',(case when A.ABLE_DATE<>'+vBegDate+' then A.RECV_MNY else 0 end) as ORG_ALL_MNY '+   //收款合计:往日
+         ',(case when A.ABLE_DATE='+vBegDate+'  then A.RECV_MNY else 0 end) as NEW_ALL_MNY '+   //收款合计:本期
+         ', A.RECV_MNY as ALL_MNY '+                                                         //收款小计
+         ',(case when (A.RECV_TYPE=''3'') and (A.ABLE_DATE<>'+vBegDate+') then A.RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
+         ',(case when (A.RECV_TYPE=''3'') and (A.ABLE_DATE='+vBegDate+')  then A.RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
+         ',(case when  A.RECV_TYPE=''3'' then A.RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
+         ',(case when (A.RECV_TYPE in (''1'',''4'')) and (A.ABLE_DATE<>'+vBegDate+') then A.RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
+         ',(case when (A.RECV_TYPE in (''1'',''4'')) and (A.ABLE_DATE='+vBegDate+')  then A.RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
+         ',(case when  A.RECV_TYPE in (''1'',''4'') then A.RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
+         ',(case when (A.RECV_TYPE=''2'') and (A.ABLE_DATE<>'+vBegDate+') then A.RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
+         ',(case when (A.RECV_TYPE=''2'') and (A.ABLE_DATE='+vBegDate+')  then A.RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
+         ',(case when  A.RECV_TYPE=''2'' then A.RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+         ',(case when (A.RECV_TYPE in (''5'',''6'')) and (A.ABLE_DATE<>'+vBegDate+') then A.RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
+         ',(case when (A.RECV_TYPE in (''5'',''6'')) and (A.ABLE_DATE='+vBegDate+')  then A.RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
+         ' from VIW_RECVABLEDATA A,SAL_SALESORDER B '+
+         ' where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+         ' and A.RECV_DATE='+vBegDate+' and B.GUIDE_USER='''+GuideUser+''' '+DataRitht;
+    end else     
+    if fndBegDate.Date<fndEndDate.Date then
+    begin
+      vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
+      vEndDate:=FormatDatetime('YYYYMMDD',fndEndDate.Date);
+      Str:='select A.TENANT_ID,A.SHOP_ID,A.RECV_DATE,A.ABLE_USER as CREA_USER,A.CHK_DATE '+
+        ',(case when (A.ABLE_DATE<'+vBegDate+' or A.ABLE_DATE>'+vEndDate+') then A.RECV_MNY else 0 end) as ORG_ALL_MNY '+   //收款合计:往日
+        ',(case when (A.ABLE_DATE>='+vBegDate+') and (A.ABLE_DATE<='+vEndDate+') then A.RECV_MNY else 0 end) as NEW_ALL_MNY '+   //收款合计:本期
+        ', A.RECV_MNY as ALL_MNY '+                                                         //收款小计
+        ',(case when (A.RECV_TYPE=''3'') and (A.ABLE_DATE<'+vBegDate+' or A.ABLE_DATE>'+vEndDate+') then A.RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
+        ',(case when (A.RECV_TYPE=''3'') and (A.ABLE_DATE>='+vBegDate+') and (A.ABLE_DATE<='+vEndDate+')  then A.RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
+        ',(case when  A.RECV_TYPE=''3'' then A.RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
+        ',(case when (A.RECV_TYPE in (''1'',''4'')) and (A.ABLE_DATE<'+vBegDate+' or A.ABLE_DATE>'+vEndDate+') then A.RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
+        ',(case when (A.RECV_TYPE in (''1'',''4'')) and (A.ABLE_DATE>='+vBegDate+') and (A.ABLE_DATE<='+vEndDate+')  then A.RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
+        ',(case when  A.RECV_TYPE in (''1'',''4'') then A.RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
+        ',(case when (A.RECV_TYPE=''2'') and (A.ABLE_DATE<'+vBegDate+' or A.ABLE_DATE>'+vEndDate+') then A.RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
+        ',(case when (A.RECV_TYPE=''2'') and (A.ABLE_DATE>='+vBegDate+') and (A.ABLE_DATE<='+vEndDate+') then A.RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
+        ',(case when  A.RECV_TYPE=''2'' then A.RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+         ',(case when (A.RECV_TYPE in (''5'',''6'')) and (A.ABLE_DATE<>'+vBegDate+') then A.RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
+         ',(case when (A.RECV_TYPE in (''5'',''6'')) and (A.ABLE_DATE='+vBegDate+')  then A.RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
+        ' from VIW_RECVABLEDATA A,SAL_SALESORDER B '+
+        ' where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+        ' and A.RECV_DATE>='+vBegDate+' and A.RECV_DATE<='+vEndDate+' and B.GUIDE_USER='''+GuideUser+''' '+DataRitht;
+    end;
   end;
   result:=str;
 end;
 
 function TfrmRecvDayReport.GetGuideSQl(chk: boolean): string;
 var
-  strSql,strWhere: string;
+  strSql,strWhere,viwTab: string;
 begin
   if P5_D1.EditValue = null then Raise Exception.Create(' 收款开始日期条件不能为空！');
   if P5_D2.EditValue = null then Raise Exception.Create(' 收款结束日期条件不能为空！');
@@ -771,6 +844,8 @@ begin
   //收款人:
   if fndP5_RecvMan.AsString<>'' then
     strWhere:=strWhere+' and A.RECV_USER='''+fndP5_RecvMan.AsString+''' ';
+  if fndP5_GUIDE_USER.AsString<>'' then
+    strWhere:=strWhere+' and C.GUIDE_USER='''+fndP5_GUIDE_USER.AsString+''' ';
 
   //银行账户：
   if fndP5_ACCOUNT_ID.AsString<>'' then
@@ -781,14 +856,17 @@ begin
     strWhere:=strWhere+' and A.PAYM_ID='''+fndP5_PAYM_ID.AsString+''' '; 
 
    //关联语句
+  viwTab:=
+    'select A.*,B.SHOP_NAME as SHOP_NAME,C.GUIDE_USER from VIW_RECVABLEDATA A,CA_SHOP_INFO B,SAL_SALESORDER C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SALES_ID=C.SALES_ID and '+
+          ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+strWhere+' ';
   strSql:=
-    'select jp.*,r.USER_NAME as USER_NAME,0 as OVERDAYS from '+
-    '(select jb.*,D.CLIENT_NAME as CUST_NAME from  '+
-    '(select A.*,B.SHOP_NAME as SHOP_NAME from VIW_RECVABLEDATA A,CA_SHOP_INFO B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-    ' '+strWhere+') jb '+
-    ' left outer join VIW_CUSTOMER D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID)jp '+
-    ' left outer join VIW_USERS r on jp.TENANT_ID=r.TENANT_ID and jp.RECV_USER=r.USER_ID order by jp.RECV_USER ';
+    'select jb.*,D.CLIENT_NAME as CUST_NAME,R.USER_NAME as USER_NAME,U.USER_NAME as GUIDE_USER_TXT,0 as OVERDAYS '+
+    ' from ('+viwTab+')jb '+
+    ' left outer join VIW_CUSTOMER D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID '+
+    ' left outer join VIW_USERS R on jb.TENANT_ID=R.TENANT_ID and jb.RECV_USER=R.USER_ID '+
+    ' left outer join VIW_USERS U on jb.TENANT_ID=U.TENANT_ID and jb.GUIDE_USER=U.USER_ID '+
+    ' order by jb.RECV_USER ';
 
   Result := ParseSQL(Factor.iDbType,strSql);
 end;

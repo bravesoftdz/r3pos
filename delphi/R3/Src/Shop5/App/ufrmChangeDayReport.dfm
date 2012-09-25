@@ -1,5 +1,5 @@
 inherited frmChangeDayReport: TfrmChangeDayReport
-  Left = 188
+  Left = 149
   Top = 119
   Width = 1131
   Height = 645
@@ -15,8 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 908
         Height = 565
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -44,13 +46,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 12
                   Height = 12
                   Caption = #33267
-                end
-                object Label6: TLabel
-                  Left = 290
-                  Top = 37
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
                 end
                 object Label7: TLabel
                   Left = 24
@@ -133,7 +128,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 5
+                  TabOrder = 4
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 805
@@ -191,9 +186,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 30
-                  Width = 121
+                  Left = 154
+                  Top = 52
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -202,7 +197,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
+                  TabOrder = 5
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
@@ -474,13 +469,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
-                object Label13: TLabel
-                  Left = 288
-                  Top = 34
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label14: TLabel
                   Left = 24
                   Top = 56
@@ -597,7 +585,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 5
+                  TabOrder = 4
                 end
                 object fndP2_UNIT_ID: TcxComboBox
                   Left = 813
@@ -655,9 +643,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   MultiSelect = False
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 30
-                  Width = 121
+                  Left = 154
+                  Top = 52
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -666,7 +654,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
+                  TabOrder = 5
                   OnKeyPress = fndP2_SORT_IDKeyPress
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
@@ -944,7 +932,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
@@ -963,6 +951,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label4: TLabel
+                  Left = 288
+                  Top = 56
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P3_D1: TcxDateEdit
                   Left = 80
@@ -1024,7 +1019,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
-                  Top = 52
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1133,6 +1128,57 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 170
                   Height = 20
                   TabOrder = 8
+                end
+                object fndP3_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 52
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 9
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel12: TRzPanel
@@ -1325,17 +1371,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object Label21: TLabel
                   Left = 24
-                  Top = 55
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
-                end
-                object Label24: TLabel
-                  Left = 289
-                  Top = 55
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
                 end
                 object Label25: TLabel
                   Left = 24
@@ -1361,10 +1400,17 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object Label38: TLabel
                   Left = 289
-                  Top = 78
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #32479#35745#31867#22411
+                end
+                object Label6: TLabel
+                  Left = 288
+                  Top = 78
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -1384,7 +1430,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn3: TRzBitBtn
                   Left = 478
-                  Top = 61
+                  Top = 62
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1402,7 +1448,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1431,7 +1477,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 9
+                  TabOrder = 10
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -1445,7 +1491,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1476,9 +1522,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   MultiSelect = False
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 52
-                  Width = 121
+                  Left = 154
+                  Top = 74
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -1487,7 +1533,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
-                  TabOrder = 5
+                  TabOrder = 7
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
@@ -1587,7 +1633,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP4_RPTTYPE: TcxComboBox
                   Left = 344
-                  Top = 74
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsFixedList
@@ -1596,14 +1642,65 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #21830#21697#36827#38144#23384#32479#35745#34920
                     #32676#32452#36827#38144#23384#32479#35745#34920
                     #20379#24212#21830#36827#38144#23384#32479#35745#34920)
-                  TabOrder = 8
+                  TabOrder = 5
                 end
                 inline P4_DateControl: TfrmDateControl
                   Left = 280
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 11
+                  TabOrder = 12
+                end
+                object fndP4_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 74
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 9
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel15: TRzPanel
@@ -1823,16 +1920,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
-                object Label18: TLabel
-                  Left = 288
-                  Top = 57
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#20998#31867
-                end
                 object Label22: TLabel
                   Left = 24
-                  Top = 55
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
@@ -1844,6 +1934,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
+                object Label13: TLabel
+                  Left = 288
+                  Top = 56
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
+                end
                 object P5_D1: TcxDateEdit
                   Left = 80
                   Top = 8
@@ -1854,7 +1951,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn4: TRzBitBtn
                   Left = 478
-                  Top = 38
+                  Top = 39
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1872,7 +1969,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 8
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1941,9 +2038,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   MultiSelect = False
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
-                  Left = 344
+                  Left = 154
                   Top = 52
-                  Width = 121
+                  Width = 119
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -2055,7 +2152,58 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 9
+                  TabOrder = 10
+                end
+                object fndP5_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 52
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 8
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel18: TRzPanel

@@ -1,7 +1,7 @@
 inherited frmSysDefine: TfrmSysDefine
   Left = 540
   Top = 234
-  Width = 434
+  Width = 441
   Height = 323
   BorderIcons = [biSystemMenu]
   Caption = #31995#32479#21442#25968#35774#32622
@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 418
-    Height = 242
-    ActivePage = TabSheet4
+    Width = 433
+    Height = 253
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 425
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -176,8 +176,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 425
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -367,8 +367,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel5: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 425
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -552,8 +552,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel3: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 425
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -757,8 +757,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel4: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 425
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -879,8 +879,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel6: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 425
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -1028,11 +1028,25 @@ inherited frmSysDefine: TfrmSysDefine
         end
       end
     end
+    object TabSheet5: TTabSheet
+      Caption = #20854#20182#36873#39033
+      ImageIndex = 6
+      object CB_REPORT_GODS_MULTI: TcxCheckBox
+        Left = 14
+        Top = 9
+        Width = 123
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #25253#34920#21551#29992#21830#21697#22810#36873
+        TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+    end
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 242
-    Width = 418
+    Top = 253
+    Width = 433
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

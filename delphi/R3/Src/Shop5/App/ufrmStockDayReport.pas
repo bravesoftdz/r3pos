@@ -65,7 +65,6 @@ type
     dsadoReport4: TDataSource;
     P5_D2: TcxDateEdit;
     dsadoReport5: TDataSource;
-    Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label5: TLabel;
@@ -76,7 +75,6 @@ type
     fndP1_SHOP_TYPE: TcxComboBox;
     fndP1_SHOP_VALUE: TzrComboBoxList;
     Label10: TLabel;
-    Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
     fndP2_SHOP_VALUE: TzrComboBoxList;
@@ -96,7 +94,6 @@ type
     fndP3_SHOP_VALUE: TzrComboBoxList;
     fndP3_SHOP_TYPE: TcxComboBox;
     Label21: TLabel;
-    Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
     Label12: TLabel;
@@ -109,7 +106,6 @@ type
     fndP4_SHOP_TYPE: TcxComboBox;
     DBGridEh5: TDBGridEh;
     Label17: TLabel;
-    Label18: TLabel;
     Label22: TLabel;
     Label28: TLabel;
     fndP5_TYPE_ID: TcxComboBox;
@@ -138,6 +134,12 @@ type
     P3_DateControl: TfrmDateControl;
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
+    Label6: TLabel;
+    fndP5_GODS_ID: TzrComboBoxList;
+    Label13: TLabel;
+    fndP4_GODS_ID: TzrComboBoxList;
+    Label16: TLabel;
+    fndP3_GODS_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -370,12 +372,12 @@ begin
   end;
 
   //商品指标:
-  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+  if (fndP1_STAT_ID.Visible) and (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+  if (fndP1_SORT_ID.Visible) and (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -390,7 +392,7 @@ begin
 
   //2011.05.11 Add 商品名称:
   if trim(fndP1_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP1_GODS_ID.AsString,'A.GODS_ID');
 
   if RckMaxDate < vBegDate then   //--[全部查询视图]  
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -536,13 +538,13 @@ begin
   end;
 
   //商品指标:
-  if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
+  if (fndP2_STAT_ID.Visible) and (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
-  if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
+  if (fndP2_SORT_ID.Visible) and (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -557,7 +559,7 @@ begin
 
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+    strWhere:=strWhere+GetGodsIdsCnd(fndP2_GODS_ID.AsString,'A.GODS_ID');
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -673,6 +675,9 @@ begin
    else
      GoodTab:='VIW_GOODSPRICE';
   end;
+  //2012.09.24增商品查询条件
+  if trim(fndP3_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP3_GODS_ID.AsString,'A.GODS_ID');
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -828,7 +833,7 @@ begin
     strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' ';
 
   //商品指标:
-  if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
+  if (fndP4_STAT_ID.Visible) and (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP4_TYPE_ID)+'='''+fndP4_STAT_ID.AsString+''' ';
   end;
@@ -846,6 +851,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //2012.09.24 Add 商品名称:
+  if trim(fndP4_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP4_GODS_ID.AsString,'A.GODS_ID');
 
   //分组字段
   case StrToInt(GodsSortIdx) of
@@ -933,8 +941,10 @@ begin
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //GodsID不为空：
-  if trim(GodsID)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
+  //if trim(GodsID)<>'' then strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
+  //2012.09.24 Add 商品名称:
+  if trim(fndP5_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+GetGodsIdsCnd(fndP5_GODS_ID.AsString,'A.GODS_ID');
 
   //月份日期:
   if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
@@ -961,13 +971,13 @@ begin
     strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP5_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP5_SHOP_ID.AsString)+''' ';
 
   //商品指标:
-  if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
+  if (fndP5_STAT_ID.Visible) and (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
   begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP5_TYPE_ID)+'='''+fndP5_STAT_ID.AsString+''' ';
   end;
   
   //商品分类:
-  if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
+  if (fndP5_SORT_ID.Visible) and (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
@@ -985,7 +995,7 @@ begin
     strWhere:=strWhere+' and STOCK_TYPE=1 '
   else if fndP5_ReturnStock.Checked then
     strWhere:=strWhere+' and STOCK_TYPE=3 ';
-    
+
   SQLData := 'VIW_STOCKDATA';
 
   strSql :=
@@ -1052,6 +1062,8 @@ begin
   fndP2_SHOP_TYPE.ItemIndex := 0;
   fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
   fndP2_SHOP_VALUE.Text := adoReport1.FieldbyName('CODE_NAME').AsString;
+  Copy_ParamsValue(fndP1_GODS_ID,fndP2_GODS_ID); //商品名称
+
   rzPage.ActivePageIndex := 1;
   actFind.OnExecute(nil);
 end;
@@ -1064,6 +1076,8 @@ begin
   P3_D2.Date := P2_D2.Date;
   fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
   Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  Copy_ParamsValue(fndP2_GODS_ID,fndP3_GODS_ID); //商品名称
+
   fndP3_SHOP_ID.KeyValue:=adoReport2.fieldbyName('SHOP_ID').AsString; //门店ID
   fndP3_SHOP_ID.Text:=adoReport2.fieldbyName('SHOP_NAME').AsString;   //门店名称
 
@@ -1120,6 +1134,7 @@ begin
   P4_D2.Date := P3_D2.Date;
   Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //门店名称 
   Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组 
+  Copy_ParamsValue(fndP3_GODS_ID,fndP4_GODS_ID); //商品名称
   fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex; //显示单位
   
   rzPage.ActivePageIndex := 3;
@@ -1131,6 +1146,7 @@ begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
+  SetGodsIDValue(fndP5_GODS_ID,GodsID);
   sid5:=sid4;
   srid5:=srid4;
   fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text;
@@ -1140,7 +1156,7 @@ begin
   Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
   Copy_ParamsValue('TYPE_ID',4,5); //商品指标
   Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //门店名称
-
+  
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);  
 end;

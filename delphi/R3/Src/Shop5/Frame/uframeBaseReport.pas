@@ -88,6 +88,7 @@ type
     procedure DoCxDateOnCloseUp(Sender: TObject); //暂时没用
     function  GetHasChild: Boolean;
     function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
+    function  GetUsedGodsMulti:Boolean; //是否启用多选
   public
     CalcFooter: TCalcFooter;
     PUB_CLIENT_ID: TZQuery;  //客户群体数据集
@@ -105,6 +106,8 @@ type
     {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[复制查询条件值] =======}
     procedure Copy_ParamsValue(SrcList,DestList: TzrComboBoxList); overload;      //复制值TzrComboBoxList
     procedure Copy_ParamsValue(vType: string; SrcIdx,DestIdx: integer); overload; //复制门店管理群组:SHOP_TYPE;商品指标:TYPE_ID
+    {=======  2012.09.25 Add 商品Gods_ID显示值  =======}
+    procedure SetGodsIDValue(Fnd_Gods_ID:TzrComboBoxList;GodsID:string);
 
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
@@ -176,14 +179,17 @@ type
     procedure LoadGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
     procedure SaveGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
     //返回当前企业的经营商品所属企业:
-    function  GetGodsOwnerTenIds(CxFieldName: string; vType: integer=0): string;
-    //创建DBGrid的Col列
-    function  CreateGridColForFIG(var SetGrid:TDBGridEh;const BegIdx:integer):Boolean; //服装版 创建颜色、尺码
+    function GetGodsOwnerTenIds(CxFieldName: string; vType: integer=0): string;
+    //2012.09.02创建DBGrid的Col列
+    function CreateGridColForFIG(var SetGrid:TDBGridEh;const BegIdx:integer):Boolean; //服装版 创建颜色、尺码
+    //2012.09.23返回商品条件
+    function GetGodsIdsCnd(GodsIds,FieldName:string;CndStr:string='and'):string; //不包括and
 
-    property  HasChild: Boolean read GetHasChild;    //判断是否多门店
-    property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
-    property  SumRecord: TRecord_ read FSumRecord;  //汇总记录值
-    property  AllRecord: TRecord_ read FAllRecord;  //汇总记录值
+    property USED_GODS_MULTI:Boolean read GetUsedGodsMulti;
+    property HasChild: Boolean read GetHasChild;    //判断是否多门店
+    property DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
+    property SumRecord: TRecord_ read FSumRecord;  //汇总记录值
+    property AllRecord: TRecord_ read FAllRecord;  //汇总记录值
   end;
 
 implementation
@@ -542,8 +548,8 @@ begin
           Cbx.ItemIndex:=0;
         end else
         if RightStr(CmpName,8)='_TYPE_ID' then //商品指标
-        begin
-          DefState:=GetGodsStateValue('01111111111111111111');
+        begin                          
+          DefState:=GetGodsStateValue('11111111111111111111');
           AddGoodSortTypeItems(Cbx,DefState);
           Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
           Cbx.ItemIndex:=0;
@@ -624,6 +630,22 @@ begin
         if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
           TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
         TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('PUB_GOODSINFO');
+        if USED_GODS_MULTI then //多选
+        begin
+          TzrComboBoxList(Components[i]).MultiSelect:=true;
+          TzrComboBoxList(Components[i]).SelectField:='A';
+          Column:=TzrComboBoxList(Components[i]).Columns.Add;
+          Column.FieldName:='A';                 
+          Column.Title.Caption:='选择';
+          Column.Checkboxes:=true;
+          Column.ReadOnly:=False;
+          Column.Index:=0;
+          Column.Width:=44;
+          Column.KeyList.Add('1');
+          Column.KeyList.Add('0');
+          Column.PickList.Add('0');
+          Column.PickList.Add('1');
+        end;
       end;
       //制单人
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_USER_ID') then
@@ -1166,17 +1188,46 @@ begin
 end;
 
 procedure TframeBaseReport.Dofnd_TYPE_IDChange(Sender: TObject);
+  function FindGodsSortType(CmpName:string):TcxButtonEdit;
+  var FindCmp:TComponent;
+  begin
+    result:=nil;
+    FindCmp:=self.FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TcxButtonEdit) then
+      result:=TcxButtonEdit(FindCmp);
+  end;
+  function FindGodsStateList(CmpName:string):TzrComboBoxList;
+  var FindCmp:TComponent;
+  begin
+    result:=nil;
+    FindCmp:=self.FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
+      result:=TzrComboBoxList(FindCmp);
+  end;
 var
-  CmpName: string;
-  FindCmp: TComponent;
+  CmpName:string;
+  CurObj:TRecord_;
+  GodsSort:TcxButtonEdit;
+  GodsStat:TzrComboBoxList;
 begin
   CmpName:=GetCmpNum(TcxComboBox(Sender).Name,'fndP'); //返回控件Num
   if CmpName<>'' then
   begin
-    CmpName:='fndP'+CmpName+'_STAT_ID';
-    FindCmp:=self.FindComponent(CmpName);
-    if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
-      AddGoodSortTypeItemsList(Sender,TzrComboBoxList(FindCmp));
+    GodsSort:=FindGodsSortType('fndP'+CmpName+'_SORT_ID');  //查找商品分类
+    GodsStat:=FindGodsStateList('fndP'+CmpName+'_STAT_ID'); //查找指标控件
+    if (GodsSort=nil) or (GodsStat=nil) then Exit;
+    if TcxComboBox(Sender).ItemIndex=-1 then Exit;
+    CurObj:=TRecord_(TcxComboBox(Sender).Properties.Items.Objects[TcxComboBox(Sender).ItemIndex]);
+    if (CurObj<>nil)and(Trim(CurObj.FieldByName('CODE_ID').AsString)='1') then //商品分类
+    begin
+      GodsSort.Visible:=true;
+      GodsStat.Visible:=False;
+    end else
+    begin
+      GodsSort.Visible:=False;
+      GodsStat.Visible:=True;
+      AddGoodSortTypeItemsList(Sender,GodsStat);
+    end;
   end;
 end;
 
@@ -1229,6 +1280,22 @@ begin
       TzrComboBoxList(DestCmp).KeyValue:=TzrComboBoxList(SrcCmp).KeyValue;
       TzrComboBoxList(DestCmp).Text:=TzrComboBoxList(SrcCmp).Text;
     end;
+  end;
+end;
+
+procedure TframeBaseReport.SetGodsIDValue(Fnd_Gods_ID: TzrComboBoxList; GodsID: string);
+var
+  GodsTab:TZQuery;
+begin
+  if not Assigned(Fnd_Gods_ID) then  Exit;
+  GodsTab:=Global.GetZQueryFromName('PUB_GOODSINFO');
+  if (GodsTab<>nil)and(not GodsTab.IsEmpty) then
+  begin
+    if GodsTab.Locate('GODS_ID',GodsID,[]) then
+    begin
+      Fnd_Gods_ID.KeyValue:=GodsID;
+      Fnd_Gods_ID.Text:=GodsTab.FieldByName('GODS_NAME').AsString;
+    end;    
   end;
 end;
 
@@ -2191,6 +2258,30 @@ begin
   finally
     SetGrid.Columns.EndUpdate;
   end;
+end;
+
+function TframeBaseReport.GetUsedGodsMulti: Boolean;
+var
+  CfgValue:string;
+begin
+  result:=False;
+  CfgValue:=ShopGlobal.GetParameter('REPORT_GODS_MULTI');
+  if trim(CfgValue)='1'  then
+    result:=true;
+end;
+
+function TframeBaseReport.GetGodsIdsCnd(GodsIds,FieldName: string; CndStr:string): string;
+var
+  Ids:string;
+begin
+  result:='';
+  Ids:=GodsIds;
+  if Pos(',',GodsIds)>0 then //有多个
+  begin
+    Ids:=StringReplace(Ids,',',''',''',[rfReplaceAll]);
+    result:=' '+CndStr+' '+FieldName+' in ('''+Ids+''')';
+  end else
+    result:=' '+CndStr+' '+FieldName+'='''+GodsIds+''' ';
 end;
 
 end.

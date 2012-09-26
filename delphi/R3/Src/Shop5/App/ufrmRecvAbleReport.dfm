@@ -14,10 +14,10 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -176,7 +176,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Tag = -1
                   Left = 80
                   Top = 53
-                  Width = 191
+                  Width = 193
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -517,7 +517,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Tag = -1
                   Left = 80
                   Top = 53
-                  Width = 192
+                  Width = 193
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -954,7 +954,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Tag = -1
                   Left = 80
                   Top = 54
-                  Width = 192
+                  Width = 193
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1368,7 +1368,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Tag = -1
               Left = 80
               Top = 54
-              Width = 192
+              Width = 193
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <

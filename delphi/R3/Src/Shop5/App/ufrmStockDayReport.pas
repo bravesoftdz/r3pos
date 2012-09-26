@@ -783,7 +783,7 @@ end;
 
 function TfrmStockDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  UnitCalc,SORT_ID: string; //统计单位换算计算关系
+  UnitCalc,SORT_ID_Fields,SORT_ID_Group: string; //统计单位换算计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
@@ -857,9 +857,21 @@ begin
 
   //分组字段
   case StrToInt(GodsSortIdx) of
-   0: SORT_ID:='C.RELATION_ID';
-   else
-      SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'') ';
+   -1:
+     begin
+       SORT_ID_Fields:=',-1 as SORT_ID';
+       SORT_ID_Group:='';
+     end;
+    0:
+     begin
+       SORT_ID_Fields:=',C.RELATION_ID as SORT_ID';
+       SORT_ID_Group:=',C.RELATION_ID';
+     end
+    else
+     begin
+       SORT_ID_Fields:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end) as SORT_ID';
+       SORT_ID_Group:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end)';
+     end;
   end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
@@ -881,8 +893,7 @@ begin
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
-    ' A.TENANT_ID '+
-    ','+SORT_ID+' as SORT_ID '+    
+    ' A.TENANT_ID'+SORT_ID_Fields+
     ',A.GODS_ID '+
     ',sum(STOCK_AMT*1.000/'+UnitCalc+') as STOCK_AMT '+
     ',case when cast(sum(STOCK_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.000/cast(sum(STOCK_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
@@ -896,7 +907,7 @@ begin
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
+    'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
 
   strSql :=
     'select j.* '+

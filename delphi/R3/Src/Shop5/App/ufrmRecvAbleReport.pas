@@ -96,6 +96,26 @@ type
     P3_DateControl: TfrmDateControl;
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
+    Label18: TLabel;
+    fndP1_RECV_TYPE: TzrComboBoxList;
+    Label44: TLabel;
+    fndP1_GUIDE_USER: TzrComboBoxList;
+    Label19: TLabel;
+    fndP2_RECV_TYPE: TzrComboBoxList;
+    Label14: TLabel;
+    fndP2_GUIDE_USER: TzrComboBoxList;
+    Label20: TLabel;
+    fndP3_RECV_TYPE: TzrComboBoxList;
+    Label15: TLabel;
+    fndP3_GUIDE_USER: TzrComboBoxList;
+    Label21: TLabel;
+    fndP4_RECV_TYPE: TzrComboBoxList;
+    Label16: TLabel;
+    fndP4_GUIDE_USER: TzrComboBoxList;
+    Label22: TLabel;
+    fndP5_RECV_TYPE: TzrComboBoxList;
+    Label17: TLabel;
+    fndP5_GUIDE_USER: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -140,6 +160,8 @@ type
     function GetShopIDCnd(ShopID: TzrComboBoxList; FieldName: string): string; //返回门店查询条件
     function GetDateCnd(BegDate,EndDate: TcxDateEdit; FieldName: string): string;  //时间条件
     function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string; //门店所属行政区域|门店类型:
+    function GetRecvTypeCnd(Recv_TYPE: TzrComboBoxList; FieldName: string): string; //返回门店查询条件
+    function GetGuileUserCnd(GuideUser:string):string;
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
@@ -242,6 +264,8 @@ begin
   if P1_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  if (fndP1_GUIDE_USER.AsString<>'') and ((fndP1_RECV_TYPE.AsString='5')or(fndP1_RECV_TYPE.AsString='6')) then
+     Raise Exception.Create(' 收款类型为（其他收款），不能同时选业务员...  ');
 
   //按根据条件门店汇总:
   strSql:=
@@ -254,6 +278,8 @@ begin
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
+     ' '+GetRecvTypeCnd(fndP1_RECV_TYPE,'A.RECV_TYPE')+' '+
+     ' '+GetGuileUserCnd(fndP1_GUIDE_USER.AsString)+' '+
      ' group by B.REGION_ID ';
 
   //关联
@@ -319,6 +345,8 @@ begin
   if P2_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  if (fndP2_GUIDE_USER.AsString<>'') and ((fndP2_RECV_TYPE.AsString='5')or(fndP2_RECV_TYPE.AsString='6')) then
+     Raise Exception.Create(' 收款类型为（其他收款），不能同时选业务员...  ');
 
   //按根据条件门店汇总:
   strSql:=
@@ -331,6 +359,8 @@ begin
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
+     ' '+GetRecvTypeCnd(fndP2_RECV_TYPE,'A.RECV_TYPE')+' '+ 
+     ' '+GetGuileUserCnd(fndP2_GUIDE_USER.AsString)+' '+
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
   //关联
@@ -350,6 +380,8 @@ begin
   if P3_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  if (fndP3_GUIDE_USER.AsString<>'') and ((fndP3_RECV_TYPE.AsString='5')or(fndP3_RECV_TYPE.AsString='6')) then
+     Raise Exception.Create(' 收款类型为（其他收款），不能同时选业务员...  ');
 
   strSql:=
      'select ABLE_DATE as RECV_DATE '+
@@ -361,7 +393,8 @@ begin
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID')+
-     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
+     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+GetRecvTypeCnd(fndP3_RECV_TYPE,'A.RECV_TYPE')+' '+ 
+     ' '+GetGuileUserCnd(fndP3_GUIDE_USER.AsString)+' '+
      ' group by ABLE_DATE ';
 
   Result := ParseSQL(Factor.iDbType,strSql);
@@ -369,11 +402,25 @@ end;
 
 function TfrmRecvAbleReport.GetRecvGlideSQL(chk:boolean=true): string;
 var
-  strSql,strWhere: string;
+  strSql,strWhere,SalTab,Cnd: string;
 begin
   if P5_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P5_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  if (fndP5_GUIDE_USER.AsString<>'') and ((fndP5_RECV_TYPE.AsString='5')or(fndP5_RECV_TYPE.AsString='6')) then
+     Raise Exception.Create(' 收款类型为（其他收款），不能同时选业务员...  ');
+
+  strWhere:='';
+  if fndP5_GUIDE_USER.AsString<>'' then
+  begin
+    strWhere:=' and RECV_TYPE not in (''5'',''6'')';
+    Cnd:=' and GUIDE_USER='''+fndP5_GUIDE_USER.AsString+''' ';
+  end;
+  //账款业务单据
+  SalTab:=
+    'select TENANT_ID,SALES_ID,GUIDE_USER from SAL_SALESORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SALES_TYPE in (1,3) '+Cnd+' '+
+    ' union all '+
+    ' select TENANT_ID,INDE_ID as SALES_ID,GUIDE_USER from SAL_INDENTORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+Cnd+' ';
 
   //按根据条件门店查询:
   strSql:=
@@ -388,18 +435,24 @@ begin
      ',REVE_MNY'+
      ',NEAR_DATE'+
      ',CREA_USER'+
+     ',C.GUIDE_USER'+
      ',B.SHOP_NAME as SHOP_ID_TEXT '+
-     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' '+GetDataRight+
-     ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+
+     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B,('+SalTab+')C '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SALES_ID=C.SALES_ID and '+
+     ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' '+strWhere+' '+GetDataRight+
+     ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+' '+GetRecvTypeCnd(fndP5_RECV_TYPE,'A.RECV_TYPE')+
      ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' ';
 
   //关联
   strSql:=
     'select jb.*,D.CLIENT_NAME from ('+strSql+') jb '+
-    ' left outer join VIW_CUSTOMER D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID '+
-    ' order by jb.ABLE_DATE ';
+    ' left outer join VIW_CUSTOMER D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID ';
+  //关联
+  strSql:=
+    'select jc.*,U.USER_NAME as GUIDE_USER_TXT from ('+strSql+') jc '+
+    ' left outer join VIW_USERS U on jc.TENANT_ID=U.TENANT_ID and jc.GUIDE_USER=U.USER_ID '+
+    ' order by jc.ABLE_DATE ';
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -413,6 +466,8 @@ begin
   fndP2_SHOP_TYPE.ItemIndex:=0;
   fndP2_SHOP_VALUE.KeyValue:=trim(adoReport1.fieldbyName('REGION_ID').AsString);
   fndP2_SHOP_VALUE.Text:=trim(adoReport1.fieldbyName('CODE_NAME').AsString);
+  Copy_ParamsValue(fndP1_RECV_TYPE,fndP2_RECV_TYPE); //账款类型
+  Copy_ParamsValue(fndP1_GUIDE_USER,fndP2_GUIDE_USER); //业务员
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -428,6 +483,8 @@ begin
   P3_D1.Date:=P2_D1.Date;
   P3_D2.Date:=P2_D2.Date;
   Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  Copy_ParamsValue(fndP2_RECV_TYPE,fndP3_RECV_TYPE); //账款类型
+  Copy_ParamsValue(fndP2_GUIDE_USER,fndP3_GUIDE_USER); //业务员
   fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
   fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
@@ -446,6 +503,8 @@ begin
   P4_D2.Date:=P4_D1.Date;
   Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组
   Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //门店名称
+  Copy_ParamsValue(fndP3_RECV_TYPE,fndP4_RECV_TYPE); //账款类型
+  Copy_ParamsValue(fndP3_GUIDE_USER,fndP4_GUIDE_USER); //业务员
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -577,6 +636,9 @@ begin
   if P4_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  if (fndP4_GUIDE_USER.AsString<>'') and ((fndP4_RECV_TYPE.AsString='5')or(fndP4_RECV_TYPE.AsString='6')) then
+     Raise Exception.Create(' 收款类型为（其他收款），不能同时选业务员...  ');
+
   //过滤企业ID:
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+GetDataRight;
 
@@ -588,6 +650,12 @@ begin
 
   //门店管理群组
   strWhere:=strWhere+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'');
+
+  //账款类型
+  strWhere:=strWhere+GetRecvTypeCnd(fndP4_RECV_TYPE,'A.RECV_TYPE');  
+
+  //业务员
+  strWhere:=strWhere+GetGuileUserCnd(fndP4_GUIDE_USER.AsString)+' ';
 
   strSql:=
      'select A.TENANT_ID as TENANT_ID '+
@@ -619,6 +687,8 @@ begin
   P5_D2.Date:=P4_D2.Date;
   Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
   Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //管理群组
+  Copy_ParamsValue(fndP4_RECV_TYPE,fndP5_RECV_TYPE); //账款类型
+  Copy_ParamsValue(fndP4_GUIDE_USER,fndP5_GUIDE_USER); //业务员
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -675,6 +745,30 @@ function TfrmRecvAbleReport.GetDataRight: string;
 begin
   //ACC_RECVABLE_INFO A
   result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+end;
+
+function TfrmRecvAbleReport.GetRecvTypeCnd(Recv_TYPE: TzrComboBoxList;FieldName: string): string;
+begin
+  result:='';
+  if Recv_TYPE.AsString<>'' then
+    result:=' and '+FieldName+'='''+Recv_TYPE.AsString+''' ';
+end;
+
+function TfrmRecvAbleReport.GetGuileUserCnd(GuideUser: string): string;
+var
+  Cnd:string;
+begin
+  result:='';
+  //业务员条件
+  if GuideUser<>'' then
+  begin
+    Cnd:=Cnd+' and RECV_TYPE not in (''5'',''6'') ';
+    Cnd:=Cnd+' and SALES_ID in '+
+      '(select SALES_ID from SAL_SALESORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SALES_TYPE in (1,3) and GUIDE_USER='''+GuideUser+''' '+
+      ' union all '+
+      ' select SALES_ID from SAL_INDENTORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and GUIDE_USER='''+GuideUser+''')';
+    result:=Cnd;
+  end;
 end;
 
 end.

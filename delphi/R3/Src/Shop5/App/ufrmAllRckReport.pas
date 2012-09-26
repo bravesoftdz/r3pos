@@ -983,7 +983,7 @@ end;
 
 function TfrmAllRckReport.GetSQL: string;
 var
-  w,w1:string;
+  w,w1,SORT_ID_Fields,SORT_ID_Group:string;
   strWhere,UnitCalc,mx,strSql,BarTab: string;
   BegDate,EndDate: string;
   Safe_Day: integer;  //安全天数

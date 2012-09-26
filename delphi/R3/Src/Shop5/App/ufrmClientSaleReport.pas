@@ -900,8 +900,8 @@ end;
 
 function TfrmClientSaleReport.GetGodsSQL(chk: boolean): string;
 var
-  UnitCalc,SORT_ID: string;  //单位计算关系
-  strSql,strCnd,strWhere,GoodTab,SQLData: string;
+  UnitCalc,SORT_ID_Fields,SORT_ID_Group:string;  //单位计算关系
+  strSql,strCnd,strWhere,GoodTab,SQLData:string;
 begin
   strCnd:='';
   if P4_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
@@ -1019,16 +1019,27 @@ begin
 
   //分组字段
   case StrToInt(GodsSortIdx) of
-   0: SORT_ID:='C.RELATION_ID';
-   else
-      SORT_ID:='case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end';
-      //SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
+   -1:
+     begin
+       SORT_ID_Fields:=',-1 as SORT_ID';
+       SORT_ID_Group:='';
+     end;
+    0:
+     begin
+       SORT_ID_Fields:=',C.RELATION_ID as SORT_ID';
+       SORT_ID_Group:=',C.RELATION_ID';
+     end
+    else
+     begin
+       SORT_ID_Fields:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end) as SORT_ID';
+       SORT_ID_Group:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end)';
+     end;
   end;
+
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
-    ' A.TENANT_ID '+
-    ','+SORT_ID+' as SORT_ID '+      
+    ' A.TENANT_ID'+SORT_ID_Fields+
     ',A.GODS_ID '+
     ',sum(SALE_AMT*1.000/'+UnitCalc+') as SALE_AMT '+    //销售数量
     ',case when cast(sum(SALE_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.000/cast(sum(SALE_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
@@ -1046,7 +1057,7 @@ begin
     ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
     ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
     '  '+ strWhere + ' '+
-    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
+    'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
 
   strSql :=
     'select j.*'+
@@ -1054,6 +1065,15 @@ begin
     'from ('+strSql+') j inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
   case StrtoInt(GodsSortIdx) of
+  -1:
+    begin
+      strSql :=
+        'select j.*,j.GODS_CODE as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' order by j.GODS_CODE';
+    end;
    0: //供应链
     begin
       strSql :=

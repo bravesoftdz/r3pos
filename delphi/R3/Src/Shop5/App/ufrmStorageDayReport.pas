@@ -653,7 +653,7 @@ end;
 
 function TfrmStorageDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  UnitCalc,SORT_ID: string;
+  UnitCalc,SORT_ID_Fields,SORT_ID_Group: string;
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
@@ -721,9 +721,21 @@ begin
     
   //分组字段
   case StrToInt(GodsSortIdx) of
-   0: SORT_ID:='C.RELATION_ID';
-   else
-      SORT_ID:='case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end';  //SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
+   -1:
+     begin
+       SORT_ID_Fields:=',-1 as SORT_ID';
+       SORT_ID_Group:='';
+     end;
+    0:
+     begin
+       SORT_ID_Fields:=',C.RELATION_ID as SORT_ID';
+       SORT_ID_Group:=',C.RELATION_ID';
+     end
+    else
+     begin
+       SORT_ID_Fields:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end) as SORT_ID';
+       SORT_ID_Group:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end)';
+     end;
   end;
 
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
@@ -740,7 +752,7 @@ begin
       ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
        '(SELECT '+
-       ' A.TENANT_ID,'+SORT_ID+' as SORT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
+       ' A.TENANT_ID'+SORT_ID_Fields+',A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
        ' A.PROPERTY_01,A.BATCH_NO,A.PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID '+
        ',AMOUNT*1.000/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
@@ -750,6 +762,15 @@ begin
       ' group by TENANT_ID,SORT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';
 
     case StrtoInt(GodsSortIdx) of
+     -1:
+      begin
+        strSql :=
+          'select j.*,j.GODS_CODE as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+          'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+          'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+          'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+          ' order by j.GODS_CODE';
+      end;
      0:
       begin
         strSql :=
@@ -783,8 +804,7 @@ begin
     strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
     strSql :=
       'SELECT '+
-      ' A.TENANT_ID '+
-      ','+SORT_ID+' as SORT_ID '+
+      ' A.TENANT_ID'+SORT_ID_Fields+
       ',A.GODS_ID '+
       ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,A.BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
       ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
@@ -794,9 +814,20 @@ begin
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-      'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,A.BATCH_NO,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
+      'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,A.BATCH_NO,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
 
     case StrtoInt(GodsSortIdx) of
+     -1:
+      begin
+        strSql :=
+          'select j.*,j.GODS_CODE as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from '+
+          ' ('+strSql+') j '+
+          ' left outer join '+
+          ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+          '   on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+          ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+          ' order by j.GODS_CODE';
+      end;
      0:
       begin
         strSql :=

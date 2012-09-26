@@ -767,7 +767,7 @@ end;
 
 function TfrmJxcTotalReport.GetGodsSQL(chk:boolean=true): string;
 var
-  mx,SORT_ID:string;
+  mx,SORT_ID_Fields,SORT_ID_Group:string;
   strSql,strWhere,GoodTab:widestring;
 begin
   result:='';
@@ -819,11 +819,23 @@ begin
 
   //分组字段
   case StrToInt(GodsSortIdx) of
-   0: SORT_ID:='C.RELATION_ID';
-   else
-      SORT_ID:='case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end';
-      //SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
+   -1:
+     begin
+       SORT_ID_Fields:=',-1 as SORT_ID';
+       SORT_ID_Group:='';
+     end;
+    0:
+     begin
+       SORT_ID_Fields:=',C.RELATION_ID as SORT_ID';
+       SORT_ID_Group:=',C.RELATION_ID';
+     end
+    else
+     begin
+       SORT_ID_Fields:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end) as SORT_ID';
+       SORT_ID_Group:=',(case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end)';
+     end;
   end;
+
   //2012.09.24商品名称
   if trim(fndP4_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+GetGodsIdsCnd(fndP4_GODS_ID.AsString,'A.GODS_ID');  
@@ -833,8 +845,7 @@ begin
   mx := GetMaxMonth(StrtoInt(P4_D2.asString));
   strSql :=
     'SELECT '+
-    ' A.TENANT_ID '+
-    ','+SORT_ID+' as SORT_ID '+
+    ' A.TENANT_ID'+SORT_ID_Fields+
     ',A.GODS_ID '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_AMT*1.000/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
@@ -872,7 +883,7 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
+    'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
 
   strSql :=
     'select j.* '+
@@ -880,6 +891,15 @@ begin
     'from ('+strSql+') j inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
   case StrToInt(GodsSortIdx) of
+   -1:
+    begin
+      strSql :=
+        'select j.*,j.GODS_CODE as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' order by j.GODS_CODE';
+    end;
    0:
     begin
       strSql :=

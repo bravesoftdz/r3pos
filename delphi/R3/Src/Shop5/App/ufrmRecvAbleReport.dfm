@@ -1,5 +1,4 @@
 inherited frmRecvAbleReport: TfrmRecvAbleReport
-  Left = 189
   Top = 103
   Width = 1022
   Height = 611
@@ -15,10 +14,10 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet5
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -31,7 +30,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Height = 494
               inherited w1: TRzPanel
                 Width = 787
-                Height = 64
+                Height = 79
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 12
@@ -49,10 +48,26 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 40
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label18: TLabel
+                  Left = 24
+                  Top = 57
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label44: TLabel
+                  Left = 286
+                  Top = 56
+                  Width = 36
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994#21153#21592
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
@@ -71,8 +86,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 322
-                  Top = 28
+                  Left = 462
+                  Top = 40
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -90,7 +105,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -99,7 +114,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 36
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -111,7 +126,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
-                  Top = 36
+                  Top = 30
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -155,16 +170,101 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 7
                   Width = 170
                   Height = 20
+                  TabOrder = 7
+                end
+                object fndP1_RECV_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 53
+                  Width = 191
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 4
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP1_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 327
+                  Top = 52
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 64
+                Top = 79
                 Width = 787
-                Height = 430
+                Height = 415
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 426
+                  Height = 411
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -267,7 +367,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 65
+                Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -289,10 +389,26 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 43
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label19: TLabel
+                  Left = 24
+                  Top = 57
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label14: TLabel
+                  Left = 286
+                  Top = 57
+                  Width = 36
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994#21153#21592
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
@@ -313,7 +429,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 39
+                  Top = 31
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -353,8 +469,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   MultiSelect = False
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 302
-                  Top = 30
+                  Left = 462
+                  Top = 41
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -372,7 +488,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -381,7 +497,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 39
+                  Top = 31
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -395,14 +511,99 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 9
                   Width = 170
                   Height = 20
+                  TabOrder = 7
+                end
+                object fndP2_RECV_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 53
+                  Width = 192
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 4
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP2_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 328
+                  Top = 53
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 65
+                Top = 78
                 Width = 787
-                Height = 429
+                Height = 416
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -411,7 +612,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 425
+                  Height = 412
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -554,7 +755,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 82
+                Height = 80
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -582,11 +783,27 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label9: TLabel
-                  Left = 24
-                  Top = 58
+                  Left = 288
+                  Top = 36
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
+                end
+                object Label20: TLabel
+                  Left = 26
+                  Top = 58
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label15: TLabel
+                  Left = 290
+                  Top = 58
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994' '#21153' '#21592
                 end
                 object P3_D1: TcxDateEdit
                   Left = 80
@@ -605,8 +822,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   TabOrder = 1
                 end
                 object RzBitBtn2: TRzBitBtn
-                  Left = 294
-                  Top = 41
+                  Left = 478
+                  Top = 39
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -624,7 +841,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -686,9 +903,9 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 80
-                  Top = 54
-                  Width = 193
+                  Left = 343
+                  Top = 32
+                  Width = 119
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -731,14 +948,99 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 10
                   Width = 170
                   Height = 20
+                  TabOrder = 8
+                end
+                object fndP3_RECV_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 54
+                  Width = 192
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP3_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 342
+                  Top = 54
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 6
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 82
+                Top = 80
                 Width = 787
-                Height = 412
+                Height = 414
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -748,7 +1050,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 408
+                  Height = 410
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -867,7 +1169,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 82
+            Height = 80
             Align = alTop
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdTop, sdRight]
@@ -895,11 +1197,27 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Caption = #38376#24215#32676#32452
             end
             object Label6: TLabel
+              Left = 292
+              Top = 36
+              Width = 48
+              Height = 12
+              Caption = #38376#24215#21517#31216
+            end
+            object Label21: TLabel
               Left = 24
               Top = 58
               Width = 48
               Height = 12
-              Caption = #38376#24215#21517#31216
+              Alignment = taRightJustify
+              Caption = #36134#27454#31867#22411
+            end
+            object Label16: TLabel
+              Left = 292
+              Top = 58
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #19994' '#21153' '#21592
             end
             object P4_D1: TcxDateEdit
               Left = 80
@@ -918,8 +1236,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               TabOrder = 1
             end
             object RzBitBtn4: TRzBitBtn
-              Left = 294
-              Top = 41
+              Left = 502
+              Top = 39
               Width = 67
               Height = 32
               Action = actFind
@@ -937,7 +1255,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               ParentFont = False
               TextShadowColor = clWhite
               TextShadowDepth = 4
-              TabOrder = 5
+              TabOrder = 7
               TextStyle = tsRaised
               ThemeAware = False
               ImageIndex = 12
@@ -999,9 +1317,9 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             end
             object fndP4_SHOP_ID: TzrComboBoxList
               Tag = -1
-              Left = 80
-              Top = 54
-              Width = 193
+              Left = 348
+              Top = 32
+              Width = 121
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -1040,18 +1358,103 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               MultiSelect = False
             end
             inline P4_DateControl: TfrmDateControl
-              Left = 280
+              Left = 292
               Top = 10
               Width = 170
               Height = 20
+              TabOrder = 8
+            end
+            object fndP4_RECV_TYPE: TzrComboBoxList
+              Tag = -1
+              Left = 80
+              Top = 54
+              Width = 192
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 5
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'CODE_ID;CODE_NAME'
+              KeyField = 'CODE_ID'
+              ListField = 'CODE_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'CODE_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                  Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CODE_ID'
+                  Footers = <>
+                  Title.Caption = #20195#30721
+                  Width = 30
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = [zbClear]
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+            object fndP4_GUIDE_USER: TzrComboBoxList
+              Tag = -1
+              Left = 348
+              Top = 54
+              Width = 121
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
               TabOrder = 6
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+              KeyField = 'USER_ID'
+              ListField = 'USER_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'USER_NAME'
+                  Footers = <>
+                  Title.Caption = #22995#21517
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'USER_SPELL'
+                  Footers = <>
+                  Title.Caption = #25340#38899#30721
+                  Width = 20
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = [zbClear]
+              DropListStyle = lsFixed
+              MultiSelect = False
             end
           end
           object RzPanel17: TRzPanel
             Left = 0
-            Top = 82
+            Top = 80
             Width = 797
-            Height = 422
+            Height = 424
             Align = alClient
             BorderOuter = fsGroove
             Color = clWhite
@@ -1061,7 +1464,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Left = 2
               Top = 2
               Width = 793
-              Height = 418
+              Height = 420
               Align = alClient
               AllowedOperations = []
               BorderStyle = bsNone
@@ -1202,7 +1605,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 82
+                Height = 103
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1237,12 +1640,28 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Caption = #38376#24215#21517#31216
                 end
                 object Label7: TLabel
-                  Left = 289
-                  Top = 59
+                  Left = 292
+                  Top = 58
                   Width = 36
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #21046#21333#20154
+                end
+                object Label22: TLabel
+                  Left = 24
+                  Top = 81
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label17: TLabel
+                  Left = 292
+                  Top = 81
+                  Width = 36
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994#21153#21592
                 end
                 object P5_D1: TcxDateEdit
                   Left = 80
@@ -1261,8 +1680,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   TabOrder = 1
                 end
                 object RzBitBtn3: TRzBitBtn
-                  Left = 427
-                  Top = 44
+                  Left = 475
+                  Top = 63
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1280,7 +1699,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 6
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1383,9 +1802,9 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   MultiSelect = False
                 end
                 object fndP5_USER_ID: TzrComboBoxList
-                  Left = 328
-                  Top = 55
-                  Width = 89
+                  Left = 331
+                  Top = 54
+                  Width = 121
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1428,14 +1847,99 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 11
                   Width = 170
                   Height = 20
+                  TabOrder = 9
+                end
+                object fndP5_RECV_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 77
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 6
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP5_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 331
+                  Top = 77
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 7
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 82
+                Top = 103
                 Width = 787
-                Height = 412
+                Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1444,7 +1948,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 408
+                  Height = 387
                   Align = alClient
                   AllowedOperations = []
                   DataSource = dsadoReport5
@@ -1627,6 +2131,12 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = [fsBold]
                       Width = 105
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GUIDE_USER_TXT'
+                      Footers = <>
+                      Title.Caption = #19994#21153#21592
                     end
                     item
                       EditButtons = <>

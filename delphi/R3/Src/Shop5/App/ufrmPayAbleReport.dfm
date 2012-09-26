@@ -29,7 +29,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Height = 494
               inherited w1: TRzPanel
                 Width = 787
-                Height = 67
+                Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 13
@@ -47,10 +47,26 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 44
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label18: TLabel
+                  Left = 24
+                  Top = 56
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label44: TLabel
+                  Left = 286
+                  Top = 54
+                  Width = 36
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994#21153#21592
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
@@ -69,8 +85,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 290
-                  Top = 32
+                  Left = 464
+                  Top = 39
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -88,7 +104,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -97,7 +113,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 40
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -109,7 +125,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
-                  Top = 40
+                  Top = 30
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -153,16 +169,101 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Top = 7
                   Width = 170
                   Height = 20
+                  TabOrder = 7
+                end
+                object fndP1_ABLE_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 52
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 4
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP1_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 327
+                  Top = 50
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 67
+                Top = 78
                 Width = 787
-                Height = 427
+                Height = 416
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 423
+                  Height = 412
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -265,7 +366,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 64
+                Height = 76
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -287,10 +388,26 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 41
+                  Top = 33
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label19: TLabel
+                  Left = 24
+                  Top = 55
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label14: TLabel
+                  Left = 286
+                  Top = 55
+                  Width = 36
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994#21153#21592
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
@@ -311,7 +428,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 37
+                  Top = 29
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -351,8 +468,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   MultiSelect = False
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 297
-                  Top = 27
+                  Left = 465
+                  Top = 39
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -370,7 +487,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -379,7 +496,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 37
+                  Top = 29
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -393,14 +510,99 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Top = 8
                   Width = 170
                   Height = 20
+                  TabOrder = 7
+                end
+                object fndP2_ABLE_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 51
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 4
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP2_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 328
+                  Top = 51
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 64
+                Top = 76
                 Width = 787
-                Height = 430
+                Height = 418
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -409,7 +611,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 426
+                  Height = 414
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -552,7 +754,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 82
+                Height = 80
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -580,11 +782,27 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label9: TLabel
-                  Left = 24
-                  Top = 58
+                  Left = 292
+                  Top = 36
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
+                end
+                object Label20: TLabel
+                  Left = 26
+                  Top = 58
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #36134#27454#31867#22411
+                end
+                object Label15: TLabel
+                  Left = 292
+                  Top = 58
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #19994' '#21153' '#21592
                 end
                 object P3_D1: TcxDateEdit
                   Left = 80
@@ -603,8 +821,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   TabOrder = 1
                 end
                 object RzBitBtn2: TRzBitBtn
-                  Left = 298
-                  Top = 44
+                  Left = 489
+                  Top = 41
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -622,7 +840,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -684,9 +902,9 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 80
-                  Top = 54
-                  Width = 193
+                  Left = 349
+                  Top = 32
+                  Width = 121
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -729,14 +947,99 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Top = 11
                   Width = 170
                   Height = 20
+                  TabOrder = 8
+                end
+                object fndP3_ABLE_TYPE: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 54
+                  Width = 192
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                      Width = 80
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 30
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP3_GUIDE_USER: TzrComboBoxList
+                  Tag = -1
+                  Left = 349
+                  Top = 54
+                  Width = 121
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 6
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_SPELL'
+                      Footers = <>
+                      Title.Caption = #25340#38899#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 82
+                Top = 80
                 Width = 787
-                Height = 412
+                Height = 414
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -746,7 +1049,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 408
+                  Height = 410
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -874,13 +1177,13 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 82
+              Height = 102
               Align = alTop
               BorderOuter = fsGroove
               BorderSides = [sdLeft, sdTop, sdRight]
               TabOrder = 0
               object RzLabel1: TRzLabel
-                Left = 24
+                Left = 23
                 Top = 14
                 Width = 48
                 Height = 12
@@ -895,18 +1198,42 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Caption = #33267
               end
               object Label4: TLabel
-                Left = 24
+                Left = 23
                 Top = 36
                 Width = 48
                 Height = 12
                 Caption = #38376#24215#32676#32452
               end
               object Label6: TLabel
-                Left = 24
+                Left = 23
                 Top = 58
                 Width = 48
                 Height = 12
                 Caption = #38376#24215#21517#31216
+              end
+              object Label21: TLabel
+                Left = 24
+                Top = 80
+                Width = 48
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #36134#27454#31867#22411
+              end
+              object Label16: TLabel
+                Left = 305
+                Top = 80
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #19994#21153#21592
+              end
+              object Label13: TLabel
+                Left = 305
+                Top = 58
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #21046#21333#20154
               end
               object P4_D1: TcxDateEdit
                 Left = 80
@@ -925,8 +1252,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 TabOrder = 1
               end
               object RzBitBtn4: TRzBitBtn
-                Left = 294
-                Top = 41
+                Left = 486
+                Top = 65
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -944,7 +1271,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 5
+                TabOrder = 8
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -1047,18 +1374,144 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 MultiSelect = False
               end
               inline P4_DateControl: TfrmDateControl
-                Left = 282
+                Left = 293
                 Top = 11
                 Width = 170
                 Height = 20
+                TabOrder = 9
+              end
+              object fndP4_ABLE_TYPE: TzrComboBoxList
+                Tag = -1
+                Left = 80
+                Top = 76
+                Width = 192
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
                 TabOrder = 6
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'CODE_ID;CODE_NAME'
+                KeyField = 'CODE_ID'
+                ListField = 'CODE_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'CODE_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                    Width = 80
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CODE_ID'
+                    Footers = <>
+                    Title.Caption = #20195#30721
+                    Width = 30
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = False
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndP4_GUIDE_USER: TzrComboBoxList
+                Tag = -1
+                Left = 345
+                Top = 77
+                Width = 121
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 7
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
+                KeyField = 'USER_ID'
+                ListField = 'USER_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'USER_NAME'
+                    Footers = <>
+                    Title.Caption = #22995#21517
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'USER_SPELL'
+                    Footers = <>
+                    Title.Caption = #25340#38899#30721
+                    Width = 20
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = False
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndP4_USER_ID: TzrComboBoxList
+                Left = 345
+                Top = 54
+                Width = 120
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 5
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
+                KeyField = 'USER_ID'
+                ListField = 'USER_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'ACCOUNT'
+                    Footers = <>
+                    Title.Caption = #24080#21495
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'USER_NAME'
+                    Footers = <>
+                    Title.Caption = #22995#21517
+                    Width = 130
+                  end>
+                DropWidth = 180
+                DropHeight = 150
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbNew]
+                DropListStyle = lsFixed
+                MultiSelect = False
               end
             end
             object RzPanel17: TRzPanel
               Left = 5
-              Top = 87
+              Top = 107
               Width = 787
-              Height = 412
+              Height = 392
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1068,7 +1521,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 2
                 Top = 2
                 Width = 783
-                Height = 408
+                Height = 388
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1191,7 +1644,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 80
+            Height = 101
             Align = alTop
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdTop, sdRight]
@@ -1226,7 +1679,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Caption = #38376#24215#21517#31216
             end
             object Label7: TLabel
-              Left = 300
+              Left = 292
               Top = 58
               Width = 36
               Height = 12
@@ -1234,12 +1687,20 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Caption = #21046#21333#20154
             end
             object Label8: TLabel
-              Left = 300
-              Top = 36
+              Left = 292
+              Top = 80
               Width = 36
               Height = 12
               Alignment = taRightJustify
-              Caption = #39564#36135#20154
+              Caption = #19994#21153#21592
+            end
+            object Label22: TLabel
+              Left = 24
+              Top = 80
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #36134#27454#31867#22411
             end
             object P5_D1: TcxDateEdit
               Left = 80
@@ -1258,8 +1719,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               TabOrder = 1
             end
             object RzBitBtn3: TRzBitBtn
-              Left = 473
-              Top = 43
+              Left = 465
+              Top = 64
               Width = 67
               Height = 32
               Action = actFind
@@ -1277,7 +1738,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               ParentFont = False
               TextShadowColor = clWhite
               TextShadowDepth = 4
-              TabOrder = 7
+              TabOrder = 8
               TextStyle = tsRaised
               ThemeAware = False
               ImageIndex = 12
@@ -1349,7 +1810,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 5
+              TabOrder = 4
               InGrid = False
               KeyValue = Null
               FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1380,7 +1841,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               MultiSelect = False
             end
             object fndP5_USER_ID: TzrComboBoxList
-              Left = 340
+              Left = 332
               Top = 54
               Width = 120
               Height = 20
@@ -1390,7 +1851,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 6
+              TabOrder = 5
               InGrid = False
               KeyValue = Null
               FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -1420,9 +1881,9 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               DropListStyle = lsFixed
               MultiSelect = False
             end
-            object fndP5_GLIDE_ID: TzrComboBoxList
-              Left = 340
-              Top = 32
+            object fndP5_GUIDE_USER: TzrComboBoxList
+              Left = 332
+              Top = 76
               Width = 120
               Height = 20
               Properties.AutoSelect = False
@@ -1431,7 +1892,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 4
+              TabOrder = 7
               InGrid = False
               KeyValue = Null
               FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -1462,18 +1923,61 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               MultiSelect = False
             end
             inline P5_DateControl: TfrmDateControl
-              Left = 278
+              Left = 293
               Top = 11
               Width = 170
               Height = 20
-              TabOrder = 8
+              TabOrder = 9
+            end
+            object fndP5_ABLE_TYPE: TzrComboBoxList
+              Tag = -1
+              Left = 80
+              Top = 76
+              Width = 193
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 6
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'CODE_ID;CODE_NAME'
+              KeyField = 'CODE_ID'
+              ListField = 'CODE_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'CODE_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                  Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CODE_ID'
+                  Footers = <>
+                  Title.Caption = #20195#30721
+                  Width = 30
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = [zbClear]
+              DropListStyle = lsFixed
+              MultiSelect = False
             end
           end
           object RzPanel15: TRzPanel
             Left = 0
-            Top = 80
+            Top = 101
             Width = 797
-            Height = 424
+            Height = 403
             Align = alClient
             BorderOuter = fsGroove
             Color = clWhite
@@ -1482,7 +1986,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Left = 2
               Top = 2
               Width = 793
-              Height = 420
+              Height = 399
               Align = alClient
               AllowedOperations = []
               DataSource = dsadoReport4
@@ -1683,7 +2187,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   EditButtons = <>
                   FieldName = 'GUIDE_USER_NAME'
                   Footers = <>
-                  Title.Caption = #39564#36135#20154
+                  Title.Caption = #19994#21153#21592
                   Title.Font.Charset = GB2312_CHARSET
                   Title.Font.Color = clWindowText
                   Title.Font.Height = -12

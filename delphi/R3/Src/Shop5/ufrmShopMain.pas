@@ -488,6 +488,7 @@ type
     procedure actfrmColorGroupExecute(Sender: TObject);
     procedure actfrmSizeGroupExecute(Sender: TObject);
     procedure actfrmBatchAdjustPriceExecute(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -817,7 +818,14 @@ begin
          Global.Roles := Params.Roles;
          Global.CloseAll;
          Global.SysDate := lDate;
-         result := true;
+         if not caFactory.checkLicese then
+            begin
+              result := false;
+              Application.Terminate;
+              Exit;
+            end
+         else
+            result := true;
        end;
        Logined := Logined;
      end
@@ -3231,7 +3239,8 @@ end;
 procedure TfrmShopMain.RzBmpButton6Click(Sender: TObject);
 begin
   inherited;
-  ShowMsgBox('谢谢你的关注，网站正在更新中...','友情提示..',MB_OK+MB_ICONINFORMATION);
+  ShellExecute(0,'open','www.rspcn.com',nil,nil,0);
+  //ShowMsgBox('谢谢你的关注，网站正在更新中...','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmShopMain.actfrmInLocusOrderListExecute(Sender: TObject);
@@ -4861,6 +4870,13 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.RzBmpButton5Click(Sender: TObject);
+begin
+  inherited;
+  ShellExecute(0,'open','www.rspcn.com',nil,nil,0);
+
 end;
 
 end.

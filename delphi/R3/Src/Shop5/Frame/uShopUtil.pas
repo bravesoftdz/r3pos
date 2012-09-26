@@ -96,8 +96,7 @@ begin
        Exit;
      end;
   Result := copy(BarCode,8,2);
-  result := '0'+result;
-  if Result = '000' then Result := '#';
+  if Result = '00' then Result := '#';
 end;
 //×Ô±àÌõÂë
 function GetBarCode(ID:string;Size,Color:string;Len:Integer=13):string;

@@ -70,7 +70,30 @@ uses
   ObjMktPlanOrder in '..\Shop5\Obj\ObjMktPlanOrder.pas',
   ObjMktRequOrder in '..\Shop5\Obj\ObjMktRequOrder.pas',
   ObjMktTaskOrder in '..\Shop5\Obj\ObjMktTaskOrder.pas',
-  ObjRecvOrder in '..\Shop5\Obj\ObjRecvOrder.pas';
+  ObjRecvOrder in '..\Shop5\Obj\ObjRecvOrder.pas',
+  ObjCostCalc in '..\Shop5\Obj\ObjCostCalc.pas',
+  ZRCtrls in '..\..\zLib\src\zLib\ZRCtrls.pas',
+  ObjBomOrder in '..\Shop5\Obj\ObjBomOrder.pas',
+  ObjInvoiceOrder in '..\Shop5\Obj\ObjInvoiceOrder.pas',
+  ObjMktActiveList in '..\Shop5\Obj\ObjMktActiveList.pas',
+  ObjNoteBook in '..\Shop5\Obj\ObjNoteBook.pas',
+  ObjMktBudgOrder in '..\Shop5\Obj\ObjMktBudgOrder.pas',
+  ObjMktAtthOrder in '..\Shop5\Obj\ObjMktAtthOrder.pas',
+  ObjMktPlanOrder3 in '..\Shop5\Obj\ObjMktPlanOrder3.pas',
+  ObjStkInvoiceOrder in '..\Shop5\Obj\ObjStkInvoiceOrder.pas',
+  ObjVoucherOrder in '..\Shop5\Obj\ObjVoucherOrder.pas',
+  ObjMktKpiModify in '..\Shop5\Obj\ObjMktKpiModify.pas',
+  ObjFvchFrame in '..\Shop5\Obj\ObjFvchFrame.pas',
+  ObjFvchIntfSet in '..\Shop5\Obj\ObjFvchIntfSet.pas',
+  ObjFvchOrder in '..\Shop5\Obj\ObjFvchOrder.pas',
+  ObjFvchPosting in '..\Shop5\Obj\ObjFvchPosting.pas',
+  ObjSvcServiceInfo in '..\Shop5\Obj\ObjSvcServiceInfo.pas',
+  ObjVhLeadOrder in '..\Shop5\Obj\ObjVhLeadOrder.pas',
+  ObjVhPayGlide in '..\Shop5\Obj\ObjVhPayGlide.pas',
+  ObjVhSendOrder in '..\Shop5\Obj\ObjVhSendOrder.pas',
+  ObjColorInfo in '..\Shop5\Obj\ObjColorInfo.pas',
+  ObjLocationInfo in '..\Shop5\Obj\ObjLocationInfo.pas',
+  ObjSizeInfo in '..\Shop5\Obj\ObjSizeInfo.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}

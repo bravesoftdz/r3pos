@@ -315,7 +315,7 @@ begin
      if CdsVhPay.Locate('BARCODE',BarCode,[]) then Raise Exception.Create('"'+BarCode+'"提货券已使用,请确认!');
 
      rs.SQL.Text :=
-     ' select A.INDE_ID,A.GLIDE_NO,A.CLIENT_ID,B.CLIENT_NAME,A.DEPT_ID,C.DEPT_NAME,A.SHOP_ID,D.SHOP_NAME,A.ADVA_MNY,'+
+     ' select A.INDE_ID,A.GLIDE_NO,A.CLIENT_ID,E.CLIENT_ID as VOCH_BARCODE,B.CLIENT_NAME,A.DEPT_ID,C.DEPT_NAME,A.SHOP_ID,D.SHOP_NAME,A.ADVA_MNY,'+
      ' E.BARCODE,E.VOUCHER_PRC,E.VOUCHER_STATUS,E.VOUCHER_TYPE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.SALES_STYLE,A.PLAN_DATE,A.INVOICE_FLAG,A.TAX_RATE,A.GUIDE_USER '+
      ' from SAL_INDENTORDER A inner join SAL_VOUCHERDATA E on A.TENANT_ID=E.TENANT_ID and A.INDE_ID=E.VOUCHER_ID '+
      ' left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
@@ -414,7 +414,7 @@ function TfrmVhPayGlide.GetBalanceVoucherSql: String;
 var Str:String;
 begin
   Str := 'select A.BARCODE,A.VOUCHER_TYPE,A.VOUCHER_PRC,A.VOUCHER_STATUS,B.SHOP_ID,B.DEPT_ID,B.VHPAY_ID,'+
-  'B.CLIENT_ID,B.VHPAY_USER,B.VHPAY_MNY,B.AGIO_RATE,B.AGIO_MONEY,B.VHPAY_DATE,B.CREA_DATE,B.FROM_ID '+
+  'B.CLIENT_ID,B.VHPAY_USER,B.VHPAY_MNY,B.AGIO_RATE,B.AGIO_MONEY,B.VHPAY_DATE,B.CREA_DATE,B.FROM_ID,B.REMARK '+
   ' from SAL_VOUCHERDATA A inner join SAL_VHPAY_GLIDE B on A.TENANT_ID=B.TENANT_ID and A.BARCODE=B.BARCODE '+
   ' where A.TENANT_ID=:TENANT_ID and A.VOUCHER_STATUS=''4'' and B.VHPAY_DATE=:VHPAY_DATE and B.VHPAY_USER=:VHPAY_USER order by B.CREA_DATE desc';
   Result := Str;
@@ -464,7 +464,7 @@ begin
       Params.ParamByName('FROM_ID').AsString := CdsVhpayGlide.FieldByName('FROM_ID').AsString;
       Params.ParamByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
       Params.ParamByName('CREA_USER').AsString := Global.UserID;
-      Params.ParamByName('REMARK').AsString := '撤消<'+CdsVhpayGlide.FieldByName('VHPAY_ID').AsString+'>';
+      Params.ParamByName('REMARK').AsString := '撤消';
       Msg := Factor.ExecProc('TUpdateVhPayGlide',Params);
       MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
     finally

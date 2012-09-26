@@ -5,6 +5,8 @@ inherited frmUpgrade: TfrmUpgrade
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPage: TRzPageControl
+    ActivePage = dbInst
+    TabIndex = 4
     OnChanging = RzPageChanging
     FixedDimension = 18
     object TabSheet3: TRzTabSheet

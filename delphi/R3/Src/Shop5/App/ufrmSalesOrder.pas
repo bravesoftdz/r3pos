@@ -2284,6 +2284,9 @@ begin
 end;
 
 procedure TfrmSalesOrder.CheckInfo(_Aobj: TRecord_);
+var rs,p1rs,p2rs:TZQuery;
+  basObj:TRecord_;
+  p1,p2:string;
 begin
   if edtCLIENT_ID.AsString <> '' then
   begin
@@ -2306,11 +2309,42 @@ begin
      edtINDE_GLIDE_NO.Text := _Aobj.FieldByName('GLIDE_NO').AsString;
      AObj.FieldbyName('FROM_ID').AsString := _Aobj.FieldByName('INDE_ID').AsString;
   end;
-
-  DecodeBarcode(copy(_Aobj.FieldByName('BARCODE').AsString,42,13));
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  basObj := TRecord_.Create;
+  try
+    if not rs.Locate('GODS_ID',_Aobj.FieldByName('VOCH_BARCODE').AsString,[]) then Raise Exception.Create('没找到对应的商品');
+    basObj.ReadFromDataSet(rs);
+    AddRecord(basObj,rs.FieldbyName('CALC_UNITS').AsString,True);
+  finally
+    basObj.Free;
+  end;
+//  DecodeBarcode(_Aobj.FieldByName('VOCH_BARCODE').AsString);
+  p1 := GetBarCodeSize(_Aobj.FieldByName('BARCODE').AsString);
+  if p1='00' then
+     p1 := '#'
+  else
+     begin
+       p1rs := Global.GetZQueryFromName('PUB_SIZE_RELATION');
+       if p1rs.Locate('BARCODE_FLAG',p1,[]) then
+          p1 := p1rs.FieldbyName('SIZE_ID').AsString
+       else
+          p1 := '#';
+     end;
+  p2 := GetBarCodeColor(_Aobj.FieldByName('BARCODE').AsString);
+  if p2='00' then
+     p2 := '#'
+  else
+     begin
+       p2rs := Global.GetZQueryFromName('PUB_COLOR_RELATION');
+       if p2rs.Locate('BARCODE_FLAG',p2,[]) then
+          p2 := p2rs.FieldbyName('COLOR_ID').AsString
+       else
+          p2 := '#';
+     end;
+  WriteNoAmount(rs.FieldbyName('CALC_UNITS').AsString,p1,p2,1,true);
   edtTable.Edit;
   edtTable.FieldbyName('APRICE').AsFloat := _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
-  PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+  AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
   AObj.FieldbyName('ADVA_MNY').AsFloat := AObj.FieldbyName('ADVA_MNY').AsFloat + _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
   edtADVA_MNY.Text := AObj.FieldbyName('ADVA_MNY').AsString;
   edtLINKMAN.Text := _Aobj.FieldbyName('LINKMAN').AsString;

@@ -62,9 +62,9 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select SHOP_ID,SHOP_NAME,SHOP_SPELL,SEQ_NO from CA_SHOP_INFO whe' +
-        're TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') order by SEQ' +
-        '_NO')
+        'select SHOP_ID,SHOP_NAME,SHOP_SPELL,SEQ_NO,REGION_ID from CA_SHO' +
+        'P_INFO where TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') or' +
+        'der by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown

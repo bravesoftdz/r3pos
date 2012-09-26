@@ -90,6 +90,22 @@ begin
    rsp.Free;
  end;
 end;
+function checkLicese(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
+var
+  rsp:TRspFactory;
+begin
+ rsp := TRspFactory.Create(20000,url,flag);
+ try
+   try
+     result := rsp.checkLicese(xml);
+   except
+     on E:Exception do
+       result := rsp.ErrorEncode(E.Message);
+   end;
+ finally
+   rsp.Free;
+ end;
+end;
 function listModules(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
 var
   rsp:TRspFactory;
@@ -321,7 +337,7 @@ begin
   move(_sslpwd^,sslpwd[1],8);
 end;
 exports
-  coLogin,coRegister,getTenantInfo,getShopInfo,listModules,checkUpgrade,
+  coLogin,coRegister,getTenantInfo,getShopInfo,checkLicese,listModules,checkUpgrade,
   createServiceLine,queryServiceLines,applyRelation,
   downloadTenants,downloadServiceLines,downloadRelations,downloadSort,downloadUnit,downloadGoods,downloadDeployGoods,downloadBarcode,
   queryUnion,SetParams;

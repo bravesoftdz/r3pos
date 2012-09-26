@@ -2047,14 +2047,16 @@ begin
 end;
 
 procedure TfrmSalIndentOrder.N6Click(Sender: TObject);
-var rsOrder,rsData,rs:TZQuery;
+var rsOrder,rsData,rs,p1rs,p2rs:TZQuery;
     Params:TftParamList;
     i,ACount,SeqNo:Integer;
     frmVoucherOrderList:TfrmVoucherOrderList;
+    P1,P2:string;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not isAudit then Raise Exception.Create('没有审核的单据不能生成提货券...');
+  if cdsHeader.FieldByName('ADVA_MNY').AsCurrency <> cdsHeader.FieldByName('INDE_MNY').AsCurrency then raise Exception.Create('不是全额预缴的订单不能打印提货券');
   rsOrder := TZQuery.Create(nil);
   rsData := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
@@ -2092,11 +2094,13 @@ begin
     rsOrder.Post;
     rsData.First;
     while not rsData.Eof do rsData.Delete;
+    p1rs := Global.GetZQueryFromName('PUB_SIZE_RELATION');
+    p2rs := Global.GetZQueryFromName('PUB_COLOR_RELATION');
     SeqNo := 0;
-    edtTable.First;
-    while not edtTable.Eof do
+    cdsDetail.First;
+    while not cdsDetail.Eof do
     begin
-      ACount := edtTable.FieldByName('AMOUNT').AsInteger;
+      ACount := round(cdsDetail.FieldByName('CALC_AMOUNT').AsFloat);
       for i := 1 to ACount do
       begin
         Inc(SeqNo);
@@ -2104,16 +2108,33 @@ begin
         rsData.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         rsData.FieldByName('SEQNO').AsInteger := SeqNo;
         rsData.FieldByName('VOUCHER_ID').AsString := cdsHeader.FieldByName('INDE_ID').AsString;
-        rsData.FieldByName('BARCODE').AsString := cdsHeader.FieldByName('INDE_ID').AsString+'-'+FnString.FormatStringEx(edtTable.FieldByName('SEQNO').AsString,3,'0')+'-'+
-                                                  edtTable.FieldByName('BARCODE').AsString+'-'+FnString.FormatStringEx(IntToStr(i),3,'0');
+        if cdsDetail.FieldbyName('PROPERTY_01').AsString<>'#' then
+           begin
+             if p1rs.Locate('SIZE_ID',cdsDetail.FieldbyName('PROPERTY_01').AsString,[]) then
+                p1 := p1rs.FieldbyName('BARCODE_FLAG').AsString
+             else
+                p1 := '#';
+           end
+        else
+           p1 := '#';
+        if cdsDetail.FieldbyName('PROPERTY_02').AsString<>'#' then
+           begin
+             if p2rs.Locate('COLOR_ID',cdsDetail.FieldbyName('PROPERTY_02').AsString,[]) then
+                p2 := p2rs.FieldbyName('BARCODE_FLAG').AsString
+             else
+                p2 := '#';
+           end
+        else
+           p2 := '#';
+        rsData.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('VOCH_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6),P1,P2);
         rsData.FieldByName('VOUCHER_TYPE').AsString := '4';
         rsData.FieldByName('VOUCHER_PRC').AsInteger := edtTable.FieldByName('APRICE').AsInteger;
         rsData.FieldByName('VOUCHER_STATUS').AsString := '1';
         rsData.FieldByName('VAILD_DATE').AsInteger := rsOrder.FieldByName('VAILD_DATE').AsInteger;
-        rsData.FieldByName('CLIENT_ID').AsString := '#';
+        rsData.FieldByName('CLIENT_ID').AsString := cdsDetail.FieldByName('GODS_ID').AsString;
         rsData.Post;
       end;
-      edtTable.Next;
+      cdsDetail.Next;
     end;
     Factor.BeginBatch;
     try

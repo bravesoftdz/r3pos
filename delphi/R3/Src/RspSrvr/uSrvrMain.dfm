@@ -668,8 +668,8 @@ object SocketForm: TSocketForm
     end
   end
   object pmuLogFile: TPopupMenu
-    Left = 128
-    Top = 184
+    Left = 56
+    Top = 176
     object N6: TMenuItem
       Caption = #22797#21046
       OnClick = N6Click
@@ -685,8 +685,8 @@ object SocketForm: TSocketForm
     Top = 47
   end
   object pmuDbConfig: TPopupMenu
-    Left = 128
-    Top = 88
+    Left = 40
+    Top = 136
     object MenuItem3: TMenuItem
       Action = actfrmDbConfig
       Default = True

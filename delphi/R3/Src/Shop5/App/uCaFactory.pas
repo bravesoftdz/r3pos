@@ -115,6 +115,7 @@ type
     FConnected: boolean;
     FresVersion: string;
     FresDesktop: string;
+    FeseFlag: integer;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -131,12 +132,14 @@ type
     function GetTimeStamp: int64;
     procedure SetresDesktop(const Value: string);
     procedure SetresVersion(const Value: string);
+    procedure SeteseFlag(const Value: integer);
   protected
     RspHandle:THandle;
     RspcoLogin:TRspFunction;
     RspcoRegister:TRspFunction;
     RspgetTenantInfo:TRspFunction;
     RspgetShopInfo:TRspFunction;
+    RspcheckLicese:TRspFunction;
     RsplistModules:TRspFunction;
     RspcheckUpgrade:TRspFunction;
     RspcreateServiceLine:TRspFunction;
@@ -161,6 +164,7 @@ type
     function  CheckRspState:boolean;
     //ado模式认证
     function  coAdoLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
+    function  coAdoCheckLicese:boolean;
     function  CheckAdoUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
     function  downloadAdoCaModule(TenantId,flag:integer):boolean;
     function  coAdoGetList(TENANT_ID:string):TCaTenant;
@@ -168,6 +172,7 @@ type
     function  coAdoRegister(Info:TCaTenant):TCaTenant;
     //rsp模式认证
     function  coRspLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
+    function  coRspCheckLicese:boolean;
     function  CheckRspUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
     function  downloadRspCaModule(TenantId,flag:integer):boolean;
     function  coRspGetList(TENANT_ID:string):TCaTenant;
@@ -215,6 +220,8 @@ type
     function downloadGoods(TenantId,flag:integer):boolean;
     function downloadDeployGoods(TenantId,flag:integer):boolean;
     function downloadBarcode(TenantId,flag:integer):boolean;
+    //保存门店
+    function downloadShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
     function SyncAll(flag:integer):boolean;
 
     function downloadCaModule(TenantId,flag:integer):boolean;
@@ -222,12 +229,11 @@ type
     //企业服务
     function AutoCoLogo:boolean;
     function coLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
+    function checkLicese:boolean;
     function coRegister(Info:TCaTenant):TCaTenant;
     function coGetList(TENANT_ID:string):TCaTenant;
 
     function SyncSystemTimeStamp:boolean;
-    //保存门店
-    function downloadShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
 
     property SSL:string read FSSL write SetSSL;
     property URL:string read FURL write SetURL;
@@ -252,6 +258,8 @@ type
     //最新桌面版本号
     property resVersion:string read FresVersion write SetresVersion;
     property resDesktop:string read FresDesktop write SetresDesktop;
+    //许可模式，0 默认 1按门店 2按硬件地址
+    property eseFlag:integer read FeseFlag write SeteseFlag;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -863,6 +871,7 @@ begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     s := f.ReadString('soft','rsp','');
+    eseFlag := f.ReadInteger('soft','eseFlag',0);
     if (s<>'') and (s[1]='#') then
        begin
          delete(s,1,1);
@@ -3372,6 +3381,8 @@ begin
   if @RspgetTenantInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getTenantInfo方法');
   @RspgetShopInfo := GetProcAddress(RspHandle, 'getShopInfo');
   if @RspgetShopInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getShopInfo方法');
+  @RspcheckLicese := GetProcAddress(RspHandle, 'checkLicese');
+  if @RspcheckLicese=nil then Raise Exception.Create('无效Rsp插件包，没有实现checkLicese方法');
   @RsplistModules := GetProcAddress(RspHandle, 'listModules');
   if @RsplistModules=nil then Raise Exception.Create('无效Rsp插件包，没有实现listModules方法');
   @RspcheckUpgrade := GetProcAddress(RspHandle, 'checkUpgrade');
@@ -3442,7 +3453,7 @@ try
   Node := doc.createElement('flag');
   Node.text := '1';
   FindNode(doc,'header\pub').appendChild(Node);
-  
+
   Node := doc.createElement('caShopInfo');
   FindNode(doc,'body').appendChild(Node);
 
@@ -4122,6 +4133,195 @@ end;
 procedure TCaFactory.SetresVersion(const Value: string);
 begin
   FresVersion := Value;
+end;
+
+procedure TCaFactory.SeteseFlag(const Value: integer);
+begin
+  FeseFlag := Value;
+end;
+
+function TCaFactory.checkLicese: boolean;
+begin
+  if CheckRspState then
+     result := coRspcheckLicese
+  else
+     result := true;// coAdocheckLicese;
+end;
+
+function TCaFactory.coAdoCheckLicese: boolean;
+var
+  rs,temp:TZQuery;
+  Params:TftParamList;
+  clseDate,rightType:string;
+begin
+try
+  result := true;
+  rs := TZQuery.Create(nil);
+  temp := TZQuery.Create(nil);
+  Params := TftParamList.Create;
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Params.ParamByName('SHOP_NAME').AsString := Global.SHOP_NAME;
+    Global.RemoteFactory.Open(temp,'TcoCheckLicese',Params);
+    clseDate := temp.FieldbyName('CLOSE_DATE').AsString;
+    rightType := temp.FieldbyName('RIGHT_TYPE').AsString;
+    result := true;
+    if clseDate='' then
+       begin
+         MessageBox(Application.MainForm.Handle,pchar('当前门店终端还没有获得授权,请联系软件提供商'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+         Exit;
+       end;
+    Factor.ExecSQL('update CA_SHOP_INFO set RIGHT_TYPE='''+rightType+''',CLSE_DATE='''+clseDate+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
+    case StrtoIntDef(rightType,1) of
+    1:begin
+        if clseDate>=formatDatetime('YYYY-MM-DD',date()) then
+           begin
+             MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限已到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+             result := false;
+           end
+        else
+        if clseDate>=formatDatetime('YYYY-MM-DD',date()-15) then
+           MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限将于'+clseDate+'到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+      end;
+    2:begin
+        if clseDate>=formatDatetime('YYYY-MM-DD',date()) then
+           MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限已到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION)
+        else
+        if clseDate>=formatDatetime('YYYY-MM-DD',date()-15) then
+           MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限将于'+clseDate+'到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+      end;
+    end;
+  finally
+    Params.Free;
+    temp.Free;
+    rs.Free;
+  end;
+except
+  on E:Exception do
+  begin
+    result := true;
+  end;
+end;
+end;
+
+function TCaFactory.coRspCheckLicese: boolean;
+var
+  rs:TZQuery;
+  Params:TftParamList;
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caShopInfo:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  code,clseDate,rightType:string;
+  h,r:rsp;
+  OutXml:widestring;
+begin
+try
+  result := true;
+  doc := CreateRspXML;
+  Node := doc.createElement('Flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('caShopInfo');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(Global.TENANT_ID);
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+  Node := doc.createElement('shopId');
+  Node.text := Global.SHOP_ID;
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+  Node := doc.createElement('shopName');
+  Node.text := Global.SHOP_NAME;
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+  Node := doc.createElement('regionId');
+  rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+  if rs.Locate('SHOP_ID',Global.SHOP_ID,[]) then
+     Node.text := rs.FieldbyName('REGION_ID').AsString
+  else
+     begin
+        rs := Global.GetZQueryFromName('CA_TENANT');
+        if rs.Locate('TENANT_ID',Global.TENANT_ID,[]) then
+           Node.text := rs.FieldbyName('REGION_ID').AsString
+     end;
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  if rspHandle>0 then
+     doc := CreateXML(rspcheckLicese(inxml,URL,1))
+  else
+  begin
+    rio := CreateRio(20000);
+    h := SendHeader(rio,1);
+    try
+      try
+        OutXml := GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).checkLicese(Encode(inxml,Pubpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+  end;
+  CheckRecAck(doc);
+  caShopInfo := FindNode(doc,'body\caShopInfo',false);
+  if caShopInfo=nil then Exit;
+  clseDate := GetNodeValue(caShopInfo,'clseDate');
+  rightType := GetNodeValue(caShopInfo,'rightType');
+  result := true;
+  if clseDate='' then
+     begin
+       MessageBox(Application.MainForm.Handle,pchar('当前门店终端还没有获得授权,请联系软件提供商'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  Factor.ExecSQL('update CA_SHOP_INFO set RIGHT_TYPE='''+rightType+''',CLSE_DATE='''+clseDate+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
+  case StrtoIntDef(GetNodeValue(caShopInfo,'rightType'),1) of
+  1:begin
+      if clseDate<=formatDatetime('YYYY-MM-DD',date()) then
+         begin
+           MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限已到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+           result := false;
+         end
+      else
+      if clseDate<=formatDatetime('YYYY-MM-DD',date()+15) then
+         MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限将于'+clseDate+'到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+    end;
+  2:begin
+      if clseDate<=formatDatetime('YYYY-MM-DD',date()) then
+         MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限已到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION)
+      else
+      if clseDate<=formatDatetime('YYYY-MM-DD',date()+15) then
+         MessageBox(Application.MainForm.Handle,pchar('当前登录门店的服务年限将于'+clseDate+'到期，'+#13+'相关服务条款及缴费明细请查看官方网站.'+#13+#13+'网址:www.rspcn.com  QQ:30355701'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+    end;
+  end;
+except
+  on E:Exception do
+  begin
+     result := true;
+  end;
+end;
 end;
 
 { rsp }

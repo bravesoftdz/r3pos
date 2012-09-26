@@ -87,6 +87,7 @@ type
     function  auditRelation(const inXml: WideString): WideString; stdcall;
     function  getTenantInfo(const inXml: WideString): WideString; stdcall;
     function  getShopInfo(const inXml: WideString): WideString; stdcall;
+    function  checkLicese(const inXml: WideString): WideString; stdcall;
   end;
 
 function GetCaTenantWebServiceImpl(UseWSDL: Boolean=System.False; Addr: string=''; HTTPRIO: THTTPRIO = nil): CaTenantWebServiceImpl;

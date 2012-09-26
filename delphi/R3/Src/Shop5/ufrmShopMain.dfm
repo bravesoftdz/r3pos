@@ -3582,6 +3582,7 @@ inherited frmShopMain: TfrmShopMain
               Font.Style = []
               ParentFont = False
               TabOrder = 1
+              OnClick = RzBmpButton5Click
             end
             object RzBmpButton6: TRzBmpButton
               Left = 171

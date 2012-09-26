@@ -75,24 +75,27 @@ begin
          AGlobal.Open(rs);
        end;
     srvrId := rs.FieldbyName('SRVR_ID').AsString;
-    if rs.IsEmpty then Raise Exception.Create('注册的用户名无效');
-    if (Params.ParamByName('flag').AsInteger=1) and (rs.Fields[1].asString=EncStr(Params.ParamByName('PassWrd').AsString,ENC_KEY)) then Raise Exception.Create('登录密码无效');
+    if rs.IsEmpty then auditStatus := '2';//Raise Exception.Create('注册的用户名无效');
+    //if (Params.ParamByName('flag').AsInteger=1) and (rs.Fields[1].asString<>EncStr(Params.ParamByName('PassWrd').AsString,ENC_KEY)) then auditStatus := '3';// Raise Exception.Create('登录密码无效');
     tid := rs.FieldbyName('TENANT_ID').AsInteger;
     sid := rs.FieldbyName('TENANT_ID').AsString+'0001';
     prodId := rs.FieldbyName('PROD_ID').AsString;
     if rs.FieldbyName('AUDIT_STATUS').AsString='2' then
        auditStatus := '1'
     else
-       auditStatus := '0';
+       auditStatus := '5';
     if (Params.ParamByName('flag').AsInteger=3) then sid := rs.Fields[1].AsString;
-    rs.Close;
-    rs.SQL.Text := 'select industry,prod_Flag,prod_Name from CA_PROD_INFO where PROD_ID=:PROD_ID';
-    rs.Params.ParamByName('PROD_ID').AsString := prodId;
-    AGlobal.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create(prodId+'软件产品在服务器上没找到');
-    prodFlag := rs.FieldbyName('prod_Flag').AsString;
-    industry := rs.FieldbyName('industry').AsString;
-    prodName := rs.FieldbyName('prod_Name').AsString;
+    if (auditStatus='1') or (auditStatus='5') then
+       begin
+          rs.Close;
+          rs.SQL.Text := 'select industry,prod_Flag,prod_Name from CA_PROD_INFO where PROD_ID=:PROD_ID';
+          rs.Params.ParamByName('PROD_ID').AsString := prodId;
+          AGlobal.Open(rs);
+          if rs.IsEmpty then Raise Exception.Create(prodId+'软件产品在服务器上没找到');
+          prodFlag := rs.FieldbyName('prod_Flag').AsString;
+          industry := rs.FieldbyName('industry').AsString;
+          prodName := rs.FieldbyName('prod_Name').AsString;
+       end;
     f.ReadSections(ls);
     for i:=0 to ls.count-1 do
       begin
@@ -188,6 +191,9 @@ begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'upd.cfg');
   prms := TftParamList.Create(nil);
   try
+    prms.ParambyName('tenant_id').AsString := Params.ParambyName('tenant_id').AsString;
+    prms.ParambyName('prodId').AsString := Params.ParambyName('prodId').AsString;
+    prms.ParambyName('curVeraion').AsString := Params.ParambyName('curVeraion').AsString;
     newVersion := F.ReadString(Params.ParambyName('prodId').AsString,'version','3.0.0.0');
     curVersion := Params.ParambyName('curVeraion').AsString;
     if CompareVersion(newVersion,curVersion) then

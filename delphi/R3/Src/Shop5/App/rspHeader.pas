@@ -40,6 +40,7 @@ type
     function coRegister(inxml: ansistring): ansistring;
     function getTenantInfo(inxml: ansistring): ansistring;
     function getShopInfo(inxml: ansistring): ansistring;
+    function checkLicese(inxml: ansistring): ansistring;
     //产品服务
     function checkUpgrade(inxml: ansistring): ansistring;
     function listModules(inxml: ansistring): ansistring;
@@ -102,6 +103,28 @@ begin
   try
     intf := GetCaServiceLineWebServiceImpl(true,Addr+'CaServiceLineService?wsdl',HTTPRIO);
     outXml := intf.applyRelation(Encode(inxml,sslpwd));
+    GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
+  finally
+    intf := nil;
+    r.Free;
+  end;
+end;
+
+function TRspFactory.checkLicese(inxml: ansistring): ansistring;
+var
+  r:rsp;
+  intf:CaTenantWebServiceImpl;
+  outXml: ansistring;
+begin
+  r := SendHeader(HTTPRIO,flag);
+  try
+    intf := GetCaTenantWebServiceImpl(true,Addr+'CaTenantService?wsdl',HTTPRIO);
+    outXml := intf.checkLicese(Encode(inxml,Pubpwd));
     GetHeader(HTTPRIO);
     case encryptType of
     2:result := Decode(outXml,sslpwd);

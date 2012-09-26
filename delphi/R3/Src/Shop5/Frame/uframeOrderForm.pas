@@ -218,6 +218,7 @@ type
     //判断当前记录是否有颜色尺管制
     function PropertyEnabled:boolean;
     function IsKeyPress:boolean;virtual;
+    procedure WriteNoAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);virtual;
     procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);virtual;
     procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);virtual;
     procedure AmountToCalc(Amount:Real);virtual;
@@ -1862,7 +1863,7 @@ end;
 procedure TframeOrderForm.AddFromDialog(AObj: TRecord_);
 var basInfo:TZQuery;
 begin
-  basInfo := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
   AddRecord(AObj,basInfo.FieldbyName('UNIT_ID').AsString,True);
   if (edtTable.FindField('AMOUNT')<>nil) then
@@ -3937,6 +3938,59 @@ begin
            break;
          end;
     end;
+end;
+
+procedure TframeOrderForm.WriteNoAmount(UNIT_ID, PROPERTY_01,
+  PROPERTY_02: string; Amt: real; Appended: boolean);
+var b:boolean;
+begin
+  b := PropertyEnabled;
+  if (edtTable.FindField('AMOUNT')<>nil) then
+  begin
+    if not b then
+    begin
+      edtTable.Edit;
+      if Appended then
+         edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat + amt
+      else
+         edtTable.FieldbyName('AMOUNT').AsFloat := amt;
+    end;
+  end
+  else
+    Raise Exception.Create('AMOUNT字段没找到');
+  if b then
+     begin
+       if edtProperty.Locate('SEQNO;PROPERTY_01;PROPERTY_02',VarArrayOf([edtTable.FieldbyName('SEQNO').AsInteger,PROPERTY_01,PROPERTY_02]),[]) then
+         begin
+           edtProperty.Edit;
+           edtTable.Edit;
+           if Appended then
+              edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat + amt
+           else
+              edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat - edtProperty.FieldbyName('AMOUNT').AsFloat + amt;
+         end else
+         begin
+           edtProperty.Append;
+           edtTable.Edit;
+           edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat + amt
+         end;
+       edtProperty.FieldByName('SEQNO').AsInteger := edtTable.FieldbyName('SEQNO').AsInteger;
+       edtProperty.FieldByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
+       edtProperty.FieldByName('BOM_ID').AsString := edtTable.FieldbyName('BOM_ID').AsString;
+       edtProperty.FieldByName('BATCH_NO').AsString := edtTable.FieldbyName('BATCH_NO').AsString;
+       edtProperty.FieldByName('IS_PRESENT').AsString := edtTable.FieldbyName('IS_PRESENT').AsString;
+       edtProperty.FieldByName('LOCUS_NO').AsString := edtTable.FieldbyName('LOCUS_NO').AsString;
+       edtProperty.FieldByName('UNIT_ID').AsString := UNIT_ID;
+       edtProperty.FieldByName('PROPERTY_01').AsString := PROPERTY_01;
+       edtProperty.FieldByName('PROPERTY_02').AsString := PROPERTY_02;
+       if Appended then
+          edtProperty.FieldbyName('AMOUNT').AsFloat := edtProperty.FieldbyName('AMOUNT').AsFloat + amt
+       else
+          edtProperty.FieldbyName('AMOUNT').AsFloat := amt;
+       edtProperty.Post;
+     end;
+  AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+  edtTable.Post;
 end;
 
 end.

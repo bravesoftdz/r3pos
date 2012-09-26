@@ -13,11 +13,13 @@ inherited frmVhPayGlide: TfrmVhPayGlide
     inherited RzPage: TRzPageControl
       Width = 494
       Height = 257
+      ActivePage = TabSheet5
       ParentColor = False
+      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
-        Caption = #31036#21048#20449#24687
+        Caption = #25195#30721#24405#20837
         inherited RzPanel2: TRzPanel
           Width = 490
           Height = 230
@@ -108,7 +110,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               TabOrder = 0
               FixedDimension = 18
               object TabSheet2: TRzTabSheet
-                Caption = #31036#21048#20449#24687
+                Caption = #35814#32454#20449#24687
                 object labMNY: TLabel
                   Left = 30
                   Top = 67
@@ -163,7 +165,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                 end
               end
               object TabSheet3: TRzTabSheet
-                Caption = #25552#36135#21048#20449#24687
+                Caption = #35814#32454#20449#24687
                 object labClientId: TLabel
                   Left = 30
                   Top = 10
@@ -278,7 +280,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                 FieldName = 'CREA_DATE'
                 Footers = <>
                 Title.Caption = #25903#20184#26102#38388
-                Width = 120
+                Width = 114
               end
               item
                 EditButtons = <>
@@ -292,21 +294,21 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                 FieldName = 'VOUCHER_TYPE'
                 Footers = <>
                 Title.Caption = #31036#21048#31867#22411
-                Width = 70
+                Width = 57
               end
               item
                 EditButtons = <>
                 FieldName = 'VOUCHER_PRC'
                 Footers = <>
                 Title.Caption = #38754#20540
-                Width = 67
+                Width = 50
               end
               item
                 EditButtons = <>
-                FieldName = 'VOUCHER_STATUS'
+                FieldName = 'REMARK'
                 Footers = <>
-                Title.Caption = #31036#21048#29366#24577
-                Width = 38
+                Title.Caption = #22791#27880
+                Width = 74
               end>
           end
         end

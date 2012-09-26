@@ -79,8 +79,10 @@ type
     procedure actFilterExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    FSumRecord: TRecord_;  //汇总记录值
-    FAllRecord: TRecord_;  //汇总记录值
+    RsRecvType:TZQuery; //应收账款类型
+    RsAbleType:TZQuery; //应付账款类型
+    FSumRecord:TRecord_;  //汇总记录值
+    FAllRecord:TRecord_;  //汇总记录值
     procedure Dofnd_CUST_TYPEChange(Sender: TObject);   //客户群体OnChange
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
     procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品统计指标OnChange
@@ -89,6 +91,7 @@ type
     function  GetHasChild: Boolean;
     function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
     function  GetUsedGodsMulti:Boolean; //是否启用多选
+    function  CreateAndOpenTable(TabIdx:integer):Boolean; //创建并Open数据集
   public
     CalcFooter: TCalcFooter;
     PUB_CLIENT_ID: TZQuery;  //客户群体数据集
@@ -662,8 +665,28 @@ begin
         TzrComboBoxList(Components[i]).ShowButton:=true;
         TzrComboBoxList(Components[i]).Buttons:=[zbClear];
         if TzrComboBoxList(Components[i]).DropWidth<TzrComboBoxList(Components[i]).Width then
-          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;        
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
         TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_USERS');
+      end;
+      //应收账款类型
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,10)='_RECV_TYPE') then
+      begin
+        if not Assigned(RsRecvType) then CreateAndOpenTable(1);
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth<TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
+        TzrComboBoxList(Components[i]).DataSet:=RsRecvType;
+      end;
+      //应付账款类型
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,10)='_ABLE_TYPE') then
+      begin
+        if not Assigned(RsAbleType) then CreateAndOpenTable(2);
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth<TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
+        TzrComboBoxList(Components[i]).DataSet:=RsAbleType;
       end;
     end;
 
@@ -1547,8 +1570,20 @@ begin
   begin
     TitleList.add('统计类型：'+TcxComboBox(FindCmp1).Text);
   end;
-
-  //14、单据类型:[全部命名规则]
+  
+  //14、应收账款类型:
+  FindCmp1:=FindComponent('fndP'+PageNo+'_RECV_TYPE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'') then
+  begin
+    TitleList.Add('应收账款类型：'+TzrComboBoxList(FindCmp1).Text)
+  end;
+  //15、应付账款类型:   
+  FindCmp1:=FindComponent('fndP'+PageNo+'_ABLE_TYPE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'') then
+  begin
+    TitleList.Add('应收账款类型：'+TzrComboBoxList(FindCmp1).Text)
+  end; 
+  //16、单据类型:[全部命名规则]
   FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
   if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
   begin
@@ -1790,6 +1825,7 @@ var
   SortList: TStringList;
   SortObj, tmpObj: TRecord_;
 begin
+  if StrToIntDef(SORT_IDX,0)=-1 then Exit;
   try
     Rs:=TZQuery.Create(nil);
     Rs.Data:=DataSet.Data;
@@ -1859,6 +1895,12 @@ begin
     rs.FieldDefs.Add('SORT_NAME',ftstring,50,true);
     rs.FieldDefs.Add('GROUP_NAME',ftstring,50,true);
     rs.CreateDataSet;
+    //添加无分组
+    rs.Append;
+    rs.FieldByName('SORT_ID').AsInteger:=-1;
+    rs.FieldByName('SORT_NAME').AsString:='无';
+    rs.FieldByName('GROUP_NAME').AsString:='无';
+    rs.Post;
     //供应链分组统计
     rs.Append;
     rs.FieldByName('SORT_ID').AsInteger:=0;
@@ -2282,6 +2324,26 @@ begin
     result:=' '+CndStr+' '+FieldName+' in ('''+Ids+''')';
   end else
     result:=' '+CndStr+' '+FieldName+'='''+GodsIds+''' ';
+end;
+
+function TframeBaseReport.CreateAndOpenTable(TabIdx: integer): Boolean;
+begin
+  case TabIdx of
+   1:
+    begin
+      RsRecvType:=TZQuery.Create(self); //应收账款类型
+      RsRecvType.close;
+      RsRecvType.SQL.Text:='select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''RECV_TYPE'' ';
+      Factor.Open(RsRecvType);
+    end;
+   2:
+    begin
+      RsAbleType:=TZQuery.Create(self); //应收账款类型
+      RsAbleType.close;
+      RsAbleType.SQL.Text:='select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''ABLE_TYPE'' ';
+      Factor.Open(RsAbleType);
+    end;
+  end;
 end;
 
 end.

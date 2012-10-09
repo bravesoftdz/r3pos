@@ -1,5 +1,6 @@
 inherited frmRecvAbleReport: TfrmRecvAbleReport
-  Top = 103
+  Left = 190
+  Top = 107
   Width = 1022
   Height = 611
   Caption = #24212#25910#27454#25253#34920

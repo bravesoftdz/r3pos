@@ -723,7 +723,7 @@ begin
   case StrToInt(GodsSortIdx) of
    -1:
      begin
-       SORT_ID_Fields:=',-1 as SORT_ID';
+       SORT_ID_Fields:=',''-1'' as SORT_ID';
        SORT_ID_Group:='';
      end;
     0:

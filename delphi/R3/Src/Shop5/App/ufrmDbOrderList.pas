@@ -96,6 +96,7 @@ begin
        2:w := w +' and A.CHK_DATE is not null';
        3:w1 := w1 +' where STOCK_USER is null';
        4:w1 := w1 +' where STOCK_USER is not null';
+       5:w := w + ' and A.PRINT_TIMES is null ';
        end;
      end;
   w_shop := ShopGlobal.GetDataRight('A.SHOP_ID',1);

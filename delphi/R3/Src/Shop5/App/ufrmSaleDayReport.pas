@@ -1346,7 +1346,7 @@ begin
     strWhere := strWhere+' and SALES_TYPE=4 '
   else if fndP6_SALRETU.Checked then //œ˙ €ÕÀªı:3
     strWhere := strWhere+' and SALES_TYPE=3 ';
-
+                                          
   SQLData:= //'VIW_SALESDATA';
     '(select '+
      ' A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.CLIENT_ID,A.CREA_USER,A.CREA_DATE,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BARTER_INTEGRAL,'+

@@ -3309,6 +3309,13 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'GUIDE_USER_TEXT'
+                      Footers = <>
+                      Title.Caption = #19994#21153#21592
+                      Width = 60
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'BATCH_NO'
                       Footers = <>
                       Title.Caption = #25209#21495

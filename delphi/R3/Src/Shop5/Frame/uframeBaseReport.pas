@@ -1571,6 +1571,13 @@ begin
     TitleList.add('统计类型：'+TcxComboBox(FindCmp1).Text);
   end;
   
+  //13、客户名称
+  FindCmp1:=FindComponent('fndP'+PageNo+'_CLIENT_ID');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).Text<>'') then
+  begin
+    TitleList.add('客户名称：'+TzrComboBoxList(FindCmp1).Text);
+  end;  
+  
   //14、应收账款类型:
   FindCmp1:=FindComponent('fndP'+PageNo+'_RECV_TYPE');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'') then

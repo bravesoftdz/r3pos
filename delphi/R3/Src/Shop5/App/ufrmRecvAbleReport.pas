@@ -116,6 +116,16 @@ type
     fndP5_RECV_TYPE: TzrComboBoxList;
     Label17: TLabel;
     fndP5_GUIDE_USER: TzrComboBoxList;
+    Label43: TLabel;
+    fndP1_CLIENT_ID: TzrComboBoxList;
+    Label8: TLabel;
+    fndP2_CLIENT_ID: TzrComboBoxList;
+    Label13: TLabel;
+    fndP3_CLIENT_ID: TzrComboBoxList;
+    Label23: TLabel;
+    fndP4_CLIENT_ID: TzrComboBoxList;
+    Label24: TLabel;
+    fndP5_CLIENT_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -161,7 +171,8 @@ type
     function GetDateCnd(BegDate,EndDate: TcxDateEdit; FieldName: string): string;  //时间条件
     function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string; //门店所属行政区域|门店类型:
     function GetRecvTypeCnd(Recv_TYPE: TzrComboBoxList; FieldName: string): string; //返回门店查询条件
-    function GetGuileUserCnd(GuideUser:string):string;
+    function GetGuileUserCnd(GuideUser:string):string; //业务员查询条件
+    function GetCustCnd(pCLIENT_ID:TzrComboBoxList;FieldName: string):string;  //客户名称查询条件
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
@@ -255,6 +266,12 @@ begin
                               'DBGridEh3.ACCT_MNY','DBGridEh3.RECV_MNY','DBGridEh3.REVE_MNY','DBGridEh3.RECK_MNY',
                               'DBGridEh4.ACCT_MNY','DBGridEh4.RECV_MNY','DBGridEh4.REVE_MNY','DBGridEh4.RECK_MNY',
                               'DBGridEh5.ACCT_MNY','DBGridEh5.RECV_MNY','DBGridEh5.REVE_MNY','DBGridEh5.RECK_MNY']);
+  //设置客户下拉选择数据集
+  fndP1_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndP2_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');  
+  fndP3_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndP4_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndP5_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');                                
 end;
 
 function TfrmRecvAbleReport.GetGroupSQL(chk:boolean=true): string;
@@ -280,6 +297,7 @@ begin
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' '+GetRecvTypeCnd(fndP1_RECV_TYPE,'A.RECV_TYPE')+' '+
      ' '+GetGuileUserCnd(fndP1_GUIDE_USER.AsString)+' '+
+     ' '+GetCustCnd(fndP1_CLIENT_ID,'CLIENT_ID')+' '+
      ' group by B.REGION_ID ';
 
   //关联
@@ -361,6 +379,7 @@ begin
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
      ' '+GetRecvTypeCnd(fndP2_RECV_TYPE,'A.RECV_TYPE')+' '+ 
      ' '+GetGuileUserCnd(fndP2_GUIDE_USER.AsString)+' '+
+     ' '+GetCustCnd(fndP2_CLIENT_ID,'CLIENT_ID')+' '+     
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
   //关联
@@ -395,6 +414,7 @@ begin
      ' '+GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+GetRecvTypeCnd(fndP3_RECV_TYPE,'A.RECV_TYPE')+' '+ 
      ' '+GetGuileUserCnd(fndP3_GUIDE_USER.AsString)+' '+
+     ' '+GetCustCnd(fndP3_CLIENT_ID,'CLIENT_ID')+' '+     
      ' group by ABLE_DATE ';
 
   Result := ParseSQL(Factor.iDbType,strSql);
@@ -442,7 +462,8 @@ begin
      ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' '+strWhere+' '+GetDataRight+
      ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+' '+GetRecvTypeCnd(fndP5_RECV_TYPE,'A.RECV_TYPE')+
-     ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' ';
+     ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' '+
+     ' '+GetCustCnd(fndP5_CLIENT_ID,'CLIENT_ID')+' ';
 
   //关联
   strSql:=
@@ -468,6 +489,7 @@ begin
   fndP2_SHOP_VALUE.Text:=trim(adoReport1.fieldbyName('CODE_NAME').AsString);
   Copy_ParamsValue(fndP1_RECV_TYPE,fndP2_RECV_TYPE); //账款类型
   Copy_ParamsValue(fndP1_GUIDE_USER,fndP2_GUIDE_USER); //业务员
+  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID); //客户名称
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -485,6 +507,7 @@ begin
   Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
   Copy_ParamsValue(fndP2_RECV_TYPE,fndP3_RECV_TYPE); //账款类型
   Copy_ParamsValue(fndP2_GUIDE_USER,fndP3_GUIDE_USER); //业务员
+  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID); //客户名称  
   fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
   fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
@@ -505,6 +528,7 @@ begin
   Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //门店名称
   Copy_ParamsValue(fndP3_RECV_TYPE,fndP4_RECV_TYPE); //账款类型
   Copy_ParamsValue(fndP3_GUIDE_USER,fndP4_GUIDE_USER); //业务员
+  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID); //客户名称  
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -565,6 +589,7 @@ begin
      1: AddReportReport(Title,'2');
      2: AddReportReport(Title,'3');
      3: AddReportReport(Title,'4');
+     4: AddReportReport(Title,'5');
     end;
     ReStr:=FormatReportHead(Title,4);
     PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
@@ -657,6 +682,9 @@ begin
   //业务员
   strWhere:=strWhere+GetGuileUserCnd(fndP4_GUIDE_USER.AsString)+' ';
 
+  //客户名称
+  strWhere:=strWhere+' '+GetCustCnd(fndP4_CLIENT_ID,'CLIENT_ID')+' ';
+
   strSql:=
      'select A.TENANT_ID as TENANT_ID '+
      ',A.CREA_USER as CREA_USER '+   //制单人
@@ -689,6 +717,7 @@ begin
   Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //管理群组
   Copy_ParamsValue(fndP4_RECV_TYPE,fndP5_RECV_TYPE); //账款类型
   Copy_ParamsValue(fndP4_GUIDE_USER,fndP5_GUIDE_USER); //业务员
+  Copy_ParamsValue(fndP4_CLIENT_ID,fndP5_CLIENT_ID);   //客户名称    
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -769,6 +798,13 @@ begin
       ' select SALES_ID from SAL_INDENTORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and GUIDE_USER='''+GuideUser+''')';
     result:=Cnd;
   end;
+end;
+
+function TfrmRecvAbleReport.GetCustCnd(pCLIENT_ID: TzrComboBoxList; FieldName: string): string;
+begin
+  result:='';
+  if pCLIENT_ID.AsString<>'' then
+    result:=' and '+FieldName+'='''+pCLIENT_ID.AsString+''' ';
 end;
 
 end.

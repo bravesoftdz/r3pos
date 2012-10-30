@@ -330,7 +330,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   RangeValue = '1'
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 80
                   Top = 96
                   Width = 193
@@ -962,7 +961,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 RangeValue = '1'
               end
               object fndP2_GODS_ID: TzrComboBoxList
-                Tag = 100
                 Left = 80
                 Top = 119
                 Width = 193
@@ -1727,7 +1725,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 8
                 end
                 object fndP3_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 80
                   Top = 97
                   Width = 193
@@ -2420,7 +2417,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 11
                 end
                 object fndP4_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 80
                   Top = 118
                   Width = 193
@@ -3148,7 +3144,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 10
                 end
                 object fndP5_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 80
                   Top = 94
                   Width = 193

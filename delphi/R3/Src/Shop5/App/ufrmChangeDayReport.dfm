@@ -1,6 +1,6 @@
 inherited frmChangeDayReport: TfrmChangeDayReport
   Left = 149
-  Top = 119
+  Top = 105
   Width = 1131
   Height = 645
   Caption = #21830#21697#35843#25972#25253#34920
@@ -261,7 +261,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 10
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 52
                   Width = 121
@@ -676,7 +675,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 10
                 end
                 object fndP2_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 52
                   Width = 121
@@ -1130,7 +1128,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 8
                 end
                 object fndP3_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 52
                   Width = 121
@@ -1652,7 +1649,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 12
                 end
                 object fndP4_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 74
                   Width = 121
@@ -2155,7 +2151,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 10
                 end
                 object fndP5_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 52
                   Width = 121

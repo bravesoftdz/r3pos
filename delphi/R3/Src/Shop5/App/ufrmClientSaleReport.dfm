@@ -327,7 +327,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   RangeValue = '1'
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 80
                   Top = 96
                   Width = 193
@@ -892,7 +891,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 RangeValue = '1'
               end
               object fndP2_GODS_ID: TzrComboBoxList
-                Tag = 100
                 Left = 80
                 Top = 96
                 Width = 193
@@ -1587,7 +1585,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 9
                 end
                 object fndP3_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 97
                   Width = 121
@@ -2282,7 +2279,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 7
                 end
                 object fndP4_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 79
                   Top = 118
                   Width = 194
@@ -3014,7 +3010,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 6
                 end
                 object fndP5_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 343
                   Top = 95
                   Width = 122

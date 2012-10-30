@@ -257,7 +257,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 0
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 346
                   Top = 53
                   Width = 121
@@ -665,7 +664,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 0
                 end
                 object fndP2_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 346
                   Top = 53
                   Width = 121
@@ -1107,7 +1105,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 0
                 end
                 object fndP3_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 52
                   Width = 121
@@ -1651,7 +1648,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 6
                 end
                 object fndP4_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 74
                   Width = 121

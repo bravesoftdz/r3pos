@@ -406,6 +406,8 @@ begin
   //2012.08.15创建尺码、颜色
   if ShopGlobal.GetVersionFlag=1 then
     CreateGridColForFIG(DBGridEh6,7);
+  //2012.10.30释放:流水表的成本价字段(关掉以免误解)
+  SetNotShowCostPrice(DBGridEh6, ['COST_MONEY']);     
 end;
 
 

@@ -310,7 +310,7 @@ begin
   if ShopGlobal.GetVersionFlag=1 then
     CreateGridColForFIG(DBGridEh5,9);
   //2012.08.29释放:流水表的成本价字段(关掉以免误解)
-  SetNotShowCostPrice(DBGridEh5, ['DB_PRC']); 
+  SetNotShowCostPrice(DBGridEh5, ['DB_PRC','DB_CST']); 
 end;
 
 function TfrmDbDayReport.GetGroupSQL(chk:boolean=true): string;

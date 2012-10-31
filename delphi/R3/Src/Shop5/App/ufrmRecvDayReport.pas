@@ -864,9 +864,10 @@ begin
 
   //¹ØÁªÓï¾ä
   viwTab:=
-    'select A.*,B.SHOP_NAME as SHOP_NAME,C.GUIDE_USER from VIW_RECVABLEDATA A,CA_SHOP_INFO B,('+SalTab+') C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SALES_ID=C.SALES_ID and '+
-          ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+strWhere+' ';
+    'select A.*,B.SHOP_NAME as SHOP_NAME,C.GUIDE_USER from VIW_RECVABLEDATA A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' left outer join ('+SalTab+') C on A.TENANT_ID=C.TENANT_ID and A.SALES_ID=C.SALES_ID '+
+    ' where A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+strWhere+' ';
   strSql:=
     'select jb.*,D.CLIENT_NAME as CUST_NAME,R.USER_NAME as USER_NAME,U.USER_NAME as GUIDE_USER_TXT,0 as OVERDAYS '+
     ' from ('+viwTab+')jb '+

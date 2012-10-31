@@ -271,7 +271,7 @@ begin
                               'DBGridEh5.AMONEY','DBGridEh5.NOTAX_MONEY','DBGridEh5.TAX_MONEY','DBGridEh5.AGIO_RATE','DBGridEh5.AGIO_MONEY','DBGridEh5.COST_MONEY','DBGridEh5.PROFIT_MONEY','DBGridEh5.AVG_PROFIT']);
 
   //2012.10.30释放:流水表的成本价字段(关掉以免误解)
-  SetNotShowCostPrice(DBGridEh5, ['COST_MONEY']);                               
+  SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);                               
 end;
 
 function TfrmRckDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -541,7 +541,7 @@ begin
 end;
 
 procedure TfrmRckDayReport.InitGrid;
-  procedure InitGridColums(Rs: TDataSet; Grid: TDBGridEh);
+  procedure InitGridColums(Rs: TDataSet; Grid: TDBGridEh; IsFlag:Boolean=False);
   var
     i: integer;
     ColName: string;
@@ -554,8 +554,12 @@ procedure TfrmRckDayReport.InitGrid;
         Grid.Columns[i].Width := 55;
         ColName:=Copy(trim(Grid.Columns[i].FieldName),5,1);
         if Rs.Locate('CODE_ID',ColName,[]) then  //定位到修改: Title.Caption
-          Grid.Columns[i].Title.Caption:='其中|'+rs.FieldbyName('CODE_NAME').AsString
-        else
+        begin
+          if IsFlag then
+            Grid.Columns[i].Title.Caption:='支付方式|'+rs.FieldbyName('CODE_NAME').AsString
+          else
+            Grid.Columns[i].Title.Caption:='其中|'+rs.FieldbyName('CODE_NAME').AsString
+        end else
           Grid.Columns.Delete(i);
       end;
     end;
@@ -571,6 +575,7 @@ begin
   InitGridColums(Rs,DBGridEh2);
   InitGridColums(Rs,DBGridEh3);
   InitGridColums(Rs,DBGridEh4);
+  InitGridColums(Rs,DBGridEh5, True);  
 end;
 
 procedure TfrmRckDayReport.PrintBefore;
@@ -831,7 +836,26 @@ begin
   else if fndP5_SALRETU.Checked then //销售退货:3
     strWhere := strWhere+' and SALES_TYPE=3 ';
 
-  SQLData := 'VIW_SALESDATA';
+  SQLData :=// 'VIW_SALESDATA';
+    '(select '+
+     ' A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.CLIENT_ID,A.CREA_USER,A.CREA_DATE,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BARTER_INTEGRAL,'+
+     ' B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE,'+
+     ' B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.ORG_PRICE,B.COST_PRICE,B.APRICE,B.AMOUNT,A.TAX_RATE,isnull(B.REMARK,A.REMARK) as REMARK,'+
+     ' round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as TAX_MONEY,'+
+     ' B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,'+
+     ' B.AGIO_MONEY,round(B.CALC_AMOUNT*B.COST_PRICE,2) as COST_MONEY,'+
+     ' B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2)-round(B.CALC_AMOUNT*B.COST_PRICE,2) as PRF_MONEY'+
+     ',A.PAY_A'+
+     ',A.PAY_B'+
+     ',A.PAY_C'+
+     ',A.PAY_D'+
+     ',A.PAY_E'+
+     ',A.PAY_F'+
+     ',A.PAY_G'+
+     ',A.PAY_H'+
+     ',A.PAY_I'+
+     ',A.PAY_J '+
+    ' from SAL_SALESORDER A,SAL_SALESDATA B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.SALES_TYPE in (1,3,4) and A.COMM not in (''02'',''12''))';
 
   strSql :=
     'SELECT '+
@@ -851,9 +875,19 @@ begin
     ',A.SHOP_ID '+
     ',A.GUIDE_USER '+
     ',A.SALES_TYPE '+
+    ',A.PAY_A'+
+    ',A.PAY_B'+
+    ',A.PAY_C'+
+    ',A.PAY_D'+
+    ',A.PAY_E'+
+    ',A.PAY_F'+            
+    ',A.PAY_G'+
+    ',A.PAY_H'+
+    ',A.PAY_I'+
+    ',A.PAY_J'+
     ',A.AMOUNT '+
     ',A.ORG_PRICE as APRICE '+   //销售时间成本价
-    ',A.CALC_MONEY as AMONEY '+ 
+    ',A.CALC_MONEY as AMONEY '+
     ',A.NOTAX_MONEY '+  //不含税
     ',A.TAX_MONEY '+    //税项
     ',A.AGIO_MONEY '+   //折扣金额

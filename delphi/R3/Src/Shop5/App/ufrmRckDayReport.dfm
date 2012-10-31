@@ -2233,6 +2233,116 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'PAY_A'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#29616#37329
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_B'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#38134#32852
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_C'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#20648#20540#21345
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_D'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#35760#36134
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_E'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#31036#21367
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_F'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#25903#31080
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_G'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'#23567#39069#25903#20184
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_H'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_I'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'PAY_J'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335'|'
+                      Width = 58
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
@@ -2349,6 +2459,10 @@ inherited frmRckDayReport: TfrmRckDayReport
   inherited dsadoReport1: TDataSource
     Left = 41
     Top = 354
+  end
+  inherited SaveDialog1: TSaveDialog
+    Left = 277
+    Top = 260
   end
   inherited adoReport1: TZQuery
     Left = 41

@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
+      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 1
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -1066,10 +1068,10 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       object Label11: TLabel
         Left = 200
         Top = 9
-        Width = 24
+        Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #36135#21495
+        Caption = #36135'    '#21495
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -1204,12 +1206,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 43
+        Left = 31
         Top = 10
-        Width = 36
+        Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #26465#24418#30721
+        Caption = #26465' '#24418' '#30721
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -1363,9 +1365,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGODS_CODE: TcxTextEdit
-        Left = 231
+        Left = 256
         Top = 5
-        Width = 100
+        Width = 75
         Height = 20
         Properties.MaxLength = 20
         TabOrder = 1

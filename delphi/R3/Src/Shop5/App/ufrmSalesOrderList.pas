@@ -450,7 +450,7 @@ begin
      'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
      'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
      'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j '+
-     ' order by SEQNO '; //2012.10.09Ôö¼ÓÅÅÐò×Ö¶Î     
+     ' '; //2012.10.09Ôö¼ÓÅÅÐò×Ö¶Î     
 end;
 
 procedure TfrmSalesOrderList.frfSalesOrderUserFunction(const Name: String;

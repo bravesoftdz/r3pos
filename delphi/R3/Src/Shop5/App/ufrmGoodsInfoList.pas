@@ -104,10 +104,11 @@ type
      function  CheckCanExport: boolean; override;
      function  GetReCount: integer;
   public
-    IsEnd: boolean;  
+    IsEnd: boolean;
     MaxId:string;
     locked:boolean;
     rcAmt:integer;
+    CSQL:string;
     procedure LoadTree; //刷新SortTree树
     procedure LoadList;
     procedure LoadProv;
@@ -289,7 +290,7 @@ begin
       if QryType=0 then
       begin
         result :=
-          'select top 600 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          'select top 600 0 as selflag,l.*,p.*,r.AMOUNT as AMOUNT from '+
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
@@ -297,7 +298,7 @@ begin
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-          'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
+          'on l.GODS_ID=r.GODS_ID left outer join ('+CSQL+') p on l.GODS_ID=p.GODS_ID order by l.GODS_ID';
       end else
       if QryType=1 then
       begin
@@ -314,7 +315,7 @@ begin
       begin
         result :=
           'select * from ('+
-          'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          'select 0 as selflag,l.*,p.*,r.AMOUNT as AMOUNT from '+
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
@@ -322,7 +323,7 @@ begin
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-          ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600 ';
+          ' on l.GODS_ID=r.GODS_ID left outer join ('+CSQL+') p on l.GODS_ID=p.GODS_ID order by l.GODS_ID) where ROWNUM<=600 ';
       end else
       if QryType=1 then
       begin
@@ -339,7 +340,7 @@ begin
       begin
         result :=
           'select tp.* from ('+
-          'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          'select 0 as selflag,l.*,p.*,r.AMOUNT as AMOUNT from '+
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
@@ -347,7 +348,7 @@ begin
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-          ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID)tp fetch first 600 rows only ';
+          ' on l.GODS_ID=r.GODS_ID  left outer join ('+CSQL+') p on l.GODS_ID=p.GODS_ID  order by l.GODS_ID)tp fetch first 600 rows only ';
       end else
       if QryType=1 then
       begin
@@ -363,7 +364,7 @@ begin
       if QryType=0 then
       begin
         result :=
-          'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          'select 0 as selflag,l.*,p.*,r.AMOUNT as AMOUNT from '+
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
@@ -371,7 +372,7 @@ begin
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-          ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600 ';
+          ' on l.GODS_ID=r.GODS_ID left outer join ('+CSQL+') p on l.GODS_ID=p.GODS_ID  order by l.GODS_ID limit 600 ';
       end else
       if QryType=1 then
       begin
@@ -467,7 +468,7 @@ end;
 procedure TfrmGoodsInfoList.InitGrid;
 var
   rs: TZQuery;
-  SetCol: TColumnEh;
+  SetCol,Column: TColumnEh;
 begin
   {rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   SetCol:=FindColumn(DBGridEh1,'CALC_UNITS');
@@ -487,7 +488,7 @@ begin
       rs.Next;
     end;
   end;}
-  
+
   //供货商[生产厂家]
   rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
   SetCol:=FindColumn(DBGridEh1,'SORT_ID3');
@@ -503,7 +504,7 @@ begin
       rs.Next;
     end;
   end;
-  
+
   //商品品牌
   rs:=Global.GetZQueryFromName('PUB_BRAND_INFO');
   SetCol:=FindColumn(DBGridEh1,'SORT_ID4');
@@ -519,7 +520,23 @@ begin
       rs.Next;
     end;
   end;
-
+  CSQL := '';
+  //会员价
+  rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
+  rs.First;
+  while not rs.Eof do
+     begin
+       Column := DBGridEh1.Columns.Add;
+       Column.FieldName := 'PRICE_'+formatFloat('000',rs.recNo);
+       Column.Title.Caption := '会员价|'+rs.FieldbyName('PRICE_NAME').AsString;
+       SetCol:=FindColumn(DBGridEh1,'PROFIT_RATE');
+       Column.Index := SetCol.Index+1;
+       Column.Width := 64;
+       Column.DisplayFormat := '#0.0##';
+       CSQL := CSQL +',max(case when PRICE_ID='''+rs.FieldbyName('PRICE_ID').AsString+''' then NEW_OUTPRICE else null end) as '+Column.FieldName;
+       rs.Next;
+     end;
+  CSQL := 'select GODS_ID'+CSQL+' from PUB_GOODSPRICE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRICE_ID<>''#'' group by GODS_ID';
   //判断是否有查看成本价权限
   if not ShopGlobal.GetChkRight('14500001',2) then
   begin

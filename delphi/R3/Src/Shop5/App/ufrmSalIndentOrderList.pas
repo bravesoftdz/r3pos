@@ -121,12 +121,13 @@ begin
   if id<>'' then
      w := w +' and A.INDE_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.SALBILL_STATUS,A.INDE_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,'+
-            'A.CREA_DATE,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY,''3'' as RECV_TYPE,B.INVOICE_NO,B.INVOICE_STATUS '+
+            'A.CREA_DATE,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY,S.USING_MNY,''3'' as RECV_TYPE,B.INVOICE_NO,B.INVOICE_STATUS '+
             'from SAL_INDENTORDER A left join (select distinct H.TENANT_ID,H.INVD_ID,H.INVOICE_NO,H.INVOICE_STATUS,I.FROM_ID '+
             ' from SAL_INVOICE_INFO H left join SAL_INVOICE_LIST I on H.TENANT_ID=I.TENANT_ID and H.INVD_ID=I.INVD_ID where H.INVOICE_STATUS=''1'') B on A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.FROM_ID '+
+            ' left outer join (select TENANT_ID,FROM_ID,sum(ADVA_MNY) as USING_MNY from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and FROM_ID is not null group by TENANT_ID,FROM_ID) S on A.TENANT_ID=S.TENANT_ID and A.INDE_ID=S.FROM_ID '+
             w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
-  result := 'select jc.*,c.RECV_MNY,c.RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.SALES_ID and jc.RECV_TYPE=c.RECV_TYPE';
+  result := 'select jc.*,c.RECV_MNY,c.RECK_MNY,isnull(c.RECV_MNY,0) - isnull(jc.USING_MNY,0) as BAL_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.SALES_ID and jc.RECV_TYPE=c.RECV_TYPE';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
   result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID '+w1;
   case Factor.iDbType of

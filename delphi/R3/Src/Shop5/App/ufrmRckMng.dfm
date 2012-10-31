@@ -795,7 +795,7 @@ inherited frmRckMng: TfrmRckMng
     Width = 775
     inherited Image3: TImage
       Left = 245
-      Width = 0
+      Width = 177
     end
     inherited Image14: TImage
       Left = 755

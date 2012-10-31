@@ -185,7 +185,20 @@ end;
 function TCloseForDay.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Str,id:String;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and CLSE_DATE=:CLSE_DATE and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('CLSE_DATE').AsInteger := FieldbyName('CLSE_DATE').AsInteger;
+    rs.ParamByName('CREA_USER').AsString := FieldbyName('CREA_USER').AsString;
+    rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('当前收银员已经结过账了，要重新结账请先撤消后再试');  
+  finally
+    rs.Free;
+  end;
   id := newid(FieldbyName('SHOP_ID').asString);
   Str :=
   'insert into ACC_CLOSE_FORDAY(ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,CLSE_MNY,CLSE_TYPE,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,'+

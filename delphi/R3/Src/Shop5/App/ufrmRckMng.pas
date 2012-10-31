@@ -1089,19 +1089,26 @@ begin
   inherited;
   if not cdsBrowser.Active then Exit;
   if cdsBrowser.IsEmpty then Exit;
-
-  if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
-  if cdsBrowser.FieldByName('FLAG').AsInteger = 1 then
-    begin
-      if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
-         TfrmTicketPrint.ShowTicketPrint(Self,2,cdsBrowser.FieldbyName('CLSE_DATE').AsString);
-    end
-  else if cdsBrowser.FieldByName('FLAG').AsInteger = 3 then
-    begin
-      if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
-         TfrmTicketPrint.ShowTicketPrint(Self,1,cdsBrowser.FieldbyName('CLSE_DATE').AsString);
+  case rzPage.ActivePageIndex of
+  0:begin
+      if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
+      if cdsBrowser.FieldByName('FLAG').AsInteger = 1 then
+        begin
+          if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
+             TfrmTicketPrint.ShowTicketPrint(Self,2,cdsBrowser.FieldbyName('CLSE_DATE').AsString,cdsBrowser.FieldbyName('SHOP_ID').asString,cdsBrowser.FieldbyName('SHOP_ID_TEXT').asString,'','');
+        end
+      else if cdsBrowser.FieldByName('FLAG').AsInteger = 3 then
+        begin
+          if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
+             TfrmTicketPrint.ShowTicketPrint(Self,1,cdsBrowser.FieldbyName('CLSE_DATE').AsString,cdsBrowser.FieldbyName('SHOP_ID').asString,TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',cdsBrowser.FieldbyName('SHOP_ID').asString),cdsBrowser.FieldbyName('CREA_USER').asString,cdsBrowser.FieldbyName('CREA_USER_TEXT').asString);
+        end;
     end;
-
+  1:begin
+      Raise Exception.Create('暂不支持打印，请');
+    end;
+  2:begin
+    end;
+  end;
 end;
 
 procedure TfrmRckMng.FormDestroy(Sender: TObject);

@@ -283,6 +283,7 @@ procedure TfrmBatchCloseForDay.Btn_SaveClick(Sender: TObject);
 begin
   inherited;
   if (not DbCloseForDay.Active) or DbCloseForDay.IsEmpty then Exit;
+  if MessageBox(Handle,'后台结账前，请确认各门店的脱机数据是否上报完毕？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   Save;
   ModalResult := mrOk;
 end;

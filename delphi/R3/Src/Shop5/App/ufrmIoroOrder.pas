@@ -316,6 +316,7 @@ begin
         cdsDetail.Post;
         cdsDetail.Next;
       end;
+  AObj.FieldbyName('IORO_MNY').AsFloat := totalfee;
   cdsHeader.FieldbyName('IORO_MNY').AsFloat := totalfee;
   cdsHeader.Post;
   finally

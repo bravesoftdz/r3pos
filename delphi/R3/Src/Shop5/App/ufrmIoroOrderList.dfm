@@ -384,6 +384,13 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'IORO_MNY'
+                    Footers = <>
+                    Title.Caption = #37329#39069
+                    Width = 71
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'REMARK'
                     Footers = <>
                     Title.Caption = #35828#26126

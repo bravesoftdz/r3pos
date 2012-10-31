@@ -47,6 +47,7 @@ type
     edtBILL_NO: TcxTextEdit;
     BtnVoucher: TRzBitBtn;
     Label4: TLabel;
+    cdsICGlide: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -122,8 +123,10 @@ begin
       try
         Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
         Params.ParamByName('RECV_ID').asString := id;
+        Params.ParamByName('SALES_ID').asString := id;
         Factor.AddBatch(cdsHeader,'TRecvOrder',Params);
         Factor.AddBatch(cdsDetail,'TRecvData',Params);
+        Factor.AddBatch(cdsIcGlide,'TSalesICData',Params);
         Factor.OpenBatch;
       except
         Factor.CancelBatch;
@@ -260,6 +263,7 @@ begin
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  if (cdsHeader.FieldbyName('PAYM_ID').asString='C') and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
   cdsDetail.DisableControls;
   try
     n := 0;
@@ -288,16 +292,40 @@ begin
     cdsDetail.EnableControls;
   end;
   cdsHeader.FieldbyName('RECV_MNY').AsFloat := r;
+  cdsHeader.Post;
+  cdsIcGlide.first;
+  while not cdsIcGlide.eof do cdsIcGlide.delete;
+  if cdsHeader.FieldbyName('PAYM_ID').asString='C' then
+     begin
+       cdsIcGlide.Append;
+       cdsIcGlide.FieldbyName('GLIDE_ID').AsString := TSequence.NewId();
+       cdsIcGlide.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+       cdsIcGlide.FieldbyName('SALES_ID').asString := cdsHeader.FieldbyName('RECV_ID').asString;
+       cdsICGlide.FieldByName('CREA_DATE').asInteger := cdsHeader.FieldbyName('RECV_DATE').asInteger;
+       cdsIcGlide.FieldbyName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').asString;
+       cdsIcGlide.FieldbyName('CLIENT_ID').AsString := cdsHeader.FieldbyName('CLIENT_ID').asString;
+       cdsIcGlide.FieldbyName('IC_GLIDE_TYPE').AsString := '2';
+       cdsIcGlide.FieldbyName('GLIDE_INFO').AsString := '储值卡支付-批发';
+       cdsIcGlide.FieldbyName('CREA_USER').AsString := Global.UserID;
+       rs := Global.GetZQueryFromName('PUB_CUSTOMER');
+       if rs.Locate('CLIENT_ID',cdsHeader.FieldbyName('CLIENT_ID').asString,[]) then
+          cdsIcGlide.FieldbyName('IC_CARDNO').AsString := rs.FieldbyName('CLIENT_CODE').AsString
+       else
+          Raise Exception.Create('没有找到当前客户的储值卡,无法支付'); 
+       cdsIcGlide.FieldbyName('PAY_C').asFloat := cdsHeader.FieldbyName('RECV_MNY').AsFloat;
+       cdsIcGlide.FieldbyName('GLIDE_MNY').asFloat := cdsHeader.FieldbyName('RECV_MNY').AsFloat;
+       cdsIcGlide.Post;
+     end;
   //if (cdsHeader.FieldbyName('PAYM_ID').AsString='G') and (r > VoucherMny) and (r<>0) then
   //begin
   //   if MessageBox(Handle,'收款总额与礼券总额不相等,是否保存!',pchar(Application.Title),MB_YESNOCANCEL+MB_ICONINFORMATION) <> 6 then Exit;
   //end;
-  cdsHeader.Post;
   if n=0 then Raise Exception.Create('没有收款记录，不能保存...');
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsHeader,'TRecvOrder');
     Factor.AddBatch(cdsDetail,'TRecvData');
+    Factor.AddBatch(cdsIcGlide,'TSalesICData');
     Factor.CommitBatch;
   except
     Factor.CancelBatch;
@@ -366,13 +394,17 @@ end;
 procedure TfrmRecvOrder.DeleteOrder;
 begin
   if cdsHeader.IsEmpty then Raise Exception.Create('不能删除一张空单...');
+  if (cdsHeader.FieldbyName('PAYM_ID').asString='C') and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Raise Exception.Create('脱机状态不能删除储值卡支付的单据...');
   cdsHeader.Delete;
   cdsDetail.First;
   while not cdsDetail.Eof do cdsDetail.Delete;
+  cdsIcGlide.first;
+  while not cdsIcGlide.eof do cdsIcGlide.delete;
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsHeader,'TRecvOrder');
     Factor.AddBatch(cdsDetail,'TRecvData');
+    Factor.AddBatch(cdsIcGlide,'TSalesICData');
     Factor.CommitBatch;
   except
     Factor.CancelBatch;

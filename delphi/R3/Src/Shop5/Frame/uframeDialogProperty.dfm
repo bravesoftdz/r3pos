@@ -81,6 +81,7 @@ inherited frameDialogProperty: TframeDialogProperty
             Top = 231
             Width = 428
             Height = 21
+            Cursor = crHandPoint
             Align = alBottom
             BevelOuter = bvNone
             Caption = #24403#21069#24211#23384#37327':0'
@@ -91,6 +92,105 @@ inherited frameDialogProperty: TframeDialogProperty
             Font.Style = [fsBold]
             ParentFont = False
             TabOrder = 1
+            OnClick = stbHintClick
+            DesignSize = (
+              428
+              21)
+            object RzBitBtn1: TRzBitBtn
+              Left = 375
+              Top = 1
+              Width = 53
+              Height = 20
+              Anchors = [akTop, akRight]
+              Caption = '<<'#36820#22238
+              Color = clSilver
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              HighlightColor = 16026986
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 0
+              TextStyle = tsRaised
+              ThemeAware = False
+              Visible = False
+              OnClick = RzBitBtn1Click
+              NumGlyphs = 2
+              Spacing = 5
+            end
+          end
+          object DBGridEh2: TDBGridEh
+            Left = 5
+            Top = 5
+            Width = 428
+            Height = 226
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            DataSource = DataSource2
+            Flat = True
+            FooterColor = cl3DLight
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FooterRowCount = 1
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+            RowHeight = 15
+            SumList.Active = True
+            TabOrder = 2
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            TitleHeight = 20
+            UseMultiTitle = True
+            Visible = False
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SHOP_ID'
+                Footers = <>
+                Title.Caption = #25152#23646#38376#24215
+                Width = 138
+              end
+              item
+                Alignment = taCenter
+                EditButtons = <>
+                FieldName = 'PROPERTY_01'
+                Footer.Alignment = taCenter
+                Footer.Value = #21512#35745
+                Footer.ValueType = fvtStaticText
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #39068#33394
+                Width = 47
+              end
+              item
+                EditButtons = <>
+                FieldName = 'PROPERTY_02'
+                Footers = <>
+                Title.Caption = #23610#30721
+                Width = 38
+              end
+              item
+                EditButtons = <>
+                FieldName = 'AMOUNT'
+                Footers = <>
+                Title.Caption = #24211#23384#37327
+              end>
           end
         end
       end
@@ -228,5 +328,10 @@ inherited frameDialogProperty: TframeDialogProperty
     Params = <>
     Left = 126
     Top = 142
+  end
+  object DataSource2: TDataSource
+    DataSet = cdsStorage
+    Left = 158
+    Top = 141
   end
 end

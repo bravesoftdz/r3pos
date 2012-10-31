@@ -292,9 +292,10 @@ begin
     try
       rs.Close;
       rs.SQL.Text :=
-      ' select INVD_ID from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and INVOICE_NO=:INVOICE_NO ';
+      ' select INVD_ID from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and INVH_ID=:INVH_ID and INVOICE_NO=:INVOICE_NO ';
       rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+      rs.ParamByName('INVH_ID').AsString := edtINVH_ID.AsString;
       rs.ParamByName('INVOICE_NO').AsString := Trim(edtINVOICE_NO.Text);
       Factor.Open(rs);
       if not rs.IsEmpty then

@@ -8,9 +8,9 @@ inherited frmMktRequOrder: TfrmMktRequOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 829
+    Width = 821
     inherited RzPanel2: TRzPanel
-      Width = 819
+      Width = 811
       Height = 113
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
@@ -343,14 +343,14 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 422
-      Width = 819
+      Top = 411
+      Width = 811
       Height = 14
     end
     inherited DBGridEh1: TDBGridEh
       Top = 118
-      Width = 819
-      Height = 280
+      Width = 811
+      Height = 269
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
@@ -423,12 +423,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 398
-      Width = 819
+      Top = 387
+      Width = 811
     end
     inherited rzHelp: TRzPanel
-      Top = 436
-      Width = 819
+      Top = 425
+      Width = 811
       Height = 21
     end
     object edtKPI_YEAR: TzrComboBoxList

@@ -503,6 +503,7 @@ begin
   if flag in [1,2] then
      begin
        if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
+       if MessageBox(Handle,'结账前，请确认各门店的脱机数据是否上报完毕？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   if not ShopGlobal.offline then
     begin

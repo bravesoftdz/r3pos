@@ -20,6 +20,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 902
         Height = 513
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -62,7 +64,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ReadOnly = True
                   RowSelect = True
                   TabOrder = 0
-                  OnChange = rzTreeChange
                 end
               end
               object RzPanel6: TRzPanel
@@ -664,7 +665,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                 ReadOnly = True
                 RowSelect = True
                 TabOrder = 0
-                OnChange = rzP2_TreeChange
               end
             end
             object RzPanel11: TRzPanel
@@ -1154,6 +1154,21 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Font.Style = []
                   ParentFont = False
                 end
+                object Label1: TLabel
+                  Left = 472
+                  Top = 15
+                  Width = 48
+                  Height = 12
+                  Caption = #36817#26399#38144#37327
+                end
+                object P2_TO: TLabel
+                  Left = 722
+                  Top = 15
+                  Width = 12
+                  Height = 12
+                  Caption = #33267
+                  Visible = False
+                end
                 object RzBitBtn1: TRzBitBtn
                   Left = 638
                   Top = 36
@@ -1184,7 +1199,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object edtP2_UNIT_ID: TcxComboBox
                   Left = 524
                   Top = 38
-                  Width = 101
+                  Width = 93
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   ParentFont = False
@@ -1385,6 +1400,38 @@ inherited frmStorageTracking: TfrmStorageTracking
                   MultiSelect = False
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
+                object NEAR_SALE: TcxComboBox
+                  Left = 524
+                  Top = 11
+                  Width = 93
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  ParentFont = False
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #23433#20840#22825#25968
+                    #21512#29702#22825#25968
+                    #26085#22343#21608#26399
+                    #33258#23450#20041)
+                  Properties.OnChange = NEAR_SALEPropertiesChange
+                  TabOrder = 8
+                end
+                object P2_D1: TcxDateEdit
+                  Left = 623
+                  Top = 11
+                  Width = 97
+                  Height = 20
+                  TabOrder = 9
+                  Visible = False
+                end
+                object P2_D2: TcxDateEdit
+                  Left = 735
+                  Top = 11
+                  Width = 97
+                  Height = 20
+                  TabOrder = 10
+                  Visible = False
+                end
               end
             end
           end
@@ -1428,7 +1475,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                 ReadOnly = True
                 RowSelect = True
                 TabOrder = 0
-                OnChange = rzP3_TreeChange
               end
             end
             object RzPanel15: TRzPanel
@@ -1442,15 +1488,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel8: TPanel
                 Left = 0
                 Top = 0
-                Width = 718
-                Height = 419
+                Width = 710
+                Height = 408
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel9: TPanel
                   Left = 1
-                  Top = 388
-                  Width = 716
+                  Top = 377
+                  Width = 708
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -1510,8 +1556,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh2: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 716
-                  Height = 387
+                  Width = 708
+                  Height = 376
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsRate
@@ -1700,7 +1746,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel11: TPanel
                 Left = 178
                 Top = 0
-                Width = 720
+                Width = 712
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -2014,7 +2060,7 @@ inherited frmStorageTracking: TfrmStorageTracking
     Width = 918
     inherited Image3: TImage
       Left = 294
-      Width = 0
+      Width = 354
     end
     inherited Image14: TImage
       Left = 898

@@ -1,6 +1,6 @@
 inherited frameToolForm: TframeToolForm
-  Left = 211
-  Top = 39
+  Left = 213
+  Top = 36
   Width = 764
   Height = 533
   Caption = #24037#20855#26465#29238#23376#31383#20307#27169#29256

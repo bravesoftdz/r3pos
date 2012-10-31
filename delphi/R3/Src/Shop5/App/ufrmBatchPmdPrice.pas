@@ -152,11 +152,6 @@ var
     if basInfo.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) then
     begin
       b := basInfo.FieldbyName('BARCODE').asString;
-      if trim(b)='' then
-      begin
-        id := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
-        b:=GetBarCode(id,'#','#');
-      end;
     end else
       b := '';
     result := b;

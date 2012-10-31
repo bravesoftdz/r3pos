@@ -845,7 +845,7 @@ procedure TSalesICData.InitClass;
 var Str:string;
 begin
   inherited;
-  SelectSQL.Text := 'select * from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID and IC_GLIDE_TYPE=''2''';
+  SelectSQL.Text := 'select * from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID and IC_GLIDE_TYPE=''2'' and COMM not in (''02'',''12'')';
   IsSQLUpdate := true;
   
   Str :=
@@ -862,7 +862,7 @@ begin
   UpdateSQL.Text := Str;
   
   Str :=
-    'update SAL_IC_GLIDE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' from SAL_IC_GLIDE where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
+    'update SAL_IC_GLIDE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
   DeleteSQL.Text := Str;
 
 end;

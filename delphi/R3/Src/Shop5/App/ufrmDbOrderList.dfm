@@ -330,9 +330,11 @@ inherited frmDbOrderList: TfrmDbOrderList
                   Footers = <>
                   KeyList.Strings = (
                     '1'
+                    '2'
                     '3')
                   PickList.Strings = (
                     #24453#21457#36135
+                    #24050#21457#36135
                     #24050#21457#36135)
                   Title.Caption = #21457#36135#29366#24577
                   Width = 60
@@ -343,9 +345,11 @@ inherited frmDbOrderList: TfrmDbOrderList
                   Footers = <>
                   KeyList.Strings = (
                     '1'
+                    '2'
                     '3')
                   PickList.Strings = (
                     #24453#25910#36135
+                    #24050#25910#36135
                     #24050#25910#36135)
                   Title.Caption = #25910#36135#29366#24577
                   Width = 60

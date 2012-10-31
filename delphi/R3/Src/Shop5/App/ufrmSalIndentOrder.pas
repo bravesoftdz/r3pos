@@ -2128,7 +2128,7 @@ begin
            p2 := '#';
         rsData.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('VOCH_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6),P1,P2);
         rsData.FieldByName('VOUCHER_TYPE').AsString := '4';
-        rsData.FieldByName('VOUCHER_PRC').AsInteger := edtTable.FieldByName('APRICE').AsInteger;
+        rsData.FieldByName('VOUCHER_PRC').AsInteger := cdsDetail.FieldByName('APRICE').AsInteger;
         rsData.FieldByName('VOUCHER_STATUS').AsString := '1';
         rsData.FieldByName('VAILD_DATE').AsInteger := rsOrder.FieldByName('VAILD_DATE').AsInteger;
         rsData.FieldByName('CLIENT_ID').AsString := cdsDetail.FieldByName('GODS_ID').AsString;
@@ -2185,7 +2185,7 @@ begin
   edtLINKMAN.Text := Aobj_.FieldByName('YQDZ_HZ_MC').AsString;
   edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
   edtSEND_ADDR.Text := Aobj_.FieldByName('YQDZ_SM').AsString;
-  AObj.FieldByName('COMM_ID').AsString := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
+//  AObj.FieldByName('COMM_ID').AsString := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
 end;
 
 procedure TfrmSalIndentOrder.edtLINKMANKeyDown(Sender: TObject;

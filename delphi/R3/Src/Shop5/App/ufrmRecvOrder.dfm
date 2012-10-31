@@ -923,4 +923,11 @@ inherited frmRecvOrder: TfrmRecvOrder
     Left = 120
     Top = 224
   end
+  object cdsICGlide: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 128
+    Top = 261
+  end
 end

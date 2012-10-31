@@ -8,22 +8,22 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 828
-    Height = 543
+    Width = 820
+    Height = 532
     inherited RzPanel2: TRzPanel
-      Width = 818
-      Height = 533
+      Width = 810
+      Height = 522
       inherited RzPage: TRzPageControl
-        Width = 812
-        Height = 527
+        Width = 804
+        Height = 516
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#35746#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 810
-            Height = 500
+            Width = 802
+            Height = 489
             inherited RzPanel1: TRzPanel
-              Width = 800
+              Width = 792
               Height = 110
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -324,8 +324,8 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 115
-              Width = 800
-              Height = 380
+              Width = 792
+              Height = 369
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -428,7 +428,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                   EditButtons = <>
                   FieldName = 'ADVA_MNY'
                   Footers = <>
-                  Title.Caption = #39044#25910#27454'|'#23567#35745
+                  Title.Caption = #39044#25910#27454'|'#39044#32564#37329#39069
                 end
                 item
                   EditButtons = <>
@@ -443,6 +443,20 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                   Footers = <>
                   Title.Caption = #39044#25910#27454'|'#26410#32467#31639
                   Width = 59
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'USING_MNY'
+                  Footers = <>
+                  Title.Caption = #39044#25910#27454'|'#24050#20914#37329#39069
+                  Width = 67
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'BAL_MNY'
+                  Footers = <>
+                  Title.Caption = #39044#25910#27454'|'#24453#20914#37329#39069
+                  Width = 68
                 end
                 item
                   EditButtons = <>
@@ -478,48 +492,49 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 828
+    Width = 820
     inherited Image3: TImage
-      Left = 667
+      Left = 671
+      Width = 405
     end
     inherited Image14: TImage
-      Left = 808
+      Left = 800
     end
     inherited Image1: TImage
-      Left = 624
+      Left = 616
       Width = 184
     end
     inherited rzPanel5: TPanel
-      Left = 667
+      Left = 671
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 647
+      Width = 651
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 647
+          MinHeight = 651
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 647
+        Width = 651
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actRecv
         end
         object ToolButton11: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Action = actInvoice
         end
         object ToolButton17: TToolButton
-          Left = 604
+          Left = 608
           Top = 0
           Action = actExit
         end

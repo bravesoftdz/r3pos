@@ -277,7 +277,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     FieldName = 'PROFIT_RATE'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #36827#20215#25240#25187#29575
+                    Title.Caption = #36827#20215#25240#25187
+                    Width = 35
                   end
                   item
                     EditButtons = <>

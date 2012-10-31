@@ -3765,19 +3765,19 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select IC_GLIDE_TYPE,GLIDE_MNY,IC_CARDNO from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and GLIDE_ID=:GLIDE_ID';
+    rs.SQL.Text := 'select IC_GLIDE_TYPE,GLIDE_MNY,IC_CARDNO,COMM from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and GLIDE_ID=:GLIDE_ID';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('GLIDE_ID').AsString := FieldbyName('GLIDE_ID').AsString;  
     AGlobal.Open(rs);
-    result := not rs.IsEmpty;
-    if not rs.IsEmpty then
+    result := not rs.IsEmpty;   //流水的记录是永远添加，不存在修改，所有不是删除标志时不需要处理。
+    if result and (FieldbyName('COMM').AsString[2]='2') and (rs.FieldByName('COMM').AsString[2]<>'2') then
        begin
          if rs.FieldbyName('IC_GLIDE_TYPE').AsInteger = 1 then
             Str := 'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) - '+formatFloat('#0.000',rs.FieldbyName('GLIDE_MNY').asFloat)+' where TENANT_ID=:TENANT_ID and IC_CARDNO='''+rs.FieldbyName('IC_CARDNO').AsString+''' and UNION_ID=''#'''
          else
             Str := 'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) + '+formatFloat('#0.000',rs.FieldbyName('GLIDE_MNY').asFloat)+' where TENANT_ID=:TENANT_ID and IC_CARDNO='''+rs.FieldbyName('IC_CARDNO').AsString+''' and UNION_ID=''#''';
          AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
-         InsertAccountInfo;
+         //InsertAccountInfo;
        end;
   finally
     rs.Free;

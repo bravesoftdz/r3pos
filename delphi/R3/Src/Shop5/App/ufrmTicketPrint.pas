@@ -10,6 +10,14 @@ uses
 type
   TfrmTicketPrint = class(TfrmBasic)
   private
+    FSHOP_ID: string;
+    FSHOP_NAME: string;
+    FUSER_ID: string;
+    FUSER_NAME: string;
+    procedure SetSHOP_ID(const Value: string);
+    procedure SetSHOP_NAME(const Value: string);
+    procedure SetUSER_ID(const Value: string);
+    procedure SetUSER_NAME(const Value: string);
     { Private declarations }
 
   public
@@ -21,7 +29,11 @@ type
     function RepeatCharacter(Str:char;L:Integer):String;
     procedure FormatGoodsAndMoney(Goods,Num,Unit_Name,Money:String);
     function DoPrintDetail(QueryType:Integer;QueryDate:String):Boolean;
-    class function ShowTicketPrint(Owner:TForm;SelectType:Integer;WhichDay:String):Boolean;
+    class function ShowTicketPrint(Owner:TForm;SelectType:Integer;WhichDay:String;MyShopId:string='';myShopName:string='';myUserId:string='';myUserName:string=''):Boolean;
+    property SHOP_ID:string read FSHOP_ID write SetSHOP_ID;
+    property SHOP_NAME:string read FSHOP_NAME write SetSHOP_NAME;
+    property USER_ID:string read FUSER_ID write SetUSER_ID;
+    property USER_NAME:string read FUSER_NAME write SetUSER_NAME;
   end;
 
 
@@ -57,13 +69,13 @@ begin
       1:begin
         ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(QueryDate);
         ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        ForDay_rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-        ForDay_rs.ParamByName('CREA_USER').AsString := Global.UserID;
+        ForDay_rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+        ForDay_rs.ParamByName('CREA_USER').AsString := USER_ID;
       end;
       2:begin
         ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(QueryDate);
         ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        ForDay_rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+        ForDay_rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
       end;
       else begin
         ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(QueryDate);
@@ -79,13 +91,13 @@ begin
     case QueryType of
       1:begin
       DevFactory.WritePrint('');
-      DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
-      DevFactory.WritePrint(FormatText('收银:'+Global.UserName,DevFactory.Width-17)+' 日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
+      DevFactory.WritePrint('店名:'+SHOP_NAME);
+      DevFactory.WritePrint(FormatText('收银:'+USER_NAME,DevFactory.Width-17)+' 日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
       end;
       2:begin
       DevFactory.WritePrint('');
-      DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
+      DevFactory.WritePrint('店名:'+SHOP_NAME);
       DevFactory.WritePrint('日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID ';
       end;
@@ -120,13 +132,13 @@ begin
           1:begin
             rs.ParamByName('SALES_DATE').AsString := QueryDate;
             rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-            rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-            rs.ParamByName('CREA_USER').AsString := Global.UserID;
+            rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+            rs.ParamByName('CREA_USER').AsString := USER_ID;
           end;
           2:begin
             rs.ParamByName('SALES_DATE').AsString := QueryDate;
             rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-            rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+            rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
           end;
           else
             begin
@@ -323,12 +335,46 @@ begin
     Result := Result + Str;
 end;
 
+procedure TfrmTicketPrint.SetSHOP_ID(const Value: string);
+begin
+  FSHOP_ID := Value;
+end;
+
+procedure TfrmTicketPrint.SetSHOP_NAME(const Value: string);
+begin
+  FSHOP_NAME := Value;
+end;
+
+procedure TfrmTicketPrint.SetUSER_ID(const Value: string);
+begin
+  FUSER_ID := Value;
+end;
+
+procedure TfrmTicketPrint.SetUSER_NAME(const Value: string);
+begin
+  FUSER_NAME := Value;
+end;
+
 class function TfrmTicketPrint.ShowTicketPrint(Owner:TForm;SelectType: Integer;
-  WhichDay: String): Boolean;
+  WhichDay: String;MyShopId:string='';myShopName:string='';myUserId:string='';myUserName:string=''): Boolean;
 begin
   with TfrmTicketPrint.Create(Owner) do
     begin
       try
+        if MyShopId='' then
+           begin
+             SHOP_ID := Global.SHOP_ID;
+             SHOP_NAME := Global.SHOP_NAME;
+             USER_ID := Global.UserID;
+             USER_NAME := Global.UserName;
+           end
+        else
+           begin
+             SHOP_ID := myShopId;
+             SHOP_NAME := myShopName;
+             USER_ID := myUserId;
+             USER_NAME := myUserName;
+           end;
         DoPrintDetail(SelectType,WhichDay);
       finally
         Free;

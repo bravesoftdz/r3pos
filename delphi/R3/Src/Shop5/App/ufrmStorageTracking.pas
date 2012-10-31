@@ -9,7 +9,7 @@ uses
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxMaskEdit,
   cxDropDownEdit, cxButtonEdit, zrComboBoxList, FR_Class, PrnDbgeh,
-  RzStatus;
+  RzStatus, cxCalendar;
 
 type
   TfrmStorageTracking = class(TframeToolForm)
@@ -123,6 +123,11 @@ type
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     CdsCommitData: TZQuery;
+    Label1: TLabel;
+    NEAR_SALE: TcxComboBox;
+    P2_D1: TcxDateEdit;
+    P2_D2: TcxDateEdit;
+    P2_TO: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -170,6 +175,7 @@ type
     procedure N1Click(Sender: TObject);
     procedure Btn_DeleteLastClick(Sender: TObject);
     procedure Btn_CommitClick(Sender: TObject);
+    procedure NEAR_SALEPropertiesChange(Sender: TObject);
   private
     FSumAmoney: Currency;
     FSumAmount: Currency;
@@ -399,6 +405,7 @@ begin
   inherited;
   RzPage.ActivePageIndex := 0;
   edtSTOR_AMT.ItemIndex := 0;
+  NEAR_SALE.ItemIndex := 0;
   TDbGridEhSort.InitForm(Self);
   DefStateIDS:=GetGodsStateValue; 
   AddGoodTypeItems(edtGoods_Type,DefStateIDS);
@@ -955,8 +962,37 @@ begin
 end;
 
 procedure TfrmStorageTracking.Open2(ID: String);
+var
+  SQL:string;
+  safe,reas,daySale:integer;
 begin
-  if Locked then Exit;
+  safe := StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
+  reas := StrtoIntDef(ShopGlobal.GetParameter('REAS_DAY'),14);
+  daySale := StrtoIntDef(ShopGlobal.GetParameter('DAY_SALE_STAND'),90);
+  //算近期销量
+  case NEAR_SALE.ItemIndex of
+  0:
+  SQL :=
+    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
+    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  1:
+  SQL :=
+    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-reas-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
+    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  2:
+  SQL :=
+    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
+    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  else
+  SQL :=
+    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',P2_D1.Date)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',P2_D2.Date)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
+    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  end;
+  Factor.ExecSQL(SQL);
   cdsDemand.Close;
   cdsDemand.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql2(ID));
   Factor.Open(cdsDemand);
@@ -1681,6 +1717,14 @@ begin
   frmDemandOrderList := TfrmDemandOrderList(frmMain.FindChildForm(TfrmDemandOrderList));
   SendMessage(frmDemandOrderList.Handle,WM_USER+3,0,2);
   PostMessage(frmDemandOrderList.CurOrder.Handle,WM_USER+7,integer(Self),0);
+end;
+
+procedure TfrmStorageTracking.NEAR_SALEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  P2_D1.Visible := NEAR_SALE.ItemIndex>2;
+  P2_D2.Visible := NEAR_SALE.ItemIndex>2;
+  P2_TO.Visible := NEAR_SALE.ItemIndex>2;
 end;
 
 end.

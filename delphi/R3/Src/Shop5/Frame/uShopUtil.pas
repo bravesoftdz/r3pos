@@ -40,7 +40,7 @@ function EncodeString(field:string;value:string):string;
 procedure LoadFormRes(Form:TForm);
 
 //自编条码
-function GetBarCode(ID:string;Size,Color:string;Len:Integer=13):string;
+function GetBarCode(ID:string;Size,Color:string;Len:Integer=13;flag:string='9'):string;
 function GetBarCodeID(BarCode:string):string;
 function GetBarCodeColor(BarCode:string):string;
 function GetBarCodeSize(BarCode:string):string;
@@ -99,7 +99,7 @@ begin
   if Result = '00' then Result := '#';
 end;
 //自编条码
-function GetBarCode(ID:string;Size,Color:string;Len:Integer=13):string;
+function GetBarCode(ID:string;Size,Color:string;Len:Integer=13;flag:string='9'):string;
   function GetCodeFlag(data:String): String;
         var i,fak,sum : Integer;  begin
           sum := 0;
@@ -128,7 +128,7 @@ begin
      Raise Exception.Create('颜色属于不能大于3位');
   p2 := Color;
   if p2='#' then p2 := '000';
-  s := '9'+FnString.FormatStringEx(ID,6)+FnString.FormatStringEx(p1,2)+FnString.FormatStringEx(p2,3);
+  s := flag+FnString.FormatStringEx(ID,6)+FnString.FormatStringEx(p1,2)+FnString.FormatStringEx(p2,3);
   Result := GetCodeFlag(s);
 end;
 

@@ -532,16 +532,16 @@ type
     procedure LoadMenu(Sender:TObject);
     procedure LoadFrame;
     procedure InitVersioin;
-    function GetDeskFlag:string;
+    function  GetDeskFlag:string;
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);
-    function Login(Locked:boolean=false;Exited:boolean=true):boolean;
+    function  Login(Locked:boolean=false;Exited:boolean=true):boolean;
     procedure WriteAction(s:string;flag:integer);
     procedure AddFrom(form:TForm);
     procedure RemoveFrom(form:TForm);
-    property Logined:boolean read FLogined write SetLogined;
-    property Loging:boolean read FLoging write SetLoging;
-    property SystemShutdown:boolean read FSystemShutdown write SetSystemShutdown;
+    property  Logined:boolean read FLogined write SetLogined;
+    property  Loging:boolean read FLoging write SetLoging;
+    property  SystemShutdown:boolean read FSystemShutdown write SetSystemShutdown;
   end;
 
 var

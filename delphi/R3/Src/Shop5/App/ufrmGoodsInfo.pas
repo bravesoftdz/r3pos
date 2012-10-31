@@ -611,8 +611,16 @@ begin
 
   if (edtBARCODE1.Text = '自编条码') or (trim(edtBARCODE1.Text)='') or (IsChinese(trim(edtBARCODE1.Text))) then
   begin
-    BARCODE_ID:=TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
-    edtBARCODE1.Text := GetBarCode(BARCODE_ID,'#','#');
+    if (length(AObj.FieldByName('GODS_CODE').AsString)=6) and fnString.IsNumberChar(AObj.FieldByName('GODS_CODE').AsString) then
+      begin
+        BARCODE_ID:=AObj.FieldbyName('GODS_CODE').AsString;
+        edtBARCODE1.Text := GetBarCode(BARCODE_ID,'#','#',13,'8');
+      end
+    else
+      begin
+        BARCODE_ID:=TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+        edtBARCODE1.Text := GetBarCode(BARCODE_ID,'#','#');
+      end;
   end;
 
   WriteToObject(AObj);  //表单的控件的Value写入Obj对象中:
@@ -3347,6 +3355,9 @@ begin
   if (edtSORT_ID8.AsString = '#') and (edtSORT_ID7.AsString = '#') then Exit;
   Cs := ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
   Ss := ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
+  if (length(edtBARCODE1.Text)>0) and (edtBARCODE1.Text[1]='8') then
+     CreateBarcode := copy(edtBARCODE1.Text,2,6)
+  else
   if (length(AObj.FieldByName('GODS_CODE').AsString)=6) and fnString.IsNumberChar(AObj.FieldByName('GODS_CODE').AsString) then
      CreateBarcode := AObj.FieldByName('GODS_CODE').AsString
   else

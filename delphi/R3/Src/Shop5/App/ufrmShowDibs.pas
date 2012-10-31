@@ -726,7 +726,7 @@ begin
     PayDs.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
     PayDs.FieldbyName('CLIENT_ID').AsString := csid;
     PayDs.FieldbyName('IC_GLIDE_TYPE').AsString := '2';
-    PayDs.FieldbyName('GLIDE_INFO').AsString := 'À¢ø®÷ß∏∂';
+    PayDs.FieldbyName('GLIDE_INFO').AsString := '¥¢÷µø®÷ß∏∂-¡„ €';
     PayDs.FieldbyName('CREA_USER').AsString := Global.UserID;
   end;
   PayDs.FieldbyName('IC_CARDNO').AsString := cardno;

@@ -69,10 +69,6 @@ begin
     Column.FieldName := 'SORT_TYPE_TEXT';
     Column.Title.Caption := '名称';
     Column.Width := 100;
-    Column := DBGridEh1.Columns.Add;
-    Column.FieldName := 'CALC_AMOUNT';
-    Column.Title.Caption := '销量';
-    Column.Width := 70;
     adoReport1.Close;
     adoReport1.FieldDefs.Clear;
     adoReport1.FieldDefs.Add('SEQNO',ftInteger,0,True);
@@ -86,21 +82,26 @@ begin
     begin
       // 根据定义动态创建数据集列
       adoReport1.FieldDefs.Add(rs.FieldByName('CODE_ID').AsString,ftFloat,0,True);
+      adoReport1.FieldDefs.Add(rs.FieldByName('CODE_ID').AsString+'_AMT',ftFloat,0,True);
+      Column := DBGridEh1.Columns.Add;
+      Column.FieldName := rs.FieldByName('CODE_ID').AsString+'_AMT';
+      Column.Title.Caption := rs.FieldByName('CODE_NAME').AsString+'|销量';
+      Column.DisplayFormat := '#0.00';
+      Column.Width := 70;
       Column := DBGridEh1.Columns.Add;
       Column.FieldName := rs.FieldByName('CODE_ID').AsString;
-      Column.Title.Caption := rs.FieldByName('CODE_NAME').AsString;
+      Column.Title.Caption := rs.FieldByName('CODE_NAME').AsString+'|金额';
       Column.DisplayFormat := '#0.00';
       Column.Width := 100;
       rs.Next;
     end;
     Column := DBGridEh1.Columns.Add;
-    Column.FieldName := '#';
-    Column.Title.Caption := '其它';
-    Column.DisplayFormat := '#0.00';
-    Column.Width := 100;
+    Column.FieldName := 'CALC_AMOUNT';
+    Column.Title.Caption := '合计|销量';
+    Column.Width := 70;
     Column := DBGridEh1.Columns.Add;
     Column.FieldName := 'TOTAL_MNY';
-    Column.Title.Caption := '合计';
+    Column.Title.Caption := '合计|金额';
     Column.DisplayFormat := '#0.00';
     Column.Width := 100;
     adoReport1.FieldDefs.Add('TOTAL_MNY',ftFloat,0,True);
@@ -234,12 +235,14 @@ begin
          else
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
          adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+         adoReport1.FindField(stl+'_AMT').AsFloat := adoReport1.FindField(stl+'_AMT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
          adoReport1.FieldByName('CALC_AMOUNT').AsFloat := rs.FieldByName('CALC_AMOUNT').AsFloat;
          adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
       end;
       SumRecord.FieldByName('CALC_AMOUNT').AsFloat:=SumRecord.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
       SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+      SumRecord.FieldByName(stl+'_AMT').AsFloat:=SumRecord.FieldByName(stl+'_AMT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
       rs.Next;
     end;
     if not rs.IsEmpty then
@@ -302,6 +305,7 @@ begin
       begin
          adoReport1.Edit;
          adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
+         adoReport1.FindField(stl+'_AMT').AsFloat := adoReport1.FindField(stl+'_AMT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
          adoReport1.FieldByName('CALC_AMOUNT').AsFloat := adoReport1.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
          adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
@@ -318,12 +322,14 @@ begin
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := sort.FieldByName('SORT_NAME').AsString
          else
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
+         adoReport1.FindField(stl+'_AMT').AsFloat := adoReport1.FindField(stl+'_AMT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
          adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.FieldByName('CALC_AMOUNT').AsFloat := rs.FieldByName('CALC_AMOUNT').AsFloat;
          adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
          adoReport1.Post;
       end;
       SumRecord.FieldByName('CALC_AMOUNT').AsFloat:=SumRecord.FieldByName('CALC_AMOUNT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      SumRecord.FieldByName(stl+'_AMT').AsFloat:=SumRecord.FieldByName(stl+'_AMT').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
       SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_MONEY').AsFloat;
       rs.Next;
     end;
@@ -349,13 +355,16 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    Swhr := ShopGlobal.GetDataRight('DEPT_ID',2)+ShopGlobal.GetDataRight('SHOP_ID',1);
+    Swhr := ShopGlobal.GetDataRight('D.DEPT_ID',2)+ShopGlobal.GetDataRight('D.SHOP_ID',1);
     if fndP1_SHOP_ID.AsString <> '' then
-       Swhr := ' and SHOP_ID=:SHOP_ID ';
+       Swhr := ' and D.SHOP_ID=:SHOP_ID ';
     if fndP1_DEPT_ID.AsString <> '' then
-       Swhr := Swhr + ' and DEPT_ID=:DEPT_ID ';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,'select isnull(SALES_STYLE,''#'') as SALES_STYLE,sum(isnull(ADVA_MNY,0)) as ADVA_MNY '+
-    ' from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_DATE>=:D1 and INDE_DATE<=:D2 '+Swhr+' group by SALES_STYLE');
+       Swhr := Swhr + ' and D.DEPT_ID=:DEPT_ID ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,'select isnull(A.SALES_STYLE,''#'') as SALES_STYLE,sum(isnull(C.RECV_MNY,0)) as ADVA_MNY '+
+    ' from SAL_INDENTORDER A,ACC_RECVABLE_INFO B,ACC_RECVDATA C,ACC_RECVORDER D '+
+    ' where A.TENANT_ID=D.TENANT_ID and B.TENANT_ID=D.TENANT_ID and C.TENANT_ID=D.TENANT_ID '+
+    ' and A.INDE_ID=B.SALES_ID and B.ABLE_ID=C.ABLE_ID and C.RECV_ID=D.RECV_ID '+
+    ' and A.TENANT_ID=:TENANT_ID and D.RECV_DATE>=:D1 and D.RECV_DATE<=:D2 '+Swhr+' group by A.SALES_STYLE');
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
@@ -445,7 +454,7 @@ begin
       end;
       rs.Next;
     end;
-
+{
     Swhr := ShopGlobal.GetDataRight('DEPT_ID',2)+ShopGlobal.GetDataRight('SHOP_ID',1);
     if fndP1_SHOP_ID.AsString <> '' then
        Swhr := ' and SHOP_ID=:SHOP_ID ';
@@ -496,6 +505,7 @@ begin
       end;
       rs.Next;
     end;
+}  
 
   finally
     rs.Free;

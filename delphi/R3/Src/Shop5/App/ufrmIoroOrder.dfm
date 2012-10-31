@@ -500,7 +500,7 @@ inherited frmIoroOrder: TfrmIoroOrder
           Left = 11
           Top = 9
           Width = 85
-          Height = 16
+          Height = 12
           Caption = #21333#21495':'#33258#21160#32534#21495
           Color = clWhite
           Font.Charset = GB2312_CHARSET

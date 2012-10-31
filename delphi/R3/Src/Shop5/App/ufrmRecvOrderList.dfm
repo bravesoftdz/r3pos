@@ -1014,7 +1014,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     Width = 892
     inherited Image3: TImage
       Left = 374
-      Width = 0
+      Width = 60
     end
     inherited Image14: TImage
       Left = 872

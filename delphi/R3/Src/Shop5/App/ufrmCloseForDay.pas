@@ -56,10 +56,13 @@ type
     procedure Btn_SaveClick(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
   private
+    FprintDate: TDate;
+    procedure SetprintDate(const Value: TDate);
     { Private declarations }
   public
     { Public declarations }
     DateArr:array of Integer;
+    printFlag:integer;
     Balance:Double;    
     LastTime:integer;
     Is_Print: Boolean;
@@ -76,6 +79,8 @@ type
     procedure InitForm;
     procedure ShowFee;
     class function ShowClDy(Owner:TForm):Integer;
+    class function ShowPrint(Owner:TForm;myPrintDate:TDate):Integer;
+    property printDate:TDate read FprintDate write SetprintDate;
   end;
 
 
@@ -245,6 +250,7 @@ begin
   with TfrmCloseForDay.Create(Owner) do
     begin
       try
+        printFlag := 0;
         GetLastDate;
         GetBalance;
         if true then
@@ -585,10 +591,53 @@ end;
 
 function TfrmCloseForDay.reckDate: TDate;
 begin
-  if Global.SysDate = (date()-1) then
-     result := Global.SysDate
+  if printFlag=0 then
+     begin
+      if Global.SysDate = (date()-1) then
+         result := Global.SysDate
+      else
+         result := Date();
+     end
   else
-     result := Date();
+     result := printDate;
+end;
+
+procedure TfrmCloseForDay.SetprintDate(const Value: TDate);
+begin
+  FprintDate := Value;
+end;
+
+class function TfrmCloseForDay.ShowPrint(Owner: TForm;myPrintDate:TDate): Integer;
+begin
+  with TfrmCloseForDay.Create(Owner) do
+    begin
+      try
+        printFlag := 1;
+        printDate := myPrintDate;
+        GetLastDate;
+        GetBalance;
+        if true then
+          begin
+            Open;
+            if CheckStatus then  //打印当天已经结账汇总
+            begin
+              Btn_Save.Caption := '打印小票(&P)';
+              Btn_Save.Tag := 1;
+            end;
+            case ShowModal of
+              mrOk : Result := 1;
+              mrIgnore : Result := 2;
+            else
+              Result := 0;
+            end;
+          end
+        else
+          Result := 2;
+
+      finally
+        Free;
+      end;
+    end;
 end;
 
 end.

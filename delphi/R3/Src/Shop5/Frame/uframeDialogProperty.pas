@@ -26,6 +26,9 @@ type
     N2: TMenuItem;
     edtTable: TZQuery;
     cdsStorage: TZQuery;
+    RzBitBtn1: TRzBitBtn;
+    DBGridEh2: TDBGridEh;
+    DataSource2: TDataSource;
     procedure edtTableCalcFields(DataSet: TDataSet);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
@@ -39,6 +42,8 @@ type
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
     procedure FormCreate(Sender: TObject);
+    procedure RzBitBtn1Click(Sender: TObject);
+    procedure stbHintClick(Sender: TObject);
   private
     FSimple: boolean;
     procedure SetSimple(const Value: boolean);
@@ -240,7 +245,7 @@ begin
   else
      if Column.Field.Calculated then Background := clYellow
   else
-     if cdsStorage.Locate('PROPERTY_01;PROPERTY_02',varArrayOf([copy(Column.FieldName,6,36),edtTable.FieldbyName('CODE_ID').asString]),[]) then
+     if cdsStorage.Locate('SHOP_ID;PROPERTY_01;PROPERTY_02',varArrayOf([Global.SHOP_ID,copy(Column.FieldName,6,36),edtTable.FieldbyName('CODE_ID').asString]),[]) then
         begin
           if cdsStorage.FieldbyName('AMOUNT').asFloat>0 then
               Background := Shape1.Brush.Color;
@@ -278,11 +283,11 @@ procedure TframeDialogProperty.OpenStroage(AObj: TRecord_);
 begin
   cdsStorage.Close;
   if (AObj.FieldbyName('BATCH_NO').AsString = '#') or (AObj.FieldbyName('BATCH_NO').AsString = '') then
-     cdsStorage.SQL.Text := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID group by PROPERTY_01,PROPERTY_02'
+     cdsStorage.SQL.Text := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02,SHOP_ID from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID group by PROPERTY_01,PROPERTY_02,SHOP_ID'
   else
-     cdsStorage.SQL.Text := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO group by PROPERTY_01,PROPERTY_02';
+     cdsStorage.SQL.Text := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02,SHOP_ID from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO group by PROPERTY_01,PROPERTY_02,SHOP_ID';
   cdsStorage.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cdsStorage.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID; 
+//  cdsStorage.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID; 
   cdsStorage.Params.ParamByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
   if cdsStorage.Params.FindParam('BATCH_NO')<>nil then cdsStorage.Params.FindParam('BATCH_NO').AsString := AObj.FieldbyName('BATCH_NO').AsString;
   Factor.Open(cdsStorage);
@@ -399,10 +404,40 @@ begin
 end;
 
 procedure TframeDialogProperty.FormCreate(Sender: TObject);
+var
+  rs:TZQuery;
+  Column:TColumnEh;
 begin
   inherited;
   SaveColumn := nil;
   Simple := false;
+  rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+  Column :=  FindDBColumn(DBGridEh2,'SHOP_ID');
+  rs.First;
+  while not rs.Eof do
+     begin
+       Column.KeyList.Add(rs.FieldbyName('SHOP_ID').AsString);
+       Column.PickList.Add(rs.FieldbyName('SHOP_NAME').AsString);
+       rs.next;
+     end;
+  rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  Column :=  FindDBColumn(DBGridEh2,'PROPERTY_01');
+  rs.First;
+  while not rs.Eof do
+     begin
+       Column.KeyList.Add(rs.FieldbyName('SIZE_ID').AsString);
+       Column.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
+       rs.next;
+     end;
+  rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+  Column :=  FindDBColumn(DBGridEh2,'PROPERTY_02');
+  rs.First;
+  while not rs.Eof do
+     begin
+       Column.KeyList.Add(rs.FieldbyName('COLOR_ID').AsString);
+       Column.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
+       rs.next;
+     end;
 end;
 
 class function TframeDialogProperty.SimpleShowDialog(AOwner: TForm;
@@ -542,6 +577,22 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TframeDialogProperty.RzBitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  DBGridEh2.visible := false;
+  RzBitBtn1.visible := false;
+end;
+
+procedure TframeDialogProperty.stbHintClick(Sender: TObject);
+begin
+  inherited;
+  DBGridEh2.visible := true;
+  DBGridEh2.bringtoFront;
+  RzBitBtn1.visible := true;
+
 end;
 
 end.

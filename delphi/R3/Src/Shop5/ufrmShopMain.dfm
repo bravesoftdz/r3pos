@@ -1,8 +1,8 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 60
-  Top = 191
+  Left = 63
+  Top = 0
   Width = 817
-  Height = 561
+  Height = 560
   Caption = ''
   Menu = nil
   Position = poDefault
@@ -27,7 +27,7 @@ inherited frmShopMain: TfrmShopMain
     Transparent = True
   end
   inherited stbBottom: TStatusBar
-    Top = 522
+    Top = 521
     Width = 801
     Height = 1
     Panels = <
@@ -47,7 +47,7 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel5: TPanel [2]
     Left = 0
-    Top = 488
+    Top = 487
     Width = 801
     Height = 0
     Align = alBottom
@@ -457,7 +457,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 2
     Top = 105
     Width = 172
-    Height = 383
+    Height = 382
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -467,7 +467,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 28
       Top = 0
       Width = 144
-      Height = 383
+      Height = 382
       ColorAdjustment = 2
       GroupBorderSize = 1
       SmallImages = ImageList1
@@ -481,7 +481,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 0
       Width = 28
-      Height = 383
+      Height = 382
       Align = alLeft
       BorderOuter = fsFlat
       BorderSides = [sdRight]
@@ -490,7 +490,7 @@ inherited frmShopMain: TfrmShopMain
         Left = 3
         Top = 0
         Width = 24
-        Height = 383
+        Height = 382
         Align = alLeft
         BackgroundColor = clWhite
         Color = clWhite
@@ -565,7 +565,7 @@ inherited frmShopMain: TfrmShopMain
         Left = 0
         Top = 0
         Width = 3
-        Height = 383
+        Height = 382
         Align = alLeft
         BevelOuter = bvNone
         Color = clWhite
@@ -577,7 +577,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 0
     Top = 105
     Width = 2
-    Height = 383
+    Height = 382
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
@@ -587,7 +587,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 799
     Top = 105
     Width = 2
-    Height = 383
+    Height = 382
     Align = alRight
     BevelOuter = bvNone
     Color = 6241037
@@ -595,7 +595,7 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel10: TPanel [6]
     Left = 0
-    Top = 488
+    Top = 487
     Width = 801
     Height = 3
     Align = alBottom
@@ -1915,7 +1915,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 174
     Top = 105
     Width = 6
-    Height = 383
+    Height = 382
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
@@ -1932,7 +1932,7 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel23: TPanel [8]
     Left = 0
-    Top = 491
+    Top = 490
     Width = 801
     Height = 31
     Align = alBottom

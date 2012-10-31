@@ -834,9 +834,10 @@ begin
     
   //关联语句
   strSql:=
-    'select A.*,B.SHOP_NAME,C.GUIDE_USER from VIW_PAYABLEDATA A,CA_SHOP_INFO B,('+StkTab+') C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.STOCK_ID=C.STOCK_ID '+
-    ' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+DataRight;
+    'select A.*,B.SHOP_NAME,C.GUIDE_USER from VIW_PAYABLEDATA A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' left outer join ('+StkTab+') C on A.TENANT_ID=C.TENANT_ID and A.STOCK_ID=C.STOCK_ID '+
+    ' where A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+DataRight;
 
   //关联条件
   strSql:=

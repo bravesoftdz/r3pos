@@ -451,7 +451,7 @@ begin
 
   Cnd:='';
   //企业ID
-  strWhere:='and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
+  strWhere:=' '+DataRight;
   //日期：
   strWhere:=strWhere+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' ';
   //门店管理群组
@@ -488,8 +488,10 @@ begin
     ',NEAR_DATE'+
     ',GUIDE_USER'+
     ',B.SHOP_NAME as SHOP_ID_TEXT '+
-    ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B,('+StkTab+')C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.STOCK_ID=C.STOCK_ID  '+strWhere;
+    ' from ACC_PAYABLE_INFO A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' left outer join ('+StkTab+')C on A.TENANT_ID=C.TENANT_ID and A.STOCK_ID=C.STOCK_ID '+
+    ' where A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+strWhere;
 
   //关联[供应商]
   strSql:=

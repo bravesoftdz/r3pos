@@ -380,13 +380,16 @@ begin
     4:
       begin //付款流水
         if adoReport5.Active then adoReport5.Close;
-        strSql := GetGuideSQl;
-        if strSql='' then Exit;
-        adoReport5.SQL.Text := strSql;
-        Factor.Open(adoReport5);
-        //统一计算不在分类型
-        //if (adoReport5.Active) and (Factor.iDbType=5) then
-        CaclOverDays(adoReport5,'ABLE_DATE','PAY_DATE');
+        try
+          dsadoReport5.DataSet:=nil;
+          strSql := GetGuideSQl;
+          if strSql='' then Exit;
+          adoReport5.SQL.Text := strSql;
+          Factor.Open(adoReport5);
+          CaclOverDays(adoReport5,'ABLE_DATE','PAY_DATE');
+        finally
+          dsadoReport5.DataSet:=adoReport5; 
+        end;
       end;
   end;
 end;
@@ -925,18 +928,23 @@ begin
   IdxBeg:=RePort.fieldbyName(BegField).Index;
   IdxEnd:=RePort.fieldbyName(EndField).Index;
   IdxDay:=RePort.fieldbyName('OVERDAYS').Index;
-  Report.First;
-  while not Report.Eof do
-  begin
-    if (trim(Report.Fields[IdxBeg].AsString)<>'') and (trim(Report.Fields[IdxEnd].AsString)<>'') then
+  try
+    Report.DisableControls;
+    Report.First;
+    while not Report.Eof do
     begin
-      OverDays:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
-      if OverDays<0 then OverDays:=0;
-      Report.Edit;
-      Report.Fields[IdxDay].AsFloat:=OverDays;
-      Report.Post;
+      if (trim(Report.Fields[IdxBeg].AsString)<>'') and (trim(Report.Fields[IdxEnd].AsString)<>'') then
+      begin
+        OverDays:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
+        if OverDays<0 then OverDays:=0;
+        Report.Edit;
+        Report.Fields[IdxDay].AsFloat:=OverDays;
+        Report.Post;
+      end;
+      Report.Next;
     end;
-    Report.Next;
+  finally
+    Report.EnableControls;
   end;
 end;
 

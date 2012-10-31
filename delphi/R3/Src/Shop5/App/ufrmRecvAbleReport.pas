@@ -457,9 +457,10 @@ begin
      ',CREA_USER'+
      ',C.GUIDE_USER'+
      ',B.SHOP_NAME as SHOP_ID_TEXT '+
-     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B,('+SalTab+')C '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SALES_ID=C.SALES_ID and '+
-     ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' from ACC_RECVABLE_INFO A '+
+     ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+     ' left outer join ('+SalTab+')C on A.TENANT_ID=C.TENANT_ID and A.SALES_ID=C.SALES_ID '+
+     ' where A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' '+strWhere+' '+GetDataRight+
      ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+' '+GetRecvTypeCnd(fndP5_RECV_TYPE,'A.RECV_TYPE')+
      ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' '+

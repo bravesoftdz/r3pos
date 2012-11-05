@@ -822,8 +822,8 @@ begin
   //业务员
   if Trim(fndP5_GUIDE_USER.AsString)<>'' then
   begin
-    Cnd:=' and GUIDE_USER='''+Trim(fndP5_GUIDE_USER.AsString)+''' ';
     strWhere:=strWhere+' and ABLE_TYPE not in (''7'',''8'') ';
+    Cnd:=' and GUIDE_USER='''+Trim(fndP5_GUIDE_USER.AsString)+''' ';
   end;
   //账款类型
   if fndP5_ABLE_TYPE.AsString<>'' then
@@ -840,7 +840,7 @@ begin
     'select A.*,B.SHOP_NAME,C.GUIDE_USER from VIW_PAYABLEDATA A '+
     ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
     ' left outer join ('+StkTab+') C on A.TENANT_ID=C.TENANT_ID and A.STOCK_ID=C.STOCK_ID '+
-    ' where A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+DataRight;
+    ' where A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+DataRight+' '+Cnd;
 
   //关联条件
   strSql:=

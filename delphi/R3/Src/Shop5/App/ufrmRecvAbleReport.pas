@@ -464,7 +464,7 @@ begin
      ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' '+strWhere+' '+GetDataRight+
      ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+' '+GetRecvTypeCnd(fndP5_RECV_TYPE,'A.RECV_TYPE')+
      ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' '+
-     ' '+GetCustCnd(fndP5_CLIENT_ID,'CLIENT_ID')+' ';
+     ' '+GetCustCnd(fndP5_CLIENT_ID,'CLIENT_ID')+' '+Cnd+' ';
 
   //นุมช
   strSql:=

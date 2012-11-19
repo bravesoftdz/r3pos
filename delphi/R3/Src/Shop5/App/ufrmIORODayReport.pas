@@ -335,8 +335,10 @@ begin
   //过滤日期
   strWhere:=strWhere+' '+GetDateCnd(P3_D1,P3_D2,'A.IORO_DATE');
 
-  //门店群主及时门店名称条件
+  //门店群主
   strWhere:=strWhere+' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'');
+  //门店名称条件
+  strWhere:=strWhere+' '+self.GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID');
 
   //账户|科目条件:
   case fndP3_SortType.ItemIndex of   
@@ -381,8 +383,10 @@ begin
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
   //过滤日期
   strWhere:=strWhere+' '+GetDateCnd(P4_D1,P4_D2,'A.IORO_DATE');
-  //门店群主及时门店名称条件
+  //门店群主
   strWhere:=strWhere+' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'');
+  //门店名称条件
+  strWhere:=strWhere+' '+GetShopIDCnd(fndP4_SHOP_ID,'A.SHOP_ID');
 
   //往来客户:
   if trim(fndP4_CLIENT_ID.AsString)<>'' then

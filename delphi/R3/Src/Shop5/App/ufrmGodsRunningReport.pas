@@ -38,6 +38,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+    procedure RzPageDblClick(Sender: TObject);
   private
     FQryType: integer;
     FReckAmt: Real;  //期初数量
@@ -45,6 +46,7 @@ type
     FBalAmt:  Real;  //结存数量
     FSumAmt:  Real;  //本次统计销量
     FSumMny:  Real;  //本次统计销额
+    idx:integer;
     procedure AddBillTypeItems; //添加帐单类型Items
 
     procedure CreateGrid;
@@ -53,8 +55,12 @@ type
     function  GetGoodStorageORG: Boolean; //返回当前查询期初数量
     function  GetGoodDetailSQL(chk:boolean=true): widestring;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override;
-    function  GetQryType: integer; //添加Title
+    function  GetQryType: integer;
+    function GetFormClass: TFormClass;
+    procedure OpenDetailForm(id, cid: string);
+    procedure Clear; //添加Title
   public
+    destructor Destroy;override;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
     property  QryType: integer read FQryType;
@@ -62,8 +68,8 @@ type
 
 implementation
 
-uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, uShopUtil, ufrmSelectGoodSort, ufrmCostCalc;
-
+uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, uShopUtil, ufrmSelectGoodSort, ufrmCostCalc, uframeOrderForm, ufrmSalesOrder,ufrmSalRetuOrder,ufrmStockOrder,ufrmStkRetuOrder,ufrmDbOrder,ufrmChangeOrder;
+var CurOrder:TframeOrderForm;
 {$R *.dfm}
 
 procedure TfrmGodsRunningReport.FormCreate(Sender: TObject);
@@ -105,6 +111,93 @@ begin
   //2012.08.15创建尺码、颜色
   if ShopGlobal.GetVersionFlag=1 then
     CreateGridColForFIG(DBGridEh1,3);  
+end;
+
+procedure TfrmGodsRunningReport.OpenDetailForm(id, cid: string);
+function CheckExists:integer;
+var
+  i:integer;
+  FrmObj: TframeOrderForm;
+begin
+  result := -1;
+  for i:=0 to rzPage.PageCount -1 do
+    begin
+      if rzPage.Pages[i].Data = nil then continue;
+      FrmObj:=TframeOrderForm(rzPage.Pages[i].Data);
+      if not(FrmObj is GetFormClass) then continue;
+      if (FrmObj.oid = id) and (FrmObj.cid=cid) then
+      begin
+        result := i;
+        exit;
+      end;
+      //进行刷新数据
+      if FrmObj is TfrmChangeOrder then
+         TfrmChangeOrder(FrmObj).CodeId := inttostr(adoReport1.FieldbyName('ORDER_TYPE').asInteger-30); 
+      if cid='' then
+        FrmObj.cid := Global.SHOP_ID
+      else
+        FrmObj.cid := cid;
+      FrmObj.Open(id);
+      result:=i;
+    end;
+end;
+var
+  p:integer;
+  form: TframeOrderForm;
+  Page: TrzTabSheet;
+begin
+  p := CheckExists;
+  if p>=0 then
+  begin
+    rzPage.ActivePageIndex := p;
+    exit;
+  end;
+  //新创建窗口
+   Page := TrzTabSheet.Create(rzPage);
+   form := TframeOrderForm(GetFormClass.Create(self));
+   try
+     inc(idx);
+     Page.Caption := '查询'+inttostr(idx);
+     Page.PageControl := rzPage;
+     Page.Data := form;
+     Page.Align := alClient;
+     form.TabSheet := Page;
+     form.ContainerHanle := Page.Handle;
+     rzPage.ActivePage := Page;
+     form.SetParantDisplay(rzPage.ActivePage);
+     if cid='' then
+        form.cid := Global.SHOP_ID
+     else
+        form.cid := cid;
+     if form is TfrmChangeOrder then
+        TfrmChangeOrder(form).CodeId := inttostr(adoReport1.FieldbyName('ORDER_TYPE').asInteger-30); 
+     form.Open(id);
+     RzPage.OnChange(nil);
+   except
+     Page.Data := nil;
+     form.TabSheet := nil;
+     form.Free;
+     Page.Free;
+     rzPage.ActivePageIndex := 0;
+   end;
+end;
+
+function TfrmGodsRunningReport.GetFormClass: TFormClass;
+begin
+  if not adoReport1.IsEmpty then
+  begin
+    case adoReport1.FieldByName('ORDER_TYPE').AsInteger of
+    11:result := TfrmStockOrder;
+    13:result := TfrmStkRetuOrder;
+    21,24:result := TfrmSalesOrder;
+    23:result := TfrmSalRetuOrder;
+    12,22:result := TfrmDbOrder;
+    else
+       result := TfrmChangeOrder;
+    end;
+  end
+  else
+    Raise Exception.Create('请先查询数据.');
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;
@@ -274,23 +367,15 @@ begin
 end;
 
 procedure TfrmGodsRunningReport.DBGridEh1DblClick(Sender: TObject);
+var
+  BillID: string;
 begin
-  inherited;
-{  if adoReport1.IsEmpty then Exit;
-  P2_D1.asString := P1_D1.asString;
-  P2_D2.asString := P1_D2.asString;
-  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
-  sid2 := sid1;
-  srid2 := srid1;
-  fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
-  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
-  fndP2_SHOP_TYPE.ItemIndex := 0;
-  fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
-  fndP2_SHOP_VALUE.Text := adoReport1.FieldbyName('CODE_NAME').AsString;
-  rzPage.ActivePageIndex := 1;
-  actFind.OnExecute(nil); }
+  if CurOrder=nil then
+  begin
+    BillID:=trim(adoReport1.FieldByName('ORDER_ID').AsString);
+    if BillID='' then Exit;
+    OpenDetailForm(BillID, adoReport1.FieldbyName('SHOP_ID').AsString);
+  end;
 end;
 
 procedure TfrmGodsRunningReport.FormDestroy(Sender: TObject);
@@ -587,6 +672,34 @@ begin
     result:=FormatFloat(Format,Revalue)
   else
     result:=FloatToStr(Revalue);
+end;
+
+procedure TfrmGodsRunningReport.Clear;
+var i:integer;
+begin
+  for i:=rzPage.PageCount -1 downto 1 do
+    begin
+      if rzPage.Pages[i].Data <> nil then
+         begin
+            TframeOrderForm(rzPage.Pages[i].Data).Free;
+         end;
+    end;
+end;
+procedure TfrmGodsRunningReport.RzPageDblClick(Sender: TObject);
+begin
+  inherited;
+  if rzPage.ActivePage.Data <> nil then
+     begin
+       if (TframeOrderForm(rzPage.ActivePage.Data).dbState <> dsBrowse) and TframeOrderForm(rzPage.ActivePage.Data).Modifyed then Raise Exception.Create('当前单据有修改，请保存后再关闭...'); 
+       TframeOrderForm(rzPage.ActivePage.Data).Close;
+     end;
+
+end;
+
+destructor TfrmGodsRunningReport.Destroy;
+begin
+  Clear;
+  inherited;
 end;
 
 end.

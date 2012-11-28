@@ -29,8 +29,8 @@ uses
   ufrmDutyInfoList in 'App\ufrmDutyInfoList.pas' {frmDutyInfoList},
   ufrmRoleInfo in 'App\ufrmRoleInfo.pas' {frmRoleInfo},
   ufrmRoleInfoList in 'App\ufrmRoleInfoList.pas' {frmRoleInfoList},
-  ufrmUsers in 'App\ufrmUsers.pas' {frmUsers},
-  ufrmUsersInfo in 'App\ufrmUsersInfo.pas' {frmUsersInfo},
+  ufrmBatchNo in 'App\ufrmBatchNo.pas' {frmBatchNo},
+  ufrmBatchNoInfo in 'App\ufrmBatchNoInfo.pas' {frmBatchNoInfo},
   ObjDutyInfo in 'Obj\ObjDutyInfo.pas',
   ObjRoleInfo in 'Obj\ObjRoleInfo.pas',
   ObjUsers in 'Obj\ObjUsers.pas',
@@ -227,7 +227,7 @@ uses
   ufrmDefineReport in 'App\ufrmDefineReport.pas' {frmDefineReport},
   ObjDefineReport in 'Obj\ObjDefineReport.pas',
   ufrmStockTotalReport in 'App\ufrmStockTotalReport.pas' {frmStockTotalReport},
-  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
+  ufrmSalIndentTotalReport in 'App\ufrmSalIndentTotalReport.pas' {frmSalIndentTotalReport},
   ufrmPrgBar in '..\..\Basic\ufrmPrgBar.pas' {frmPrgBar},
   objHandSetRelation in 'Obj\objHandSetRelation.pas',
   ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
@@ -359,7 +359,12 @@ uses
   ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber},
   ufrmBatchAdjustPrice in 'App\ufrmBatchAdjustPrice.pas' {frmBatchAdjustPrice},
   ufrmPriceingInfo in 'App\ufrmPriceingInfo.pas' {frmPriceingInfo},
-  ufrmGodsComPare in 'App\ufrmGodsComPare.pas' {frmGodsComPare};
+  ufrmGodsComPare in 'App\ufrmGodsComPare.pas' {frmGodsComPare},
+  uResFactory in 'App\uResFactory.pas',
+  ufrmUsers in 'App\ufrmUsers.pas' {frmUsers},
+  ufrmUsersInfo in 'App\ufrmUsersInfo.pas' {frmUsersInfo},
+  ObjBatchNo in 'Obj\ObjBatchNo.pas',
+  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport};
 
 {$R *.res}
 var

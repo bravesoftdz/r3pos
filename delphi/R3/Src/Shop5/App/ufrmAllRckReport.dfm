@@ -1,31 +1,32 @@
 inherited frmAllRckReport: TfrmAllRckReport
-  Left = -8
-  Top = -8
-  Width = 1292
-  Height = 776
+  Left = 1
+  Top = 1
+  Width = 1278
+  Height = 758
   Caption = #32508#21512#21488#36134
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1284
-    Height = 712
+    Width = 1262
+    Height = 683
     inherited RzPanel2: TRzPanel
-      Width = 1274
-      Height = 702
+      Width = 1252
+      Height = 673
       inherited RzPage: TRzPageControl
-        Width = 1069
-        Height = 696
+        Width = 1047
+        Height = 667
+        OnDblClick = RzPageDblClick
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32508#21512#21488#36134
           inherited RzPanel3: TRzPanel
-            Width = 1067
-            Height = 669
+            Width = 1045
+            Height = 640
             inherited Panel4: TPanel
-              Width = 1057
-              Height = 659
+              Width = 1035
+              Height = 630
               inherited w1: TRzPanel
-                Width = 1057
+                Width = 1035
                 Height = 82
                 object LblRckType: TLabel
                   Left = 9
@@ -65,7 +66,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Caption = #26597#35810#21608#26399
                 end
                 object Shape1: TShape
-                  Left = 850
+                  Left = 836
                   Top = 56
                   Width = 44
                   Height = 17
@@ -73,7 +74,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Brush.Color = clRed
                 end
                 object Shape2: TShape
-                  Left = 954
+                  Left = 940
                   Top = 56
                   Width = 44
                   Height = 17
@@ -81,7 +82,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Brush.Color = 8454016
                 end
                 object Label3: TLabel
-                  Left = 898
+                  Left = 884
                   Top = 58
                   Width = 36
                   Height = 12
@@ -89,7 +90,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Caption = #26368#28382#38144
                 end
                 object Label4: TLabel
-                  Left = 1002
+                  Left = 988
                   Top = 58
                   Width = 36
                   Height = 12
@@ -225,12 +226,12 @@ inherited frmAllRckReport: TfrmAllRckReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 1057
-                Height = 577
+                Width = 1035
+                Height = 548
                 inherited DBGridEh1: TDBGridEh
                   Tag = 1
-                  Width = 1053
-                  Height = 573
+                  Width = 1031
+                  Height = 544
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -270,15 +271,15 @@ inherited frmAllRckReport: TfrmAllRckReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1072
-        Height = 696
+        Left = 1050
+        Height = 667
         Visible = False
         inherited Panel2: TPanel
-          Height = 662
+          Height = 644
           inherited Panel5: TPanel
-            Height = 547
+            Height = 529
             inherited rzShowColumns: TRzCheckList
-              Height = 543
+              Height = 525
             end
           end
         end
@@ -286,15 +287,15 @@ inherited frmAllRckReport: TfrmAllRckReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1284
+    Width = 1262
     inherited Image3: TImage
-      Width = 334
+      Width = 308
     end
     inherited Image14: TImage
-      Left = 1264
+      Left = 1242
     end
     inherited Image1: TImage
-      Left = 684
+      Left = 662
       Width = 580
     end
     inherited CoolBar1: TCoolBar

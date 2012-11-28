@@ -86,7 +86,7 @@ type
 
 implementation
 uses ufrmSalIndentOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,ufrmRecvOrder,
-  uShopGlobal,uDsUtil, uMsgBox,ufrmOrderHandSet,ufrmSalInvoice;
+  uShopGlobal,uDsUtil, uMsgBox,ufrmOrderHandSet,ufrmSalInvoice,ObjCommon;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -160,7 +160,7 @@ begin
   sm := TMemoryStream.Create;
   cdsList.DisableControls;
   try
-    rs.SQL.Text := EncodeSQL(Id);
+    rs.SQL.Text := ParseSQL(Factor.iDbType,EncodeSQL(Id));
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));

@@ -87,6 +87,7 @@ type
     procedure RzBitBtn1Click(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure fndBATCH_NOAddClick(Sender: TObject);
   private
     { Private declarations }
     //结算金额
@@ -106,6 +107,7 @@ type
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
     procedure IndeFrom(id:string);
     procedure SetdbState(const Value: TDataSetState); override;
+    procedure BatchNoDropList; override;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -138,7 +140,7 @@ type
 implementation
 uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo,ufrmTenantInfo,  
   ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmMain,ufrmFindOrder,ufrmBarCodePrint,
-  IniFiles;
+  IniFiles,ufrmBatchNoInfo;
 {$R *.dfm}
 
 procedure TfrmStockOrder.CancelOrder;
@@ -1094,9 +1096,16 @@ begin
   if id = '' then Raise Exception.Create('输入的批号无效');
   bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
-  if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
-  edtTable.Edit;
-  edtTable.FieldbyName('BATCH_NO').asString := id;
+//  if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
+//  fndBATCH_NOAddClick(nil);
+  if (edtTable.FieldbyName('BATCH_NO').asString='#') or (edtTable.FieldbyName('BATCH_NO').asString='') then
+  begin
+    edtTable.Edit;
+    edtTable.FieldbyName('BATCH_NO').asString := id;
+  end
+  else
+  begin
+  end;
   result := true;
 
 end;
@@ -1445,6 +1454,39 @@ begin
       end;
     end;
   except
+  end;
+end;
+
+procedure TfrmStockOrder.BatchNoDropList;
+begin
+  if GBATCH_NO<>edtTable.FieldbyName('GODS_ID').asString then
+  begin
+    cdsBatchNo.Close;
+    cdsBatchNo.SQL.Text := 'select BATCH_NO from PUB_BATCH_NO where TENANT_ID=:TENANT_ID and GODS_ID in (:GODS_ID,''#'') order by BATCH_NO';
+    cdsBatchNo.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    cdsBatchNo.ParambyName('GODS_ID').asString := edtTable.FieldbyName('GODS_ID').asString;
+    Factor.Open(cdsBatchNo);
+  end;
+  fndBATCH_NO.Text := edtTable.FieldbyName('BATCH_NO').AsString;
+  fndBATCH_NO.KeyValue := edtTable.FieldbyName('BATCH_NO').AsString;
+  fndBATCH_NO.SaveStatus;
+end;
+
+procedure TfrmStockOrder.fndBATCH_NOAddClick(Sender: TObject);
+var obj:TRecord_;
+begin
+  inherited;
+  obj := TRecord_.Create;
+  try
+  if TfrmBatchNoInfo.AddDialog(self,obj,edtTable.FieldbyName('GODS_ID').asString) then
+     begin
+       edtTable.Edit;
+       edtTable.FieldbyName('BATCH_NO').asString := obj.FieldbyName('BATCH_NO').asString;
+       fndBATCH_NO.KeyValue := edtTable.FieldbyName('BATCH_NO').asString;
+       fndBATCH_NO.Text := edtTable.FieldbyName('BATCH_NO').asString;
+     end;
+  finally
+     obj.free;
   end;
 end;
 

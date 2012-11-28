@@ -1,5 +1,5 @@
 inherited frmMMMain: TfrmMMMain
-  Left = -8
+  Left = -11
   Top = 0
   VertScrollBar.Range = 0
   BorderStyle = bsNone

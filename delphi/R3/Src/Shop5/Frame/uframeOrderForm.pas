@@ -71,6 +71,8 @@ type
     mnuIsPressent: TMenuItem;
     Excel1: TMenuItem;
     GodsCompare: TMenuItem;
+    fndBATCH_NO: TzrComboBoxList;
+    cdsBatchNo: TZQuery;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -125,6 +127,13 @@ type
     procedure Excel1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure GodsCompareClick(Sender: TObject);
+    procedure fndBATCH_NOEnter(Sender: TObject);
+    procedure fndBATCH_NOExit(Sender: TObject);
+    procedure fndBATCH_NOKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndBATCH_NOKeyPress(Sender: TObject; var Key: Char);
+    procedure fndBATCH_NOSaveValue(Sender: TObject);
+    procedure fndBATCH_NOClearValue(Sender: TObject);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -199,6 +208,8 @@ type
     function DecodeBarcode(BarCode: string):integer;
     function GetToolHandle:THandle;
     function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;virtual;
+    procedure DBGridEh1BatchNoBeforeShowControl(Sender: TObject);
+    procedure BatchNoDropList;virtual;
   public
     { Public declarations }
     //SEQNO控制号
@@ -212,6 +223,8 @@ type
     //重复条码控制
     fndStr:string;
     BarCodeInfo:TZQuery;
+
+    GBATCH_NO:string;//当前数据打开的批号对应的商品
     function EnCodeBarcode:string;
     function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
 
@@ -349,6 +362,7 @@ begin
 end;
 
 constructor TframeOrderForm.Create(AOwner: TComponent);
+var Column:TColumnEh;
 begin
   gRepeat := false;
   CanAppend := false;
@@ -394,7 +408,15 @@ begin
   else
      InputFlag := 0;
   fndGODS_ID.OnFilterRecord := GodsDropFilterRecord;
-  BarCodeInfo := Global.GetZQueryFromName('PUB_BARCODE'); 
+  BarCodeInfo := Global.GetZQueryFromName('PUB_BARCODE');
+
+  Column := FindColumn('BATCH_NO');
+  if Column<>nil then
+     begin
+       Column.Control := fndBATCH_NO;
+       Column.OnBeforeShowControl := DBGridEh1BatchNoBeforeShowControl;
+       Column.ReadOnly := false;
+     end;
 end;
 
 destructor TframeOrderForm.Destroy;
@@ -445,7 +467,7 @@ procedure TframeOrderForm.FocusNextColumn;
 var i:Integer;
 begin
   i:=DbGridEh1.Col;
-  if edtTable.RecordCount>edtTable.RecNo then
+  if (edtTable.RecordCount>edtTable.RecNo) and (DbGridEh1.Columns[i].Control=nil) then
      begin
        edtTable.Next;
        Exit;
@@ -2306,7 +2328,7 @@ end;
 
 procedure TframeOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  if not fndGODS_ID.Focused and not edtInput.Focused and not fndUNIT_ID.Focused and not DBGridEh1.Focused then
+  if not fndGODS_ID.Focused and not edtInput.Focused and not fndUNIT_ID.Focused and not DBGridEh1.Focused and fndBATCH_NO.Focused then
      begin
        inherited;
      end;
@@ -2343,6 +2365,12 @@ begin
   fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
   fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
   fndGODS_ID.SaveStatus;
+end;
+
+procedure TframeOrderForm.DBGridEh1BatchNoBeforeShowControl(
+  Sender: TObject);
+begin
+  BatchNoDropList;
 end;
 
 procedure TframeOrderForm.edtTableNewRecord(DataSet: TDataSet);
@@ -2957,7 +2985,7 @@ begin
            ConvertUnit;
        end;
     end;
-    
+
 end;
 
 procedure TframeOrderForm.fndUNIT_IDKeyPress(Sender: TObject;
@@ -3257,9 +3285,10 @@ begin
     Factor.Open(rs);
     if rs.Fields[0].asString='' then
        begin
-         if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
-         if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
-         if MessageBox(Handle,'当前门店没有此批号的商品,是否强制手工输入?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         //if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+         //if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
+         MessageBox(Handle,'当前门店没有此批号的商品,不能发货?','友情提示..',MB_OK+MB_ICONQUESTION);
+         Exit;
        end;
     edtTable.Edit;
     edtTable.FieldbyName('BATCH_NO').asString := id;
@@ -3991,6 +4020,99 @@ begin
      end;
   AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
   edtTable.Post;
+end;
+
+procedure TframeOrderForm.fndBATCH_NOEnter(Sender: TObject);
+begin
+  inherited;
+  fndBATCH_NO.Properties.ReadOnly := DBGridEh1.ReadOnly;
+
+end;
+
+procedure TframeOrderForm.fndBATCH_NOExit(Sender: TObject);
+begin
+  inherited;
+  if not fndBATCH_NO.DropListed then fndBATCH_NO.Visible := false;
+
+end;
+
+procedure TframeOrderForm.fndBATCH_NOKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (Key=VK_RIGHT) then
+     begin
+       DBGridEh1.SetFocus;
+       fndBATCH_NO.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_LEFT) then
+     begin
+       DBGridEh1.SetFocus;
+       fndBATCH_NO.Visible := false;
+       DBGridEh1.Col := DBGridEh1.Col -1;
+     end;
+  if (Key=VK_UP) and (Shift=[]) and not fndBATCH_NO.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       fndBATCH_NO.Visible := false;
+       PostMessage(Handle,WM_PRIOR_RECORD,0,0);
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not fndBATCH_NO.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       fndBATCH_NO.Visible := false;
+       PostMessage(Handle,WM_NEXT_RECORD,0,0);
+     end;
+end;
+
+procedure TframeOrderForm.fndBATCH_NOKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       DBGridEh1.SetFocus;
+       FocusNextColumn;
+     end;
+
+end;
+
+procedure TframeOrderForm.fndBATCH_NOSaveValue(Sender: TObject);
+begin
+  inherited;
+  if not fndBATCH_NO.Visible then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
+  edtTable.Edit;
+  if fndBATCH_NO.AsString='' then
+     edtTable.FieldByName('BATCH_NO').AsString := '#'
+  else
+     edtTable.FieldByName('BATCH_NO').AsString := fndBATCH_NO.AsString;
+
+end;
+
+procedure TframeOrderForm.fndBATCH_NOClearValue(Sender: TObject);
+begin
+  inherited;
+  edtTable.Edit;
+  edtTable.FieldByName('BATCH_NO').AsString := '#';
+  fndBATCH_NO.Text := '#';
+  fndBATCH_NO.KeyValue := '#';
+end;
+
+procedure TframeOrderForm.BatchNoDropList;
+begin
+  if GBATCH_NO<>edtTable.FieldbyName('GODS_ID').asString then
+  begin
+    cdsBatchNo.Close;
+    cdsBatchNo.SQL.Text := 'select * from (select distinct BATCH_NO from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and AMOUNT<>0) j order by BATCH_NO';
+    cdsBatchNo.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    cdsBatchNo.ParambyName('GODS_ID').asString := edtTable.FieldbyName('GODS_ID').asString;
+    Factor.Open(cdsBatchNo);
+  end;
+  fndBATCH_NO.Text := edtTable.FieldbyName('BATCH_NO').AsString;
+  fndBATCH_NO.KeyValue := edtTable.FieldbyName('BATCH_NO').AsString;
+  fndBATCH_NO.SaveStatus;
 end;
 
 end.

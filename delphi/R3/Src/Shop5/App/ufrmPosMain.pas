@@ -38,6 +38,8 @@ const
   FIND_CUSTOMER_DIALOG=5;
   //查询导购员对话框
   FIND_GUIDE_DIALOG=6;
+  //
+  FIND_DIALOG_BATCH_NO=7;
 
 type
   TfrmPosMain = class(TfrmBasic)
@@ -238,6 +240,7 @@ type
     function  OpenDialogCustomer(KeyString:string;C_T:Integer=0):boolean;
     procedure OpenDialogGuide;
     procedure OpenDialogTrend;
+    procedure OpenDialogBatchNo;
     procedure AddFromDialog(AObj:TRecord_);
     procedure SetgRepeat(const Value: boolean);
     procedure Setoid(const Value: string);
@@ -1335,6 +1338,7 @@ begin
     end;
   FIND_GUIDE_DIALOG:OpenDialogGuide;
   FIND_CUSTOMER_DIALOG:OpenDialogCustomer(KeyStr);
+  FIND_DIALOG_BATCH_NO:OpenDialogBatchNo;
   end;
 end;
 
@@ -2185,7 +2189,10 @@ begin
     cdsTable.Edit;
     cdsTable.FieldbyName('BATCH_NO').AsString := vBtNo;
     if not Bulk then
-       WriteAmount(1,true)
+       begin
+         WriteAmount(1,true);
+         PostMessage(Handle,WM_DIALOG_PULL,FIND_DIALOG_BATCH_NO,FIND_DIALOG_BATCH_NO);
+       end
     else
        BulkAmount(amt,pri,mny,true);
   finally
@@ -3737,9 +3744,10 @@ begin
     Factor.Open(rs);
     if rs.Fields[0].asString='' then
        begin
-         if not bs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
-         if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
-         if MessageBox(Handle,'当前门店没有此批号的商品,是否强制手工输入?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         //if not bs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+         //if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
+         MessageBox(Handle,'当前门店没有此批号的商品,不能发货?','友情提示..',MB_OK+MB_ICONQUESTION);
+         Exit;
        end;
     cdsTable.Edit;
     cdsTable.FieldbyName('BATCH_NO').asString := id;
@@ -5102,6 +5110,42 @@ begin
   Calc;
   //actSave.OnExecute(actSave);
   PostMessage(Message.WParam, WM_LVL_PRICE_OVER, Round(TotalFee * 1000), 0);
+end;
+
+procedure TfrmPosMain.OpenDialogBatchNo;
+var
+  rs,bs:TZQuery;
+  obj:TRecord_;
+begin
+  rs := TZQuery.Create(nil);
+  obj := TRecord_.Create;
+  try
+    rs.Close;
+    rs.SQL.Text := 'select BATCH_NO from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and AMOUNT<>0 order by BATCH_NO';
+    rs.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    rs.ParambyName('GODS_ID').asString := cdsTable.FieldByName('GODS_ID').AsString;
+    Factor.Open(rs);
+    if rs.RecordCount > 1 then
+    begin
+    if TframeListDialog.FindDSDialog(self,rs,'BATCH_NO=批号',obj) then
+       begin
+         cdsTable.Edit;
+         cdsTable.FieldByName('BATCH_NO').AsString := obj.FieldbyName('BATCH_NO').AsString;
+       end;
+    end
+    else
+    begin
+       bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+       if bs.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) and (bs.FieldbyName('USING_BATCH_NO').asInteger=1) then
+          begin
+            cdsTable.Edit;
+            cdsTable.FieldByName('BATCH_NO').AsString := rs.FieldbyName('BATCH_NO').AsString;
+          end;
+    end;
+  finally
+    rs.free;
+    obj.free;
+  end;
 end;
 
 end.

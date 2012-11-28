@@ -759,6 +759,10 @@ inherited frmStockOrder: TfrmStockOrder
     inherited fndUNIT_ID: TcxComboBox
       Top = 176
     end
+    inherited fndBATCH_NO: TzrComboBoxList
+      OnAddClick = fndBATCH_NOAddClick
+      Buttons = [zbNew, zbClear]
+    end
   end
   inherited mmMenu: TMainMenu
     Left = 192

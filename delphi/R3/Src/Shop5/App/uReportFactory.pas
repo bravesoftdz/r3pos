@@ -27,6 +27,7 @@ const
      'BOND2_MNY=滚存保证金,BOND2_NEW_SL=滚存保证金本期申领,BOND2_ALL_SL=滚存保证金累计申领,BOND2_JY=滚存保证金结余,'+
      'REQU1_MNY=市场返利金额,REQU1_NEW_SL=市场返利金额本期申领,REQU1_ALL_SL=市场返利累计申领金额,REQU1_JY=市场返利结余金额,'+
      'REQU2_MNY=市场计提金额,REQU2_NEW_SL=市场计提金额本期申领,REQU2_ALL_SL=市场计提累计申领金额,REQU2_JY=市场计提结余金额';
+  RF_DATA_SOURCE7='CLIENT_CODE=客户编码,ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,INDE_AMT=数量,INDE_MNY=未税金额,INDE_TTL=金额,INDE_TAX=销项税额';
 
 type
 pRCondi=^TRCondi;

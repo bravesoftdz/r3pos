@@ -49,6 +49,7 @@ type
     procedure Lbl_LinkCheckGoodClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure fndBATCH_NOSaveValue(Sender: TObject);
   private
     { Private declarations }
     w:integer;
@@ -853,7 +854,9 @@ begin
             edtTable.FieldByName('UNIT_ID').AsString:=CurObj.FieldByName('UNIT_ID').AsString;
             edtTable.FieldByName('IS_PRESENT').AsString:='0';
             //edtTable.FieldByName('LOCUS_NO').AsString:='';
-            edtTable.FieldByName('BATCH_NO').AsString:='#';
+            if BatchNo='' then
+            edtTable.FieldByName('BATCH_NO').AsString:='#' else
+            edtTable.FieldByName('BATCH_NO').AsString:=BatchNo;
             edtTable.FieldByName('NEW_INPRICE').AsString:=CurObj.FieldByName('NEW_INPRICE').AsString;
             edtTable.FieldByName('NEW_OUTPRICE').AsString:=CurObj.FieldByName('NEW_OUTPRICE').AsString;
             edtTable.FieldByName('RCK_AMOUNT').AsString:=CurObj.FieldByName('AMOUNT').AsString;
@@ -1079,6 +1082,7 @@ begin
       edtTable.FieldbyName('RCK_AMOUNT').AsFloat := 0;
       edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat:=0;
     end;
+    Calc(1);
     edtTable.Post;
   end;
 end;
@@ -1088,7 +1092,7 @@ function TfrmCheckOrder.GodsToBatchNo(id: string): boolean;
 begin
   inherited GodsToBatchNo(id);
   //2011.04.02 Add Ë¢ÐÂÕËÃæ¿â´æ
-  RefreshRckAMount;
+  RefreshRckAMount(GetCalcUnitValue(edtTable.FieldbyName('GODS_ID').asString));
 end;
 
 procedure TfrmCheckOrder.DBGridEh1GetCellParams(Sender: TObject;
@@ -1105,6 +1109,14 @@ begin
      begin
        AFont.Color := clRed;
      end;
+end;
+
+procedure TfrmCheckOrder.fndBATCH_NOSaveValue(Sender: TObject);
+begin
+  inherited;
+  //2011.04.02 Add Ë¢ÐÂÕËÃæ¿â´æ
+  RefreshRckAMount(GetCalcUnitValue(edtTable.FieldbyName('GODS_ID').asString));
+
 end;
 
 end.

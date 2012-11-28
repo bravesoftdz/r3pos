@@ -328,7 +328,7 @@ begin
      ' DEPT.DEPT_NAME as DEPT_NAME '+
      ' from ('+strSql+')K '+
      ' left outer join CA_DEPT_INFO DEPT '+
-     ' on K.TENANT_ID=DEPT.TENANT_ID K.DEPT_ID=DEPT.DEPT_ID '
+     ' on K.TENANT_ID=DEPT.TENANT_ID and K.DEPT_ID=DEPT.DEPT_ID '
      );
 end;
 

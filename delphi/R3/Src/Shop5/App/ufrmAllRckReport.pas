@@ -71,6 +71,7 @@ type
     procedure RB_DefineClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure RzPageDblClick(Sender: TObject);
   private
     FMax_Sale_prf:real; //高毛利临界值
     FMax_Sale_cxb:real; //高存销比临界值
@@ -1176,7 +1177,7 @@ begin
    form := TframeOrderForm(GetFormClass.Create(self));
    try
      inc(idx);
-     Page.Caption := '新建'+inttostr(idx);
+     Page.Caption := '查询'+inttostr(idx);
      Page.PageControl := rzPage;
      Page.Data := form;
      Page.Align := alClient;
@@ -1857,6 +1858,17 @@ begin
     ' on ja.SORT_ID=s.SORT_ID '+
     ' order by s.ORDER_ID,ja.GODS_CODE';
   result:=ParseSQL(Factor.iDbType,strSql);
+end;
+
+procedure TfrmAllRckReport.RzPageDblClick(Sender: TObject);
+begin
+  inherited;
+  if rzPage.ActivePage.Data <> nil then
+     begin
+       if (TframeOrderForm(rzPage.ActivePage.Data).dbState <> dsBrowse) and TframeOrderForm(rzPage.ActivePage.Data).Modifyed then Raise Exception.Create('当前单据有修改，请保存后再关闭...'); 
+       TframeOrderForm(rzPage.ActivePage.Data).Close;
+     end;
+
 end;
 
 end.

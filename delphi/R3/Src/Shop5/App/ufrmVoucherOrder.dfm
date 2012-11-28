@@ -9,10 +9,10 @@ inherited frmVoucherOrder: TfrmVoucherOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 846
-    Height = 484
+    Width = 838
+    Height = 480
     inherited RzPanel2: TRzPanel
-      Width = 836
+      Width = 828
       Height = 106
       object Label3: TLabel [0]
         Left = 31
@@ -258,8 +258,8 @@ inherited frmVoucherOrder: TfrmVoucherOrder
     end
     inherited DBGridEh1: TDBGridEh [1]
       Top = 148
-      Width = 836
-      Height = 259
+      Width = 828
+      Height = 255
       PopupMenu = PopupMenu1
       TabOrder = 2
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -314,16 +314,16 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         end>
     end
     inherited stbHint: TRzPanel [2]
-      Top = 455
-      Width = 836
+      Top = 451
+      Width = 828
     end
     inherited rzHelp: TRzPanel [3]
-      Top = 407
-      Width = 836
+      Top = 403
+      Width = 828
     end
     inherited RzPanel3: TRzPanel [4]
       Top = 111
-      Width = 836
+      Width = 828
       Height = 37
       Align = alTop
       BorderOuter = fsFlat
@@ -344,6 +344,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         ParentFont = False
       end
       object edtInput: TcxTextEdit
+        Tag = -1
         Left = 141
         Top = 5
         Width = 204
@@ -376,8 +377,12 @@ inherited frmVoucherOrder: TfrmVoucherOrder
     Left = 232
     Top = 264
     object N1: TMenuItem
-      Caption = #21024#38500#31036#21048#35760#24405
+      Caption = #21024#38500#31036#21048
       OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = #21333#31508#34917#25171
+      OnClick = N2Click
     end
   end
 end

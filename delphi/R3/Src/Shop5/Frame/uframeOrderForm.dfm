@@ -556,6 +556,51 @@ inherited frameOrderForm: TframeOrderForm
       OnKeyDown = fndUNIT_IDKeyDown
       OnKeyPress = fndUNIT_IDKeyPress
     end
+    object fndBATCH_NO: TzrComboBoxList
+      Left = 352
+      Top = 163
+      Width = 121
+      Height = 20
+      TabStop = False
+      PopupMenu = PopupMenu1
+      Properties.AutoSelect = False
+      Properties.Buttons = <
+        item
+          Default = True
+        end>
+      Properties.ReadOnly = True
+      TabOrder = 8
+      Visible = False
+      OnEnter = fndBATCH_NOEnter
+      OnExit = fndBATCH_NOExit
+      OnKeyDown = fndBATCH_NOKeyDown
+      OnKeyPress = fndBATCH_NOKeyPress
+      InGrid = True
+      KeyValue = Null
+      FilterFields = 'BATCH_NO'
+      KeyField = 'BATCH_NO'
+      ListField = 'BATCH_NO'
+      Columns = <
+        item
+          EditButtons = <>
+          FieldName = 'BATCH_NO'
+          Footers = <>
+          Title.Caption = #25209#21495
+          Width = 150
+        end>
+      DataSet = cdsBatchNo
+      DropWidth = 121
+      DropHeight = 180
+      ShowTitle = False
+      AutoFitColWidth = True
+      ShowButton = True
+      LocateStyle = lsDark
+      Buttons = [zbClear]
+      DropListStyle = lsFixed
+      OnSaveValue = fndBATCH_NOSaveValue
+      OnClearValue = fndBATCH_NOClearValue
+      MultiSelect = False
+    end
   end
   inherited actList: TActionList
     Left = 216
@@ -750,6 +795,66 @@ inherited frameOrderForm: TframeOrderForm
     CachedUpdates = True
     Params = <>
     Left = 72
+    Top = 304
+  end
+  object cdsBatchNo: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 440
     Top = 304
   end
 end

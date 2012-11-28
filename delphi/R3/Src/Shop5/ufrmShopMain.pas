@@ -327,6 +327,7 @@ type
     actfrmColorGroup: TAction;
     actfrmSizeGroup: TAction;
     actfrmBatchAdjustPrice: TAction;
+    actfrmBatchNo: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -489,6 +490,7 @@ type
     procedure actfrmSizeGroupExecute(Sender: TObject);
     procedure actfrmBatchAdjustPriceExecute(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
+    procedure actfrmBatchNoExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -553,7 +555,7 @@ uses
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
-  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
+  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,ufrmBatchNo,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
@@ -567,7 +569,8 @@ uses
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
   ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,
-  ufrmBusinessIncomeDayReport,ufrmSvcServiceList,ufrmColorInfo,ufrmSizeInfo,ufrmColorGroupInfo,ufrmSizeGroupInfo,ufrmBatchAdjustPrice;
+  ufrmBusinessIncomeDayReport,ufrmSvcServiceList,ufrmColorInfo,ufrmSizeInfo,ufrmColorGroupInfo,ufrmSizeGroupInfo,
+  ufrmBatchAdjustPrice,uResFactory;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -835,6 +838,7 @@ begin
   if Logined then
      begin
        //CommandPush.ExecuteCommand;
+       resFactory.checkAndDownRes;
        Loging := false;
        frmLogo.Show;
        try
@@ -4877,6 +4881,28 @@ begin
   inherited;
   ShellExecute(0,'open','www.rspcn.com',nil,nil,0);
 
+end;
+
+procedure TfrmShopMain.actfrmBatchNoExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+//  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmBatchNo);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBatchNo.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

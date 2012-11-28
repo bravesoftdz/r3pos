@@ -520,6 +520,23 @@ begin
       rs.Next;
     end;
   end;
+  //判断是否有查看成本价权限
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetCol:=FindColumn(DBGridEh1, 'NEW_INPRICE');
+    if SetCol<>nil then SetCol.Free;
+    SetCol:=FindColumn(DBGridEh1, 'PROFIT_RATE');
+    if SetCol<>nil then SetCol.Free;
+  end;
+end;
+
+procedure TfrmGoodsInfoList.FormCreate(Sender: TObject);
+var
+  tmp,rs: TZQuery;
+  Column,SetCol:TColumnEh;
+begin
+  inherited;
+  InitGrid;
   CSQL := '';
   //会员价
   rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
@@ -537,22 +554,6 @@ begin
        rs.Next;
      end;
   CSQL := 'select GODS_ID'+CSQL+' from PUB_GOODSPRICE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRICE_ID<>''#'' group by GODS_ID';
-  //判断是否有查看成本价权限
-  if not ShopGlobal.GetChkRight('14500001',2) then
-  begin
-    SetCol:=FindColumn(DBGridEh1, 'NEW_INPRICE');
-    if SetCol<>nil then SetCol.Free;
-    SetCol:=FindColumn(DBGridEh1, 'PROFIT_RATE');
-    if SetCol<>nil then SetCol.Free;
-  end;
-end;
-
-procedure TfrmGoodsInfoList.FormCreate(Sender: TObject);
-var
-  tmp,rs: TZQuery;
-begin
-  inherited;
-  InitGrid;
   Locked := true;
   try
     rs := Global.GetZQueryFromName('PUB_STAT_INFO');

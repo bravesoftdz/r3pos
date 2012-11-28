@@ -8,7 +8,7 @@ uses
   ZDataset, ActnList, Menus, Grids, DBGridEh, ExtCtrls, StdCtrls, RzPanel,
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxButtonEdit, zrComboBoxList;
-
+const WM_VOUCHER_PRINT=WM_USER+987;
 type
   TfrmVoucherOrder = class(TframeContractForm)
     edtDEPT_ID: TzrComboBoxList;
@@ -33,6 +33,7 @@ type
     edtVUCH_NAME: TcxTextEdit;
     edtVOUCHER_PRC: TcxTextEdit;
     Label8: TLabel;
+    N2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure N1Click(Sender: TObject);
@@ -41,6 +42,7 @@ type
     procedure edtVUCH_NAMEPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure N2Click(Sender: TObject);
   private
     { Private declarations }
     //procedure FocusNextColumn;
@@ -312,11 +314,15 @@ var
 begin
   inherited;
   try
-    if dbState = dsBrowse then Exit;
     if Key = #13 then
     begin
        s := Trim(edtInput.Text);
        Key := #0;
+       if dbState = dsBrowse then
+          begin
+            if not cdsDetail.Locate('BARCODE',s,[]) then Raise Exception.Create('"'+cdsDetail.FieldbyName('BARCODE').asString+'"礼券号无效!');
+            Exit;
+          end;
        if edtVOUCHER_TYPE.ItemIndex < 0 then Raise Exception.Create('请选择礼券类型!');
        if edtINTO_DATE.EditValue = null then Raise Exception.Create('有效日期不能为空!');
        if Trim(edtVOUCHER_PRC.Text) = '' then Raise Exception.Create('礼券面值不能为空!');
@@ -404,6 +410,12 @@ begin
        DBGridEh1.Canvas.Font.Style := [fsBold];
        DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
      end;
+end;
+
+procedure TfrmVoucherOrder.N2Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(GetToolHandle,WM_VOUCHER_PRINT,0,0);
 end;
 
 end.

@@ -84,6 +84,7 @@ type
     Label21: TLabel;
     N6: TMenuItem;
     N7: TMenuItem;
+    N8: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -128,6 +129,7 @@ type
       Shift: TShiftState);
     procedure edtTELEPHONEKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure N8Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -2047,6 +2049,70 @@ begin
 end;
 
 procedure TfrmSalIndentOrder.N6Click(Sender: TObject);
+begin
+  inherited;
+    if cdsHeader.IsEmpty then Exit;
+    if MessageBox(Handle,pchar('请确认打印机准备就绪，是否立即打印"提货券"？'),pchar(Caption),MB_YESNO+MB_ICONQUESTION) = 6 then
+    begin
+       with TfrmVoucherOrderList.Create(nil) do
+       begin
+         try
+           PrintType := 1;
+           PrintVoucher(cdsHeader.FieldByName('INDE_ID').AsString);
+         finally
+           Free;
+         end;
+       end;
+    end;
+end;
+
+procedure TfrmSalIndentOrder.FilterUserClick(Sender: TObject);
+begin
+  with TfrmFilterUser.Create(Self) do
+  begin
+    try
+      OnGetUserInfo := GetUserInfo;
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmSalIndentOrder.GetUserInfo(Aobj_: TRecord_);
+begin
+  if Aobj_.FieldByName('YQDZ_USERID_OLD').AsString = '' then Exit;
+  edtLINKMAN.Text := Aobj_.FieldByName('YQDZ_HZ_MC').AsString;
+  edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
+  edtSEND_ADDR.Text := Aobj_.FieldByName('YQDZ_SM').AsString;
+//  AObj.FieldByName('COMM_ID').AsString := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
+end;
+
+procedure TfrmSalIndentOrder.edtLINKMANKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key = VK_RETURN) then
+     FilterUserClick(Sender);
+end;
+
+procedure TfrmSalIndentOrder.edtSEND_ADDRKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key = VK_RETURN) then
+     FilterUserClick(Sender);
+end;
+
+procedure TfrmSalIndentOrder.edtTELEPHONEKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key = VK_RETURN) then
+     FilterUserClick(Sender);
+end;
+
+procedure TfrmSalIndentOrder.N8Click(Sender: TObject);
 var rsOrder,rsData,rs,p1rs,p2rs:TZQuery;
     Params:TftParamList;
     i,ACount,SeqNo:Integer;
@@ -2074,7 +2140,7 @@ begin
       Factor.CancelBatch;
       raise;
     end;
-    //if rsOrder.FieldByName('PRINT_TIMES').AsInteger > 0 then Raise Exception.Create('生成提货券已打印,不能重新生成提货券!');
+    if rsOrder.FieldByName('PRINT_TIMES').AsInteger > 0 then Raise Exception.Create('提货券已打印,不能重新生成提货券!');
     rs.SQL.Text := 'select count(VOUCHER_ID) as STATUS_SUM from SAL_VOUCHERDATA where TENANT_ID='+IntToStr(Global.TENANT_ID)+
     ' and VOUCHER_ID='+QuotedStr(cdsHeader.FieldByName('INDE_ID').AsString)+' and VOUCHER_STATUS=''4'' ';
     Factor.Open(rs);
@@ -2145,7 +2211,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    if MessageBox(Handle,pchar('是否打印"提货券"!'),pchar(Caption),MB_YESNO+MB_ICONQUESTION) = 6 then
+    if MessageBox(Handle,pchar('请确认打印机准备就绪，是否立即打印"提货券"？'),pchar(Caption),MB_YESNO+MB_ICONQUESTION) = 6 then
     begin
        with TfrmVoucherOrderList.Create(nil) do
        begin
@@ -2164,52 +2230,6 @@ begin
     Params.Free;
     cdsDetail.EnableControls;
   end;
-end;
-
-procedure TfrmSalIndentOrder.FilterUserClick(Sender: TObject);
-begin
-  with TfrmFilterUser.Create(Self) do
-  begin
-    try
-      OnGetUserInfo := GetUserInfo;
-      ShowModal;
-    finally
-      Free;
-    end;
-  end;
-end;
-
-procedure TfrmSalIndentOrder.GetUserInfo(Aobj_: TRecord_);
-begin
-  if Aobj_.FieldByName('YQDZ_USERID_OLD').AsString = '' then Exit;
-  edtLINKMAN.Text := Aobj_.FieldByName('YQDZ_HZ_MC').AsString;
-  edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
-  edtSEND_ADDR.Text := Aobj_.FieldByName('YQDZ_SM').AsString;
-//  AObj.FieldByName('COMM_ID').AsString := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
-end;
-
-procedure TfrmSalIndentOrder.edtLINKMANKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  inherited;
-  if (ssCtrl in Shift) and (Key = VK_RETURN) then
-     FilterUserClick(Sender);
-end;
-
-procedure TfrmSalIndentOrder.edtSEND_ADDRKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  inherited;
-  if (ssCtrl in Shift) and (Key = VK_RETURN) then
-     FilterUserClick(Sender);
-end;
-
-procedure TfrmSalIndentOrder.edtTELEPHONEKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  inherited;
-  if (ssCtrl in Shift) and (Key = VK_RETURN) then
-     FilterUserClick(Sender);
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 63
-  Top = 0
+  Left = 183
+  Top = 171
   Width = 817
   Height = 560
   Caption = ''
@@ -5717,6 +5717,11 @@ inherited frmShopMain: TfrmShopMain
       Tag = 12100001
       Caption = #25209#37327#35843#20215
       OnExecute = actfrmBatchAdjustPriceExecute
+    end
+    object actfrmBatchNo: TAction
+      Tag = 100002513
+      Caption = #25209#21495#31649#29702
+      OnExecute = actfrmBatchNoExecute
     end
   end
   inherited PopupMenu: TPopupMenu

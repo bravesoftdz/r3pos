@@ -1417,7 +1417,7 @@ begin
       end;
     for i:= 0 to 100 do fldArr[i] := '';
     for i:= 0 to 100 do TleArr[i] := '';
-    rs2.SQL.Text := 'select distinct SORT_ID8 from VIW_GOODSINFO where TENANT_ID='+inttostr(Global.TENANT_ID);
+    rs2.SQL.Text := 'select distinct SORT_ID8,0 as SEQNO from VIW_GOODSINFO where TENANT_ID='+inttostr(Global.TENANT_ID);
     Factor.Open(rs2);
     rs := ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
     //求得最大列
@@ -1436,8 +1436,12 @@ begin
         inc(lv);
         rs.Next;
       end;
+      rs2.Edit;
+      rs2.FieldByName('SEQNO').AsInteger := lv;
+      rs2.Post; 
       rs2.Next;
     end;
+    rs2.SortedFields := 'SEQNO';
     //准备列头数据
     rs2.First;
     while not rs2.Eof do
@@ -1464,7 +1468,9 @@ begin
       //不足最大列，要补足
       for i:= lv to mx do
       begin
-        TleArr[i] := TleArr[i]+'| ';
+           if TleArr[i]='' then TleArr[i] := '#'
+        else
+           TleArr[i] := TleArr[i]+'|#';
       end;
       rs2.Next;
     end;

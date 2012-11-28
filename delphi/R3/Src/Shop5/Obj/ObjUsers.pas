@@ -24,15 +24,17 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select SHOP_ID from STK_STOCKORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID ';
-    rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsString;
+    rs.SQL.Text := 'select SHOP_ID from STK_STOCKORDER where TENANT_ID=:TENANT_ID and (GUIDE_USER=:USER_ID or CREA_USER=:USER_ID)';
+    rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     AGlobal.Open(rs);
     if rs.Fields[0].AsString <> '' then
       Raise Exception.Create('此用户在入库单据中有使用,不能删除!');
 
     rs.Close;
-    rs.SQL.Text := 'select SHOP_ID from SAL_SALESORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID';
-    rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsString;
+    rs.SQL.Text := 'select SHOP_ID from SAL_SALESORDER where TENANT_ID=:TENANT_ID and (GUIDE_USER=:USER_ID or CREA_USER=:USER_ID)';
+    rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     AGlobal.Open(rs);
     if rs.Fields[0].AsString <> '' then
       Raise Exception.Create('此用户在销售单据中有使用,不能删除!');

@@ -840,6 +840,9 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     inherited fndUNIT_ID: TcxComboBox
       Top = 208
     end
+    inherited fndBATCH_NO: TzrComboBoxList
+      TabOrder = 9
+    end
     object pnlFEE: TPanel
       Left = 5
       Top = 391
@@ -1090,7 +1093,11 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     object N7: TMenuItem [11]
       Caption = '-'
     end
-    object N6: TMenuItem [12]
+    object N8: TMenuItem [12]
+      Caption = #29983#25104#25552#36135#21048
+      OnClick = N8Click
+    end
+    object N6: TMenuItem [13]
       Caption = #25171#21360#25552#36135#21048
       OnClick = N6Click
     end

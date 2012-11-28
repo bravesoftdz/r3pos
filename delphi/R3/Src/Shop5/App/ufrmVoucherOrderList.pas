@@ -8,7 +8,7 @@ uses
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
   cxButtonEdit, zrComboBoxList, cxControls, cxContainer, cxEdit,
-  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class;
+  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class,ufrmVoucherOrder;
 
 type
   TfrmVoucherOrderList = class(TframeContractToolForm)
@@ -50,23 +50,25 @@ type
     function CheckCanExport: boolean; override;
     procedure PrintBefore(Sender:TObject);
     procedure PrintAfter(Sender:TObject);
+  protected
+    procedure WMVoucherPrint(var Message: TMessage); message WM_VOUCHER_PRINT;
   public
     { Public declarations }
     PrintType:Integer;
     PrintId:String;
     IsEnd: boolean;
     MaxId:string;
-    function PrintSQL(tenantid,id:string):string;
+    function PrintSQL(tenantid,id:string;barcode:string=''):string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
-    function PrintVoucher(ID:String):Boolean;
+    function PrintVoucher(ID:String;BarCode:string=''):Boolean;
   end;
 
 
 implementation
 uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, uShopGlobal,
-   uMsgBox,ufrmVoucherOrder, uframeMDForm, uframeContractForm;
+   uMsgBox, uframeMDForm, uframeContractForm;
 {$R *.dfm}
 
 procedure TfrmVoucherOrderList.actNewExecute(Sender: TObject);
@@ -368,13 +370,14 @@ begin
   end;
 end;
 
-function TfrmVoucherOrderList.PrintSQL(tenantid, id: string): string;
+function TfrmVoucherOrderList.PrintSQL(tenantid, id: string;barcode:string=''): string;
 var Str:String;
 begin
   Str := 'select A.TENANT_ID,A.SEQNO,A.BARCODE as CODE,A.VAILD_DATE,C.GODS_CODE,C.BARCODE,C.GODS_NAME,A.VOUCHER_PRC from SAL_VOUCHERDATA A '+
   ' left join SAL_INDENTDATA B on A.TENANT_ID=B.TENANT_ID and A.VOUCHER_ID=B.INDE_ID and A.CLIENT_ID=B.GODS_ID '+
   ' left join VIW_GOODSINFO C on B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+
   ' where A.TENANT_ID='+tenantid+' and A.VOUCHER_ID='+QuotedStr(id);
+  if barcode<>'' then Str := Str + ' and A.BARCODE='''+barcode+'''';
   Result := ParseSQL(Factor.iDbType,Str);
 end;
 
@@ -488,7 +491,7 @@ begin
   end;
 end;
 
-function TfrmVoucherOrderList.PrintVoucher(ID: String): Boolean;
+function TfrmVoucherOrderList.PrintVoucher(ID: String;BarCode:string=''): Boolean;
 begin
   //if not ShopGlobal.GetChkRight('100002430',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
@@ -497,12 +500,18 @@ begin
         PrintId := ID;
         BeforePrint := PrintBefore;
         AfterPrint := PrintAfter;
-        PrintReport(PrintSQL(IntToStr(Global.TENANT_ID),ID),frfVoucherOrder);
+        PrintReport(PrintSQL(IntToStr(Global.TENANT_ID),ID,BarCode),frfVoucherOrder);
       finally
         free;
       end;
     end;
 
+end;
+
+procedure TfrmVoucherOrderList.WMVoucherPrint(var Message: TMessage);
+begin
+  if CurContract<>nil then
+  PrintVoucher(TfrmVoucherOrder(CurContract).cdsHeader.FieldbyName('VOUCHER_ID').AsString,TfrmVoucherOrder(CurContract).cdsDetail.FieldbyName('BARCODE').AsString);
 end;
 
 end.

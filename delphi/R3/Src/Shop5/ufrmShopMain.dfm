@@ -5723,6 +5723,11 @@ inherited frmShopMain: TfrmShopMain
       Caption = #25209#21495#31649#29702
       OnExecute = actfrmBatchNoExecute
     end
+    object actfrmLocation: TAction
+      Tag = 100002524
+      Caption = #20648#20301#31649#29702
+      OnExecute = actfrmLocationExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

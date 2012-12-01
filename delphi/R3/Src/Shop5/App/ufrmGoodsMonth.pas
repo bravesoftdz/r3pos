@@ -42,6 +42,8 @@ type
     ToolButton7: TToolButton;
     PrintDBGridEh1: TPrintDBGridEh;
     ToolButton8: TToolButton;
+    N2: TMenuItem;
+    N3: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure edtGoods_TypePropertiesChange(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -64,6 +66,7 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure N2Click(Sender: TObject);
   private
     FIsModify: Boolean;
     Locked: Boolean;
@@ -616,6 +619,33 @@ end;
 function TfrmGoodsMonth.CheckCanExport: boolean;
 begin
   if not ShopGlobal.GetChkRight('100002095',4) then Raise Exception.Create('你没有导出的权限,请和管理员联系.');
+end;
+
+procedure TfrmGoodsMonth.N2Click(Sender: TObject);
+var
+  GoodsId:string;
+begin
+  CdsGoodsMonth.DisableControls;
+  try
+    GoodsId := CdsGoodsMonth.FieldbyName('GODS_ID').AsString;
+    CdsGoodsMonth.First;
+    while not CdsGoodsMonth.Eof do
+      begin
+          if not IsModify then IsModify := True;
+          if CdsGoodsMonth.FieldByName('BAL_AMT').AsCurrency=0 then
+             begin
+               CdsGoodsMonth.Edit;
+               CdsGoodsMonth.FieldByName('ADJ_PRICE').AsCurrency := 0;
+               CdsGoodsMonth.FieldByName('ADJ_MNY').AsCurrency := 0;
+               CdsGoodsMonth.FieldByName('ADJ_CST').AsCurrency := -CdsGoodsMonth.FieldByName('BAL_CST').AsCurrency;
+               CdsGoodsMonth.Post;
+             end;
+        CdsGoodsMonth.Next;
+      end;
+    CdsGoodsMonth.Locate('GODS_ID',GoodsId,[]);
+  finally
+    CdsGoodsMonth.EnableControls;
+  end;
 end;
 
 end.

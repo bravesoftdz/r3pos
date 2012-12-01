@@ -68,7 +68,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     procedure SetdbState(const Value: TDataSetState);
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     function GetLVL_TYPE: integer;
     procedure SetUpdateState();
     procedure SetBrowseState();

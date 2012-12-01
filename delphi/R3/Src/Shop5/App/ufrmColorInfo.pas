@@ -63,7 +63,7 @@ type
     function GetBarcodeFlag:String;
     procedure FocusNextColumn;
   protected
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     { Private declarations }
   public
     procedure Open;

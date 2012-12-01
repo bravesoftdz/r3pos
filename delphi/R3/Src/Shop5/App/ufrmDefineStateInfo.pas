@@ -48,7 +48,7 @@ type
     procedure UpdateGlobal(CdsState: TDataSet);
   protected
     procedure CheckBeforeSave; //保存前判断是否存在自定义
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
   public
     procedure Open;
     procedure Save;

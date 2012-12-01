@@ -59,7 +59,7 @@ type
     procedure SetdbState(const Value: TDataSetState);
     procedure SetMaxCount(const Value: Integer);
   protected
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     { Private declarations }
   public
     procedure RefreshTable;

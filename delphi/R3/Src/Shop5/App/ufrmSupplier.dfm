@@ -10,24 +10,24 @@ inherited frmSupplier: TfrmSupplier
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 734
-    Height = 426
+    Width = 726
+    Height = 415
     inherited RzPanel2: TRzPanel
-      Width = 724
-      Height = 416
+      Width = 716
+      Height = 405
       inherited RzPage: TRzPageControl
-        Width = 718
-        Height = 410
+        Width = 710
+        Height = 399
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#21830#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 716
-            Height = 383
+            Width = 708
+            Height = 372
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
-              Width = 706
+              Width = 698
               Height = 61
               Align = alTop
               BorderOuter = fsNone
@@ -135,8 +135,8 @@ inherited frmSupplier: TfrmSupplier
             object RzPanel1: TRzPanel
               Left = 5
               Top = 66
-              Width = 706
-              Height = 312
+              Width = 698
+              Height = 301
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -144,8 +144,8 @@ inherited frmSupplier: TfrmSupplier
               object DBGridEh1: TDBGridEh
                 Left = 5
                 Top = 5
-                Width = 696
-                Height = 283
+                Width = 688
+                Height = 272
                 Align = alClient
                 DataSource = Ds_Client
                 Flat = True
@@ -317,8 +317,8 @@ inherited frmSupplier: TfrmSupplier
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 288
-                Width = 696
+                Top = 277
+                Width = 688
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -344,17 +344,17 @@ inherited frmSupplier: TfrmSupplier
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 734
-    inherited Image1: TImage
-      Left = 328
-      Width = 386
-    end
+    Width = 726
     inherited Image3: TImage
       Left = 328
-      Width = 386
+      Width = 0
     end
     inherited Image14: TImage
-      Left = 714
+      Left = 706
+    end
+    inherited Image1: TImage
+      Left = 320
+      Width = 386
     end
     inherited rzPanel5: TPanel
       Left = 328

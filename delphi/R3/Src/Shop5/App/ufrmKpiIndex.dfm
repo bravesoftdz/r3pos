@@ -8,29 +8,29 @@ inherited frmKpiIndex: TfrmKpiIndex
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1000
-    Height = 509
+    Width = 992
+    Height = 498
     inherited RzPanel2: TRzPanel
-      Width = 990
-      Height = 499
+      Width = 982
+      Height = 488
       inherited RzPage: TRzPageControl
-        Width = 984
-        Height = 493
+        Width = 976
+        Height = 482
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 982
-            Height = 466
+            Width = 974
+            Height = 455
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 972
+              Width = 964
               Height = 82
               Align = alTop
               BorderOuter = fsNone
               TabOrder = 0
               DesignSize = (
-                972
+                964
                 82)
               object Label3: TLabel
                 Left = 21
@@ -162,16 +162,16 @@ inherited frmKpiIndex: TfrmKpiIndex
             object RzPanel6: TRzPanel
               Left = 5
               Top = 87
-              Width = 972
-              Height = 374
+              Width = 964
+              Height = 363
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 972
-                Height = 374
+                Width = 964
+                Height = 363
                 Align = alClient
                 DataSource = Ds_KpiIndex
                 Flat = True
@@ -261,16 +261,16 @@ inherited frmKpiIndex: TfrmKpiIndex
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1000
+    Width = 992
     inherited Image3: TImage
       Left = 323
-      Width = 637
+      Width = 629
     end
     inherited Image14: TImage
-      Left = 980
+      Left = 972
     end
     inherited Image1: TImage
-      Left = 960
+      Left = 952
     end
     inherited rzPanel5: TPanel
       Left = 323

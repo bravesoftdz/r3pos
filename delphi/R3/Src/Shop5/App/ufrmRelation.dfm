@@ -8,36 +8,36 @@ inherited frmRelation: TfrmRelation
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 836
-    Height = 479
+    Width = 828
+    Height = 468
     inherited RzPanel2: TRzPanel
-      Width = 826
-      Height = 469
+      Width = 818
+      Height = 458
       inherited RzPage: TRzPageControl
-        Width = 820
-        Height = 463
+        Width = 812
+        Height = 452
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#38142#31649#29702
           inherited RzPanel3: TRzPanel
-            Width = 818
-            Height = 436
+            Width = 810
+            Height = 425
             object Splitter1: TSplitter
               Left = 181
               Top = 47
-              Height = 384
+              Height = 373
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 808
+              Width = 800
               Height = 42
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                808
+                800
                 42)
               object Panel3: TPanel
                 Left = 0
@@ -92,7 +92,7 @@ inherited frmRelation: TfrmRelation
               Left = 5
               Top = 47
               Width = 176
-              Height = 384
+              Height = 373
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -108,15 +108,15 @@ inherited frmRelation: TfrmRelation
             object Panel1: TPanel
               Left = 184
               Top = 47
-              Width = 629
-              Height = 384
+              Width = 621
+              Height = 373
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object stbPanel: TPanel
                 Left = 1
-                Top = 364
-                Width = 627
+                Top = 353
+                Width = 619
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -138,8 +138,8 @@ inherited frmRelation: TfrmRelation
               object Grid_RelationAndGoods: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 627
-                Height = 363
+                Width = 619
+                Height = 352
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_RelationAndGoods
@@ -261,17 +261,17 @@ inherited frmRelation: TfrmRelation
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 836
-    inherited Image1: TImage
-      Left = 525
-      Width = 291
-    end
+    Width = 828
     inherited Image3: TImage
       Left = 525
-      Width = 291
+      Width = 0
     end
     inherited Image14: TImage
-      Left = 816
+      Left = 808
+    end
+    inherited Image1: TImage
+      Left = 517
+      Width = 291
     end
     inherited rzPanel5: TPanel
       Left = 525

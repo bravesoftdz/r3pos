@@ -96,7 +96,7 @@ type
     procedure actCancelCardExecute(Sender: TObject);
   private
     sqlstring:string;
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     procedure PrintView;
     procedure AddMenuItem;
     procedure ResetClientPswClick(Sender:TObject);

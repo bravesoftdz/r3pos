@@ -10,24 +10,24 @@ inherited frmClient: TfrmClient
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 734
-    Height = 426
+    Width = 726
+    Height = 415
     inherited RzPanel2: TRzPanel
-      Width = 724
-      Height = 416
+      Width = 716
+      Height = 405
       inherited RzPage: TRzPageControl
-        Width = 718
-        Height = 410
+        Width = 710
+        Height = 399
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #23458#25143#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 716
-            Height = 383
+            Width = 708
+            Height = 372
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
-              Width = 706
+              Width = 698
               Height = 61
               Align = alTop
               BorderOuter = fsNone
@@ -135,8 +135,8 @@ inherited frmClient: TfrmClient
             object RzPanel1: TRzPanel
               Left = 5
               Top = 66
-              Width = 706
-              Height = 312
+              Width = 698
+              Height = 301
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -144,8 +144,8 @@ inherited frmClient: TfrmClient
               object DBGridEh1: TDBGridEh
                 Left = 5
                 Top = 5
-                Width = 696
-                Height = 283
+                Width = 688
+                Height = 272
                 Align = alClient
                 DataSource = Ds_Client
                 Flat = True
@@ -331,8 +331,8 @@ inherited frmClient: TfrmClient
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 288
-                Width = 696
+                Top = 277
+                Width = 688
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -358,38 +358,38 @@ inherited frmClient: TfrmClient
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 734
+    Width = 726
     inherited Image3: TImage
-      Left = 440
+      Left = 448
       Width = 0
     end
     inherited Image14: TImage
-      Left = 714
+      Left = 706
     end
     inherited Image1: TImage
-      Left = 440
+      Left = 432
       Width = 274
     end
     inherited rzPanel5: TPanel
-      Left = 440
+      Left = 448
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #23458#25143#31649#29702
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 420
+      Width = 428
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 420
+          MinHeight = 428
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 420
+        Width = 428
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0
@@ -429,24 +429,24 @@ inherited frmClient: TfrmClient
           Style = tbsDropDown
         end
         object ToolButton3: TToolButton
-          Left = 235
+          Left = 239
           Top = 0
           Action = actNewCard
           DropdownMenu = PopupMenu2
           Style = tbsDropDown
         end
         object But_Print: TToolButton
-          Left = 291
+          Left = 299
           Top = 0
           Action = actPrint
         end
         object But_Preview: TToolButton
-          Left = 334
+          Left = 342
           Top = 0
           Action = actPreview
         end
         object But_Exit: TToolButton
-          Left = 377
+          Left = 385
           Top = 0
           Action = actExit
         end

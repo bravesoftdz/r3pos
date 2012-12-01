@@ -68,7 +68,7 @@ type
     procedure Excel1Click(Sender: TObject);
   private
     sqlstring:string;
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     procedure PrintView;
     { Private declarations }
   public

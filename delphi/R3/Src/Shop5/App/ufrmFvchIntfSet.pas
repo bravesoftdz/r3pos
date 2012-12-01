@@ -42,7 +42,7 @@ type
     procedure edtIntf_TYPEPropertiesEditValueChanged(Sender: TObject);
   private
     procedure SetdbState(const Value: TDataSetState);
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
   public
     function  Save: boolean;
     class function ShowDialog(Owner:TForm):boolean;

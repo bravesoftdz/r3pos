@@ -89,7 +89,7 @@ type
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure SetIsRel(const Value: Boolean);
     function  getflag: integer;
-    function  CheckCanExport:Boolean;
+    function  CheckCanExport:Boolean;override;
     function  GetParentTENANT_ID: integer;  //2011.06.08 返回当前市级的企业ID（卷烟供应链）
   public
     property IsRel:Boolean read FIsRel write SetIsRel;

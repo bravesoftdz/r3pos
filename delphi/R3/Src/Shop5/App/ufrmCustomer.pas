@@ -122,7 +122,7 @@ type
     procedure actLossCardExecute(Sender: TObject);
     procedure Excel1Click(Sender: TObject);
   private
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     procedure PrintView;
     procedure AddMenuItem;
     procedure ResetCustomerPswClick(Sender:TObject);

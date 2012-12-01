@@ -59,7 +59,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
   private
     procedure ChangeButton;
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     { Private declarations }
   public
     { Public declarations }

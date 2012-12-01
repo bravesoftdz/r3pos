@@ -454,20 +454,27 @@ begin
       end;
       rs.Next;
     end;
-{
+
     Swhr := ShopGlobal.GetDataRight('DEPT_ID',2)+ShopGlobal.GetDataRight('SHOP_ID',1);
     if fndP1_SHOP_ID.AsString <> '' then
        Swhr := ' and SHOP_ID=:SHOP_ID ';
     if fndP1_DEPT_ID.AsString <> '' then
        Swhr := Swhr + ' and DEPT_ID=:DEPT_ID ';
     rs.SQL.Text := ParseSQL(Factor.iDbType,
-    'select isnull(SALES_STYLE,''#'') as SALES_STYLE,sum(isnull(ADVA_MNY,0)) as ADVA_MNY '+
-    ' from SAL_INDENTORDER where TENANT_ID=:TENANT_ID '+Swhr+' group by SALES_STYLE '+
+    ' select SALES_STYLE,sum(ADVA_MNY) AS ADVA_MNY from ('+
+    ' select isnull(A.SALES_STYLE,''#'') as SALES_STYLE,-sum(isnull(C.RECV_MNY,0)) as ADVA_MNY '+
+    ' from SAL_INDENTORDER A,ACC_RECVABLE_INFO B,ACC_RECVDATA C,ACC_RECVORDER D '+
+    ' where A.TENANT_ID=D.TENANT_ID and B.TENANT_ID=D.TENANT_ID and C.TENANT_ID=D.TENANT_ID '+
+    ' and A.INDE_ID=B.SALES_ID and B.ABLE_ID=C.ABLE_ID and C.RECV_ID=D.RECV_ID '+
+    ' and A.TENANT_ID=:TENANT_ID and D.RECV_DATE<=:D2 '+Swhr+' group by A.SALES_STYLE '+
     ' union all '+
-    'select isnull(SALES_STYLE,''#'') as SALES_STYLE,sum(-isnull(ADVA_MNY,0)) as ADVA_MNY '+
-    ' from SAL_SALESORDER where TENANT_ID=:TENANT_ID '+Swhr+' group by SALES_STYLE '
+    ' select isnull(SALES_STYLE,''#'') as SALES_STYLE,sum(isnull(ADVA_MNY,0)) as ADVA_MNY '+
+    ' from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_DATE<=:D2 '+Swhr+' group by SALES_STYLE '+
+    ' ) j group by SALES_STYLE'
     );
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
+    rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
     if rs.Params.FindParam('SHOP_ID') <> nil then rs.Params.ParamByName('SHOP_ID').AsString := fndP1_SHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
     Factor.Open(rs);
@@ -505,7 +512,6 @@ begin
       end;
       rs.Next;
     end;
-}  
 
   finally
     rs.Free;

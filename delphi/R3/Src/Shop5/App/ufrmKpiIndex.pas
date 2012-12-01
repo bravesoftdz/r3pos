@@ -52,7 +52,7 @@ type
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
-    function  CheckCanExport:Boolean;
+    function  CheckCanExport:Boolean; override;
     procedure PrintView;    
   public
     { Public declarations }

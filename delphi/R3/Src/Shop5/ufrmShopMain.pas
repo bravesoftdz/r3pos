@@ -328,6 +328,7 @@ type
     actfrmSizeGroup: TAction;
     actfrmBatchAdjustPrice: TAction;
     actfrmBatchNo: TAction;
+    actfrmLocation: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -491,6 +492,7 @@ type
     procedure actfrmBatchAdjustPriceExecute(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure actfrmBatchNoExecute(Sender: TObject);
+    procedure actfrmLocationExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -570,7 +572,7 @@ uses
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
   ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,
   ufrmBusinessIncomeDayReport,ufrmSvcServiceList,ufrmColorInfo,ufrmSizeInfo,ufrmColorGroupInfo,ufrmSizeGroupInfo,
-  ufrmBatchAdjustPrice,uResFactory;
+  ufrmBatchAdjustPrice,uResFactory,ufrmLocationInfoList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4899,6 +4901,28 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmBatchNo.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmLocationExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+//  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmLocationInfoList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmLocationInfoList.Create(self);
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;

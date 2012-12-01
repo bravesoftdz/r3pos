@@ -364,7 +364,10 @@ uses
   ufrmUsers in 'App\ufrmUsers.pas' {frmUsers},
   ufrmUsersInfo in 'App\ufrmUsersInfo.pas' {frmUsersInfo},
   ObjBatchNo in 'Obj\ObjBatchNo.pas',
-  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport};
+  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
+  ufrmlocationinfo in 'App\ufrmLocationInfo.pas' {frmlocationinfo},
+  ufrmLocationInfoList in 'App\ufrmLocationInfoList.pas' {frmLocationInfoList},
+  ObjLocationInfo in 'Obj\ObjLocationInfo.pas';
 
 {$R *.res}
 var

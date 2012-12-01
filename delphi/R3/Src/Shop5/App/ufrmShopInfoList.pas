@@ -57,7 +57,7 @@ type
   private
     { Private declarations }
     locked:Boolean;
-    function CheckCanExport:Boolean;
+    function CheckCanExport:Boolean;override;
     procedure PrintView;
   public
     { Public declarations }

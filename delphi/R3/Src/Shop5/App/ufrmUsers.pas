@@ -79,7 +79,7 @@ type
     procedure Excel1Click(Sender: TObject);
   private
     { Private declarations }
-    function CheckCanExport:Boolean;
+    function CheckCanExport:Boolean;override;
     procedure PrintView;
     procedure IniDegrees;
     procedure AddMenuItem;

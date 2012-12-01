@@ -237,7 +237,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.ValueType = fvtSum
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #35843#25972'|'#24046#39069
+                          Title.Caption = #35843#25972'|'#25439#30410
                         end>
                     end
                   end
@@ -515,8 +515,15 @@ inherited frmGoodsMonth: TfrmGoodsMonth
   object PopupMenu1: TPopupMenu
     Left = 682
     Top = 311
+    object N2: TMenuItem
+      Caption = #38646#24211#23384#36716#25439#30410
+      OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
     object N1: TMenuItem
-      Caption = #25209#37327#24405#20837'...'
+      Caption = #21442#32771#36827#20215#24405#20837
       OnClick = N1Click
     end
   end

@@ -47,7 +47,7 @@ type
     { Private declarations }
   protected
     procedure SetdbState(const Value: TDataSetState);
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
   public
     procedure Open;
     procedure Save;

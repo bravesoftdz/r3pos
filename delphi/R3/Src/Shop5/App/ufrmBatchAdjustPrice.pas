@@ -67,7 +67,7 @@ type
   private
     FdbState: TDataSetState;
     { Private declarations }
-    function CheckCanExport:Boolean;
+    function CheckCanExport:Boolean;override;
     procedure PrintView;
     procedure InitGrid;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;

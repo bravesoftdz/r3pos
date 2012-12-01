@@ -22,46 +22,19 @@ function TGoodsMonth.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  //还原调整前的成本
-  Str :='update RCK_GOODS_MONTH set '+
-        'CHANGE1_CST=isnull(CHANGE1_CST,0)-isnull(ADJ_CST,0),'+
-        'BAL_CST=isnull(BAL_CST,0)-isnull(ADJ_CST,0) '+
-        ' where TENANT_ID=:OLD_TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
-  //还原调整前的成本
-  Str :='update RCK_GOODS_DAYS set '+
-        'CHANGE1_CST=isnull(CHANGE1_CST,0)-(select sum(ADJ_CST) from RCK_GOODS_MONTH '+
-        'where TENANT_ID=RCK_GOODS_DAYS.TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=RCK_GOODS_DAYS.GODS_ID and BATCH_NO=RCK_GOODS_DAYS.BATCH_NO and SHOP_ID=RCK_GOODS_DAYS.SHOP_ID),'+  {转成最后天的损益量}
-        'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-        ' where TENANT_ID=:OLD_TENANT_ID and CREA_DATE='+eDate+' and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
-  //还原调整前的结余成本
-  Str :='update RCK_GOODS_DAYS set '+
-        'BAL_CST=isnull(BAL_CST,0)-(select sum(ADJ_CST) from RCK_GOODS_MONTH '+
-        'where TENANT_ID=RCK_GOODS_DAYS.TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=RCK_GOODS_DAYS.GODS_ID and BATCH_NO=RCK_GOODS_DAYS.BATCH_NO and SHOP_ID=RCK_GOODS_DAYS.SHOP_ID),'+  {转成最后天的损益量}
-        'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-        ' where TENANT_ID=:OLD_TENANT_ID and CREA_DATE='+eDate+' and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
-  
   //对月账表进行处理
   Str :='update RCK_GOODS_MONTH set '+
         'ADJ_CST=round(:ADJ_PRICE*isnull(BAL_AMT,0),2)-isnull(BAL_CST,0),'+  {成本调增量}
-        'CHANGE1_CST=isnull(CHANGE1_CST,0)+(round(:ADJ_PRICE*isnull(BAL_AMT,0),2)-isnull(BAL_CST,0)),'+  {转成最后天的损益量}
-        'BAL_CST=isnull(BAL_CST,0)+(round(:ADJ_PRICE*isnull(BAL_AMT,0),2)-isnull(BAL_CST,0)),'+  {转成最后天的损益量}
+        'CHANGE1_CST=isnull(CHANGE1_CST,0)-isnull(ADJ_CST,0)+(round(:ADJ_PRICE*isnull(BAL_AMT,0),2)-isnull(BAL_CST,0)),'+  {转成最后天的损益量}
+        'BAL_CST=round(:ADJ_PRICE*isnull(BAL_AMT,0),2),'+
         'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where TENANT_ID=:OLD_TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
   //对最后一天的日账表进行处理
   Str :='update RCK_GOODS_DAYS set '+
-        'CHANGE1_CST=isnull(CHANGE1_CST,0)+(select sum(ADJ_CST) from RCK_GOODS_MONTH '+
-        'where TENANT_ID=RCK_GOODS_DAYS.TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=RCK_GOODS_DAYS.GODS_ID and BATCH_NO=RCK_GOODS_DAYS.BATCH_NO and SHOP_ID=RCK_GOODS_DAYS.SHOP_ID),'+  {转成最后天的损益量}
-        'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-        ' where TENANT_ID=:OLD_TENANT_ID and CREA_DATE='+eDate+' and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
-  //对最后一天的日账表的结余成本进行
-  Str :='update RCK_GOODS_DAYS set '+
-        'BAL_CST=isnull(BAL_CST,0)+(select sum(ADJ_CST) from RCK_GOODS_MONTH '+
-        'where TENANT_ID=RCK_GOODS_DAYS.TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=RCK_GOODS_DAYS.GODS_ID and BATCH_NO=RCK_GOODS_DAYS.BATCH_NO and SHOP_ID=RCK_GOODS_DAYS.SHOP_ID),'+  {转成最后天的损益量}
+        'ADJ_CST=round(:ADJ_PRICE*isnull(BAL_AMT,0),2)-isnull(BAL_CST,0),'+  {成本调增量}
+        'CHANGE1_CST=isnull(CHANGE1_CST,0)-isnull(ADJ_CST,0)+(round(:ADJ_PRICE*isnull(BAL_AMT,0),2)-isnull(BAL_CST,0)),'+  {转成最后天的损益量}
+        'BAL_CST=round(:ADJ_PRICE*isnull(BAL_AMT,0),2),'+
         'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where TENANT_ID=:OLD_TENANT_ID and CREA_DATE='+eDate+' and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);

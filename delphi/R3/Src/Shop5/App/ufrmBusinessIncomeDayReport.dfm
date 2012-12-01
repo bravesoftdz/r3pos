@@ -1,6 +1,6 @@
 inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
-  Left = -8
-  Top = -8
+  Left = -15
+  Top = -4
   Width = 1296
   Height = 776
   Caption = #33829#19994#26085#27719#24635#34920

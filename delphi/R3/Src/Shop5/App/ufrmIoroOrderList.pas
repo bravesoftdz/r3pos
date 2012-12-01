@@ -66,7 +66,7 @@ type
   private
     FIoroType: integer;
     procedure SetIoroType(const Value: integer);
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
     { Private declarations }
   public
     { Public declarations }

@@ -434,7 +434,7 @@ begin
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+   //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_CST) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -600,7 +600,7 @@ begin
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(-sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(-sum(CHANGE'+CodeId+'_CST) as decimal(10,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -713,7 +713,7 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_CST) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -732,7 +732,7 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(AMOUNT,0)) as AMOUNT '+      //数量
-          ',case when cast(sum(nvl(AMOUNT,0))as decimal(18,3))<>0 then sum(nvl(AMONEY,0))/cast(sum(nvl(AMOUNT,0))as decimal(18,3)) else sum(nvl(AMONEY,0)) end as APRICE '+  //--均价
+          ',case when cast(sum(nvl(AMOUNT,0))as decimal(18,3))<>0 then sum(nvl(COST_MONEY,0))/cast(sum(nvl(AMOUNT,0))as decimal(18,3)) else 0.0 end as APRICE '+  //--均价
           ',sum(nvl(AMONEY,0)) as AMONEY '+      //--可销售额
           ',sum(nvl(COST_MONEY,0)) as COST_MONEY '+  //--进货成本
           ',sum(nvl(AMONEY,0))-sum(nvl(COST_MONEY,0)) as PROFIT_MONEY '+  //差额毛利
@@ -752,7 +752,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when cast(sum(AMOUNT)as decimal(18,3))<>0 then sum(AMONEY)/cast(sum(AMOUNT)as decimal(18,3)) else sum(AMONEY) end as APRICE '+  //--均价
+          ',case when cast(sum(AMOUNT)as decimal(18,3))<>0 then sum(COST_MONEY)/cast(sum(AMOUNT)as decimal(18,3)) else 0.0 end as APRICE '+  //--均价
           ',sum(AMONEY) as AMONEY '+      //--可销售额
           ',sum(COST_MONEY) as COST_MONEY '+  //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
@@ -766,7 +766,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when cast(sum(AMOUNT)as decimal(18,3))<>0 then sum(AMONEY)/cast(sum(AMOUNT)as decimal(18,3)) else sum(AMONEY) end as APRICE '+  //--均价
+          ',case when cast(sum(AMOUNT)as decimal(18,3))<>0 then sum(COST_MONEY)/cast(sum(AMOUNT)as decimal(18,3)) else 0.0 end as APRICE '+  //--均价
           ',sum(AMONEY) as AMONEY '+      //--可销售额
           ',sum(COST_MONEY) as COST_MONEY '+    //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
@@ -902,7 +902,7 @@ begin
     ' A.TENANT_ID as TENANT_ID'+SORT_ID_Fields+
     ',A.GODS_ID as GODS_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_CST) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利

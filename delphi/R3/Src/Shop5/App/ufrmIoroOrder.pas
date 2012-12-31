@@ -120,7 +120,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uDsUtil,ufrmClientInfo,ufrmAccountInfo,ufrmCodeInfo,ufrmUsersInfo,
-  uShopGlobal, ufrmBasic;
+  uShopGlobal, ufrmBasic,ufrmSupplierInfo;
 {$R *.dfm}
 
 procedure TfrmIoroOrder.FocusNextColumn;
@@ -502,13 +502,26 @@ procedure TfrmIoroOrder.edtCLIENT_IDAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  AObj := TRecord_.Create;
   try
-    if TfrmClientInfo.AddDialog(self,AObj) then
-       begin
-         edtCLIENT_ID.KeyValue :=AObj.FieldbyName('CLIENT_ID').AsString;
-         edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_NAME').asString;
-       end;
+    AObj := TRecord_.Create;
+    case IoroType of
+     1:
+      begin
+        if TfrmClientInfo.AddDialog(self,AObj) then
+        begin
+          edtCLIENT_ID.KeyValue :=AObj.FieldbyName('CLIENT_ID').AsString;
+          edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_NAME').asString;
+        end;
+      end;
+     2:
+      begin
+        if TfrmSupplierInfo.AddDialog(self,AObj) then
+        begin
+          edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
+          edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_NAME').AsString;
+        end;
+      end;
+    end;
   finally
     AObj.Free;
   end;

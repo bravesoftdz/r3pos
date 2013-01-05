@@ -269,16 +269,33 @@ begin
 end;
 
 procedure TfrmLogin.Label3Click(Sender: TObject);
+var
+  Rs:TZQuery;
+  TenID,UserID:string;
 begin
   inherited;
-//  if cxcbxCompany.AsString = '' then
-//     Raise Exception.Create('请选择你所属公司。');
   if cxedtUsers.Text = '' then
-     Raise Exception.Create('请输入用户名。');
+    Raise Exception.Create('请输入用户名。');
   if cxedtUsers.Text = 'system' then
-     Raise Exception.Create('超级管理员密码不能修改。');
-  TfrmPswModify.ShowExecute(cxedtUsers.Text,cxedtUsers.Text);
+    Raise Exception.Create('超级管理员密码不能修改。');
+  //2013.01.05 xhh根据账户名返回USER_ID
+  TenID:='';
+  if cbxTenant.ItemIndex>-1 then
+    TenID:=IntToStr(TRecord_(cbxTenant.Properties.Items.Objects[cbxTenant.ItemIndex]).FieldByName('TENANT_ID').AsInteger);
+  if TenID='' then Raise Exception.Create('请选择你所属公司。');
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select USER_ID from CA_USERS where TENANT_ID='+TenID+' and ACCOUNT='''+cxedtUsers.Text+''' ';
+    Factor.Open(Rs);
+    if (Rs.Active) and (Rs.FieldByName('USER_ID').AsString<>'') then
+      UserID:=Rs.FieldByName('USER_ID').AsString
+    else
+      Raise Exception.Create('您输入的用户名不存在，请重新输入...');
+  finally
+    Rs.Free;
+  end;
 
+  TfrmPswModify.ShowExecute(UserID,cxedtUsers.Text);
 end;
 
 procedure TfrmLogin.FormCreate(Sender: TObject);

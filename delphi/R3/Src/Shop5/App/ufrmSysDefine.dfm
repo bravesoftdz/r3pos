@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 433
-    Height = 253
-    ActivePage = TabSheet5
+    Width = 425
+    Height = 242
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -879,8 +879,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel6: TBevel
         Left = 0
         Top = 0
-        Width = 425
-        Height = 226
+        Width = 417
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -890,13 +890,13 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 153
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #20801#35768#38646#24211#23384#20986#24211
+        Properties.Caption = #20801#35768#38646#19994#21153#24211#23384#20986#24211
         TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtDB_AUTO_OK: TcxCheckBox
         Left = 14
-        Top = 73
+        Top = 99
         Width = 171
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -906,7 +906,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object chkCheckAudit: TcxCheckBox
         Left = 14
-        Top = 44
+        Top = 70
         Width = 171
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -916,7 +916,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object edtSTO_AUTO_CHK: TcxCheckBox
         Left = 14
-        Top = 106
+        Top = 132
         Width = 267
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -1027,6 +1027,16 @@ inherited frmSysDefine: TfrmSysDefine
           TabOrder = 3
         end
       end
+      object edtZERO_LCT_OUT: TcxCheckBox
+        Left = 14
+        Top = 43
+        Width = 153
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #20801#35768#38646#20648#20301#24211#23384#20986#24211
+        TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
     object TabSheet5: TTabSheet
       Caption = #20854#20182#36873#39033
@@ -1045,8 +1055,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 253
-    Width = 433
+    Top = 242
+    Width = 425
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

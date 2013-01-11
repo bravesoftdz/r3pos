@@ -639,7 +639,7 @@ end;
 
 function TfrmSalRetuOrderList.CheckCanExport: boolean;
 begin
-  result:=(ShopGlobal.GetChkRight('12300001',9) or ShopGlobal.GetChkRight('12300001',10));
+  result:=(ShopGlobal.GetChkRight('12500001',9) or ShopGlobal.GetChkRight('12500001',10));
 end;
 
 procedure TfrmSalRetuOrderList.PrintAfter(Sender: TObject);

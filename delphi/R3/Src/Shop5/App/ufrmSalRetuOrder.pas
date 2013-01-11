@@ -121,6 +121,7 @@ type
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
     procedure FilterUserClick(Sender: TObject);
     procedure GetUserInfo(Aobj_: TRecord_);    
+    function GetShopId:string;override;
   public
     { Public declarations }
     //结算金额
@@ -167,6 +168,7 @@ type
     procedure DeleteOrder;override;
     procedure SaveOrder;override;
     procedure AuditOrder;override;
+    procedure AutoAudit;
     procedure CancelOrder;override;
     procedure Open(id:string);override;
   end;
@@ -461,11 +463,11 @@ begin
   AObj.FieldByName('PAY_I').AsFloat := 0;
   AObj.FieldByName('PAY_J').AsFloat := 0;
   AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
-  if (ShopGlobal.GetParameter('SAL_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('12500001',7) then
-     begin
-       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
-       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
-     end;
+  //if (ShopGlobal.GetParameter('SAL_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('12500001',7) then
+  //   begin
+  //     AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  //     AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
+  //   end;
   //结算对话框
   //if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;
   //end 
@@ -497,6 +499,10 @@ begin
   Open(oid);
   dbState := dsBrowse;
   Saved := true;
+  if (ShopGlobal.GetParameter('SAL_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('12500001',7) then
+     begin
+       AutoAudit;
+     end;
 end;
 
 procedure TfrmSalRetuOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
@@ -1919,6 +1925,42 @@ begin
   inherited;
   if (ssCtrl in Shift) and (Key = VK_RETURN) then
      FilterUserClick(Sender);
+end;
+
+function TfrmSalRetuOrder.GetShopId: string;
+begin
+  result := edtSHOP_ID.AsString;
+end;
+
+procedure TfrmSalRetuOrder.AutoAudit;
+var
+  Msg :string;
+  Params:TftParamList;
+begin
+  inherited;
+  if cdsHeader.IsEmpty then Raise Exception.Create('不能审核空单据');
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('SHOP_ID').asString := edtSHOP_ID.AsString;
+      Params.ParamByName('SALES_ID').asString := cdsHeader.FieldbyName('SALES_ID').AsString;
+      Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+      Params.ParamByName('CHK_USER').asString := Global.UserID;
+      if not IsAudit then
+         Msg := Factor.ExecProc('TSalRetuOrderAudit',Params)
+      else
+         Msg := Factor.ExecProc('TSalRetuOrderUnAudit',Params) ;
+    finally
+       Params.free;
+    end;
+  except
+    on E:Exception do
+       begin
+         Raise Exception.Create(E.Message);
+       end;
+  end;
+  Open(oid);
 end;
 
 end.

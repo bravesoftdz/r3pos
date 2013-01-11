@@ -129,7 +129,7 @@ var tmp:TZQuery;
 begin
   if dbState = dsBrowse then Exit;
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
-
+  if Trim(edtInput.Text)='' then Exit;
   //if DBGridEh1.CanFocus and Visible then DBGridEh1.SetFocus;
   cdsDetail.DisableControls;
   try
@@ -140,7 +140,7 @@ begin
       cdsDetail.Append;
       cdsDetail.FieldByName('BARCODE').AsString := Trim(edtInput.Text);
       cdsDetail.FieldByName('VOUCHER_TYPE').AsString := TRecord_(edtVOUCHER_TYPE.Properties.Items.Objects[edtVOUCHER_TYPE.ItemIndex]).FieldByName('CODE_ID').AsString;
-      cdsDetail.FieldByName('VOUCHER_PRC').AsInteger := StrToInt(Trim(edtVOUCHER_PRC.Text));
+      cdsDetail.FieldByName('VOUCHER_PRC').AsInteger := StrToIntDef(Trim(edtVOUCHER_PRC.Text),0);
       cdsDetail.FieldByName('VAILD_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',edtVAILD_DATE.Date));
       cdsDetail.FieldByName('CLIENT_ID').AsString := '#';
       cdsDetail.FieldByName('VOUCHER_STATUS').AsString := '1';

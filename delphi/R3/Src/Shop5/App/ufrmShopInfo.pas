@@ -69,6 +69,10 @@ type
     edtEND_DATE: TcxDateEdit;
     Label24: TLabel;
     Label28: TLabel;
+    Label29: TLabel;
+    edtDEF_LOCATION_ID: TzrComboBoxList;
+    Label30: TLabel;
+    cdsLocationInfo: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -78,6 +82,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure edtSHOP_TYPEAddClick(Sender: TObject);
     procedure edtCATEGORYPropertiesChange(Sender: TObject);
+    procedure edtDEF_LOCATION_IDClearValue(Sender: TObject);
+    procedure edtDEF_LOCATION_IDAddClick(Sender: TObject);
   private
     FIsRelation: Boolean;
     { Private declarations }
@@ -101,7 +107,7 @@ type
   end;
 implementation
 uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, uShopGlobal,ufrmCodeInfo,EncDec,
-  ufrmBasic;
+  ufrmBasic,ufrmlocationinfo;
 {$R *.dfm}
 
 { TfrmCompanyInfo }
@@ -114,6 +120,10 @@ begin
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   edtSHOP_TYPE.KeyValue := '#';
   edtSHOP_TYPE.Text := '无';
+  edtDEF_LOCATION_ID.KeyValue := edtSHOP_ID.Text+'00000000000000000000000';
+  edtDEF_LOCATION_ID.Text := '默认储位';
+  edtDEF_LOCATION_ID.Properties.ReadOnly := true;
+  SetEditStyle(dsBrowse,edtDEF_LOCATION_ID.Style);
   edtCATEGORY.ItemIndex := TdsItems.FindItems(edtCATEGORY.Properties.Items,'CODE_ID','1');
   if Visible and edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
 end;
@@ -173,6 +183,11 @@ begin
         edtSHOP_TYPE.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SHOP_TYPE'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SHOP_TYPE').AsString);
         edtSHOP_TYPE.KeyValue := Aobj.FieldByName('SHOP_TYPE').AsString;
       end;
+    cdsLocationInfo.Close;
+    cdsLocationInfo.SQL.Text := 'select LOCATION_ID,LOCATION_NAME,LOCATION_SPELL from PUB_LOCATION_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID order by LOCATION_ID';
+    cdsLocationInfo.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    cdsLocationInfo.ParambyName('SHOP_ID').asString := edtSHOP_ID.Text;
+    Factor.Open(cdsLocationInfo);
 
     dbState := dsBrowse;
   finally
@@ -490,6 +505,30 @@ begin
      Label15.Caption := '签约日期';
      Label21.Caption := '到期日期';
      Label27.Caption := '租金总价';
+  end;
+end;
+
+procedure TfrmShopInfo.edtDEF_LOCATION_IDClearValue(Sender: TObject);
+begin
+  inherited;
+  edtDEF_LOCATION_ID.KeyValue := edtSHOP_ID.Text+'00000000000000000000000';
+  edtDEF_LOCATION_ID.Text := '默认储位';
+
+end;
+
+procedure TfrmShopInfo.edtDEF_LOCATION_IDAddClick(Sender: TObject);
+var _obj:TRecord_;
+begin
+  inherited;
+  _obj := TRecord_.Create;
+  try
+    if Tfrmlocationinfo.AddDialog(self,_obj,edtSHOP_ID.Text,edtSHOP_NAME.Text) then
+       begin
+         edtDEF_LOCATION_ID.KeyValue := _obj.FieldbyName('LOCATION_ID').AsString;
+         edtDEF_LOCATION_ID.Text  := _obj.FieldbyName('LOCATION_NAME').AsString;
+       end;
+  finally
+    _obj.Free;
   end;
 end;
 

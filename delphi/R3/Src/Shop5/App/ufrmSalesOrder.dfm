@@ -800,6 +800,13 @@ inherited frmSalesOrder: TfrmSalesOrder
         end
         item
           EditButtons = <>
+          FieldName = 'LOCATION_ID'
+          Footers = <>
+          Title.Caption = #20648#20301
+          Width = 100
+        end
+        item
+          EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791#27880
@@ -905,6 +912,11 @@ inherited frmSalesOrder: TfrmSalesOrder
         Name = 'BATCH_NO'
         DataType = ftString
         Size = 20
+      end
+      item
+        Name = 'LOCATION_ID'
+        DataType = ftString
+        Size = 36
       end
       item
         Name = 'IS_PRESENT'

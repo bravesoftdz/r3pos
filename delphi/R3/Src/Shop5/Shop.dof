@@ -91,10 +91,10 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=D:\µ÷ÊÔ
-UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
+UnitOutputDir=D:\myWork\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=D:\Delphi\R3\Src\Shop5\temp
-SearchPath=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
+SearchPath=
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;Rz30Ctls70;Rz30DBCtls70;cxLibraryVCLD7;cxEditorsVCLD7;cxGridVCLD7;dxThemeD7;cxDataD7;cxGridUtilsVCLD7;FR7;zsr;DirectX9_D7;DSPack_D7;ActiveXPacket;llPDFLibD7;asgd7;inetdb
 Conditionals=
 DebugSourceDirs=
@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=3
 MinorVer=0
 Release=2
-Build=53
+Build=54
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=R3
-FileVersion=3.0.2.53
+FileVersion=3.0.2.54
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -155,8 +155,9 @@ Item9=D:\Delphi\R3\zLib\src\zLib
 Item10=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub
 Item11=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=D:\Delphi\R3\Src\Shop5\temp
+Count=2
+Item0=D:\myWork\Delphi\R3\Src\Shop5\temp
+Item1=D:\Delphi\R3\Src\Shop5\temp
 [HistoryLists\hlOutputDirectorry]
 Count=20
 Item0=D:\µ÷ÊÔ

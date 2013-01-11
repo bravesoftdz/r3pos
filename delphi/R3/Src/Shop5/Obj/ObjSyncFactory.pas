@@ -1150,12 +1150,20 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
              FieldbyName('CALC_MONEY').asFloat-roundto(FieldbyName('CALC_MONEY').asFloat/(1+FieldbyName('TAX_RATE').AsFloat)*FieldbyName('TAX_RATE').AsFloat,-2),1);
+  if FieldbyName('CHK_DATE').AsString<>'' then
+     begin
+       IncLocation(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+             FieldbyName('GODS_ID').asString,
+             FieldbyName('LOCATION_ID').asString,
+             FieldbyName('BATCH_NO').asString,
+             FieldbyName('CALC_AMOUNT').asFloat);
+     end;
 end;
 begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_STOCKDATA';
-       MaxCol := RowAccessor.ColumnCount-1;
+       MaxCol := RowAccessor.ColumnCount-2;
        InitSQL(AGlobal);
      end;
   FillParams(InsertQuery);
@@ -1167,7 +1175,7 @@ function TSyncStockData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select a.*,b.TAX_RATE as TAX_RATE from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
+  Str := 'select a.*,b.TAX_RATE as TAX_RATE,b.CHK_DATE from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
   SelectSQL.Text := Str;
 end;
 
@@ -1178,7 +1186,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,b.TAX_RATE as TAX_RATE '+
+       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.LOCATION_ID,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,b.TAX_RATE as TAX_RATE,b.CHK_DATE as CHK_DATE '+
        'from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
     rs.Params.AssignValues(Params); 
     AGlobal.Open(rs);
@@ -1192,6 +1200,14 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
                    rs.FieldbyName('CALC_MONEY').asFloat-roundto(rs.FieldbyName('CALC_MONEY').asFloat/(1+rs.FieldbyName('TAX_RATE').asFloat)*rs.FieldbyName('TAX_RATE').asFloat,-2),3);
+        if rs.FieldbyName('CHK_DATE').AsString<>'' then
+           begin
+              DecLocation(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                   rs.FieldbyName('GODS_ID').asString,
+                   rs.FieldbyName('LOCATION_ID').asString,
+                   rs.FieldbyName('BATCH_NO').asString,
+                   rs.FieldbyName('CALC_AMOUNT').asFloat);
+           end;
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params);
@@ -1216,6 +1232,7 @@ function TSyncSalesOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure InsertAbleInfo;
 var rs:TZQuery;
 begin
+   if not (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) then Exit; //调拨单不处理 
    if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) and (FieldbyName('ABLE_ID').asString<>'') then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
@@ -1249,6 +1266,7 @@ end;
 procedure InsertIntegralInfo;
 var rs:TZQuery;
 begin
+  if not (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) then Exit; //调拨单不处理 
   //更新积分
   if length(FieldbyName('CLIENT_ID').AsString)>0 then
   begin
@@ -1275,10 +1293,10 @@ end;
 procedure UpdateAbleInfo;
 var rs:TZQuery;
 begin
-   if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) and (FieldbyName('ABLE_ID').asString<>'') then
+   if not (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) then Exit; //调拨单不处理 
+   if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('ABLE_ID').asString<>'') then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
-//     if roundto(FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
      begin
        rs := TZQuery.Create(nil);
        try
@@ -1315,7 +1333,8 @@ begin
     rs.ParamByName('SALES_ID').AsString := FieldbyName('SALES_ID').AsString;
     AGlobal.Open(rs);
     result := not rs.IsEmpty;
-    if result and (rs.FieldByName('SALES_TYPE').AsInteger in [1,3,4]) then
+    if not (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) then Exit; //调拨单不处理 
+    if result then
     begin
       if (rs.Fields[0].AsInteger <> 0) or (rs.Fields[1].AsInteger <> 0) then
          begin
@@ -1426,11 +1445,19 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('COST_PRICE').asFloat*FieldbyName('CALC_AMOUNT').asFloat,-2),2);
-
+  if FieldByName('CHK_DATE').AsString<>'' then
+     begin
+        DecLocation(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+                   FieldbyName('GODS_ID').asString,
+                   FieldbyName('LOCATION_ID').asString,
+                   FieldbyName('BATCH_NO').asString,
+                   FieldbyName('CALC_AMOUNT').asFloat);
+     end;
 end;
 begin
   if not Init then
      begin
+       MaxCol := RowAccessor.ColumnCount - 1;
        Params.ParamByName('TABLE_NAME').AsString := 'SAL_SALESDATA';
      end;
   InitSQL(AGlobal);
@@ -1443,7 +1470,7 @@ function TSyncSalesData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select * from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+  Str := 'select A.*,B.CHK_DATE from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID';
   SelectSQL.Text := Str;
 end;
 
@@ -1454,8 +1481,8 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
-       'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
+       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.LOCATION_ID,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHK_DATE '+
+       'from SAL_SALESDATA a,SAL_SALESORDER b where a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.SALES_ID and a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
     rs.Params.AssignValues(Params); 
     AGlobal.Open(rs);
     rs.First;
@@ -1468,6 +1495,14 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
                    roundto(rs.FieldbyName('COST_PRICE').asFloat*rs.FieldbyName('CALC_AMOUNT').asFloat,-2),3);
+        if rs.FieldByName('CHK_DATE').AsString<>'' then
+           begin
+              IncLocation(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                         rs.FieldbyName('GODS_ID').asString,
+                         rs.FieldbyName('LOCATION_ID').asString,
+                         rs.FieldbyName('BATCH_NO').asString,
+                         rs.FieldbyName('CALC_AMOUNT').asFloat);
+           end;
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);
@@ -1568,12 +1603,27 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1);
+  if FieldbyName('CHK_DATE').AsString <> '' then
+     begin
+        if FieldbyName('CHANGE_TYPE').AsString = '1' then
+        IncLocation(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+                   FieldbyName('GODS_ID').asString,
+                   FieldbyName('LOCATION_ID').asString,
+                   FieldbyName('BATCH_NO').asString,
+                   FieldbyName('CALC_AMOUNT').asFloat)
+        else
+        DecLocation(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+                   FieldbyName('GODS_ID').asString,
+                   FieldbyName('LOCATION_ID').asString,
+                   FieldbyName('BATCH_NO').asString,
+                   FieldbyName('CALC_AMOUNT').asFloat);
+     end;
 end;
 begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STO_CHANGEDATA';
-       MaxCol := RowAccessor.ColumnCount-1;
+       MaxCol := RowAccessor.ColumnCount-2;
      end;
   InitSQL(AGlobal);
   FillParams(InsertQuery);
@@ -1585,7 +1635,7 @@ function TSyncChangeData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select a.*,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+  Str := 'select a.*,b.CHANGE_TYPE as CHANGE_TYPE,b.CHK_DATE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
   SelectSQL.Text := Str;
 end;
 
@@ -1596,7 +1646,8 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
+       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.LOCATION_ID,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE,b.CHK_DATE as CHK_DATE '+
+       'from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
        'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
     rs.Params.AssignValues(Params); 
     AGlobal.Open(rs);
@@ -1619,6 +1670,21 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
                    roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3);
+        if rs.FieldByName('CHK_DATE').AsString<>'' then
+           begin
+              if FieldbyName('CHANGE_TYPE').AsString = '1' then
+              DecLocation(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                         rs.FieldbyName('GODS_ID').asString,
+                         rs.FieldbyName('LOCATION_ID').asString,
+                         rs.FieldbyName('BATCH_NO').asString,
+                         rs.FieldbyName('CALC_AMOUNT').asFloat)
+              else
+              IncLocation(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                         rs.FieldbyName('GODS_ID').asString,
+                         rs.FieldbyName('LOCATION_ID').asString,
+                         rs.FieldbyName('BATCH_NO').asString,
+                         rs.FieldbyName('CALC_AMOUNT').asFloat);
+           end;
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);

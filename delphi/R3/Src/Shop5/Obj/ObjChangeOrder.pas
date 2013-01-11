@@ -243,14 +243,14 @@ begin
                'select b.GODS_NAME,b.GODS_CODE,j.SHOP_ID,j.TENANT_ID,j.CHANGE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.AMOUNT,j.APRICE,j.AMONEY,j.CALC_MONEY,j.COST_PRICE,j.IS_PRESENT,j.CALC_AMOUNT,'+
                'case when j.AMOUNT<>0 then round(j.COST_PRICE*j.CALC_AMOUNT,2)/j.AMOUNT else 0 end as COST_APRICE,'+
                'round(j.COST_PRICE*j.CALC_AMOUNT,2) as COST_MONEY,'+
-               'j.REMARK from STO_CHANGEDATA j inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.CHANGE_ID=:CHANGE_ID ) g '+
+               'j.REMARK,j.LOCATION_ID from STO_CHANGEDATA j inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.CHANGE_ID=:CHANGE_ID ) g '+
                'left outer join STO_CHANGEORDER h on g.TENANT_ID=h.TENANT_ID and g.CHANGE_ID=h.CHANGE_ID order by SEQNO';
   IsSQLUpdate := True;
-  Str := 'insert into STO_CHANGEDATA(TENANT_ID,SHOP_ID,SEQNO,CHANGE_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,APRICE,AMONEY,CALC_MONEY,COST_PRICE,IS_PRESENT,CALC_AMOUNT,REMARK) '
-    + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:CHANGE_ID,:GODS_ID,:BATCH_NO,:LOCUS_NO,:BOM_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:AMOUNT,:APRICE,:AMONEY,:CALC_MONEY,:COST_PRICE,:IS_PRESENT,:CALC_AMOUNT,:REMARK)';
+  Str := 'insert into STO_CHANGEDATA(TENANT_ID,SHOP_ID,SEQNO,CHANGE_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,APRICE,AMONEY,CALC_MONEY,COST_PRICE,IS_PRESENT,CALC_AMOUNT,REMARK,LOCATION_ID) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:CHANGE_ID,:GODS_ID,:BATCH_NO,:LOCUS_NO,:BOM_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:AMOUNT,:APRICE,:AMONEY,:CALC_MONEY,:COST_PRICE,:IS_PRESENT,:CALC_AMOUNT,:REMARK,:LOCATION_ID)';
   InsertSQL.Text := str;
   Str := 'update STO_CHANGEDATA set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SEQNO=:SEQNO,CHANGE_ID=:CHANGE_ID,GODS_ID=:GODS_ID,BATCH_NO=:BATCH_NO,LOCUS_NO=:LOCUS_NO,BOM_ID=:BOM_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,UNIT_ID=:UNIT_ID,AMOUNT=:AMOUNT,'+
-         'IS_PRESENT=:IS_PRESENT,CALC_AMOUNT=:CALC_AMOUNT,APRICE=:APRICE,AMONEY=:AMONEY,CALC_MONEY=:CALC_MONEY,COST_PRICE=:COST_PRICE,REMARK=:REMARK '
+         'IS_PRESENT=:IS_PRESENT,CALC_AMOUNT=:CALC_AMOUNT,APRICE=:APRICE,AMONEY=:AMONEY,CALC_MONEY=:CALC_MONEY,COST_PRICE=:COST_PRICE,REMARK=:REMARK,LOCATION_ID=:LOCATION_ID '
     + 'where TENANT_ID=:OLD_TENANT_ID and CHANGE_ID=:OLD_CHANGE_ID and SEQNO=:OLD_SEQNO';
   UpdateSQL.Text := str;
   Str := 'delete from STO_CHANGEDATA where TENANT_ID=:OLD_TENANT_ID and CHANGE_ID=:OLD_CHANGE_ID and SEQNO=:OLD_SEQNO';
@@ -442,6 +442,7 @@ begin
   finally
     rs.Free;
   end;  }
+  AGlobal.BeginTrans; 
   try
     Str := 'update STO_CHANGEORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
@@ -450,11 +451,28 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
+      rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
+      rs.ParamByName('CHANGE_ID').AsString := Params.ParambyName('CHANGE_ID').AsString;
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          DecLocation(AGlobal,rs.Fields[0].AsString,rs.Fields[1].AsString,rs.Fields[2].AsString,rs.Fields[3].AsString,rs.Fields[4].AsString,rs.Fields[5].AsFloat);
+          rs.Next;
+        end;
+    finally
+      rs.Free;
+    end;
+    AGlobal.CommitTrans;
     Result := true;
     Msg := '审核单据成功';
   except
     on E:Exception do
       begin
+        AGlobal.RollbackTrans;
         Result := false;
         Msg := '审核错误'+E.Message;
       end;
@@ -478,6 +496,7 @@ begin
   finally
     rs.Free;
   end;
+   AGlobal.BeginTrans; 
    try
     Str := 'update STO_CHANGEORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
@@ -486,11 +505,28 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
+      rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
+      rs.ParamByName('CHANGE_ID').AsString := Params.ParambyName('CHANGE_ID').AsString;
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          IncLocation(AGlobal,rs.Fields[0].AsString,rs.Fields[1].AsString,rs.Fields[2].AsString,rs.Fields[3].AsString,rs.Fields[4].AsString,rs.Fields[5].AsFloat);
+          rs.Next;
+        end;
+    finally
+      rs.Free;
+    end;
+    AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;
   except
     on E:Exception do
        begin
+         AGlobal.RollbackTrans;
          Result := False;
          Msg := '反审核错误:'+E.Message;
        end;

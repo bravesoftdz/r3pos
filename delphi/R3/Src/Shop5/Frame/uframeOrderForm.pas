@@ -73,6 +73,8 @@ type
     GodsCompare: TMenuItem;
     fndBATCH_NO: TzrComboBoxList;
     cdsBatchNo: TZQuery;
+    fndLOCATION_ID: TzrComboBoxList;
+    cdsLocationInfo: TZQuery;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -134,6 +136,12 @@ type
     procedure fndBATCH_NOKeyPress(Sender: TObject; var Key: Char);
     procedure fndBATCH_NOSaveValue(Sender: TObject);
     procedure fndBATCH_NOClearValue(Sender: TObject);
+    procedure fndLOCATION_IDClearValue(Sender: TObject);
+    procedure fndLOCATION_IDEnter(Sender: TObject);
+    procedure fndLOCATION_IDExit(Sender: TObject);
+    procedure fndLOCATION_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndLOCATION_IDKeyPress(Sender: TObject; var Key: Char);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -209,7 +217,11 @@ type
     function GetToolHandle:THandle;
     function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;virtual;
     procedure DBGridEh1BatchNoBeforeShowControl(Sender: TObject);
+    procedure DBGridEh1LocationIdBeforeShowControl(Sender: TObject);
     procedure BatchNoDropList;virtual;
+    procedure LocationIdDropList;virtual;
+    function GetShopId:string;virtual;
+    function GetDefLocation:string;virtual;
   public
     { Public declarations }
     //SEQNO控制号
@@ -224,7 +236,7 @@ type
     fndStr:string;
     BarCodeInfo:TZQuery;
 
-    GBATCH_NO:string;//当前数据打开的批号对应的商品
+    GBATCH_NO,GLOCATION_ID:string;//当前数据打开的批号对应的商品
     function EnCodeBarcode:string;
     function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
 
@@ -334,13 +346,19 @@ procedure TframeOrderForm.AddRecord(AObj: TRecord_; UNIT_ID: string;Located:bool
 var
   Pt:integer;
   r:boolean;
+  lid:string;
 begin
   if IsPresent then pt := 1 else pt := 0;
   if Located then
      begin
+        if edtTable.FindField('LOCATION_ID')<>nil then
+           lid := GetDefLocation else lid:='';
         if not gRepeat then
             begin
-              r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt,null,null]),[]);
+              if lid<>'' then
+                 r := edtTable.Locate('GODS_ID;BATCH_NO;LOCATION_ID;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',lid,UNIT_ID,pt,null,null]),[])
+              else
+                 r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt,null,null]),[]);
               if r then Exit;
             end;
         inc(RowID);
@@ -355,6 +373,8 @@ begin
         else
            edtTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
         edtTable.FieldbyName('BATCH_NO').AsString := '#';
+        if lid<>'' then
+           edtTable.FieldByName('LOCATION_ID').AsString := lid; 
      end;
   edtTable.Edit;
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
@@ -363,6 +383,7 @@ end;
 
 constructor TframeOrderForm.Create(AOwner: TComponent);
 var Column:TColumnEh;
+  rs:TZQuery;
 begin
   gRepeat := false;
   CanAppend := false;
@@ -416,6 +437,21 @@ begin
        Column.Control := fndBATCH_NO;
        Column.OnBeforeShowControl := DBGridEh1BatchNoBeforeShowControl;
        Column.ReadOnly := false;
+     end;
+  Column := FindColumn('LOCATION_ID');
+  if Column<>nil then
+     begin
+       Column.Control := fndLOCATION_ID;
+       Column.OnBeforeShowControl := DBGridEh1LocationIdBeforeShowControl;
+       Column.ReadOnly := false;
+       rs := Global.GetZQueryFromName('PUB_LOCATION_INFO');
+       rs.First;
+       while not rs.Eof do
+          begin
+            Column.KeyList.Add(rs.FieldbyName('LOCATION_ID').AsString);
+            Column.PickList.Add(rs.FieldbyName('LOCATION_NAME').AsString);  
+            rs.Next;
+          end;
      end;
 end;
 
@@ -807,6 +843,8 @@ begin
         AObj.FieldbyName('IS_PRESENT').AsString := '0';
         AObj.FieldbyName('LOCUS_NO').AsString := '';
         AObj.FieldbyName('BATCH_NO').AsString := '#';
+        if AObj.FindField('LOCATION_ID')<>nil then
+           AObj.FieldbyName('LOCATION_ID').AsString := GetDefLocation;
         pt := false;
 
         if CheckRepeat(AObj,pt) then
@@ -1744,8 +1782,17 @@ begin
            (edtTable.FieldbyName('SEQNO').AsInteger <> r)
         then
            begin
-             inc(c);
-             break;
+             if (edtTable.FindField('LOCATION_ID')=nil) then
+                begin
+                  inc(c);
+                  break;
+                end
+             else
+             if (edtTable.FieldbyName('LOCATION_ID').AsString = AObj.FieldbyName('LOCATION_ID').AsString) then
+                begin
+                  inc(c);
+                  break;
+                end;
            end;
         edtTable.Next;
       end;
@@ -1942,14 +1989,9 @@ begin
   edtTable.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
   edtTable.FieldByName('IS_PRESENT').AsString := '0';
   edtTable.FieldbyName('BATCH_NO').AsString := '#';
+  if edtTable.FindField('LOCATION_ID')<>nil then
+     edtTable.FieldbyName('LOCATION_ID').AsString := GetDefLocation;
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
-  if edtTable.FindField('IS_PRESENT')<>nil then
-  begin
-    if pt then
-       edtTable.FieldByName('IS_PRESENT').AsString := '1'
-    else
-       edtTable.FieldByName('IS_PRESENT').AsString := '0';
-  end;
   edtProperty.Filtered := false;
   edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
   edtProperty.Filtered := true;
@@ -1976,7 +2018,10 @@ procedure TframeOrderForm.ReadFrom(DataSet: TDataSet);
 var
   i:integer;
   r:boolean;
+  hasLocation:boolean;
+  lid:string;
 begin
+  hasLocation := (DataSet.FindField('LOCATION_ID')<>nil);
   edtTable.DisableControls;
   try
   edtProperty.Close;
@@ -1987,22 +2032,44 @@ begin
   DataSet.First;
   while not DataSet.Eof do
     begin
-      if HasPrice then
-         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
-                        DataSet.FieldbyName('BATCH_NO').asString,
-                        DataSet.FieldbyName('UNIT_ID').asString,
-                        DataSet.FieldbyName('BOM_ID').Value,
-                        DataSet.FieldbyName('LOCUS_NO').Value,
-                        DataSet.FieldbyName('IS_PRESENT').asInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+      if hasLocation then
+      begin
+        if HasPrice then
+           r := edtTable.Locate('GODS_ID;BATCH_NO;LOCATION_ID;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
+                VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
+                          DataSet.FieldbyName('BATCH_NO').asString,DataSet.FieldbyName('LOCATION_ID').asString,
+                          DataSet.FieldbyName('UNIT_ID').asString,
+                          DataSet.FieldbyName('BOM_ID').Value,
+                          DataSet.FieldbyName('LOCUS_NO').Value,
+                          DataSet.FieldbyName('IS_PRESENT').asInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+        else
+           r := edtTable.Locate('GODS_ID;BATCH_NO;LOCATION_ID;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
+                VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
+                          DataSet.FieldbyName('BATCH_NO').asString,DataSet.FieldbyName('LOCATION_ID').asString,
+                          DataSet.FieldbyName('UNIT_ID').asString,
+                          DataSet.FieldbyName('BOM_ID').Value,
+                          DataSet.FieldbyName('LOCUS_NO').Value,
+                          DataSet.FieldbyName('IS_PRESENT').asInteger]),[]);
+      end
       else
-         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
-                        DataSet.FieldbyName('BATCH_NO').asString,
-                        DataSet.FieldbyName('UNIT_ID').asString,
-                        DataSet.FieldbyName('BOM_ID').Value,
-                        DataSet.FieldbyName('LOCUS_NO').Value,
-                        DataSet.FieldbyName('IS_PRESENT').asInteger]),[]);
+      begin
+        if HasPrice then
+           r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
+                VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
+                          DataSet.FieldbyName('BATCH_NO').asString,
+                          DataSet.FieldbyName('UNIT_ID').asString,
+                          DataSet.FieldbyName('BOM_ID').Value,
+                          DataSet.FieldbyName('LOCUS_NO').Value,
+                          DataSet.FieldbyName('IS_PRESENT').asInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+        else
+           r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
+                VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
+                          DataSet.FieldbyName('BATCH_NO').asString,
+                          DataSet.FieldbyName('UNIT_ID').asString,
+                          DataSet.FieldbyName('BOM_ID').Value,
+                          DataSet.FieldbyName('LOCUS_NO').Value,
+                          DataSet.FieldbyName('IS_PRESENT').asInteger]),[]);
+      end;
       if r then
       begin
         edtTable.Edit;
@@ -2029,6 +2096,8 @@ begin
         inc(RowID);
         edtTable.FieldbyName('SEQNO').AsInteger := RowID;
         edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+        if (edtTable.FindField('LOCATION_ID')<>nil) and (edtTable.FieldByName('LOCATION_ID').AsString='') then
+           edtTable.FieldByName('LOCATION_ID').AsString := GetDefLocation;
         edtTable.Post;
       end;
       edtProperty.Append;
@@ -2328,7 +2397,7 @@ end;
 
 procedure TframeOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  if not fndGODS_ID.Focused and not edtInput.Focused and not fndUNIT_ID.Focused and not DBGridEh1.Focused and fndBATCH_NO.Focused then
+  if not fndGODS_ID.Focused and not edtInput.Focused and not fndUNIT_ID.Focused and not DBGridEh1.Focused and fndBATCH_NO.Focused and fndLOCATION_ID.Focused then
      begin
        inherited;
      end;
@@ -4109,10 +4178,133 @@ begin
     cdsBatchNo.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
     cdsBatchNo.ParambyName('GODS_ID').asString := edtTable.FieldbyName('GODS_ID').asString;
     Factor.Open(cdsBatchNo);
+    GBATCH_NO := edtTable.FieldbyName('GODS_ID').asString;
   end;
   fndBATCH_NO.Text := edtTable.FieldbyName('BATCH_NO').AsString;
   fndBATCH_NO.KeyValue := edtTable.FieldbyName('BATCH_NO').AsString;
   fndBATCH_NO.SaveStatus;
+end;
+
+procedure TframeOrderForm.fndLOCATION_IDClearValue(Sender: TObject);
+var
+  rs:TZQuery;
+begin
+  inherited;
+  rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtTable.Edit;
+  if rs.Locate('SHOP_ID',GetShopId,[]) then
+     edtTable.FieldByName('LOCATION_ID').AsString := rs.FieldbyName('DEF_LOCATION_ID').AsString;
+  if edtTable.FieldByName('LOCATION_ID').AsString='' then
+     edtTable.FieldByName('LOCATION_ID').AsString := GetShopId+'00000000000000000000000';
+  fndBATCH_NO.KeyValue := edtTable.FieldByName('LOCATION_ID').AsString;
+
+  rs := Global.GetZQueryFromName('PUB_LOCATION_INFO');
+  if rs.Locate('LOCATION_ID',edtTable.FieldByName('LOCATION_ID').AsString,[]) then
+  fndBATCH_NO.Text := edtTable.FieldByName('LOCATION_NAME').AsString else
+  fndBATCH_NO.Text := '默认储位';
+end;
+
+function TframeOrderForm.GetShopId: string;
+begin
+  result := '';
+end;
+
+procedure TframeOrderForm.fndLOCATION_IDEnter(Sender: TObject);
+begin
+  inherited;
+  fndLOCATION_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
+
+end;
+
+procedure TframeOrderForm.fndLOCATION_IDExit(Sender: TObject);
+begin
+  inherited;
+  if not fndLOCATION_ID.DropListed then fndLOCATION_ID.Visible := false;
+
+end;
+
+procedure TframeOrderForm.fndLOCATION_IDKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) then
+     begin
+       DBGridEh1.SetFocus;
+       fndLOCATION_ID.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_LEFT) then
+     begin
+       DBGridEh1.SetFocus;
+       fndLOCATION_ID.Visible := false;
+       DBGridEh1.Col := DBGridEh1.Col -1;
+     end;
+  if (Key=VK_UP) and (Shift=[]) and not fndLOCATION_ID.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       fndLOCATION_ID.Visible := false;
+       PostMessage(Handle,WM_PRIOR_RECORD,0,0);
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not fndLOCATION_ID.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       fndLOCATION_ID.Visible := false;
+       PostMessage(Handle,WM_NEXT_RECORD,0,0);
+     end;
+
+end;
+
+procedure TframeOrderForm.fndLOCATION_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       DBGridEh1.SetFocus;
+       FocusNextColumn;
+     end;
+
+end;
+
+procedure TframeOrderForm.DBGridEh1LocationIdBeforeShowControl(
+  Sender: TObject);
+begin
+  LocationIdDropList;
+end;
+
+procedure TframeOrderForm.LocationIdDropList;
+var
+  rs:TZQuery;
+begin
+  rs := Global.GetZQueryFromName('PUB_LOCATION_INFO');
+  if GLOCATION_ID<>GetShopId then
+  begin
+    cdsLocationInfo.Close;
+    cdsLocationInfo.SQL.Text := 'select LOCATION_ID,LOCATION_NAME,LOCATION_SPELL from PUB_LOCATION_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID order by LOCATION_ID';
+    cdsLocationInfo.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    cdsLocationInfo.ParambyName('SHOP_ID').asString := GetShopId;
+    Factor.Open(cdsLocationInfo);
+    GBATCH_NO := GetShopId;
+  end;
+  fndLOCATION_ID.KeyValue := edtTable.FieldbyName('LOCATION_ID').AsString;
+  if rs.Locate('LOCATION_ID',fndLOCATION_ID.AsString,[]) then
+    fndLOCATION_ID.Text :=  rs.FieldbyName('LOCATION_NAME').AsString
+  else
+    fndLOCATION_ID.Text :=  edtTable.FieldbyName('LOCATION_ID').AsString;
+  fndLOCATION_ID.SaveStatus;
+end;
+
+function TframeOrderForm.GetDefLocation: string;
+var
+  rs:TZQuery;
+begin
+  inherited;
+  rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+  if rs.Locate('SHOP_ID',GetShopId,[]) then
+     result := rs.FieldbyName('DEF_LOCATION_ID').AsString;
+  if result='' then
+     result := GetShopId+'00000000000000000000000';
 end;
 
 end.

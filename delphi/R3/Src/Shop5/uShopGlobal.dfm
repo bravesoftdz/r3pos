@@ -3,7 +3,7 @@ inherited ShopGlobal: TShopGlobal
   Left = 253
   Top = 120
   Height = 568
-  Width = 904
+  Width = 935
   object SYS_DEFINE: TZQuery
     FieldDefs = <>
     CachedUpdates = True
@@ -62,9 +62,9 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select SHOP_ID,SHOP_NAME,SHOP_SPELL,SEQ_NO,REGION_ID from CA_SHO' +
-        'P_INFO where TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') or' +
-        'der by SEQ_NO')
+        'select SHOP_ID,SHOP_NAME,SHOP_SPELL,SEQ_NO,REGION_ID,DEF_LOCATIO' +
+        'N_ID from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not i' +
+        'n ('#39'02'#39','#39'12'#39') order by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown
@@ -81,6 +81,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_DUTY_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -104,6 +105,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_ROLE_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -149,6 +151,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_REGION_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -160,6 +163,7 @@ inherited ShopGlobal: TShopGlobal
     Top = 152
   end
   object PUB_PAYMENT: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -341,6 +345,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_BRAND_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -394,6 +399,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_CATE_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -423,6 +429,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_IMPT_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -452,6 +459,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_COLOR_GROUP: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -481,6 +489,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_SIZE_GROUP: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -510,6 +519,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_AREA_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -530,7 +540,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 368
-    Top = 416
+    Top = 424
     ParamData = <
       item
         DataType = ftUnknown
@@ -539,6 +549,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_COLOR_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -563,6 +574,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_SIZE_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -613,6 +625,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_IDNTYPE_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -636,6 +649,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_SALE_STYLE: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -658,6 +672,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_BANK_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -681,6 +696,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_CLIENTSORT: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -710,6 +726,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_PRICEGRADE: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -732,6 +749,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object ACC_ACCOUNT_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -765,6 +783,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object ACC_ITEM_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -787,6 +806,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_MONTH_PAY_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -810,6 +830,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_DEGREES_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -833,6 +854,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_OCCUPATION_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -885,6 +907,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_SETTLE_CODE: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -938,6 +961,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_SUPPERSORT: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -958,7 +982,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 663
-    Top = 471
+    Top = 479
     ParamData = <
       item
         DataType = ftUnknown
@@ -967,6 +991,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_STAT_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1000,6 +1025,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_GOODS_INDEXS: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1051,6 +1077,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_TREND_INFO: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1078,7 +1105,7 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     Params = <>
     Left = 136
-    Top = 536
+    Top = 464
   end
   object SYS_FEE_OPTION: TZQuery
     Tag = 1
@@ -1104,6 +1131,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object MKT_ACTIVE_GROUP: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1117,7 +1145,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 664
-    Top = 528
+    Top = 482
     ParamData = <
       item
         DataType = ftUnknown
@@ -1126,6 +1154,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_COLOR_RELATION: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1151,6 +1180,7 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object PUB_SIZE_RELATION: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1167,7 +1197,31 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 800
-    Top = 480
+    Top = 472
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_LOCATION_INFO: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select LOCATION_ID,LOCATION_NAME,LOCATION_SPELL,SHOP_ID from PUB' +
+        '_LOCATION_INFO where  TENANT_ID=:TENANT_ID'
+      'order by LOCATION_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 800
+    Top = 352
     ParamData = <
       item
         DataType = ftUnknown

@@ -80,6 +80,7 @@ type
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
     procedure DemaFrom(id:String);
     function CheckInput:boolean;override;
+    function GetShopId:string;override;
   public
     { Public declarations }
     //½áËã½ð¶î
@@ -903,6 +904,11 @@ begin
      begin
        DemaFrom(s);
      end;
+end;
+
+function TfrmDbOrder.GetShopId: string;
+begin
+  result := edtSHOP_ID.asString;
 end;
 
 end.

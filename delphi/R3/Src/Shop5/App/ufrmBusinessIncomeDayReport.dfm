@@ -1,31 +1,31 @@
 inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
-  Left = -15
-  Top = -4
-  Width = 1296
-  Height = 776
+  Left = 1
+  Top = 1
+  Width = 972
+  Height = 612
   Caption = #33829#19994#26085#27719#24635#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1280
-    Height = 701
+    Width = 956
+    Height = 537
     inherited RzPanel2: TRzPanel
-      Width = 1270
-      Height = 691
+      Width = 946
+      Height = 527
       inherited RzPage: TRzPageControl
-        Width = 1065
-        Height = 685
+        Width = 741
+        Height = 521
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #33829#19994#26085#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 1063
-            Height = 658
+            Width = 739
+            Height = 494
             inherited Panel4: TPanel
-              Width = 1053
-              Height = 648
+              Width = 729
+              Height = 484
               inherited w1: TRzPanel
-                Width = 1053
+                Width = 729
                 Height = 82
                 object RzLabel2: TRzLabel
                   Left = 33
@@ -180,11 +180,11 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 1053
-                Height = 566
+                Width = 729
+                Height = 402
                 inherited DBGridEh1: TDBGridEh
-                  Width = 1049
-                  Height = 562
+                  Width = 725
+                  Height = 398
                   FooterRowCount = 0
                 end
               end
@@ -193,14 +193,14 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1068
-        Height = 685
+        Left = 744
+        Height = 521
         inherited Panel2: TPanel
-          Height = 664
+          Height = 500
           inherited Panel5: TPanel
-            Height = 549
+            Height = 385
             inherited rzShowColumns: TRzCheckList
-              Height = 545
+              Height = 381
             end
           end
         end
@@ -208,15 +208,15 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1280
+    Width = 956
     inherited Image3: TImage
-      Width = 494
+      Width = 170
     end
     inherited Image14: TImage
-      Left = 1260
+      Left = 936
     end
     inherited Image1: TImage
-      Left = 848
+      Left = 524
     end
   end
   inherited mmMenu: TMainMenu

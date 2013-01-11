@@ -20,8 +20,6 @@ inherited frmShopInfo: TfrmShopInfo
       Top = 113
       Width = 524
       Height = 185
-      ActivePage = TabSheet2
-      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -588,6 +586,29 @@ inherited frmShopInfo: TfrmShopInfo
         Font.Style = []
         ParentFont = False
       end
+      object Label29: TLabel
+        Left = 264
+        Top = 83
+        Width = 80
+        Height = 12
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = #40664#35748#20648#20301
+      end
+      object Label30: TLabel
+        Left = 478
+        Top = 83
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = '*'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object edtSHOP_ID: TcxTextEdit
         Tag = 1
         Left = 106
@@ -704,6 +725,43 @@ inherited frmShopInfo: TfrmShopInfo
         DropListStyle = lsFixed
         MultiSelect = False
       end
+      object edtDEF_LOCATION_ID: TzrComboBoxList
+        Left = 356
+        Top = 79
+        Width = 120
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 6
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'LOCATION_NAME;LOCATION_SPELL'
+        KeyField = 'LOCATION_ID'
+        ListField = 'LOCATION_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'LOCATION_NAME'
+            Footers = <>
+            Title.Caption = #20648#20301#21517#31216
+          end>
+        DataSet = cdsLocationInfo
+        DropWidth = 170
+        DropHeight = 228
+        ShowTitle = True
+        AutoFitColWidth = True
+        OnAddClick = edtDEF_LOCATION_IDAddClick
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew, zbClear]
+        DropListStyle = lsFixed
+        OnClearValue = edtDEF_LOCATION_IDClearValue
+        MultiSelect = False
+      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -720,5 +778,65 @@ inherited frmShopInfo: TfrmShopInfo
     Params = <>
     Left = 17
     Top = 295
+  end
+  object cdsLocationInfo: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 440
+    Top = 344
   end
 end

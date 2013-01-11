@@ -217,9 +217,9 @@ begin
         Column.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
         rs.Next;
       end;
+    Column.KeyList.Add('#');
+    Column.PickList.Add('无');
   end;
-  Column.KeyList.Add('#');
-  Column.PickList.Add('无');
 
   rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
   Column := FindColumn(DBGridEh1,'PROPERTY_02');
@@ -232,9 +232,9 @@ begin
         Column.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
         rs.Next;
       end;
+    Column.KeyList.Add('#');
+    Column.PickList.Add('无');
   end;
-  Column.KeyList.Add('#');
-  Column.PickList.Add('无');
 end;
 
 function TfrmGodsComPare.FindColumn(DBGrid: TDBGridEh;

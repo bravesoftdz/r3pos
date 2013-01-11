@@ -219,16 +219,16 @@ begin
   SelectSQL.Text :=
                'select b.GODS_NAME,b.GODS_CODE,j.TENANT_ID,j.SHOP_ID,j.SALES_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,-j.AMOUNT as AMOUNT,j.ORG_PRICE,j.POLICY_TYPE,'+
                'j.IS_PRESENT,-j.BARTER_INTEGRAL as BARTER_INTEGRAL,j.COST_PRICE,j.APRICE,-j.AMONEY as AMONEY,j.AGIO_RATE,-j.AGIO_MONEY as AGIO_MONEY,-j.CALC_AMOUNT as CALC_AMOUNT,-j.CALC_MONEY as CALC_MONEY,'+
-               'j.HAS_INTEGRAL,j.REMARK from SAL_SALESDATA j inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
+               'j.HAS_INTEGRAL,j.REMARK,j.LOCATION_ID from SAL_SALESDATA j inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
   IsSQLUpdate := True;
   Str := 'insert into SAL_SALESDATA(TENANT_ID,SHOP_ID,SALES_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_NO,BOM_ID,UNIT_ID,AMOUNT,ORG_PRICE,'+
-      'POLICY_TYPE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,BARTER_INTEGRAL,HAS_INTEGRAL,REMARK,COST_PRICE) '
+      'POLICY_TYPE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,BARTER_INTEGRAL,HAS_INTEGRAL,REMARK,COST_PRICE,LOCATION_ID) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:SALES_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_NO,:BOM_ID,:UNIT_ID,- :AMOUNT,:ORG_PRICE,'+
-      ':POLICY_TYPE,:IS_PRESENT,:APRICE,- :AMONEY,:AGIO_RATE,- :AGIO_MONEY,- :CALC_AMOUNT,- :CALC_MONEY,- :BARTER_INTEGRAL,:HAS_INTEGRAL,:REMARK,:COST_PRICE)';
+      ':POLICY_TYPE,:IS_PRESENT,:APRICE,- :AMONEY,:AGIO_RATE,- :AGIO_MONEY,- :CALC_AMOUNT,- :CALC_MONEY,- :BARTER_INTEGRAL,:HAS_INTEGRAL,:REMARK,:COST_PRICE,:LOCATION_ID)';
   InsertSQL.Text := str;
   Str := 'update SAL_SALESDATA set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SALES_ID=:SALES_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,LOCUS_NO=:LOCUS_NO,BOM_ID=:BOM_ID,UNIT_ID=:UNIT_ID,'+
       'AMOUNT=- :AMOUNT,ORG_PRICE=:ORG_PRICE,COST_PRICE=:COST_PRICE,POLICY_TYPE=:POLICY_TYPE,IS_PRESENT=:IS_PRESENT,APRICE=:APRICE,AMONEY=- :AMONEY,AGIO_RATE=:AGIO_RATE,AGIO_MONEY=- :AGIO_MONEY,CALC_AMOUNT=- :CALC_AMOUNT,'+
-      'CALC_MONEY=- :CALC_MONEY,BARTER_INTEGRAL=- :BARTER_INTEGRAL,HAS_INTEGRAL=:HAS_INTEGRAL,REMARK=:REMARK '
+      'CALC_MONEY=- :CALC_MONEY,BARTER_INTEGRAL=- :BARTER_INTEGRAL,HAS_INTEGRAL=:HAS_INTEGRAL,REMARK=:REMARK,LOCATION_ID=:LOCATION_ID '
     + 'where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
   UpdateSQL.Text := str;
   Str := 'delete from SAL_SALESDATA where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
@@ -493,7 +493,6 @@ begin
   4:SelectSQL.Text := 'select * from (select SALES_ID from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO and SALES_TYPE=:SALES_TYPE order by GLIDE_NO) tp fetch first 1 rows only';
   5:SelectSQL.Text := 'select SALES_ID from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO and SALES_TYPE=:SALES_TYPE order by GLIDE_NO limit 1';
   end;
-
 end;
 
 { TSalRetuOrderAudit }
@@ -515,6 +514,7 @@ begin
   finally
     rs.Free;
   end;
+  AGlobal.BeginTrans; 
   try
     Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
@@ -523,11 +523,28 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+      rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
+      rs.ParamByName('SALES_ID').AsString := Params.ParambyName('SALES_ID').AsString;
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          IncLocation(AGlobal,rs.Fields[0].AsString,rs.Fields[1].AsString,rs.Fields[2].AsString,rs.Fields[3].AsString,rs.Fields[4].AsString,rs.Fields[5].AsFloat);
+          rs.Next;
+        end;
+    finally
+      rs.Free;
+    end;
+    AGlobal.CommitTrans;
     Result := true;
     Msg := '审核单据成功';
   except
     on E:Exception do
       begin
+        AGlobal.RollbackTrans;
         Result := false;
         Msg := '审核错误'+E.Message;
       end;
@@ -540,7 +557,9 @@ function TSalRetuOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+   rs:TZQuery;
 begin
+   AGlobal.BeginTrans; 
    try
     Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
@@ -549,11 +568,28 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+      rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
+      rs.ParamByName('SALES_ID').AsString := Params.ParambyName('SALES_ID').AsString;
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          DecLocation(AGlobal,rs.Fields[0].AsString,rs.Fields[1].AsString,rs.Fields[2].AsString,rs.Fields[3].AsString,rs.Fields[4].AsString,rs.Fields[5].AsFloat);
+          rs.Next;
+        end;
+    finally
+      rs.Free;
+    end;
+    AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;
   except
     on E:Exception do
        begin
+         AGlobal.RollbackTrans;
          Result := False;
          Msg := '反审核错误:'+E.Message;
        end;

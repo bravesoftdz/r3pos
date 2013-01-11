@@ -49,6 +49,8 @@ type
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure N1Click(Sender: TObject);
     
 
    
@@ -94,7 +96,7 @@ begin
      IsHeadShop := ' and (LOCATION_ID like ''%'+trim(edtKEY.Text)+'%'' or LOCATION_NAME like ''%'+trim(edtKEY.Text)+'%'' or LOCATION_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text :=
-  'Select A.SHOP_ID,LOCATION_ID,B.SHOP_NAME,LOCATION_NAME,LOCATION_SPELL,A.REMARK,0 as SEQ_NO from PUB_LOCATION_INFO A left join CA_SHOP_INFO B ON A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.COMM not in (''02'',''12'') '+IsHeadShop;
+  'Select A.TENANT_ID,A.SHOP_ID,LOCATION_ID,B.SHOP_NAME AS SHOP_ID_TEXT,LOCATION_NAME,LOCATION_SPELL,A.REMARK,0 as SEQ_NO from PUB_LOCATION_INFO A left join CA_SHOP_INFO B ON A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.COMM not in (''02'',''12'') '+IsHeadShop;
   Factor.Open(cdsBrowser);
 end;
 
@@ -125,12 +127,11 @@ begin
   TDbGridEhSort.InitForm(self);
   if ShopGlobal.GetProdFlag = 'E' then
     begin
-      Self.Caption := '仓库档案管理';
-      Label1.Caption := '支持（店名、拼音码、仓库代码）查询';
-      DBGridEh1.Columns[1].Title.Caption := '仓库代码';
-      DBGridEh1.Columns[2].Title.Caption := '所属门店';
+      Self.Caption := '储位管理';
+      Label1.Caption := '支持（储位名、拼音码）查询';
+      DBGridEh1.Columns[2].Title.Caption := '所属仓库';
 
-      RzPage.Pages[0].Caption := '仓库档案查询';
+      RzPage.Pages[0].Caption := '储位档案查询';
     end;
 end;
 
@@ -198,17 +199,18 @@ end;
 
 
 procedure TfrmLocationInfoList.actDeleteExecute(Sender: TObject);
- procedure UpdateToGlobal(str:string);
-  var Temp:TZQuery;
+  procedure UpdateToGlobal(Str:string);
+  var Tmp:TZQuery;
   begin
-    Temp := Global.GetZQueryFromName('pub_location_INFO');
-    Temp.Filtered :=false;
-    if Temp.Locate('location_ID',str,[]) then
+    Tmp := Global.GetZQueryFromName('PUB_LOCATION_INFO');
+    if Tmp.Locate('LOCATION_ID',Str,[]) then
     begin
-      Temp.Delete;
+      Tmp.Delete;
+      //Tmp.CommitUpdates;
     end;
   end;
 var i:integer;
+  ID:string;
 begin
   inherited;
   if (not cdsBrowser.Active) then Exception.Create('没有数据！');
@@ -219,9 +221,11 @@ begin
   if i=6 then
   begin
     try
-      UpdateToGlobal(cdsBrowser.FieldByName('location_ID').AsString);
+      cdsBrowser.CommitUpdates;
+      id := cdsBrowser.FieldByName('LOCATION_ID').AsString;
       cdsBrowser.Delete;
       Factor.UpdateBatch(cdsBrowser,'Tlocation');
+      UpdateToGlobal(id);
     Except
       cdsBrowser.CancelUpdates;
       
@@ -290,6 +294,32 @@ function TfrmLocationInfoList.CheckCanExport: boolean;
 begin
   Result := ShopGlobal.GetChkRight('100002524',6);
 
+end;
+
+procedure TfrmLocationInfoList.FormShow(Sender: TObject);
+begin
+  inherited;
+  actFindExecute(nil);
+end;
+
+procedure TfrmLocationInfoList.N1Click(Sender: TObject);
+begin
+  inherited;
+  case Factor.iDbType of
+  1,4,5:begin
+  Factor.ExecSQL('insert into PUB_LOCATION_INFO(TENANT_ID,SHOP_ID,LOCATION_ID,LOCATION_NAME,LOCATION_SPELL,REMARK,COMM,TIME_STAMP) '+
+                 'select TENANT_ID,SHOP_ID,SHOP_ID||''00000000000000000000000'',''默认储位'',''MRCW'',''仓库的默认存放位置'',''00'',5497000 from CA_SHOP_INFO A where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '+
+                 'not Exists(select * from PUB_LOCATION_INFO where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID)'
+  );
+      end;
+  else
+      begin
+  Factor.ExecSQL('insert into PUB_LOCATION_INFO(TENANT_ID,SHOP_ID,LOCATION_ID,LOCATION_NAME,LOCATION_SPELL,REMARK,COMM,TIME_STAMP) '+
+                 'select TENANT_ID,SHOP_ID,SHOP_ID+''00000000000000000000000'',''默认储位'',''MRCW'',''仓库的默认存放位置'',''00'',5497000 from CA_SHOP_INFO A where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '+
+                 'not Exists(select * from PUB_LOCATION_INFO where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID)'
+  );
+      end;
+  end;
 end;
 
 end.

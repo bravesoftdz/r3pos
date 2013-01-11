@@ -23,6 +23,7 @@ type
     edtREMARK: TcxMemo;
     btnOk: TRzBitBtn;
     btnClose: TRzBitBtn;
+    shop_id: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure edtLOCATION_NAMEPropertiesChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -45,6 +46,7 @@ type
     procedure WriteTo(AObj:TRecord_);
     procedure Edit(code:string);
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;
+    class function AddDialog(Owner:TForm;var AObj:TRecord_;sid,sname:string):boolean;
   end;
 
 
@@ -96,7 +98,7 @@ begin
   if ShopGlobal.GetProdFlag = 'E' then
     begin
      // Label1.Caption := '仓库代码';
-      Label3.Caption := '仓库名称';
+      shop_id.Caption := '所属仓库';
     end;
 end;
 procedure Tfrmlocationinfo.edtLOCATION_NAMEPropertiesChange(
@@ -132,29 +134,16 @@ end;
 
 procedure Tfrmlocationinfo.Save;
  procedure UpdateToGlobal(AObj:TRecord_);
-  var Temp:TZQuery;
+   var Temp:TZQuery;
    begin
-    Temp := Global.GetZQueryFromName('PUB_LOCATION_INFO');
-    if Temp.Locate('location_name',AObj.FieldbyName('location_name').AsString,[]) then
-        begin
-        if (Temp.FieldByName('location_id').AsString<>AObj.FieldbyName('location_id').AsString) then
-         begin
-           if Visible and edtLOCATION_NAME.CanFocus  then edtLOCATION_NAME.SetFocus;
-           Raise Exception.Create('此储位名已经存在，不能重名！') ;
-         end
-        else
-         begin
-         temp.Edit;
-         AObj.WriteToDataSet(Temp);
-         Temp.Post;
-         end;
-        end
-     else
-         begin
-         temp.Append ;
-         AObj.WriteToDataSet(Temp);
-         Temp.Post;
-         end;
+      Temp := Global.GetZQueryFromName('PUB_LOCATION_INFO');
+      Temp.Filtered := false;
+      if Temp.Locate('LOCATION_ID',AObj.FieldByName('LOCATION_ID').AsString,[]) then
+         Temp.Edit
+      else
+         Temp.Append;
+      AObj.WriteToDataSet(Temp,false);
+      Temp.Post;
    end;
 begin
   if trim(edtSHOP_ID.Text)='' then
@@ -169,32 +158,26 @@ begin
   end;
 
   WriteTo(AObj);
-  UpdateToGlobal(AObj);
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;
   cdsTable.Edit;
   AObj.WriteToDataSet(cdsTable);
   cdsTable.Post;
   Factor.UpdateBatch(cdsTable,'TLocation',nil);
+  UpdateToGlobal(AObj);
   dbState := dsBrowse;
   Saved := true;
 end;
 
 procedure Tfrmlocationinfo.SetdbState(const Value: TDataSetState);
-var
-  Name_S:String;
 begin
   inherited;
-  if ShopGlobal.GetProdFlag = 'E' then
-    Name_S := '仓库'
-  else
-    Name_S := '门店';
   btnOk.Visible := (Value<>dsBrowse);
   case Value of
-    dsInsert:Caption := Name_S+'档案--(新增)';
-    dsEdit:Caption := Name_S+'档案--(修改)';
+    dsInsert:Caption := '储位档案--(新增)';
+    dsEdit:Caption := '储位档案--(修改)';
   else
-    Caption := Name_S+'档案';
+    Caption := '储位档案';
   end;
 end;
 
@@ -236,6 +219,27 @@ procedure Tfrmlocationinfo.btnCloseClick(Sender: TObject);
 begin
   inherited;
   close;
+end;
+
+class function Tfrmlocationinfo.AddDialog(Owner: TForm;
+  var AObj: TRecord_;sid,sname:string): boolean;
+begin
+  with Tfrmlocationinfo.Create(Owner) do
+    begin
+      try
+        Append;
+        edtSHOP_ID.KeyValue := sid;
+        edtSHOP_ID.Text := sname;
+        edtSHOP_ID.Properties.ReadOnly := true;
+        SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+        if ShowModal=MROK then
+           begin
+              AObj.ReadFromDataSet(cdsTable);
+           end;
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

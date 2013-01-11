@@ -153,6 +153,7 @@ procedure TfrmUsers.actDeleteExecute(Sender: TObject);
     end;
   end;
 var i:integer;
+  id:string;
 begin
   inherited;
   if (Not Cds_Users.Active) then Exit;
@@ -164,9 +165,10 @@ begin
   begin
     try
       Cds_Users.CommitUpdates;
-      UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
+      id :=  Cds_Users.FieldByName('USER_ID').AsString;
       Cds_Users.Delete;
       Factor.UpdateBatch(Cds_Users,'TUsers');
+      UpdateToGlobal(id);
     Except
       Cds_Users.CancelUpdates;
       Raise;

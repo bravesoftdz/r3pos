@@ -3,6 +3,7 @@ inherited frmLocationInfoList: TfrmLocationInfoList
   Top = 192
   Caption = #20648#20301#26723#26696
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -142,6 +143,7 @@ inherited frmLocationInfoList: TfrmLocationInfoList
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                  PopupMenu = PopupMenu1
                   ReadOnly = True
                   RowHeight = 20
                   TabOrder = 0
@@ -175,7 +177,7 @@ inherited frmLocationInfoList: TfrmLocationInfoList
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_NAME'
+                      FieldName = 'SHOP_ID_TEXT'
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 145
@@ -320,7 +322,8 @@ inherited frmLocationInfoList: TfrmLocationInfoList
     Left = 312
     Top = 171
     object N1: TMenuItem
-      Caption = #36716#25442#25104#24635#24215
+      Caption = #29983#25104#40664#35748#20648#20301
+      OnClick = N1Click
     end
   end
   object cdsBrowser: TZQuery

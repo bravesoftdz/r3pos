@@ -70,6 +70,7 @@ type
   protected
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
     procedure DemaFrom(id:String);
+    function GetShopId:string;override;
   public
     { Public declarations }
     function CheckInput:boolean;override;
@@ -83,6 +84,7 @@ type
     procedure SaveOrder;override;
     procedure CancelOrder;override;
     procedure AuditOrder;override;
+    procedure AutoAudit;
     procedure Open(id:string);override;
     property CodeId:string read FCodeId write SetCodeId;
   end;
@@ -342,14 +344,14 @@ begin
   cid := edtSHOP_ID.AsString;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
-  if ((CodeId = '1') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14300001',5))
-     or
-     ((CodeId = '2') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14200001',5))
-  then
-     begin
-       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
-       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
-     end;
+//  if ((CodeId = '1') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14300001',5))
+//     or
+//     ((CodeId = '2') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14200001',5))
+//  then
+//     begin
+//       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+//       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
+//     end;
   Factor.BeginBatch;
   try
     cdsHeader.Edit;
@@ -387,6 +389,15 @@ begin
   end;
   open(oid);
   dbState := dsBrowse;
+
+  if ((CodeId = '1') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14300001',5))
+     or
+     ((CodeId = '2') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14200001',5))
+  then
+     begin
+       AutoAudit;
+     end;
+
 end;
 
 procedure TfrmChangeOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
@@ -843,6 +854,43 @@ begin
      begin
        DemaFrom(s);
      end;
+end;
+
+function TfrmChangeOrder.GetShopId: string;
+begin
+  result := edtSHOP_ID.AsString;
+end;
+
+procedure TfrmChangeOrder.AutoAudit;
+var
+  Msg :string;
+  Params:TftParamList;
+begin
+  inherited;
+  if cdsHeader.FieldByName('FROM_ID').AsString<>'' then Raise Exception.Create('盘点任务生成的损益单不能在此操作,请到盘点模块使用此功能...');
+  if cdsHeader.IsEmpty then Raise Exception.Create('不能审核空单据');
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('SHOP_ID').asString := edtSHOP_ID.AsString;
+      Params.ParamByName('CHANGE_ID').asString := cdsHeader.FieldbyName('CHANGE_ID').AsString;
+      Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+      Params.ParamByName('CHK_USER').asString := Global.UserID;
+      if not IsAudit then
+         Msg := Factor.ExecProc('TChangeOrderAudit',Params)
+      else
+         Msg := Factor.ExecProc('TChangeOrderUnAudit',Params) ;
+    finally
+       Params.free;
+    end;
+  except
+    on E:Exception do
+       begin
+         Raise Exception.Create(E.Message);
+       end;
+  end;
+  Open(oid);
 end;
 
 end.

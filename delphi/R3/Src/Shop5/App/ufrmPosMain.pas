@@ -377,6 +377,7 @@ type
     procedure ConvertUnit;
     procedure ConvertPresent;
     function  PrintSQL(tenantid,id:string):string;
+    function GetDefLocation:string;
 
     procedure LoadFile(cName: string);
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
@@ -586,6 +587,7 @@ begin
         cdsTable.FieldByName('PROPERTY_01').AsString := P1;
         cdsTable.FieldByName('PROPERTY_02').AsString := P2;
         cdsTable.FieldbyName('BATCH_NO').AsString := '#';
+        cdsTable.FieldbyName('LOCATION_ID').AsString := GetDefLocation;
         cdsTable.Post;
      end;
   finally
@@ -2463,6 +2465,8 @@ begin
              cdsLocusNo.FieldByName('LOCUS_DATE').AsInteger := cdsHeader.FieldByName('SALES_DATE').AsInteger;
              cdsLocusNo.Post;
            end;
+         if cdsTable.FieldByName('LOCATION_ID').AsString='' then
+            cdsTable.FieldByName('SALES_ID').AsString := GetDefLocation;
          cdsTable.Next;
        end;
     finally
@@ -5146,6 +5150,18 @@ begin
     rs.free;
     obj.free;
   end;
+end;
+
+function TfrmPosMain.GetDefLocation: string;
+var
+  rs:TZQuery;
+begin
+  inherited;
+  rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+  if rs.Locate('SHOP_ID',Global.SHOP_ID,[]) then
+     result := rs.FieldbyName('DEF_LOCATION_ID').AsString;
+  if result='' then
+     result := Global.SHOP_ID+'00000000000000000000000';
 end;
 
 end.

@@ -132,6 +132,7 @@ type
     edtRECEIVE_HINT: TcxCheckBox;
     TabSheet5: TTabSheet;
     CB_REPORT_GODS_MULTI: TcxCheckBox;
+    edtZERO_LCT_OUT: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -205,6 +206,13 @@ begin
         edtZERO_OUT.Checked := True
       else if (Value = '0') or (Value = '') then
         edtZERO_OUT.Checked := False
+    end
+    else if Define = 'ZERO_LCT_OUT' then
+    begin
+      if Value = '1' then
+        edtZERO_LCT_OUT.Checked := True
+      else if (Value = '0') or (Value = '') then
+        edtZERO_LCT_OUT.Checked := False
     end
     else if Define = 'RTL_RATE2' then
       begin
@@ -466,6 +474,10 @@ begin
     SetValue('ZERO_OUT', '1')
   else
     SetValue('ZERO_OUT', '0');
+  if edtZERO_LCT_OUT.Checked then
+    SetValue('ZERO_LCT_OUT', '1')
+  else
+    SetValue('ZERO_LCT_OUT', '0');
   if edtGUIDE_USER.Checked then
     SetValue('GUIDE_USER', '1')
   else

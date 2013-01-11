@@ -7,10 +7,10 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 788
-    Height = 525
+    Width = 780
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 778
+      Width = 770
       Height = 140
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -491,8 +491,8 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 421
-      Width = 778
+      Top = 410
+      Width = 770
       Height = 62
       TabOrder = 2
       object Label8: TLabel
@@ -693,8 +693,8 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 178
-      Width = 778
-      Height = 243
+      Width = 770
+      Height = 232
       TabOrder = 3
       Columns = <
         item
@@ -800,6 +800,13 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         end
         item
           EditButtons = <>
+          FieldName = 'LOCATION_ID'
+          Footers = <>
+          Title.Caption = #20648#20301
+          Width = 88
+        end
+        item
+          EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791#27880
@@ -812,15 +819,15 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 145
-      Width = 778
+      Width = 770
     end
     inherited stbHint: TRzPanel
-      Top = 483
-      Width = 778
+      Top = 472
+      Width = 770
     end
     inherited rzHelp: TRzPanel
-      Top = 507
-      Width = 778
+      Top = 496
+      Width = 770
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox
@@ -887,6 +894,11 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Name = 'BATCH_NO'
         DataType = ftString
         Size = 20
+      end
+      item
+        Name = 'LOCATION_ID'
+        DataType = ftString
+        Size = 36
       end
       item
         Name = 'IS_PRESENT'

@@ -841,7 +841,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
       Top = 208
     end
     inherited fndBATCH_NO: TzrComboBoxList
-      TabOrder = 9
+      TabOrder = 10
     end
     object pnlFEE: TPanel
       Left = 5

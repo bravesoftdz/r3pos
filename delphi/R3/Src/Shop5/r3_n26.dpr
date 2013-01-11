@@ -352,7 +352,10 @@ uses
   ufrmSizeGroupInfo in 'App\ufrmSizeGroupInfo.pas' {frmSizeGroupInfo},
   ufrmSizeInfo in 'App\ufrmSizeInfo.pas' {frmSizeInfo},
   ufrmColorInfo in 'App\ufrmColorInfo.pas' {frmColorInfo},
-  ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber};
+  ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber},
+  ufrmGodsComPare in 'App\ufrmGodsComPare.pas' {frmGodsComPare},
+  ufrmBatchNo in 'App\ufrmBatchNo.pas' {frmBatchNo},
+  ufrmBatchNoInfo in 'App\ufrmBatchNoInfo.pas' {frmBatchNoInfo};
 
 {$R *.res}
 var

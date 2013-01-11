@@ -33,6 +33,9 @@ function GetSequence(AGlobal:IdbHelp;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Int
 //flag 1 进货单，2 销售单 3 其他单
 procedure IncStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO: String;amt,mny: Real;flag:integer);
 procedure DecStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:String; amt,mny:Real;flag:integer);
+//flag 1 进货单，2 销售单 3 其他单
+procedure IncLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO: String;amt: Real);
+procedure DecLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO:String; amt: Real);
 function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
 
 function NewId(id:string): string;
@@ -660,6 +663,48 @@ begin
            Str := 'insert into STO_STORAGE(ROWS_ID,GODS_ID,TENANT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,NEAR_OUTDATE,SHOP_ID,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
                   'values('''+NewId(SHOP_ID)+''','''+GODS_ID+''','+TENANT_ID+','''+PROPERTY_01+''','''+PROPERTY_02+''','''+BATCH_NO+''','''+formatDatetime('YYYY-MM-DD',Date())+''','''+SHOP_ID+''','+
                   FormatFloat('#0.000',-Mny) +','+FormatFloat('#0.000',-Amt)+','+FormatFloat('#0.000000',CostPrice)+',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+           AGlobal.ExecSQL(Str);
+        end;
+end;
+procedure IncLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO: String; amt: Real);
+var Str:string;
+    n:Integer;
+begin
+    if (amt=0) then Exit;
+    if trim(BATCH_NO)='' then BATCH_NO := '#';
+    if trim(LOCATION_ID)='' then LOCATION_ID := SHOP_ID+'00000000000000000000000';
+    Str :=
+      'update STO_GOODS_LOCATION set '+
+      'AMOUNT=round(AMOUNT + '+FormatFloat('#0.000',amt)+',3),'+
+      'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
+      'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and LOCATION_ID='''+LOCATION_ID+''' and BATCH_NO='''+BATCH_NO+''' ';
+     n := AGlobal.ExecSQL(Str) ;
+     if n=0 then
+        begin
+           Str := 'insert into STO_GOODS_LOCATION(GODS_ID,TENANT_ID,SHOP_ID,LOCATION_ID,BATCH_NO,AMOUNT,COMM,TIME_STAMP) '+
+                  'values('''+GODS_ID+''','+TENANT_ID+','''+SHOP_ID+''','''+LOCATION_ID+''','''+BATCH_NO+''','+
+                  FormatFloat('#0.000',Amt)+',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+           AGlobal.ExecSQL(Str);
+        end;
+end;
+procedure DecLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO:String; amt:Real);
+var Str:string;
+    n:Integer;
+begin
+    if (amt=0) then Exit;
+    if trim(BATCH_NO)='' then BATCH_NO := '#';
+    if trim(LOCATION_ID)='' then LOCATION_ID := SHOP_ID+'00000000000000000000000';
+    Str :=
+      'update STO_GOODS_LOCATION set '+
+      'AMOUNT=round(AMOUNT + '+FormatFloat('#0.000',-amt)+',3),'+
+      'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
+      'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and LOCATION_ID='''+LOCATION_ID+''' and BATCH_NO='''+BATCH_NO+''' ';
+     n := AGlobal.ExecSQL(Str) ;
+     if n=0 then
+        begin
+           Str := 'insert into STO_GOODS_LOCATION(GODS_ID,TENANT_ID,SHOP_ID,LOCATION_ID,BATCH_NO,AMOUNT,COMM,TIME_STAMP) '+
+                  'values('''+GODS_ID+''','+TENANT_ID+','''+SHOP_ID+''','''+LOCATION_ID+''','''+BATCH_NO+''','+
+                  FormatFloat('#0.000',-Amt)+',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
            AGlobal.ExecSQL(Str);
         end;
 end;

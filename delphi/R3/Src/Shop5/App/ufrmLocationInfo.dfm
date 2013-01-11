@@ -106,7 +106,7 @@ inherited frmlocationinfo: Tfrmlocationinfo
       Align = alTop
       BorderOuter = fsNone
       TabOrder = 2
-      object TLabel
+      object shop_id: TLabel
         Left = 13
         Top = 44
         Width = 48
@@ -166,13 +166,13 @@ inherited frmlocationinfo: Tfrmlocationinfo
             Footers = <>
             Title.Caption = #38376#24215#21517#31216
           end>
-        DropWidth = 290
+        DropWidth = 230
         DropHeight = 228
         ShowTitle = True
         AutoFitColWidth = True
-        ShowButton = True
+        ShowButton = False
         LocateStyle = lsDark
-        Buttons = [zbNew, zbClear, zbFind]
+        Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
       end

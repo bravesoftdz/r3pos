@@ -108,6 +108,7 @@ type
     procedure IndeFrom(id:string);
     procedure SetdbState(const Value: TDataSetState); override;
     procedure BatchNoDropList; override;
+    function GetShopId:string;override;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -130,6 +131,7 @@ type
     procedure SaveOrder;override;
     procedure CancelOrder;override;
     procedure AuditOrder;override;
+    procedure AutoAudit;
     procedure Open(id:string);override;
     procedure PrintBarcode;
     //2011.04.12 晚 增加 到货确认填充 订单
@@ -368,11 +370,11 @@ begin
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
-  if (ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('11200001',5) then
-     begin
-       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
-       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
-     end;
+  //if (ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('11200001',5) then
+  //   begin
+  //     AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  //     AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
+  //   end;
   //下载订单:COMM_ID
   if (not edtCLIENT_ID.Enabled) and (not edtSHOP_ID.Enabled) and (DBGridEh1.ReadOnly) and (FDownOrderID<>'') then
     AObj.FieldByName('COMM_ID').AsString:=FDownOrderID
@@ -424,6 +426,12 @@ begin
   end;
   Open(oid);
   dbState := dsBrowse;
+
+  if (ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('11200001',5) then
+     begin
+       AutoAudit;
+     end;
+
 end;
 
 procedure TfrmStockOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
@@ -662,7 +670,7 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
-}    
+}
   except
     on E:Exception do
        begin
@@ -1488,6 +1496,41 @@ begin
   finally
      obj.free;
   end;
+end;
+
+function TfrmStockOrder.GetShopId: string;
+begin
+  result := edtSHOP_ID.asString;
+end;
+
+procedure TfrmStockOrder.AutoAudit;
+var
+  Msg :string;
+  Params:TftParamList;
+begin
+  inherited;
+  if cdsHeader.IsEmpty then Raise Exception.Create('不能审核空单据');
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('STOCK_ID').asString := cdsHeader.FieldbyName('STOCK_ID').AsString;
+      Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+      Params.ParamByName('CHK_USER').asString := Global.UserID;
+      if not IsAudit then
+         Msg := Factor.ExecProc('TStockOrderAudit',Params)
+      else
+         Msg := Factor.ExecProc('TStockOrderUnAudit',Params) ;
+    finally
+       Params.free;
+    end;
+  except
+    on E:Exception do
+       begin
+         Raise Exception.Create(E.Message);
+       end;
+  end;
+  Open(oid);
 end;
 
 end.

@@ -58,6 +58,7 @@ type
     MKT_ACTIVE_GROUP: TZQuery;
     PUB_COLOR_RELATION: TZQuery;
     PUB_SIZE_RELATION: TZQuery;
+    PUB_LOCATION_INFO: TZQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     Fokline: boolean;

@@ -1,5 +1,5 @@
 inherited frameToolForm: TframeToolForm
-  Left = 213
+  Left = 215
   Top = 36
   Width = 764
   Height = 533

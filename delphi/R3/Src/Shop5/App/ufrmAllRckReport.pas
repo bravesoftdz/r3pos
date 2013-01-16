@@ -1258,6 +1258,7 @@ begin
             SALE_PRF_RATE:=0;
           Text:=FormatFloat(Column.DisplayFormat,SALE_PRF_RATE);
         end else
+          if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
           Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end else
       if ColName='CX_RATE' then

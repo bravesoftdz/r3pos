@@ -1394,6 +1394,7 @@ begin
       if (ColName='DBIN_AMT') or (ColName='DBIN_PRC') or (ColName='DBIN_CST') or (ColName='DBIN_RTL') or
          (ColName='DBOUT_AMT') or (ColName='DBOUT_PRC') or (ColName='DBOUT_CST') or (ColName='DBOUT_RTL') then
       begin
+        if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
         Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end;
     end;

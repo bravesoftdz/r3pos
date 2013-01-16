@@ -29,6 +29,8 @@ begin
         'BAL_CST=round(:ADJ_PRICE*isnull(BAL_AMT,0),2),'+
         'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where TENANT_ID=:OLD_TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
+  //2012.12.28对(:ADJ_PRICE*isnull(BAL_AMT,0),2))带参数相乘有小数位误差，修改将带参数替换成参数值
+  Str:=StringReplace(Str,':ADJ_PRICE',FloatToStr(FieldByName('ADJ_PRICE').AsFloat),[rfReplaceAll]);
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
   //对最后一天的日账表进行处理
   Str :='update RCK_GOODS_DAYS set '+

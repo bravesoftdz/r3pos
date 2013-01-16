@@ -1337,6 +1337,7 @@ begin
     begin
       if (ColName='AMOUNT') or (ColName='APRICE') or (ColName='AMONEY') or (ColName='COST_MONEY') or (ColName='PROFIT_MONEY') then
       begin
+        if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
         Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end;
     end;

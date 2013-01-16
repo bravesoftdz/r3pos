@@ -1346,6 +1346,7 @@ begin
     begin
       if (Copy(ColName,1,6)='STOCK_') or (Copy(ColName,1,4)='AVG_') then
       begin
+        if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
         Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end;
     end;

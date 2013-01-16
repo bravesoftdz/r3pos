@@ -1341,6 +1341,7 @@ begin
          (Copy(ColName,1,5)='SALE_') or (Copy(ColName,1,5)='DBIN_') or
          (Copy(ColName,1,6)='DBOUT_') or (Copy(ColName,1,4)='BAL_') then
       begin
+        if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
         Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end
     end;

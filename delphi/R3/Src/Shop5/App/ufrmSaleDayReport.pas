@@ -1904,9 +1904,11 @@ begin
   begin
     if (Copy(ColName,1,5)='SALE_') and (AllRecord.FindField(ColName)<>nil) then
     begin
+      if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
       Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
     end;
   end;
+
 end;
 
 procedure TfrmSaleDayReport.DBGridEh1DrawColumnCell(Sender: TObject;

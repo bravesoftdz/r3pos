@@ -133,6 +133,8 @@ type
     TabSheet5: TTabSheet;
     CB_REPORT_GODS_MULTI: TcxCheckBox;
     edtZERO_LCT_OUT: TcxCheckBox;
+    edtUSING_BATCH_NO: TcxCheckBox;
+    edtUSING_LOCATION: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -201,6 +203,13 @@ begin
     Define := cdsTable.FieldByName('DEFINE').AsString;
     Value := cdsTable.FieldByName('VALUE').AsString;
     if Define = 'ZERO_OUT' then
+    begin
+      if Value = '1' then
+        edtZERO_OUT.Checked := True
+      else if (Value = '0') or (Value = '') then
+        edtZERO_OUT.Checked := False
+    end
+    else if Define = 'ZERO_OUT' then
     begin
       if Value = '1' then
         edtZERO_OUT.Checked := True

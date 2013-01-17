@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 540
-  Top = 234
+  Left = 183
+  Top = 257
   Width = 441
   Height = 323
   BorderIcons = [biSystemMenu]
@@ -15,7 +15,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 425
     Height = 242
-    ActivePage = TabSheet4
+    ActivePage = tabBasic
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 425
-        Height = 226
+        Width = 417
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -75,7 +75,7 @@ inherited frmSysDefine: TfrmSysDefine
         Left = 18
         Top = 120
         Width = 196
-        Height = 81
+        Height = 84
         Caption = #26376#32467#36873#39033
         TabOrder = 2
         object edtRECK_OPTION1: TcxRadioButton
@@ -112,7 +112,7 @@ inherited frmSysDefine: TfrmSysDefine
         Left = 226
         Top = 36
         Width = 169
-        Height = 117
+        Height = 101
         Caption = #36755#20837#36873#39033
         TabOrder = 3
         object Label18: TLabel
@@ -160,14 +160,36 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object chkAUTO_SYNC: TcxCheckBox
         Left = 222
-        Top = 168
+        Top = 185
         Width = 156
         Height = 21
         Properties.DisplayUnchecked = 'False'
         Properties.ReadOnly = False
-        Properties.Caption = #26159#21542#21551#29992#33258#21160#25968#25454#19978#25253
+        Properties.Caption = #21551#29992#33258#21160#25968#25454#19978#25253
         State = cbsChecked
         TabOrder = 4
+      end
+      object edtUSING_BATCH_NO: TcxCheckBox
+        Left = 222
+        Top = 143
+        Width = 156
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.ReadOnly = False
+        Properties.Caption = #21551#29992#25209#21495#31649#29702
+        State = cbsChecked
+        TabOrder = 5
+      end
+      object edtUSING_LOCATION: TcxCheckBox
+        Left = 222
+        Top = 164
+        Width = 156
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.ReadOnly = False
+        Properties.Caption = #21551#29992#20648#20301#31649#29702
+        State = cbsChecked
+        TabOrder = 6
       end
     end
     object tabStock: TTabSheet
@@ -176,8 +198,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 425
-        Height = 226
+        Width = 417
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -367,8 +389,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel5: TBevel
         Left = 0
         Top = 0
-        Width = 425
-        Height = 226
+        Width = 417
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -552,8 +574,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel3: TBevel
         Left = 0
         Top = 0
-        Width = 425
-        Height = 226
+        Width = 417
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -757,8 +779,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel4: TBevel
         Left = 0
         Top = 0
-        Width = 425
-        Height = 226
+        Width = 417
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end

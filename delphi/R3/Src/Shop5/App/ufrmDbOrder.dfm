@@ -563,13 +563,6 @@ inherited frmDbOrder: TfrmDbOrder
         end
         item
           EditButtons = <>
-          FieldName = 'LOCATION_ID'
-          Footers = <>
-          Title.Caption = #20648#20301
-          Width = 91
-        end
-        item
-          EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791#27880

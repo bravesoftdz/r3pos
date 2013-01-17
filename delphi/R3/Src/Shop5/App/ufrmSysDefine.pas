@@ -202,12 +202,19 @@ begin
   begin
     Define := cdsTable.FieldByName('DEFINE').AsString;
     Value := cdsTable.FieldByName('VALUE').AsString;
-    if Define = 'ZERO_OUT' then
+    if Define = 'USING_LOCATION' then
     begin
       if Value = '1' then
-        edtZERO_OUT.Checked := True
+        edtUSING_LOCATION.Checked := True
       else if (Value = '0') or (Value = '') then
-        edtZERO_OUT.Checked := False
+        edtUSING_LOCATION.Checked := False
+    end
+    else if Define = 'USING_BATCH_NO' then
+    begin
+      if Value = '1' then
+        edtUSING_BATCH_NO.Checked := True
+      else if (Value = '0') or (Value = '') then
+        edtUSING_BATCH_NO.Checked := False
     end
     else if Define = 'ZERO_OUT' then
     begin
@@ -479,6 +486,14 @@ var
 begin
   inherited;
   SetValue('USING_DATE', FormatDateTime('YYYY-MM-DD', edtUSING_DATE.Date));
+  if edtUSING_BATCH_NO.Checked then
+    SetValue('USING_BATCH_NO', '1')
+  else
+    SetValue('USING_BATCH_NO', '0');
+  if edtUSING_LOCATION.Checked then
+    SetValue('USING_LOCATION', '1')
+  else
+    SetValue('USING_LOCATION', '0');
   if edtZERO_OUT.Checked then
     SetValue('ZERO_OUT', '1')
   else

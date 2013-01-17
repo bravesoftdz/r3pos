@@ -210,6 +210,7 @@ begin
     //修改价格日志:
     Params.ParamByName('ROWS_ID').AsString:=NewId(''); //日志日期
     Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date()); //日志日期
+    Params.ParamByName('PRICING_USER').AsString:='admin'; 
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;    //企业ID
     Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;        //门店ID
     Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;        //商品ID
@@ -412,13 +413,14 @@ begin
   begin
     Params.ParamByName('ROWS_ID').AsString:=NewId('');
     Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date());
+    Params.ParamByName('PRICING_USER').AsString:='admin';     
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;
     Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;
     Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;
     Params.ParamByName('PRICE_METHOD').AsString:='1';
-    Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('ORG_OUTPRICE').AsOldFloat;
-    Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('ORG_OUTPRICE1').AsOldFloat;
-    Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('ORG_OUTPRICE2').AsOldFloat;
+    Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsOldFloat;
+    Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsOldFloat;
+    Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsOldFloat;
     Params.ParamByName('NEW_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsFloat;
     Params.ParamByName('NEW_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsFloat;
     Params.ParamByName('NEW_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsFloat;

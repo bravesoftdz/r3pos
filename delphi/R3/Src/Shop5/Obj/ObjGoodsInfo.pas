@@ -41,6 +41,12 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  {==服装版本附加条码使用(打印库存没有条码)==}
+  TEXT_BARCODEForStock=class(TZFactory)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 
   {== 商品单价 ==}
   TGoodsPrice=class(TZFactory)
@@ -458,18 +464,38 @@ begin
 end;
 
 
+{ TEXT_BARCODEForStock }
+
+function TEXT_BARCODEForStock.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str: string;
+begin
+  Str :=
+    'update PUB_BARCODE set BATCH_NO=:BATCH_NO,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BARCODE=:BARCODE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' where TENANT_ID=:TENANT_ID and BARCODE_TYPE=:BARCODE_TYPE and UNIT_ID=:UNIT_ID and GODS_ID=:GODS_ID and PROPERTY_01=:PROPERTY_01 and '+
+    ' PROPERTY_02=:PROPERTY_02';
+  if AGlobal.ExecSQL(Str, self)=0 then
+  begin
+    Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
+         ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
+    AGlobal.ExecSQL(Str,self);
+  end;
+end;
+
 initialization
   RegisterClass(TGoodsInfo);
   RegisterClass(TPUB_BARCODE);
   RegisterClass(TEXT_BARCODE);
   RegisterClass(TGoodsPrice);
+  RegisterClass(TEXT_BARCODEForStock);
 
 finalization
   UnRegisterClass(TGoodsInfo);
   UnRegisterClass(TPUB_BARCODE);
   UnRegisterClass(TEXT_BARCODE);
   UnRegisterClass(TGoodsPrice);
-
+  UnRegisterClass(TEXT_BARCODEForStock);
+  
 end.
 
 

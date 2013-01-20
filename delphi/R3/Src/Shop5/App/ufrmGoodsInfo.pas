@@ -210,9 +210,11 @@ type
     procedure fndPROPERTY_02SaveValue(Sender: TObject);
     procedure fndPROPERTY_01BeforeDropList(Sender: TObject);
     procedure fndPROPERTY_02BeforeDropList(Sender: TObject);
+    procedure fndUNIT_IDBeforeDropList(Sender: TObject);
   private
     InputMode : Integer;   //输入模式
     DropUNITS_Ds: TZQuery;
+    ExtUNITS_Ds: TZQuery;
     FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
     FSortName: string;    //Append传入的SortName值
@@ -391,6 +393,11 @@ var
   rs:TZQuery;
 begin
   inherited;
+  //2013.01.20增加扩展条码数据集
+  ExtUNITS_Ds:=TZQuery.Create(self);
+  ExtUNITS_Ds.Data:=Global.GetZQueryFromName('PUB_MEAUNITS').Data;
+  fndUNIT_ID.DataSet:=ExtUNITS_Ds;
+  
   RzPage.ActivePageIndex := 0;
   CheckCLVersionSetParams; //判断行业版本设置相应控件: 服装版本显示颜色和条码组
   TabGoodPrice.TabVisible:=False;  //价格管理分页 默认为False;
@@ -2895,7 +2902,6 @@ begin
     edtCALC_UNITS.DataSet:=DropUNITS_Ds;
     edtSMALL_UNITS.DataSet:=DropUNITS_Ds;
     edtBIG_UNITS.DataSet:=DropUNITS_Ds;
-    fndUNIT_ID.DataSet:=DropUNITS_Ds;
   end;
   
   Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
@@ -3261,7 +3267,7 @@ begin
   try
     ExtObj:=TRecord_.Create;
     ExtObj.ReadFromDataSet(ExtBarCode);
-    if (ShopGlobal.GetVersionFlag=1) and (ExtObj.FieldByName('BARCODE').AsString='') then
+    if ShopGlobal.GetVersionFlag=1 then
     begin
       if CreateExtBarcode(ExtObj) then
       begin
@@ -3677,7 +3683,7 @@ begin
   try
     ExtObj:=TRecord_.Create;
     ExtObj.ReadFromDataSet(ExtBarCode);
-    if (ShopGlobal.GetVersionFlag=1) and (ExtObj.FieldByName('BARCODE').AsString='') then
+    if ShopGlobal.GetVersionFlag=1 then
     begin
       if CreateExtBarcode(ExtObj) then
       begin
@@ -3701,7 +3707,7 @@ begin
   try
     ExtObj:=TRecord_.Create;
     ExtObj.ReadFromDataSet(ExtBarCode);
-    if (ShopGlobal.GetVersionFlag=1) and (ExtObj.FieldByName('BARCODE').AsString='') then
+    if ShopGlobal.GetVersionFlag=1 then
     begin
       if CreateExtBarcode(ExtObj) then
       begin
@@ -3735,7 +3741,7 @@ begin
   if PROPERTY_02='' then PROPERTY_02:='#'; //颜色
 
   //单位为空，尺码和颜色任意一个不为空时生成扩展条码
-  if (UNIT_ID<>'') and ((PROPERTY_01<>'#')or(PROPERTY_02<>'#')) and (BarCode='') then
+  if (UNIT_ID<>'') and ((PROPERTY_01<>'#')or(PROPERTY_02<>'#')) then
   begin
     Size_BAR_FLAG:='#';
     Color_BAR_FLAG:='#';
@@ -3754,11 +3760,11 @@ begin
         Color_BAR_FLAG:=tmp.FieldByName('BARCODE_FLAG').AsString;
     end;
     if (length(edtBARCODE1.Text)>0) and (edtBARCODE1.Text[1]='8') then
-     CreateBarcode := copy(edtBARCODE1.Text,2,6)
+      CreateBarcode := copy(edtBARCODE1.Text,2,6)
     else if (length(edtGODS_CODE.Text)=6) and fnString.IsNumberChar(edtGODS_CODE.Text) then
-     CreateBarcode := AObj.FieldByName('GODS_CODE').AsString
+      CreateBarcode := AObj.FieldByName('GODS_CODE').AsString
     else
-     CreateBarcode := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+      CreateBarcode := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
     //生成条码
     ExtObj.FieldByName('BARCODE').AsString:=GetBarCode(CreateBarcode,Size_BAR_FLAG,Color_BAR_FLAG);
     result:=true;
@@ -3842,6 +3848,48 @@ begin
     tmpQry.Filtered:=False;
     tmpQry.Filter:='';
   end;
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDBeforeDropList(Sender: TObject);
+ procedure AddUnitObj(UnitID:string);
+ var
+   tmp:TZQuery;
+   UnitObj:TRecord_;
+ begin
+   tmp:=Global.GetZQueryFromName('PUB_MEAUNITS');
+   if ExtUNITS_Ds.Locate('UNIT_ID',UnitID,[]) then Exit; //已存在就不需要添加
+   if tmp.Locate('UNIT_ID',UnitID,[]) then
+   begin
+     try
+       UnitObj:=TRecord_.Create;
+       ExtUNITS_Ds.Append;
+       UnitObj.ReadFromDataSet(tmp);
+       UnitObj.WriteToDataSet(ExtUNITS_Ds);
+       ExtUNITS_Ds.Post;
+     finally
+       UnitObj.Free;
+     end;
+   end;
+ end;
+var
+  i:integer;
+begin
+  inherited;
+  //清空记录
+  ExtUNITS_Ds.First;
+  while not ExtUNITS_Ds.Eof do
+  begin
+    ExtUNITS_Ds.Delete;
+  end;
+  //插入三个计量单位
+  if edtCALC_UNITS.AsString<>'' then //计量单位
+    AddUnitObj(edtCALC_UNITS.AsString);
+  //小件单位
+  if edtSMALL_UNITS.AsString<>'' then
+    AddUnitObj(edtSMALL_UNITS.AsString);
+    //大件单位
+  if edtBIG_UNITS.AsString<>'' then
+    AddUnitObj(edtBIG_UNITS.AsString);
 end;
 
 end.

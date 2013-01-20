@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
+      ActivePage = TabSheet4
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 3
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -882,6 +884,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Buttons = []
             DropListStyle = lsFixed
             OnSaveValue = fndUNIT_IDSaveValue
+            OnBeforeDropList = fndUNIT_IDBeforeDropList
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end

@@ -404,8 +404,6 @@ var
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
-  edtSTOR_AMT.ItemIndex := 0;
-  NEAR_SALE.ItemIndex := 0;
   TDbGridEhSort.InitForm(Self);
   DefStateIDS:=GetGodsStateValue; 
   AddGoodTypeItems(edtGoods_Type,DefStateIDS);
@@ -415,7 +413,7 @@ begin
   edtGoods_Type.Properties.DropDownListStyle:=lsFixedList;
   edtP2_Goods_Type.Properties.DropDownListStyle:=lsFixedList;
   edtP3_Goods_Type.Properties.DropDownListStyle:=lsFixedList;
-  InitGrid;                                                       
+  InitGrid;
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
        FindColumn(Grid,'STOCK_MNY').Free;
@@ -465,6 +463,11 @@ begin
       Label21.Caption := '≤÷ø‚√˚≥∆';
     end;
 
+  edtSTOR_AMT.ItemIndex := 0;
+  NEAR_SALE.ItemIndex := 0;
+  edtUNIT_ID.ItemIndex := 0;
+  edtP2_UNIT_ID.ItemIndex := 0;
+  edtP3_UNIT_ID.ItemIndex := 0;
   //2011.09.22 Add «ß∑÷Œª£ª
   SetGridColumnDisplayFormat(['DBGridEh1.SALE_MNY','DBGridEh1.STOCK_MNY','DBGridEh2.STOCK_MNY']);
 end;

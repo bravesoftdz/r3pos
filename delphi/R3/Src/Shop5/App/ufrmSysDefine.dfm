@@ -102,7 +102,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 41
           Height = 20
           Properties.MaxValue = 28.000000000000000000
-          Properties.MinValue = 26.000000000000000000
+          Properties.MinValue = 24.000000000000000000
           TabOrder = 2
           Value = 28
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1057,20 +1057,6 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #20801#35768#38646#20648#20301#24211#23384#20986#24211
         TabOrder = 5
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-    end
-    object TabSheet5: TTabSheet
-      Caption = #20854#20182#36873#39033
-      ImageIndex = 6
-      object CB_REPORT_GODS_MULTI: TcxCheckBox
-        Left = 14
-        Top = 9
-        Width = 123
-        Height = 21
-        Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #25253#34920#21551#29992#21830#21697#22810#36873
-        TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

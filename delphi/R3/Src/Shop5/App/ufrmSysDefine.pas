@@ -130,8 +130,6 @@ type
     chkAUTO_SYNC: TcxCheckBox;
     edtSEND_HINT: TcxCheckBox;
     edtRECEIVE_HINT: TcxCheckBox;
-    TabSheet5: TTabSheet;
-    CB_REPORT_GODS_MULTI: TcxCheckBox;
     edtZERO_LCT_OUT: TcxCheckBox;
     edtUSING_BATCH_NO: TcxCheckBox;
     edtUSING_LOCATION: TcxCheckBox;
@@ -472,8 +470,8 @@ begin
          edtInLevel1.Checked := true;
     end;
     //2012.09.22报表启用商品多选
-    if Define = 'REPORT_GODS_MULTI' then
-      CB_REPORT_GODS_MULTI.Checked:=(trim(Value)='1');
+    //if Define = 'REPORT_GODS_MULTI' then
+    //  CB_REPORT_GODS_MULTI.Checked:=(trim(Value)='1');
 
     cdsTable.Next;
   end;
@@ -637,10 +635,10 @@ begin
   else if  edtInLevel2.Checked then
     SetValue('InLevel', '2');
   //2012.09.22报表启用商品多选
-  if CB_REPORT_GODS_MULTI.Checked then
-    SetValue('REPORT_GODS_MULTI', '1')
-  else
-    SetValue('REPORT_GODS_MULTI', '0');
+  //if CB_REPORT_GODS_MULTI.Checked then
+  //  SetValue('REPORT_GODS_MULTI', '1')
+  //else
+  //  SetValue('REPORT_GODS_MULTI', '0');
   WriteBarCodeRule;
 end;
 

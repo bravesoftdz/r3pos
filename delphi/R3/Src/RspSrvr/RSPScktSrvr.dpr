@@ -93,7 +93,8 @@ uses
   ObjVhSendOrder in '..\Shop5\Obj\ObjVhSendOrder.pas',
   ObjColorInfo in '..\Shop5\Obj\ObjColorInfo.pas',
   ObjLocationInfo in '..\Shop5\Obj\ObjLocationInfo.pas',
-  ObjSizeInfo in '..\Shop5\Obj\ObjSizeInfo.pas';
+  ObjSizeInfo in '..\Shop5\Obj\ObjSizeInfo.pas',
+  ObjBatchNo in '..\Shop5\Obj\ObjBatchNo.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}

@@ -2022,12 +2022,12 @@ var
   lid:string;
 begin
   hasLocation := (DataSet.FindField('LOCATION_ID')<>nil);
-  edtTable.DisableControls;
-  try
   edtProperty.Close;
   edtTable.Close;
   edtProperty.CreateDataSet;
   edtTable.CreateDataSet;
+  edtTable.DisableControls;
+  try
   RowID := 0;
   DataSet.First;
   while not DataSet.Eof do

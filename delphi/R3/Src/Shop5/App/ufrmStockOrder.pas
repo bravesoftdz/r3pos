@@ -89,7 +89,8 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure fndBATCH_NOAddClick(Sender: TObject);
   private
-    { Private declarations }
+    //条码头
+    FBarQry:TZQuery;
     //结算金额
     TotalFee:real;
     //默认发票类型
@@ -100,7 +101,9 @@ type
     InRate3:real;
     FDownOrderID: string; //下载订单ID
     FOrderStatus: string; //订单状态
-    function  CheckCanExport: boolean; override;
+    function CheckCanExport: boolean; override;
+    //打印条码时创建入库不存在
+    function GetPrintStockBarCode(GodsID,p_ID1,p_ID2,Unit_ID:string):string;
   protected
     procedure ReadHeader;
     function CheckInput:boolean;override;
@@ -108,7 +111,7 @@ type
     procedure IndeFrom(id:string);
     procedure SetdbState(const Value: TDataSetState); override;
     procedure BatchNoDropList; override;
-    function GetShopId:string;override;
+    function  GetShopId:string;override;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -136,7 +139,6 @@ type
     procedure PrintBarcode;
     //2011.04.12 晚 增加 到货确认填充 订单
     function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
-
   end;
 
 implementation
@@ -228,7 +230,7 @@ begin
   edtGUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtDEPT_ID.RangeField := 'DEPT_TYPE';
-  edtDEPT_ID.RangeValue := '1'; 
+  edtDEPT_ID.RangeValue := '1';
   InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
@@ -249,6 +251,19 @@ begin
   try    if F.ReadInteger('soft','deskFlag',0)=1 then      Btn_DownOrder.Visible:=True    else      Btn_DownOrder.Visible:=False;  finally
     F.Free;
   end;
+
+  //创建补条码的数据集
+  FBarQry:=TZQuery.Create(self);
+  FBarQry.FieldDefs.Add('ROWS_ID',ftstring,36,true);
+  FBarQry.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
+  FBarQry.FieldDefs.Add('GODS_ID',ftstring,36,true);
+  FBarQry.FieldDefs.Add('PROPERTY_01',ftstring,36,true);
+  FBarQry.FieldDefs.Add('PROPERTY_02',ftstring,36,true);
+  FBarQry.FieldDefs.Add('UNIT_ID',ftstring,36,true);
+  FBarQry.FieldDefs.Add('BARCODE_TYPE',ftstring,1,true);
+  FBarQry.FieldDefs.Add('BATCH_NO',ftstring,36,False);
+  FBarQry.FieldDefs.Add('BARCODE',ftstring,30,true);
+  FBarQry.CreateDataSet;
 end;
 
 procedure TfrmStockOrder.InitPrice(GODS_ID, UNIT_ID: string);
@@ -688,7 +703,7 @@ begin
 end;
 
 procedure TfrmStockOrder.PrintBarcode;
-procedure AddTo(DataSet:TDataSet;ID,P1,P2:string;amt:Integer);
+procedure AddTo(DataSet:TDataSet;ID,P1,P2,UnitID:string;amt:Integer);
 function PubGetBarCode:string;
 var rs:TZQuery;
 begin
@@ -696,8 +711,10 @@ begin
   if rs.Locate('GODS_ID,PROPERTY_01,PROPERTY_02',VarArrayOf([ID,P1,P2]),[]) then
     Result := rs.FieldbyName('BARCODE').AsString
   else
-    Result := '';
-
+  begin
+    //2013.01.19补生成有入库但是没有条码
+    Result := GetPrintStockBarCode(ID,P1,P2,UnitID);
+  end;
 end;
 var
   rs:TZQuery;
@@ -728,39 +745,75 @@ begin
     DataSet.Post;
   end;
 end;
-var amt,i,RecNo:integer;
-
+var
+  UNIT_ID:string; //单位ID
+  amt,i,RecNo:integer;
+  BarTable:TZQuery;
 begin
   inherited;
 
   RecNo := edtTable.RecNo;
   edtTable.DisableControls;
   try
-  with TfrmBarCodePrint.Create(self) do
+    //清除记录
+    FBarQry.First;
+    while not FBarQry.Eof do
+    begin
+      FBarQry.Delete; 
+    end;
+
+    with TfrmBarCodePrint.Create(self) do
     begin
       try
         adoPrint.Close;
         adoPrint.CreateDataSet;
         edtTable.First;
         while not edtTable.Eof do
-          begin
+        begin
             if PropertyEnabled then
                begin
+                 UNIT_ID:=trim(edtTable.FieldbyName('UNIT_ID').AsString);
                  edtProperty.Filtered := false;
                  edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
                  edtProperty.Filtered := true;
                  edtProperty.First;
                  while not edtProperty.Eof do
                     begin
-                      AddTo(adoPrint,edtProperty.FieldbyName('GODS_ID').AsString,edtProperty.FieldbyName('PROPERTY_01').AsString,edtProperty.FieldbyName('PROPERTY_02').AsString,trunc(edtProperty.FieldbyName('CALC_AMOUNT').AsFloat));
+                      AddTo(adoPrint,
+                            edtProperty.FieldbyName('GODS_ID').AsString,
+                            edtProperty.FieldbyName('PROPERTY_01').AsString,
+                            edtProperty.FieldbyName('PROPERTY_02').AsString,
+                            UNIT_ID,
+                            trunc(edtProperty.FieldbyName('CALC_AMOUNT').AsFloat));
                       edtProperty.Next;
                     end;
                end
             else
                begin
-                 AddTo(adoPrint,edtTable.FieldbyName('GODS_ID').AsString,'#','#',trunc(edtTable.FieldbyName('CALC_AMOUNT').AsFloat));
+                 AddTo(adoPrint,
+                       edtTable.FieldbyName('GODS_ID').AsString,
+                       '#','#',
+                       UNIT_ID,
+                       trunc(edtTable.FieldbyName('CALC_AMOUNT').AsFloat));
                end;
             edtTable.Next;
+          end;
+          //保存补条码的记录
+          if FBarQry.RecordCount>0 then
+          begin
+            if Factor.UpdateBatch(FBarQry,'TEXT_BARCODEForStock') then
+            begin
+              BarTable:=Global.GetZQueryFromName('PUB_BARCODE');
+              BarTable.Append;
+              BarTable.FieldByName('GODS_ID').AsString:=FBarQry.FieldByName('GODS_ID').AsString;
+              BarTable.FieldByName('BARCODE').AsString:=FBarQry.FieldByName('BARCODE').AsString;
+              BarTable.FieldByName('PROPERTY_01').AsString:=FBarQry.FieldByName('PROPERTY_01').AsString;
+              BarTable.FieldByName('PROPERTY_02').AsString:=FBarQry.FieldByName('PROPERTY_02').AsString;
+              BarTable.FieldByName('BATCH_NO').AsString:=FBarQry.FieldByName('BATCH_NO').AsString;
+              BarTable.FieldByName('UNIT_ID').AsString:=FBarQry.FieldByName('UNIT_ID').AsString;
+              BarTable.FieldByName('BARCODE_TYPE').AsString:=FBarQry.FieldByName('BARCODE_TYPE').AsString;
+              BarTable.Post;
+            end;
           end;
         ShowModal;
       finally
@@ -1531,6 +1584,59 @@ begin
        end;
   end;
   Open(oid);
+end;
+
+function TfrmStockOrder.GetPrintStockBarCode(GodsID,p_ID1,p_ID2,Unit_ID: string): string;
+var
+  tmp:TZQuery;
+  vGods_Code:string;
+  vBarCode,NewCode:string;
+  Size_BAR_FLAG:string;
+  Color_BAR_FLAG:string;
+  CreateBarcode:string;
+begin
+  result:='';
+  Size_BAR_FLAG:='#';
+  Color_BAR_FLAG:='#';
+  //商品GODS_CODE,BarCode
+  tmp:=ShopGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if tmp.Locate('GODS_ID',GodsID,[]) then
+  begin
+    vGods_Code:=tmp.FieldByName('GODS_CODE').AsString;
+    vBarCode:=tmp.FieldByName('BARCODE').AsString;
+  end;
+
+  //尺码
+  tmp:=ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
+  if tmp.Locate('SIZE_ID',p_ID1,[]) then
+    Size_BAR_FLAG:=tmp.FieldByName('BARCODE_FLAG').AsString;
+  //颜色
+  tmp:=ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
+  if tmp.Locate('COLOR_ID',p_ID2,[]) then
+    Color_BAR_FLAG:=tmp.FieldByName('BARCODE_FLAG').AsString;
+
+  if (length(vBarCode)>0) and (vBarCode[1]='8') then
+    CreateBarcode := copy(vBarCode,2,6)
+  else if (length(vGods_Code)=6) and fnString.IsNumberChar(vGods_Code) then
+    CreateBarcode := vGods_Code
+  else
+    CreateBarcode := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+  //生成条码
+  NewCode:=GetBarCode(CreateBarcode,Size_BAR_FLAG,Color_BAR_FLAG);
+  if NewCode<>'' then
+  begin
+    FBarQry.Append;
+    FBarQry.FieldByName('ROWS_ID').AsString:=TSequence.NewId;
+    FBarQry.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
+    FBarQry.FieldByName('GODS_ID').AsString:=GodsID;
+    FBarQry.FieldByName('PROPERTY_01').AsString:=p_ID1;
+    FBarQry.FieldByName('PROPERTY_02').AsString:=p_ID2;
+    FBarQry.FieldByName('UNIT_ID').AsString:=Unit_ID;
+    FBarQry.FieldByName('BARCODE_TYPE').AsString:='3';    
+    FBarQry.FieldByName('BATCH_NO').AsString:='#';
+    FBarQry.FieldByName('BARCODE').AsString:=NewCode;
+    result:=NewCode;
+  end;
 end;
 
 end.

@@ -49,7 +49,6 @@ type
     N9: TMenuItem;
     N10: TMenuItem;
     PrintDBGridEh1: TPrintDBGridEh;
-    edtProperty: TZQuery;
     ToolButton3: TToolButton;
     actDefineState: TAction;
     Excel1: TMenuItem;
@@ -96,7 +95,7 @@ type
     procedure fndGODS_FLAG1PropertiesChange(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
   private
-     edtProperty2,edtProperty1: TZQuery;
+     edtProperty1,edtProperty2: TZQuery;
      procedure PrintView;
      procedure GetNo;
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
@@ -565,6 +564,9 @@ begin
   end;
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);
+  edtProperty1.Data:=ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION').Data;
+  edtProperty2.Data:=ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION').Data;
+  
   //暂关闭Gird表头排序
   TDbGridEhSort.InitForm(self);   
 end;
@@ -906,7 +908,6 @@ begin
     Result := rs.FieldbyName('BARCODE').AsString
   else
     Result := '';
-
 end;
 var
   rs:TZQuery;
@@ -923,18 +924,21 @@ begin
     DataSet.FieldByName('NEW_OUTPRICE1').AsString := rs.FieldByName('NEW_OUTPRICE1').AsString;
     DataSet.FieldByName('NEW_OUTPRICE2').AsString := rs.FieldByName('NEW_OUTPRICE2').AsString;
     DataSet.FieldByName('NEW_LOWPRICE').AsString := rs.FieldByName('NEW_LOWPRICE').AsString;
-
     DataSet.FieldByName('PROPERTY_01').AsString := P1;
     DataSet.FieldByName('PROPERTY_02').AsString := P2;
-    if (p1='#') and (p2='#') then
-      DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString
-    else
-      DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
-
-    {if (DataSet.FieldByName('BARCODE').AsString='') then  // or fnString.IsCustBarCode(DataSet.FieldByName('BARCODE').AsString)
-       DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;}
     DataSet.FieldByName('AMOUNT').AsInteger := amt;
-    DataSet.Post;
+    if (p1='#') and (p2='#') then
+    begin
+      DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;
+      DataSet.Post;
+    end else
+    begin
+      DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
+      if trim(DataSet.FieldByName('BARCODE').AsString)='' then
+        DataSet.Delete
+      else
+        DataSet.Post;
+    end;
   end;
 end;
 var amt,i,RecNo:integer;
@@ -945,34 +949,38 @@ begin
   RecNo := cdsBrowser.RecNo;
   cdsBrowser.DisableControls;
   try
-  with TfrmBarCodePrint.Create(self) do
+    with TfrmBarCodePrint.Create(self) do
     begin
       try
         adoPrint.Close;
         adoPrint.CreateDataSet;
         cdsBrowser.First;
         while not cdsBrowser.Eof do
+        begin
+          if PropertyEnabled then
           begin
-            if PropertyEnabled then
-               begin
-                 GetProperty;
-                 edtProperty1.First;
-                 while not edtProperty1.Eof do
-                    begin
-                      while not edtProperty2.Eof do
-                      begin
-                        AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,edtProperty1.FieldbyName('CODE_ID').AsString,edtProperty2.FieldbyName('CODE_ID').AsString,1);
-                        edtProperty2.Next;
-                      end;
-                      edtProperty1.Next;
-                    end;
-               end
-            else
-               begin
-                 AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,'#','#',1);
-               end;
-            cdsBrowser.Next;
+            GetProperty;
+            edtProperty1.First;
+            while not edtProperty1.Eof do
+            begin
+              edtProperty2.First;
+              while not edtProperty2.Eof do
+              begin
+                AddTo(adoPrint,
+                      cdsBrowser.FieldbyName('GODS_ID').AsString,
+                      edtProperty1.FieldbyName('SIZE_ID').AsString,
+                      edtProperty2.FieldbyName('COLOR_ID').AsString,
+                      1);
+                edtProperty2.Next;
+              end;
+              edtProperty1.Next;
+            end;
+          end else
+          begin
+            AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,'#','#',1);
           end;
+          cdsBrowser.Next;
+        end;
         ShowModal;
       finally
         free;
@@ -982,7 +990,6 @@ begin
     if RecNo>0 then cdsBrowser.RecNo := RecNo;
     cdsBrowser.EnableControls;
   end;
-
 end;
 
 function TfrmGoodsInfoList.PropertyEnabled: boolean;
@@ -990,52 +997,22 @@ var
   rs:TZQuery;
 begin
   result := false;
-  rs := Global.GetZQueryFromName('PUB_BARCODE');
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',cdsBrowser.FieldbyName('GODS_ID').AsString,[]) then
+  result := not (
+       ((rs.FieldbyName('SORT_ID7').AsString = '') or (rs.FieldbyName('SORT_ID7').AsString = '#'))
+         and
+       ((rs.FieldbyName('SORT_ID8').AsString = '') or (rs.FieldbyName('SORT_ID8').AsString = '#'))
+       );
+
+ {rs := Global.GetZQueryFromName('PUB_BARCODE');
   if rs.Locate('GODS_ID',cdsBrowser.FieldbyName('GODS_ID').AsString,[]) then
   result := not (
        ((rs.FieldbyName('PROPERTY_01').AsString = '') or (rs.FieldbyName('PROPERTY_01').AsString = '#'))
          and
        ((rs.FieldbyName('PROPERTY_02').AsString = '') or (rs.FieldbyName('PROPERTY_02').AsString = '#'))
        );
-end;
-
-procedure TfrmGoodsInfoList.GetProperty;
-var
-  rs: TZQuery;
-begin
-  rs := Global.GetZQueryFromName('BAS_GOODSINFO');
-  if rs.Locate('GODS_ID',cdsBrowser.FieldbyName('GODS_ID').AsString,[]) then
-  begin
-    if not ((rs.FieldbyName('PROPERTY_01').AsString='#') or (rs.FieldbyName('PROPERTY_01').AsString='')) then
-    begin
-      edtProperty1.Close;
-      if rs.FieldbyName('PROPERTY_01').AsString='G' then //自定义尺码
-         edtProperty1.SQL.Text := 'select B.CODE_ID from PUB_PROPERTY A,PUB_CODE_INFO B where A.CODE_ID=B.CODE_ID and A.GODS_ID='''+cdsBrowser.FieldbyName('GODS_ID').AsString+''' and A.CODE_TYPE=2 and B.CODE_TYPE=2 and B.COMM not in (''02'',''12'') order by A.SEQ_NO'
-      else
-         edtProperty1.SQL.Text := 'select substring(CODE_ID,4,3) as CODE_ID from PUB_CODE_INFO where CODE_ID like '''+rs.FieldbyName('PROPERTY_01').AsString+'%'' and len(CODE_ID)>3 and CODE_TYPE=2 and COMM not in (''02'',''12'') order by SEQ_NO';
-      Factor.Open(edtProperty1);
-    end else
-    begin
-      edtProperty1.Close;
-      edtProperty1.SQL.Text:='select ''#'' CODE_ID';
-      Factor.Open(edtProperty1);
-    end;
-
-    if not ((rs.FieldbyName('PROPERTY_02').AsString='#') or (rs.FieldbyName('PROPERTY_02').AsString='')) then
-    begin
-      edtProperty2.Close;
-      if rs.FieldbyName('PROPERTY_02').AsString='G' then //自定义尺码
-        edtProperty2.SQL.Text := 'select B.CODE_ID from PUB_PROPERTY A,PUB_CODE_INFO B where A.CODE_ID=B.CODE_ID and A.GODS_ID='''+cdsBrowser.FieldbyName('GODS_ID').AsString+''' and A.CODE_TYPE=4 and B.CODE_TYPE=4 and B.COMM not in (''02'',''12'') order by A.SEQ_NO'
-      else
-        edtProperty2.SQL.Text := 'select substring(CODE_ID,4,3) as CODE_ID from PUB_CODE_INFO where CODE_ID like '''+rs.FieldbyName('PROPERTY_02').AsString+'%'' and len(CODE_ID)>3 and CODE_TYPE=4  and COMM not in (''02'',''12'') order by SEQ_NO';
-      Factor.Open(edtProperty2);
-    end else
-    begin
-      edtProperty2.Close;
-      edtProperty2.SQL.Text :='select ''#'' CODE_ID';
-      Factor.Open(edtProperty2);
-    end;
-  end;
+  }
 end;
 
 procedure TfrmGoodsInfoList.actPrintBarCodeExecute(Sender: TObject);
@@ -1822,6 +1799,31 @@ begin
   inherited;
   if locked then Exit;
   Open('');
+end;
+
+procedure TfrmGoodsInfoList.GetProperty;  //SORT_ID8
+var
+  rs: TZQuery;
+  Size_IDS,Color_IDS:string;
+begin
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',cdsBrowser.FieldbyName('GODS_ID').AsString,[]) then
+  begin
+    Color_IDS:=trim(rs.FieldbyName('SORT_ID7').AsString);
+    Size_IDS:=trim(rs.FieldbyName('SORT_ID8').AsString);
+    if not ((Size_IDS='#') or (Size_IDS='')) then
+    begin
+      edtProperty1.Filtered:=False;
+      edtProperty1.Filter:='SORT_ID='''+Size_IDS+''' ';
+      edtProperty1.Filtered:=True;
+    end;
+    if not ((Color_IDS='#') or (Color_IDS='')) then
+    begin
+      edtProperty2.Filtered:=False;
+      edtProperty2.Filter:='SORT_ID='''+Color_IDS+''' ';
+      edtProperty2.Filtered:=True;
+    end;
+  end;
 end;
 
 end.

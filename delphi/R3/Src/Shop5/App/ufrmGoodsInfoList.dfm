@@ -1,6 +1,6 @@
 inherited frmGoodsInfoList: TfrmGoodsInfoList
-  Left = 265
-  Top = 144
+  Left = 196
+  Top = 108
   Width = 956
   Height = 628
   Caption = #21830#21697#26723#26696#31649#29702
@@ -10,36 +10,36 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 940
-    Height = 553
+    Width = 948
+    Height = 564
     inherited RzPanel2: TRzPanel
-      Width = 930
-      Height = 543
+      Width = 938
+      Height = 554
       inherited RzPage: TRzPageControl
-        Width = 924
-        Height = 537
+        Width = 932
+        Height = 548
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21830#21697#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 922
-            Height = 510
+            Width = 930
+            Height = 521
             object Splitter1: TSplitter
               Left = 181
               Top = 41
-              Height = 464
+              Height = 475
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 912
+              Width = 920
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                912
+                920
                 36)
               object Panel3: TPanel
                 Left = 0
@@ -129,16 +129,16 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
             object Panel1: TPanel
               Left = 184
               Top = 41
-              Width = 733
-              Height = 464
+              Width = 741
+              Height = 475
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 731
-                Height = 443
+                Width = 739
+                Height = 454
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -328,8 +328,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 444
-                Width = 731
+                Top = 455
+                Width = 739
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -353,7 +353,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               Left = 5
               Top = 41
               Width = 176
-              Height = 464
+              Height = 475
               Align = alLeft
               AutoSize = True
               BevelOuter = bvNone
@@ -362,7 +362,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                 Left = 0
                 Top = 36
                 Width = 176
-                Height = 428
+                Height = 439
                 SelectionPen.Color = clBtnShadow
                 Align = alLeft
                 FrameStyle = fsGroove
@@ -411,16 +411,16 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 940
+    Width = 948
     inherited Image3: TImage
       Left = 425
-      Width = 0
+      Width = 8
     end
     inherited Image14: TImage
-      Left = 920
+      Left = 928
     end
     inherited Image1: TImage
-      Left = 425
+      Left = 433
       Width = 495
     end
     inherited rzPanel5: TPanel
@@ -691,73 +691,5 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
       72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
       615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
       0A5C706172207D0D0A00}
-  end
-  object edtProperty: TZQuery
-    FieldDefs = <
-      item
-        Name = 'SEQNO'
-        DataType = ftInteger
-      end
-      item
-        Name = 'GODS_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'GODS_CODE'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 100
-      end
-      item
-        Name = 'UNIT_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BATCH_NO'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'IS_PRESENT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOCUS_NO'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BOM_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'PROPERTY_01'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'PROPERTY_02'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'AMOUNT'
-        DataType = ftFloat
-      end
-      item
-        Name = 'CALC_AMOUNT'
-        DataType = ftFloat
-      end>
-    CachedUpdates = True
-    Params = <>
-    Left = 392
-    Top = 256
   end
 end

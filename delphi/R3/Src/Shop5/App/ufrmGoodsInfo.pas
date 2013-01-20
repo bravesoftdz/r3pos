@@ -118,6 +118,8 @@ type
     Label12: TLabel;
     Label13: TLabel;
     edtSHORT_GODS_NAME: TcxTextEdit;
+    fndPROPERTY_01: TzrComboBoxList;
+    fndPROPERTY_02: TzrComboBoxList;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -194,6 +196,20 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure PriceGridColumns5UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure fndPROPERTY_01Enter(Sender: TObject);
+    procedure fndPROPERTY_02Enter(Sender: TObject);
+    procedure fndPROPERTY_01Exit(Sender: TObject);
+    procedure fndPROPERTY_02Exit(Sender: TObject);
+    procedure fndPROPERTY_01KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndPROPERTY_02KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndPROPERTY_01KeyPress(Sender: TObject; var Key: Char);
+    procedure fndPROPERTY_02KeyPress(Sender: TObject; var Key: Char);
+    procedure fndPROPERTY_01SaveValue(Sender: TObject);
+    procedure fndPROPERTY_02SaveValue(Sender: TObject);
+    procedure fndPROPERTY_01BeforeDropList(Sender: TObject);
+    procedure fndPROPERTY_02BeforeDropList(Sender: TObject);
   private
     InputMode : Integer;   //输入模式
     DropUNITS_Ds: TZQuery;
@@ -206,6 +222,9 @@ type
 
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
+    //2013.01.18增加尺码、颜色数据集
+    SizeDataSet: TZQuery;
+    ColorDataSet: TZQuery; 
  
     //2011.04.26 PM 读取商品指标的属性;
     function  GetLblCaption(LblName: string): string;  //返回标签Caption
@@ -236,6 +255,7 @@ type
     procedure AutoCreateBarcodeClick(Sender:TObject);
     procedure ClearBarcodeClick(Sender:TObject);
     procedure CheckExtBarcode;
+    function  CreateExtBarcode(var ExtObj:TRecord_):Boolean; //生成扩展条码
   public
      //SEQNO控制号
      RowID:integer;
@@ -367,7 +387,7 @@ end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
 var
-  SetCol: TColumnEh;
+  SetCol:TColumnEh;
   rs:TZQuery;
 begin
   inherited;
@@ -412,28 +432,42 @@ begin
   //输入模式
   InputMode:=StrtoIntDef(ShopGlobal.GetParameter('INPUT_MODE'),0);
 
-  rs := ShopGlobal.GetZQueryFromName('PUB_COLOR_INFO');
-  SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_02');
-  rs.First;
-  while not rs.Eof do
+  //2013.01.18增加尺码、颜色数据集
+  if (ShopGlobal.GetVersionFlag=1) then
   begin
-    SetCol.KeyList.Add(rs.FieldbyName('COLOR_ID').AsString);
-    SetCol.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
-    rs.Next;
+    SizeDataSet:=TZQuery.Create(self);
+    ColorDataSet:=TZQuery.Create(self);
+    fndPROPERTY_01.DataSet:=SizeDataSet;
+    fndPROPERTY_02.DataSet:=ColorDataSet;
+    rs := ShopGlobal.GetZQueryFromName('PUB_COLOR_INFO');
+    SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_02');
+    if SetCol<>nil then
+    begin
+      rs.First;
+      while not rs.Eof do
+      begin
+        SetCol.KeyList.Add(rs.FieldbyName('COLOR_ID').AsString);
+        SetCol.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
+        rs.Next;
+      end;
+      SetCol.KeyList.Add('#');
+      SetCol.PickList.Add('不分色');
+    end;
+    rs := ShopGlobal.GetZQueryFromName('PUB_SIZE_INFO');
+    SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_01');
+    if SetCol<>nil then
+    begin
+      rs.First;
+      while not rs.Eof do
+      begin
+        SetCol.KeyList.Add(rs.FieldbyName('SIZE_ID').AsString);
+        SetCol.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
+        rs.Next;
+      end;
+      SetCol.KeyList.Add('#');
+      SetCol.PickList.Add('不分码');
+    end;
   end;
-  SetCol.KeyList.Add('#');
-  SetCol.PickList.Add('不分色');
-  rs := ShopGlobal.GetZQueryFromName('PUB_SIZE_INFO');
-  SetCol := FindColumn(ExtBarCodeGrid,'PROPERTY_01');
-  rs.First;
-  while not rs.Eof do
-  begin
-    SetCol.KeyList.Add(rs.FieldbyName('SIZE_ID').AsString);
-    SetCol.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
-    rs.Next;
-  end;
-  SetCol.KeyList.Add('#');
-  SetCol.PickList.Add('不分码');
 end;
 
 procedure TfrmGoodsInfo.FormDestroy(Sender: TObject);
@@ -1140,7 +1174,7 @@ procedure TfrmGoodsInfo.edtSORT_ID7AddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002497',2) then Raise Exception.Create('你没有新增颜色组的权限,请和管理员联系.');
+  //qx  if not ShopGlobal.GetChkRight('100002497',2) then Raise Exception.Create('你没有新增颜色组的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
     if TfrmColorGroupInfo.AddDialog(self,AObj) then
@@ -1157,7 +1191,7 @@ procedure TfrmGoodsInfo.edtSORT_ID8AddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002504',2) then Raise Exception.Create('你没有新增尺码组的权限,请和管理员联系.');
+  //qx  if not ShopGlobal.GetChkRight('100002504',2) then Raise Exception.Create('你没有新增尺码组的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
     if TfrmSizeGroupInfo.AddDialog(self,AObj) then
@@ -1537,7 +1571,7 @@ end;
 procedure TfrmGoodsInfo.WriteExtBarCode;
 var
   Str,Unit_ID: string;
-  EditQry,Rs: TZQuery;
+  EditQry,Rs,CheckQry: TZQuery;
   Controls:boolean;
   r:integer;
 begin
@@ -1548,6 +1582,7 @@ begin
   r := ExtBarCode.RecNo;
   ExtBarCode.DisableControls;
   EditQry:=TZQuery.Create(nil);
+  CheckQry:=TZQuery.Create(nil);
   try
     //判断单位是否是商品的单位
     Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
@@ -1595,6 +1630,7 @@ begin
     end;
   finally
     EditQry.Free;
+    CheckQry.Free;
     if r>0 then ExtBarCode.RecNo := r;
     if not Controls then  ExtBarCode.EnableControls;
   end;
@@ -2369,6 +2405,8 @@ begin
 end;
 
 procedure TfrmGoodsInfo.CheckCLVersionSetParams;
+var
+  SetCol:TColumnEh;
 begin
   lblSORT_ID7.Visible:=(ShopGlobal.GetVersionFlag=1);
   edtSORT_ID7.Visible:=lblSORT_ID7.Visible;
@@ -2378,6 +2416,10 @@ begin
   begin
     GB_Small.Top:=22;
     GB_Big.Top:=103;
+    SetCol:=FindColumn(ExtBarCodeGrid,'PROPERTY_01');
+    if SetCol<>nil then SetCol.Free;
+    SetCol:=FindColumn(ExtBarCodeGrid,'PROPERTY_02');
+    if SetCol<>nil then SetCol.Free;
   end else
   begin
     GB_Small.Top:=35;
@@ -3091,6 +3133,7 @@ begin
     begin
       inc(RowID);
       ExtBarCode.Append;
+      ExtBarCode.FieldByName('ROWS_ID').Value := TSequence.NewId;
       ExtBarCode.FieldByName('UNIT_ID').Value := null;
       if ExtBarCode.FindField('SEQNO')<> nil then
         ExtBarCode.FindField('SEQNO').asInteger := RowID;
@@ -3103,6 +3146,7 @@ begin
     ExtBarCode.Edit;
   end;
 end;
+
 procedure TfrmGoodsInfo.ExtGridFocusNextColumn;
 var
   i:Integer;
@@ -3207,10 +3251,28 @@ begin
 end;
 
 procedure TfrmGoodsInfo.fndUNIT_IDSaveValue(Sender: TObject);
+var
+  ExtObj:TRecord_;
 begin
   inherited;
   if ExtBarCode.State = dsBrowse then ExtBarCode.Edit;
   ExtBarCode.FieldByName('UNIT_ID').AsString := fndUNIT_ID.AsString;
+  //判断生成条码
+  try
+    ExtObj:=TRecord_.Create;
+    ExtObj.ReadFromDataSet(ExtBarCode);
+    if (ShopGlobal.GetVersionFlag=1) and (ExtObj.FieldByName('BARCODE').AsString='') then
+    begin
+      if CreateExtBarcode(ExtObj) then
+      begin
+        ExtBarCode.Edit;
+        ExtObj.WriteToDataSet(ExtBarCode);
+        ExtBarCode.Post;
+      end;
+    end;
+  finally
+    ExtObj.Free;
+  end;  
 end;
 
 procedure TfrmGoodsInfo.ExtBarCodeGridKeyPress(Sender: TObject;
@@ -3236,7 +3298,10 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   if ExtBarCode.Active then
+  begin
     ExtBarCode.Delete;
+    Dec(RowID);
+  end;
 end;
 
 procedure TfrmGoodsInfo.GodsDefaultValue;
@@ -3454,25 +3519,329 @@ procedure TfrmGoodsInfo.CheckExtBarcode;
 var
   Controls:boolean;
   r:integer;
+  UnitID:string;
+  pBig:string;
+  pColor:string;
+  BarCode:string;
+  ExtObj:TRecord_;
 begin
   if ExtBarCode.State in [dsEdit,dsInsert] then ExtBarCode.Post;
   Controls := ExtBarCode.ControlsDisabled;
   r := ExtBarCode.RecNo;
   ExtBarCode.DisableControls;
   try
-  ExtBarCode.First;
-  while not ExtBarCode.Eof do
+    ExtBarCode.First;
+    while not ExtBarCode.Eof do
     begin
-      if (ExtBarCode.FieldByName('BARCODE').AsString = '') then
-         ExtBarCode.Delete
-      else
-         ExtBarCode.Next;
+      BarCode:=trim(ExtBarCode.FieldByName('BARCODE').AsString);    //条码
+      UnitID:=trim(ExtBarCode.FieldByName('UNIT_ID').AsString);     //单位
+      pBig:=trim(ExtBarCode.FieldByName('PROPERTY_01').AsString);   //尺码
+      pColor:=trim(ExtBarCode.FieldByName('PROPERTY_02').AsString); //颜色
+      if pBig='' then pBig:='#';
+      if pColor='' then pColor:='#';
+
+      //判断是否存在(同一个)
+
+      //更改:UNIT_ID不为空，尺码和颜色可以任意值创建扩展条码
+      if (ShopGlobal.GetVersionFlag=1) then //服装版本
+      begin
+        if (pBig='#') and (pColor='#') then
+          ExtBarCode.Delete
+        else
+        begin
+          if (UnitID<>'')and((pBig<>'#')or(pColor<>'#'))and(BarCode='') then
+          begin
+            try
+              ExtObj:=TRecord_.Create;
+              ExtObj.ReadFromDataSet(ExtBarCode);
+              if CreateExtBarcode(ExtObj) then
+              begin
+                ExtBarCode.Edit;
+                ExtObj.WriteToDataSet(ExtBarCode);
+                ExtBarCode.Post;
+              end;
+            finally
+              ExtObj.Free;
+            end;
+          end;
+          ExtBarCode.Next;
+        end;
+      end else
+      begin  //通用版本
+        if (UnitID='') or (BarCode='') then
+          ExtBarCode.Delete
+        else
+          ExtBarCode.Next;
+      end;
     end;
   finally
     if r>0 then ExtBarCode.RecNo := r;
     if not Controls then  ExtBarCode.EnableControls;
   end;
-  if (ShopGlobal.GetVersionFlag=1) and ExtBarCode.IsEmpty then AutoCreateBarcodeClick(nil);
+  //2013.01.18去掉自动创建扩展条码
+  //if (ShopGlobal.GetVersionFlag=1) and ExtBarCode.IsEmpty then AutoCreateBarcodeClick(nil);
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_01Enter(Sender: TObject);
+begin
+  inherited;
+  fndPROPERTY_01.Properties.ReadOnly := ExtBarCodeGrid.ReadOnly;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_02Enter(Sender: TObject);
+begin
+  inherited;
+  fndPROPERTY_02.Properties.ReadOnly := ExtBarCodeGrid.ReadOnly;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_01Exit(Sender: TObject);
+begin
+  inherited;
+  if not fndPROPERTY_01.DropListed then fndPROPERTY_01.Visible := false;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_02Exit(Sender: TObject);
+begin
+  inherited;
+  if not fndPROPERTY_02.DropListed then fndPROPERTY_02.Visible := false;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_01KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) then
+  begin
+    ExtBarCodeGrid.SetFocus;
+    fndPROPERTY_01.Visible := false;
+    ExtGridFocusNextColumn;
+  end;
+  if (Key=VK_LEFT) then
+  begin
+    ExtBarCodeGrid.SetFocus;
+    fndPROPERTY_01.Visible := false;
+    ExtBarCodeGrid.Col := ExtBarCodeGrid.Col -1;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_02KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) then
+  begin
+    ExtBarCodeGrid.SetFocus;
+    fndPROPERTY_02.Visible := false;
+    ExtGridFocusNextColumn;
+  end;
+  if (Key=VK_LEFT) then
+  begin
+    ExtBarCodeGrid.SetFocus;
+    fndPROPERTY_02.Visible := false;
+    ExtBarCodeGrid.Col := ExtBarCodeGrid.Col -1;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_01KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+  begin
+    Key := #0;
+    ExtBarCodeGrid.SetFocus;
+    ExtGridFocusNextColumn;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_02KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+  begin
+    Key := #0;
+    ExtBarCodeGrid.SetFocus;
+    ExtGridFocusNextColumn;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_01SaveValue(Sender: TObject);
+var
+  ExtObj:TRecord_;
+begin
+  inherited;
+  if ExtBarCode.State = dsBrowse then ExtBarCode.Edit;
+  ExtBarCode.FieldByName('PROPERTY_01').AsString := fndPROPERTY_01.AsString;
+
+  try
+    ExtObj:=TRecord_.Create;
+    ExtObj.ReadFromDataSet(ExtBarCode);
+    if (ShopGlobal.GetVersionFlag=1) and (ExtObj.FieldByName('BARCODE').AsString='') then
+    begin
+      if CreateExtBarcode(ExtObj) then
+      begin
+        ExtBarCode.Edit;
+        ExtObj.WriteToDataSet(ExtBarCode);
+        ExtBarCode.Post;
+      end;
+    end;
+  finally
+    ExtObj.Free;
+  end;    
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_02SaveValue(Sender: TObject);
+var
+  ExtObj:TRecord_;
+begin
+  inherited;
+  if ExtBarCode.State = dsBrowse then ExtBarCode.Edit;
+  ExtBarCode.FieldByName('PROPERTY_02').AsString := fndPROPERTY_02.AsString;
+  try
+    ExtObj:=TRecord_.Create;
+    ExtObj.ReadFromDataSet(ExtBarCode);
+    if (ShopGlobal.GetVersionFlag=1) and (ExtObj.FieldByName('BARCODE').AsString='') then
+    begin
+      if CreateExtBarcode(ExtObj) then
+      begin
+        ExtBarCode.Edit;
+        ExtObj.WriteToDataSet(ExtBarCode);
+        ExtBarCode.Post;
+      end;
+    end;
+  finally
+    ExtObj.Free;
+  end;  
+end;
+
+function TfrmGoodsInfo.CreateExtBarcode(var ExtObj:TRecord_): Boolean;
+var
+  UNIT_ID:string;
+  PROPERTY_01:string;
+  PROPERTY_02:string;
+  BarCode:string;
+  CreateBarcode:String;
+  Size_BAR_FLAG:string;
+  Color_BAR_FLAG:string;
+  tmp:TZQuery;
+begin
+  result:=False;
+  UNIT_ID:=trim(ExtObj.FieldByName('UNIT_ID').AsString);
+  PROPERTY_01:=trim(ExtObj.FieldByName('PROPERTY_01').AsString);
+  PROPERTY_02:=trim(ExtObj.FieldByName('PROPERTY_02').AsString);
+  BarCode:=trim(ExtObj.FieldByName('BARCODE').AsString);
+  if PROPERTY_01='' then PROPERTY_01:='#'; //尺码
+  if PROPERTY_02='' then PROPERTY_02:='#'; //颜色
+
+  //单位为空，尺码和颜色任意一个不为空时生成扩展条码
+  if (UNIT_ID<>'') and ((PROPERTY_01<>'#')or(PROPERTY_02<>'#')) and (BarCode='') then
+  begin
+    Size_BAR_FLAG:='#';
+    Color_BAR_FLAG:='#';
+    //尺码
+    if PROPERTY_01<>'#' then
+    begin
+      tmp:=ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
+      if tmp.Locate('SIZE_ID',PROPERTY_01,[]) then
+        Size_BAR_FLAG:=tmp.FieldByName('BARCODE_FLAG').AsString;
+    end;
+    //颜色
+    if PROPERTY_02<>'#' then
+    begin
+      tmp:=ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
+      if tmp.Locate('COLOR_ID',PROPERTY_02,[]) then
+        Color_BAR_FLAG:=tmp.FieldByName('BARCODE_FLAG').AsString;
+    end;
+    if (length(edtBARCODE1.Text)>0) and (edtBARCODE1.Text[1]='8') then
+     CreateBarcode := copy(edtBARCODE1.Text,2,6)
+    else if (length(edtGODS_CODE.Text)=6) and fnString.IsNumberChar(edtGODS_CODE.Text) then
+     CreateBarcode := AObj.FieldByName('GODS_CODE').AsString
+    else
+     CreateBarcode := TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+    //生成条码
+    ExtObj.FieldByName('BARCODE').AsString:=GetBarCode(CreateBarcode,Size_BAR_FLAG,Color_BAR_FLAG);
+    result:=true;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_01BeforeDropList(Sender: TObject);
+var
+  Filter:string;
+  SizeObj:TRecord_;
+  tmpQry:TZQuery;
+begin
+  tmpQry:=ShopGlobal.GetZQueryFromName('PUB_SIZE_RELATION');
+  SizeObj:=TRecord_.Create;
+  try
+    //清空当前数据集
+    if not SizeDataSet.Active then
+      SizeDataSet.Data:=tmpQry.Data;
+    SizeDataSet.First;
+    while not SizeDataSet.Eof do
+    begin
+      SizeDataSet.Delete;
+    end;
+    //过滤数据插入SizeDataSet
+    tmpQry.Filtered:=False;
+    if edtSORT_ID8.AsString='' then
+      tmpQry.Filter:='SORT_ID=''#'' '
+    else
+      tmpQry.Filter:='SORT_ID='''+edtSORT_ID8.AsString+''' ';
+    tmpQry.Filtered:=true;
+    tmpQry.First;
+    while not tmpQry.Eof do
+    begin
+      SizeObj.ReadFromDataSet(tmpQry);
+      SizeDataSet.Append;
+      SizeObj.WriteToDataSet(SizeDataSet);
+      SizeDataSet.Post;
+      tmpQry.Next;
+    end;                 
+  finally
+    SizeObj.Free;
+    tmpQry.Filtered:=False;
+    tmpQry.Filter:='';
+  end;    
+end;
+
+procedure TfrmGoodsInfo.fndPROPERTY_02BeforeDropList(Sender: TObject);
+var
+  ColorObj:TRecord_;
+  tmpQry:TZQuery;
+begin             
+  tmpQry:=ShopGlobal.GetZQueryFromName('PUB_COLOR_RELATION');
+  ColorObj:=TRecord_.Create;
+  try
+    //清空当前数据集
+    if not ColorDataSet.Active then
+      ColorDataSet.Data:=tmpQry.Data;
+    ColorDataSet.First;
+    while not ColorDataSet.Eof do
+    begin
+      ColorDataSet.Delete;
+    end;
+    //过滤数据插入ColorDataSet
+    tmpQry.Filtered:=False;
+    if edtSORT_ID7.AsString='' then
+      tmpQry.Filter:='SORT_ID=''#'' '
+    else
+      tmpQry.Filter:='SORT_ID='''+edtSORT_ID7.AsString+''' ';
+    tmpQry.Filtered:=True;
+    tmpQry.First;
+    while not tmpQry.Eof do
+    begin
+      ColorObj.ReadFromDataSet(tmpQry);
+      ColorDataSet.Append;
+      ColorObj.WriteToDataSet(ColorDataSet);
+      ColorDataSet.Post;
+      tmpQry.Next;
+    end;                 
+  finally
+    ColorObj.Free;
+    tmpQry.Filtered:=False;
+    tmpQry.Filter:='';
+  end;
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 691
-  Top = 147
+  Left = 194
+  Top = 107
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 429
@@ -49,13 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
-      ActivePage = TabGoodPrice
+      ActivePage = TabSheet4
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 1
+      TabIndex = 3
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -815,29 +815,31 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               end
               item
                 EditButtons = <>
-                FieldName = 'BARCODE'
-                Footers = <>
-                Title.Caption = #26465#24418#30721
-                Width = 300
-              end
-              item
-                EditButtons = <>
                 FieldName = 'PROPERTY_01'
                 Footers = <>
                 Title.Caption = #23610#30721
-                Width = 40
+                Width = 72
+                Control = fndPROPERTY_01
               end
               item
                 EditButtons = <>
                 FieldName = 'PROPERTY_02'
                 Footers = <>
                 Title.Caption = #39068#33394
-                Width = 50
+                Width = 66
+                Control = fndPROPERTY_02
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BARCODE'
+                Footers = <>
+                Title.Caption = #26465#24418#30721
+                Width = 268
               end>
           end
           object fndUNIT_ID: TzrComboBoxList
-            Left = 102
-            Top = 54
+            Left = 14
+            Top = 46
             Width = 63
             Height = 20
             Properties.AutoSelect = False
@@ -882,6 +884,90 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Buttons = []
             DropListStyle = lsFixed
             OnSaveValue = fndUNIT_IDSaveValue
+            MultiSelect = False
+            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+          end
+          object fndPROPERTY_01: TzrComboBoxList
+            Left = 87
+            Top = 47
+            Width = 68
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 2
+            Visible = False
+            OnEnter = fndPROPERTY_01Enter
+            OnExit = fndPROPERTY_01Exit
+            OnKeyDown = fndPROPERTY_01KeyDown
+            OnKeyPress = fndPROPERTY_01KeyPress
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'SIZE_NAME;SIZE_SPELL;SIZE_ID'
+            KeyField = 'SIZE_ID'
+            ListField = 'SIZE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SIZE_NAME'
+                Footers = <>
+                Title.Caption = #39068#33394#32452
+              end>
+            DropWidth = 100
+            DropHeight = 120
+            ShowTitle = False
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = []
+            DropListStyle = lsFixed
+            OnSaveValue = fndPROPERTY_01SaveValue
+            OnBeforeDropList = fndPROPERTY_01BeforeDropList
+            MultiSelect = False
+            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+          end
+          object fndPROPERTY_02: TzrComboBoxList
+            Left = 161
+            Top = 47
+            Width = 69
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 3
+            Visible = False
+            OnEnter = fndPROPERTY_02Enter
+            OnExit = fndPROPERTY_02Exit
+            OnKeyDown = fndPROPERTY_02KeyDown
+            OnKeyPress = fndPROPERTY_02KeyPress
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'COLOR_NAME;COLOR_SPELL;COLOR_ID'
+            KeyField = 'COLOR_ID'
+            ListField = 'COLOR_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'COLOR_NAME'
+                Footers = <>
+                Title.Caption = #23610#30721#32452
+              end>
+            DropWidth = 100
+            DropHeight = 120
+            ShowTitle = False
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew]
+            DropListStyle = lsFixed
+            OnSaveValue = fndPROPERTY_02SaveValue
+            OnBeforeDropList = fndPROPERTY_02BeforeDropList
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end

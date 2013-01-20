@@ -127,7 +127,7 @@ type
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure Excel1Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);    
     procedure GodsCompareClick(Sender: TObject);
     procedure fndBATCH_NOEnter(Sender: TObject);
     procedure fndBATCH_NOExit(Sender: TObject);
@@ -1738,7 +1738,7 @@ begin
          and
        ((rs.FieldbyName('SORT_ID8').AsString = '') or (rs.FieldbyName('SORT_ID8').AsString = '#'))
        );
-end;
+end;            
 
 procedure TframeOrderForm.WMDialogPull(var Message: TMessage);
 begin
@@ -4009,9 +4009,23 @@ begin
 end;
 
 procedure TframeOrderForm.FormCreate(Sender: TObject);
+var
+  i:integer;
+  SetCol:TColumnEh;
 begin
   inherited;
-  //
+  //2013.01.16 xhh启用批号管理
+  if ShopGlobal.GetParameter('USING_BATCH_NO')<>'1' then
+  begin
+    SetCol:=FindDBColumn(DBGridEh1,'BATCH_NO');
+    if SetCol<>nil then SetCol.Free;
+  end;
+  //2013.01.16 xhh启用储位管理
+  if ShopGlobal.GetParameter('USING_LOCATION')<>'1' then
+  begin
+    SetCol:=FindDBColumn(DBGridEh1,'LOCATION_ID');
+    if SetCol<>nil then SetCol.Free;
+  end;
 end;
 
 procedure TframeOrderForm.GodsCompareClick(Sender: TObject);

@@ -1174,7 +1174,7 @@ procedure TfrmGoodsInfo.edtSORT_ID7AddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  //qx  if not ShopGlobal.GetChkRight('100002497',2) then Raise Exception.Create('你没有新增颜色组的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002497',2) then Raise Exception.Create('你没有新增颜色组的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
     if TfrmColorGroupInfo.AddDialog(self,AObj) then
@@ -1191,7 +1191,7 @@ procedure TfrmGoodsInfo.edtSORT_ID8AddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  //qx  if not ShopGlobal.GetChkRight('100002504',2) then Raise Exception.Create('你没有新增尺码组的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002504',2) then Raise Exception.Create('你没有新增尺码组的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
     if TfrmSizeGroupInfo.AddDialog(self,AObj) then

@@ -216,7 +216,6 @@ begin
     //修改价格日志:
     Params.ParamByName('ROWS_ID').AsString:=NewId(''); //日志日期
     Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date()); //日志日期
-    Params.ParamByName('PRICING_USER').AsString:='admin'; 
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;    //企业ID
     Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;        //门店ID
     Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;        //商品ID
@@ -419,7 +418,6 @@ begin
   begin
     Params.ParamByName('ROWS_ID').AsString:=NewId('');
     Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date());
-    Params.ParamByName('PRICING_USER').AsString:='admin';     
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;
     Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;
     Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;

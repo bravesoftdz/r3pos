@@ -51,7 +51,6 @@ type
   protected
     function CheckIdTransact:boolean;
     procedure PushCache;
-    procedure ForcePushCache;
 
     function  DoSKTOpenCommandText(Token,LocaleID: Integer;
       Flags: Word; var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;
@@ -232,7 +231,6 @@ end;
 
 destructor TDoInvokeDispatch.Destroy;
 begin
-  ForcePushCache;
   inherited;
 end;
 
@@ -736,26 +734,18 @@ begin
   end;
 end;
 
-procedure TDoInvokeDispatch.ForcePushCache;
-begin
-  if Assigned(Session) and Assigned(Session.dbResolver) then
-     begin
-       //Session.dbResolver.DisConnect;
-       ConnCache.Push(Session.dbResolver);
-       Session.dbResolver := nil;
-       dbLock := false;
-     end;
-end;
-
 procedure TDoInvokeDispatch.PushCache;
 begin
   if not Assigned(Session) then Raise Exception.Create('dbid连接参数没有设置，无法找到对应的Session');
   if not Assigned(Session.dbResolver) then Exit;
   if (not Session.dbResolver.InTransaction and not dbLock) or not Session.dbResolver.Connected then
      begin
-       ConnCache.Push(Session.dbResolver);
-       Session.dbResolver := nil;
-       dbLock := false;
+       try
+         ConnCache.Push(Session.dbResolver);
+       finally
+         Session.dbResolver := nil;
+         dbLock := false;
+       end;
      end;
 end;
 
@@ -766,7 +756,6 @@ end;
 
 procedure TDoInvokeDispatch.SetSession(const Value: TZSession);
 begin
-  ForcePushCache;
   FSession := Value;
 end;
 
@@ -781,9 +770,11 @@ destructor TZSession.Destroy;
 begin
   if Assigned(dbResolver) then
      begin
-       //dbResolver.DisConnect;
-       ConnCache.Push(dbResolver);
-       dbResolver := nil;
+       try
+         ConnCache.Push(dbResolver);
+       finally
+         dbResolver := nil;
+       end;
      end;
   inherited;
 end;

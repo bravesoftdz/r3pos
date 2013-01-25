@@ -1263,8 +1263,8 @@ begin
             begin
               DataCache.Delete(SessionId);
               Sessions.Delete(TServerClientSocket(SessionId).Session);
-              TServerClientSocket(SessionId).Free;
               SocketCache.Remove(Pointer(SessionId));
+              TServerClientSocket(SessionId).Free;
             end;
        end
     else

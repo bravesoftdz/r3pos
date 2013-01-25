@@ -766,21 +766,20 @@ begin
     while (StreamLen > 0) and FSocket.Connected do
     begin
       RetLen := FSocket.ReceiveBuf(P^, StreamLen);
-      case RetLen of
-      -1,0:begin
+      if RetLen<=0 then
+        begin
            if ((GetTickCount-_Start)>5000) then
             begin
               FSocket.Close;
               raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
             end;
-        end;
+        end
       else
         begin
           _Start := GetTickCount;
           Dec(StreamLen, RetLen);
           Inc(Integer(P), RetLen);
         end;
-      end;
     end;
     if StreamLen <> 0 then
        raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
@@ -806,8 +805,7 @@ begin
      while (Amount>0) and FSocket.Connected do
        begin
          AmountSent := FSocket.SendBuf(P^, Amount);
-         case AmountSent of
-         -1,0:
+         if AmountSent<=0 then
             begin
                if ((GetTickCount-_Start)>5000) then
                begin
@@ -822,7 +820,6 @@ begin
               Inc(Result,AmountSent);
               P := Pointer(Integer(P) + AmountSent);
             end;
-         end;
        end;
     if Amount <> 0 then
        raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);

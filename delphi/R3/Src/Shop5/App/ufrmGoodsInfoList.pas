@@ -545,8 +545,11 @@ begin
        Column := DBGridEh1.Columns.Add;
        Column.FieldName := 'PRICE_'+formatFloat('000',rs.recNo);
        Column.Title.Caption := '会员价|'+rs.FieldbyName('PRICE_NAME').AsString;
-       SetCol:=FindColumn(DBGridEh1,'PROFIT_RATE');
-       Column.Index := SetCol.Index+1;
+       SetCol:=FindColumn(DBGridEh1,'SORT_ID3');
+       if SetCol<>nil then
+         Column.Index := SetCol.Index
+       else
+         Column.Index := DBGridEh1.Columns.Count-3; //默认后倒数第4列
        Column.Width := 64;
        Column.DisplayFormat := '#0.0##';
        CSQL := CSQL +',max(case when PRICE_ID='''+rs.FieldbyName('PRICE_ID').AsString+''' then NEW_OUTPRICE else null end) as '+Column.FieldName;

@@ -1,0 +1,54 @@
+object frmWebForm: TfrmWebForm
+  Left = 336
+  Top = 228
+  HorzScrollBar.Style = ssFlat
+  HorzScrollBar.Tracking = True
+  VertScrollBar.Style = ssFlat
+  VertScrollBar.Tracking = True
+  Align = alClient
+  BorderIcons = []
+  BorderStyle = bsNone
+  ClientHeight = 462
+  ClientWidth = 846
+  Color = clWhite
+  Ctl3D = False
+  Font.Charset = GB2312_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = #23435#20307
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poMainFormCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  object ScrollBox: TScrollBox
+    Left = 0
+    Top = 32
+    Width = 846
+    Height = 430
+    Align = alClient
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    BorderStyle = bsNone
+    TabOrder = 0
+    object webForm: TRzPanel
+      Left = 62
+      Top = 48
+      Width = 731
+      Height = 308
+      BorderOuter = fsNone
+      Color = 16645629
+      TabOrder = 0
+    end
+  end
+  object RzPanel1: TRzPanel
+    Left = 0
+    Top = 0
+    Width = 846
+    Height = 32
+    Align = alTop
+    BorderOuter = fsFlat
+    Color = 14474426
+    TabOrder = 1
+  end
+end

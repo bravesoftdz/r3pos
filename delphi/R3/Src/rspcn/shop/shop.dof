@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=..\debug
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=D:\myWork\Delphi\R3\Src\rspcn\rspcn.exe
+HostApplication=D:\myWork\Delphi\R3\Src\rspcn\debug\rspcn.exe
 Launcher=
 UseLauncher=0
 DebugCWD=
@@ -138,5 +138,6 @@ Comments=
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
-Count=1
-Item0=D:\myWork\Delphi\R3\Src\rspcn\plugins
+Count=2
+Item0=..\debug
+Item1=D:\myWork\Delphi\R3\Src\rspcn\plugins

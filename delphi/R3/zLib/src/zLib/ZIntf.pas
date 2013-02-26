@@ -41,10 +41,43 @@ IdbHelp = Interface(IUnknown)
     //返回执行影响记录数
     function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;stdcall;
 
-    //数据集执行Query 返回执行影响记录数    
+    //数据集执行Query 返回执行影响记录数
     function ExecQuery(DataSet:TDataSet):Integer;stdcall;
+    //客户端中断连接
+    function KillDBConnect:Integer;stdcall;
    end;
-   
+
+IdbDllHelp = Interface(IUnknown)
+    ['{E66321DF-7462-4FAF-B612-2D4A3B0E103F}']
+    //开始事务  超时设置 单位秒
+    procedure BeginTrans(TimeOut:integer=-1);stdcall;
+    //提交事务
+    procedure CommitTrans;stdcall;
+    //回滚事务
+    procedure RollbackTrans;stdcall;
+    //是否已经在事务中 True 在事务中
+    function  InTransaction:boolean;stdcall;
+
+    //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
+    function  iDbType:Integer;stdcall;
+
+    //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
+    function OpenSQL(SQL:WideString;Params:WideString):OleVariant;OverLoad;stdcall;
+    function OpenNS(NS:WideString;Params:WideString):OleVariant;OverLoad;stdcall;
+    //提交数据集
+    function UpdateBatch(ds:OleVariant;NS:WideString;Params:WideString):boolean;OverLoad;stdcall;
+    //返回执行影响记录数
+    function ExecSQL(const SQL:WideString):Integer;stdcall;
+    //执行远程方式，返回结果
+    function ExecProc(NS:String;Params:WideString):pchar;stdcall;
+
+    procedure BeginBatch; stdcall;
+    procedure AddBatch(ds:OleVariant;const ns: WideString; const Params: WideString); stdcall;
+    function OpenBatch: OleVariant; stdcall;
+    procedure CommitBatch; stdcall;
+    procedure CancelBatch; stdcall;
+   end;
+
 IZFactory= interface(IUnknown)
   ['{CC9E0F51-22D6-46DD-A3D9-D8B1D0A0A13A}']
     //初始化对象

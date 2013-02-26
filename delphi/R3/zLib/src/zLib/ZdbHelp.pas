@@ -6,13 +6,14 @@
 unit ZdbHelp;
 
 interface
-uses Classes,SysUtils,Windows,DB,Variants,ZIntf,ZAbstractRODataset, ZDbcCache,
-     ZAbstractDataset, ZDataset, ZConnection, ZDbcIntfs, ZBase, ZSqlUpdate, ComObj;
+uses Classes,SysUtils,Windows,DB,Variants,ZIntf,ZAbstractRODataset, ZDbcCache,Forms,
+     ZAbstractDataset, ZDataset, ZConnection, ZDbcIntfs, ZBase, msxml, ZSqlUpdate, ComObj;
 type
   TdbHelp=class(TInterfacedObject, IdbHelp)
   private
     ZConn:TZConnection;
     ZConnStr:string;
+    Killed:boolean;
     function CheckError(s:string):boolean;
     function CheckConnection:boolean;
   protected
@@ -47,6 +48,8 @@ type
     function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;stdcall;
     //数据集执行Query 返回执行影响记录数
     function ExecQuery(DataSet:TDataSet):Integer;stdcall;
+    //客户端中断连接
+    function KillDBConnect:Integer;stdcall;
   public
     constructor Create;
     destructor Destroy;override;
@@ -156,6 +159,9 @@ type
     constructor Create;
     destructor Destroy;override;
 
+    //客户端断开连接 ,异常
+    procedure KillDBConnect;
+
     //设置连接参数
     function  Initialize(Const ConnStr:WideString):boolean;override;
     //读取连接串
@@ -213,6 +219,7 @@ uses ZLogFile;
 
 procedure TdbHelp.BeginTrans(TimeOut: integer);
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
   try
     if ZConn.InTransaction then Raise Exception.Create('当前连接已经启动事务了,不能BeginTrans');
@@ -256,6 +263,7 @@ end;
 
 procedure TdbHelp.CommitTrans;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   try
     if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能commit'); 
     ZConn.Commit;
@@ -273,17 +281,19 @@ function TdbHelp.Connect: boolean;
 begin
   LogFile.AddLogFile(0,'ZConn.Connect to '+ZConn.Database);
   ZConn.Connect;
+  Killed := false;
   LogFile.AddLogFile(0,'ZConn.Connect finish');
 end;
 
 function TdbHelp.Connected: boolean;
 begin
-  result := ZConn.Connected;
+  result := ZConn.Connected and not Killed;
 end;
 
 constructor TdbHelp.Create;
 begin
   ZConn := TZConnection.Create(nil);
+  Killed := false;
 end;
 
 destructor TdbHelp.Destroy;
@@ -300,6 +310,7 @@ end;
 function TdbHelp.ExecQuery(DataSet: TDataSet): Integer;
 var ZQuery:TZQuery;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
   try
     result := -1;
@@ -322,6 +333,7 @@ var
   ZQuery:TZQuery;
   i:integer;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
   try
   result := -1;
@@ -371,6 +383,7 @@ end;
 
 function TdbHelp.iDbType: Integer;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   if copy(ZConn.Protocol,1,6) = 'mssql' then
      result := 0
   else
@@ -410,6 +423,7 @@ end;
 
 function TdbHelp.InTransaction: boolean;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   try
     result := zConn.InTransaction;
   except
@@ -421,8 +435,14 @@ begin
   end;
 end;
 
+function TdbHelp.KillDBConnect: Integer;
+begin
+  Killed := true;
+end;
+
 function TdbHelp.Open(DataSet: TDataSet): boolean;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
   try
   result := false;
@@ -474,6 +494,7 @@ begin
 //    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback');
     ZConn.Rollback;
     ZConn.TransactIsolationLevel := tiNone;
+    if Killed then Raise Exception.Create('客户端已断开连接'); 
   except
     on E:Exception do
       begin
@@ -485,6 +506,7 @@ end;
 
 function TdbHelp.UpdateBatch(DataSet: TDataSet): boolean;
 begin
+  if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
   try
   result := false;
@@ -550,16 +572,63 @@ begin
 end;
 
 function TdbResolver.CreateFactory(AClassName: string): TZFactory;
+function CreateParserClass(AClassName: string):TZFactory;
+var
+  w:integer;
+  filename:string;
+  ns:string;
+  doc:IXMLDomDocument;
+  Root:IXMLDOMElement;
+  node:IXMLDOMNode;
+  SQL:TSQLCache;
+begin
+  w := pos('@',AClassName);
+  filename := copy(AClassName,1,w-1);
+  ns := copy(AClassName,w+1,255);
+  doc :=  CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
+  filename := ExtractFilePath(Application.ExeName)+'built-in\'+stringReplace(filename,'/','\',[rfReplaceAll])+'.xml';
+  if not fileExists(filename) then Raise Exception.Create('无效的'+AClassName+'包名');
+  doc.load(filename);
+  Root :=  doc.DocumentElement;
+  if not Assigned(Root) then Raise Exception.Create('无效的'+AClassName+'包名');
+  result := TZFactory.Create;
+  node := Root.selectSingleNode('/mapper[@namespace="'+ns+'"]');
+  if not Assigned(node) then Raise Exception.Create('无效的'+AClassName+'包名');
+  node := node.firstChild;
+  while assigned(node) do
+    begin
+       if lowercase(node.nodeName)='select' then
+          begin
+             result.SelectSQL.Text := node.text;
+          end
+       else
+          begin
+             SQL := TSQLCache.Create;
+             SQL.Text := node.text;
+             result.AddSQLTo(node.nodeName,SQL);
+          end;
+       node := node.nextSibling;
+    end;
+end;
 var
   FactoryClass:TPersistentClass;
 begin
   if AClassName<>'' then
   begin
-    FactoryClass := GetClass(AClassName);
-    if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
-    result := TZFactoryClass(FactoryClass).Create;
-    result.iDbType := dbHelp.iDbType;
-    result.ZClassName:=AClassName;  //类名AClassName传入
+    if pos('@',AClassName)>0 then  //xml命名空间 shop/tenant@tenant 路径/包名@命名空间
+       begin
+          result := CreateParserClass(AClassName);
+          result.iDbType := dbHelp.iDbType;
+          result.ZClassName:=AClassName;  //类名AClassName传入
+       end
+    else
+       begin
+          FactoryClass := GetClass(AClassName);
+          if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
+          result := TZFactoryClass(FactoryClass).Create;
+          result.iDbType := dbHelp.iDbType;
+          result.ZClassName:=AClassName;  //类名AClassName传入
+       end;
   end
   else
   begin
@@ -622,10 +691,13 @@ end;
 function TdbResolver.ExecSQL(const SQL: WideString;
   ObjectFactory: TObject): Integer;
 begin
+  if pos(lowercase('update STO_STORAGE set COST_PRICE=('),lowercase(SQL))>0 then Exit;
   if Assigned(ObjectFactory) then
      result := dbHelp.ExecSQL(SQL,ObjectFactory)
   else
-     result := dbHelp.ExecSQL(SQL);
+     begin
+       result := dbHelp.ExecSQL(SQL);
+     end;
 end;
 
 function TdbResolver.GetConnectionString: WideString;
@@ -739,7 +811,7 @@ end;
 
 function TdbResolver.BeginBatch: Boolean;
 begin
-  if FList.Count > 0 then Raise Exception.Create('正在组织数据包，无法开始新的数据包。'); 
+  if FList.Count > 0 then Raise Exception.Create('正在组织数据包，无法开始新的数据包。');
 end;
 
 function TdbResolver.CancelBatch: Boolean;
@@ -894,6 +966,11 @@ procedure TdbResolver.DBLock(Locked: boolean);
 begin
   inherited;
   FdbLocked := Locked;
+end;
+
+procedure TdbResolver.KillDBConnect;
+begin
+  dbHelp.KillDBConnect;
 end;
 
 { TZdbUpdate }

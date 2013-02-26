@@ -6,7 +6,7 @@
 unit ZBase;
 
 interface
-uses SysUtils,Classes,Windows,DB,Variants,FMTBcd,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings;
+uses SysUtils,Classes,Windows,DB,Variants,FMTBcd,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings,ZJson;
 
 type
 TftParam=class(TParam);
@@ -15,6 +15,8 @@ TftParamList=class(TParams)
     function ParamByName(const Value: string): TParam;
     class function Encode(Params:TParams):string;
     class procedure Decode(Params:TParams;str:string);
+    class function EncodeJson(Params:TParams):string;
+    class procedure DecodeJson(Params:TParams;str:string);
   end;
 
 TField_=Class(TInterfacedObject)
@@ -145,7 +147,7 @@ TRecord_=class(TComponent)
     destructor  Destroy;override;
 
     function  FindField(FieldName:String):TField_;virtual;
-    procedure Clear;
+    procedure Clear;virtual;
     procedure AddField(Field:TField_);overload;
     procedure AddField(AFieldName:string;AFieldValue:Variant;AFieldType:TFieldType=ftString);overload;
     procedure CopyTo(Records:TRecord_);
@@ -202,6 +204,7 @@ TZFactory=Class(TRecord_,IZFactory)
     FKeyFields: String;
     FZClassName: string;
     FZParamWStr: widestring;
+    FSQLTable:TStringList;
     procedure SetIsSQLUpdate(const Value: Boolean);
     procedure SetDLLHandle(const Value: THandle);
     procedure SetKeyFields(const Value: String);
@@ -222,13 +225,15 @@ TZFactory=Class(TRecord_,IZFactory)
     function PSBeforeUpdateRecord(ObjectFactory:IdbHelp):HRESULT;stdcall;
     //所有记录处理完毕后,事务提交以前执行。返回值说明 =0表示执行成功 否则为错误代码
     function PSBeforeCommitRecord(ObjectFactory:IdbHelp):HRESULT;stdcall;
-    
+
     procedure CreateNew(AOwner: TComponent);override;
+    procedure Clear;override;
 
   public
     constructor Create(ADataSet: TDataSet);override;
     destructor  Destroy;override;
 
+    procedure AddSQLTo(target:string;SQL:TSQLCache);
     procedure InitClass;virtual;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;virtual;
@@ -1025,6 +1030,11 @@ end;
 
 { TZFactory }
 
+procedure TZFactory.AddSQLTo(target: string; SQL: TSQLCache);
+begin
+  FSQLTable.AddObject(target,SQL); 
+end;
+
 function TZFactory.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
 begin
 
@@ -1055,6 +1065,18 @@ begin
 
 end;
 
+procedure TZFactory.Clear;
+var
+  i:integer;
+begin
+  inherited;
+  for i:=0 to FSQLTable.Count-1 do
+    begin
+      FSQLTable.Objects[i].Free;
+    end;
+  FSQLTable.Clear;
+end;
+
 constructor TZFactory.Create(ADataSet: TDataSet);
 begin
   inherited;
@@ -1071,6 +1093,7 @@ begin
   begin
      SelectSQL.Text := TZTable(ADataSet).TableName;
   end;
+  FSQLTable := TStringList.Create;
 end;
 
 procedure TZFactory.CreateNew(AOwner: TComponent);
@@ -1094,6 +1117,7 @@ begin
   FUpdateSQL.Free;
   FInsertSQL.Free;
   FParams.Free;
+  FSQLTable.Free;
   inherited;
 end;
 
@@ -1357,6 +1381,44 @@ begin
   end;
 end;
 
+class procedure TftParamList.DecodeJson(Params: TParams;str:string);
+var
+  jo:ISuperObject;
+  ja:TSuperArray;
+  i:integer;
+  param:TParam;
+begin
+  if str='' then Exit;
+  jo := SO(str);
+  ja := jo['params'].asArray;
+  for i:=0 to ja.Length-1 do
+    begin
+      param := Params.FindParam(ja[i]['name'].AsString);
+      if param=nil then
+         begin
+           param := TParam(Params.add);
+           param.Name := ja[i]['name'].AsString;
+           param.ParamType := ptInput;
+         end;
+      if lowercase(ja[i]['datatype'].AsString)='integer' then
+         begin
+           param.AsInteger := ja[i]['value'].AsInteger;
+         end;
+      if lowercase(ja[i]['datatype'].AsString)='float' then
+         begin
+           param.AsFloat := ja[i]['value'].AsDouble;
+         end;
+      if lowercase(ja[i]['datatype'].AsString)='double' then
+         begin
+           param.AsFloat := ja[i]['value'].AsDouble;
+         end;
+      if lowercase(ja[i]['datatype'].AsString)='string' then
+         begin
+           param.AsString := ja[i]['value'].AsString;
+         end;
+    end;
+end;
+
 class function TftParamList.Encode(Params: TParams): string;
 var
   i,w:integer;
@@ -1439,6 +1501,11 @@ begin
   finally
     ss.free;
   end;
+end;
+
+class function TftParamList.EncodeJson(Params: TParams): string;
+begin
+
 end;
 
 function TftParamList.ParamByName(const Value: string): TParam;

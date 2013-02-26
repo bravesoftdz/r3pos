@@ -361,7 +361,9 @@ begin
     end;
 
     if CreateIoCompletionPort(ClientWinSocket,iocp,dword(ClientSocket),0) = 0 then
-       RemoveClient(ClientSocket)
+       begin
+         RemoveClient(ClientSocket);
+       end
     else
        begin
          try
@@ -373,6 +375,7 @@ begin
            end;
          except
            RemoveClient(ClientSocket);
+           Raise;
          end;
        end;
   end;
@@ -437,7 +440,8 @@ begin
                            Terminate;
                            SetEvent(Worker.FhEvent);
                          end;
-                       List.Delete(i); 
+                       List.Delete(i);
+                       Dec(c);
                      end;
                 end;
            end;
@@ -445,11 +449,11 @@ begin
       end;
     if (Worker=nil) and (List.Count < 50) then
       begin
-        if (List.Count=0) or ((List.Count > 0) and (FWaitTime>500)) then
-        begin
+        //if (List.Count=0) or ((List.Count > 0) and (FWaitTime>500)) then
+        //begin
            Worker := TSocketWorkerThread.Create(self);
            List.Add(Worker);
-        end;
+        //end;
       end;
     if Worker<>nil then SetEvent(Worker.FhEvent);
   finally
@@ -791,7 +795,14 @@ end;
 procedure TSocketAcceptThread.Execute;
 begin
   while not Terminated do
-    SocketDispatcher.Accept(SocketDispatcher.Socket,SocketDispatcher.iocp);
+    begin
+      try
+        SocketDispatcher.Accept(SocketDispatcher.Socket,SocketDispatcher.iocp);
+      except
+        on E:Exception do
+           LogFile.AddLogFile(0,E.Message,'TSocketAcceptThread','Accept');
+      end;
+    end;
 end;
 
 { TServerClientSocket }
@@ -811,6 +822,10 @@ procedure TServerClientSocket.Close(locked:boolean=true);
 var
   skt: TSocket;
 begin
+  try
+    if Assigned(Session) and Assigned(Session.dbResolver) then Session.dbResolver.KillDbConnect;
+  except
+  end;
   if (FSocket <> INVALID_SOCKET) then
   begin
     RecvEnter;

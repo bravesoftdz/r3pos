@@ -231,6 +231,15 @@ end;
 
 destructor TDoInvokeDispatch.Destroy;
 begin
+  if Assigned(Session) and Assigned(Session.dbResolver) then
+     begin
+       try
+         ConnCache.Push(Session.dbResolver);
+       finally
+         Session.dbResolver := nil;
+         dbLock := false;
+       end;
+     end;
   inherited;
 end;
 
@@ -1110,9 +1119,8 @@ begin
     if not Conn.Connected then
        begin
          Clear;
-         Exit;
        end;
-    if (FList.Count>=MaxCache) then
+    if (FList.Count>=MaxCache) or not Conn.Connected then
        begin
          Conn.Free;
        end

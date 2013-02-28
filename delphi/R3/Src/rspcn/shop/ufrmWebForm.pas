@@ -10,7 +10,6 @@ type
   TfrmWebForm = class(TForm)
     ScrollBox: TScrollBox;
     webForm: TRzPanel;
-    RzPanel1: TRzPanel;
   private
     FhWnd: THandle;
     procedure SethWnd(const Value: THandle);

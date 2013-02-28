@@ -23,9 +23,9 @@ object frmWebForm: TfrmWebForm
   TextHeight = 13
   object ScrollBox: TScrollBox
     Left = 0
-    Top = 32
+    Top = 0
     Width = 846
-    Height = 430
+    Height = 462
     Align = alClient
     BevelInner = bvNone
     BevelOuter = bvNone
@@ -40,15 +40,5 @@ object frmWebForm: TfrmWebForm
       Color = 16645629
       TabOrder = 0
     end
-  end
-  object RzPanel1: TRzPanel
-    Left = 0
-    Top = 0
-    Width = 846
-    Height = 32
-    Align = alTop
-    BorderOuter = fsFlat
-    Color = 14474426
-    TabOrder = 1
   end
 end

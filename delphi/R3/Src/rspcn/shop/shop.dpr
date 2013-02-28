@@ -14,11 +14,13 @@ uses
   ufrmWebForm in 'ufrmWebForm.pas' {frmWebForm},
   uTokenFactory in '..\uTokenFactory.pas',
   dllApi in 'dllApi.pas',
-  ufrmSaleOrder in 'ufrmSaleOrder.pas' {frmSaleOrder},
   udataFactory in 'udataFactory.pas' {dataFactory: TDataModule},
   rspcn_TLB in '..\rspcn_TLB.pas',
   dllIntf in '..\dllIntf.pas',
-  uRspFactory in '..\uRspFactory.pas' {rspFactory: TDataModule};
+  uRspFactory in '..\uRspFactory.pas' {rspFactory: TDataModule},
+  ufrmWebToolForm in 'ufrmWebToolForm.pas' {frmWebToolForm},
+  ufrmWebDialogForm in 'ufrmWebDialogForm.pas' {frmWebDialogForm},
+  ufrmOrderForm in 'app\ufrmOrderForm.pas' {frmOrderForm};
 
 {$R *.res}
 

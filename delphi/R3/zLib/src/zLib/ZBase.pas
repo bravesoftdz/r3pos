@@ -1093,7 +1093,6 @@ begin
   begin
      SelectSQL.Text := TZTable(ADataSet).TableName;
   end;
-  FSQLTable := TStringList.Create;
 end;
 
 procedure TZFactory.CreateNew(AOwner: TComponent);
@@ -1106,19 +1105,18 @@ begin
   FUpdateSQL := TSQLCache.Create;
   FInsertSQL := TSQLCache.Create;
   FParams := TftParamList.Create(self);
-
+  FSQLTable := TStringList.Create;
 end;
 
 destructor TZFactory.Destroy;
 begin
-  Clear;
+  inherited;
   FSelectSQL.Free;
   FDeleteSQL.Free;
   FUpdateSQL.Free;
   FInsertSQL.Free;
   FParams.Free;
   FSQLTable.Free;
-  inherited;
 end;
 
 function TZFactory.FindParam(ParamName: string): TParam;

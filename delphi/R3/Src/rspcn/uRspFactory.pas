@@ -25,13 +25,6 @@ type
     FdbId: integer;
     procedure FreeRspFactory;
     procedure LoadRspFactory;
-    function CreateRspXML: IXMLDomDocument;
-    function CreateXML(xml:string):IXMLDomDocument;
-    function DesEncode(inStr, Key: string): string;
-    procedure CheckRecAck(doc: IXMLDomDocument);
-    function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
-    function FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
-    function GetNodeValue(root:IXMLDOMNode;s:string):string;
     procedure Settimestamp(const Value: Int64);
     procedure SettenantId(const Value: integer);
     procedure SetshopId(const Value: string);
@@ -42,9 +35,21 @@ type
   protected
     RspLogin:TRspFunction;
     RspSetParams:TRspSetParams;
+    RspGetGoodsInfo:TRspFunction;
+    RspUploadGoods:TRspFunction;
   public
     { Public declarations }
+    function  CreateRspXML: IXMLDomDocument;
+    function  CreateXML(xml:string):IXMLDomDocument;
+    procedure CheckRecAck(doc: IXMLDomDocument);
+    function  FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
+    function  FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
+    function  GetNodeValue(root:IXMLDOMNode;s:string):string;
+    function  DesEncode(inStr, Key: string): string;
+
     function xsmLogin(username:string;flag:integer):boolean;
+    function getGoodsInfo(inXml:widestring):widestring;
+    function uploadGoods(inXml:widestring):widestring;
 
     property timestamp:Int64 read Ftimestamp write Settimestamp;
     property tenantId:integer read FtenantId write SettenantId;
@@ -75,6 +80,10 @@ begin
   if @RspLogin=nil then Raise Exception.Create('无效Rsp插件包，没有实现coLogin方法');
   @RspSetParams := GetProcAddress(RspHandle, 'SetParams');
   if @RspSetParams=nil then Raise Exception.Create('无效Rsp插件包，没有实现SetParams方法');
+  @RspGetGoodsInfo := GetProcAddress(RspHandle, 'getGoodsInfo');
+  if @RspGetGoodsInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getGoodsInfo方法');
+  @RspUploadGoods := GetProcAddress(RspHandle, 'uploadGoods');
+  if @RspUploadGoods=nil then Raise Exception.Create('无效Rsp插件包，没有实现uploadGoods方法');
 end;
 procedure TrspFactory.FreeRspFactory;
 begin
@@ -299,6 +308,16 @@ begin
      end
   else
      Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
+end;
+
+function TrspFactory.getGoodsInfo(inXml:widestring): widestring;
+begin
+  result := RspGetGoodsInfo(inxml,rspUrl,1);
+end;
+
+function TrspFactory.uploadGoods(inXml:widestring): widestring;
+begin
+  result := RspUploadGoods(inxml,rspUrl,1);
 end;
 
 function TrspFactory.FindElement(root: IXMLDOMNode;

@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, IdHTTP, msxml, ComObj, EncDec, IniFiles, IdCookieManager,IdCookie,WinInet;
+  IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB, EncDec, IniFiles, IdCookieManager,IdCookie,WinInet;
 
 type
   TUcFactory = class(TDataModule)
@@ -32,6 +32,7 @@ type
     { Public declarations }
     function getChallenge:boolean;
     function xsmLogin(username,password:string):boolean;
+    function chkLogin(EWB:TEmbeddedWB):boolean;
     function getSignature:boolean;
     property xsmUC:string read FxsmUC write SetxsmUC;
     property xsmWB:string read FxsmWB write SetxsmWB;
@@ -130,6 +131,7 @@ begin
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('ÇëÇóÐ£ÑéÂëÊ§°Ü,´íÎó:'+Root.attributes.getNamedItem('msg').text);
     xsmChallenge := Root.selectSingleNode('challenge').text;
     result := true;
+//    IdCookieManager1.CookieCollection.
   except
     on E:Exception do
     begin
@@ -220,8 +222,8 @@ begin
     xsmUC := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
     if xsmUC='' then
        begin
-         xsmUC := 'http://10.10.10.90/st/';
-         xsmWB := 'http://10.0.8.88/xsm6/';
+         xsmUC := 'http://test.xinshangmeng.com/st/';
+         xsmWB := 'http://test.xinshangmeng.com/xsm6/';
        end
        else
        begin
@@ -253,7 +255,21 @@ end;
 procedure TUcFactory.IdCookieManager1NewCookie(ASender: TObject;
   ACookie: TIdCookieRFC2109; var VAccept: Boolean);
 begin
-  InternetSetCookie(nil,pchar(ACookie.CookieName),pchar(ACookie.Value));
+//  messagebox(0,pchar(ACookie.CookieText),'',mb_ok);
+//  InternetSetCookie(pchar('test.xinshangmeng.com'),pchar(ACookie.CookieName),pchar(ACookie.Value+ ';expires=Sun,22-Feb-2099 00:00:00 GMT'));
+end;
+
+function TUcFactory.chkLogin(EWB: TEmbeddedWB): boolean;
+var
+  s:string;
+begin
+  s := '';
+  try
+     s := EWB.OleObject.Document.XMLDocument.documentElement.XML;
+  except
+     s := EWB.OleObject.document.documentelement.innerText;
+  end;
+  result := pos('code="0000"',s)>0;
 end;
 
 end.

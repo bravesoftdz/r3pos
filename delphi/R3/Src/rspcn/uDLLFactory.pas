@@ -20,6 +20,8 @@ type
   TgetLastError=function():pchar;stdcall;
   //6.读取模块名称
   TgetModuleName=function(moduId:pchar):Pchar;stdcall;
+  //5.读取错误说明
+  Tresize=function():boolean;stdcall;
 
   TDLLPlugin=class
   private
@@ -30,6 +32,7 @@ type
     eraseApp:TeraseApp;
     getLastError:TgetLastError;
     getModuleName:TgetModuleName;
+    resize:Tresize;
     FappId: string;
     procedure SetDLLHandle(const Value: THandle);
     procedure SetappId(const Value: string);
@@ -84,12 +87,13 @@ type
     function erase(idx:integer):boolean;
     function find(appId:string):integer;
 
+    procedure resize;
     function getDBHelp:IdbDLLHelp;
   end;
 var
   dllFactory:TDLLFactory;
 implementation
-uses udataFactory;
+uses udataFactory,utokenFactory;
 
 { TDLLFactory }
 
@@ -343,6 +347,16 @@ begin
   end;
 end;
 
+procedure TDLLFactory.resize;
+var
+  i:integer;
+begin
+  for i:=0 to FList.Count -1 do
+    begin
+      TDLLPlugin(FList[i]).resize;
+    end;
+end;
+
 { TDLLPlugin }
 
 constructor TDLLPlugin.Create(dllname:string);
@@ -362,7 +376,9 @@ begin
     if @getLastError=nil then Raise Exception.Create('getLastError方法没有实现');
     @getModuleName := GetProcAddress(dllHandle, 'getModuleName');
     if @getModuleName=nil then Raise Exception.Create('getModuleName方法没有实现');
-    if not initApp(Application.Handle,dllFactory.getDBHelp,'') then Raise Exception.Create('初始化'+dllname+'应用失败');
+    @resize := GetProcAddress(dllHandle, 'resize');
+    if @resize=nil then Raise Exception.Create('resize方法没有实现');
+    if not initApp(Application.Handle,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败');
   except
     freeLibrary(dllHandle);
     dllHandle := 0;

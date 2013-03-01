@@ -12,7 +12,7 @@ unit rspcn_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/2/25 17:06:01 from Type Library described below.
+// File generated on 2013/2/27 18:58:49 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\myWork\Delphi\R3\Src\rspcn\rspcn.tlb (1)
@@ -109,6 +109,7 @@ type
     function iDbType: Integer; safecall;
     procedure moveToRemote; safecall;
     procedure moveToSqlite; safecall;
+    function getUserInfo: WideString; safecall;
   end;
 
 // *********************************************************************//
@@ -157,6 +158,7 @@ type
     function iDbType: Integer; dispid 236;
     procedure moveToRemote; dispid 237;
     procedure moveToSqlite; dispid 238;
+    function getUserInfo: WideString; dispid 239;
   end;
 
 // *********************************************************************//

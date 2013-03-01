@@ -11,6 +11,11 @@ library shop;
   using PChar or ShortString parameters. }
 
 uses
+  SysUtils,
+  Forms,
+  Windows,
+  Messages,
+  Classes,
   ufrmWebForm in 'ufrmWebForm.pas' {frmWebForm},
   uTokenFactory in '..\uTokenFactory.pas',
   dllApi in 'dllApi.pas',
@@ -20,12 +25,21 @@ uses
   uRspFactory in '..\uRspFactory.pas' {rspFactory: TDataModule},
   ufrmWebToolForm in 'ufrmWebToolForm.pas' {frmWebToolForm},
   ufrmWebDialogForm in 'ufrmWebDialogForm.pas' {frmWebDialogForm},
-  ufrmOrderForm in 'app\ufrmOrderForm.pas' {frmOrderForm};
+  ufrmOrderForm in 'app\ufrmOrderForm.pas' {frmOrderForm},
+  ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
+  udllGlobal in 'app\udllGlobal.pas' {dllGlobal: TDataModule},
+  ufrmInitGoods in 'app\ufrmInitGoods.pas' {frmInitGoods},
+  ObjGoodsRelation in 'obj\ObjGoodsRelation.pas',
+  ObjCommon in 'obj\ObjCommon.pas',
+  ufrmWebDialog in '..\common\ufrmWebDialog.pas' {frmWebDialog},
+  ufrmFindDialog in 'ufrmFindDialog.pas' {frmFindDialog},
+  udllDsUtil in 'utils\udllDsUtil.pas',
+  udllFnUtil in 'utils\udllFnUtil.pas',
+  udllShopUtil in 'utils\udllShopUtil.pas',
+  udllXDictFactory in 'utils\udllXDictFactory.pas';
 
 {$R *.res}
-
 exports
-  initApp,openApp,closeApp,eraseApp,getLastError,getModuleName;
+  initApp,openApp,closeApp,eraseApp,getLastError,getModuleName,resize;
 begin
-
 end.

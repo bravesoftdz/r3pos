@@ -6,8 +6,11 @@ uses
   Classes,
   Forms,
   Windows,
-  ZIntf,uTokenFactory,
-  ufrmWebForm;
+  ZIntf,
+  uTokenFactory,
+  ufrmWebForm,
+  uRspFactory,
+  udataFactory;
   
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
@@ -27,23 +30,57 @@ function getLastError:pchar;stdcall;
 //6.获取标题名
 function getModuleName(moduId:Pchar):Pchar;stdcall;
 
+function resize:boolean;stdcall;
+
+type
+  TdllApplication=class
+  public
+    procedure dllException(Sender: TObject; E: Exception);
+  end;
 var
   lastError:string;
   buf:string;
   dbHelp:IdbDllHelp;
+  dllApplication:TdllApplication;
 implementation
 var
   webForm:TStringList;
   oldHandle:THandle;
+procedure Halt0;
+begin
+  halt;
+end;
+procedure DLLEntryPoint(dwReason: DWord);
+begin
+  if (dwReason = DLL_PROCESS_DETACH) Then
+  Begin
+    asm
+      xor edx, edx
+      push ebp
+      push OFFSET @@safecode
+      push dword ptr fs:[edx]
+      mov fs:[edx],esp
+      call Halt0
+      jmp @@exit;
+      @@safecode:
+      call Halt0;
+      @@exit:
+    end;
+  end;
+end;
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
 function initApp(appWnd:Thandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
 begin
+  DllProc := @DLLEntryPoint;
+  DllProcEX := @DLLEntryPoint;
   webForm := TStringList.Create;
   oldHandle := Application.Handle;
-  Application.Handle := appWnd;
+  Application.OnException := dllApplication.dllException;
+//  Application.Handle := appWnd;
   token.decode(strpas(_token));
   dbHelp:= _dbHelp;
+  rspFactory := TrspFactory.Create(nil);
   result := true;
 end;
 
@@ -60,6 +97,7 @@ begin
     Form := TFormClass(pClass).Create(application) as TfrmWebForm;
     webForm.AddObject(moduid,Form);
     windows.SetParent(Form.Handle,hWnd);
+    //Form.ParentWindow := hWnd;
     Form.hWnd := hWnd;
     Form.showForm;
     result := true;
@@ -98,7 +136,8 @@ begin
      end;
   webForm.Free;
   dbHelp := nil;
-  Application.Handle := oldHandle;
+  Application.OnException := nil;
+//  Application.Handle := oldHandle;
 end;
 //5.读取错误说明
 function getLastError:pchar;stdcall;
@@ -119,4 +158,29 @@ begin
   else
      result := '无';
 end;
+function resize:boolean;stdcall;
+var
+  i:integer;
+begin
+  for i:=webForm.Count -1 downto 0 do
+     begin
+       TfrmWebForm(webForm.Objects[i]).ajustPostion;
+     end;
+end;
+{ TdllApplication }
+
+procedure TdllApplication.dllException(Sender: TObject; E: Exception);
+var wnd:THandle;
+begin
+  if Screen.ActiveForm<>nil then
+     wnd := Screen.ActiveForm.Handle
+  else
+     wnd := Application.Handle;
+  MessageBox(wnd,pchar(E.Message),'出错了',MB_OK+MB_ICONERROR);
+end;
+
+initialization
+  dllApplication := TdllApplication.create;
+finalization
+  dllApplication.Free;
 end.

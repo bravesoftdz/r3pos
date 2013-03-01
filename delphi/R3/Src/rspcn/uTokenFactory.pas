@@ -1,7 +1,7 @@
 unit uTokenFactory;
 
 interface
-uses SysUtils, Classes,Des,EncDec,msxml,windows,EncdDecd;
+uses SysUtils, Classes,Des,EncDec,msxml,windows,EncdDecd,Comobj;
 type
   TToken=class
   private
@@ -21,6 +21,8 @@ type
     FidCard: string;
     FxsmAlias: string;
     Fshoped: boolean;
+    Flogined: boolean;
+    Fusername: string;
     procedure Setaccount(const Value: string);
     procedure Setaddress(const Value: string);
     procedure SetidCard(const Value: string);
@@ -37,12 +39,16 @@ type
     procedure SetxsmCode(const Value: string);
     procedure SetxsmPWD(const Value: string);
     procedure Setshoped(const Value: boolean);
+    procedure Setlogined(const Value: boolean);
+    procedure Setusername(const Value: string);
   public
     function encode:string;
+    function encodeJson:string;
     procedure decode(_token:string);
 
     property userId:string read FuserId write SetuserId;
     property account:string read Faccount write Setaccount;
+    property username:string read Fusername write Setusername;
     property tenantId:string read FtenantId write SettenantId;
     property tenantName:string read FtenantName write SettenantName;
     property shopId:string read FshopId write SetshopId;
@@ -57,6 +63,7 @@ type
     property mobile:string read Fmobile write Setmobile;
     property online:boolean read Fonline write Setonline;
     property shoped:boolean read Fshoped write Setshoped;
+    property logined:boolean read Flogined write Setlogined;
   end;
 var
   token:TToken;
@@ -65,13 +72,126 @@ implementation
 { TToken }
 
 procedure TToken.decode(_token: string);
+var
+  rspcn:IXMLDOMElement;
+  userinfo:IXMLDOMNode;
+  doc:IXMLDomDocument;
 begin
-
+  doc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
+  try
+    doc.loadXML(_token);
+    rspcn := doc.documentElement;
+    if rspcn.getAttribute('code')<>'0000' then raise exception.Create(rspcn.getAttribute('msg'));
+    userId := rspcn.selectSingleNode('/rspcn/userInfo/userId').text;
+    account := rspcn.selectSingleNode('/rspcn/userInfo/account').text;
+    username := rspcn.selectSingleNode('/rspcn/userInfo/username').text;
+    tenantId := rspcn.selectSingleNode('/rspcn/userInfo/tenantId').text;
+    tenantName := rspcn.selectSingleNode('/rspcn/userInfo/tenantName').text;
+    shopId := rspcn.selectSingleNode('/rspcn/userInfo/shopId').text;
+    shopName := rspcn.selectSingleNode('/rspcn/userInfo/shopName').text;
+    address := rspcn.selectSingleNode('/rspcn/userInfo/address').text;
+    xsmCode := rspcn.selectSingleNode('/rspcn/userInfo/xsmCode').text;
+    xsmPWD := rspcn.selectSingleNode('/rspcn/userInfo/xsmPWD').text;
+    licenseCode := rspcn.selectSingleNode('/rspcn/userInfo/licenseCode').text;
+    legal := rspcn.selectSingleNode('/rspcn/userInfo/legal').text;
+    idCard := rspcn.selectSingleNode('/rspcn/userInfo/idCard').text;
+    mobile := rspcn.selectSingleNode('/rspcn/userInfo/mobile').text;
+    online := (rspcn.selectSingleNode('/rspcn/userInfo/mobile').text='1');
+    shoped := true;
+    logined := true;
+  except
+    Raise;
+  end;
 end;
 
 function TToken.encode: string;
+var
+  rspcn,userinfo,node:IXMLDOMElement;
+  doc:IXMLDomDocument;
 begin
+  doc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
+  try
+    rspcn := doc.createElement('rspcn');
+    rspcn.setAttribute('code','0000');
+    rspcn.setAttribute('msg','∫œ∑®¡Ó∞Ê');
+    rspcn.setAttribute('time_stamp',formatDatetime('YYYYMMDDHHNNSS',now()));
+    doc.documentElement := rspcn;
+    userinfo := doc.createElement('userInfo');
+    node := doc.createElement('userId');
+    node.text := userId;
+    userinfo.appendChild(node);
+    node := doc.createElement('account');
+    node.text := account;
+    userinfo.appendChild(node);
+    node := doc.createElement('username');
+    node.text := username;
+    userinfo.appendChild(node);
+    node := doc.createElement('tenantId');
+    node.text := tenantId;
+    userinfo.appendChild(node);
+    node := doc.createElement('tenantName');
+    node.text := tenantName;
+    userinfo.appendChild(node);
+    node := doc.createElement('shopId');
+    node.text := shopId;
+    userinfo.appendChild(node);
+    node := doc.createElement('shopName');
+    node.text := shopName;
+    userinfo.appendChild(node);
+    node := doc.createElement('address');
+    node.text := address;
+    userinfo.appendChild(node);
+    node := doc.createElement('xsmCode');
+    node.text := xsmCode;
+    userinfo.appendChild(node);
+    node := doc.createElement('xsmPWD');
+    node.text := xsmPWD;
+    userinfo.appendChild(node);
+    node := doc.createElement('licenseCode');
+    node.text := licenseCode;
+    userinfo.appendChild(node);
+    node := doc.createElement('legal');
+    node.text := legal;
+    userinfo.appendChild(node);
+    node := doc.createElement('idCard');
+    node.text := idCard;
+    userinfo.appendChild(node);
+    node := doc.createElement('mobile');
+    node.text := mobile;
+    userinfo.appendChild(node);
+    node := doc.createElement('online');
+    if online then
+       node.text := '1'
+    else
+       node.text := '0';
+    userinfo.appendChild(node);
+    rspcn.appendChild(userinfo);
+    result := doc.xml;
+  except
+    Raise;
+  end;
+end;
 
+function TToken.encodeJson: string;
+begin
+  result :=
+   '{'+
+   '"userId":"'+userId+'",'+
+   '"userName":"'+userName+'",'+
+   '"account":"'+account+'",'+
+   '"tenantId":"'+tenantId+'",'+
+   '"tenantName":"'+tenantName+'",'+
+   '"shopId":"'+shopId+'",'+
+   '"shopName":"'+shopName+'",'+
+   '"address":"'+address+'",'+
+   '"xsmCode":"'+xsmCode+'",'+
+   '"xsmAlias":"'+xsmAlias+'",'+
+   '"licenseCode":"'+licenseCode+'",'+
+   '"legal":"'+legal+'",'+
+   '"idCard":"'+idCard+'",'+
+   '"mobile":"'+mobile+'",'+
+   '"online":"'+booltoStr(online,true)+'"'+
+   '}';
 end;
 
 procedure TToken.Setaccount(const Value: string);
@@ -97,6 +217,11 @@ end;
 procedure TToken.SetlicenseCode(const Value: string);
 begin
   FlicenseCode := Value;
+end;
+
+procedure TToken.Setlogined(const Value: boolean);
+begin
+  Flogined := Value;
 end;
 
 procedure TToken.Setmobile(const Value: string);
@@ -137,6 +262,11 @@ end;
 procedure TToken.SetuserId(const Value: string);
 begin
   FuserId := Value;
+end;
+
+procedure TToken.Setusername(const Value: string);
+begin
+  Fusername := Value;
 end;
 
 procedure TToken.SetxsmAlias(const Value: string);

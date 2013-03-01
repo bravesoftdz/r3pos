@@ -53,6 +53,8 @@ type
     function iDbType: Integer;safecall;
     procedure moveToRemote;safecall;
     procedure moveToSqlite;safecall;
+    
+    function getUserInfo: WideString; safecall;
   end;
 
 implementation
@@ -117,6 +119,10 @@ begin
              token.account := username;
              token.xsmCode := username;
              token.xsmPWD := password;
+             token.userId := username;
+             token.username := username;
+             token.Logined := true;
+             token.online := online;
              result := true;
              Exit;
              //if rspFactory.xsmLogin(username,3) then
@@ -197,6 +203,20 @@ begin
     token.tenantName := rs.FieldbyName('TENANT_NAME').AsString;
     token.shopId := rs.FieldbyName('SHOP_ID').AsString;
     token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
+    token.username := rs.FieldbyName('USER_NAME').AsString;
+    rs.Close;
+    rs.SQL.CommaText := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    token.address := rs.FieldbyName('ADDRESS').AsString;
+    token.xsmCode := rs.FieldbyName('XSM_CODE').AsString;
+    token.xsmPWD := rs.FieldbyName('XSM_PSWD').AsString;
+    token.licenseCode := rs.FieldbyName('LICENSE_CODE').AsString;
+    token.legal := rs.FieldbyName('LINKMAN').AsString;
+    token.mobile := rs.FieldbyName('TELEPHONE').AsString;
+    token.Logined := true;
+    token.online := online;
   finally
     rs.Free;
   end;
@@ -444,6 +464,11 @@ begin
   finally
     prms.Free;
   end;
+end;
+
+function TjavaScriptExt.getUserInfo: WideString;
+begin
+  result := token.encode;
 end;
 
 initialization

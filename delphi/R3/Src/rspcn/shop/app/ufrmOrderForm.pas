@@ -63,6 +63,7 @@ type
     procedure fndGODS_IDKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure fndGODS_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
   private
     //SEQNO控制号
     FinputFlag: integer;
@@ -85,10 +86,11 @@ type
     Locked:boolean;
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
-    
+
     procedure SetinputFlag(const Value: integer);
     procedure SetinputMode(const Value: integer);
     procedure InitRecord;
+    function CheckInput:boolean;virtual;
     procedure SetdbState(const Value: TDataSetState);
     function EnCodeBarcode: string;
     { Private declarations }
@@ -121,6 +123,21 @@ type
     procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);virtual;
     procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);virtual;
 
+    //输入会员号
+    procedure WriteInfo(id:string);virtual;
+    //整单折扣
+    procedure AgioInfo(id:string);virtual;
+    //单笔折扣
+    procedure AgioToGods(id:string);virtual;
+    //修改单价
+    procedure PriceToGods(id:string);virtual;
+    //输入跟踪号
+    function GodsToLocusNo(id:string):boolean;virtual;
+    //输入批号
+    function GodsToBatchNo(id:string):boolean;virtual;
+    //输入数量
+    procedure GodsToAmount(id:string);virtual;
+    
     procedure ReadFrom(DataSet:TDataSet);virtual;
     procedure CalcWriteTo(edtTable,DataSet:TDataSet;MyField:TField);virtual;
     procedure WriteTo(DataSet:TDataSet);virtual;
@@ -153,7 +170,7 @@ var
 
 implementation
 
-uses udllGlobal,ufrmFindDialog,utokenFactory;
+uses udllGlobal,ufrmFindDialog,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil;
 
 {$R *.dfm}
 
@@ -167,7 +184,44 @@ begin
       lblInput.Caption := '条码输入';
       lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
     end;
+  1:begin
+      lblInput.Caption := '会员卡号';
+      lblHint.Caption := '请输入完整的(会员卡号)后按“回车”';
+    end;
+  2:begin
+      lblInput.Caption := '整单折扣';
+      lblHint.Caption := '请输入整单折扣率(如:8折、85折)后按“回车”';
+    end;
+  3:begin
+      lblInput.Caption := '修改单价';
+      lblHint.Caption := '请直接输入单价后按“回车”';
+    end;
+  4:begin
+      lblInput.Caption := '单笔折扣';
+      lblHint.Caption := '请直接输入当前商品的折扣率(如:8折、85折)后按“回车”';
+    end;
+  5:begin
+      lblInput.Caption := '单位切换';
+      lblHint.Caption := '请按 tab 健进行单位转换';
+    end;
+  6:begin
+      lblInput.Caption := '赠品/兑换';
+      lblHint.Caption := '请按 tab 健进行"正常/赠品/兑换"转换';
+    end;
+  7:begin
+      lblInput.Caption := '物流条码';
+      lblHint.Caption := '请输入物流跟踪号后按“回车”';
+    end;
+  8:begin
+      lblInput.Caption := '商品批号';
+      lblHint.Caption := '请输入商品批号后按“回车”';
+    end;
+  9:begin
+      lblInput.Caption := '数量输入';
+      lblHint.Caption := '请输入商品批号后按“回车”';
+    end;
   end;
+  if not CheckInput then InputFlag := 0;
 end;
 
 procedure TfrmOrderForm.RzBmpButton2Click(Sender: TObject);
@@ -214,7 +268,7 @@ end;
 procedure TfrmOrderForm.edtInputExit(Sender: TObject);
 begin
   inherited;
-  inputMode := 0;
+//  inputMode := 0;
 
 end;
 
@@ -234,6 +288,7 @@ begin
        inputMode := 1;
        inputFlag := 0;
        edtInput.SetFocus;
+       MessageBox(handle,'dll f2','',mb_ok);
      end;
 end;
 
@@ -1567,6 +1622,198 @@ begin
      end;
   AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
   edtTable.Post;
+end;
+
+procedure TfrmOrderForm.edtInputKeyPress(Sender: TObject; var Key: Char);
+var
+  s:string;
+  IsNumber,IsFind,isAdd:Boolean;
+  amt:Real;
+  AObj:TRecord_;
+begin
+  inherited;
+  try
+  if Key=#13 then
+    begin
+      if (dbState = dsBrowse) then Exit;
+      s := trim(edtInput.Text);
+      edtInput.SelectAll;
+      if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
+      Key := #0;
+      try
+      if InputFlag=1 then //会员卡号
+         begin
+           WriteInfo(s);
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=2 then //整单折扣
+         begin
+           if s<>'' then AgioInfo(s);
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=3 then //单价
+         begin
+           if s<>'' then PriceToGods(s);
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=4 then //折扣率
+         begin
+           if s<>'' then AgioToGods(s);
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=5 then //单位
+         begin
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=6 then //赠品
+         begin
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=9 then //数量输入
+         begin
+           if s<>'' then GodsToAmount(s);
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      isAdd := false;
+      if s='' then
+         begin
+           fndStr := '';
+           Exit;
+         end;
+      IsNumber := false;
+      if s[1]='+' then
+         begin
+            Delete(s,1,1);
+            isAdd := true;
+         end ;
+      if ((length(s) in [1,2,3,4]) and FnString.IsNumberChar(s)) or IsNumber then
+         begin
+             if trim(s)='' then Exit;
+             if edtTable.FieldbyName('GODS_ID').asString='' then Exit;
+             if not IsNumber then amt := StrtoFloatDef(s,0);
+             if amt=0 then
+                begin
+                   AObj := TRecord_.Create;
+                   try
+                      AObj.ReadFromDataSet(edtTable);
+                      DelRecord(AObj)
+                   finally
+                      AObj.Free;
+                   end;
+                end
+             else
+                begin
+                  if PropertyEnabled then
+                     begin
+                       if (vgds = edtTable.FieldbyName('GODS_ID').AsString) and ((vP1<>'#') or (vP2<>'#')) then
+                         WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,vP1,vP2,amt,isAdd)
+                       else
+                         PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
+                     end
+                  else
+                     begin
+                       WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,'#','#',amt,isAdd);
+                     end;
+                end;
+            edtInput.Text := '';
+         end
+      else
+         begin
+           case DecodeBarCode(trim(s)) of
+             2:begin
+                 MessageBox(Handle,'输入的条码无效..','友情提示...',MB_OK+MB_ICONQUESTION);
+               end;
+             3:begin
+                 edtInput.Text := '';
+                 Exit;
+               end;
+           else
+              edtInput.Text := '';
+           end;
+         end;
+      except
+         edtInput.SelectAll;
+         Raise;
+      end;
+    end;
+
+    if Key='-' then
+      begin
+        if MessageBox(Handle,pchar('是否删除当前选择商品"'+edtTable.FieldbyName('GODS_NAME').asString+'"'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+        AObj := TRecord_.Create;
+        try
+           AObj.ReadFromDataSet(edtTable);
+           DelRecord(AObj)
+        finally
+           AObj.Free;
+        end;
+        Key := #0;
+      end;
+  finally
+     if edtInput.CanFocus and not edtInput.Focused then
+        if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
+  end;
+end;
+
+procedure TfrmOrderForm.AgioInfo(id: string);
+begin
+
+end;
+
+procedure TfrmOrderForm.AgioToGods(id: string);
+begin
+
+end;
+
+function TfrmOrderForm.CheckInput: boolean;
+begin
+  result := true;
+end;
+
+procedure TfrmOrderForm.GodsToAmount(id: string);
+begin
+
+end;
+
+function TfrmOrderForm.GodsToBatchNo(id: string): boolean;
+begin
+
+end;
+
+function TfrmOrderForm.GodsToLocusNo(id: string): boolean;
+begin
+
+end;
+
+procedure TfrmOrderForm.PriceToGods(id: string);
+begin
+
+end;
+
+procedure TfrmOrderForm.WriteInfo(id: string);
+begin
+
 end;
 
 end.

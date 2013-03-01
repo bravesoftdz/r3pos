@@ -128,6 +128,8 @@ type
     procedure RzBmpButton8Click(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FWindowState: TWindowState;
     { Private declarations }
@@ -169,6 +171,9 @@ type
     procedure ProgressChangeEvent(ASender: TObject; Progress,
       ProgressMax: Integer);
     procedure SetWindowState(const Value: TWindowState);
+    procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;
+    procedure WMKeyUp(var Message: TWMKeyUp); message WM_KEYUP;
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
   protected
     m_Rect: TRect;
     m_bCreatedManually: Boolean;
@@ -1021,8 +1026,85 @@ begin
 end;
 
 procedure TfrmBrowerForm.WndProc(var Message: TMessage);
+var
+  tabEx:TTabSheetEx;
+  childWnd:THandle;
 begin
   inherited;
+  if PageControl1=nil then Exit;
+  if not( Message.Msg=WM_KEYDOWN) then Exit;
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  if tabEx=nil then Exit;
+  if tabEx.url.appFlag=0 then Exit;
+  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+  while childWnd>0 do
+    begin
+      DefWindowProc(childWnd,Message.Msg,Message.WParam,Message.LParam);
+      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+    end;
+end;
+
+procedure TfrmBrowerForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key=VK_F2 then MessageBox(handle,'ÊÕµ½ÁË','',mb_ok);
+end;
+
+procedure TfrmBrowerForm.WMChar(var Message: TWMChar);
+var
+  tabEx:TTabSheetEx;
+  childWnd:THandle;
+begin
+  inherited;
+  if PageControl1=nil then Exit;
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  if tabEx=nil then Exit;
+  if tabEx.url.appFlag=0 then Exit;
+  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+  while childWnd>0 do
+    begin
+      windows.SetFocus(childWnd);
+      DefWindowProc(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
+      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+    end;
+end;
+
+procedure TfrmBrowerForm.WMKeyDown(var Message: TWMKeyDown);
+var
+  tabEx:TTabSheetEx;
+  childWnd:THandle;
+begin
+  inherited;
+  if PageControl1=nil then Exit;
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  if tabEx=nil then Exit;
+  if tabEx.url.appFlag=0 then Exit;
+  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+  while childWnd>0 do
+    begin
+      windows.SetFocus(childWnd);
+      DefWindowProc(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
+      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+    end;
+end;
+
+procedure TfrmBrowerForm.WMKeyUp(var Message: TWMKeyUp);
+var
+  tabEx:TTabSheetEx;
+  childWnd:THandle;
+begin
+  inherited;
+  if PageControl1=nil then Exit;
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  if tabEx=nil then Exit;
+  if tabEx.url.appFlag=0 then Exit;
+  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+  while childWnd>0 do
+    begin
+      windows.SetFocus(childWnd);
+      DefWindowProc(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
+      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+    end;
 end;
 
 initialization

@@ -1,6 +1,7 @@
 inherited frmOrderForm: TfrmOrderForm
   Left = 186
   Top = 134
+  ActiveControl = edtInput
   Caption = #21333#25454#22522#31867
   ClientHeight = 542
   ClientWidth = 904
@@ -97,6 +98,7 @@ inherited frmOrderForm: TfrmOrderForm
                 TabOrder = 0
                 OnEnter = edtInputEnter
                 OnExit = edtInputExit
+                OnKeyPress = edtInputKeyPress
               end
               object RzBmpButton2: TRzBmpButton
                 Left = 812

@@ -1,6 +1,7 @@
 inherited frmFindDialog: TfrmFindDialog
   Caption = 'frmFindDialog'
   ClientWidth = 451
+  OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
   inherited pnlAddressBar: TPanel

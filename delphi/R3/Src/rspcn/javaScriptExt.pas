@@ -156,8 +156,8 @@ begin
   //开始登录
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,A.DIMI_DATE,A.TENANT_ID from VIW_USERS A,CA_SHOP_INFO B '+
-      'where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT in ('''+username+''','''+lowercase(username)+''','''+uppercase(username)+''')';
+    rs.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,A.DIMI_DATE,A.TENANT_ID,C.TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
+      'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT in ('''+username+''','''+lowercase(username)+''','''+uppercase(username)+''')';
     rs.ParamByName('TENANT_ID').AsInteger := tenantId;
     dataFactory.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('无效登录名.'); 

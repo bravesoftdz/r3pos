@@ -205,7 +205,7 @@ begin
     token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
     token.username := rs.FieldbyName('USER_NAME').AsString;
     rs.Close;
-    rs.SQL.CommaText := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.SQL.Text := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
     rs.ParamByName('SHOP_ID').AsString := token.shopId;
     dataFactory.Open(rs);

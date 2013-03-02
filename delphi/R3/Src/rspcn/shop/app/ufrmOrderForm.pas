@@ -48,10 +48,10 @@ type
     order_grid: TRzPanel;
     DBGridEh1: TDBGridEh;
     order_footer: TRzPanel;
-    fndGODS_ID: TzrComboBoxList;
     edtTable: TZQuery;
     dsTable: TDataSource;
     edtProperty: TZQuery;
+    fndGODS_ID: TzrComboBoxList;
     fndUNIT_ID: TcxComboBox;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
@@ -64,6 +64,9 @@ type
       Shift: TShiftState);
     procedure fndGODS_IDKeyPress(Sender: TObject; var Key: Char);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure fndGODS_IDSaveValue(Sender: TObject);
+    procedure DBGridEh1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     //SEQNO控制号
     FinputFlag: integer;
@@ -89,12 +92,13 @@ type
 
     procedure SetinputFlag(const Value: integer);
     procedure SetinputMode(const Value: integer);
-    procedure InitRecord;
-    function CheckInput:boolean;virtual;
     procedure SetdbState(const Value: TDataSetState);
-    function EnCodeBarcode: string;
     { Private declarations }
   protected
+    procedure InitRecord;
+    function EnCodeBarcode: string;
+    function CheckInput:boolean;virtual;
+
     function  FindColumn(FieldName:string):TColumnEh;
     procedure FocusColumn(FieldName: string);
     procedure FocusNextColumn;
@@ -108,10 +112,11 @@ type
     //检测是否是汇总字段
     function CheckSumField(FieldName:string):boolean;virtual;
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string);virtual;
-    procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string;pt:boolean=false);virtual;
+    procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string);virtual;
     procedure DelRecord(AObj:TRecord_);virtual;
     procedure EraseRecord;virtual;
     procedure InitPrice(GODS_ID,UNIT_ID:string);virtual;
+    function CheckRepeat(AObj:TRecord_):boolean;virtual;
 
     procedure AmountToCalc(Amount:Real);virtual;
     procedure PriceToCalc(APrice:Real);virtual;
@@ -170,7 +175,8 @@ var
 
 implementation
 
-uses udllGlobal,ufrmFindDialog,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil;
+uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil,
+  udataFactory;
 
 {$R *.dfm}
 
@@ -253,11 +259,24 @@ begin
 end;
 
 constructor TfrmOrderForm.Create(AOwner: TComponent);
-var i:integer;
+var
+  i:integer;
+  rs:TZQuery;
+  Column:TColumnEh;
 begin
   inherited;
   inputMode := 1;
   for i:=0 to PageControl.PageCount - 1 do PageControl.Pages[i].TabVisible := false;
+  fndGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  Column := FindColumn('UNIT_ID');
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString)
+      rs.Next;
+    end;
 end;
 
 destructor TfrmOrderForm.Destroy;
@@ -288,7 +307,6 @@ begin
        inputMode := 1;
        inputFlag := 0;
        edtInput.SetFocus;
-       MessageBox(handle,'dll f2','',mb_ok);
      end;
 end;
 
@@ -447,6 +465,8 @@ end;
 procedure TfrmOrderForm.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
+  SetFormEditStatus(self,Value);
+  DBGridEh1.ReadOnly := (Value=dsBrowse);
 end;
 
 procedure TfrmOrderForm.CheckInvaid;
@@ -512,7 +532,29 @@ begin
 end;
 
 function TfrmOrderForm.EnCodeBarcode:string;
+var
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select BARCODE,UNIT_ID from PUB_BARCODE where TENANT_ID in ('+dllGlobal.GetTenantId+') and GODS_ID=:GODS_ID and BARCODE_TYPE in (''0'',''1'',''2'') order by BARCODE_TYPE';
+    rs.ParamByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
+    dataFactory.MoveToSqlite;
+    try
+      dataFactory.Open(rs);
+      if rs.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').asString,[]) then
+         result := rs.FieldbyName('BARCODE').asString
+      else
+         begin
+           rs.First;
+           result := rs.FieldbyName('BARCODE').asString;
+         end;
+    finally
+      dataFactory.MoveToDefault;
+    end;
+  finally
+    rs.free;
+  end;
 end;
 procedure TfrmOrderForm.AddRecord(AObj: TRecord_; UNIT_ID: string);
 var
@@ -700,8 +742,7 @@ begin
   end;
 end;
 
-procedure TfrmOrderForm.UpdateRecord(AObj: TRecord_; UNIT_ID: string;
-  pt: boolean);
+procedure TfrmOrderForm.UpdateRecord(AObj: TRecord_; UNIT_ID: string);
 var Field:TField;
 begin
   if edtTable.State = dsBrowse then
@@ -713,7 +754,7 @@ begin
   edtTable.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
   edtTable.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
   edtTable.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
-  edtTable.FieldByName('IS_PRESENT').AsString := '0';
+  edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
   edtTable.FieldbyName('BATCH_NO').AsString := '#';
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
   edtProperty.Filtered := false;
@@ -1305,13 +1346,18 @@ var
   rs:TZQuery;
 begin
   result := false;
+  Exit;
   rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-  if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then 
-  result := not (
-       ((rs.FieldbyName('SORT_ID7').AsString = '') or (rs.FieldbyName('SORT_ID7').AsString = '#'))
-         and
-       ((rs.FieldbyName('SORT_ID8').AsString = '') or (rs.FieldbyName('SORT_ID8').AsString = '#'))
-       );
+  if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
+     begin
+        result := not (
+             ((rs.FieldbyName('SORT_ID7').AsString = '') or (rs.FieldbyName('SORT_ID7').AsString = '#'))
+               and
+             ((rs.FieldbyName('SORT_ID8').AsString = '') or (rs.FieldbyName('SORT_ID8').AsString = '#'))
+             );
+     end
+  else
+     Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
 end;
 
 procedure TfrmOrderForm.AuditOrder;
@@ -1814,6 +1860,138 @@ end;
 procedure TfrmOrderForm.WriteInfo(id: string);
 begin
 
+end;
+
+procedure TfrmOrderForm.fndGODS_IDSaveValue(Sender: TObject);
+var AObj:TRecord_;
+  rs:TZQuery;
+  pt:boolean;
+begin
+  inherited;
+  if not edtTable.Active then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then exit;
+  edtTable.DisableControls;
+  try
+  if edtTable.FieldbyName('GODS_ID').AsString <> '' then
+     begin
+       if edtTable.FieldByName('BOM_ID').AsString = '' then
+       begin
+         if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
+            begin
+              fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+              fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+              Exit;
+            end;
+       end
+       else
+       begin
+          MessageBox(Handle,pchar('礼盒包装不能单商品修改，请删除重新扫码'),'友情提示',MB_OK+MB_ICONINFORMATION);
+          fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+          fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+          Exit;
+       end;
+     end;
+  if VarIsNull(fndGODS_ID.KeyValue) then
+  begin
+    EraseRecord;
+  end
+  else
+  begin
+    AObj := TRecord_.Create;
+    try
+      rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+      if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
+      begin
+        AObj.ReadField(edtTable);
+        AObj.ReadFromDataSet(rs,false);
+        AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
+        AObj.FieldbyName('IS_PRESENT').AsInteger := 0;
+        AObj.FieldbyName('LOCUS_NO').AsString := '';
+        AObj.FieldbyName('BATCH_NO').AsString := '#';
+
+        if CheckRepeat(AObj) then
+           begin
+             fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+             fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+             Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[edtTable.FieldbyName('GODS_NAME').AsString]));
+           end;
+           
+        UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString);
+      end
+      else
+        Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
+    finally
+      AObj.Free;
+    end;
+    if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) then
+       begin
+         if not PropertyEnabled then
+            begin
+              edtTable.FieldbyName('AMOUNT').AsFloat := 1;
+              AMountToCalc(1);
+            end
+         else
+            PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
+       end;
+  end;
+  finally
+    if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
+    edtTable.EnableControls;
+  end;
+end;
+
+function TfrmOrderForm.CheckRepeat(AObj: TRecord_): boolean;
+var
+  r,c:integer;
+begin
+  result := false;
+  r := edtTable.FieldbyName('SEQNO').AsInteger;
+  edtTable.DisableControls;
+  try
+    c := 0;
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        if
+           (edtTable.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+           and
+           (edtTable.FieldbyName('IS_PRESENT').AsString = AObj.FieldbyName('IS_PRESENT').AsString)
+           and
+           (edtTable.FieldbyName('UNIT_ID').AsString = AObj.FieldbyName('UNIT_ID').AsString)
+           and
+           (edtTable.FieldbyName('LOCUS_NO').AsString = AObj.FieldbyName('LOCUS_NO').AsString)
+           and
+           (edtTable.FieldbyName('BATCH_NO').AsString = AObj.FieldbyName('BATCH_NO').AsString)
+           and
+           (edtTable.FieldbyName('BOM_ID').AsString = AObj.FieldbyName('BOM_ID').AsString)
+           and
+           (edtTable.FieldbyName('SEQNO').AsInteger <> r)
+        then
+           begin
+              inc(c);
+              break;
+           end;
+        edtTable.Next;
+      end;
+    if c>0 then
+      begin
+        if (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+           result := false else result := true;
+      end;
+  finally
+    edtTable.Locate('SEQNO',r,[]);
+    edtTable.EnableControls;
+  end;
+end;
+
+procedure TfrmOrderForm.DBGridEh1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var Cell: TGridCoord;
+begin
+  inherited;
+  Cell := DBGridEh1.MouseCoord(X,Y);
+  if Cell.Y > DBGridEh1.VisibleRowCount -2 then
+     InitRecord;
 end;
 
 end.

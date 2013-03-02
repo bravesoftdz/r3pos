@@ -36,7 +36,9 @@ uses
   udllDsUtil in 'utils\udllDsUtil.pas',
   udllFnUtil in 'utils\udllFnUtil.pas',
   udllShopUtil in 'utils\udllShopUtil.pas',
-  udllXDictFactory in 'utils\udllXDictFactory.pas';
+  udllXDictFactory in 'utils\udllXDictFactory.pas',
+  ObjSalesOrderV60 in 'obj\ObjSalesOrderV60.pas',
+  ufrmDialogProperty in 'app\ufrmDialogProperty.pas' {frmDialogProperty};
 
 {$R *.res}
 exports

@@ -219,7 +219,7 @@ begin
   if dbState = dsBrowse then
      begin
        AStyle.BorderStyle := ebsUltraFlat;
-       AStyle.Color := clBtnFace;
+       AStyle.Color := $00F6F6F6;
      end
   else
      begin

@@ -3,20 +3,40 @@ unit udllGlobal;
 interface
 
 uses
-  SysUtils, Classes, ZDataSet;
+  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset;
 
 type
   TdllGlobal = class(TDataModule)
+    CA_TENANT: TZQuery;
+    CA_SHOP_INFO: TZQuery;
+    SYS_DEFINE: TZQuery;
+    CA_USERS: TZQuery;
+    PUB_CUSTOMER: TZQuery;
+    PUB_CLIENTINFO: TZQuery;
+    PUB_GOODSINFO: TZQuery;
+    PUB_MEAUNITS: TZQuery;
+    PUB_PARAMS: TZQuery;
+    PUB_PRICEGRADE: TZQuery;
+    CA_RELATIONS: TZQuery;
   private
     { Private declarations }
+    procedure OpenPubGoodsInfo;
   public
     { Public declarations }
     function GetZQueryFromName(Name:string):TZQuery;
+    function OpenSqlite(DataSet:TZQuery):boolean;
     //按条码检索商品
     function GetGodsFromBarcode(ds:TZQuery;barcode:string):boolean;
     function GetGodsFromGodsCode(ds:TZQuery;godsCode:string):boolean;
+    function getMyDeptId:string;
+    function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean;
 
     function GetVersionFlag:integer;
+    function sysDate:TDatetime;
+    function GetParameter(paramname:string):string;
+    //得到供应链企业 in ();
+    function GetTenantId:string;
+
   end;
 
 var
@@ -28,6 +48,12 @@ uses utokenFactory,udataFactory,iniFiles;
 
 { TdllGlobal }
 
+function TdllGlobal.GetChkRight(MID: string; SequNo: integer;
+  userid: string): boolean;
+begin
+  result := true;
+end;
+
 function TdllGlobal.GetGodsFromBarcode(ds: TZQuery;
   barcode: string): boolean;
 begin
@@ -38,6 +64,30 @@ function TdllGlobal.GetGodsFromGodsCode(ds: TZQuery;
   godsCode: string): boolean;
 begin
 
+end;
+
+function TdllGlobal.getMyDeptId: string;
+begin
+
+end;
+
+function TdllGlobal.GetParameter(paramname: string): string;
+begin
+
+end;
+
+function TdllGlobal.GetTenantId: string;
+var
+  rs:TZQuery;
+begin
+  rs := GetZQueryFromName('CA_RELATIONS');
+  result := '''+token.tenantId+''';
+  rs.first;
+  while not rs.eof do
+    begin
+      result := result + ','''+rs.FieldbyName('TENANT_ID').asString+'''';
+      rs.next;
+    end;
 end;
 
 function TdllGlobal.GetVersionFlag: integer;
@@ -101,6 +151,33 @@ begin
   if Result.Filtered then Result.Filtered := false;
   Result.OnFilterRecord := nil;
   Result.CommitUpdates;
+end;
+
+procedure TdllGlobal.OpenPubGoodsInfo;
+begin
+  dataFactory.MoveToSqlite;
+  try
+    PUB_GOODSINFO.SQL.Text :=
+      '';
+    dataFactory.Open(PUB_GOODSINFO);
+  finally
+    dataFactory.MoveToDefault;
+  end;
+end;
+
+function TdllGlobal.OpenSqlite(DataSet: TZQuery): boolean;
+begin
+  dataFactory.MoveToSqlite;
+  try
+    dataFactory.Open(DataSet); 
+  finally
+    dataFactory.MoveToDefault;
+  end;
+end;
+
+function TdllGlobal.sysDate: TDatetime;
+begin
+  result := date();
 end;
 
 initialization

@@ -14,6 +14,11 @@ inherited frmSaleOrder: TfrmSaleOrder
             Height = 149
             inherited RzPanel2: TRzPanel
               Height = 129
+              inherited lblHint: TLabel
+                Width = 279
+                Anchors = [akLeft, akTop, akRight]
+                AutoSize = False
+              end
               object RzLabel2: TRzLabel [2]
                 Left = 11
                 Top = 56
@@ -60,6 +65,24 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Style = []
                 ParentFont = False
               end
+              object RzLabel5: TRzLabel [6]
+                Left = 645
+                Top = 16
+                Width = 135
+                Height = 15
+                Anchors = [akTop, akRight]
+                Caption = '000413031500002'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clPurple
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              inherited RzBmpButton2: TRzBmpButton
+                Left = 605
+                Width = 37
+              end
             end
           end
           inherited order_header: TRzPanel
@@ -74,7 +97,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Caption = #23458#25143#21517#31216
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 1
+              TabOrder = 2
             end
             object edtCLIENT_ID: TzrComboBoxList
               Left = 106
@@ -156,7 +179,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Caption = #38144#21806#26085#26399
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 2
+              TabOrder = 3
             end
             object edtSALES_DATE: TcxDateEdit
               Left = 754
@@ -165,7 +188,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Height = 23
               Anchors = [akTop, akRight]
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              TabOrder = 3
+              TabOrder = 1
             end
           end
           inherited order_grid: TRzPanel
@@ -191,6 +214,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Title.Caption = #21830#21697#21517#31216
                   Width = 195
                   Control = fndGODS_ID
+                  OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
                 end
                 item
                   EditButtons = <>
@@ -220,24 +244,67 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Control = fndUNIT_ID
                 end
                 item
+                  DisplayFormat = '#0.###'
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
                   Title.Caption = #25968#37327
-                  Width = 41
+                  Width = 49
+                  OnUpdateData = DBGridEh1Columns5UpdateData
+                end
+                item
+                  DisplayFormat = '#0.00#'
+                  EditButtons = <>
+                  FieldName = 'APRICE'
+                  Footers = <>
+                  Title.Caption = #21333#20215
+                  Width = 60
+                  OnUpdateData = DBGridEh1Columns6UpdateData
+                end
+                item
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'AMONEY'
+                  Footers = <>
+                  ReadOnly = True
+                  Tag = 1
+                  Title.Caption = #37329#39069
+                  Width = 68
+                end
+                item
+                  DisplayFormat = '#00.0%'
+                  EditButtons = <>
+                  FieldName = 'AGIO_RATE'
+                  Footers = <>
+                  Title.Caption = #25240#25187
+                  Width = 46
+                  OnUpdateData = DBGridEh1Columns8UpdateData
+                end
+                item
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'AGIO_MONEY'
+                  Footers = <>
+                  ReadOnly = True
+                  Tag = 1
+                  Title.Caption = #35753#21033
+                  Width = 69
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'REMARK'
+                  Footers = <>
+                  Title.Caption = #22791#27880
+                  Width = 111
                 end>
             end
             inherited fndGODS_ID: TzrComboBoxList
-              OnFindClick = nil
-              OnAddClick = nil
-              OnSaveValue = nil
+              Style.BorderStyle = ebsFlat
+              Style.ButtonStyle = btsUltraFlat
             end
             inherited fndUNIT_ID: TcxComboBox
-              Properties.OnChange = nil
-              OnEnter = nil
-              OnExit = nil
-              OnKeyDown = nil
-              OnKeyPress = nil
+              Style.BorderStyle = ebsFlat
+              Style.ButtonStyle = btsUltraFlat
             end
           end
           inherited order_footer: TRzPanel
@@ -252,7 +319,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Caption = #25240#25187
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 7
+              TabOrder = 9
             end
             object RzPanel6: TRzPanel
               Left = 10
@@ -263,7 +330,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Caption = #35828'    '#26126
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 2
+              TabOrder = 6
             end
             object RzPanel3: TRzPanel
               Left = 0
@@ -274,7 +341,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               BorderOuter = fsFlat
               BorderSides = [sdTop]
               FlatColor = 6447714
-              TabOrder = 0
+              TabOrder = 5
               DesignSize = (
                 904
                 47)
@@ -427,7 +494,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Width = 543
               Height = 23
               Anchors = [akLeft, akTop, akRight]
-              TabOrder = 1
+              TabOrder = 0
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object RzPanel8: TRzPanel
@@ -440,7 +507,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Caption = #23548' '#36141' '#21592
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 3
+              TabOrder = 7
             end
             object edtGUIDE_USER: TzrComboBoxList
               Left = 754
@@ -454,7 +521,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Default = True
                 end>
               Properties.ReadOnly = True
-              TabOrder = 4
+              TabOrder = 1
               InGrid = False
               KeyValue = Null
               FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -493,14 +560,14 @@ inherited frmSaleOrder: TfrmSaleOrder
               Caption = #32467#31639#37329#39069
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 5
+              TabOrder = 8
             end
             object cxTextEdit1: TcxTextEdit
               Left = 106
               Top = 31
               Width = 110
               Height = 23
-              TabOrder = 6
+              TabOrder = 2
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object cxTextEdit2: TcxTextEdit
@@ -508,7 +575,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Top = 31
               Width = 59
               Height = 23
-              TabOrder = 8
+              TabOrder = 3
               Text = '90.9%'
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
@@ -528,7 +595,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Font.Name = #23435#20307
               Font.Style = [fsBold]
               ParentFont = False
-              TabOrder = 9
+              TabOrder = 10
             end
             object cxTextEdit3: TcxTextEdit
               Left = 754
@@ -542,7 +609,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Style.Font.Height = -15
               Style.Font.Name = #23435#20307
               Style.Font.Style = [fsBold]
-              TabOrder = 10
+              TabOrder = 4
               Text = '34866.55'
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
@@ -568,5 +635,195 @@ inherited frmSaleOrder: TfrmSaleOrder
         Anchors = [akTop]
       end
     end
+  end
+  inherited edtTable: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BARCODE'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'APRICE'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMONEY'
+        DataType = ftFloat
+      end
+      item
+        Name = 'COST_PRICE'
+        DataType = ftFloat
+      end
+      item
+        Name = 'ORG_PRICE'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AGIO_RATE'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AGIO_MONEY'
+        DataType = ftFloat
+      end
+      item
+        Name = 'POLICY_TYPE'
+        DataType = ftInteger
+      end
+      item
+        Name = 'BARTER_INTEGRAL'
+        DataType = ftInteger
+      end
+      item
+        Name = 'HAS_INTEGRAL'
+        DataType = ftInteger
+      end
+      item
+        Name = 'CALC_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'CALC_MONEY'
+        DataType = ftFloat
+      end
+      item
+        Name = 'REMARK'
+        DataType = ftString
+        Size = 100
+      end>
+    AfterPost = edtTableAfterPost
+  end
+  inherited edtProperty: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'CALC_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end>
+  end
+  object cdsHeader: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 120
+    Top = 192
+  end
+  object cdsDetail: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 120
+    Top = 224
+  end
+  object cdsICGlide: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 120
+    Top = 264
   end
 end

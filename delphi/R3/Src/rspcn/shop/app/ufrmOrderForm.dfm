@@ -143,6 +143,7 @@ inherited frmOrderForm: TfrmOrderForm
               Align = alClient
               AllowedOperations = [alopUpdateEh, alopAppendEh]
               AutoFitColWidths = True
+              DataSource = dsTable
               FixedColor = clSilver
               Flat = True
               FooterColor = clWindow
@@ -168,6 +169,7 @@ inherited frmOrderForm: TfrmOrderForm
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
+              OnMouseDown = DBGridEh1MouseDown
               Columns = <
                 item
                   EditButtons = <>
@@ -222,8 +224,8 @@ inherited frmOrderForm: TfrmOrderForm
                 end>
             end
             object fndGODS_ID: TzrComboBoxList
-              Left = 40
-              Top = 155
+              Left = 288
+              Top = 139
               Width = 121
               Height = 23
               TabStop = False
@@ -233,6 +235,8 @@ inherited frmOrderForm: TfrmOrderForm
                   Default = True
                 end>
               Properties.ReadOnly = True
+              Style.Edges = [bBottom]
+              Style.ButtonTransparency = ebtHideInactive
               TabOrder = 1
               Visible = False
               OnEnter = fndGODS_IDEnter
@@ -274,14 +278,17 @@ inherited frmOrderForm: TfrmOrderForm
               LocateStyle = lsDark
               Buttons = [zbNew, zbFind]
               DropListStyle = lsFixed
+              OnSaveValue = fndGODS_IDSaveValue
               MultiSelect = False
             end
             object fndUNIT_ID: TcxComboBox
-              Left = 176
-              Top = 160
+              Left = 216
+              Top = 168
               Width = 49
               Height = 23
               Properties.DropDownListStyle = lsFixedList
+              Style.Edges = [bBottom]
+              Style.ButtonTransparency = ebtHideInactive
               TabOrder = 2
               Visible = False
             end

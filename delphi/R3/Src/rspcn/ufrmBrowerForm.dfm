@@ -17,6 +17,8 @@ object frmBrowerForm: TfrmBrowerForm
   OldCreateOrder = False
   Scaled = False
   OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
+  OnKeyUp = FormKeyUp
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13

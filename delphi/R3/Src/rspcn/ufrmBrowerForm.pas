@@ -135,6 +135,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     FWindowState: TWindowState;
+    FInitialized: boolean;
     { Private declarations }
     procedure DownloadCompleteEvent(Sender: TObject);
     procedure CommandStateChangeEvent(Sender: TObject; Command: Integer; Enable: WordBool);
@@ -174,6 +175,7 @@ type
     procedure ProgressChangeEvent(ASender: TObject; Progress,
       ProgressMax: Integer);
     procedure SetWindowState(const Value: TWindowState);
+    procedure SetInitialized(const Value: boolean);
   protected
     m_Rect: TRect;
     m_bCreatedManually: Boolean;
@@ -189,14 +191,16 @@ type
     procedure PageButtonClick(Sender:TObject);
     procedure RzInit(var Message: TMessage); message WM_BROWSER_INIT;
     procedure WMDisplayChange(var Message: TMessage); message WM_DISPLAYCHANGE;
+    procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure FullScreen;
     procedure OpenHome;
-
-    procedure WndProc(var Message: TMessage); override;
   public
     { Public declarations }
+    hotKeyid:integer;
+
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property Initialized:boolean read FInitialized write SetInitialized;
   end;
 
 var
@@ -407,6 +411,18 @@ end;
 
 procedure TfrmBrowerForm.RzInit(var Message: TMessage);
 begin
+  jsExt :=  TjavaScriptExt.Create;
+  CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
+  CoInternetGetSession(0, InternetSession, 0);
+  InternetSession.RegisterNameSpace(Factory, Class_NSHandler, 'rspcn', 0, nil, 0);
+  m_Rect := Rect(0, 0, 0, 0);
+  m_bResizable := True;
+  m_bFullScreen := true;
+  dllFactory := TDLLFactory.Create;
+  hotKeyid:=GlobalAddAtom('rspcn');//'Hotkey'名字可以随便取
+  RegisterHotKey(Handle,hotKeyid,0,VK_F2);
+  Initialized := true;
+  Timer1.Enabled := true;
   case Message.LParam of
   1:begin
       ParentWindow := FindWindow('Progman',nil);
@@ -419,7 +435,7 @@ begin
       m_bFullScreen := false;
       setWindowState(wsMaximized);
       Show;
-      LoadUrl('rspcn://built-in/login.html','home');
+      OpenHome
     end;
   end;
   UpdateControls;
@@ -472,6 +488,11 @@ begin
          urlToken.url := _url;
        end;
     urlToken.appId := appId;
+    if (urlToken.appFlag>0) and not token.logined then
+        begin
+           OpenHome;
+           Exit;
+        end;
     if CheckUrlExists(urlToken) then Exit;
     if PageControl1.ActivePage=nil then
        CreateNewTabBrowser(urlToken)
@@ -544,22 +565,20 @@ end;
 constructor TfrmBrowerForm.Create(AOwner: TComponent);
 begin
   inherited;
-  jsExt :=  TjavaScriptExt.Create;
-  CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
-  CoInternetGetSession(0, InternetSession, 0);
-  InternetSession.RegisterNameSpace(Factory, Class_NSHandler, 'rspcn', 0, nil, 0);
-  m_Rect := Rect(0, 0, 0, 0);
-  m_bResizable := True;
-  m_bFullScreen := true;
-  dllFactory := TDLLFactory.Create;
 end;
 
 destructor TfrmBrowerForm.Destroy;
 begin
-  jsExt := nil;
-  if assigned(InternetSession) then
-     InternetSession.UnregisterNameSpace(Factory, 'rspcn');
-  dllFactory.Free;
+  if Initialized then
+     begin
+        Timer1.Enabled := false;
+        Initialized := false;
+        UnRegisterHotKey(handle,hotKeyid);
+        GlobalDeleteAtom(hotKeyid);
+        jsExt := nil;
+        if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
+        dllFactory.Free;
+     end;
   inherited;
 end;
 
@@ -803,7 +822,20 @@ begin
 end;
 
 procedure TfrmBrowerForm.OpenHome;
+var
+  tabEx:TtabSheetEx;
 begin
+  if PageControl1.PageCount=0 then
+     begin
+       LoadUrl('rspcn://built-in/login.html','home');
+     end
+  else
+     begin
+       tabEx := PageControl1.Pages[0] as TtabSheetEx;
+       PageControl1.ActivePageIndex := 0;
+       pageButtonSort;
+       tabEx.EWB.Go('rspcn://built-in/login.html',15000);
+     end;
 end;
 
 procedure TfrmBrowerForm.Button2Click(Sender: TObject);
@@ -956,6 +988,11 @@ begin
     urlToken.url := _url;
     urlToken.appId := appId;
     if CheckUrlExists(urlToken) then Exit;
+    if not UcFactory.xsmLogined then
+        begin
+           OpenHome;
+           Exit;
+        end;
     if PageControl1.ActivePage=nil then
        CreateNewTabBrowser(urlToken)
     else
@@ -1023,11 +1060,6 @@ end;
 procedure TfrmBrowerForm.FormResize(Sender: TObject);
 begin
   dllFactory.resize;
-end;
-
-procedure TfrmBrowerForm.WndProc(var Message: TMessage);
-begin
-  inherited;
 end;
 
 procedure TfrmBrowerForm.FormKeyDown(Sender: TObject; var Key: Word;
@@ -1100,6 +1132,46 @@ begin
       SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
       childWnd := GetWindow(childWnd,GW_HWNDNEXT);
     end;
+end;
+
+procedure TfrmBrowerForm.WMHotKey(var Msg: TWMHotKey);
+var
+  tabEx:TTabSheetEx;
+  childWnd:THandle;
+  Message: TWMKeyDown;
+begin
+  if (Msg.HotKey=hotKeyId) and not (fsModal in Screen.ActiveForm.FormState) then
+     begin
+        if IsIconic(Application.Handle) then
+           begin
+             Application.Restore;
+             SetForegroundWindow(application.Handle);
+           end
+        else
+           begin
+             if Msg.HotKey<>Msg.Unused then
+                WinExec(pchar(Application.ExeName),0);
+           end;
+        if PageControl1=nil then Exit;
+        tabEx := PageControl1.ActivePage as TTabSheetEx;
+        if tabEx=nil then Exit;
+        if tabEx.url.appFlag=0 then Exit;
+        childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+        while childWnd>0 do
+          begin
+            Message.Msg := WM_KEYDOWN;
+            Message.KeyData := 0;
+            Message.CharCode := VK_F2;
+            Message.Unused := 0;
+            SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
+            childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+          end;
+     end;
+end;
+
+procedure TfrmBrowerForm.SetInitialized(const Value: boolean);
+begin
+  FInitialized := Value;
 end;
 
 initialization

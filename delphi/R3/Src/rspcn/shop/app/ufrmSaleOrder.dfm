@@ -14,58 +14,15 @@ inherited frmSaleOrder: TfrmSaleOrder
             Height = 149
             inherited RzPanel2: TRzPanel
               Height = 129
+              DesignSize = (
+                884
+                129)
               inherited lblHint: TLabel
                 Width = 279
                 Anchors = [akLeft, akTop, akRight]
                 AutoSize = False
               end
-              object RzLabel2: TRzLabel [2]
-                Left = 11
-                Top = 56
-                Width = 106
-                Height = 15
-                Caption = #12304'F2'#12305#21830#21697#36755#20837
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object RzBorder1: TRzBorder [3]
-                Left = 18
-                Top = 45
-                Width = 846
-                Height = 2
-                Anchors = [akLeft, akTop, akRight]
-              end
-              object RzLabel3: TRzLabel [4]
-                Left = 11
-                Top = 79
-                Width = 106
-                Height = 15
-                Caption = #12304'F2'#12305#21830#21697#36755#20837
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object RzLabel4: TRzLabel [5]
-                Left = 11
-                Top = 102
-                Width = 106
-                Height = 15
-                Caption = #12304'F2'#12305#21830#21697#36755#20837
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object RzLabel5: TRzLabel [6]
+              object RzLabel5: TRzLabel [2]
                 Left = 645
                 Top = 16
                 Width = 135
@@ -78,6 +35,219 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Name = #23435#20307
                 Font.Style = [fsBold]
                 ParentFont = False
+              end
+              object h2: TLabel [3]
+                Left = 166
+                Top = 60
+                Width = 110
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #28165#23631'  [Insert]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object h6: TLabel [4]
+                Left = 298
+                Top = 60
+                Width = 108
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #20250#21592#21345#21495'  [F5]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object h5: TLabel [5]
+                Left = 361
+                Top = 80
+                Width = 94
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #36864#36135'  [F10] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object h11: TLabel [6]
+                Left = 697
+                Top = 79
+                Width = 94
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #25910#38134'  [ + ] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object h12: TLabel [7]
+                Left = 697
+                Top = 99
+                Width = 86
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #21462#28040'  [Esc]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label9: TLabel [8]
+                Left = 577
+                Top = 60
+                Width = 94
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #38065#31665'  [Home]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label10: TLabel [9]
+                Left = 577
+                Top = 80
+                Width = 102
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #38145#23631'  [Pause]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label8: TLabel [10]
+                Left = 164
+                Top = 80
+                Width = 116
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #21024#38500#21333#21697'  [ - ]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label21: TLabel [11]
+                Left = 18
+                Top = 80
+                Width = 109
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #23548' '#36141' '#21592'  [F9]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label23: TLabel [12]
+                Left = 448
+                Top = 80
+                Width = 133
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #19978#19968#21333'  [Page Up]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label24: TLabel [13]
+                Left = 448
+                Top = 99
+                Width = 149
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #19979#19968#21333'  [Page Down]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label25: TLabel [14]
+                Left = 576
+                Top = 99
+                Width = 126
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #23567#31080'  [Ctrl + P]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label27: TLabel [15]
+                Left = 697
+                Top = 60
+                Width = 86
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #33756#21333'  [ / ]'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label28: TLabel [16]
+                Left = 450
+                Top = 59
+                Width = 140
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #36192#36865'/'#20817#25442'    [F4] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label11: TLabel [17]
+                Left = 164
+                Top = 99
+                Width = 116
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #25972#21333#35843#20215'  [F6] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              inherited Label26: TLabel
+                OnClick = nil
               end
               inherited RzBmpButton2: TRzBmpButton
                 Left = 605
@@ -242,6 +412,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Title.Caption = #21333#20301
                   Width = 35
                   Control = fndUNIT_ID
+                  OnBeforeShowControl = DBGridEh1Columns4BeforeShowControl
                 end
                 item
                   DisplayFormat = '#0.###'
@@ -310,6 +481,13 @@ inherited frmSaleOrder: TfrmSaleOrder
           inherited order_footer: TRzPanel
             Top = 360
             Height = 114
+            object Label1: TLabel
+              Left = 314
+              Top = 34
+              Width = 8
+              Height = 15
+              Caption = '%'
+            end
             object RzPanel10: TRzPanel
               Left = 213
               Top = 32
@@ -379,6 +557,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   TabOrder = 0
                   TabStop = False
                   ThemeAware = False
+                  OnClick = RzBitBtn1Click
                   NumGlyphs = 2
                   Spacing = 5
                 end
@@ -562,7 +741,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               FlatColor = clMenuHighlight
               TabOrder = 8
             end
-            object cxTextEdit1: TcxTextEdit
+            object edtACCT_MNY: TcxTextEdit
               Left = 106
               Top = 31
               Width = 110
@@ -570,16 +749,16 @@ inherited frmSaleOrder: TfrmSaleOrder
               TabOrder = 2
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
-            object cxTextEdit2: TcxTextEdit
+            object edtAGIO_RATE: TcxTextEdit
               Left = 261
               Top = 31
-              Width = 59
+              Width = 52
               Height = 23
               TabOrder = 3
-              Text = '90.9%'
+              Text = '100.0'
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
-            object RzPanel11: TRzPanel
+            object payment: TRzPanel
               Left = 658
               Top = 32
               Width = 99
@@ -597,7 +776,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               ParentFont = False
               TabOrder = 10
             end
-            object cxTextEdit3: TcxTextEdit
+            object edtPAY_TOTAL: TcxTextEdit
               Left = 754
               Top = 31
               Width = 110

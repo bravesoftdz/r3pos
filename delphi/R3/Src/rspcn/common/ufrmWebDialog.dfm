@@ -6,6 +6,8 @@ object frmWebDialog: TfrmWebDialog
   ClientHeight = 349
   ClientWidth = 475
   Color = clBtnFace
+  TransparentColor = True
+  TransparentColorValue = clFuchsia
   Font.Charset = GB2312_CHARSET
   Font.Color = clBlack
   Font.Height = -15

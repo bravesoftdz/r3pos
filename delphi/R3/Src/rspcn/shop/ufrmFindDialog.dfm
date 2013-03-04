@@ -9,6 +9,9 @@ inherited frmFindDialog: TfrmFindDialog
     inherited Image1: TImage
       Left = -102
     end
+    inherited Image3: TImage
+      Width = 719
+    end
     inherited RzFormShape1: TRzFormShape
       Width = 451
     end
@@ -122,6 +125,7 @@ inherited frmFindDialog: TfrmFindDialog
       CurrencySymbol = #65509
       DecimalNumber = 2
       DigitalNumber = 12
+      OnDrawColumnCell = DBGridEh1DrawColumnCell
       Columns = <
         item
           EditButtons = <>

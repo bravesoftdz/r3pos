@@ -300,18 +300,21 @@ begin
   finally
     F.Free;
   end;
+  if not db.Connected then connect; 
 end;
 
 procedure TdataFactory.MoveToRemote;
 begin
-  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接'); 
+  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接');
   dbFlag := 1;
+  if not db.Connected then connect; 
 end;
 
 procedure TdataFactory.MoveToSqlite;
 begin
   if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接'); 
   dbFlag := 0;
+  if not db.Connected then connect; 
 end;
 
 function TdataFactory.Open(DataSet: TDataSet): Boolean;

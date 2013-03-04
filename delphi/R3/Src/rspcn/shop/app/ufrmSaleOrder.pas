@@ -8,7 +8,7 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math;
+  ZDataset, ZBase, Math, Menus;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -29,19 +29,31 @@ type
     RzPanel8: TRzPanel;
     edtGUIDE_USER: TzrComboBoxList;
     RzPanel9: TRzPanel;
-    cxTextEdit1: TcxTextEdit;
+    edtACCT_MNY: TcxTextEdit;
     RzPanel10: TRzPanel;
-    cxTextEdit2: TcxTextEdit;
-    RzPanel11: TRzPanel;
-    cxTextEdit3: TcxTextEdit;
-    RzLabel2: TRzLabel;
-    RzBorder1: TRzBorder;
-    RzLabel3: TRzLabel;
-    RzLabel4: TRzLabel;
+    edtAGIO_RATE: TcxTextEdit;
+    payment: TRzPanel;
+    edtPAY_TOTAL: TcxTextEdit;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     cdsICGlide: TZQuery;
     RzLabel5: TRzLabel;
+    Label1: TLabel;
+    h2: TLabel;
+    h6: TLabel;
+    h5: TLabel;
+    h11: TLabel;
+    h12: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label8: TLabel;
+    Label21: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label11: TLabel;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -50,6 +62,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns8UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -67,10 +80,18 @@ type
     TotalBarter:integer;
 
     agioLower:Currency;
+    //进位法则
+    CarryRule:integer;
+    //保留小数位
+    Deci:integer;
 
     function  CheckSale_Limit: Boolean;
+    procedure checkPayment;
+    procedure DoPayment;
     procedure Calc; //2011.06.09判断是否限量
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
+    procedure InitPrice(GODS_ID,UNIT_ID:string);override;
+    function GetCostPrice(GODS_ID, BATCH_NO: string): real;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -145,15 +166,38 @@ begin
     edtTable.Locate('SEQNO',r,[]);
     edtTable.EnableControls;
   end;
-  if (amt<>0) and (dbState<>dsBrowse) then
-     begin
-       case t of
-       1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee / amt);
-       2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf / amt);
-       3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
+  if (dbState<>dsBrowse) then
+  begin
+    if (amt<>0) then
+       begin
+         case t of
+         1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee / amt);
+         2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf / amt);
+         3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
+         end;
        end;
-     end;
-  AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := TotalBarter;
+    AObj.FieldbyName('SALE_AMT').asFloat := TotalAmt;
+    AObj.FieldbyName('SALE_MNY').asFloat := TotalFee;
+    AObj.FieldbyName('PAY_ZERO').asFloat := 0;
+    AObj.FieldbyName('PAY_A').asFloat := TotalFee;
+    AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
+    AObj.FieldbyName('PAY_DIBS').asFloat := 0;
+
+    AObj.FieldByName('PAY_A').AsFloat := 0;
+    AObj.FieldByName('PAY_B').AsFloat := 0;
+    AObj.FieldByName('PAY_C').AsFloat := 0;
+    AObj.FieldByName('PAY_D').AsFloat := 0;
+    AObj.FieldByName('PAY_E').AsFloat := 0;
+    AObj.FieldByName('PAY_F').AsFloat := 0;
+    AObj.FieldByName('PAY_G').AsFloat := 0;
+    AObj.FieldByName('PAY_H').AsFloat := 0;
+    AObj.FieldByName('PAY_I').AsFloat := 0;
+    AObj.FieldByName('PAY_J').AsFloat := 0;
+    edtACCT_MNY.Text := formatFloat('#0.00',TotalFee);
+    edtAGIO_RATE.Text := '100.0';
+    DoPayment;
+    AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := TotalBarter;
+  end;
 end;
 
 procedure TfrmSaleOrder.CancelOrder;
@@ -273,6 +317,10 @@ constructor TfrmSaleOrder.Create(AOwner: TComponent);
 begin
   inherited;
   AObj := TRecord_.Create;
+  //进位法则
+  CarryRule := StrtoIntDef(dllGlobal.GetParameter('CARRYRULE'),0);
+  //保留小数位
+  Deci := StrtoIntDef(dllGlobal.GetParameter('POSDIGHT'),2);
 end;
 
 procedure TfrmSaleOrder.DeleteOrder;
@@ -329,23 +377,24 @@ begin
   inherited;
   Open('');
   dbState := dsInsert;
+  AObj.FieldbyName('TENANT_ID').AsString := token.tenantId;
   AObj.FieldbyName('SHOP_ID').asString := token.shopId;
-  
+
   AObj.FieldbyName('DEPT_ID').asString := dllGlobal.getMyDeptId;
 
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   AObj.FieldbyName('UNION_ID').asString := '#';
   AObj.FieldbyName('PRICE_ID').asString := '#';
 
-  AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
-  AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
+  AObj.FieldByName('SALE_AMT').AsFloat := 0;
+  AObj.FieldByName('SALE_MNY').AsFloat := 0;
   AObj.FieldByName('CASH_MNY').AsFloat := 0;
   AObj.FieldByName('PAY_ZERO').AsFloat := 0;
   AObj.FieldByName('PAY_DIBS').AsFloat := 0;
   AObj.FieldByName('PAY_A').AsFloat := 0;
   AObj.FieldByName('PAY_B').AsFloat := 0;
   AObj.FieldByName('PAY_C').AsFloat := 0;
-  AObj.FieldByName('PAY_D').AsFloat := TotalFee;
+  AObj.FieldByName('PAY_D').AsFloat := 0;
   AObj.FieldByName('PAY_E').AsFloat := 0;
   AObj.FieldByName('PAY_F').AsFloat := 0;
   AObj.FieldByName('PAY_G').AsFloat := 0;
@@ -405,6 +454,7 @@ end;
 procedure TfrmSaleOrder.SaveOrder;
 var
   Printed:boolean;
+  acctMny:real;
 begin
   if dbState = dsBrowse then Exit;
   if dllGlobal.GetParameter('GUIDE_USER')='0' then
@@ -414,7 +464,11 @@ begin
   end;
 
   if edtSALES_DATE.EditValue = null then Raise Exception.Create('销售日期不能为空');
-
+  try
+    acctMny := StrtoFloat(edtACCT_MNY.Text);
+  except
+    Raise Exception.Create('结算金额输入有误，请正确输入保存'); 
+  end;
   //2011.06.09 Add 判断是否限量
   CheckSale_Limit;
 
@@ -428,8 +482,10 @@ begin
   AObj.FieldByName('CREA_USER').AsString := token.userId;
   AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
   AObj.FieldByName('CHK_USER').AsString := token.userId;
-  AObj.FieldByName('LOCUS_STATUS').AsString := '3'; 
-  Calc;
+  AObj.FieldByName('LOCUS_STATUS').AsString := '3';
+  AObj.FieldByName('PAY_ZERO').AsFloat := TotalFee-acctMny;
+
+  checkPayment;
 
   if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
 
@@ -632,7 +688,7 @@ begin
             if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else     }
-          allow := false;
+       allow := false;
      end else allow := true;
   if allow then
   begin
@@ -710,6 +766,130 @@ begin
   begin
     result:=(trim(Rs.FieldByName('CHANGE_PRICE').AsString)='2');
   end;
+end;
+
+procedure TfrmSaleOrder.RzBitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  SaveOrder;
+  if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+     NewOrder;
+end;
+
+function TfrmSaleOrder.GetCostPrice(GODS_ID,BATCH_NO: string): real;
+var
+  rs:TZQuery;
+  bs:TZQuery;
+begin
+  rs:=TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select AMONEY,AMOUNT from ('+
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) j where round(AMOUNT,3)<>0';
+    rs.ParamByName('TENANT_ID').AsString := token.tenantId;
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    rs.ParamByName('GODS_ID').AsString := GODS_ID;
+    rs.ParamByName('BATCH_NO').AsString := BATCH_NO;
+    dataFactory.Open(rs);
+    if rs.IsEmpty then
+       begin
+         bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+         if bs.Locate('GODS_ID',GODS_ID,[]) then
+            result := bs.FieldbyName('NEW_INPRICE').AsFloat
+         else
+            Raise Exception.Create('没找到经营商品');
+       end
+    else
+       result := rs.Fields[0].AsFloat/rs.Fields[1].AsFloat;
+  finally
+    rs.Free;
+  end;
+end;
+procedure TfrmSaleOrder.InitPrice(GODS_ID, UNIT_ID: string);
+var
+  rs,bs:TZQuery;
+  Params:TftParamList;
+  str,OutLevel:string;
+begin
+  rs := TZQuery.Create(nil);
+  bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');  
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('CarryRule').asInteger := CarryRule;
+    Params.ParamByName('Deci').asInteger := Deci;
+    Params.ParamByName('CLIENT_ID').asString := edtCLIENT_ID.AsString;
+    Params.ParamByName('TENANT_ID').asString := token.tenantId;
+    Params.ParamByName('SHOP_ID').asString := token.shopId;
+    Params.ParamByName('GODS_ID').asString := GODS_ID;
+    if AObj.FieldbyName('PRICE_ID').AsString='' then
+    Params.ParamByName('PRICE_ID').asString := '#' else
+    Params.ParamByName('PRICE_ID').asString := AObj.FieldbyName('PRICE_ID').AsString;
+    Params.ParamByName('UNIT_ID').asString := UNIT_ID;
+    dataFactory.Open(rs,'TGetSalesPrice',Params);
+    if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
+    edtTable.FieldByName('APRICE').AsFloat := rs.FieldbyName('V_APRICE').AsFloat;
+    edtTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('V_ORG_PRICE').AsFloat;
+    edtTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(GODS_ID,edtTable.FieldbyName('BATCH_NO').AsString);
+    edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
+    edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
+    //看是否换购商品
+    if bs.FieldByName('USING_BARTER').AsInteger=3 then
+       begin
+         edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+         edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+       end
+    else
+       begin
+         edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
+         edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
+       end;
+  finally
+    Params.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TfrmSaleOrder.checkPayment;
+var
+  fee,payZero,salMny:currency;
+begin
+  fee :=
+    AObj.FieldbyName('PAY_A').AsFloat+
+    AObj.FieldbyName('PAY_B').AsFloat+
+    AObj.FieldbyName('PAY_C').AsFloat+
+    AObj.FieldbyName('PAY_D').AsFloat+
+    AObj.FieldbyName('PAY_E').AsFloat+
+    AObj.FieldbyName('PAY_F').AsFloat+
+    AObj.FieldbyName('PAY_G').AsFloat+
+    AObj.FieldbyName('PAY_H').AsFloat+
+    AObj.FieldbyName('PAY_I').AsFloat+
+    AObj.FieldbyName('PAY_J').AsFloat;
+  payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
+  salMny := AObj.FieldbyName('SAL_MNY').AsFloat;
+  if fee<>(TotalFee-payZero) then Raise Exception.Create('支付金额与结算金额相同，请正确输入支付金额');
+end;
+
+procedure TfrmSaleOrder.DoPayment;
+var
+  fee,payZero,salMny:currency;
+begin
+  fee :=
+    AObj.FieldbyName('PAY_B').AsFloat+
+    AObj.FieldbyName('PAY_C').AsFloat+
+    AObj.FieldbyName('PAY_D').AsFloat+
+    AObj.FieldbyName('PAY_E').AsFloat+
+    AObj.FieldbyName('PAY_F').AsFloat+
+    AObj.FieldbyName('PAY_G').AsFloat+
+    AObj.FieldbyName('PAY_H').AsFloat+
+    AObj.FieldbyName('PAY_I').AsFloat+
+    AObj.FieldbyName('PAY_J').AsFloat;
+  payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
+  salMny := AObj.FieldbyName('SAL_MNY').AsFloat;
+  if fee<>0 then
+     edtPAY_TOTAL.Text := formatFloat('#0.00',fee)
+  else
+     edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero));
 end;
 
 initialization

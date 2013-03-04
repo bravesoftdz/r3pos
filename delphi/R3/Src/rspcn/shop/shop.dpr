@@ -38,7 +38,8 @@ uses
   udllShopUtil in 'utils\udllShopUtil.pas',
   udllXDictFactory in 'utils\udllXDictFactory.pas',
   ObjSalesOrderV60 in 'obj\ObjSalesOrderV60.pas',
-  ufrmDialogProperty in 'app\ufrmDialogProperty.pas' {frmDialogProperty};
+  ufrmDialogProperty in 'app\ufrmDialogProperty.pas' {frmDialogProperty},
+  ObjGetPrice in 'obj\ObjGetPrice.pas';
 
 {$R *.res}
 exports

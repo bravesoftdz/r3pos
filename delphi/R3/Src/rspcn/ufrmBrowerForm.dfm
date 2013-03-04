@@ -9873,6 +9873,8 @@ object frmBrowerForm: TfrmBrowerForm
   end
   object RzTrayIcon1: TRzTrayIcon
     HideOnMinimize = False
+    RestoreOn = ticNone
+    PopupMenuOn = ticNone
     OnRestoreApp = RzTrayIcon1RestoreApp
     Left = 96
     Top = 112
@@ -9885,6 +9887,7 @@ object frmBrowerForm: TfrmBrowerForm
     end
   end
   object Timer1: TTimer
+    Enabled = False
     OnTimer = Timer1Timer
     Left = 256
     Top = 192

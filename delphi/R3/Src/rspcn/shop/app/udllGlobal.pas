@@ -56,24 +56,56 @@ end;
 
 function TdllGlobal.GetGodsFromBarcode(ds: TZQuery;
   barcode: string): boolean;
+var
+  bs:TZQuery;
 begin
-
+  ds.Close;
+  ds.SQL.Text := 'select GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO from PUB_BARCODE where TENANT_ID in ('+GetTenantId+') and BARCODE=:BARCODE';
+  ds.ParamByName('BARCODE').AsString := barcode;
+  OpenSqlite(ds);
+  bs := GetZQueryFromName('PUB_GOODSINFO');
+  ds.First;
+  while not ds.Eof do
+    begin
+      if bs.Locate('GODS_ID',ds.Fields[0].asString,[]) then
+         ds.Next
+      else
+         ds.Delete;
+    end;
+  result := not ds.IsEmpty;
 end;
 
 function TdllGlobal.GetGodsFromGodsCode(ds: TZQuery;
   godsCode: string): boolean;
 begin
-
+  ds.Close;
+  ds.SQL.Text := 'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+  ds.ParamByName('TENANT_ID').AsString := token.tenantId;
+  ds.ParamByName('GODS_CODE').AsString := godsCode;
+  OpenSqlite(ds);
+  result := not ds.IsEmpty;
 end;
 
 function TdllGlobal.getMyDeptId: string;
+var
+  rs:TZQuery;
 begin
-
+  rs := GetZQueryFromName('CA_USERS');
+  if rs.Locate('USER_ID',token.userId,[]) then
+     result := rs.FieldbyName('DEPT_ID').AsString
+  else
+     Raise Exception.Create('当前操作用户没有找到，请刷新系统缓存');
 end;
 
 function TdllGlobal.GetParameter(paramname: string): string;
+var
+  rs:TZQuery;
 begin
-
+  rs := GetZQueryFromName('SYS_DEFINE');
+  if rs.Locate('DEFINE',paramname,[]) then
+     result := rs.FieldbyName('VALUE').AsString
+  else
+     result := '';
 end;
 
 function TdllGlobal.GetTenantId: string;
@@ -81,7 +113,7 @@ var
   rs:TZQuery;
 begin
   rs := GetZQueryFromName('CA_RELATIONS');
-  result := '''+token.tenantId+''';
+  result := ''''+token.tenantId+'''';
   rs.first;
   while not rs.eof do
     begin

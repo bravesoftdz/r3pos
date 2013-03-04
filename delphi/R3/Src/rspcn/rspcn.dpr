@@ -12,7 +12,8 @@ uses
   udataFactory in 'udataFactory.pas',
   javaScriptExt in 'javaScriptExt.pas',
   uRspFactory in 'uRspFactory.pas' {rspFactory: TDataModule},
-  uTokenFactory in 'uTokenFactory.pas';
+  uTokenFactory in 'uTokenFactory.pas',
+  webMultInst in 'webMultInst.pas';
 
 {$R *.TLB}
 
@@ -21,8 +22,11 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TfrmBrowerForm, frmBrowerForm);
-  Application.CreateForm(TUcFactory, UcFactory);
-  Application.CreateForm(TrspFactory, rspFactory);
-  postMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
+  if not Runed then
+  begin
+    Application.CreateForm(TUcFactory, UcFactory);
+    Application.CreateForm(TrspFactory, rspFactory);
+    PostMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
+  end;
   Application.Run;
 end.

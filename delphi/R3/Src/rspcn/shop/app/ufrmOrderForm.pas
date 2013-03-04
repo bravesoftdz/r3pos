@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmWebToolForm, ExtCtrls, RzPanel, Grids, DBGridEh, StdCtrls,
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
-  RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math;
+  RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
+  Menus, RzBorder;
 
 const
 
@@ -53,6 +54,17 @@ type
     edtProperty: TZQuery;
     fndGODS_ID: TzrComboBoxList;
     fndUNIT_ID: TcxComboBox;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    Label26: TLabel;
+    Label20: TLabel;
+    Label22: TLabel;
+    RzBorder1: TRzBorder;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -67,6 +79,20 @@ type
     procedure fndGODS_IDSaveValue(Sender: TObject);
     procedure DBGridEh1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure DBGridEh1Columns4BeforeShowControl(Sender: TObject);
+    procedure fndUNIT_IDPropertiesChange(Sender: TObject);
+    procedure fndUNIT_IDEnter(Sender: TObject);
+    procedure fndUNIT_IDExit(Sender: TObject);
+    procedure fndUNIT_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndUNIT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     //SEQNO控制号
     FinputFlag: integer;
@@ -128,25 +154,19 @@ type
     procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);virtual;
     procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);virtual;
 
-    //输入会员号
-    procedure WriteInfo(id:string);virtual;
-    //整单折扣
-    procedure AgioInfo(id:string);virtual;
-    //单笔折扣
-    procedure AgioToGods(id:string);virtual;
     //修改单价
     procedure PriceToGods(id:string);virtual;
-    //输入跟踪号
-    function GodsToLocusNo(id:string):boolean;virtual;
-    //输入批号
-    function GodsToBatchNo(id:string):boolean;virtual;
-    //输入数量
+    //修改数量
     procedure GodsToAmount(id:string);virtual;
+    //修改单位
+    procedure UnitToGods(id:string);virtual;
     
     procedure ReadFrom(DataSet:TDataSet);virtual;
     procedure CalcWriteTo(edtTable,DataSet:TDataSet;MyField:TField);virtual;
     procedure WriteTo(DataSet:TDataSet);virtual;
 
+    procedure ConvertUnit;virtual;
+    procedure ConvertPresent;virtual;
     function DecodeBarcode(BarCode: string):integer;
   public
     { Public declarations }
@@ -200,7 +220,7 @@ begin
     end;
   3:begin
       lblInput.Caption := '修改单价';
-      lblHint.Caption := '请直接输入单价后按“回车”';
+      lblHint.Caption := '请直接输入单价后按“回车”,赠送当前商品输入0后按回车';
     end;
   4:begin
       lblInput.Caption := '单笔折扣';
@@ -208,23 +228,15 @@ begin
     end;
   5:begin
       lblInput.Caption := '单位切换';
-      lblHint.Caption := '请按 tab 健进行单位转换';
+      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按回车 ';
     end;
   6:begin
-      lblInput.Caption := '赠品/兑换';
-      lblHint.Caption := '请按 tab 健进行"正常/赠品/兑换"转换';
+      lblInput.Caption := '销售类型';
+      lblHint.Caption := '"正常销售请输1、赠送当前商品请输2"输入完毕按回车';
     end;
   7:begin
-      lblInput.Caption := '物流条码';
-      lblHint.Caption := '请输入物流跟踪号后按“回车”';
-    end;
-  8:begin
-      lblInput.Caption := '商品批号';
-      lblHint.Caption := '请输入商品批号后按“回车”';
-    end;
-  9:begin
       lblInput.Caption := '数量输入';
-      lblHint.Caption := '请输入商品批号后按“回车”';
+      lblHint.Caption := '请输入数量后按回车';
     end;
   end;
   if not CheckInput then InputFlag := 0;
@@ -274,7 +286,7 @@ begin
   while not rs.Eof do
     begin
       Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString)
+      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       rs.Next;
     end;
 end;
@@ -303,6 +315,24 @@ procedure TfrmOrderForm.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if Key = VK_F2 then
+     begin
+       inputMode := 1;
+       inputFlag := 5;
+       edtInput.SetFocus;
+     end;
+  if Key = VK_F3 then
+     begin
+       inputMode := 1;
+       inputFlag := 7;
+       edtInput.SetFocus;
+     end;
+  if Key = VK_F4 then
+     begin
+       inputMode := 1;
+       inputFlag := 3;
+       edtInput.SetFocus;
+     end;
+  if Key = VK_F12 then
      begin
        inputMode := 1;
        inputFlag := 0;
@@ -539,19 +569,14 @@ begin
   try
     rs.SQL.Text := 'select BARCODE,UNIT_ID from PUB_BARCODE where TENANT_ID in ('+dllGlobal.GetTenantId+') and GODS_ID=:GODS_ID and BARCODE_TYPE in (''0'',''1'',''2'') order by BARCODE_TYPE';
     rs.ParamByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
-    dataFactory.MoveToSqlite;
-    try
-      dataFactory.Open(rs);
-      if rs.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').asString,[]) then
-         result := rs.FieldbyName('BARCODE').asString
-      else
-         begin
-           rs.First;
-           result := rs.FieldbyName('BARCODE').asString;
-         end;
-    finally
-      dataFactory.MoveToDefault;
-    end;
+    dllGlobal.OpenSqlite(rs);
+    if rs.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').asString,[]) then
+       result := rs.FieldbyName('BARCODE').asString
+    else
+       begin
+         rs.First;
+         result := rs.FieldbyName('BARCODE').asString;
+       end;
   finally
     rs.free;
   end;
@@ -1175,7 +1200,7 @@ begin
       Field.AsString := formatFloat('#0.00',AMoney/APrice);
       Amount := Field.asFloat;
       rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
+      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
 
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
          begin
@@ -1250,8 +1275,11 @@ end;
 procedure TfrmOrderForm.PresentToCalc(Present: integer);
 var
   Field:TField;
+  rs:TZQuery;
 begin
   if edtTable.FindField('IS_PRESENT')=nil then Exit;
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then  Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
   edtTable.Edit;
   edtTable.FindField('IS_PRESENT').AsInteger := Present;
   Field := edtTable.FindField('APRICE');
@@ -1259,10 +1287,12 @@ begin
   if Present=1 then
      begin
        Field.AsFloat := 0;
+       edtTable.FieldByName('GODS_NAME').AsString := '【赠送】'+rs.FieldbyName('GODS_NAME').AsString; 
        PriceToCalc(0);
      end
   else
      begin
+       edtTable.FieldByName('GODS_NAME').AsString := rs.FieldbyName('GODS_NAME').AsString; 
        InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
        PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
      end;
@@ -1409,15 +1439,18 @@ function TfrmOrderForm.DecodeBarcode(BarCode: string): integer;
 function CheckDupBar(rs:TZQuery):boolean;
 var
   r:integer;
+  gid:string;
 begin
   result := true;
   r := 0;
   rs.First;
+  gid := rs.FieldByName('GODS_ID').AsString;
   while not rs.Eof do
     begin
-      if rs.FieldByName('BARCODE').AsString=BarCode then
+      if rs.FieldByName('GODS_ID').AsString<>gid then
          begin
            inc(r);
+           break;
          end;
       rs.Next;
     end;
@@ -1677,7 +1710,6 @@ var
   amt:Real;
   AObj:TRecord_;
 begin
-  inherited;
   try
   if Key=#13 then
     begin
@@ -1687,23 +1719,7 @@ begin
       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       Key := #0;
       try
-      if InputFlag=1 then //会员卡号
-         begin
-           WriteInfo(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=2 then //整单折扣
-         begin
-           if s<>'' then AgioInfo(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=3 then //单价
+      if InputFlag=3 then //修改单价
          begin
            if s<>'' then PriceToGods(s);
            InputFlag := 0;
@@ -1711,29 +1727,15 @@ begin
            edtInput.Text := '';
            Exit;
          end;
-      if InputFlag=4 then //折扣率
+      if InputFlag=5 then //修改单位
          begin
-           if s<>'' then AgioToGods(s);
+           if s<>'' then UnitToGods(s);
            InputFlag := 0;
            DBGridEh1.Col := 1;
            edtInput.Text := '';
            Exit;
          end;
-      if InputFlag=5 then //单位
-         begin
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=6 then //赠品
-         begin
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=9 then //数量输入
+      if InputFlag=7 then //修改数量
          begin
            if s<>'' then GodsToAmount(s);
            InputFlag := 0;
@@ -1741,6 +1743,7 @@ begin
            edtInput.Text := '';
            Exit;
          end;
+         
       isAdd := false;
       if s='' then
          begin
@@ -1816,21 +1819,17 @@ begin
         end;
         Key := #0;
       end;
+    if Key=#27 then
+      begin
+        InputFlag := 0;
+        Key := #0;
+      end;
   finally
      if edtInput.CanFocus and not edtInput.Focused then
         if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 
-procedure TfrmOrderForm.AgioInfo(id: string);
-begin
-
-end;
-
-procedure TfrmOrderForm.AgioToGods(id: string);
-begin
-
-end;
 
 function TfrmOrderForm.CheckInput: boolean;
 begin
@@ -1838,28 +1837,45 @@ begin
 end;
 
 procedure TfrmOrderForm.GodsToAmount(id: string);
+var
+  Field:TField;
+  s:string;
 begin
-
-end;
-
-function TfrmOrderForm.GodsToBatchNo(id: string): boolean;
-begin
-
-end;
-
-function TfrmOrderForm.GodsToLocusNo(id: string): boolean;
-begin
-
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  s := trim(id);
+  try
+    StrToFloat(s);
+  except
+    Raise Exception.Create('输入的数量无效，请正确输入');
+  end;
+  if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的数量过大，请确认是否输入正确');
+  Field := edtTable.FindField('AMOUNT');
+  if Field=nil then Exit;
+  edtTable.Edit;
+  Field.AsFloat := StrToFloat(s);
+  AmountToCalc(Field.AsFloat);
 end;
 
 procedure TfrmOrderForm.PriceToGods(id: string);
+var
+  Field:TField;
+  s:string;
 begin
-
-end;
-
-procedure TfrmOrderForm.WriteInfo(id: string);
-begin
-
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  s := trim(id);
+  try
+    StrToFloat(s);
+  except
+    Raise Exception.Create('输入的单价无效，请正确输入');
+  end;
+  if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
+  Field := edtTable.FindField('APRICE');
+  if Field=nil then Exit;
+  edtTable.Edit;
+  Field.AsFloat := StrToFloat(s);
+  PriceToCalc(Field.AsFloat);
 end;
 
 procedure TfrmOrderForm.fndGODS_IDSaveValue(Sender: TObject);
@@ -1909,13 +1925,8 @@ begin
         AObj.FieldbyName('LOCUS_NO').AsString := '';
         AObj.FieldbyName('BATCH_NO').AsString := '#';
 
-        if CheckRepeat(AObj) then
-           begin
-             fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
-             fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
-             Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[edtTable.FieldbyName('GODS_NAME').AsString]));
-           end;
-           
+        if CheckRepeat(AObj) then Exit;
+
         UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString);
       end
       else
@@ -1937,6 +1948,8 @@ begin
   finally
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
     edtTable.EnableControls;
+    if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+    edtTable.Edit;
   end;
 end;
 
@@ -1975,7 +1988,7 @@ begin
       end;
     if c>0 then
       begin
-        if (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+        if (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经录入，是否继续添加商品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
            result := false else result := true;
       end;
   finally
@@ -1992,6 +2005,262 @@ begin
   Cell := DBGridEh1.MouseCoord(X,Y);
   if Cell.Y > DBGridEh1.VisibleRowCount -2 then
      InitRecord;
+end;
+
+procedure TfrmOrderForm.DBGridEh1Columns4BeforeShowControl(
+  Sender: TObject);
+var
+  rs:TZQuery;
+  us:TZQuery;
+begin
+  inherited;
+  fndUNIT_ID.Tag := 1;
+  try
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  us := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  fndUNIT_ID.Properties.Items.Clear;
+  if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
+     begin
+       if us.Locate('UNIT_ID',rs.FieldbyName('CALC_UNITS').AsString,[]) then
+          fndUNIT_ID.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(0));
+       if us.Locate('UNIT_ID',rs.FieldbyName('SMALL_UNITS').AsString,[]) then
+          fndUNIT_ID.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(1));
+       if us.Locate('UNIT_ID',rs.FieldbyName('BIG_UNITS').AsString,[]) then
+          fndUNIT_ID.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(2));
+     end;
+  if us.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').AsString,[]) then
+     begin
+       fndUNIT_ID.Properties.ReadOnly := false;
+       fndUNIT_ID.ItemIndex := fndUNIT_ID.Properties.Items.IndexOf(us.FieldbyName('UNIT_NAME').AsString);
+       fndUNIT_ID.Properties.ReadOnly := (dbState = dsBrowse);
+     end;
+  finally
+     fndUNIT_ID.Tag := 0;
+  end;
+end;
+
+procedure TfrmOrderForm.fndUNIT_IDPropertiesChange(Sender: TObject);
+var
+  w:integer;
+  rs:TZQuery;
+begin
+  inherited;
+  if fndUNIT_ID.Tag = 1 then Exit;
+  if fndUNIT_ID.ItemIndex < 0 then Exit;
+  if not fndUNIT_ID.Visible then Exit;
+  w := Integer(fndUNIT_ID.Properties.Items.Objects[fndUNIT_ID.ItemIndex]);
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
+     begin
+       edtTable.Edit;
+       case w of
+       0:UnitToCalc(rs.FieldbyName('CALC_UNITS').AsString);
+       1:UnitToCalc(rs.FieldbyName('SMALL_UNITS').AsString);
+       2:UnitToCalc(rs.FieldbyName('BIG_UNITS').AsString);
+       end;
+     end;
+end;
+
+procedure TfrmOrderForm.fndUNIT_IDEnter(Sender: TObject);
+begin
+  inherited;
+  fndUNIT_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
+
+end;
+
+procedure TfrmOrderForm.fndUNIT_IDExit(Sender: TObject);
+begin
+  inherited;
+  fndUNIT_ID.Visible := false;
+
+end;
+
+procedure TfrmOrderForm.fndUNIT_IDKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) then
+     begin
+       DBGridEh1.SetFocus;
+       fndUNIT_ID.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_LEFT) then
+     begin
+       DBGridEh1.SetFocus;
+       fndUNIT_ID.Visible := false;
+       DBGridEh1.Col := DBGridEh1.Col -1;
+     end;
+  if (Key=VK_UP) and (Shift=[]) and not fndUNIT_ID.DroppedDown then
+     begin
+       DBGridEh1.SetFocus;
+       fndUNIT_ID.Visible := false;
+       PostMessage(Handle,WM_PRIOR_RECORD,0,0);
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not fndUNIT_ID.DroppedDown then
+     begin
+       DBGridEh1.SetFocus;
+       fndUNIT_ID.Visible := false;
+       PostMessage(Handle,WM_NEXT_RECORD,0,0);
+     end;
+end;
+
+procedure TfrmOrderForm.fndUNIT_IDKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       DBGridEh1.SetFocus;
+       FocusNextColumn;
+     end
+  else
+  if not fndUNIT_ID.DroppedDown then fndUNIT_ID.DroppedDown := true;
+end;
+
+procedure TfrmOrderForm.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if (Key=#13) then
+     begin
+       FocusNextColumn;
+       Key := #0;
+     end;
+
+end;
+
+procedure TfrmOrderForm.DBGridEh1KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key=VK_SHIFT then
+    begin
+      if edtTable.IsEmpty then Exit;
+      ConvertPresent;
+    end;
+end;
+
+procedure TfrmOrderForm.ConvertPresent;
+begin
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
+  if edtTable.FindField('IS_PRESENT')=nil then Exit;
+  case edtTable.FieldbyName('IS_PRESENT').AsInteger of
+  0:PresentToCalc(1)
+  else
+     PresentToCalc(0);
+  end;
+end;
+
+procedure TfrmOrderForm.ConvertUnit;
+var
+  rs:TZQuery;
+  uid:string;
+begin
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+  if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('CALC_UNITS').AsString) and (rs.FieldByName('SMALL_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('SMALL_UNITS').AsString;
+     end
+  else
+  if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('CALC_UNITS').AsString) and (rs.FieldByName('BIG_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('BIG_UNITS').AsString;
+     end
+  else
+  if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('SMALL_UNITS').AsString) and (rs.FieldByName('BIG_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('BIG_UNITS').AsString;
+     end
+  else
+     uid := rs.FieldByName('CALC_UNITS').AsString;
+  if uid=edtTable.FieldByName('UNIT_ID').AsString then Exit;
+  UnitToCalc(uid);
+  fndUNIT_ID.Visible := false;
+end;
+
+procedure TfrmOrderForm.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+  br:TBrush;
+  pn:TPen;
+  b,s:string;
+begin
+  br := TBrush.Create;
+  br.Assign(DBGridEh1.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh1.Canvas.Pen);
+  try
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DbGridEh1.canvas.Brush.Color := $0000F2F2;
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if ((gdSelected in State) or (gdFocused in State)) then
+    begin
+      ARect := Rect;
+      DBGridEh1.Canvas.Pen.Color := clRed;
+      DBGridEh1.Canvas.Pen.Width := 1;
+      DBGridEh1.Canvas.Brush.Style := bsClear;
+      DbGridEh1.canvas.Rectangle(ARect);
+    end;
+  finally
+    DBGridEh1.Canvas.Brush.Assign(br);
+    DBGridEh1.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
+end;
+
+procedure TfrmOrderForm.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if edtTable.FieldbyName('IS_PRESENT').AsInteger<>0 then
+     AFont.Color := clRed;
+end;
+
+procedure TfrmOrderForm.UnitToGods(id: string);
+var
+  rs:TZQuery;
+  uid:string;
+begin
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+  if (id='2') and (rs.FieldByName('SMALL_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('SMALL_UNITS').AsString;
+     end
+  else
+  if (id='3') and (rs.FieldByName('BIG_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('BIG_UNITS').AsString;
+     end
+  else
+  if (id='1') and (rs.FieldByName('CALC_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('CALC_UNITS').AsString;
+     end
+  else
+     Raise Exception.Create('当前商品没有维护输入的单位类型');
+  if uid=edtTable.FieldByName('UNIT_ID').AsString then Exit;
+  UnitToCalc(uid);
 end;
 
 end.

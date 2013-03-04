@@ -102,6 +102,7 @@ procedure TDLLFactory.AddBatch(ds: OleVariant; const ns,
 var
   rs:TZQuery;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   rs := TZQuery.Create(nil);
   rs.Delta := ds;
   if Params<>'' then
@@ -114,6 +115,7 @@ procedure TDLLFactory.BeginBatch;
 var
   i:integer;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.BeginBatch;
   for i:=0 to FDataSets.Count-1 do
     begin
@@ -124,13 +126,15 @@ end;
 
 procedure TDLLFactory.BeginTrans(TimeOut: integer);
 begin
-  dataFactory.BeginTrans(TimeOut); 
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+  dataFactory.BeginTrans(TimeOut);
 end;
 
 procedure TDLLFactory.CancelBatch;
 var
   i:integer;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   for i:=0 to FDataSets.Count-1 do
     begin
       TObject(FDataSets[i]).Free;
@@ -158,6 +162,7 @@ procedure TDLLFactory.CommitBatch;
 var
   i:integer;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.CommitBatch;
   for i:=0 to FDataSets.Count-1 do
     begin
@@ -168,6 +173,7 @@ end;
 
 procedure TDLLFactory.CommitTrans;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.CommitTrans;
 end;
 
@@ -201,6 +207,7 @@ end;
 
 function TDLLFactory.ExecSQL(const SQL: WideString): Integer;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   result := dataFactory.ExecSQL(SQL); 
 end;
 
@@ -238,11 +245,13 @@ end;
 
 function TDLLFactory.iDbType: Integer;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   result := dataFactory.iDbType;
 end;
 
 function TDLLFactory.InTransaction: boolean;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   result := dataFactory.InTransaction;
 end;
 
@@ -267,6 +276,7 @@ function TDLLFactory.OpenSQL(SQL, Params: WideString): OleVariant;
 var
   rs:TZQuery;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := SQL;
@@ -282,6 +292,7 @@ function TDLLFactory.OpenBatch: OleVariant;
 var
   i:integer;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.OpenBatch;
   result:=VarArrayCreate([0,FList.Count-1],varVariant);
   for i:=0 to FDataSets.Count-1 do
@@ -296,6 +307,7 @@ function TDLLFactory.OpenNS(NS, Params: WideString): OleVariant;
 var
   rs:TZQuery;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   rs := TZQuery.Create(nil);
   try
     TftParamList.Decode(rs.Params,Params);
@@ -308,6 +320,7 @@ end;
 
 procedure TDLLFactory.RollbackTrans;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.RollbackTrans;
 end;
 
@@ -316,6 +329,7 @@ function TDLLFactory.UpdateBatch(ds: OleVariant; NS,
 var
   rs:TZQuery;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   rs := TZQuery.Create(nil);
   try
     rs.Delta := ds;
@@ -338,6 +352,7 @@ function TDLLFactory.ExecProc(NS: String; Params: WideString): pchar;
 var
   prms:TftParamList;
 begin
+  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   prms := TftParamList.Create;
   try
     TftParamList.Decode(prms,Params);

@@ -59,7 +59,7 @@ inherited frmOrderForm: TfrmOrderForm
                 130)
               object lblInput: TLabel
                 Left = 16
-                Top = 12
+                Top = 13
                 Width = 84
                 Height = 20
                 Caption = #26465#30721#36755#20837
@@ -72,7 +72,7 @@ inherited frmOrderForm: TfrmOrderForm
               end
               object lblHint: TLabel
                 Left = 322
-                Top = 16
+                Top = 17
                 Width = 206
                 Height = 12
                 Caption = #35831#25353' [F2] '#20809#26631#28608#27963#26465#30721#36755#20837#26694'...'
@@ -85,14 +85,14 @@ inherited frmOrderForm: TfrmOrderForm
               end
               object Label26: TLabel
                 Left = 17
-                Top = 79
+                Top = 80
                 Width = 116
                 Height = 15
                 Cursor = crHandPoint
                 Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
                 Caption = #20462#25913#25968#37327'  [F3] '
                 Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
+                Font.Color = clNavy
                 Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
@@ -102,13 +102,13 @@ inherited frmOrderForm: TfrmOrderForm
               end
               object Label20: TLabel
                 Left = 17
-                Top = 104
+                Top = 105
                 Width = 116
                 Height = 15
                 Cursor = crHandPoint
                 Caption = #20462#25913#21333#20215'  [F4] '
                 Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
+                Font.Color = clNavy
                 Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
@@ -116,13 +116,13 @@ inherited frmOrderForm: TfrmOrderForm
               end
               object Label22: TLabel
                 Left = 17
-                Top = 54
+                Top = 55
                 Width = 116
                 Height = 15
                 Cursor = crHandPoint
                 Caption = #20462#25913#21333#20301'  [F2] '
                 Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
+                Font.Color = clNavy
                 Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
@@ -130,14 +130,14 @@ inherited frmOrderForm: TfrmOrderForm
               end
               object RzBorder1: TRzBorder
                 Left = 18
-                Top = 45
+                Top = 46
                 Width = 846
                 Height = 2
                 Anchors = [akLeft, akTop, akRight]
               end
               object edtInput: TcxTextEdit
                 Left = 109
-                Top = 9
+                Top = 10
                 Width = 204
                 Height = 27
                 ParentFont = False
@@ -152,17 +152,73 @@ inherited frmOrderForm: TfrmOrderForm
                 OnExit = edtInputExit
                 OnKeyPress = edtInputKeyPress
               end
-              object RzBmpButton2: TRzBmpButton
-                Left = 812
-                Top = 8
-                Width = 49
+              object help: TRzBmpButton
+                Left = 852
+                Top = 16
+                Width = 16
+                Height = 16
                 AllowAllUp = True
-                GroupIndex = 2
+                GroupIndex = 3
+                Down = True
+                Bitmaps.Down.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+                  D7CDC2BEAD9AB7A490B7A490B7A490B7A490B7A490B7A490B7A490B7A490BEAD
+                  9AD7CDC2FF00FFFF00FFFF00FFB9A692DFD1C2F8EEE2FFF6EBFFF6EBFFF6EBFF
+                  F6EBFFF6EBFFF6EBFFF6EBFFF6EBF8EEE2DFD1C2B9A692FF00FFD9CFC4DDD0C1
+                  FFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7
+                  ECFFF7ECDED1C2D8CEC3BDAB99F9F0E5FFF7EDFFF7ED7D66567D6656FFF7EDFF
+                  F7EDFFF7EDFFF7ED7D66557D6655FFF7EDFFF7EDF9F0E5BDAB99B7A490FFF7EE
+                  FFF7EEFFF7EEA78F7CA78F7C7D6656FFF7EEFFF7EE7C6655A78F7CA78F7CFFF7
+                  EEFFF7EEFFF7EEB7A490B7A490FFF8EFFFF8EFFFF8EFFFF8EFA8907DA78F7C7C
+                  66557D6656A78F7CA78F7CFFF8EFFFF8EFFFF8EFFFF8EFB7A490B7A490FFF8F0
+                  FFF8F0FFF8F0FFF8F0FFF8F0A78F7CA8907DA78F7CA8907DFFF8F0FFF8F0FFF8
+                  F0FFF8F0FFF8F0B7A490B7A490FFF9F0FFF9F0FFF9F0FFF9F0FFF9F0FFF9F0A8
+                  8F7CA78F7CFFF9F0FFF9F0FFF9F0FFF9F0FFF9F0FFF9F0B7A490B7A490FFF9F1
+                  FFF9F1FFF9F17D66567D6656FFF9F1FFF9F1FFF9F1FFF9F17D66557D6655FFF9
+                  F1FFF9F1FFF9F1B7A490B7A490FFF9F2FFF9F2FFF9F2A78F7CA78F7C7D6656FF
+                  F9F2FFF9F27C6655A78F7CA78F7CFFF9F2FFF9F2FFF9F2B7A490B7A490FFFAF3
+                  FFFAF3FFFAF3FFFAF3A8907DA78F7C7C66557D6656A78F7CA78F7CFFFAF3FFFA
+                  F3FFFAF3FFFAF3B7A490B7A490FFFAF4FFFAF4FFFAF4FFFAF4FFFAF4A78F7CA8
+                  907DA78F7CA8907DFFFAF4FFFAF4FFFAF4FFFAF4FFFAF4B7A490BDAB99F9F4ED
+                  FFFBF5FFFBF5FFFBF5FFFBF5FFFBF5A88F7CA78F7CFFFBF5FFFBF5FFFBF5FFFB
+                  F5FFFBF5F9F4EDBDAB99D9CFC4DDD2C6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FF
+                  FBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6DDD2C6D9CFC4FF00FFB9A692
+                  DCD1C5F7F2EBFFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6F7F2
+                  EBDCD1C5B9A692FF00FFFF00FFFF00FFDAD0C6BFAE9CB7A490B7A490B7A490B7
+                  A490B7A490B7A490B7A490B7A490BFAE9CDAD0C6FF00FFFF00FF}
                 Bitmaps.TransparentColor = clOlive
+                Bitmaps.Up.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  1800000000000003000000000000000000000000000000000000FF00FFFF00FF
+                  D7CDC2BEAD9AB7A490B7A490B7A490B7A490B7A490B7A490B7A490B7A490BEAD
+                  9AD7CDC2FF00FFFF00FFFF00FFB9A692DFD1C2F8EEE2FFF6EBFFF6EBFFF6EBFF
+                  F6EBFFF6EBFFF6EBFFF6EBFFF6EBF8EEE2DFD1C2B9A692FF00FFD9CFC4DDD0C1
+                  FFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7ECFFF7
+                  ECFFF7ECDED1C2D8CEC3BDAB99F9F0E5FFF7EDFFF7EDFFF7EDFFF7EDFFF7EDA8
+                  8F7CA78F7CFFF7EDFFF7EDFFF7EDFFF7EDFFF7EDF9F0E5BDAB99B7A490FFF7EE
+                  FFF7EEFFF7EEFFF7EEFFF7EEA78F7CA8907DA78F7CA8907DFFF7EEFFF7EEFFF7
+                  EEFFF7EEFFF7EEB7A490B7A490FFF8EFFFF8EFFFF8EFFFF8EFA8907DA78F7C7C
+                  66557D6656A78F7CA78F7CFFF8EFFFF8EFFFF8EFFFF8EFB7A490B7A490FFF8F0
+                  FFF8F0FFF8F0A78F7CA78F7C7D6656FFF8F0FFF8F07C6655A78F7CA78F7CFFF8
+                  F0FFF8F0FFF8F0B7A490B7A490FFF9F0FFF9F0FFF9F07D66567D6656FFF9F0FF
+                  F9F0FFF9F0FFF9F07D66557D6655FFF9F0FFF9F0FFF9F0B7A490B7A490FFF9F1
+                  FFF9F1FFF9F1FFF9F1FFF9F1FFF9F1A88F7CA78F7CFFF9F1FFF9F1FFF9F1FFF9
+                  F1FFF9F1FFF9F1B7A490B7A490FFF9F2FFF9F2FFF9F2FFF9F2FFF9F2A78F7CA8
+                  907DA78F7CA8907DFFF9F2FFF9F2FFF9F2FFF9F2FFF9F2B7A490B7A490FFFAF3
+                  FFFAF3FFFAF3FFFAF3A8907DA78F7C7C66557D6656A78F7CA78F7CFFFAF3FFFA
+                  F3FFFAF3FFFAF3B7A490B7A490FFFAF4FFFAF4FFFAF4A78F7CA78F7C7D6656FF
+                  FAF4FFFAF47C6655A78F7CA78F7CFFFAF4FFFAF4FFFAF4B7A490BDAB99F9F4ED
+                  FFFBF5FFFBF57D66567D6656FFFBF5FFFBF5FFFBF5FFFBF57D66557D6655FFFB
+                  F5FFFBF5F9F4EDBDAB99D9CFC4DDD2C6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FF
+                  FBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6DDD2C6D9CFC4FF00FFB9A692
+                  DCD1C5F7F2EBFFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6FFFBF6F7F2
+                  EBDCD1C5B9A692FF00FFFF00FFFF00FFDAD0C6BFAE9CB7A490B7A490B7A490B7
+                  A490B7A490B7A490B7A490B7A490BFAE9CDAD0C6FF00FFFF00FF}
                 Color = clBtnFace
                 Anchors = [akTop, akRight]
                 TabOrder = 1
-                OnClick = RzBmpButton2Click
+                OnClick = helpClick
               end
             end
           end

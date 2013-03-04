@@ -176,10 +176,10 @@ begin
          3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
          end;
        end;
+       
     AObj.FieldbyName('SALE_AMT').asFloat := TotalAmt;
     AObj.FieldbyName('SALE_MNY').asFloat := TotalFee;
     AObj.FieldbyName('PAY_ZERO').asFloat := 0;
-    AObj.FieldbyName('PAY_A').asFloat := TotalFee;
     AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
     AObj.FieldbyName('PAY_DIBS').asFloat := 0;
 
@@ -885,7 +885,7 @@ begin
     AObj.FieldbyName('PAY_I').AsFloat+
     AObj.FieldbyName('PAY_J').AsFloat;
   payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
-  salMny := AObj.FieldbyName('SAL_MNY').AsFloat;
+  salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
   if fee<>0 then
      edtPAY_TOTAL.Text := formatFloat('#0.00',fee)
   else

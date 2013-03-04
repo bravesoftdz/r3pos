@@ -44,7 +44,7 @@ type
     lblInput: TLabel;
     lblHint: TLabel;
     edtInput: TcxTextEdit;
-    RzBmpButton2: TRzBmpButton;
+    help: TRzBmpButton;
     order_header: TRzPanel;
     order_grid: TRzPanel;
     DBGridEh1: TDBGridEh;
@@ -65,7 +65,7 @@ type
     Label20: TLabel;
     Label22: TLabel;
     RzBorder1: TRzBorder;
-    procedure RzBmpButton2Click(Sender: TObject);
+    procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -242,10 +242,11 @@ begin
   if not CheckInput then InputFlag := 0;
 end;
 
-procedure TfrmOrderForm.RzBmpButton2Click(Sender: TObject);
+procedure TfrmOrderForm.helpClick(Sender: TObject);
 begin
   inherited;
-  if order_input.Height=66 then
+  help.Down := not help.Down;
+  if help.Down then
      order_input.Height := 147
   else
      order_input.Height := 66;
@@ -314,6 +315,10 @@ procedure TfrmOrderForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
+  if Key = VK_F1 then
+     begin
+       helpClick(nil);
+     end;
   if Key = VK_F2 then
      begin
        inputMode := 1;

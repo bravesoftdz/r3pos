@@ -23,12 +23,12 @@ inherited frmSaleOrder: TfrmSaleOrder
                 AutoSize = False
               end
               object RzLabel5: TRzLabel [2]
-                Left = 645
+                Left = 663
                 Top = 16
-                Width = 135
+                Width = 176
                 Height = 15
                 Anchors = [akTop, akRight]
-                Caption = '000413031500002'
+                Caption = #21333#21495':000413031500002'
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clPurple
                 Font.Height = -15
@@ -245,13 +245,6 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
-              end
-              inherited Label26: TLabel
-                OnClick = nil
-              end
-              inherited RzBmpButton2: TRzBmpButton
-                Left = 605
-                Width = 37
               end
             end
           end

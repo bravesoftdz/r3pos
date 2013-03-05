@@ -37,7 +37,7 @@ inherited frmInitGoods: TfrmInitGoods
             Top = 0
             Width = 425
             Height = 456
-            ActivePage = TabSheet3
+            ActivePage = TabSheet1
             Align = alClient
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
@@ -45,7 +45,7 @@ inherited frmInitGoods: TfrmInitGoods
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
-            TabIndex = 2
+            TabIndex = 0
             TabOrder = 0
             FixedDimension = 19
             object TabSheet1: TRzTabSheet

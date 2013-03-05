@@ -1,6 +1,6 @@
 object frmWebForm: TfrmWebForm
-  Left = 336
-  Top = 228
+  Left = 131
+  Top = 80
   HorzScrollBar.Style = ssFlat
   HorzScrollBar.Tracking = True
   VertScrollBar.Style = ssFlat

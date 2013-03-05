@@ -1,13 +1,14 @@
-inherited frmSaleOrder: TfrmSaleOrder
+inherited frmStockOrder: TfrmStockOrder
   Left = 238
   Top = 96
-  Caption = #21830#21697#38144#21806
+  Caption = #21830#21697#20837#24211
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     inherited webForm: TRzPanel
       inherited PageControl: TRzPageControl
+        OnChange = PageControlChange
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -1081,6 +1082,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Left = 594
               Top = 194
               Width = 153
+              Height = 21
               Align = alNone
               AutoStyle = False
               Margin = 0
@@ -1185,7 +1187,7 @@ inherited frmSaleOrder: TfrmSaleOrder
   end
   inherited toolNav: TRzPanel
     inherited lblCaption: TRzLabel
-      Caption = #21830#21697#38144#21806
+      Caption = #21830#21697#20837#24211
     end
     inherited RzPanel12: TRzPanel
       Left = 384
@@ -1197,7 +1199,6 @@ inherited frmSaleOrder: TfrmSaleOrder
         Left = 432
         Width = 74
         Anchors = [akTop]
-        Caption = #26597#35810#21333#25454
         OnClick = btnNavClick
       end
       inherited btnPrint: TRzBitBtn

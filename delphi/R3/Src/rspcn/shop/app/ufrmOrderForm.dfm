@@ -1,28 +1,28 @@
 inherited frmOrderForm: TfrmOrderForm
-  Left = 437
-  Top = 134
+  Left = 315
+  Top = 198
   ActiveControl = edtInput
   Caption = #21333#25454#22522#31867
-  ClientHeight = 542
+  ClientHeight = 522
   ClientWidth = 904
   OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     Width = 904
-    Height = 495
+    Height = 475
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
       Width = 904
-      Height = 495
+      Height = 475
       Align = alClient
       Color = clWhite
       object PageControl: TRzPageControl
         Left = 0
         Top = 0
         Width = 904
-        Height = 495
+        Height = 475
         ActivePage = TabSheet1
         Align = alClient
         ShowCardFrame = False
@@ -31,6 +31,7 @@ inherited frmOrderForm: TfrmOrderForm
         ShowShadow = False
         TabIndex = 0
         TabOrder = 0
+        OnChange = PageControlChange
         FixedDimension = 21
         object TabSheet1: TRzTabSheet
           Color = clWhite
@@ -238,7 +239,7 @@ inherited frmOrderForm: TfrmOrderForm
             Left = 0
             Top = 182
             Width = 904
-            Height = 223
+            Height = 203
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -249,7 +250,7 @@ inherited frmOrderForm: TfrmOrderForm
               Left = 10
               Top = 10
               Width = 884
-              Height = 203
+              Height = 183
               Align = alClient
               AllowedOperations = [alopUpdateEh, alopAppendEh]
               AutoFitColWidths = True
@@ -416,7 +417,7 @@ inherited frmOrderForm: TfrmOrderForm
           end
           object order_footer: TRzPanel
             Left = 0
-            Top = 405
+            Top = 385
             Width = 904
             Height = 69
             Align = alBottom
@@ -428,13 +429,13 @@ inherited frmOrderForm: TfrmOrderForm
       end
     end
   end
-  inherited RzPanel1: TRzPanel
+  inherited toolNav: TRzPanel
     Width = 904
-    object RzLabel1: TRzLabel
+    object lblCaption: TRzLabel
       Left = 14
-      Top = 7
+      Top = 11
       Width = 100
-      Height = 24
+      Height = 25
       Caption = #21333#25454#21517#31216
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
@@ -452,12 +453,15 @@ inherited frmOrderForm: TfrmOrderForm
       BorderOuter = fsNone
       Color = 8026232
       TabOrder = 0
-      object RzBitBtn5: TRzBitBtn
-        Left = 222
-        Top = 6
-        Width = 113
+      DesignSize = (
+        352
+        47)
+      object btnNav: TRzBitBtn
+        Left = 256
+        Top = 8
+        Width = 79
         Height = 28
-        Caption = #26597#35810#21382#21490#21333#25454
+        Caption = #21382#21490#21333#25454
         Color = 15461355
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -472,6 +476,84 @@ inherited frmOrderForm: TfrmOrderForm
         TextShadowColor = clWhite
         TextShadowDepth = 4
         TabOrder = 0
+        TabStop = False
+        ThemeAware = False
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object btnPrint: TRzBitBtn
+        Left = 37
+        Top = 8
+        Width = 70
+        Height = 28
+        Anchors = [akTop]
+        Caption = #25171#21360
+        Color = 15461355
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        HighlightColor = 14276036
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 1
+        TabStop = False
+        ThemeAware = False
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object btnPreview: TRzBitBtn
+        Left = 104
+        Top = 8
+        Width = 45
+        Height = 28
+        Anchors = [akTop]
+        Caption = #39044#35272
+        Color = 15461355
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        HighlightColor = 14276036
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 2
+        TabStop = False
+        ThemeAware = False
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object btnExport: TRzBitBtn
+        Left = 164
+        Top = 8
+        Width = 76
+        Height = 28
+        Anchors = [akTop]
+        Caption = #23548#20986'(&I)'
+        Color = 15461355
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        HighlightColor = 14276036
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 3
         TabStop = False
         ThemeAware = False
         NumGlyphs = 2

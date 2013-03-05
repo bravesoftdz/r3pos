@@ -8,7 +8,7 @@ uses
 
 type
   TfrmWebToolForm = class(TfrmWebForm)
-    RzPanel1: TRzPanel;
+    toolNav: TRzPanel;
   private
     { Private declarations }
   public

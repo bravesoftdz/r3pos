@@ -19,6 +19,7 @@ type
     PUB_PRICEGRADE: TZQuery;
     CA_RELATIONS: TZQuery;
     PUB_UNION_INFO: TZQuery;
+    PUB_PAYMENT: TZQuery;
   private
     { Private declarations }
     procedure OpenPubGoodsInfo;

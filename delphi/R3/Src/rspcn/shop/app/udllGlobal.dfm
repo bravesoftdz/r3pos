@@ -287,4 +287,28 @@ object dllGlobal: TdllGlobal
         ParamType = ptUnknown
       end>
   end
+  object PUB_PAYMENT: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENAN' +
+        'T_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39')'
+      'order by CODE_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 264
+    Top = 96
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
 end

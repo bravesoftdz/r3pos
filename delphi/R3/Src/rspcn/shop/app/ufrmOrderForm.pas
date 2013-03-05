@@ -34,9 +34,9 @@ const
   FIND_GOODS_DIALOG=4;
 type
   TfrmOrderForm = class(TfrmWebToolForm)
-    RzLabel1: TRzLabel;
+    lblCaption: TRzLabel;
     RzPanel12: TRzPanel;
-    RzBitBtn5: TRzBitBtn;
+    btnNav: TRzBitBtn;
     PageControl: TRzPageControl;
     TabSheet1: TRzTabSheet;
     order_input: TRzPanel;
@@ -65,6 +65,9 @@ type
     Label20: TLabel;
     Label22: TLabel;
     RzBorder1: TRzBorder;
+    btnPrint: TRzBitBtn;
+    btnPreview: TRzBitBtn;
+    btnExport: TRzBitBtn;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -95,6 +98,7 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure edtInputKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure PageControlChange(Sender: TObject);
   private
 
     // 散装条码参数
@@ -114,14 +118,14 @@ type
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
 
-    procedure SetinputMode(const Value: integer);
-    procedure SetdbState(const Value: TDataSetState);
     { Private declarations }
   protected
     FinputMode: integer;
     FdbState: TDataSetState;
     FinputFlag: integer;
     
+    procedure SetinputMode(const Value: integer);virtual;
+    procedure SetdbState(const Value: TDataSetState);virtual;
     procedure SetinputFlag(const Value: integer);virtual;
     procedure InitRecord;
     function EnCodeBarcode: string;
@@ -236,12 +240,12 @@ end;
 procedure TfrmOrderForm.helpClick(Sender: TObject);
 begin
   inherited;
-  help.Down := not help.Down;
+//  help.Down := not help.Down;
   if help.Down then
      order_input.Height := 147
   else
      order_input.Height := 66;
-  ajustPostion;
+//  ajustPostion;
 end;
 
 procedure TfrmOrderForm.SetinputMode(const Value: integer);
@@ -2185,6 +2189,8 @@ begin
   inherited;
   if edtTable.FieldbyName('IS_PRESENT').AsInteger<>0 then
      AFont.Color := clRed;
+  if edtTable.FieldbyName('AMOUNT').AsFloat < 0 then
+     AFont.Color := clRed;
 end;
 
 procedure TfrmOrderForm.UnitToGods(id: string);
@@ -2242,6 +2248,25 @@ begin
      edtTable.Next;
   if Key=VK_UP then
      edtTable.Prior;
+end;
+
+procedure TfrmOrderForm.PageControlChange(Sender: TObject);
+begin
+  inherited;
+  case PageControl.ActivePageIndex of
+  0:begin
+       btnNav.Caption := '查询单据';
+       lblCaption.Caption := Caption;
+    end;
+  1:begin
+       btnNav.Caption := '返回';
+       lblCaption.Caption := Caption+'列表';
+    end;
+  end;
+  btnPrint.Visible := (PageControl.ActivePageIndex>0);
+  btnPreview.Visible := (PageControl.ActivePageIndex>0);
+  btnExport.Visible := (PageControl.ActivePageIndex>0);
+
 end;
 
 end.

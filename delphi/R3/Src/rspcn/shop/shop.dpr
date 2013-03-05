@@ -26,10 +26,9 @@ uses
   ufrmWebToolForm in 'ufrmWebToolForm.pas' {frmWebToolForm},
   ufrmWebDialogForm in 'ufrmWebDialogForm.pas' {frmWebDialogForm},
   ufrmOrderForm in 'app\ufrmOrderForm.pas' {frmOrderForm},
-  ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
+  ufrmStockOrder in 'app\ufrmStockOrder.pas' {frmStockOrder},
   udllGlobal in 'app\udllGlobal.pas' {dllGlobal: TDataModule},
   ufrmInitGoods in 'app\ufrmInitGoods.pas' {frmInitGoods},
-  ObjGoodsRelation in 'obj\ObjGoodsRelation.pas',
   ObjCommon in 'obj\ObjCommon.pas',
   ufrmWebDialog in '..\common\ufrmWebDialog.pas' {frmWebDialog},
   ufrmFindDialog in 'ufrmFindDialog.pas' {frmFindDialog},
@@ -39,7 +38,10 @@ uses
   udllXDictFactory in 'utils\udllXDictFactory.pas',
   ObjSalesOrderV60 in 'obj\ObjSalesOrderV60.pas',
   ufrmDialogProperty in 'app\ufrmDialogProperty.pas' {frmDialogProperty},
-  ObjGetPrice in 'obj\ObjGetPrice.pas';
+  ObjGetPrice in 'obj\ObjGetPrice.pas',
+  ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
+  ObjStockOrderV60 in 'obj\ObjStockOrderV60.pas',
+  ObjGoodsInfoV60 in 'obj\ObjGoodsInfoV60.pas';
 
 {$R *.res}
 exports

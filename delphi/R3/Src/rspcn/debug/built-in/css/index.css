@@ -1,0 +1,226 @@
+@charset "utf-8";
+
+/* CSS Document */
+html,body {
+	margin: 0px;
+	height: 100%;
+}
+
+body,div,address,blockquote,iframe,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,h5,h6,p,pre,table,caption,th,td,form,legend,fieldset,input,button,select,textarea
+	{
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 100%;
+	font-family: inherit;
+}
+
+br {
+	line-height: 8px;
+}
+
+ol,ul,li {
+	list-style: none;
+}
+
+img {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/*去除float的类*/
+.clearfloat {
+	clear: both;
+	height: 0 !important;
+	font-size: 1px;
+	line-height: 0px;
+}
+
+.font1 {
+	font-size: 20px;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	color: #2791c0;
+}
+
+.font2 {
+	font-size: 14px;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	color: #7b7b7b;
+}
+
+#container {
+	min-width: 1200px;
+	width: 100%;
+	overflow: hidden;
+	margin: 0 auto;
+	height: 100%;
+	background-color: #E9E9E9;
+}
+
+#mid {
+	width: 860px;
+	overflow: hidden;
+	float: left;
+	margin-left: 12px;
+	background-color: #FFFFFF;
+}
+
+#mid #midHeader {
+	padding-left: 10px;
+	height: 60px;
+	line-height: 45px;
+	vertical-align: middle;
+	width: 850px;
+	overflow: hidden;
+	background-color: #E9E9E9;
+}
+
+#mid #application {
+	width: 858px;
+	border: 1px solid #CCCCCC;
+	overflow: hidden;
+	margin-top: 0px;
+	height: auto;
+}
+
+#mid #application li {
+	font-size: 12px;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	color: #494949;
+	width: 85px;
+	height: 90px;
+	float: left;
+	display: inline-block;
+	overflow: hidden;
+	text-align: center;
+	padding-top: 10px;
+}
+
+#adsFla {
+	width: 860px;
+	height: 205px;
+	overflow: hidden;
+	margin-top: 20px;
+	position: absolute;
+	bottom: 125px;
+}
+
+#adsFla .adsDd {
+	border-bottom: 1px solid #cbcbcb;
+	height: 164px;
+	overflow: hidden;
+}
+
+#adsFla .adsDt {
+	height: 38px;
+	overflow: hidden;
+}
+
+#adsFla .adsDt li {
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	font-size: 16px;
+	line-height: 38px;
+	vertical-align: middle;
+	text-align: center;
+	height: 38px;
+	background-color: #e55252;
+	color: #ffffff;
+	border-left: 1px solid #cbcbcb;
+	float: left;
+	display: block;
+	cursor: pointer;
+	padding: 0 20px;
+}
+
+#adsFla .adsDt li.hover {
+	background-color: #992424;
+	color: #ffffff;
+	border-left: 1px solid #cbcbcb;
+	float: left;
+	display: block;
+	cursor: pointer;
+}
+
+#links {
+	width: 860px;
+	overflow: hidden;
+	position: absolute;
+	bottom: 10px;
+}
+
+#links .dt {
+	padding-left: 10px;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	font-size: 14px;
+	color: #606060;
+	height: 25px;
+	line-height: 25px;
+	vertical-align: middle;
+}
+
+#links .dd {
+	width: 858px;
+	border: 1px solid #cbcbcb;
+	height: 65px;
+	overflow: hidden;
+}
+
+#right {
+	float: left;
+	margin-left: 12px;
+	overflow: hidden;
+	background-color: #58595d;
+	height: 100%;
+	position: relative;
+}
+
+#right .rTitle {
+	height: 35px;
+	width: 100%;
+	overflow: hidden;
+	text-align: center;
+	background-color: #3a97c5;
+	line-height: 35px;
+	vertical-align: middle;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	font-size: 16px;
+	color: #ffffff;
+}
+
+#right .rTip {
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#right .rLine {
+	margin-top: 30px;
+	height: 35px;
+	width: 100%;
+	overflow: hidden;
+	text-align: center;
+	background-color: #ed8900;
+	line-height: 35px;
+	vertical-align: middle;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	font-size: 16px;
+	color: #ffffff;
+	height: 35px;
+	margin-top: 30px;
+}
+
+.tipfont {
+	font-size: 18px;
+	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
+	color: #FFFFEE;
+	font-size: 22px;
+	display: inline-block;
+	vertical-align: middle;
+}

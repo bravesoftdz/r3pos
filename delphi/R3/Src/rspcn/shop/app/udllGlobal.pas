@@ -18,6 +18,7 @@ type
     PUB_PARAMS: TZQuery;
     PUB_PRICEGRADE: TZQuery;
     CA_RELATIONS: TZQuery;
+    PUB_UNION_INFO: TZQuery;
   private
     { Private declarations }
     procedure OpenPubGoodsInfo;
@@ -25,6 +26,7 @@ type
     { Public declarations }
     function GetZQueryFromName(Name:string):TZQuery;
     function OpenSqlite(DataSet:TZQuery):boolean;
+    function OpenRemote(DataSet:TZQuery):boolean;
     //按条码检索商品
     function GetGodsFromBarcode(ds:TZQuery;barcode:string):boolean;
     function GetGodsFromGodsCode(ds:TZQuery;godsCode:string):boolean;
@@ -36,6 +38,8 @@ type
     function GetParameter(paramname:string):string;
     //得到供应链企业 in ();
     function GetTenantId:string;
+    //取得我加入的商盟企业
+    function GetUnionTenantId:string;
 
   end;
 
@@ -113,11 +117,25 @@ var
   rs:TZQuery;
 begin
   rs := GetZQueryFromName('CA_RELATIONS');
-  result := ''''+token.tenantId+'''';
+  result := ''+token.tenantId+'';
   rs.first;
   while not rs.eof do
     begin
-      result := result + ','''+rs.FieldbyName('TENANT_ID').asString+'''';
+      result := result + ','+rs.FieldbyName('TENANT_ID').asString+'';
+      rs.next;
+    end;
+end;
+
+function TdllGlobal.GetUnionTenantId: string;
+var
+  rs:TZQuery;
+begin
+  rs := GetZQueryFromName('PUB_UNION_INFO');
+  result := ''+token.tenantId+'';
+  rs.first;
+  while not rs.eof do
+    begin
+      result := result + ','+rs.FieldbyName('TENANT_ID').asString+'';
       rs.next;
     end;
 end;
@@ -197,11 +215,21 @@ begin
   end;
 end;
 
+function TdllGlobal.OpenRemote(DataSet: TZQuery): boolean;
+begin
+  dataFactory.MoveToRemote;
+  try
+    dataFactory.Open(DataSet);
+  finally
+    dataFactory.MoveToDefault;
+  end;
+end;
+
 function TdllGlobal.OpenSqlite(DataSet: TZQuery): boolean;
 begin
   dataFactory.MoveToSqlite;
   try
-    dataFactory.Open(DataSet); 
+    dataFactory.Open(DataSet);
   finally
     dataFactory.MoveToDefault;
   end;

@@ -420,7 +420,7 @@ begin
   m_bFullScreen := true;
   dllFactory := TDLLFactory.Create;
   hotKeyid:=GlobalAddAtom('rspcn');//'Hotkey'名字可以随便取
-  RegisterHotKey(Handle,hotKeyid,0,VK_F2);
+  RegisterHotKey(Handle,hotKeyid,0,VK_F12);
   Initialized := true;
   Timer1.Enabled := true;
   case Message.LParam of
@@ -1161,7 +1161,7 @@ begin
           begin
             Message.Msg := WM_KEYDOWN;
             Message.KeyData := 0;
-            Message.CharCode := VK_F2;
+            Message.CharCode := VK_F12;
             Message.Unused := 0;
             SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
             childWnd := GetWindow(childWnd,GW_HWNDNEXT);

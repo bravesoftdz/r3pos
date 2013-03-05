@@ -192,7 +192,7 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 240
+    Left = 264
     Top = 216
     ParamData = <
       item
@@ -209,7 +209,7 @@ object dllGlobal: TdllGlobal
         'select CODE_ID,CODE_NAME,TYPE_CODE from PUB_PARAMS order by  TYP' +
         'E_CODE,CODE_ID')
     Params = <>
-    Left = 240
+    Left = 264
     Top = 288
   end
   object PUB_PRICEGRADE: TZQuery
@@ -226,7 +226,7 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 240
+    Left = 264
     Top = 344
     ParamData = <
       item
@@ -253,8 +253,33 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 240
+    Left = 264
     Top = 168
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_UNION_INFO: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select TENANT_ID,UNION_ID,UNION_NAME from PUB_UNION_INFO where U' +
+        'NION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID=' +
+        ':TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') )  and COMM not in ('#39'02'#39',' +
+        #39'12'#39') ')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 384
+    Top = 344
     ParamData = <
       item
         DataType = ftUnknown

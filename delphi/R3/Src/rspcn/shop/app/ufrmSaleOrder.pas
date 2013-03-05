@@ -39,21 +39,17 @@ type
     cdsICGlide: TZQuery;
     RzLabel5: TRzLabel;
     Label1: TLabel;
-    h2: TLabel;
-    h6: TLabel;
-    h5: TLabel;
     h11: TLabel;
-    h12: TLabel;
-    Label9: TLabel;
-    Label10: TLabel;
-    Label8: TLabel;
     Label21: TLabel;
-    Label23: TLabel;
-    Label24: TLabel;
-    Label25: TLabel;
-    Label27: TLabel;
-    Label28: TLabel;
-    Label11: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    customerInfo: TLabel;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -63,6 +59,9 @@ type
     procedure DBGridEh1Columns8UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -85,6 +84,8 @@ type
     //保留小数位
     Deci:integer;
 
+    procedure PresentToCalc(Present:integer);override;
+    procedure SetinputFlag(const Value: integer);override;
     function  CheckSale_Limit: Boolean;
     procedure checkPayment;
     procedure DoPayment;
@@ -92,6 +93,20 @@ type
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     function GetCostPrice(GODS_ID, BATCH_NO: string): real;
+    //重读所有商品价格
+    procedure CalcPrice;
+
+    //快捷健
+    function doShortCut(s:string):boolean;override;
+    procedure DoIsPresent(s:string);
+    procedure DoCustId(s:string);
+    procedure DoGuideUser(s:string);
+    procedure DoNewOrder;
+    procedure DoHangUp;
+    procedure DoPickUp;
+    procedure DoPayZero(s:string);
+    procedure DoPayDialog;
+    procedure DoSaveOrder;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -446,6 +461,16 @@ begin
     dbState := dsBrowse; 
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
+    if AObj.FieldbyName('SALE_MNY').asFloat<>0 then
+       begin
+         edtACCT_MNY.Text := formatFloat('#0.00',AObj.FieldbyName('SALE_MNY').asFloat-AObj.FieldbyName('PAY_ZERO').asFloat);
+         edtAGIO_RATE.Text := formatFloat('#0.00',(AObj.FieldbyName('SALE_MNY').asFloat-AObj.FieldbyName('PAY_ZERO').asFloat)*100/AObj.FieldbyName('SALE_MNY').asFloat);
+       end
+    else
+       begin
+         edtACCT_MNY.Text := '';
+         edtAGIO_RATE.Text := '';
+       end;
   finally
     Params.Free;
   end;
@@ -890,6 +915,293 @@ begin
      edtPAY_TOTAL.Text := formatFloat('#0.00',fee)
   else
      edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero));
+end;
+
+procedure TfrmSaleOrder.SetinputFlag(const Value: integer);
+begin
+  inherited;
+  case Value of
+  5:begin
+      FInputFlag := value;
+      lblInput.Caption := '销售类型';
+      lblHint.Caption := '"1.正常销售、2.赠送商品、3.积分兑换" 请输入类型序号后按回车';
+    end;
+  6:begin
+      FInputFlag := value;
+      lblInput.Caption := '会员卡号';
+      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按回车';
+    end;
+  7:begin
+      FInputFlag := value;
+      lblInput.Caption := '导 购 员';
+      lblHint.Caption := '请输入导购员员工编号后按回车';
+    end;
+  11:begin
+      FInputFlag := value;
+      lblInput.Caption := '整单调价';
+      lblHint.Caption := '请直接输入结算金额后按回车健';
+    end;
+  end;
+end;
+
+procedure TfrmSaleOrder.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_F5 then
+     begin
+       inputMode := 1;
+       inputFlag := 5;
+       edtInput.SetFocus;
+     end;
+  if Key = VK_F6 then
+     begin
+       inputMode := 1;
+       inputFlag := 6;
+       edtInput.SetFocus;
+     end;
+  if Key = VK_F7 then
+     begin
+       inputMode := 1;
+       inputFlag := 7;
+       edtInput.SetFocus;
+     end;
+  if Key = VK_F8 then
+     begin
+       DoNewOrder;
+     end;
+  if Key = VK_F9 then
+     begin
+       DoHangUp;
+     end;
+  if Key = VK_F10 then
+     begin
+       DoPickUp;
+     end;
+  if Key = VK_F11 then
+     begin
+       inputMode := 1;
+       inputFlag := 11;
+       edtInput.SetFocus;
+     end;
+end;
+
+procedure TfrmSaleOrder.DoCustId(s:string);
+var
+  rs,bs:TZQuery;
+begin
+  inherited;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select UNION_ID,CLIENT_ID,TENANT_ID from PUB_IC_INFO where TENANT_ID in ('+dllGlobal.GetUnionTenantId+') and IC_CARDNO=:IC_CARDNO and IC_STATUS in (''0'',''1'') and COMM not in (''02'',''12'')';
+    rs.ParamByName('IC_CARDNO').AsString := s;
+    if token.online then
+       dllGlobal.OpenRemote(rs)
+    else
+       dllGlobal.OpenSqlite(rs);
+    if rs.IsEmpty then
+       begin
+         rs.Close;
+         rs.SQL.Text :=
+           'select ''#'' as UNION_ID,CLIENT_ID,TENANT_ID from PUB_CUSTOMER where TENANT_ID='+token.tenantId+' and (MOVE_TELE='''+s+''' or ID_NUMBER='''+s+''') and COMM not in (''02'',''12'')';
+         if token.online then
+            dllGlobal.OpenRemote(rs)
+         else
+            dllGlobal.OpenSqlite(rs);
+       end;
+    if rs.IsEmpty then Raise Exception.Create('你输入的会员卡号无效.');
+    if rs.RecordCount > 1 then
+       begin
+         rs.Locate('UNION_ID','#',[]); 
+       end;
+    if rs.FieldbyName('TENANT_ID').AsString=token.tenantId then
+       begin
+         AObj.FieldbyName('UNION_ID').AsString := '#';
+         bs := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
+         if bs.Locate('CLIENT_ID',rs.FieldbyName('CLIENT_ID').AsString,[]) then
+            begin
+               AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
+               AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
+               AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+            end;
+       end
+    else
+       begin
+         if not token.online then Raise Exception.Create('脱机状态不能使用商盟卡');  
+         AObj.FieldbyName('UNION_ID').AsString := rs.FieldbyName('UNION_ID').AsString;
+         AObj.FieldbyName('PRICE_ID').AsString := rs.FieldbyName('UNION_ID').AsString;
+         AObj.FieldbyName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
+         rs.Close;
+         rs.SQL.Text := 'select CUST_NAME from PUB_CUSTOMER where TENANT_ID in ('+dllGlobal.GetUnionTenantId+') and CUST_ID=:CUST_ID';
+         rs.ParamByName('CUST_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
+         dllGlobal.OpenRemote(rs);
+         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CUST_NAME').AsString;
+       end;
+    edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
+    edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+    CalcPrice;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmSaleOrder.DoGuideUser(s:string);
+var
+  rs:TZQuery;
+begin
+  rs := dllGlobal.GetZQueryFromName('CA_USERS');
+  if rs.Locate('ACCOUNT',s,[]) then
+     begin
+       edtGUIDE_USER.KeyValue := rs.FieldbyName('USER_ID').AsString;
+       edtGUIDE_USER.Text := rs.FieldbyName('USER_NAME').AsString;
+     end;
+end;
+
+procedure TfrmSaleOrder.DoHangUp;
+begin
+
+end;
+
+procedure TfrmSaleOrder.DoIsPresent(s:string);
+begin
+  if s='1' then
+     PresentToCalc(0)
+  else
+  if s='2' then
+     PresentToCalc(1)
+  else
+  if s='3' then
+     PresentToCalc(2)
+  else
+     Raise Exception.Create('不支持的销售类型，请输入1-3之间的类型序号');
+end;
+
+procedure TfrmSaleOrder.DoNewOrder;
+begin
+  if MessageBox(Handle,'是否清除当前输入的所有商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
+     NewOrder;
+end;
+
+procedure TfrmSaleOrder.DoPayZero(s:string);
+var
+  mny:currency;
+begin
+  try
+    mny := StrtoFloat(s);
+  except
+    Raise Exception.create('你输入的金额无效');
+  end;
+  AObj.FieldbyName('PAY_ZERO').asFloat := totalFee-mny;
+  edtACCT_MNY.Text := formatFloat('#0.00',mny);
+end;
+
+procedure TfrmSaleOrder.DoPickUp;
+begin
+
+end;
+
+procedure TfrmSaleOrder.DoSaveOrder;
+begin
+  SaveOrder;
+  NewOrder;
+end;
+
+function TfrmSaleOrder.doShortCut(s: string): boolean;
+begin
+  result := inherited doShortCut(s);
+  if result then exit;
+  result := true;
+  case InputFlag of
+  5:begin
+      if s<>'' then DoIsPresent(s);
+    end;
+  6:begin
+      if s<>'' then DoCustId(s);
+    end;
+  7:begin
+      if s<>'' then DoGuideUser(s);
+    end;
+  11:begin
+      if s<>'' then DoPayZero(s);
+    end;
+  else
+    result := false;
+  end;
+end;
+
+procedure TfrmSaleOrder.DoPayDialog;
+begin
+
+end;
+
+procedure TfrmSaleOrder.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if char(Key) = '*' then
+     begin
+       key := #0;
+       DoPaydialog;
+     end;
+  if char(Key) = '+' then 
+     begin
+       key := #0;
+       DoSaveOrder;
+     end;
+end;
+
+procedure TfrmSaleOrder.PresentToCalc(Present: integer);
+var bs:TZQuery;
+begin
+  if Present in [0,1] then
+     inherited
+  else
+  if Present in [2] then
+     begin
+       bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+       //看是否换购商品
+       if bs.FieldByName('USING_BARTER').AsInteger in [2,3] then
+          begin
+            edtTable.Edit;
+            edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+            edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+            if bs.FieldByName('USING_BARTER').AsInteger=2 then
+               begin
+                 edtTable.FieldByName('APRICE').AsFloat := 0;
+                 PriceToCalc(0);
+               end;
+          end
+       else
+          begin
+            MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+            Exit;
+          end;
+     end;
+
+end;
+
+procedure TfrmSaleOrder.CalcPrice;
+var r:integer;
+begin
+  if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+  r := edtTable.RecNo;
+  edtTable.DisableControls;
+  try
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        if (edtTable.FieldbyName('GODS_ID').AsString <> '') and (edtTable.FieldbyName('BOM_ID').AsString = '') and (edtTable.FieldByName('POLICY_TYPE').AsInteger<>4) then
+        begin
+          InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+          PriceToCalc(edtTable.FieldbyName('APrice').asFloat);
+        end;
+        edtTable.Next;
+      end;
+  finally
+    if r>0 then edtTable.RecNo := r;
+    edtTable.EnableControls;
+  end;
 end;
 
 initialization

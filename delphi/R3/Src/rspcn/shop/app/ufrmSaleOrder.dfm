@@ -1,6 +1,6 @@
 inherited frmSaleOrder: TfrmSaleOrder
-  Left = 256
-  Top = 154
+  Left = 106
+  Top = 132
   Caption = #21830#21697#38144#21806
   PixelsPerInch = 96
   TextHeight = 15
@@ -36,119 +36,21 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Style = [fsBold]
                 ParentFont = False
               end
-              object h2: TLabel [3]
-                Left = 166
-                Top = 60
-                Width = 110
+              object h11: TLabel [3]
+                Left = 386
+                Top = 104
+                Width = 124
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #28165#23631'  [Insert]'
+                Caption = #25910#38134#32467#36134'  [ + ] '
                 Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
+                Font.Color = clRed
                 Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
-              object h6: TLabel [4]
-                Left = 298
-                Top = 60
-                Width = 108
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #20250#21592#21345#21495'  [F5]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object h5: TLabel [5]
-                Left = 361
-                Top = 80
-                Width = 94
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #36864#36135'  [F10] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object h11: TLabel [6]
-                Left = 697
-                Top = 79
-                Width = 94
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #25910#38134'  [ + ] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object h12: TLabel [7]
-                Left = 697
-                Top = 99
-                Width = 86
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #21462#28040'  [Esc]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label9: TLabel [8]
-                Left = 577
-                Top = 60
-                Width = 94
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #38065#31665'  [Home]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label10: TLabel [9]
-                Left = 577
-                Top = 80
-                Width = 102
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #38145#23631'  [Pause]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label8: TLabel [10]
-                Left = 164
-                Top = 80
-                Width = 116
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #21024#38500#21333#21697'  [ - ]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label21: TLabel [11]
+              object Label21: TLabel [4]
                 Left = 18
                 Top = 80
                 Width = 109
@@ -162,95 +64,146 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Style = []
                 ParentFont = False
               end
-              object Label23: TLabel [12]
-                Left = 448
-                Top = 80
-                Width = 133
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #19978#19968#21333'  [Page Up]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label24: TLabel [13]
-                Left = 448
-                Top = 99
-                Width = 149
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #19979#19968#21333'  [Page Down]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label25: TLabel [14]
-                Left = 576
-                Top = 99
-                Width = 126
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #23567#31080'  [Ctrl + P]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label27: TLabel [15]
-                Left = 697
-                Top = 60
-                Width = 86
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #33756#21333'  [ / ]'
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label28: TLabel [16]
-                Left = 450
-                Top = 59
-                Width = 140
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #36192#36865'/'#20817#25442'    [F4] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label11: TLabel [17]
-                Left = 164
-                Top = 99
+              object Label2: TLabel [9]
+                Left = 149
+                Top = 55
                 Width = 116
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #25972#21333#35843#20215'  [F6] '
+                Caption = #38144#21806#31867#22411'  [F5] '
                 Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
+                Font.Color = clNavy
                 Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
+              end
+              object Label3: TLabel [10]
+                Left = 149
+                Top = 80
+                Width = 116
+                Height = 15
+                Cursor = crHandPoint
+                Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
+                Caption = #20250#21592#21345#21495'  [F6] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                ParentShowHint = False
+                ShowHint = True
+              end
+              object Label4: TLabel [11]
+                Left = 149
+                Top = 105
+                Width = 117
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #23548' '#36141' '#21592'  [F7] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label5: TLabel [12]
+                Left = 282
+                Top = 80
+                Width = 86
+                Height = 15
+                Cursor = crHandPoint
+                Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
+                Caption = #25346#21333'  [F9] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                ParentShowHint = False
+                ShowHint = True
+              end
+              object Label6: TLabel [13]
+                Left = 282
+                Top = 55
+                Width = 86
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #28165#23631'  [F8] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label7: TLabel [14]
+                Left = 282
+                Top = 105
+                Width = 94
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #21462#21333'  [F10] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label12: TLabel [15]
+                Left = 386
+                Top = 80
+                Width = 124
+                Height = 15
+                Cursor = crHandPoint
+                Caption = #25903#20184#26041#24335'  [ * ] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clRed
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+              end
+              object Label13: TLabel [16]
+                Left = 386
+                Top = 55
+                Width = 124
+                Height = 15
+                Cursor = crHandPoint
+                Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
+                Caption = #25972#21333#35843#20215'  [F11] '
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                ParentShowHint = False
+                ShowHint = True
               end
             end
           end
           inherited order_header: TRzPanel
             Top = 149
             Height = 27
+            object customerInfo: TLabel
+              Left = 324
+              Top = 10
+              Width = 325
+              Height = 12
+              Anchors = [akLeft, akTop, akRight]
+              AutoSize = False
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
             object RzPanel5: TRzPanel
               Left = 10
               Top = 6
@@ -467,6 +420,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               Style.ButtonStyle = btsUltraFlat
             end
             inherited fndUNIT_ID: TcxComboBox
+              Top = 112
               Style.BorderStyle = ebsFlat
               Style.ButtonStyle = btsUltraFlat
             end

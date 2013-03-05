@@ -1,5 +1,5 @@
 inherited frmOrderForm: TfrmOrderForm
-  Left = 186
+  Left = 437
   Top = 134
   ActiveControl = edtInput
   Caption = #21333#25454#22522#31867
@@ -148,8 +148,10 @@ inherited frmOrderForm: TfrmOrderForm
                 Style.Font.Name = #40657#20307
                 Style.Font.Style = [fsBold]
                 TabOrder = 0
+                ImeMode = imAlpha
                 OnEnter = edtInputEnter
                 OnExit = edtInputExit
+                OnKeyDown = edtInputKeyDown
                 OnKeyPress = edtInputKeyPress
               end
               object help: TRzBmpButton

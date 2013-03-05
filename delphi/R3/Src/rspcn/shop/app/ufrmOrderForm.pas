@@ -93,11 +93,9 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure edtInputKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
-    //SEQNO控制号
-    FinputFlag: integer;
-    FinputMode: integer;
-    FdbState: TDataSetState;
 
     // 散装条码参数
     BulkiFlag:string;
@@ -116,19 +114,23 @@ type
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
 
-    procedure SetinputFlag(const Value: integer);
     procedure SetinputMode(const Value: integer);
     procedure SetdbState(const Value: TDataSetState);
     { Private declarations }
   protected
+    FinputMode: integer;
+    FdbState: TDataSetState;
+    FinputFlag: integer;
+    
+    procedure SetinputFlag(const Value: integer);virtual;
     procedure InitRecord;
     function EnCodeBarcode: string;
-    function CheckInput:boolean;virtual;
 
     function  FindColumn(FieldName:string):TColumnEh;
     procedure FocusColumn(FieldName: string);
     procedure FocusNextColumn;
 
+    function doShortCut(s:string):boolean;virtual;
     //清除无效数据
     procedure ClearInvaid;virtual;
     //检测数据合法性
@@ -210,36 +212,25 @@ begin
       lblInput.Caption := '条码输入';
       lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
     end;
-  1:begin
-      lblInput.Caption := '会员卡号';
-      lblHint.Caption := '请输入完整的(会员卡号)后按“回车”';
-    end;
   2:begin
-      lblInput.Caption := '整单折扣';
-      lblHint.Caption := '请输入整单折扣率(如:8折、85折)后按“回车”';
+      lblInput.Caption := '单位切换';
+      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按回车';
     end;
   3:begin
-      lblInput.Caption := '修改单价';
-      lblHint.Caption := '请直接输入单价后按“回车”,赠送当前商品输入0后按回车';
-    end;
-  4:begin
-      lblInput.Caption := '单笔折扣';
-      lblHint.Caption := '请直接输入当前商品的折扣率(如:8折、85折)后按“回车”';
-    end;
-  5:begin
-      lblInput.Caption := '单位切换';
-      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按回车 ';
-    end;
-  6:begin
-      lblInput.Caption := '销售类型';
-      lblHint.Caption := '"正常销售请输1、赠送当前商品请输2"输入完毕按回车';
-    end;
-  7:begin
       lblInput.Caption := '数量输入';
       lblHint.Caption := '请输入数量后按回车';
     end;
+  4:begin
+      lblInput.Caption := '修改单价';
+      lblHint.Caption := '请直接输入单价后按“回车”,赠送当前商品输入0后按回车';
+    end;
+  else
+    begin
+      FinputFlag := 0;
+      lblInput.Caption := '条码输入';
+      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
+    end;
   end;
-  if not CheckInput then InputFlag := 0;
 end;
 
 procedure TfrmOrderForm.helpClick(Sender: TObject);
@@ -322,19 +313,19 @@ begin
   if Key = VK_F2 then
      begin
        inputMode := 1;
-       inputFlag := 5;
+       inputFlag := 2;
        edtInput.SetFocus;
      end;
   if Key = VK_F3 then
      begin
        inputMode := 1;
-       inputFlag := 7;
+       inputFlag := 3;
        edtInput.SetFocus;
      end;
   if Key = VK_F4 then
      begin
        inputMode := 1;
-       inputFlag := 3;
+       inputFlag := 4;
        edtInput.SetFocus;
      end;
   if Key = VK_F12 then
@@ -1724,43 +1715,19 @@ begin
       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       Key := #0;
       try
-      if InputFlag=3 then //修改单价
+      if doShortCut(s) then
          begin
-           if s<>'' then PriceToGods(s);
            InputFlag := 0;
            DBGridEh1.Col := 1;
            edtInput.Text := '';
            Exit;
          end;
-      if InputFlag=5 then //修改单位
-         begin
-           if s<>'' then UnitToGods(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=7 then //修改数量
-         begin
-           if s<>'' then GodsToAmount(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-         
-      isAdd := false;
       if s='' then
          begin
            fndStr := '';
            Exit;
          end;
       IsNumber := false;
-      if s[1]='+' then
-         begin
-            Delete(s,1,1);
-            isAdd := true;
-         end ;
       if ((length(s) in [1,2,3,4]) and FnString.IsNumberChar(s)) or IsNumber then
          begin
              if trim(s)='' then Exit;
@@ -1781,13 +1748,13 @@ begin
                   if PropertyEnabled then
                      begin
                        if (vgds = edtTable.FieldbyName('GODS_ID').AsString) and ((vP1<>'#') or (vP2<>'#')) then
-                         WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,vP1,vP2,amt,isAdd)
+                         WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,vP1,vP2,amt,false)
                        else
                          PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
                      end
                   else
                      begin
-                       WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,'#','#',amt,isAdd);
+                       WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,'#','#',amt,false);
                      end;
                 end;
             edtInput.Text := '';
@@ -1811,19 +1778,6 @@ begin
          Raise;
       end;
     end;
-
-    if Key='-' then
-      begin
-        if MessageBox(Handle,pchar('是否删除当前选择商品"'+edtTable.FieldbyName('GODS_NAME').asString+'"'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-        AObj := TRecord_.Create;
-        try
-           AObj.ReadFromDataSet(edtTable);
-           DelRecord(AObj)
-        finally
-           AObj.Free;
-        end;
-        Key := #0;
-      end;
     if Key=#27 then
       begin
         InputFlag := 0;
@@ -1833,12 +1787,6 @@ begin
      if edtInput.CanFocus and not edtInput.Focused then
         if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
-end;
-
-
-function TfrmOrderForm.CheckInput: boolean;
-begin
-  result := true;
 end;
 
 procedure TfrmOrderForm.GodsToAmount(id: string);
@@ -2266,6 +2214,34 @@ begin
      Raise Exception.Create('当前商品没有维护输入的单位类型');
   if uid=edtTable.FieldByName('UNIT_ID').AsString then Exit;
   UnitToCalc(uid);
+end;
+
+function TfrmOrderForm.doShortCut(s:string):boolean;
+begin
+  result := true;
+  case InputFlag of //修改单价
+  4:begin
+       if s<>'' then PriceToGods(s);
+    end;
+  2:begin
+       if s<>'' then UnitToGods(s);
+    end;
+  3:begin
+       if s<>'' then GodsToAmount(s);
+    end;
+  else
+    result := false;
+  end;
+end;
+
+procedure TfrmOrderForm.edtInputKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key=VK_DOWN then
+     edtTable.Next;
+  if Key=VK_UP then
+     edtTable.Prior;
 end;
 
 end.

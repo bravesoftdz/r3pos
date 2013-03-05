@@ -3,7 +3,7 @@ unit uRspFactory;
 interface
 
 uses
-  SysUtils, Classes,Des,EncDec,msxml,windows,activex,inifiles,ComObj,EncdDecd;
+  SysUtils,Classes,Des,EncDec,msxml,windows,activex,inifiles,ComObj,EncdDecd;
 
 type
   TRspFunction=function(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
@@ -48,8 +48,8 @@ type
     function  DesEncode(inStr, Key: string): string;
 
     function xsmLogin(username:string;flag:integer):boolean;
-    function getGoodsInfo(inXml:widestring):widestring;
-    function uploadGoods(inXml:widestring):widestring;
+    function getGoodsInfo(barcode:string):widestring;
+    function uploadGoods(inXml:widestring):boolean;
 
     property timestamp:Int64 read Ftimestamp write Settimestamp;
     property tenantId:integer read FtenantId write SettenantId;
@@ -65,6 +65,7 @@ var
   rspFactory: TrspFactory;
 
 implementation
+
 const
   pubpwd = 'SaRi0+jf';
 var
@@ -85,10 +86,12 @@ begin
   @RspUploadGoods := GetProcAddress(RspHandle, 'uploadGoods');
   if @RspUploadGoods=nil then Raise Exception.Create('无效Rsp插件包，没有实现uploadGoods方法');
 end;
+
 procedure TrspFactory.FreeRspFactory;
 begin
   FreeLibrary(RspHandle);
 end;
+
 procedure TrspFactory.DataModuleCreate(Sender: TObject);
 var
   f:TIniFile;
@@ -132,6 +135,7 @@ begin
     Raise;
   end;
 end;
+
 function TrspFactory.DesEncode(inStr, Key: string): string;
 var
   EncStr:string;
@@ -139,6 +143,7 @@ begin
   EncStr := EncryStr(inStr+'{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}',Key);
   result := encddecd.EncodeString(EncStr);
 end;
+
 procedure TrspFactory.CheckRecAck(doc:IXMLDomDocument);
 var
   node:IXMLDOMNode;
@@ -172,6 +177,7 @@ begin
       end;
   end;
 end;
+
 function TrspFactory.xsmLogin(username: string;flag:integer): boolean;
 var
   doc:IXMLDomDocument;
@@ -239,67 +245,67 @@ begin
 
                finded := false;
 
-                   r.WriteString('soft','SFVersion','.'+GetNodeValue(caTenantLoginResp,'prodFlag'));
-                   r.WriteString('soft','CLVersion','.'+GetNodeValue(caTenantLoginResp,'industry'));
-                   r.WriteString('soft','ProductID',GetNodeValue(caTenantLoginResp,'prodId'));
-                   r.WriteString('soft','name',GetNodeValue(caTenantLoginResp,'prodName'));
-                   paramsList := TStringList.Create;
-                   try
-                    paramsList.CommaText := prodParams;
-                    for i := 0 to paramsList.Count - 1 do
-                      begin
-                        if (paramsList.Names[i] <> '') and (paramsList.ValueFromIndex[i] <> '') then
-                          r.WriteString('soft',paramsList.Names[i],paramsList.ValueFromIndex[i]);
-                      end;
-                   finally
-                    paramsList.Free;
+               r.WriteString('soft','SFVersion','.'+GetNodeValue(caTenantLoginResp,'prodFlag'));
+               r.WriteString('soft','CLVersion','.'+GetNodeValue(caTenantLoginResp,'industry'));
+               r.WriteString('soft','ProductID',GetNodeValue(caTenantLoginResp,'prodId'));
+               r.WriteString('soft','name',GetNodeValue(caTenantLoginResp,'prodName'));
+               paramsList := TStringList.Create;
+               try
+                 paramsList.CommaText := prodParams;
+                 for i := 0 to paramsList.Count - 1 do
+                   begin
+                     if (paramsList.Names[i] <> '') and (paramsList.ValueFromIndex[i] <> '') then
+                       r.WriteString('soft',paramsList.Names[i],paramsList.ValueFromIndex[i]);
                    end;
+               finally
+                 paramsList.Free;
+               end;
+               ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
+               ServerInfo := ServerInfo.firstChild;
+               isSrvr := false;
+               while ServerInfo<>nil do
+                 begin
+                   f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrName',GetNodeValue(ServerInfo,'srvrName')); //服务名
+                   f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'connMode',GetNodeValue(ServerInfo,'connMode')); //连接模式
+                   f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'hostName',GetNodeValue(ServerInfo,'hostName')); //主机名
+                   f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrPort',GetNodeValue(ServerInfo,'srvrPort')); //服务端口
+                   f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrPath',GetNodeValue(ServerInfo,'srvrPath')); //服务路径
+                   case strtoint(GetNodeValue(ServerInfo,'srvrStatus')) of
+                   1: f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
+                   2: f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','爆满');
+                   9: begin
+                        f.EraseSection(GetNodeValue(ServerInfo,'srvrId'));
+                        ServerInfo := ServerInfo.nextSibling;
+                        continue;
+                      end;
+                   else
+                     f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
+                   end;
+                   if srvrId=GetNodeValue(ServerInfo,'srvrId') then isSrvr := true;
+                   if not finded then
+                     begin
+                       if srvrId=GetNodeValue(ServerInfo,'srvrId') then
+                         begin
+                           f.WriteString('db','Connstr','connmode='+GetNodeValue(ServerInfo,'connMode')+';hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(dbId));
+                           finded := true;
+                         end;
+                     end;
+                   if defSrvrId=GetNodeValue(ServerInfo,'srvrId') then
+                     begin
+                       defStr := 'connmode='+GetNodeValue(ServerInfo,'connMode')+';hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(dbId);
+                     end;
+                   ServerInfo := ServerInfo.nextSibling;
+                 end;
+               if not finded or not isSrvr then //一直没找到设置，默认第一个
+                 begin
                    ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
                    ServerInfo := ServerInfo.firstChild;
-                   isSrvr := false;
-                   while ServerInfo<>nil do
+                   if ServerInfo<>nil then
                      begin
-                       f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrName',GetNodeValue(ServerInfo,'srvrName')); //服务名
-                       f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'connMode',GetNodeValue(ServerInfo,'connMode')); //连接模式
-                       f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'hostName',GetNodeValue(ServerInfo,'hostName')); //主机名
-                       f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrPort',GetNodeValue(ServerInfo,'srvrPort')); //服务端口
-                       f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrPath',GetNodeValue(ServerInfo,'srvrPath')); //服务路径
-                       case strtoint(GetNodeValue(ServerInfo,'srvrStatus')) of
-                       1: f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
-                       2: f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','爆满');
-                       9: begin
-                            f.EraseSection(GetNodeValue(ServerInfo,'srvrId'));
-                            ServerInfo := ServerInfo.nextSibling;
-                            continue;
-                          end;
-                       else
-                          f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
-                       end;
-                       if srvrId=GetNodeValue(ServerInfo,'srvrId') then isSrvr := true;
-                       if not finded then
-                          begin
-                            if srvrId=GetNodeValue(ServerInfo,'srvrId') then
-                               begin
-                                 f.WriteString('db','Connstr','connmode='+GetNodeValue(ServerInfo,'connMode')+';hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(dbId));
-                                 finded := true;
-                               end;
-                          end;
-                       if defSrvrId=GetNodeValue(ServerInfo,'srvrId') then
-                          begin
-                            defStr := 'connmode='+GetNodeValue(ServerInfo,'connMode')+';hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(dbId);
-                          end;
-                       ServerInfo := ServerInfo.nextSibling;
+                       f.WriteString('db','srvrId',defSrvrId);
+                       f.WriteString('db','Connstr',defStr);
                      end;
-                   if not finded or not isSrvr then //一直没找到设置，默认第一个
-                     begin
-                       ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
-                       ServerInfo := ServerInfo.firstChild;
-                       if ServerInfo<>nil then
-                          begin
-                            f.WriteString('db','srvrId',defSrvrId);
-                            f.WriteString('db','Connstr',defStr);
-                          end;
-                    end;
+                 end;
             finally
               f.Free;
               r.Free;
@@ -310,14 +316,42 @@ begin
      Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
 end;
 
-function TrspFactory.getGoodsInfo(inXml:widestring): widestring;
+function TrspFactory.getGoodsInfo(barcode:string): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
 begin
-  result := RspGetGoodsInfo(inxml,rspUrl,1);
+  doc := CreateRspXML;
+  Node := doc.CreateElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.CreateElement('pubGoodsinfo');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.CreateElement('barcode');
+  Node.text := barcode;
+  FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+  outxml := RspGetGoodsInfo(inxml,rspUrl,1);
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
 end;
 
-function TrspFactory.uploadGoods(inXml:widestring): widestring;
+function TrspFactory.uploadGoods(inXml:widestring): boolean;
+var
+  doc:IXMLDomDocument;
+  simpleReturn:IXMLDOMNode;
+  code:string;
 begin
-  result := RspUploadGoods(inxml,rspUrl,1);
+  doc := CreateXML(RspUploadGoods(inxml,rspUrl,1));
+  CheckRecAck(doc);
+  simpleReturn := FindNode(doc,'body\simpleReturn');
+  code := GetNodeValue(simpleReturn,'code');
+  result := (code = '1');
 end;
 
 function TrspFactory.FindElement(root: IXMLDOMNode;

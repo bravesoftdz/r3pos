@@ -18,11 +18,12 @@ uses
   CaTenantService in 'App\CaTenantService.pas',
   PubMemberService in 'App\PubMemberService.pas',
   RspDownloadService in 'App\RspDownloadService.pas',
+  PubGoodsService in 'App\PubGoodsService.pas',
   rspHeader in 'App\rspHeader.pas',
   des in '..\..\Pub\des.pas',
-  ZLibEx in 'E:\soft\¿Ø¼þ\Gzip125\ZLibEx.pas',
-  ZLibExApi in 'E:\soft\¿Ø¼þ\Gzip125\ZLibExApi.pas',
-  ZLibExGZ in 'E:\soft\¿Ø¼þ\Gzip125\ZLibExGZ.pas',
+  ZLibEx in 'F:\Borland\Plugins\Gzip125\ZLibEx.pas',
+  ZLibExApi in 'F:\Borland\Plugins\Gzip125\ZLibExApi.pas',
+  ZLibExGZ in 'F:\Borland\Plugins\Gzip125\ZLibExGZ.pas',
   DCPbase64 in '..\..\Pub\DCPbase64.pas';
 
 {$R *.res}
@@ -330,7 +331,38 @@ begin
    rsp.Free;
  end;
 end;
-
+function uploadGoods(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
+var
+  rsp:TRspFactory;
+begin
+ rsp := TRspFactory.Create(120000,url,flag);
+ try
+   try
+     result := rsp.uploadGoods(xml);
+   except
+     on E:Exception do
+       result := rsp.ErrorEncode(E.Message  );
+   end;
+ finally
+   rsp.Free;
+ end;
+end;
+function getGoodsInfo(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
+var
+  rsp:TRspFactory;
+begin
+ rsp := TRspFactory.Create(120000,url,flag);
+ try
+   try
+     result := rsp.getGoodsInfo(xml);
+   except
+     on E:Exception do
+       result := rsp.ErrorEncode(E.Message  );
+   end;
+ finally
+   rsp.Free;
+ end;
+end;
 function SetParams(_sslpwd:pansichar):boolean;stdcall;
 begin
   sslpwd := '        ';
@@ -340,6 +372,6 @@ exports
   coLogin,coRegister,getTenantInfo,getShopInfo,checkLicese,listModules,checkUpgrade,
   createServiceLine,queryServiceLines,applyRelation,
   downloadTenants,downloadServiceLines,downloadRelations,downloadSort,downloadUnit,downloadGoods,downloadDeployGoods,downloadBarcode,
-  queryUnion,SetParams;
+  queryUnion,SetParams,uploadGoods,getGoodsInfo;
 begin
 end.

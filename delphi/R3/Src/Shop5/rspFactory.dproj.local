@@ -27,12 +27,13 @@
     <File Path="App\PubMemberService.pas"/>
     <File Path="App\RspDownloadService.pas"/>
     <File Path="App\rspHeader.pas"/>
-    <File Path="E:"/>
-    <File Path="E:\soft"/>
-    <File Path="E:\soft\控件"/>
-    <File Path="E:\soft\控件\Gzip125"/>
-    <File Path="E:\soft\控件\Gzip125\ZLibEx.pas"/>
-    <File Path="E:\soft\控件\Gzip125\ZLibExApi.pas"/>
-    <File Path="E:\soft\控件\Gzip125\ZLibExGZ.pas"/>
+    <File Path="App\PubGoodsService.pas"/>
+    <File Path="F:"/>
+    <File Path="F:\Borland"/>
+    <File Path="F:\Borland\Plugins"/>
+    <File Path="F:\Borland\Plugins\Gzip125"/>
+    <File Path="F:\Borland\Plugins\Gzip125\ZLibEx.pas"/>
+    <File Path="F:\Borland\Plugins\Gzip125\ZLibExApi.pas"/>
+    <File Path="F:\Borland\Plugins\Gzip125\ZLibExGZ.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

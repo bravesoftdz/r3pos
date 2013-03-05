@@ -59,7 +59,9 @@ type
     function downloadBarcode(inxml: ansistring): ansistring;
     //消费者服务
     function queryUnion(inxml: ansistring): ansistring;
-
+    //商品服务
+    function uploadGoods(inxml: ansistring): ansistring;
+    function getGoodsInfo(inxml: ansistring): ansistring;
   end;
 var
   SessionId: ansistring;
@@ -67,7 +69,7 @@ var
   sslpwd: ansistring;
   encryptType:integer;
 implementation
-uses ZLibExGZ,DCPbase64,PubMemberService,RspDownloadService,CaProductService,CaServiceLineService,CaTenantService;
+uses ZLibExGZ,DCPbase64,PubMemberService,RspDownloadService,CaProductService,CaServiceLineService,CaTenantService,PubGoodsService;
 { rsp }
 
 constructor rsp.Create;
@@ -586,6 +588,50 @@ begin
   try
     intf := GetPubMemberWebServiceImpl(true,Addr+'PubMemberService?wsdl',HTTPRIO);
     outXml := intf.queryUnion(Encode(inxml,sslpwd));
+    GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
+  finally
+    intf := nil;
+    r.Free;
+  end;
+end;
+
+function TRspFactory.uploadGoods(inxml: ansistring): ansistring;
+var
+  r:rsp;
+  intf:PubGoodsWebServiceImpl;
+  outXml: ansistring;
+begin
+  r := SendHeader(HTTPRIO,flag);
+  try
+    intf := GetPubGoodsWebServiceImpl(true,Addr+'PubGoodsService?wsdl',HTTPRIO);
+    outXml := intf.uploadGoods(Encode(inxml,Pubpwd));
+    GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
+  finally
+    intf := nil;
+    r.Free;
+  end;
+end;
+
+function TRspFactory.getGoodsInfo(inxml: ansistring): ansistring;
+var
+  r:rsp;
+  intf:PubGoodsWebServiceImpl;
+  outXml: ansistring;
+begin
+  r := SendHeader(HTTPRIO,flag);
+  try
+    intf := GetPubGoodsWebServiceImpl(true,Addr+'PubGoodsService?wsdl',HTTPRIO);
+    outXml := intf.getGoodsInfo(Encode(inxml,Pubpwd));
     GetHeader(HTTPRIO);
     case encryptType of
     2:result := Decode(outXml,sslpwd);

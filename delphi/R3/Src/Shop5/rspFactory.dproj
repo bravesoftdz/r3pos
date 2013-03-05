@@ -50,11 +50,12 @@
 			<DCCReference Include="App\CaTenantService.pas"/>
 			<DCCReference Include="App\PubMemberService.pas"/>
 			<DCCReference Include="App\RspDownloadService.pas"/>
+			<DCCReference Include="App\PubGoodsService.pas"/>
 			<DCCReference Include="App\rspHeader.pas"/>
 			<DCCReference Include="..\..\Pub\des.pas"/>
-			<DCCReference Include="E:\soft\控件\Gzip125\ZLibEx.pas"/>
-			<DCCReference Include="E:\soft\控件\Gzip125\ZLibExApi.pas"/>
-			<DCCReference Include="E:\soft\控件\Gzip125\ZLibExGZ.pas"/>
+			<DCCReference Include="F:\Borland\Plugins\Gzip125\ZLibEx.pas"/>
+			<DCCReference Include="F:\Borland\Plugins\Gzip125\ZLibExApi.pas"/>
+			<DCCReference Include="F:\Borland\Plugins\Gzip125\ZLibExGZ.pas"/>
 			<DCCReference Include="..\..\Pub\DCPbase64.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -40,7 +40,10 @@ type
     function GetTenantId:string;
     //取得我加入的商盟企业
     function GetUnionTenantId:string;
-
+    //取商品标准进价
+    function GetNewInPrice(GodsId,UnitId:string):real;
+    //取商品标准售价
+    function GetNewOutPrice(GodsId,UnitId:string):real;
   end;
 
 var
@@ -138,6 +141,60 @@ begin
       result := result + ','+rs.FieldbyName('TENANT_ID').asString+'';
       rs.next;
     end;
+end;
+
+function TdllGlobal.GetNewInPrice(GodsId,UnitId:string):real;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE from VIW_GOODSINFOEXT where GODS_ID=:GODS_ID';
+    rs.ParamByName('GODS_ID').AsString := GodsId;
+    OpenSqlite(rs);
+    if rs.IsEmpty then Raise Exception.Create('经营商品中没找到“'+GodsId+'”');
+    if UnitId = rs.FieldbyName('SMALL_UNITS').AsString then
+      begin
+        result := rs.FieldbyName('NEW_INPRICE').AsFloat*rs.FieldbyName('SMALLTO_CALC').AsFloat;
+      end
+    else
+    if UnitId = rs.FieldbyName('BIG_UNITS').AsString then
+      begin
+        result := rs.FieldbyName('NEW_INPRICE').AsFloat*rs.FieldbyName('BIGTO_CALC').AsFloat;
+      end
+    else
+      begin
+        result := rs.FieldbyName('NEW_INPRICE').AsFloat;
+      end;
+  finally
+    rs.Free;
+  end;
+end;
+
+function TdllGlobal.GetNewOutPrice(GodsId,UnitId:string):real;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 from VIW_GOODSINFOEXT where GODS_ID=:GODS_ID';
+    rs.ParamByName('GODS_ID').AsString := GodsId;
+    OpenSqlite(rs);
+    if rs.IsEmpty then Raise Exception.Create('经营商品中没找到“'+GodsId+'”');
+    if UnitId = rs.FieldbyName('SMALL_UNITS').AsString then
+      begin
+        result := rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
+      end
+    else
+    if UnitId = rs.FieldbyName('BIG_UNITS').AsString then
+      begin
+        result := rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
+      end
+    else
+      begin
+        result := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+      end;
+  finally
+    rs.Free;
+  end;
 end;
 
 function TdllGlobal.GetVersionFlag: integer;

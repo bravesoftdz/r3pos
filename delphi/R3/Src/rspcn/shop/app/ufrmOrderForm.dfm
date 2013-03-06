@@ -74,9 +74,9 @@ inherited frmOrderForm: TfrmOrderForm
               object lblHint: TLabel
                 Left = 322
                 Top = 17
-                Width = 206
+                Width = 213
                 Height = 12
-                Caption = #35831#25353' [F2] '#20809#26631#28608#27963#26465#30721#36755#20837#26694'...'
+                Caption = #35831#25353' [F12] '#20809#26631#28608#27963#26465#30721#36755#20837#26694'...'
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clRed
                 Font.Height = -12
@@ -241,19 +241,22 @@ inherited frmOrderForm: TfrmOrderForm
             Width = 904
             Height = 203
             Align = alClient
+            BorderInner = fsFlat
             BorderOuter = fsNone
+            BorderSides = [sdLeft, sdTop, sdRight]
             BorderColor = clWhite
             BorderWidth = 10
             Color = clWhite
             TabOrder = 2
             object DBGridEh1: TDBGridEh
-              Left = 10
-              Top = 10
-              Width = 884
-              Height = 183
+              Left = 11
+              Top = 11
+              Width = 882
+              Height = 182
               Align = alClient
               AllowedOperations = [alopUpdateEh, alopAppendEh]
               AutoFitColWidths = True
+              BorderStyle = bsNone
               DataSource = dsTable
               FixedColor = clSilver
               Flat = True
@@ -435,7 +438,7 @@ inherited frmOrderForm: TfrmOrderForm
       Left = 14
       Top = 11
       Width = 100
-      Height = 25
+      Height = 24
       Caption = #21333#25454#21517#31216
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
@@ -702,5 +705,10 @@ inherited frmOrderForm: TfrmOrderForm
     object N5: TMenuItem
       Caption = #36192#36865#27492#21830#21697
     end
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 352
+    Top = 152
   end
 end

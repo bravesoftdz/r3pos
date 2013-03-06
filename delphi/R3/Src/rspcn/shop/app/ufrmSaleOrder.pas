@@ -438,7 +438,8 @@ begin
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   AObj.FieldbyName('UNION_ID').asString := '#';
   AObj.FieldbyName('PRICE_ID').asString := '#';
-
+  edtCLIENT_ID.KeyValue := token.tenantId;
+  edtCLIENT_ID.Text := token.tenantName;
   AObj.FieldByName('SALE_AMT').AsFloat := 0;
   AObj.FieldByName('SALE_MNY').AsFloat := 0;
   AObj.FieldByName('CASH_MNY').AsFloat := 0;
@@ -464,9 +465,9 @@ begin
 
   AObj.FieldbyName('INVOICE_FLAG').AsInteger := DefInvFlag;
   case DefInvFlag of
-  1: AObj.FieldbyName('TAX_TATE').AsFloat := 0;
-  2: AObj.FieldbyName('TAX_TATE').AsFloat := RtlRate2;
-  3: AObj.FieldbyName('TAX_TATE').AsFloat := RtlRate3;
+  1: AObj.FieldbyName('TAX_RATE').AsFloat := 0;
+  2: AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
+  3: AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
   end;
   InitRecord;
   if edtInput.CanFocus and Visible then
@@ -577,6 +578,9 @@ end;
 procedure TfrmSaleOrder.showForm;
 begin
   inherited;
+  RtlRate2 := StrtoFloatDef(dllGlobal.GetParameter('RTL_RATE2'),0.05);
+  RtlRate3 := StrtoFloatDef(dllGlobal.GetParameter('RTL_RATE3'),0.17);
+  DefInvFlag := StrtoIntDef(dllGlobal.GetParameter('RTL_INV_FLAG'),1);
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   edtGUIDE_USER.DataSet := dllGlobal.GetZQueryFromName('CA_USERS');
   NewOrder;
@@ -1109,7 +1113,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'select UNION_ID,CLIENT_ID,TENANT_ID from PUB_IC_INFO where TENANT_ID in ('+dllGlobal.GetUnionTenantId+') and IC_CARDNO=:IC_CARDNO and IC_STATUS in (''0'',''1'') and COMM not in (''02'',''12'')';
+      'select UNION_ID,CLIENT_ID,TENANT_ID from PUB_IC_INFO where TENANT_ID in ('+dllGlobal.GetUnionTenantInWhere+') and IC_CARDNO=:IC_CARDNO and IC_STATUS in (''0'',''1'') and COMM not in (''02'',''12'')';
     rs.ParamByName('IC_CARDNO').AsString := s;
     if token.online then
        dllGlobal.OpenRemote(rs)
@@ -1148,7 +1152,7 @@ begin
          AObj.FieldbyName('PRICE_ID').AsString := rs.FieldbyName('UNION_ID').AsString;
          AObj.FieldbyName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
          rs.Close;
-         rs.SQL.Text := 'select CUST_NAME from PUB_CUSTOMER where TENANT_ID in ('+dllGlobal.GetUnionTenantId+') and CUST_ID=:CUST_ID';
+         rs.SQL.Text := 'select CUST_NAME from PUB_CUSTOMER where TENANT_ID in ('+dllGlobal.GetUnionTenantInWhere+') and CUST_ID=:CUST_ID';
          rs.ParamByName('CUST_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
          dllGlobal.OpenRemote(rs);
          AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CUST_NAME').AsString;
@@ -1462,7 +1466,7 @@ begin
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
-      DBGridEh2.canvas.Brush.Color := $0000F2F2;
+      DBGridEh2.canvas.Brush.Color := DBGridEh2.FixedColor;
       DBGridEh2.canvas.FillRect(ARect);
       DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;

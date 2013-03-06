@@ -242,8 +242,8 @@ object dllGlobal: TdllGlobal
     SQL.Strings = (
       
         'select A.RELATION_ID as RELATION_ID ,CHANGE_PRICE,SINGLE_LIMIT,S' +
-        'ALE_LIMIT,USING_MODULE,RELATION_NAME,B.TENANT_ID from CA_RELATIO' +
-        'NS A,CA_RELATION B  '
+        'ALE_LIMIT,USING_MODULE,RELATION_NAME,A.TENANT_ID as P_TENANT_ID,' +
+        'B.TENANT_ID,A.RELATION_TYPE from CA_RELATIONS A,CA_RELATION B  '
       
         'where A.RELATION_ID=B.RELATION_ID and A.RELATI_ID=:TENANT_ID ord' +
         'er by A.RELATION_ID')
@@ -304,6 +304,30 @@ object dllGlobal: TdllGlobal
       end>
     Left = 264
     Top = 96
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_GOODSSORT: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID,'
+      
+        'RELATION_ID,RELATION_NAME from VIW_GOODSSORT where COMM not in (' +
+        #39'02'#39','#39'12'#39') and SORT_TYPE=1 and TENANT_ID=:TENANT_ID '
+      'order by RELATION_ID DESC,LEVEL_ID,SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 264
+    Top = 32
     ParamData = <
       item
         DataType = ftUnknown

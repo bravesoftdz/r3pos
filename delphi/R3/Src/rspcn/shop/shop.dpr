@@ -41,7 +41,11 @@ uses
   ObjGetPrice in 'obj\ObjGetPrice.pas',
   ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
   ObjStockOrderV60 in 'obj\ObjStockOrderV60.pas',
-  ObjGoodsInfoV60 in 'obj\ObjGoodsInfoV60.pas';
+  ObjGoodsInfoV60 in 'obj\ObjGoodsInfoV60.pas',
+  ufrmGoodsStorage in 'app\ufrmGoodsStorage.pas' {frmGoodsStorage},
+  ufrmDropForm in 'app\ufrmDropForm.pas' {frmDropForm},
+  ufrmSortDropFrom in 'app\ufrmSortDropFrom.pas' {frmSortDropFrom},
+  ufrmGoodsInfoDropForm in 'app\ufrmGoodsInfoDropForm.pas' {frmGoodsInfoDropForm};
 
 {$R *.res}
 exports

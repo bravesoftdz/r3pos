@@ -1,6 +1,7 @@
 inherited frmSaleOrder: TfrmSaleOrder
   Left = 238
   Top = 96
+  ActiveControl = serachText
   Caption = #21830#21697#38144#21806
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -8,6 +9,8 @@ inherited frmSaleOrder: TfrmSaleOrder
   inherited ScrollBox: TScrollBox
     inherited webForm: TRzPanel
       inherited PageControl: TRzPageControl
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -161,7 +164,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Width = 124
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #25903#20184#26041#24335'  [ * ] '
+                Caption = #25910#27454#26041#24335'  [ * ] '
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clRed
                 Font.Height = -15
@@ -315,7 +318,7 @@ inherited frmSaleOrder: TfrmSaleOrder
             Top = 176
             Height = 164
             inherited DBGridEh1: TDBGridEh
-              Height = 144
+              Height = 143
               FrozenCols = 1
               Columns = <
                 item
@@ -871,7 +874,9 @@ inherited frmSaleOrder: TfrmSaleOrder
             Width = 904
             Height = 389
             Align = alClient
+            BorderInner = fsFlat
             BorderOuter = fsNone
+            BorderSides = [sdLeft, sdTop, sdRight]
             BorderColor = clWhite
             BorderWidth = 10
             Color = clWhite
@@ -955,13 +960,14 @@ inherited frmSaleOrder: TfrmSaleOrder
               OnKeyPress = fndUNIT_IDKeyPress
             end
             object DBGridEh2: TDBGridEh
-              Left = 10
-              Top = 10
-              Width = 884
-              Height = 369
+              Left = 11
+              Top = 11
+              Width = 882
+              Height = 368
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
+              BorderStyle = bsNone
               Color = clWhite
               DataSource = dsList
               Flat = True
@@ -1067,14 +1073,14 @@ inherited frmSaleOrder: TfrmSaleOrder
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #35828#26126
-                  Width = 82
+                  Width = 87
                 end
                 item
                   EditButtons = <>
                   FieldName = 'TOOL_NAV'
                   Footers = <>
                   Title.Caption = #25805#20316
-                  Width = 153
+                  Width = 146
                 end>
             end
             object rowToolNav: TRzToolbar
@@ -1202,7 +1208,6 @@ inherited frmSaleOrder: TfrmSaleOrder
       end
       inherited btnPrint: TRzBitBtn
         Left = 213
-        OnClick = nil
       end
       inherited btnPreview: TRzBitBtn
         Left = 280
@@ -1381,33 +1386,33 @@ inherited frmSaleOrder: TfrmSaleOrder
         DataType = ftFloat
       end>
   end
-  object cdsHeader: TZQuery
+  object cdsHeader: TZQuery [6]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 120
     Top = 192
   end
-  object cdsDetail: TZQuery
+  object cdsDetail: TZQuery [7]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 120
     Top = 224
   end
-  object cdsICGlide: TZQuery
+  object cdsICGlide: TZQuery [8]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 120
     Top = 264
   end
-  object dsList: TDataSource
+  object dsList: TDataSource [9]
     DataSet = cdsList
     Left = 104
     Top = 392
   end
-  object cdsList: TZQuery
+  object cdsList: TZQuery [10]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>

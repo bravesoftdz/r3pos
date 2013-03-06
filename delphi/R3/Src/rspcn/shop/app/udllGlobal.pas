@@ -3,7 +3,7 @@ unit udllGlobal;
 interface
 
 uses
-  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset;
+  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, RzTreeVw,ZBase;
 
 type
   TdllGlobal = class(TDataModule)
@@ -20,6 +20,7 @@ type
     CA_RELATIONS: TZQuery;
     PUB_UNION_INFO: TZQuery;
     PUB_PAYMENT: TZQuery;
+    PUB_GOODSSORT: TZQuery;
   private
     { Private declarations }
     procedure OpenPubGoodsInfo;
@@ -38,20 +39,24 @@ type
     function sysDate:TDatetime;
     function GetParameter(paramname:string):string;
     //得到供应链企业 in ();
-    function GetTenantId:string;
+    function GetRelatTenantInWhere:string;
+    //得么商品视图
+    function GetViwGoodsInfo(s:string):string;
     //取得我加入的商盟企业
-    function GetUnionTenantId:string;
+    function GetUnionTenantInWhere:string;
     //取商品标准进价
     function GetNewInPrice(GodsId,UnitId:string):real;
     //取商品标准售价
     function GetNewOutPrice(GodsId,UnitId:string):real;
+    //创建分类树
+    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean):boolean;
   end;
 
 var
   dllGlobal: TdllGlobal;
 
 implementation
-uses utokenFactory,udataFactory,iniFiles;
+uses utokenFactory,udataFactory,iniFiles,uTreeUtil;
 {$R *.dfm}
 
 { TdllGlobal }
@@ -68,7 +73,7 @@ var
   bs:TZQuery;
 begin
   ds.Close;
-  ds.SQL.Text := 'select GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO from PUB_BARCODE where TENANT_ID in ('+GetTenantId+') and BARCODE=:BARCODE';
+  ds.SQL.Text := 'select GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO from PUB_BARCODE where TENANT_ID in ('+GetRelatTenantInWhere+') and BARCODE=:BARCODE';
   ds.ParamByName('BARCODE').AsString := barcode;
   OpenSqlite(ds);
   bs := GetZQueryFromName('PUB_GOODSINFO');
@@ -116,7 +121,7 @@ begin
      result := '';
 end;
 
-function TdllGlobal.GetTenantId: string;
+function TdllGlobal.GetRelatTenantInWhere: string;
 var
   rs:TZQuery;
 begin
@@ -130,7 +135,7 @@ begin
     end;
 end;
 
-function TdllGlobal.GetUnionTenantId: string;
+function TdllGlobal.GetUnionTenantInWhere: string;
 var
   rs:TZQuery;
 begin
@@ -149,7 +154,8 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE from VIW_GOODSINFOEXT where GODS_ID=:GODS_ID';
+    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.ParamByName('TENANT_ID').AsInteger  := StrtoInt(token.tenantId);
     rs.ParamByName('GODS_ID').AsString := GodsId;
     OpenSqlite(rs);
     if rs.IsEmpty then Raise Exception.Create('经营商品中没找到“'+GodsId+'”');
@@ -176,7 +182,8 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 from VIW_GOODSINFOEXT where GODS_ID=:GODS_ID';
+    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.ParamByName('TENANT_ID').AsInteger  := StrtoInt(token.tenantId);
     rs.ParamByName('GODS_ID').AsString := GodsId;
     OpenSqlite(rs);
     if rs.IsEmpty then Raise Exception.Create('经营商品中没找到“'+GodsId+'”');
@@ -296,6 +303,119 @@ end;
 function TdllGlobal.sysDate: TDatetime;
 begin
   result := date();
+end;
+
+function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;IsAll:boolean): boolean;
+var IsRoot: Boolean;
+    rs:TZQuery;
+    i:Integer;
+    Rel_ID,Rel_IDS: string;
+    Aobj,CurObj:TRecord_;
+begin
+  Rel_ID:='';
+  Rel_IDS:='';
+  IsRoot:=False;
+  ClearTree(rzTree);
+  rs := GetZQueryFromName('PUB_GOODSSORT');
+  rs.First;
+  while not rs.Eof do
+  begin
+    Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
+    if (Pos(Rel_ID,Rel_IDS)<=0) and (rs.FieldByName('RELATION_ID').AsInteger=1000008) then   //1000008为平台内置条码库，不显示
+    begin
+      Rel_IDS:=Rel_IDS+Rel_ID;  //2011.09.25 add 
+      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
+      begin
+        CurObj := TRecord_.Create;
+        CurObj.ReadFromDataSet(rs);
+        CurObj.FieldByName('LEVEL_ID').AsString := '';
+        CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
+        IsRoot:=true;
+      end else
+      begin
+        Aobj := TRecord_.Create;
+        Aobj.ReadFromDataSet(rs);
+        Aobj.FieldByName('LEVEL_ID').AsString := '';
+        Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
+        rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+      end;
+    end;
+    rs.Next;
+  end;
+  
+  if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
+    rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+
+  for i:=rzTree.Items.Count-1 downto 0 do
+    begin
+      rs.Filtered := False;
+      rs.Filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
+      rs.Filtered := True;
+      CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+    end;
+  if IsAll then AddRoot(rzTree,'所有分类');
+end;
+
+function TdllGlobal.GetViwGoodsInfo(s:string): string;
+var
+  rs:TZQuery;
+  w,fields:string;
+  list:TStringList;
+  i:integer;
+begin
+  w := 'where A.TENANT_ID='+token.tenantId+ ' ';
+  rs := GetZQueryFromName('CA_RELATIONS');
+  rs.first;
+  while not rs.eof do
+    begin
+      case rs.FieldByName('RELATION_TYPE').AsInteger of
+      1:begin
+          w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) ';
+        end
+      else
+        begin
+          w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) ';
+        end;
+      end;
+      rs.next;
+    end;
+  list := TStringList.Create;
+  try
+    list.DelimitedText := s;
+    for i:=0 to list.Count-1 do
+      begin
+        if fields<>'' then fields := fields + ',';
+        if
+          (list[i]<>'BARCODE')
+          and
+          (list[i]<>'CALC_UNITS')
+          and
+          (list[i]<>'SMALL_UNITS')
+          and
+          (list[i]<>'BIG_UNITS')
+          and
+          (list[i]<>'SMALLTO_CALC')
+          and
+          (list[i]<>'BIGTO_CALC')
+          and
+          (list[i]<>'GODS_TYPE')
+        then
+           begin
+           if list[i]='TEANANT_ID' then
+              fields := fields+ ''+token.tenantId+' as TENANT_ID'
+           else
+           if list[i]='SHOP_ID' then
+              fields := fields+ ''''+token.tenantId+'0001'' as SHOP_ID'
+           else
+              fields := fields+ 'isnull(B.'+list[i]+',A.'+list[i]+') as '+list[i]
+           end
+        else
+           fields := fields+ 'A.BARCODE';
+      end;
+  finally
+    list.Free;
+  end;
+  result := 'select '+fields+' from PUB_GOODSINFO A left outer join PUB_GOODS_RELATION B on A.GODS_ID=B.GODS_ID '+w;
 end;
 
 initialization

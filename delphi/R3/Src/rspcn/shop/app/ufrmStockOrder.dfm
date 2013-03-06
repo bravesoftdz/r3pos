@@ -1,14 +1,16 @@
 inherited frmStockOrder: TfrmStockOrder
   Left = 238
   Top = 96
-  Caption = #21830#21697#20837#24211
+  ActiveControl = serachText
+  Caption = #21830#21697#36827#36135
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     inherited webForm: TRzPanel
       inherited PageControl: TRzPageControl
-        OnChange = PageControlChange
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -39,12 +41,12 @@ inherited frmStockOrder: TfrmStockOrder
                 ParentFont = False
               end
               object h11: TLabel [3]
-                Left = 386
-                Top = 104
-                Width = 124
+                Left = 282
+                Top = 80
+                Width = 94
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #25910#38134#32467#36134'  [ + ] '
+                Caption = #20445#23384'  [ + ] '
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clRed
                 Font.Height = -15
@@ -72,7 +74,7 @@ inherited frmStockOrder: TfrmStockOrder
                 Width = 116
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #36192#36865'/'#20817#25442' [F5] '
+                Caption = #25913#20026#36192#21697'  [F5] '
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -15
@@ -83,11 +85,11 @@ inherited frmStockOrder: TfrmStockOrder
               object Label3: TLabel [10]
                 Left = 149
                 Top = 80
-                Width = 116
+                Width = 117
                 Height = 15
                 Cursor = crHandPoint
                 Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
-                Caption = #20250#21592#21345#21495'  [F6] '
+                Caption = #20379' '#24212' '#21830'  [F6] '
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -15
@@ -103,7 +105,7 @@ inherited frmStockOrder: TfrmStockOrder
                 Width = 117
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #23548' '#36141' '#21592'  [F7] '
+                Caption = #25910' '#36135' '#21592'  [F7] '
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -15
@@ -111,81 +113,19 @@ inherited frmStockOrder: TfrmStockOrder
                 Font.Style = []
                 ParentFont = False
               end
-              object Label5: TLabel [12]
-                Left = 282
-                Top = 80
-                Width = 86
-                Height = 15
-                Cursor = crHandPoint
-                Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
-                Caption = #25346#21333'  [F9] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                ParentShowHint = False
-                ShowHint = True
-              end
-              object Label6: TLabel [13]
+              object Label6: TLabel [12]
                 Left = 282
                 Top = 55
-                Width = 86
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #28165#23631'  [F8] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label7: TLabel [14]
-                Left = 282
-                Top = 105
                 Width = 94
                 Height = 15
                 Cursor = crHandPoint
-                Caption = #21462#21333'  [F10] '
+                Caption = #28165#23631'  [F8 ] '
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
-              end
-              object Label12: TLabel [15]
-                Left = 386
-                Top = 80
-                Width = 124
-                Height = 15
-                Cursor = crHandPoint
-                Caption = #25903#20184#26041#24335'  [ * ] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clRed
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label13: TLabel [16]
-                Left = 386
-                Top = 55
-                Width = 124
-                Height = 15
-                Cursor = crHandPoint
-                Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
-                Caption = #25972#21333#35843#20215'  [F11] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                ParentShowHint = False
-                ShowHint = True
               end
               inherited edtInput: TcxTextEdit
                 Tag = -1
@@ -215,7 +155,7 @@ inherited frmStockOrder: TfrmStockOrder
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
-              Caption = #23458#25143#21517#31216
+              Caption = #20379' '#24212' '#21830
               Color = 16185078
               FlatColor = clMenuHighlight
               TabOrder = 2
@@ -297,12 +237,12 @@ inherited frmStockOrder: TfrmStockOrder
               Height = 21
               Anchors = [akTop, akRight]
               BorderOuter = fsFlatRounded
-              Caption = #38144#21806#26085#26399
+              Caption = #36827#36135#26085#26399
               Color = 16185078
               FlatColor = clMenuHighlight
               TabOrder = 3
             end
-            object edtSALES_DATE: TcxDateEdit
+            object edtSTOCK_DATE: TcxDateEdit
               Left = 754
               Top = 5
               Width = 141
@@ -314,9 +254,9 @@ inherited frmStockOrder: TfrmStockOrder
           end
           inherited order_grid: TRzPanel
             Top = 176
-            Height = 164
+            Height = 190
             inherited DBGridEh1: TDBGridEh
-              Height = 144
+              Height = 168
               FrozenCols = 1
               Columns = <
                 item
@@ -433,26 +373,8 @@ inherited frmStockOrder: TfrmStockOrder
             end
           end
           inherited order_footer: TRzPanel
-            Top = 340
-            Height = 114
-            object Label1: TLabel
-              Left = 314
-              Top = 34
-              Width = 8
-              Height = 15
-              Caption = '%'
-            end
-            object RzPanel10: TRzPanel
-              Left = 213
-              Top = 32
-              Width = 51
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25240#25187
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 9
-            end
+            Top = 366
+            Height = 88
             object RzPanel6: TRzPanel
               Left = 10
               Top = 0
@@ -462,18 +384,18 @@ inherited frmStockOrder: TfrmStockOrder
               Caption = #35828'    '#26126
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 6
+              TabOrder = 3
             end
             object RzPanel3: TRzPanel
               Left = 0
-              Top = 67
+              Top = 41
               Width = 904
               Height = 47
               Align = alBottom
               BorderOuter = fsFlat
               BorderSides = [sdTop]
               FlatColor = 6447714
-              TabOrder = 5
+              TabOrder = 2
               object RzPanel4: TRzPanel
                 Left = 535
                 Top = 1
@@ -609,10 +531,10 @@ inherited frmStockOrder: TfrmStockOrder
               Height = 21
               Anchors = [akTop, akRight]
               BorderOuter = fsFlatRounded
-              Caption = #23548' '#36141' '#21592
+              Caption = #25910' '#36135' '#21592
               Color = 16185078
               FlatColor = clMenuHighlight
-              TabOrder = 7
+              TabOrder = 4
             end
             object edtGUIDE_USER: TzrComboBoxList
               Left = 754
@@ -655,68 +577,6 @@ inherited frmStockOrder: TfrmStockOrder
               Buttons = [zbNew]
               DropListStyle = lsFixed
               MultiSelect = False
-            end
-            object RzPanel9: TRzPanel
-              Left = 10
-              Top = 32
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #32467#31639#37329#39069
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 8
-            end
-            object edtACCT_MNY: TcxTextEdit
-              Left = 106
-              Top = 31
-              Width = 110
-              Height = 23
-              TabOrder = 2
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object edtAGIO_RATE: TcxTextEdit
-              Left = 261
-              Top = 31
-              Width = 52
-              Height = 23
-              TabOrder = 3
-              Text = '100.0'
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object payment: TRzPanel
-              Left = 658
-              Top = 32
-              Width = 99
-              Height = 21
-              Anchors = [akTop, akRight]
-              BorderOuter = fsFlatRounded
-              Caption = #29616#37329#25903#20184
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clMaroon
-              Font.Height = -15
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-              TabOrder = 10
-            end
-            object edtPAY_TOTAL: TcxTextEdit
-              Left = 754
-              Top = 31
-              Width = 110
-              Height = 23
-              Anchors = [akTop, akRight]
-              ParentFont = False
-              Style.Font.Charset = GB2312_CHARSET
-              Style.Font.Color = clMaroon
-              Style.Font.Height = -15
-              Style.Font.Name = #23435#20307
-              Style.Font.Style = [fsBold]
-              TabOrder = 4
-              Text = '34866.55'
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
           end
         end
@@ -872,7 +732,9 @@ inherited frmStockOrder: TfrmStockOrder
             Width = 904
             Height = 389
             Align = alClient
+            BorderInner = fsFlat
             BorderOuter = fsNone
+            BorderSides = [sdLeft, sdTop, sdRight]
             BorderColor = clWhite
             BorderWidth = 10
             Color = clWhite
@@ -956,13 +818,14 @@ inherited frmStockOrder: TfrmStockOrder
               OnKeyPress = fndUNIT_IDKeyPress
             end
             object DBGridEh2: TDBGridEh
-              Left = 10
-              Top = 10
-              Width = 884
-              Height = 369
+              Left = 11
+              Top = 11
+              Width = 882
+              Height = 368
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
+              BorderStyle = bsNone
               Color = clWhite
               DataSource = dsList
               Flat = True
@@ -1014,9 +877,9 @@ inherited frmStockOrder: TfrmStockOrder
                 item
                   DisplayFormat = '0000-00-00'
                   EditButtons = <>
-                  FieldName = 'SALES_DATE'
+                  FieldName = 'STOCK_DATE'
                   Footers = <>
-                  Title.Caption = #38144#21806#26085#26399
+                  Title.Caption = #36827#36135#26085#26399
                 end
                 item
                   EditButtons = <>
@@ -1029,38 +892,17 @@ inherited frmStockOrder: TfrmStockOrder
                   Alignment = taRightJustify
                   DisplayFormat = '#0.00'
                   EditButtons = <>
-                  FieldName = 'SALE_MNY'
+                  FieldName = 'STOCK_MNY'
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
-                  Title.Caption = #38144#21806#37329#39069
-                end
-                item
-                  Alignment = taRightJustify
-                  DisplayFormat = '#0.00'
-                  EditButtons = <>
-                  FieldName = 'ACCT_MNY'
-                  Footer.DisplayFormat = '#0.00'
-                  Footer.ValueType = fvtSum
-                  Footers = <>
-                  Title.Caption = #32467#31639#37329#39069
-                end
-                item
-                  Alignment = taRightJustify
-                  DisplayFormat = '#0.00'
-                  EditButtons = <>
-                  FieldName = 'RECV_MNY'
-                  Footer.DisplayFormat = '#0.00'
-                  Footer.ValueType = fvtSum
-                  Footers = <>
-                  Title.Caption = #25910#27454#37329#39069
-                  Width = 66
+                  Title.Caption = #36827#36135#37329#39069
                 end
                 item
                   EditButtons = <>
                   FieldName = 'GUIDE_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #23548#36141#21592
+                  Title.Caption = #25910#36135#21592
                   Width = 49
                 end
                 item
@@ -1068,21 +910,20 @@ inherited frmStockOrder: TfrmStockOrder
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #35828#26126
-                  Width = 82
+                  Width = 221
                 end
                 item
                   EditButtons = <>
                   FieldName = 'TOOL_NAV'
                   Footers = <>
                   Title.Caption = #25805#20316
-                  Width = 153
+                  Width = 146
                 end>
             end
             object rowToolNav: TRzToolbar
               Left = 594
               Top = 194
-              Width = 153
-              Height = 21
+              Width = 146
               Align = alNone
               AutoStyle = False
               Margin = 0
@@ -1187,7 +1028,7 @@ inherited frmStockOrder: TfrmStockOrder
   end
   inherited toolNav: TRzPanel
     inherited lblCaption: TRzLabel
-      Caption = #21830#21697#20837#24211
+      Caption = #21830#21697#36827#36135
     end
     inherited RzPanel12: TRzPanel
       Left = 384
@@ -1203,7 +1044,6 @@ inherited frmStockOrder: TfrmStockOrder
       end
       inherited btnPrint: TRzBitBtn
         Left = 213
-        OnClick = nil
       end
       inherited btnPreview: TRzBitBtn
         Left = 280
@@ -1292,18 +1132,6 @@ inherited frmStockOrder: TfrmStockOrder
         DataType = ftFloat
       end
       item
-        Name = 'POLICY_TYPE'
-        DataType = ftInteger
-      end
-      item
-        Name = 'BARTER_INTEGRAL'
-        DataType = ftInteger
-      end
-      item
-        Name = 'HAS_INTEGRAL'
-        DataType = ftInteger
-      end
-      item
         Name = 'CALC_AMOUNT'
         DataType = ftFloat
       end
@@ -1382,33 +1210,26 @@ inherited frmStockOrder: TfrmStockOrder
         DataType = ftFloat
       end>
   end
-  object cdsHeader: TZQuery
+  object cdsHeader: TZQuery [6]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 120
     Top = 192
   end
-  object cdsDetail: TZQuery
+  object cdsDetail: TZQuery [7]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 120
     Top = 224
   end
-  object cdsICGlide: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 120
-    Top = 264
-  end
-  object dsList: TDataSource
+  object dsList: TDataSource [8]
     DataSet = cdsList
     Left = 104
     Top = 392
   end
-  object cdsList: TZQuery
+  object cdsList: TZQuery [9]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>

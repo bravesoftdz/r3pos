@@ -68,6 +68,7 @@ type
     btnPrint: TRzBitBtn;
     btnPreview: TRzBitBtn;
     btnExport: TRzBitBtn;
+    Timer1: TTimer;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -99,6 +100,7 @@ type
     procedure edtInputKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure PageControlChange(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
 
     // 散装条码参数
@@ -274,7 +276,9 @@ var
 begin
   inherited;
   inputMode := 1;
+  dbState := dsBrowse;
   for i:=0 to PageControl.PageCount - 1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 0;
   fndGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   Column := FindColumn('UNIT_ID');
@@ -497,6 +501,7 @@ begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
   DBGridEh1.ReadOnly := (Value=dsBrowse);
+  Timer1.Enabled := (Value<>dsBrowse);
 end;
 
 procedure TfrmOrderForm.CheckInvaid;
@@ -567,7 +572,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select BARCODE,UNIT_ID from PUB_BARCODE where TENANT_ID in ('+dllGlobal.GetTenantId+') and GODS_ID=:GODS_ID and BARCODE_TYPE in (''0'',''1'',''2'') order by BARCODE_TYPE';
+    rs.SQL.Text := 'select BARCODE,UNIT_ID from PUB_BARCODE where TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') and GODS_ID=:GODS_ID and BARCODE_TYPE in (''0'',''1'',''2'') order by BARCODE_TYPE';
     rs.ParamByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
     dllGlobal.OpenSqlite(rs);
     if rs.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').asString,[]) then
@@ -2162,7 +2167,7 @@ begin
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
-      DbGridEh1.canvas.Brush.Color := $0000F2F2;
+      DbGridEh1.canvas.Brush.Color := DBGridEh1.FixedColor;
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
@@ -2266,6 +2271,18 @@ begin
   btnPrint.Visible := (PageControl.ActivePageIndex>0);
   btnPreview.Visible := (PageControl.ActivePageIndex>0);
   btnExport.Visible := (PageControl.ActivePageIndex>0);
+
+end;
+
+procedure TfrmOrderForm.Timer1Timer(Sender: TObject);
+begin
+  inherited;
+  if dbState <> dsBrowse then
+     begin
+        Timer1.Enabled := false;
+        if edtInput.CanFocus and Visible then
+           edtInput.SetFocus;
+     end;
 
 end;
 

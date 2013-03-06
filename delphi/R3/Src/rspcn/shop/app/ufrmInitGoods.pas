@@ -277,7 +277,7 @@ begin
 
   hasGoods := TZQuery.Create(nil);
   try
-    hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where COMM not in (''02'',''12'') and TENANT_ID in ('+dllGlobal.GetTenantId+') and BARCODE = '''+barcode+''' ';
+    hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where COMM not in (''02'',''12'') and TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') and BARCODE = '''+barcode+''' ';
     dataFactory.Open(hasGoods);
     if not hasGoods.IsEmpty then
       begin

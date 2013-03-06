@@ -185,6 +185,7 @@ type
     procedure LoadXsm(_url:string;appId:string;TimeOut:integer=15000);
     procedure LoadUrl(_url:string;appId:string;TimeOut:integer=15000);
     function CheckUrlExists(_url:TurlToken):boolean;
+    function CheckNewTabBrowser(_url:TurlToken):boolean;
     function CreateNewTabBrowser(UrlToken: TurlToken):TTabSheetEx;
     procedure destroyTabBrowser;
     procedure pageButtonSort;
@@ -487,7 +488,8 @@ begin
          urlToken.appFlag := 0;
          urlToken.url := _url;
        end;
-    urlToken.appId := appId;
+    if urlToken.appFlag=0 then
+       urlToken.appId := appId;
     if (urlToken.appFlag>0) and not token.logined then
         begin
            OpenHome;
@@ -498,12 +500,10 @@ begin
        CreateNewTabBrowser(urlToken)
     else
        begin
-         if (urlToken.appFlag<>0) or (PageControl1.ActivePageIndex=0) then
+         if (urlToken.appFlag<>0) or CheckNewTabBrowser(urlToken) then
             begin
               CreateNewTabBrowser(urlToken);
             end
-         else
-            (PageControl1.ActivePage as TTabSheetEx).url := urlToken;
        end;
     with (PageControl1.ActivePage as TTabSheetEx) do
     case url.appFlag of
@@ -827,14 +827,20 @@ var
 begin
   if PageControl1.PageCount=0 then
      begin
-       LoadUrl('rspcn://built-in/login.html','home');
+       if token.logined then
+          LoadUrl('rspcn://built-in/index.html','home')
+       else
+          LoadUrl('rspcn://built-in/login.html','home');
      end
   else
      begin
        tabEx := PageControl1.Pages[0] as TtabSheetEx;
        PageControl1.ActivePageIndex := 0;
        pageButtonSort;
-       tabEx.EWB.Go('rspcn://built-in/login.html',15000);
+       if token.logined then
+          tabEx.EWB.Go('rspcn://built-in/index.html',15000)
+       else
+          tabEx.EWB.Go('rspcn://built-in/login.html',15000);
      end;
 end;
 
@@ -950,6 +956,7 @@ begin
     begin
       if lowercase(TTabSheetEx(PageControl1.Pages[i]).url.appId)=lowercase(_url.appId) then
          begin
+           if (_url.appFlag>0) and (_url.moduname<>TTabSheetEx(PageControl1.ActivePage).url.moduname) then continue;
            result := true;
            PageControl1.ActivePageIndex := i;
            pageButtonSort;
@@ -997,12 +1004,10 @@ begin
        CreateNewTabBrowser(urlToken)
     else
        begin
-         if (PageControl1.ActivePageIndex=0) then
+         if (PageControl1.ActivePageIndex=0) or CheckNewTabBrowser(urlToken) then
             begin
               CreateNewTabBrowser(urlToken);
-            end
-         else
-            (PageControl1.ActivePage as TTabSheetEx).url := urlToken;
+            end;
        end;
 
     with (PageControl1.ActivePage as TTabSheetEx) do
@@ -1054,7 +1059,7 @@ end;
 
 procedure TfrmBrowerForm.RzBmpButton3Click(Sender: TObject);
 begin
-  loadurl('rspcn://built-in/index.html','home',15000);
+  OpenHome;
 end;
 
 procedure TfrmBrowerForm.FormResize(Sender: TObject);
@@ -1172,6 +1177,16 @@ end;
 procedure TfrmBrowerForm.SetInitialized(const Value: boolean);
 begin
   FInitialized := Value;
+end;
+
+function TfrmBrowerForm.CheckNewTabBrowser(_url: TurlToken): boolean;
+begin
+  result := true;
+  if lowercase(TTabSheetEx(PageControl1.ActivePage).url.appId)=lowercase(_url.appId) then
+     begin
+       if (_url.appFlag>0) and (_url.moduname<>TTabSheetEx(PageControl1.ActivePage).url.moduname) then Exit;
+       result := false;
+     end;
 end;
 
 initialization

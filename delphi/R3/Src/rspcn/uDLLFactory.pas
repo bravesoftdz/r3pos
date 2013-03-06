@@ -270,6 +270,7 @@ begin
   else
      app := TDLLPlugin(flist[idx]);
   result := app.openApp(hWnd,pchar(urlToken.moduname));
+  if not result then MessageBox(application.MainForm.Handle,app.getLastError,'´íÎó..',MB_OK+MB_ICONERROR);
 end;
 
 function TDLLFactory.OpenSQL(SQL, Params: WideString): OleVariant;

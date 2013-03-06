@@ -288,6 +288,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               FramingPreference = fpCustomFraming
               Indent = 19
               TabOrder = 1
+              OnChange = rzTreeChange
             end
           end
           object RzPanel6: TRzPanel
@@ -310,7 +311,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             BorderOuter = fsFlat
             BorderSides = [sdLeft, sdTop]
             TabOrder = 2
-            object DBGridEh2: TDBGridEh
+            object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1
               Width = 797
@@ -348,7 +349,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
-              OnDrawColumnCell = DBGridEh2DrawColumnCell
+              OnDrawColumnCell = DBGridEh1DrawColumnCell
               Columns = <
                 item
                   EditButtons = <>
@@ -358,6 +359,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   Width = 28
                 end
                 item
+                  Checkboxes = True
                   EditButtons = <>
                   FieldName = 'A'
                   Footers = <>
@@ -409,6 +411,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   DisplayFormat = '#0.###'
                   EditButtons = <>
                   FieldName = 'AMOUNT'
+                  Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #24211#23384
                   Width = 56
@@ -419,7 +422,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   EditButtons = <>
                   FieldName = 'NEW_INPRICE'
                   Footer.DisplayFormat = '#0.00'
-                  Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #36827#20215
                   Width = 51
@@ -592,6 +594,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       TabOrder = 1
       TabStop = False
       ThemeAware = False
+      OnClick = btnNavClick
       NumGlyphs = 2
       Spacing = 5
     end

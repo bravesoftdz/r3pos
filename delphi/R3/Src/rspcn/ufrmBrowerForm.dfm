@@ -1,6 +1,6 @@
 object frmBrowerForm: TfrmBrowerForm
-  Left = 232
-  Top = 161
+  Left = 163
+  Top = 49
   BorderStyle = bsNone
   Caption = #23478#23478#26106'-'#21830#38138#24037#20855#31665
   ClientHeight = 485

@@ -1,7 +1,7 @@
 inherited frmInitGoods: TfrmInitGoods
   Left = 256
   Top = 72
-  Caption = 'frmInitGoods'
+  Caption = #21830#21697#21021#22987#21270#21521#23548
   ClientHeight = 604
   ClientWidth = 939
   OnDestroy = FormDestroy

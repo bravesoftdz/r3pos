@@ -270,8 +270,8 @@ begin
       vParams.ParamByName('STOCK_ID').AsString := '';
       dataFactory.BeginBatch;
       try
-        dataFactory.AddBatch(cdsHeader, 'TStockOrder', vParams);
-        dataFactory.AddBatch(cdsDetail, 'TStockData', vParams);
+        dataFactory.AddBatch(cdsHeader, 'TStockOrderV60', vParams);
+        dataFactory.AddBatch(cdsDetail, 'TStockDataV60', vParams);
         dataFactory.OpenBatch;
       except
         dataFactory.CancelBatch;
@@ -360,8 +360,8 @@ begin
 
     dataFactory.BeginBatch;
     try
-      dataFactory.AddBatch(cdsHeader, 'TStockOrder');
-      dataFactory.AddBatch(cdsDetail, 'TStockData');
+      dataFactory.AddBatch(cdsHeader, 'TStockOrderV60');
+      dataFactory.AddBatch(cdsDetail, 'TStockDataV60');
       dataFactory.CommitBatch;
     except
       dataFactory.CancelBatch;

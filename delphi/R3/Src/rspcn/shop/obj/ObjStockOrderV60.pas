@@ -248,7 +248,7 @@ begin
         begin
           AGlobal.ExecSQL(
              'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-           + 'VALUES(:STOCK_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'进货货款【入库单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''4'',:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+           + 'VALUES(:STOCK_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'进货货款【入库单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''4'',:STOCK_MNY,0,:ADVA_MNY,:STOCK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
            ,self);
         end;
    end;

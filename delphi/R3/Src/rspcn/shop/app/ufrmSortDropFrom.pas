@@ -14,9 +14,12 @@ type
     procedure rzTreeKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
+    FRelationId: string;
+    procedure SetRelationId(const Value: string);
   public
     { Public declarations }
     function showForm:boolean;override;
+    property RelationId:string read FRelationId write SetRelationId;
   end;
 
 var
@@ -28,10 +31,19 @@ uses udllGlobal;
 
 { TfrmSortDropFrom }
 
+procedure TfrmSortDropFrom.SetRelationId(const Value: string);
+begin
+  FRelationId := Value;
+end;
+
 function TfrmSortDropFrom.showForm: boolean;
 begin
   result := inherited showForm;
-  dllGlobal.CreateGoodsSortTree(rzTree,false);
+  if RelationId = '' then
+    dllGlobal.CreateGoodsSortTree(rzTree,false)
+  else
+    dllGlobal.CreateGoodsSortTree(rzTree,RelationId);
+  RelationId := '';
 end;
 
 procedure TfrmSortDropFrom.rzTreeClick(Sender: TObject);

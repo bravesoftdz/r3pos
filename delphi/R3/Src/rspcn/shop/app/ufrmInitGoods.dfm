@@ -37,17 +37,17 @@ inherited frmInitGoods: TfrmInitGoods
             Top = 0
             Width = 425
             Height = 456
-            ActivePage = TabSheet1
+            ActivePage = TabSheet2
             Align = alClient
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
-            Font.Height = -13
+            Font.Height = -15
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
-            TabIndex = 0
+            TabIndex = 1
             TabOrder = 0
-            FixedDimension = 19
+            FixedDimension = 21
             object TabSheet1: TRzTabSheet
               Caption = #24320#22987#21521#23548
               object lblInput: TLabel
@@ -99,9 +99,9 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtInputKeyPress
               end
               object RzPanel4: TRzPanel
-                Left = 30
+                Left = 20
                 Top = 16
-                Width = 370
+                Width = 380
                 Height = 57
                 BorderOuter = fsGroove
                 TabOrder = 3
@@ -136,99 +136,99 @@ inherited frmInitGoods: TfrmInitGoods
             object TabSheet2: TRzTabSheet
               Caption = #21830#21697#23646#24615
               object Label5: TLabel
-                Left = 222
+                Left = 214
                 Top = 120
-                Width = 53
-                Height = 13
+                Width = 61
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #26465' '#24418' '#30721
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
               object Label11: TLabel
-                Left = 28
+                Left = 20
                 Top = 120
-                Width = 52
-                Height = 13
+                Width = 60
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #21830#21697#36135#21495
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
               object Label3: TLabel
-                Left = 28
+                Left = 20
                 Top = 160
-                Width = 52
-                Height = 13
+                Width = 60
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #21830#21697#21517#31216
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
               object Label30: TLabel
-                Left = 28
+                Left = 20
                 Top = 200
-                Width = 52
-                Height = 13
+                Width = 60
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #35745#37327#21333#20301
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
               object Label8: TLabel
-                Left = 28
+                Left = 20
                 Top = 240
-                Width = 52
-                Height = 13
+                Width = 60
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #26631#20934#36827#20215
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
               object Label10: TLabel
-                Left = 223
+                Left = 215
                 Top = 240
-                Width = 52
-                Height = 13
+                Width = 60
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #26631#20934#21806#20215
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
               object lblSORT_ID1: TLabel
-                Left = 223
+                Left = 215
                 Top = 200
-                Width = 52
-                Height = 13
+                Width = 60
+                Height = 15
                 Alignment = taRightJustify
                 Caption = #21830#21697#20998#31867
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
-                Font.Height = -13
+                Font.Height = -15
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
@@ -237,7 +237,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Left = 285
                 Top = 115
                 Width = 116
-                Height = 21
+                Height = 23
                 Properties.MaxLength = 30
                 TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -246,7 +246,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Left = 90
                 Top = 115
                 Width = 115
-                Height = 21
+                Height = 23
                 Properties.MaxLength = 20
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -255,7 +255,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Left = 90
                 Top = 155
                 Width = 310
-                Height = 21
+                Height = 23
                 Properties.MaxLength = 50
                 TabOrder = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -264,7 +264,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Left = 90
                 Top = 195
                 Width = 116
-                Height = 21
+                Height = 23
                 Properties.AutoSelect = False
                 Properties.Buttons = <
                   item
@@ -308,80 +308,36 @@ inherited frmInitGoods: TfrmInitGoods
                 Left = 90
                 Top = 235
                 Width = 116
-                Height = 21
-                TabOrder = 5
+                Height = 23
+                TabOrder = 4
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object edtNEW_OUTPRICE: TcxTextEdit
                 Left = 285
                 Top = 235
                 Width = 116
-                Height = 21
-                TabOrder = 6
+                Height = 23
+                TabOrder = 5
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
-              object edtSORT_ID1: TzrComboBoxList
-                Left = 285
-                Top = 195
-                Width = 116
-                Height = 21
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 4
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
-                KeyField = 'SORT_ID'
-                ListField = 'SORT_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'SORT_NAME'
-                    Footers = <>
-                    Title.Caption = #21333#20301#21517#31216
-                    Width = 50
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SORT_ID'
-                    Footers = <>
-                    Title.Caption = #20195#30721
-                    Visible = False
-                    Width = 50
-                  end>
-                DropWidth = 100
-                DropHeight = 120
-                ShowTitle = False
-                AutoFitColWidth = True
-                ShowButton = True
-                LocateStyle = lsDark
-                Buttons = []
-                DropListStyle = lsFixed
-                MultiSelect = False
-                ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-              end
               object edtMoreUnits: TcxCheckBox
-                Left = 25
+                Left = 17
                 Top = 280
                 Width = 150
-                Height = 21
+                Height = 23
                 Properties.DisplayUnchecked = 'False'
                 Properties.OnChange = edtMoreUnitsPropertiesChange
                 Properties.Caption = #21551#29992#22810#21253#35013#31649#29702
-                TabOrder = 7
+                TabOrder = 6
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object RzPanel5: TRzPanel
-                Left = 30
+                Left = 20
                 Top = 16
-                Width = 370
+                Width = 380
                 Height = 57
                 BorderOuter = fsGroove
-                TabOrder = 8
+                TabOrder = 7
                 object RzLabel1: TRzLabel
                   Left = 17
                   Top = 6
@@ -409,6 +365,32 @@ inherited frmInitGoods: TfrmInitGoods
                   ParentFont = False
                 end
               end
+              object edtSORT_ID: TcxButtonEdit
+                Left = 285
+                Top = 195
+                Width = 116
+                Height = 23
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                Properties.OnButtonClick = edtSORT_IDPropertiesButtonClick
+                Style.BorderStyle = ebsUltraFlat
+                Style.Edges = [bLeft, bTop, bRight, bBottom]
+                Style.ButtonStyle = btsUltraFlat
+                TabOrder = 8
+              end
+              object edtSORT_ID1: TcxTextEdit
+                Left = 285
+                Top = 275
+                Width = 116
+                Height = 23
+                Properties.MaxLength = 30
+                TabOrder = 9
+                Visible = False
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             object TabSheet3: TRzTabSheet
               Caption = #21830#21697#21253#35013
@@ -420,43 +402,43 @@ inherited frmInitGoods: TfrmInitGoods
                 Caption = #23567#21253#35013
                 TabOrder = 0
                 object Label4: TLabel
-                  Left = 32
+                  Left = 24
                   Top = 30
-                  Width = 52
-                  Height = 13
+                  Width = 60
+                  Height = 15
                   Alignment = taRightJustify
                   Caption = #21253#35013#21333#20301
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
-                  Font.Height = -13
+                  Font.Height = -15
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
                 end
                 object Label6: TLabel
-                  Left = 32
+                  Left = 24
                   Top = 90
-                  Width = 52
-                  Height = 13
+                  Width = 60
+                  Height = 15
                   Alignment = taRightJustify
                   Caption = #25442#31639#31995#25968
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
-                  Font.Height = -13
+                  Font.Height = -15
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
                 end
                 object Label9: TLabel
-                  Left = 32
+                  Left = 24
                   Top = 60
-                  Width = 52
-                  Height = 13
+                  Width = 60
+                  Height = 15
                   Alignment = taRightJustify
                   Caption = #21253#35013#26465#30721
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
-                  Font.Height = -13
+                  Font.Height = -15
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
@@ -465,7 +447,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 92
                   Top = 25
                   Width = 70
-                  Height = 21
+                  Height = 23
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
@@ -509,7 +491,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 92
                   Top = 85
                   Width = 180
-                  Height = 21
+                  Height = 23
                   TabOrder = 1
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
@@ -517,7 +499,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 92
                   Top = 55
                   Width = 180
-                  Height = 21
+                  Height = 23
                   Properties.MaxLength = 30
                   TabOrder = 2
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -526,7 +508,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 170
                   Top = 25
                   Width = 121
-                  Height = 21
+                  Height = 23
                   Properties.DisplayUnchecked = 'False'
                   Properties.Caption = #35774#20026#31649#29702#21333#20301
                   TabOrder = 3
@@ -542,43 +524,43 @@ inherited frmInitGoods: TfrmInitGoods
                 Caption = #22823#21253#35013
                 TabOrder = 1
                 object Label12: TLabel
-                  Left = 32
+                  Left = 24
                   Top = 30
-                  Width = 52
-                  Height = 13
+                  Width = 60
+                  Height = 15
                   Alignment = taRightJustify
                   Caption = #21253#35013#21333#20301
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
-                  Font.Height = -13
+                  Font.Height = -15
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
                 end
                 object Label14: TLabel
-                  Left = 32
+                  Left = 24
                   Top = 90
-                  Width = 52
-                  Height = 13
+                  Width = 60
+                  Height = 15
                   Alignment = taRightJustify
                   Caption = #25442#31639#31995#25968
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
-                  Font.Height = -13
+                  Font.Height = -15
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
                 end
                 object Label16: TLabel
-                  Left = 32
+                  Left = 24
                   Top = 60
-                  Width = 52
-                  Height = 13
+                  Width = 60
+                  Height = 15
                   Alignment = taRightJustify
                   Caption = #21253#35013#26465#30721
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
-                  Font.Height = -13
+                  Font.Height = -15
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
@@ -587,7 +569,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 92
                   Top = 25
                   Width = 70
-                  Height = 21
+                  Height = 23
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
@@ -631,7 +613,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 92
                   Top = 85
                   Width = 180
-                  Height = 21
+                  Height = 23
                   TabOrder = 1
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
@@ -639,7 +621,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 92
                   Top = 55
                   Width = 180
-                  Height = 21
+                  Height = 23
                   Properties.MaxLength = 30
                   TabOrder = 2
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -648,7 +630,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Left = 170
                   Top = 25
                   Width = 121
-                  Height = 21
+                  Height = 23
                   Properties.DisplayUnchecked = 'False'
                   Properties.Caption = #35774#20026#31649#29702#21333#20301
                   TabOrder = 3
@@ -657,9 +639,9 @@ inherited frmInitGoods: TfrmInitGoods
                 end
               end
               object RzPanel6: TRzPanel
-                Left = 30
+                Left = 20
                 Top = 16
-                Width = 370
+                Width = 380
                 Height = 57
                 BorderOuter = fsGroove
                 TabOrder = 2
@@ -805,13 +787,6 @@ inherited frmInitGoods: TfrmInitGoods
     CachedUpdates = True
     Params = <>
     Left = 458
-    Top = 472
-  end
-  object SortDataSet: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 492
     Top = 472
   end
   object edtTable: TZQuery

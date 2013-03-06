@@ -49,7 +49,8 @@ type
     //取商品标准售价
     function GetNewOutPrice(GodsId,UnitId:string):real;
     //创建分类树
-    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean):boolean;
+    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean):boolean;overload;
+    function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string):boolean;overload;
   end;
 
 var
@@ -356,6 +357,61 @@ begin
         CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
       end;
     if IsAll then AddRoot(rzTree,'所有分类');
+  finally
+//    rzTree.Items.EndUpdate;
+  end;
+end;
+
+function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;RelationId:string): boolean;
+var IsRoot: Boolean;
+    rs:TZQuery;
+    i:Integer;
+    Rel_ID,Rel_IDS: string;
+    Aobj,CurObj:TRecord_;
+begin
+//  rzTree.Items.BeginUpdate;
+  try
+    Rel_ID:='';
+    Rel_IDS:='';
+    IsRoot:=False;
+    ClearTree(rzTree);
+    rs := GetZQueryFromName('PUB_GOODSSORT');
+    rs.First;
+    while not rs.Eof do
+    begin
+      Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
+      if (Pos(Rel_ID,Rel_IDS)<=0) and (rs.FieldByName('RELATION_ID').asString=RelationId) then
+      begin
+        Rel_IDS:=Rel_IDS+Rel_ID;  //2011.09.25 add
+        if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
+        begin
+          CurObj := TRecord_.Create;
+          CurObj.ReadFromDataSet(rs);
+          CurObj.FieldByName('LEVEL_ID').AsString := '';
+          CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
+          IsRoot:=true;
+        end else
+        begin
+          Aobj := TRecord_.Create;
+          Aobj.ReadFromDataSet(rs);
+          Aobj.FieldByName('LEVEL_ID').AsString := '';
+          Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
+          rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+        end;
+      end;
+      rs.Next;
+    end;
+
+    if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
+      rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+
+    for i:=rzTree.Items.Count-1 downto 0 do
+      begin
+        rs.Filtered := False;
+        rs.Filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
+        rs.Filtered := True;
+        CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+      end;
   finally
 //    rzTree.Items.EndUpdate;
   end;

@@ -36,8 +36,6 @@ type
     lblSORT_ID1: TLabel;
     cdsBigBarCode: TZQuery;
     cdsBarCode: TZQuery;
-    SortDataSet: TZQuery;
-    edtSORT_ID1: TzrComboBoxList;
     TabSheet3: TRzTabSheet;
     GroupBox1: TGroupBox;
     Label4: TLabel;
@@ -73,6 +71,8 @@ type
     btnNext: TRzBitBtn;
     btnPrev: TRzBitBtn;
     edtTable: TZQuery;
+    edtSORT_ID: TcxButtonEdit;
+    edtSORT_ID1: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
@@ -83,6 +83,8 @@ type
     procedure edtDefault1Click(Sender: TObject);
     procedure edtDefault2Click(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure edtSORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
@@ -107,11 +109,10 @@ type
 
 implementation
 
-uses uRspFactory,msxml,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal;
+uses uRspFactory,msxml,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom;
 
 const
-  //FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
-  FY_CREATOR_ID = '110000001'; //非烟供应链创建者,允许修改商品分类
+  FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
 
 {$R *.dfm}
 
@@ -124,7 +125,6 @@ begin
   Finded := false;
   Simple := false;
   AObj := TRecord_.Create;
-  edtTable := TZQuery.Create(self);
 
   FY_RELATION_ID := '';
   FY_TENANT_ID := '';
@@ -133,17 +133,14 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      if rs.FieldByName('RELATION_ID').AsInteger <> 1000006 then
+      if (rs.FieldByName('RELATION_ID').AsInteger <> 1000006) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
         begin
           FY_RELATION_ID := rs.FieldByName('RELATION_ID').AsString;
           FY_TENANT_ID := rs.FieldByName('TENANT_ID').AsString;
+          break;
         end;
       rs.Next;
     end;
-
-  //测试用
-  FY_TENANT_ID := '110000001';
-  FY_RELATION_ID := '1000006';
 
   edtCALC_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   edtSMALL_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
@@ -160,11 +157,7 @@ begin
   edtDefault2.Checked := false;
 
   if (FY_TENANT_ID = '') or (FY_RELATION_ID = '') then
-    Raise Exception.Create('企业尚未加盟非烟供应链...');
-
-  SortDataSet.SQL.Text := 'select SORT_ID,SORT_NAME,SORT_SPELL from VIW_GOODSSORT where SORT_TYPE=1 and TENANT_ID='+token.tenantId +' and RELATION_ID='+FY_RELATION_ID;
-  dllGlobal.OpenSqlite(SortDataSet);
-  edtSORT_ID1.DataSet := SortDataSet;
+    Raise Exception.Create('当前企业尚未加盟非烟供应链...');
 end;
 
 procedure TfrmInitGoods.btnNextClick(Sender: TObject);
@@ -173,6 +166,7 @@ begin
   if rzPage.ActivePageIndex = 0 then
     begin
       Finded := false;
+      edtSORT_ID.Text := '';
       edtDefault1.Checked := false;
       edtDefault2.Checked := false;
       if edtGOODS_OPTION1.Checked then
@@ -543,9 +537,9 @@ begin
       Raise Exception.Create('计量单位不能为空！');
     end;
 
-  if trim(edtSORT_ID1.AsString)='' then
+  if trim(edtSORT_ID1.Text)='' then
     begin
-      if edtSORT_ID1.CanFocus then edtSORT_ID1.SetFocus;
+      if edtSORT_ID.CanFocus then edtSORT_ID.SetFocus;
       Raise Exception.Create('商品分类不能为空！');
     end;
 
@@ -647,6 +641,7 @@ begin
 end;
 
 procedure TfrmInitGoods.ReadFromObject;
+var rs: TZQuery;
 begin
   AObj.ReadFromDataSet(cdsGoodsInfo);
   udllShopUtil.ReadFromObject(AObj,self);
@@ -673,13 +668,17 @@ begin
       // 非烟供应链允许修改商品分类
       if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID then
         begin
-          edtSORT_ID1.Properties.ReadOnly := true;
-          SetEditStyle(dsBrowse, edtSORT_ID1.Style);
+          rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+          if rs.Locate('SORT_ID',cdsGoodsInfo.FieldByName('SORT_ID1').AsString,[]) then
+            edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
+          edtSORT_ID.Properties.ReadOnly := true;
+          SetEditStyle(dsBrowse, edtSORT_ID.Style);
         end
       else
         begin
-          edtSORT_ID1.Properties.ReadOnly := false;
-          SetEditStyle(dsInsert, edtSORT_ID1.Style);
+          edtSORT_ID1.Text := '';
+          edtSORT_ID.Properties.ReadOnly := false;
+          SetEditStyle(dsInsert, edtSORT_ID.Style);
         end;
 
       if (cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '') or (cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '') then
@@ -698,8 +697,9 @@ begin
       CancelReadOnly;
       edtMoreUnits.Checked := false;
       btnNext.Caption := '完成';
-      edtSORT_ID1.Properties.ReadOnly := false;
-      SetEditStyle(dsInsert, edtSORT_ID1.Style);
+      edtSORT_ID1.Text := '';
+      edtSORT_ID.Properties.ReadOnly := false;
+      SetEditStyle(dsInsert, edtSORT_ID.Style);
     end;
 end;
 
@@ -747,7 +747,7 @@ begin
       cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '0';
       cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
       cdsBarCode.FieldByName('BARCODE').AsString := cdsGoodsInfo.FieldByName('BARCODE').AsString;
-      
+
       if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
         begin
           cdsSmallBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
@@ -802,7 +802,10 @@ begin
       cdsGoodsRelation.FieldByName('GODS_CODE').AsString := cdsGoodsInfo.FieldByName('GODS_CODE').AsString;
       cdsGoodsRelation.FieldByName('GODS_NAME').AsString := cdsGoodsInfo.FieldByName('GODS_NAME').AsString;
       cdsGoodsRelation.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(cdsGoodsRelation.FieldByName('GODS_NAME').AsString,3);
-      cdsGoodsRelation.FieldByName('SORT_ID1').AsString := cdsGoodsInfo.FieldByName('SORT_ID1').AsString;
+      if Finded then
+        cdsGoodsRelation.FieldByName('SORT_ID1').AsString := cdsGoodsInfo.FieldByName('SORT_ID1').AsString
+      else
+        cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#';
       cdsGoodsRelation.FieldByName('NEW_INPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat;
       cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat;
     end;
@@ -1059,6 +1062,7 @@ begin
         tmpGoodsRelation.Free;
       end;
     end;
+  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
 procedure TfrmInitGoods.EditDataSet;
@@ -1118,7 +1122,6 @@ procedure TfrmInitGoods.FormDestroy(Sender: TObject);
 begin
   inherited;
   AObj.Free;
-  edtTable.Free;
 end;
 
 procedure TfrmInitGoods.edtMoreUnitsPropertiesChange(Sender: TObject);
@@ -1232,6 +1235,36 @@ begin
     end;
   Simple := false;
   result := true;
+end;
+
+procedure TfrmInitGoods.edtSORT_IDPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var Obj:TRecord_;
+begin
+  inherited;
+  if edtSORT_ID.Properties.ReadOnly then Exit;
+  Obj := TRecord_.Create;
+  try
+    if edtGOODS_OPTION1.Checked and (not Finded) then
+      begin
+        frmSortDropFrom.RelationId := FY_RELATION_ID;
+        if frmSortDropFrom.DropForm(edtSORT_ID, Obj) then
+          begin
+            edtSORT_ID1.Text := Obj.FieldbyName('SORT_ID').AsString;
+            edtSORT_ID.Text := Obj.FieldbyName('SORT_NAME').AsString;
+          end;
+      end
+    else
+      begin
+        if frmSortDropFrom.DropForm(edtSORT_ID, Obj) then
+          begin
+            edtSORT_ID1.Text := Obj.FieldbyName('SORT_ID').AsString;
+            edtSORT_ID.Text := Obj.FieldbyName('SORT_NAME').AsString;
+          end;
+      end;
+  finally
+    Obj.Free;
+  end;
 end;
 
 initialization

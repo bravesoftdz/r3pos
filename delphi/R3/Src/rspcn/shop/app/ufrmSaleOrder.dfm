@@ -1,7 +1,6 @@
 inherited frmSaleOrder: TfrmSaleOrder
   Left = 238
   Top = 96
-  ActiveControl = serachText
   Caption = #21830#21697#38144#21806
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -9,8 +8,6 @@ inherited frmSaleOrder: TfrmSaleOrder
   inherited ScrollBox: TScrollBox
     inherited webForm: TRzPanel
       inherited PageControl: TRzPageControl
-        ActivePage = TabSheet2
-        TabIndex = 1
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -763,7 +760,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   22)
                 object serachText: TEdit
                   Tag = -1
-                  Left = 8
+                  Left = 6
                   Top = 2
                   Width = 342
                   Height = 18

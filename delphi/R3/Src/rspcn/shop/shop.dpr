@@ -45,7 +45,8 @@ uses
   ufrmGoodsStorage in 'app\ufrmGoodsStorage.pas' {frmGoodsStorage},
   ufrmDropForm in 'app\ufrmDropForm.pas' {frmDropForm},
   ufrmSortDropFrom in 'app\ufrmSortDropFrom.pas' {frmSortDropFrom},
-  ufrmGoodsInfoDropForm in 'app\ufrmGoodsInfoDropForm.pas' {frmGoodsInfoDropForm};
+  ufrmGoodsInfoDropForm in 'app\ufrmGoodsInfoDropForm.pas' {frmGoodsInfoDropForm},
+  ObjChangeOrderV60 in 'obj\ObjChangeOrderV60.pas';
 
 {$R *.res}
 exports

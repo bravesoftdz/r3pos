@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmWebToolForm, ExtCtrls, RzPanel, StdCtrls, RzLabel, RzButton,
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase,ObjCommon;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase,ObjCommon,
+  zrComboBoxList, RzBorder, cxCheckBox;
 
 type
   TfrmGoodsStorage = class(TfrmWebToolForm)
@@ -41,6 +42,50 @@ type
     RzToolButton3: TRzToolButton;
     RzSpacer1: TRzSpacer;
     serachText: TEdit;
+    RzPanel8: TRzPanel;
+    RzPanel9: TRzPanel;
+    edtACCT_MNY: TcxTextEdit;
+    RzPanel10: TRzPanel;
+    cxTextEdit1: TcxTextEdit;
+    RzPanel12: TRzPanel;
+    RzPanel14: TRzPanel;
+    RzPanel16: TRzPanel;
+    cxTextEdit4: TcxTextEdit;
+    RzPanel17: TRzPanel;
+    cxTextEdit5: TcxTextEdit;
+    cxTextEdit6: TcxTextEdit;
+    RzPanel18: TRzPanel;
+    RzPanel19: TRzPanel;
+    edtAGIO_RATE: TcxTextEdit;
+    cxButtonEdit1: TcxButtonEdit;
+    RzPanel20: TRzPanel;
+    cxTextEdit2: TcxTextEdit;
+    edtCALC_UNITS: TzrComboBoxList;
+    RzPanel21: TRzPanel;
+    cxTextEdit3: TcxTextEdit;
+    cxTextEdit7: TcxTextEdit;
+    RzPanel22: TRzPanel;
+    RzPanel23: TRzPanel;
+    cxTextEdit8: TcxTextEdit;
+    RzBorder1: TRzBorder;
+    edtUNIT_ID_USING: TcxCheckBox;
+    RzBitBtn6: TRzBitBtn;
+    RzBitBtn7: TRzBitBtn;
+    RzPanel24: TRzPanel;
+    RzPanel25: TRzPanel;
+    zrComboBoxList1: TzrComboBoxList;
+    RzPanel26: TRzPanel;
+    cxTextEdit9: TcxTextEdit;
+    RzPanel27: TRzPanel;
+    zrComboBoxList2: TzrComboBoxList;
+    RzPanel28: TRzPanel;
+    cxTextEdit10: TcxTextEdit;
+    cdsGoodsInfo: TZQuery;
+    cdsStorage: TZQuery;
+    cdsGodsRelation: TZQuery;
+    cdsGoodsPrice: TZQuery;
+    cdsGoodsExt: TZQuery;
+    cdsBarcode: TZQuery;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -55,6 +100,7 @@ type
     function GetOpenWhere:string;
   public
     { Public declarations }
+    procedure OpenInfo(godsId:string);
     procedure Open;
     procedure showForm;override;
   end;
@@ -156,11 +202,11 @@ begin
   cdsList.Close;
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,
-   'select jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
-   'select j.TENANT_ID,'''+token.shopId+''' as SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.CALC_UNITS,c.AMOUNT,'+
+   'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
+   'select j.TENANT_ID,'''+token.shopId+''' as SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,c.AMOUNT,'+
    'isnull(ext.NEW_INPRICE,j.NEW_INPRICE) as NEW_INPRICE,'+
    'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P '+
-   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE')+') j '+
+   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID')+') j '+
    'left outer join (select TENANT_ID,GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+''') c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
    'left outer join  PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID '+
    'left outer join  PUB_GOODSPRICE prc on j.TENANT_ID=prc.TENANT_ID and j.GODS_ID=prc.GODS_ID and j.SHOP_ID=prc.SHOP_ID ) jp '+
@@ -202,11 +248,11 @@ begin
      begin
        if rzTree.Selected.Level=1 then
           begin
-            result := 'jp.RELATION_ID='''+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+'''';
+            result := 'jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+'';
           end
        else
           begin
-            result := 'jp.RELATION_ID='''+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+''' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
+            result := 'jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
           end;
      end;
   if trim(serachText.Text) <> '' then
@@ -227,6 +273,32 @@ procedure TfrmGoodsStorage.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
   if rzTree.Focused then Open;
+end;
+
+procedure TfrmGoodsStorage.OpenInfo(godsId: string);
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create;
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+    Params.ParamByName('GODS_ID').AsString := godsId;  
+    Params.ParamByName('GODS_ID').AsString := godsId;  
+    dataFactory.BeginBatch;
+    try
+       dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',Params);
+       dataFactory.AddBatch(cdsGodsRelation,'TGoodsInfoV60',Params);
+       dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',Params);
+       dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',Params);
+       dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',Params);
+       dataFactory.OpenBatch;
+    except
+       dataFactory.CancelBatch;
+       Raise;
+    end;
+  finally
+    Params.Free;
+  end;
 end;
 
 initialization

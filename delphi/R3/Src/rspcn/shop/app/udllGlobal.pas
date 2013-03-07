@@ -469,7 +469,7 @@ begin
               fields := fields+ ''''+token.tenantId+'0001'' as SHOP_ID'
            else
            if list[i]='RELATION_ID' then
-              fields := fields+ 'isnull(B.RELATION_ID,''0'') as RELATION_ID'
+              fields := fields+ 'isnull(B.RELATION_ID,0) as RELATION_ID'
            else
               fields := fields+ 'isnull(B.'+list[i]+',A.'+list[i]+') as '+list[i]
            end

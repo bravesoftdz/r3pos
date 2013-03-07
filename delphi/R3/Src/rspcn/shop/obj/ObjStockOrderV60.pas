@@ -1,7 +1,7 @@
 unit ObjStockOrderV60;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet,math;
+uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet,math,udllFnUtil;
 type
   TStockOrderV60=class(TZFactory)
   private
@@ -272,33 +272,18 @@ function TStockOrderV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
 begin
    isSync := Params.FindParam('SyncFlag')<>nil;
-   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
+   if isSync then
+      begin
+        AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and (CREA_DATE>='+FieldbyName('STOCK_DATE').AsOldString+' or CREA_DATE>='+FieldbyName('STOCK_DATE').AsString+')',self);
+        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('STOCK_DATE').AsString))+' or END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('STOCK_DATE').AsString))+')',self);
+      end
+   else
       begin
         Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('STOCK_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
         if FieldbyName('STOCK_DATE').AsOldString <> '' then
            Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('STOCK_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
         result := true;
-      end
-   else
-      Result := true;
-  //检测订单是否重复入库
-{
-  if FieldbyName('FROM_ID').asString<>'' then
-     begin
-       rs := TZQuery.Create(nil);
-       try
-         rs.SQL.Text := 'select count(*) from STK_STOCKORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and STOCK_ID<>:STOCK_ID';
-         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-         rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
-         rs.ParamByName('STOCK_ID').AsString := FieldbyName('STOCK_ID').AsString;
-         AGlobal.Open(rs);
-         if rs.Fields[0].AsInteger<>0 then Raise Exception.Create('当前订单已经入库了，不能重复入库了');  
-       finally
-         rs.Free;
-       end;
-     end;
-
-}     
+      end;
 end;
 
 function TStockOrderV60.CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true): boolean;

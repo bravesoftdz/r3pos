@@ -295,7 +295,7 @@ begin
   SelectSQL.Text :=
     'select TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP '+
     'from   PUB_GOODSPRICE '+
-    'where  TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and SHOP_ID in ('''+Params.ParambyName('TENANT_ID').AsString+'0001'','''+Params.ParambyName('SHOP_ID').AsString+''') and PRICE_ID=''#'' ';
+    'where  TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and SHOP_ID in ('''+Params.ParambyName('TENANT_ID').AsString+'0001'','''+Params.ParambyName('SHOP_ID').AsString+''') and PRICE_ID=:PRICE_ID ';
 
   InsertSQL.Text :=
     'insert into PUB_GOODSPRICE '+
@@ -312,12 +312,12 @@ begin
     'update PUB_GOODSPRICE '+
     'set '+
     ' TENANT_ID=:TENANT_ID,PRICE_ID=:PRICE_ID,SHOP_ID=:SHOP_ID,GODS_ID=:GODS_ID,PRICE_METHOD=:PRICE_METHOD,NEW_OUTPRICE=:NEW_OUTPRICE,NEW_OUTPRICE1=:NEW_OUTPRICE1,NEW_OUTPRICE2=:NEW_OUTPRICE2,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
-    'where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID  ';
+    'where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID and PRICE_ID=:OLD_PRICE_ID ';
 
 
   DeleteSQL.Text :=
     ' update PUB_GOODSPRICE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
-    ' where  TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID  ';
+    ' where  TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID and PRICE_ID=:OLD_PRICE_ID ';
 
 end;
 

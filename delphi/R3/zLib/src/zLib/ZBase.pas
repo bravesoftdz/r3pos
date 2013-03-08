@@ -714,11 +714,15 @@ end;
 
 procedure TField_.SetNewValue(const Value: Variant);
 begin
+  if VarIsStr(Value) and (VartoStr(Value)='') then
+  FNewValue := null else
   FNewValue := Value;
 end;
 
 procedure TField_.SetOldValue(const Value: Variant);
 begin
+  if VarIsStr(Value) and (VartoStr(Value)='') then
+  FOldValue := null else
   FOldValue := Value;
 end;
 

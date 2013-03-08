@@ -92,7 +92,7 @@ ExeDescription=Zeos Database Components
 [Directories]
 OutputDir=
 UnitOutputDir=build
-PackageDLLOutputDir=D:\Delphi\R3\zLib\packages\delphi7
+PackageDLLOutputDir=D:\myWork\Delphi\R3\zLib\packages\delphi7\build
 PackageDCPOutputDir=
 SearchPath=build
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP
@@ -155,10 +155,11 @@ Count=2
 Item0=build
 Item1=$(ZEOSDBO_BUILD)
 [HistoryLists\hlBPLOutput]
-Count=3
-Item0=D:\Delphi\R3\zLib\packages\delphi7
-Item1=build
-Item2=$(ZEOSDBO_BUILD)
+Count=4
+Item0=D:\myWork\Delphi\R3\zLib\packages\delphi7\build
+Item1=D:\Delphi\R3\zLib\packages\delphi7
+Item2=build
+Item3=$(ZEOSDBO_BUILD)
 [HistoryLists\hlDCPOutput]
 Count=2
 Item0=build

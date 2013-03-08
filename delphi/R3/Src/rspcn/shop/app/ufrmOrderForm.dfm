@@ -1,6 +1,6 @@
 inherited frmOrderForm: TfrmOrderForm
-  Left = 315
-  Top = 198
+  Left = 99
+  Top = 149
   ActiveControl = edtInput
   Caption = #21333#25454#22522#31867
   ClientHeight = 522
@@ -9,19 +9,19 @@ inherited frmOrderForm: TfrmOrderForm
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 904
+    Width = 704
     Height = 475
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 904
+      Width = 704
       Height = 475
       Align = alClient
       Color = clWhite
       object PageControl: TRzPageControl
         Left = 0
         Top = 0
-        Width = 904
+        Width = 704
         Height = 475
         ActivePage = TabSheet1
         Align = alClient
@@ -39,7 +39,7 @@ inherited frmOrderForm: TfrmOrderForm
           object order_input: TRzPanel
             Left = 0
             Top = 0
-            Width = 904
+            Width = 704
             Height = 150
             Align = alTop
             BorderOuter = fsNone
@@ -50,13 +50,13 @@ inherited frmOrderForm: TfrmOrderForm
             object RzPanel2: TRzPanel
               Left = 10
               Top = 10
-              Width = 884
+              Width = 684
               Height = 130
               Align = alClient
               BorderOuter = fsFlatRounded
               TabOrder = 0
               DesignSize = (
-                884
+                684
                 130)
               object lblInput: TLabel
                 Left = 16
@@ -132,7 +132,7 @@ inherited frmOrderForm: TfrmOrderForm
               object RzBorder1: TRzBorder
                 Left = 18
                 Top = 46
-                Width = 846
+                Width = 646
                 Height = 2
                 Anchors = [akLeft, akTop, akRight]
               end
@@ -156,7 +156,7 @@ inherited frmOrderForm: TfrmOrderForm
                 OnKeyPress = edtInputKeyPress
               end
               object help: TRzBmpButton
-                Left = 852
+                Left = 652
                 Top = 16
                 Width = 16
                 Height = 16
@@ -228,7 +228,7 @@ inherited frmOrderForm: TfrmOrderForm
           object order_header: TRzPanel
             Left = 0
             Top = 150
-            Width = 904
+            Width = 704
             Height = 32
             Align = alTop
             BorderOuter = fsNone
@@ -238,7 +238,7 @@ inherited frmOrderForm: TfrmOrderForm
           object order_grid: TRzPanel
             Left = 0
             Top = 182
-            Width = 904
+            Width = 704
             Height = 203
             Align = alClient
             BorderInner = fsFlat
@@ -251,14 +251,13 @@ inherited frmOrderForm: TfrmOrderForm
             object DBGridEh1: TDBGridEh
               Left = 11
               Top = 11
-              Width = 882
+              Width = 682
               Height = 182
               Align = alClient
               AllowedOperations = [alopUpdateEh, alopAppendEh]
               AutoFitColWidths = True
               BorderStyle = bsNone
               DataSource = dsTable
-              FixedColor = clSilver
               Flat = True
               FooterColor = clWindow
               FooterFont.Charset = GB2312_CHARSET
@@ -421,7 +420,7 @@ inherited frmOrderForm: TfrmOrderForm
           object order_footer: TRzPanel
             Left = 0
             Top = 385
-            Width = 904
+            Width = 704
             Height = 69
             Align = alBottom
             BorderOuter = fsNone
@@ -435,10 +434,13 @@ inherited frmOrderForm: TfrmOrderForm
   inherited toolNav: TRzPanel
     Width = 904
     object lblCaption: TRzLabel
-      Left = 14
-      Top = 11
-      Width = 100
-      Height = 24
+      Left = 0
+      Top = 0
+      Width = 169
+      Height = 47
+      Align = alLeft
+      Alignment = taCenter
+      AutoSize = False
       Caption = #21333#25454#21517#31216
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
@@ -446,9 +448,12 @@ inherited frmOrderForm: TfrmOrderForm
       Font.Name = #40657#20307
       Font.Style = [fsBold]
       ParentFont = False
+      Transparent = False
+      Layout = tlCenter
+      TextStyle = tsShadow
     end
     object RzPanel12: TRzPanel
-      Left = 552
+      Left = 352
       Top = 0
       Width = 352
       Height = 47
@@ -562,6 +567,54 @@ inherited frmOrderForm: TfrmOrderForm
         NumGlyphs = 2
         Spacing = 5
       end
+    end
+    object RzPanel18: TRzPanel
+      Left = 704
+      Top = 0
+      Width = 200
+      Height = 47
+      Align = alRight
+      BorderOuter = fsFlat
+      BorderSides = [sdLeft]
+      Color = 8026232
+      TabOrder = 1
+    end
+  end
+  object RzPanel1: TRzPanel
+    Left = 704
+    Top = 47
+    Width = 200
+    Height = 475
+    Align = alRight
+    BorderOuter = fsFlat
+    BorderSides = [sdLeft]
+    BorderColor = clWhite
+    BorderWidth = 10
+    Color = clWhite
+    TabOrder = 2
+    object adv01: TImage
+      Left = 11
+      Top = 10
+      Width = 179
+      Height = 263
+      Align = alTop
+    end
+    object adv02: TImage
+      Left = 11
+      Top = 283
+      Width = 179
+      Height = 182
+      Align = alClient
+    end
+    object RzPanel17: TRzPanel
+      Left = 11
+      Top = 273
+      Width = 179
+      Height = 10
+      Align = alTop
+      BorderOuter = fsNone
+      Color = clWhite
+      TabOrder = 0
     end
   end
   object edtTable: TZQuery

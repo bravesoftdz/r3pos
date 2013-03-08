@@ -1,16 +1,13 @@
 inherited frmStockOrder: TfrmStockOrder
   Left = 238
   Top = 96
-  ActiveControl = serachText
-  Caption = #21830#21697#36827#36135
+  Caption = #36827#36135#21333
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     inherited webForm: TRzPanel
       inherited PageControl: TRzPageControl
-        ActivePage = TabSheet2
-        TabIndex = 1
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -19,15 +16,15 @@ inherited frmStockOrder: TfrmStockOrder
             inherited RzPanel2: TRzPanel
               Height = 129
               DesignSize = (
-                884
+                684
                 129)
               inherited lblHint: TLabel
                 Width = 279
                 Anchors = [akLeft, akTop, akRight]
                 AutoSize = False
               end
-              object RzLabel5: TRzLabel [2]
-                Left = 663
+              object lblNo: TRzLabel [2]
+                Left = 471
                 Top = 16
                 Width = 176
                 Height = 15
@@ -256,7 +253,7 @@ inherited frmStockOrder: TfrmStockOrder
             Top = 176
             Height = 190
             inherited DBGridEh1: TDBGridEh
-              Height = 168
+              Height = 169
               FrozenCols = 1
               Columns = <
                 item
@@ -389,7 +386,7 @@ inherited frmStockOrder: TfrmStockOrder
             object RzPanel3: TRzPanel
               Left = 0
               Top = 41
-              Width = 904
+              Width = 704
               Height = 47
               Align = alBottom
               BorderOuter = fsFlat
@@ -397,7 +394,7 @@ inherited frmStockOrder: TfrmStockOrder
               FlatColor = 6447714
               TabOrder = 2
               object RzPanel4: TRzPanel
-                Left = 535
+                Left = 335
                 Top = 1
                 Width = 369
                 Height = 46
@@ -586,7 +583,7 @@ inherited frmStockOrder: TfrmStockOrder
           object RzPanel11: TRzPanel
             Left = 0
             Top = 0
-            Width = 904
+            Width = 704
             Height = 65
             Align = alTop
             BorderOuter = fsNone
@@ -597,13 +594,13 @@ inherited frmStockOrder: TfrmStockOrder
             object RzPanel13: TRzPanel
               Left = 10
               Top = 10
-              Width = 884
+              Width = 684
               Height = 45
               Align = alClient
               BorderOuter = fsFlatRounded
               TabOrder = 0
               DesignSize = (
-                884
+                684
                 45)
               object RzPanel15: TRzPanel
                 Left = 16
@@ -729,7 +726,7 @@ inherited frmStockOrder: TfrmStockOrder
           object RzPanel14: TRzPanel
             Left = 0
             Top = 65
-            Width = 904
+            Width = 704
             Height = 389
             Align = alClient
             BorderInner = fsFlat
@@ -820,7 +817,7 @@ inherited frmStockOrder: TfrmStockOrder
             object DBGridEh2: TDBGridEh
               Left = 11
               Top = 11
-              Width = 882
+              Width = 682
               Height = 368
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -1028,10 +1025,11 @@ inherited frmStockOrder: TfrmStockOrder
   end
   inherited toolNav: TRzPanel
     inherited lblCaption: TRzLabel
-      Caption = #21830#21697#36827#36135
+      Width = 184
+      Caption = #36827#36135#21333
     end
     inherited RzPanel12: TRzPanel
-      Left = 384
+      Left = 184
       Width = 520
       DesignSize = (
         520

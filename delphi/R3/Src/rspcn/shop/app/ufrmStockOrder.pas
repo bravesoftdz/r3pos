@@ -8,7 +8,7 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus;
+  ZDataset, ZBase, Math, Menus, pngimage;
 
 type
   TfrmStockOrder = class(TfrmOrderForm)
@@ -29,7 +29,7 @@ type
     edtGUIDE_USER: TzrComboBoxList;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    RzLabel5: TRzLabel;
+    lblNo: TRzLabel;
     h11: TLabel;
     Label21: TLabel;
     Label2: TLabel;
@@ -600,6 +600,9 @@ begin
        btnNew.Caption := 'Çå¿Õ';
      end;
   end;
+  lblNo.Visible := (Value<>dsInsert);
+  if not cdsHeader.IsEmpty then
+  lblNo.Caption := 'µ¥ºÅ:'+AObj.FieldbyName('GLIDE_NO').AsString;
 end;
 
 procedure TfrmStockOrder.OpenList;

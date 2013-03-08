@@ -8,7 +8,7 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder;
+  Menus, RzBorder, pngimage;
 
 const
 
@@ -34,7 +34,6 @@ const
   FIND_GOODS_DIALOG=4;
 type
   TfrmOrderForm = class(TfrmWebToolForm)
-    lblCaption: TRzLabel;
     RzPanel12: TRzPanel;
     btnNav: TRzBitBtn;
     PageControl: TRzPageControl;
@@ -69,6 +68,12 @@ type
     btnPreview: TRzBitBtn;
     btnExport: TRzBitBtn;
     Timer1: TTimer;
+    RzPanel1: TRzPanel;
+    adv01: TImage;
+    RzPanel17: TRzPanel;
+    adv02: TImage;
+    RzPanel18: TRzPanel;
+    lblCaption: TRzLabel;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -204,7 +209,7 @@ var
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil,
-  udataFactory;
+  udataFactory,uAdvFactory;
 
 {$R *.dfm}
 
@@ -228,7 +233,7 @@ begin
     end;
   4:begin
       lblInput.Caption := '修改单价';
-      lblHint.Caption := '请直接输入单价后按“回车”,赠送当前商品输入0后按回车';
+      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按回车,赠送当前商品输入0后按回车';
     end;
   else
     begin
@@ -289,6 +294,8 @@ begin
       Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       rs.Next;
     end;
+  advFactory.getAdvPngImage(adv01.Name,adv01.Picture);
+  advFactory.getAdvPngImage(adv02.Name,adv02.Picture);
 end;
 
 destructor TfrmOrderForm.Destroy;
@@ -1823,21 +1830,42 @@ procedure TfrmOrderForm.PriceToGods(id: string);
 var
   Field:TField;
   s:string;
+  agio:real;
+  IsAgio:boolean;
 begin
   if dbState = dsBrowse then Exit;
   if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
   s := trim(id);
+  IsAgio := (s[1]='/');
+  delete(s,1,1);
+  s := trim(s);
   try
     StrToFloat(s);
   except
     Raise Exception.Create('输入的单价无效，请正确输入');
   end;
-  if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
-  Field := edtTable.FindField('APRICE');
-  if Field=nil then Exit;
-  edtTable.Edit;
-  Field.AsFloat := StrToFloat(s);
-  PriceToCalc(Field.AsFloat);
+  if IsAgio then
+     if abs(StrToFloat(s))>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确')
+  else
+     if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
+  if not IsAgio then
+     begin
+        Field := edtTable.FindField('APRICE');
+        if Field=nil then Exit;
+        edtTable.Edit;
+        Field.AsFloat := StrToFloat(s);
+        PriceToCalc(Field.AsFloat);
+     end
+  else
+     begin
+        agio :=  StrToFloat(s);
+        if agio<10 then agio := agio * 10;
+        Field := edtTable.FindField('AGIO_RATE');
+        if Field=nil then Exit;
+        edtTable.Edit;
+        Field.AsFloat := agio;
+        AgioToCalc(Field.AsFloat);
+     end;
 end;
 
 procedure TfrmOrderForm.fndGODS_IDSaveValue(Sender: TObject);

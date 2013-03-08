@@ -97,12 +97,13 @@ var
   Form:TfrmWebForm;
 begin
   try
+    if token.tenantId='' then moduId:='TfrmSysDefine';
     pClass := GetClass(strpas(moduId));
     if pClass = nil then Raise Exception.Create(strPas(moduId)+'类名没找到.');
     Form := TFormClass(pClass).Create(application) as TfrmWebForm;
     webForm.AddObject(moduid,Form);
     windows.SetParent(Form.Handle,hWnd);
-    //Form.ParentWindow := hWnd;
+
     Form.hWnd := hWnd;
     Form.showForm;
     result := true;
@@ -122,6 +123,7 @@ function closeApp(moduId:pchar):boolean;stdcall;
 var
   idx:integer;
 begin
+  if token.tenantId='' then moduId:='TfrmSysDefine';
   idx := webForm.IndexOf(moduId);
   if idx>=0 then
      begin

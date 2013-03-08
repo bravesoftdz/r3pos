@@ -8,7 +8,7 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus;
+  ZDataset, ZBase, Math, Menus, pngimage;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -36,7 +36,7 @@ type
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     cdsICGlide: TZQuery;
-    RzLabel5: TRzLabel;
+    lblNo: TRzLabel;
     Label1: TLabel;
     h11: TLabel;
     Label21: TLabel;
@@ -122,7 +122,7 @@ type
     procedure PresentToCalc(Present:integer);override;
     procedure SetinputFlag(const Value: integer);override;
     function  CheckSale_Limit: Boolean;
-    function checkPayment:boolean;
+    function  checkPayment:boolean;
     procedure DoShowPayment;
     procedure Calc; //2011.06.09判断是否限量
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
@@ -133,7 +133,7 @@ type
     function getPaymentTitle(pay:string):string;
 
     //快捷健
-    function doShortCut(s:string):boolean;override;
+    function  doShortCut(s:string):boolean;override;
     procedure DoIsPresent(s:string);
     procedure DoCustId(s:string);
     procedure DoGuideUser(s:string);
@@ -924,7 +924,7 @@ begin
     AObj.FieldbyName('PAY_I').AsFloat+
     AObj.FieldbyName('PAY_J').AsFloat;
   payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
-  salMny := AObj.FieldbyName('SAL_MNY').AsFloat;
+  salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
   if fee<>(TotalFee-payZero) then
     begin
        if MessageBox(Handle,pchar('收款金额与结算金额不相同，剩余未收金额'+formatFloat('#0.00',(TotalFee-payZero) - fee)+'元是否登记欠款?'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
@@ -1058,7 +1058,7 @@ begin
   11:begin
       FInputFlag := value;
       lblInput.Caption := '整单调价';
-      lblHint.Caption := '请直接输入结算金额后按回车健';
+      lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按回车健';
     end;
   end;
 end;
@@ -1205,14 +1205,35 @@ end;
 procedure TfrmSaleOrder.DoPayZero(s:string);
 var
   mny:currency;
+  IsAgio:boolean;
 begin
+  s := trim(s);
+  IsAgio := (s[1]='/');
+  delete(s,1,1);
+  s := trim(s);
   try
     mny := StrtoFloat(s);
   except
-    Raise Exception.create('你输入的金额无效');
+    Raise Exception.create('你输入的数值无效无效');
   end;
-  AObj.FieldbyName('PAY_ZERO').asFloat := totalFee-mny;
-  edtACCT_MNY.Text := formatFloat('#0.00',mny);
+  if IsAgio then
+     if abs(mny)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确')
+  else
+     if abs(mny)>totalfee then Raise Exception.Create('输入的金额过大，请确认是否输入正确');
+  if not IsAgio then
+     begin
+       AObj.FieldbyName('PAY_ZERO').asFloat := totalFee-mny;
+       edtACCT_MNY.Text := formatFloat('#0.00',mny);
+     end
+  else
+     begin
+       AObj.FieldbyName('PAY_ZERO').AsString := formatFloat('#0.00',totalfee-(totalFee*mny/100));
+       edtACCT_MNY.Text := formatFloat('#0.00',totalfee-AObj.FieldbyName('PAY_ZERO').asFloat);
+     end;
+  if TotalFee<>0 then
+     edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-AObj.FieldbyName('PAY_ZERO').asFloat)*100/TotalFee)
+  else
+     edtAGIO_RATE.Text := '';
 end;
 
 procedure TfrmSaleOrder.DoPickUp;
@@ -1365,6 +1386,9 @@ begin
        btnNew.Caption := '清空';
      end;
   end;
+  lblNo.Visible := (Value<>dsInsert);
+  if not cdsHeader.IsEmpty then
+  lblNo.Caption := '单号:'+AObj.FieldbyName('GLIDE_NO').AsString;
 end;
 
 procedure TfrmSaleOrder.OpenList;

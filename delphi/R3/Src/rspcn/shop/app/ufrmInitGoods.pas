@@ -8,7 +8,8 @@ uses
   cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, DB, ZBase,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, cxMaskEdit,
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
-  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons;
+  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
+  RzBckgnd, RzBorder, RzBmpBtn;
 
 type
   TfrmInitGoods = class(TfrmWebDialogForm)
@@ -20,25 +21,17 @@ type
     TabSheet2: TRzTabSheet;
     cdsGoodsInfo: TZQuery;
     cdsGoodsRelation: TZQuery;
-    Label5: TLabel;
     edtBARCODE1: TcxTextEdit;
-    Label11: TLabel;
     edtGODS_CODE: TcxTextEdit;
-    Label3: TLabel;
     edtGODS_NAME: TcxTextEdit;
-    Label30: TLabel;
     edtCALC_UNITS: TzrComboBoxList;
-    Label8: TLabel;
     edtNEW_INPRICE: TcxTextEdit;
-    Label10: TLabel;
     edtNEW_OUTPRICE: TcxTextEdit;
-    lblSORT_ID1: TLabel;
     cdsBarCode: TZQuery;
     TabSheet3: TRzTabSheet;
     edtMoreUnits: TcxCheckBox;
     edtGOODS_OPTION1: TcxRadioButton;
     edtGOODS_OPTION2: TcxRadioButton;
-    lblInput: TLabel;
     edtInput: TcxTextEdit;
     RzPanel7: TRzPanel;
     btnNext: TRzBitBtn;
@@ -48,10 +41,6 @@ type
     edtSORT_ID1: TcxTextEdit;
     RzLabel1: TRzLabel;
     RzLabel2: TRzLabel;
-    RzLabel3: TRzLabel;
-    RzLabel4: TRzLabel;
-    RzLabel5: TRzLabel;
-    RzLabel6: TRzLabel;
     Label9: TLabel;
     Label6: TLabel;
     Label4: TLabel;
@@ -72,6 +61,34 @@ type
     Bevel2: TBevel;
     lblSMALL_NOTE: TLabel;
     lblBIG_NOTE: TLabel;
+    RzPanel4: TRzPanel;
+    lblCaption: TRzLabel;
+    Image1: TImage;
+    RzBackground2: TRzBackground;
+    RzBackground3: TRzBackground;
+    RzBackground1: TRzBackground;
+    RzLabel3: TRzLabel;
+    RzLabel9: TRzLabel;
+    RzLabel4: TRzLabel;
+    RzLabel5: TRzLabel;
+    RzBorder1: TRzBorder;
+    RzPanel9: TRzPanel;
+    RzPanel10: TRzPanel;
+    RzPanel12: TRzPanel;
+    RzPanel14: TRzPanel;
+    RzPanel20: TRzPanel;
+    RzPanel16: TRzPanel;
+    RzPanel17: TRzPanel;
+    RzPanel18: TRzPanel;
+    edtSHOP_NEW_OUTPRICE: TcxTextEdit;
+    RzPanel5: TRzPanel;
+    RzPanel6: TRzPanel;
+    RzLabel6: TRzLabel;
+    RzLabel10: TRzLabel;
+    Timer1: TTimer;
+    RzBmpButton1: TRzBmpButton;
+    RzBorder2: TRzBorder;
+    RzBorder3: TRzBorder;
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
@@ -89,6 +106,8 @@ type
     procedure edtBIG_UNITSSaveValue(Sender: TObject);
     procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Timer1Timer(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
@@ -1322,6 +1341,18 @@ procedure TfrmInitGoods.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Dialog and (Key=#27) then Close;
+end;
+
+procedure TfrmInitGoods.Timer1Timer(Sender: TObject);
+begin
+  inherited;
+  if edtGOODS_OPTION1.Checked and edtInput.CanFocus then edtInput.SetFocus; 
+end;
+
+procedure TfrmInitGoods.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  Close;
 end;
 
 initialization

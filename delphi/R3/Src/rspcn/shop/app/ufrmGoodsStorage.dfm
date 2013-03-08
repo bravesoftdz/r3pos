@@ -57,6 +57,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TextShadowDepth = 4
             TabOrder = 0
             TabStop = False
+            OnClick = RzBitBtn1Click
             Layout = blGlyphTop
             NumGlyphs = 2
             Spacing = 5

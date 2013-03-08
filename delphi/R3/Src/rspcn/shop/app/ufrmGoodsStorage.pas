@@ -103,6 +103,7 @@ type
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure btnAMOUNTClick(Sender: TObject);
     procedure RzToolButton1Click(Sender: TObject);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -133,7 +134,7 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory;
+uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmInitGoods;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -821,6 +822,12 @@ procedure TfrmGoodsStorage.RzToolButton1Click(Sender: TObject);
 begin
   inherited;
   DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
+end;
+
+procedure TfrmGoodsStorage.RzBitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  TfrmInitGoods.ShowDialog(self,'',true);
 end;
 
 initialization

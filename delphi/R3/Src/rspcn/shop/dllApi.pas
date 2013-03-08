@@ -34,8 +34,12 @@ function resize:boolean;stdcall;
 
 type
   TdllApplication=class
+  private
+    Fhandle: THandle;
+    procedure Sethandle(const Value: THandle);
   public
     procedure dllException(Sender: TObject; E: Exception);
+    property handle:THandle read Fhandle write Sethandle;
   end;
 var
   lastError:string;
@@ -76,8 +80,9 @@ begin
   DllProcEX := @DLLEntryPoint;
   webForm := TStringList.Create;
   oldHandle := Application.Handle;
+  dllApplication.handle := appWnd;
   Application.OnException := dllApplication.dllException;
-//  Application.Handle := appWnd;
+  Application.Handle := appWnd;
   token.decode(strpas(_token));
   dbHelp:= _dbHelp;
   rspFactory := TrspFactory.Create(nil);
@@ -137,7 +142,7 @@ begin
   webForm.Free;
   dbHelp := nil;
   Application.OnException := nil;
-//  Application.Handle := oldHandle;
+  Application.Handle := oldHandle;
 end;
 //5.读取错误说明
 function getLastError:pchar;stdcall;
@@ -177,6 +182,11 @@ begin
   else
      wnd := Application.Handle;
   MessageBox(wnd,pchar(E.Message),'出错了',MB_OK+MB_ICONERROR);
+end;
+
+procedure TdllApplication.Sethandle(const Value: THandle);
+begin
+  Fhandle := Value;
 end;
 
 initialization

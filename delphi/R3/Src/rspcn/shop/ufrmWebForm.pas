@@ -19,6 +19,9 @@ type
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
     procedure ajustPostion;virtual;
     procedure showForm;virtual;
     property hWnd:THandle read FhWnd write SethWnd;
@@ -26,7 +29,7 @@ type
   end;
   
 implementation
-
+uses dllApi;
 {$R *.dfm}
 
 { TForm1 }
@@ -93,6 +96,18 @@ end;
 procedure TfrmWebForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := cafree;
+end;
+
+constructor TfrmWebForm.Create(AOwner: TComponent);
+begin
+  inherited;
+  setWindowLong(handle,GWL_EXSTYLE,WS_EX_TOOLWINDOW);
+end;
+
+destructor TfrmWebForm.Destroy;
+begin
+
+  inherited;
 end;
 
 end.

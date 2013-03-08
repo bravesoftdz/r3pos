@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, RzPanel, ZBase;
+  Dialogs, ExtCtrls, RzPanel, ZBase, dllApi;
 
 type
   TfrmDropForm = class(TForm)
@@ -17,6 +17,9 @@ type
     SaveObj:TRecord_;
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+
     function showForm:boolean;virtual;
     function DropForm(control:TWinControl;var AObj:TRecord_):boolean;virtual;
     function Filter(s:string):boolean;virtual;
@@ -111,6 +114,19 @@ end;
 procedure TfrmDropForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key=#27 then Close;
+end;
+
+constructor TfrmDropForm.Create(AOwner: TComponent);
+begin
+  inherited;
+  setWindowLong(handle,GWL_EXSTYLE,WS_EX_TOOLWINDOW);
+
+end;
+
+destructor TfrmDropForm.Destroy;
+begin
+
+  inherited;
 end;
 
 end.

@@ -9,7 +9,7 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, cxMaskEdit,
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
-  RzBckgnd, RzBorder, RzBmpBtn;
+  RzBckgnd, RzBorder, RzBmpBtn, Math;
 
 type
   TfrmInitGoods = class(TfrmWebDialogForm)
@@ -41,16 +41,10 @@ type
     edtSORT_ID1: TcxTextEdit;
     RzLabel1: TRzLabel;
     RzLabel2: TRzLabel;
-    Label9: TLabel;
-    Label6: TLabel;
-    Label4: TLabel;
     edtSMALLTO_CALC: TcxTextEdit;
     edtSMALL_UNITS: TzrComboBoxList;
     edtDefault1: TcxCheckBox;
     edtBARCODE2: TcxTextEdit;
-    Label16: TLabel;
-    Label14: TLabel;
-    Label12: TLabel;
     edtDefault2: TcxCheckBox;
     edtBIGTO_CALC: TcxTextEdit;
     edtBIG_UNITS: TzrComboBoxList;
@@ -59,8 +53,6 @@ type
     RzLabel8: TRzLabel;
     Bevel1: TBevel;
     Bevel2: TBevel;
-    lblSMALL_NOTE: TLabel;
-    lblBIG_NOTE: TLabel;
     RzPanel4: TRzPanel;
     lblCaption: TRzLabel;
     Image1: TImage;
@@ -76,7 +68,6 @@ type
     RzPanel10: TRzPanel;
     RzPanel12: TRzPanel;
     RzPanel14: TRzPanel;
-    RzPanel20: TRzPanel;
     RzPanel16: TRzPanel;
     RzPanel17: TRzPanel;
     RzPanel18: TRzPanel;
@@ -86,9 +77,21 @@ type
     RzLabel6: TRzLabel;
     RzLabel10: TRzLabel;
     Timer1: TTimer;
-    RzBmpButton1: TRzBmpButton;
+    btnClose: TRzBmpButton;
     RzBorder2: TRzBorder;
     RzBorder3: TRzBorder;
+    RzPanel8: TRzPanel;
+    RzPanel11: TRzPanel;
+    RzPanel13: TRzPanel;
+    RzPanel15: TRzPanel;
+    RzPanel19: TRzPanel;
+    RzPanel20: TRzPanel;
+    RzPanel21: TRzPanel;
+    cdsGoodsPrice: TZQuery;
+    RzPanel22: TRzPanel;
+    RzPanel23: TRzPanel;
+    RzPanel24: TRzPanel;
+    RzPanel25: TRzPanel;
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
@@ -107,7 +110,10 @@ type
     procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Timer1Timer(Sender: TObject);
-    procedure RzBmpButton1Click(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure edtCALC_UNITSSaveValue(Sender: TObject);
+    procedure RzPanel5Click(Sender: TObject);
+    procedure RzPanel6Click(Sender: TObject);
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
@@ -196,6 +202,7 @@ begin
     begin
       Finded := false;
       edtSORT_ID.Text := '';
+      edtSHOP_NEW_OUTPRICE.Text := '';
       edtDefault1.Checked := false;
       edtDefault2.Checked := false;
       if edtGOODS_OPTION1.Checked then
@@ -204,12 +211,12 @@ begin
           edtBARCODE1.Text := '';
           edtBARCODE2.Text := '';
           edtBARCODE3.Text := '';
-          edtBARCODE1.Visible := true;
-          edtBARCODE2.Visible := true;
-          edtBARCODE3.Visible := true;
-          Label5.Visible := true;
-          Label9.Visible := true;
-          Label16.Visible := true;
+          edtBARCODE1.Properties.ReadOnly := false;
+          edtBARCODE2.Properties.ReadOnly := false;
+          edtBARCODE3.Properties.ReadOnly := false;
+          SetEditStyle(dsInsert, edtBARCODE1.Style);
+          SetEditStyle(dsInsert, edtBARCODE2.Style);
+          SetEditStyle(dsInsert, edtBARCODE3.Style);
         end
       else
         begin
@@ -217,12 +224,12 @@ begin
           edtBARCODE1.Text := '自编条码...';
           edtBARCODE2.Text := '自编条码...';
           edtBARCODE3.Text := '自编条码...';
-          edtBARCODE1.Visible := false;
-          edtBARCODE2.Visible := false;
-          edtBARCODE3.Visible := false;
-          Label5.Visible := false;
-          Label9.Visible := false;
-          Label16.Visible := false;
+          edtBARCODE1.Properties.ReadOnly := true;
+          edtBARCODE2.Properties.ReadOnly := true;
+          edtBARCODE3.Properties.ReadOnly := true;
+          SetEditStyle(dsBrowse, edtBARCODE1.Style);
+          SetEditStyle(dsBrowse, edtBARCODE2.Style);
+          SetEditStyle(dsBrowse, edtBARCODE3.Style);
         end;
       ReadFromObject;
       rzPage.ActivePageIndex := 1;
@@ -245,7 +252,7 @@ begin
           WriteToObject;
           if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
           Save;
-          if not Simple then ShowMessage('商品添加成功...');
+          if not Simple then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
           rzPage.ActivePageIndex := 0;
           btnPrev.Visible := False;
           btnNext.Visible := True;
@@ -258,7 +265,7 @@ begin
       WriteToObject;
       if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
       Save;
-      if not Simple then ShowMessage('商品添加成功...');
+      if not Simple then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
       rzPage.ActivePageIndex := 0;
       btnPrev.Visible := False;
       btnNext.Visible := True;
@@ -606,22 +613,30 @@ begin
       if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
       Raise Exception.Create('标准售价不能为空！');
     end;
+  if trim(edtSHOP_NEW_OUTPRICE.Text)='' then
+    begin
+      if edtSHOP_NEW_OUTPRICE.CanFocus then edtSHOP_NEW_OUTPRICE.SetFocus;
+      Raise Exception.Create('店内售价不能为空！');
+    end;
 
   CheckGodsMaxPrice(edtNEW_INPRICE,'标准进价');
   CheckGodsMaxPrice(edtNEW_OUTPRICE,'标准售价');
+  CheckGodsMaxPrice(edtSHOP_NEW_OUTPRICE,'店内售价');
 
   if StrToFloatDef(trim(edtNEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
     begin
       if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
       Raise Exception.Create('标准售价不能小于标准进价！');
     end;
+  if StrToFloatDef(trim(edtSHOP_NEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
+    begin
+      if edtSHOP_NEW_OUTPRICE.CanFocus then edtSHOP_NEW_OUTPRICE.SetFocus;
+      Raise Exception.Create('店内售价不能小于标准进价！');
+    end;
 end;
 
 procedure TfrmInitGoods.CheckInput2;
 begin
-  if trim(edtSMALL_UNITS.Text)='' then edtSMALL_UNITS.KeyValue := null;
-  if trim(edtBIG_UNITS.Text)='' then edtBIG_UNITS.KeyValue := null;
-
   if edtGOODS_OPTION1.Checked then //无条码商品不检测条形码
     begin
       if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBARCODE2.Text)='') then
@@ -716,12 +731,14 @@ begin
     begin
       if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
         edtBARCODE2.Text := cdsBarCode.FieldByName('BARCODE').AsString;
-    end;
+    end
+  else edtSMALLTO_CALC.Text := '';
   if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
     begin
       if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
         edtBARCODE3.Text := cdsBarCode.FieldByName('BARCODE').AsString;
-    end;
+    end
+  else edtBIGTO_CALC.Text := '';
 
   if (cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '') and
      (cdsGoodsInfo.FieldByName('UNIT_ID').AsString = cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString) then
@@ -733,6 +750,7 @@ begin
 
   if Finded then
     begin
+      edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
       SetReadOnly;
       // 非烟供应链允许修改商品分类
       if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID then
@@ -770,6 +788,37 @@ begin
       edtSORT_ID1.Properties.ReadOnly := false;
       SetEditStyle(dsInsert, edtSORT_ID.Style);
     end;
+
+  if edtGOODS_OPTION1.Checked then
+    begin
+      if not Finded then
+        begin
+          edtBARCODE1.Properties.ReadOnly := false;
+          edtBARCODE2.Properties.ReadOnly := false;
+          edtBARCODE3.Properties.ReadOnly := false;
+          SetEditStyle(dsInsert, edtBARCODE1.Style);
+          SetEditStyle(dsInsert, edtBARCODE2.Style);
+          SetEditStyle(dsInsert, edtBARCODE3.Style);
+        end
+      else
+        begin
+          edtBARCODE1.Properties.ReadOnly := true;
+          edtBARCODE2.Properties.ReadOnly := true;
+          edtBARCODE3.Properties.ReadOnly := true;
+          SetEditStyle(dsBrowse, edtBARCODE1.Style);
+          SetEditStyle(dsBrowse, edtBARCODE2.Style);
+          SetEditStyle(dsBrowse, edtBARCODE3.Style);
+        end
+    end
+  else
+    begin
+      edtBARCODE1.Properties.ReadOnly := true;
+      edtBARCODE2.Properties.ReadOnly := true;
+      edtBARCODE3.Properties.ReadOnly := true;
+      SetEditStyle(dsBrowse, edtBARCODE1.Style);
+      SetEditStyle(dsBrowse, edtBARCODE2.Style);
+      SetEditStyle(dsBrowse, edtBARCODE3.Style);
+    end;
 end;
 
 procedure TfrmInitGoods.WriteToObject;
@@ -779,6 +828,9 @@ begin
       edtSMALL_UNITS.KeyValue := null;
       edtBIG_UNITS.KeyValue := null;
     end;
+
+  if edtSMALL_UNITS.AsString = '' then edtSMALL_UNITS.KeyValue := null;
+  if edtBIG_UNITS.AsString  = '' then edtBIG_UNITS.KeyValue := null;
 
   udllShopUtil.WriteToObject(AObj,self);
   AObj.FieldByName('BARCODE').AsString := edtBARCODE1.Text;
@@ -959,16 +1011,65 @@ end;
 
 procedure TfrmInitGoods.Save;
 var
-  tmpGoodsInfo,tmpBarCode,tmpGoodsRelation: TZQuery;
+  tmpGoodsInfo,tmpBarCode,tmpGoodsRelation,tmpGoodsPrice: TZQuery;
   Params: TftParamList;
   tmpObj: TRecord_;
+  isPrice: boolean;
+  isDel: boolean;
 begin
+  isPrice := false;
+  if trim(edtSHOP_NEW_OUTPRICE.Text) <> trim(edtNEW_OUTPRICE.Text) then
+    begin
+      isPrice := true;
+      Params := TftParamList.Create(nil);
+      cdsGoodsPrice.Close;
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+        Params.ParamByName('SHOP_ID').AsString := token.shopId;
+        Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+        Params.ParamByName('PRICE_ID').AsString := '#';
+        dataFactory.Open(cdsGoodsPrice,'TGoodsPriceV60',Params);
+      finally
+        Params.Free;
+      end;
+
+      if FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))=0 then
+        begin
+          isDel := false;
+          if cdsGoodsPrice.Locate('SHOP_ID',token.tenantId+'0001',[]) and
+             (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat)=0)
+          then
+            isDel := true;
+          if cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) and (cdsGoodsPrice.RecordCount=1) then
+            isDel := true;
+          if IsDel and cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then cdsGoodsPrice.Delete;
+        end;
+      if not isDel then
+        begin
+          if cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then
+            cdsGoodsPrice.Edit
+          else
+            cdsGoodsPrice.Append;
+          cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+          cdsGoodsPrice.FieldByName('PRICE_ID').AsString := '#';
+          cdsGoodsPrice.FieldByName('SHOP_ID').AsString := token.shopId;
+          cdsGoodsPrice.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldbyName('GODS_ID').AsString;
+          cdsGoodsPrice.FieldByName('PRICE_METHOD').AsString := '1';
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat;
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat;
+          cdsGoodsPrice.Post;
+        end;
+    end;
+
   dataFactory.BeginBatch;
   try
     dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
     dataFactory.AddBatch(cdsBarCode,'TBarCodeV60',nil);
     if edtGOODS_OPTION1.Checked then //供应链商品
       dataFactory.AddBatch(cdsGoodsRelation,'TGoodsRelationV60',nil);
+    if isPrice then
+      dataFactory.AddBatch(cdsGoodsPrice,'TGoodsPriceV60',nil);
     dataFactory.CommitBatch;
   except
     dataFactory.CancelBatch;
@@ -979,11 +1080,12 @@ begin
   edtInput.Text := '';
 
   // 本地保存
-  if dataFactory.iDbType <> 5 then
-    begin
+//  if dataFactory.iDbType <> 5 then
+//    begin
       tmpGoodsInfo := TZQuery.Create(nil);
       tmpBarCode := TZQuery.Create(nil);
       tmpGoodsRelation := TZQuery.Create(nil);
+      tmpGoodsPrice := TZQuery.Create(nil);
       dataFactory.MoveToSqlite;
       try
         Params := TftParamList.Create(nil);
@@ -1016,6 +1118,21 @@ begin
         finally
           Params.Free;
         end;
+
+        if isPrice then
+          begin
+            Params := TftParamList.Create(nil);
+            tmpGoodsPrice.Close;
+            try
+              Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+              Params.ParamByName('SHOP_ID').AsString := cdsGoodsPrice.FieldByName('SHOP_ID').AsString;
+              Params.ParamByName('GODS_ID').AsString := cdsGoodsPrice.FieldByName('GODS_ID').AsString;
+              Params.ParamByName('PRICE_ID').AsString := cdsGoodsPrice.FieldByName('PRICE_ID').AsString;
+              dataFactory.Open(tmpGoodsPrice,'TGoodsPriceV60',Params);
+            finally
+              Params.Free;
+            end;
+          end;
 
         tmpObj := TRecord_.Create;
         try
@@ -1087,12 +1204,37 @@ begin
           tmpObj.Free;
         end;
 
+        if isPrice then
+          begin
+            tmpObj := TRecord_.Create;
+            try
+              if cdsGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+                begin
+                  if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+                    tmpGoodsPrice.Edit
+                  else
+                    tmpGoodsPrice.Append;
+                  tmpObj.ReadFromDataSet(cdsGoodsPrice);
+                  tmpObj.WriteToDataSet(tmpGoodsPrice, false);
+                end
+              else
+                begin
+                  if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+                    tmpGoodsPrice.Delete;
+                end;
+            finally
+              tmpObj.Free;
+            end;
+          end;
+
         if tmpGoodsInfo.State in [dsEdit,dsInsert] then
           tmpGoodsInfo.Post;
         if tmpBarCode.State in [dsEdit,dsInsert] then
           tmpBarCode.Post;
         if tmpGoodsRelation.State in [dsEdit,dsInsert] then
           tmpGoodsRelation.Post;
+        if isPrice and (tmpGoodsPrice.State in [dsEdit,dsInsert]) then
+          tmpGoodsPrice.Post;
 
         dataFactory.BeginBatch;
         try
@@ -1100,6 +1242,8 @@ begin
           dataFactory.AddBatch(tmpBarCode,'TBarCodeV60',nil);
           if edtGOODS_OPTION1.Checked then //供应链商品
             dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',nil);
+          if isPrice then
+            dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',nil);
           dataFactory.CommitBatch;
         except
           dataFactory.CancelBatch;
@@ -1110,8 +1254,9 @@ begin
         tmpGoodsInfo.Free;
         tmpBarCode.Free;
         tmpGoodsRelation.Free;
+        tmpGoodsPrice.Free;
       end;
-    end;
+//    end;
   dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
@@ -1144,16 +1289,12 @@ procedure TfrmInitGoods.edtGOODS_OPTION1Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION2.Checked := false;
-  lblInput.Visible := true;
-  edtInput.Visible := true;
 end;
 
 procedure TfrmInitGoods.edtGOODS_OPTION2Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION1.Checked := false;
-  lblInput.Visible := false;
-  edtInput.Visible := false;
 end;
 
 procedure TfrmInitGoods.edtDefault1Click(Sender: TObject);
@@ -1179,49 +1320,37 @@ end;
 
 procedure TfrmInitGoods.SetReadOnly;
 begin
-  edtBARCODE1.Properties.ReadOnly := true;
   edtCALC_UNITS.Properties.ReadOnly := true;
   edtSMALL_UNITS.Properties.ReadOnly := true;
-  edtBARCODE2.Properties.ReadOnly := true;
   edtSMALLTO_CALC.Properties.ReadOnly := true;
-  edtDEFAULT1.Properties.ReadOnly := true;
   edtBIG_UNITS.Properties.ReadOnly := true;
-  edtBARCODE3.Properties.ReadOnly := true;
   edtBIGTO_CALC.Properties.ReadOnly := true;
+  edtDEFAULT1.Properties.ReadOnly := true;
   edtDEFAULT2.Properties.ReadOnly := true;
   edtMoreUnits.Properties.ReadOnly := true;
 
-  SetEditStyle(dsBrowse, edtBARCODE1.Style);
   SetEditStyle(dsBrowse, edtCALC_UNITS.Style);
   SetEditStyle(dsBrowse, edtSMALL_UNITS.Style);
-  SetEditStyle(dsBrowse, edtBARCODE2.Style);
   SetEditStyle(dsBrowse, edtSMALLTO_CALC.Style);
   SetEditStyle(dsBrowse, edtBIG_UNITS.Style);
-  SetEditStyle(dsBrowse, edtBARCODE3.Style);
   SetEditStyle(dsBrowse, edtBIGTO_CALC.Style);
 end;
 
 procedure TfrmInitGoods.CancelReadOnly;
 begin
-  edtBARCODE1.Properties.ReadOnly := false;
   edtCALC_UNITS.Properties.ReadOnly := false;
   edtSMALL_UNITS.Properties.ReadOnly := false;
-  edtBARCODE2.Properties.ReadOnly := false;
   edtSMALLTO_CALC.Properties.ReadOnly := false;
-  edtDEFAULT1.Properties.ReadOnly := false;
   edtBIG_UNITS.Properties.ReadOnly := false;
-  edtBARCODE3.Properties.ReadOnly := false;
   edtBIGTO_CALC.Properties.ReadOnly := false;
+  edtDEFAULT1.Properties.ReadOnly := false;
   edtDEFAULT2.Properties.ReadOnly := false;
   edtMoreUnits.Properties.ReadOnly := false;
-  
-  SetEditStyle(dsInsert, edtBARCODE1.Style);
+ 
   SetEditStyle(dsInsert, edtCALC_UNITS.Style);
   SetEditStyle(dsInsert, edtSMALL_UNITS.Style);
-  SetEditStyle(dsInsert, edtBARCODE2.Style);
   SetEditStyle(dsInsert, edtSMALLTO_CALC.Style);
   SetEditStyle(dsInsert, edtBIG_UNITS.Style);
-  SetEditStyle(dsInsert, edtBARCODE3.Style);
   SetEditStyle(dsInsert, edtBIGTO_CALC.Style);
 end;
 
@@ -1282,6 +1411,22 @@ begin
     lblSMALL_NOTE.Visible := false;
 end;
 
+procedure TfrmInitGoods.edtBIG_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtBIG_UNITS.AsString = '' then
+    lblBIG_NOTE.Visible := false;
+end;
+
+procedure TfrmInitGoods.edtCALC_UNITSSaveValue(Sender: TObject);
+begin
+  inherited;
+  if lblSMALL_NOTE.Visible and (edtSMALL_UNITS.AsString <> '') then
+    lblSMALL_NOTE.Caption := '一'+edtSMALL_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
+  if lblBIG_NOTE.Visible and (edtBIG_UNITS.AsString <> '') then
+    lblBIG_NOTE.Caption := '一'+edtBIG_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
+end;
+
 procedure TfrmInitGoods.edtSMALL_UNITSSaveValue(Sender: TObject);
 begin
   inherited;
@@ -1306,16 +1451,10 @@ begin
     end;
 end;
 
-procedure TfrmInitGoods.edtBIG_UNITSPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if edtBIG_UNITS.AsString = '' then
-    lblBIG_NOTE.Visible := false;
-end;
-
 procedure TfrmInitGoods.SetDialogForm;
 begin
   Dialog := true;
+  btnClose.Visible := true;
   self.Height := RzPanel1.Height;
   self.Width := RzPanel1.Width;
   RzPanel1.Left := 0;
@@ -1332,7 +1471,7 @@ begin
         if BarCodeSimpleInit(barcode) then
           begin
             if autoClose then Free
-            else ShowMessage('商品添加成功...');
+            else MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
           end;
     end;
 end;
@@ -1349,10 +1488,22 @@ begin
   if edtGOODS_OPTION1.Checked and edtInput.CanFocus then edtInput.SetFocus; 
 end;
 
-procedure TfrmInitGoods.RzBmpButton1Click(Sender: TObject);
+procedure TfrmInitGoods.btnCloseClick(Sender: TObject);
 begin
   inherited;
   Close;
+end;
+
+procedure TfrmInitGoods.RzPanel5Click(Sender: TObject);
+begin
+  inherited;
+  edtGOODS_OPTION1.Checked := true;
+end;
+
+procedure TfrmInitGoods.RzPanel6Click(Sender: TObject);
+begin
+  inherited;
+  edtGOODS_OPTION2.Checked := true;
 end;
 
 initialization

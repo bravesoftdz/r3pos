@@ -1,21 +1,21 @@
 inherited frmInitGoods: TfrmInitGoods
-  Left = 196
-  Top = 136
+  Left = 127
+  Top = 120
   Caption = #21830#21697#21021#22987#21270#21521#23548
-  ClientHeight = 551
-  ClientWidth = 978
+  ClientHeight = 567
+  ClientWidth = 1047
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 978
-    Height = 551
+    Width = 1047
+    Height = 567
     inherited webForm: TRzPanel
-      Width = 978
-      Height = 551
+      Width = 1047
+      Height = 567
       inherited bkgImage: TImage
-        Width = 978
-        Height = 551
+        Width = 1047
+        Height = 567
       end
       object RzPanel1: TRzPanel
         Left = 88
@@ -154,6 +154,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Color = 16185078
                 FlatColor = clMenuHighlight
                 TabOrder = 3
+                OnClick = RzPanel5Click
               end
               object edtGOODS_OPTION2: TcxRadioButton
                 Left = 56
@@ -186,10 +187,11 @@ inherited frmInitGoods: TfrmInitGoods
                 Width = 173
                 Height = 21
                 BorderOuter = fsFlatRounded
-                Caption = #28155#21152#26377#21830#21697#27809#26377#26465#22411#30721
+                Caption = #28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
                 Color = 16185078
                 FlatColor = clMenuHighlight
                 TabOrder = 4
+                OnClick = RzPanel6Click
               end
             end
             object TabSheet2: TRzTabSheet
@@ -246,7 +248,7 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object RzPanel17: TRzPanel
                 Left = 25
-                Top = 233
+                Top = 250
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
@@ -257,7 +259,7 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object RzPanel16: TRzPanel
                 Left = 25
-                Top = 201
+                Top = 220
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
@@ -268,50 +270,41 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object RzPanel14: TRzPanel
                 Left = 25
-                Top = 170
+                Top = 190
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
                 Caption = #35745#37327#21333#20301
                 Color = 16185078
                 FlatColor = clMenuHighlight
-                TabOrder = 12
+                TabOrder = 13
               end
               object RzPanel10: TRzPanel
                 Left = 25
-                Top = 108
+                Top = 130
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
                 Caption = #21830#21697#21517#31216
                 Color = 16185078
                 FlatColor = clMenuHighlight
-                TabOrder = 10
+                TabOrder = 11
               end
               object RzPanel9: TRzPanel
                 Left = 25
-                Top = 76
+                Top = 100
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
                 Caption = #21830#21697#36135#21495
                 Color = 16185078
                 FlatColor = clMenuHighlight
-                TabOrder = 9
-              end
-              object edtBARCODE1: TcxTextEdit
-                Left = 261
-                Top = 75
-                Width = 116
-                Height = 23
-                Properties.MaxLength = 30
-                TabOrder = 0
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                TabOrder = 10
               end
               object edtGODS_CODE: TcxTextEdit
                 Left = 121
-                Top = 75
-                Width = 115
+                Top = 99
+                Width = 116
                 Height = 23
                 Properties.MaxLength = 20
                 TabOrder = 1
@@ -319,7 +312,7 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object edtGODS_NAME: TcxTextEdit
                 Left = 121
-                Top = 107
+                Top = 129
                 Width = 208
                 Height = 23
                 Properties.MaxLength = 50
@@ -328,8 +321,8 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object edtCALC_UNITS: TzrComboBoxList
                 Left = 121
-                Top = 169
-                Width = 116
+                Top = 189
+                Width = 60
                 Height = 23
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -337,7 +330,7 @@ inherited frmInitGoods: TfrmInitGoods
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -367,72 +360,62 @@ inherited frmInitGoods: TfrmInitGoods
                 LocateStyle = lsDark
                 Buttons = []
                 DropListStyle = lsFixed
+                OnSaveValue = edtCALC_UNITSSaveValue
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
               object edtNEW_INPRICE: TcxTextEdit
                 Left = 121
-                Top = 200
-                Width = 116
-                Height = 23
-                TabOrder = 4
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object edtNEW_OUTPRICE: TcxTextEdit
-                Left = 121
-                Top = 232
+                Top = 219
                 Width = 116
                 Height = 23
                 TabOrder = 5
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
+              object edtNEW_OUTPRICE: TcxTextEdit
+                Left = 121
+                Top = 249
+                Width = 116
+                Height = 23
+                TabOrder = 6
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
               object edtMoreUnits: TcxCheckBox
-                Left = 185
-                Top = 138
+                Left = 189
+                Top = 189
                 Width = 136
                 Height = 23
                 Properties.DisplayUnchecked = 'False'
                 Properties.OnChange = edtMoreUnitsPropertiesChange
                 Properties.Caption = #21551#29992#21253#35013#21333#20301
-                TabOrder = 6
+                TabOrder = 8
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object edtSORT_ID1: TcxTextEdit
-                Left = 277
-                Top = 184
+                Left = 270
+                Top = 99
                 Width = 116
                 Height = 23
                 Properties.MaxLength = 30
-                TabOrder = 8
+                TabOrder = 9
                 Visible = False
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object RzPanel12: TRzPanel
                 Left = 25
-                Top = 139
+                Top = 160
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
                 Caption = #21830#21697#31867#21035
                 Color = 16185078
                 FlatColor = clMenuHighlight
-                TabOrder = 11
-              end
-              object RzPanel20: TRzPanel
-                Left = 280
-                Top = 225
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #26465' '#22411' '#30721
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 13
+                TabOrder = 12
               end
               object edtSORT_ID: TcxButtonEdit
                 Left = 121
-                Top = 138
-                Width = 56
+                Top = 159
+                Width = 116
                 Height = 23
                 Properties.Buttons = <
                   item
@@ -443,11 +426,11 @@ inherited frmInitGoods: TfrmInitGoods
                 Style.BorderStyle = ebsUltraFlat
                 Style.Edges = [bLeft, bTop, bRight, bBottom]
                 Style.ButtonStyle = btsUltraFlat
-                TabOrder = 7
+                TabOrder = 3
               end
               object RzPanel18: TRzPanel
                 Left = 25
-                Top = 264
+                Top = 280
                 Width = 99
                 Height = 21
                 BorderOuter = fsFlatRounded
@@ -458,10 +441,30 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object edtSHOP_NEW_OUTPRICE: TcxTextEdit
                 Left = 121
-                Top = 263
+                Top = 279
                 Width = 116
                 Height = 23
+                TabOrder = 7
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object RzPanel8: TRzPanel
+                Left = 25
+                Top = 70
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #26465' '#24418' '#30721
+                Color = 16185078
+                FlatColor = clMenuHighlight
                 TabOrder = 17
+              end
+              object edtBARCODE1: TcxTextEdit
+                Left = 121
+                Top = 69
+                Width = 116
+                Height = 23
+                Properties.MaxLength = 30
+                TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
             end
@@ -489,90 +492,6 @@ inherited frmInitGoods: TfrmInitGoods
                 ShowImage = False
                 ShowTexture = False
               end
-              object Label9: TLabel
-                Left = 38
-                Top = 142
-                Width = 60
-                Height = 15
-                Alignment = taRightJustify
-                Caption = #21253#35013#26465#30721
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label6: TLabel
-                Left = 38
-                Top = 172
-                Width = 60
-                Height = 15
-                Alignment = taRightJustify
-                Caption = #25442#31639#31995#25968
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label4: TLabel
-                Left = 38
-                Top = 112
-                Width = 60
-                Height = 15
-                Alignment = taRightJustify
-                Caption = #21253#35013#21333#20301
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label16: TLabel
-                Left = 54
-                Top = 243
-                Width = 60
-                Height = 15
-                Alignment = taRightJustify
-                Caption = #21253#35013#26465#30721
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label14: TLabel
-                Left = 54
-                Top = 273
-                Width = 60
-                Height = 15
-                Alignment = taRightJustify
-                Caption = #25442#31639#31995#25968
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object Label12: TLabel
-                Left = 54
-                Top = 213
-                Width = 60
-                Height = 15
-                Alignment = taRightJustify
-                Caption = #21253#35013#21333#20301
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
               object RzLabel7: TRzLabel
                 Left = 25
                 Top = 74
@@ -582,7 +501,7 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object RzLabel8: TRzLabel
                 Left = 25
-                Top = 199
+                Top = 190
                 Width = 45
                 Height = 15
                 Caption = #22823#21253#35013
@@ -596,38 +515,10 @@ inherited frmInitGoods: TfrmInitGoods
               end
               object Bevel2: TBevel
                 Left = 75
-                Top = 205
+                Top = 196
                 Width = 300
                 Height = 2
                 Shape = bsTopLine
-              end
-              object lblSMALL_NOTE: TLabel
-                Left = 229
-                Top = 172
-                Width = 60
-                Height = 15
-                Caption = #31995#25968#25552#31034
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Visible = False
-              end
-              object lblBIG_NOTE: TLabel
-                Left = 244
-                Top = 273
-                Width = 60
-                Height = 15
-                Caption = #31995#25968#25552#31034
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Visible = False
               end
               object RzLabel4: TRzLabel
                 Left = 111
@@ -657,17 +548,97 @@ inherited frmInitGoods: TfrmInitGoods
                 ParentFont = False
                 Transparent = True
               end
-              object edtSMALLTO_CALC: TcxTextEdit
-                Left = 106
-                Top = 167
-                Width = 116
+              object edtDefault1: TcxCheckBox
+                Left = 205
+                Top = 100
+                Width = 121
                 Height = 23
-                TabOrder = 0
+                Properties.DisplayUnchecked = 'False'
+                Properties.Caption = #35774#20026#31649#29702#21333#20301
+                TabOrder = 6
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnClick = edtDefault1Click
+              end
+              object edtDefault2: TcxCheckBox
+                Left = 205
+                Top = 216
+                Width = 121
+                Height = 23
+                Properties.DisplayUnchecked = 'False'
+                Properties.Caption = #35774#20026#31649#29702#21333#20301
+                TabOrder = 8
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnClick = edtDefault2Click
+              end
+              object RzPanel11: TRzPanel
+                Left = 30
+                Top = 100
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #21253#35013#21333#20301
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 7
+              end
+              object RzPanel13: TRzPanel
+                Left = 30
+                Top = 160
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #21253#35013#31995#25968
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 9
+              end
+              object RzPanel15: TRzPanel
+                Left = 30
+                Top = 246
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #21253#35013#26465#30721
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 10
+              end
+              object RzPanel19: TRzPanel
+                Left = 30
+                Top = 216
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #21253#35013#21333#20301
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 11
+              end
+              object RzPanel20: TRzPanel
+                Left = 30
+                Top = 130
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #21253#35013#26465#30721
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 12
+              end
+              object RzPanel21: TRzPanel
+                Left = 30
+                Top = 276
+                Width = 99
+                Height = 21
+                BorderOuter = fsFlatRounded
+                Caption = #21253#35013#31995#25968
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 13
               end
               object edtSMALL_UNITS: TzrComboBoxList
-                Left = 106
-                Top = 107
+                Left = 126
+                Top = 99
                 Width = 70
                 Height = 23
                 Properties.AutoSelect = False
@@ -677,7 +648,7 @@ inherited frmInitGoods: TfrmInitGoods
                   end>
                 Properties.ReadOnly = False
                 Properties.OnChange = edtSMALL_UNITSPropertiesChange
-                TabOrder = 1
+                TabOrder = 0
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -711,48 +682,18 @@ inherited frmInitGoods: TfrmInitGoods
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
-              object edtDefault1: TcxCheckBox
-                Left = 184
-                Top = 107
-                Width = 121
-                Height = 23
-                Properties.DisplayUnchecked = 'False'
-                Properties.Caption = #35774#20026#31649#29702#21333#20301
-                TabOrder = 2
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                OnClick = edtDefault1Click
-              end
               object edtBARCODE2: TcxTextEdit
-                Left = 106
-                Top = 137
+                Left = 126
+                Top = 129
                 Width = 116
                 Height = 23
                 Properties.MaxLength = 30
-                TabOrder = 3
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object edtDefault2: TcxCheckBox
-                Left = 200
-                Top = 208
-                Width = 121
-                Height = 23
-                Properties.DisplayUnchecked = 'False'
-                Properties.Caption = #35774#20026#31649#29702#21333#20301
-                TabOrder = 4
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                OnClick = edtDefault2Click
-              end
-              object edtBIGTO_CALC: TcxTextEdit
-                Left = 122
-                Top = 268
-                Width = 116
-                Height = 23
-                TabOrder = 5
+                TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object edtBIG_UNITS: TzrComboBoxList
-                Left = 122
-                Top = 208
+                Left = 126
+                Top = 215
                 Width = 70
                 Height = 23
                 Properties.AutoSelect = False
@@ -762,7 +703,7 @@ inherited frmInitGoods: TfrmInitGoods
                   end>
                 Properties.ReadOnly = False
                 Properties.OnChange = edtBIG_UNITSPropertiesChange
-                TabOrder = 6
+                TabOrder = 3
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -797,13 +738,73 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
               object edtBARCODE3: TcxTextEdit
-                Left = 122
-                Top = 238
+                Left = 126
+                Top = 245
                 Width = 116
                 Height = 23
                 Properties.MaxLength = 30
-                TabOrder = 7
+                TabOrder = 4
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object edtBIGTO_CALC: TcxTextEdit
+                Left = 185
+                Top = 275
+                Width = 40
+                Height = 23
+                TabOrder = 5
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object RzPanel22: TRzPanel
+                Left = 127
+                Top = 160
+                Width = 60
+                Height = 21
+                Alignment = taRightJustify
+                BorderOuter = fsFlat
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 14
+              end
+              object edtSMALLTO_CALC: TcxTextEdit
+                Left = 185
+                Top = 159
+                Width = 40
+                Height = 23
+                TabOrder = 2
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object RzPanel23: TRzPanel
+                Left = 223
+                Top = 160
+                Width = 36
+                Height = 21
+                Alignment = taLeftJustify
+                BorderOuter = fsFlat
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 15
+              end
+              object RzPanel24: TRzPanel
+                Left = 127
+                Top = 276
+                Width = 60
+                Height = 21
+                Alignment = taRightJustify
+                BorderOuter = fsFlat
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 16
+              end
+              object RzPanel25: TRzPanel
+                Left = 223
+                Top = 276
+                Width = 36
+                Height = 21
+                Alignment = taLeftJustify
+                BorderOuter = fsFlat
+                Color = 16185078
+                FlatColor = clMenuHighlight
+                TabOrder = 17
               end
             end
           end
@@ -3663,9 +3664,9 @@ inherited frmInitGoods: TfrmInitGoods
             Font.Style = [fsBold]
             ParentFont = False
           end
-          object RzBmpButton1: TRzBmpButton
-            Left = 584
-            Top = 8
+          object btnClose: TRzBmpButton
+            Left = 594
+            Top = 5
             Width = 9
             Height = 9
             Bitmaps.TransparentColor = clFuchsia
@@ -3682,7 +3683,8 @@ inherited frmInitGoods: TfrmInitGoods
               FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00}
             Color = clBtnFace
             TabOrder = 0
-            OnClick = RzBmpButton1Click
+            Visible = False
+            OnClick = btnCloseClick
           end
         end
       end
@@ -3718,7 +3720,14 @@ inherited frmInitGoods: TfrmInitGoods
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 324
-    Top = 329
+    Left = 156
+    Top = 385
+  end
+  object cdsGoodsPrice: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 370
+    Top = 16
   end
 end

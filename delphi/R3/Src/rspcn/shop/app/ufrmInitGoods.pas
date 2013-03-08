@@ -76,7 +76,6 @@ type
     RzPanel6: TRzPanel;
     RzLabel6: TRzLabel;
     RzLabel10: TRzLabel;
-    Timer1: TTimer;
     btnClose: TRzBmpButton;
     RzBorder2: TRzBorder;
     RzBorder3: TRzBorder;
@@ -89,9 +88,7 @@ type
     RzPanel21: TRzPanel;
     cdsGoodsPrice: TZQuery;
     RzPanel_SMALL: TRzPanel;
-    RzPanel_CALC1: TRzPanel;
     RzPanel_BIG: TRzPanel;
-    RzPanel_CALC2: TRzPanel;
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
@@ -109,11 +106,12 @@ type
     procedure edtBIG_UNITSSaveValue(Sender: TObject);
     procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure Timer1Timer(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure edtCALC_UNITSSaveValue(Sender: TObject);
     procedure RzPanel5Click(Sender: TObject);
     procedure RzPanel6Click(Sender: TObject);
+    procedure edtCALC_UNITSPropertiesChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
@@ -135,7 +133,8 @@ type
     procedure Save;
     function  BarCodeSimpleInit(barcode:string):boolean;
     procedure SetDialogForm;
-    class function ShowDialog(Owner:TForm;barcode:string='';autoClose:boolean=false):boolean;
+    procedure ajustPostion;override;
+    class function ShowDialog(Owner:TForm;barcode:string;var GodsId:string):boolean;
   end;
 
 implementation
@@ -235,7 +234,7 @@ begin
       rzPage.ActivePageIndex := 1;
       btnPrev.Visible := True;
       btnNext.Visible := True;
-      if edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
+      if self.Visible and edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
     end
   else if rzPage.ActivePageIndex = 1 then
     begin
@@ -252,7 +251,7 @@ begin
           WriteToObject;
           if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
           Save;
-          if not Simple then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
+          if (not Simple) and (not Dialog) then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
           rzPage.ActivePageIndex := 0;
           btnPrev.Visible := False;
           btnNext.Visible := True;
@@ -265,7 +264,7 @@ begin
       WriteToObject;
       if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
       Save;
-      if not Simple then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
+      if (not Simple) and (not Dialog) then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
       rzPage.ActivePageIndex := 0;
       btnPrev.Visible := False;
       btnNext.Visible := True;
@@ -1007,6 +1006,18 @@ begin
   finally
     Params.Free;
   end;
+
+  Params := TftParamList.Create(nil);
+  cdsGoodsPrice.Close;
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('GODS_ID').AsString := godsId;
+    Params.ParamByName('PRICE_ID').AsString := '#';
+    dataFactory.Open(cdsGoodsPrice,'TGoodsPriceV60',Params);
+  finally
+    Params.Free;
+  end;
 end;
 
 procedure TfrmInitGoods.Save;
@@ -1014,62 +1025,45 @@ var
   tmpGoodsInfo,tmpBarCode,tmpGoodsRelation,tmpGoodsPrice: TZQuery;
   Params: TftParamList;
   tmpObj: TRecord_;
-  isPrice: boolean;
   isDel: boolean;
 begin
-  isPrice := false;
-  if trim(edtSHOP_NEW_OUTPRICE.Text) <> trim(edtNEW_OUTPRICE.Text) then
+  isDel := false;
+  if FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))=0 then
     begin
-      isPrice := true;
-      Params := TftParamList.Create(nil);
-      cdsGoodsPrice.Close;
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-        Params.ParamByName('SHOP_ID').AsString := token.shopId;
-        Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-        Params.ParamByName('PRICE_ID').AsString := '#';
-        dataFactory.Open(cdsGoodsPrice,'TGoodsPriceV60',Params);
-      finally
-        Params.Free;
-      end;
+      isDel := false;
+      if cdsGoodsPrice.Locate('SHOP_ID',token.tenantId+'0001',[]) and
+         (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat)=0)
+      then isDel := true;
 
-      if FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))=0 then
-        begin
-          isDel := false;
-          if cdsGoodsPrice.Locate('SHOP_ID',token.tenantId+'0001',[]) and
-             (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat)=0)
-          then
-            isDel := true;
-          if cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) and (cdsGoodsPrice.RecordCount=1) then
-            isDel := true;
-          if IsDel and cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then cdsGoodsPrice.Delete;
-        end;
-      if not isDel then
-        begin
-          if cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then
-            cdsGoodsPrice.Edit
-          else
-            cdsGoodsPrice.Append;
-          cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-          cdsGoodsPrice.FieldByName('PRICE_ID').AsString := '#';
-          cdsGoodsPrice.FieldByName('SHOP_ID').AsString := token.shopId;
-          cdsGoodsPrice.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldbyName('GODS_ID').AsString;
-          cdsGoodsPrice.FieldByName('PRICE_METHOD').AsString := '1';
-          cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
-          cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat;
-          cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat;
-          cdsGoodsPrice.Post;
-        end;
+      if cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) and (cdsGoodsPrice.RecordCount=1) then
+        isDel := true;
+
+      if IsDel and cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then cdsGoodsPrice.Delete;
+    end;
+  if not isDel then
+    begin
+      if cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then
+        cdsGoodsPrice.Edit
+      else
+        cdsGoodsPrice.Append;
+      cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      cdsGoodsPrice.FieldByName('PRICE_ID').AsString := '#';
+      cdsGoodsPrice.FieldByName('SHOP_ID').AsString := token.shopId;
+      cdsGoodsPrice.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldbyName('GODS_ID').AsString;
+      cdsGoodsPrice.FieldByName('PRICE_METHOD').AsString := '1';
+      cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
+      cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat;
+      cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat;
+      cdsGoodsPrice.Post;
     end;
 
   dataFactory.BeginBatch;
   try
     dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
     dataFactory.AddBatch(cdsBarCode,'TBarCodeV60',nil);
-    if edtGOODS_OPTION1.Checked then //供应链商品
+    dataFactory.AddBatch(cdsGoodsPrice,'TGoodsPriceV60',nil);
+    if edtGOODS_OPTION1.Checked then
       dataFactory.AddBatch(cdsGoodsRelation,'TGoodsRelationV60',nil);
-    if isPrice then
-      dataFactory.AddBatch(cdsGoodsPrice,'TGoodsPriceV60',nil);
     dataFactory.CommitBatch;
   except
     dataFactory.CancelBatch;
@@ -1080,8 +1074,8 @@ begin
   edtInput.Text := '';
 
   // 本地保存
-//  if dataFactory.iDbType <> 5 then
-//    begin
+  if dataFactory.iDbType <> 5 then
+    begin
       tmpGoodsInfo := TZQuery.Create(nil);
       tmpBarCode := TZQuery.Create(nil);
       tmpGoodsRelation := TZQuery.Create(nil);
@@ -1119,20 +1113,17 @@ begin
           Params.Free;
         end;
 
-        if isPrice then
-          begin
-            Params := TftParamList.Create(nil);
-            tmpGoodsPrice.Close;
-            try
-              Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
-              Params.ParamByName('SHOP_ID').AsString := cdsGoodsPrice.FieldByName('SHOP_ID').AsString;
-              Params.ParamByName('GODS_ID').AsString := cdsGoodsPrice.FieldByName('GODS_ID').AsString;
-              Params.ParamByName('PRICE_ID').AsString := cdsGoodsPrice.FieldByName('PRICE_ID').AsString;
-              dataFactory.Open(tmpGoodsPrice,'TGoodsPriceV60',Params);
-            finally
-              Params.Free;
-            end;
-          end;
+        Params := TftParamList.Create(nil);
+        tmpGoodsPrice.Close;
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+          Params.ParamByName('SHOP_ID').AsString := cdsGoodsPrice.FieldByName('SHOP_ID').AsString;
+          Params.ParamByName('GODS_ID').AsString := cdsGoodsPrice.FieldByName('GODS_ID').AsString;
+          Params.ParamByName('PRICE_ID').AsString := cdsGoodsPrice.FieldByName('PRICE_ID').AsString;
+          dataFactory.Open(tmpGoodsPrice,'TGoodsPriceV60',Params);
+        finally
+          Params.Free;
+        end;
 
         tmpObj := TRecord_.Create;
         try
@@ -1204,28 +1195,25 @@ begin
           tmpObj.Free;
         end;
 
-        if isPrice then
-          begin
-            tmpObj := TRecord_.Create;
-            try
-              if cdsGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
-                begin
-                  if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
-                    tmpGoodsPrice.Edit
-                  else
-                    tmpGoodsPrice.Append;
-                  tmpObj.ReadFromDataSet(cdsGoodsPrice);
-                  tmpObj.WriteToDataSet(tmpGoodsPrice, false);
-                end
+        tmpObj := TRecord_.Create;
+        try
+          if cdsGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+            begin
+              if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+                tmpGoodsPrice.Edit
               else
-                begin
-                  if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
-                    tmpGoodsPrice.Delete;
-                end;
-            finally
-              tmpObj.Free;
+                tmpGoodsPrice.Append;
+              tmpObj.ReadFromDataSet(cdsGoodsPrice);
+              tmpObj.WriteToDataSet(tmpGoodsPrice, false);
+            end
+          else
+            begin
+              if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+                tmpGoodsPrice.Delete;
             end;
-          end;
+        finally
+          tmpObj.Free;
+        end;
 
         if tmpGoodsInfo.State in [dsEdit,dsInsert] then
           tmpGoodsInfo.Post;
@@ -1233,17 +1221,16 @@ begin
           tmpBarCode.Post;
         if tmpGoodsRelation.State in [dsEdit,dsInsert] then
           tmpGoodsRelation.Post;
-        if isPrice and (tmpGoodsPrice.State in [dsEdit,dsInsert]) then
+        if tmpGoodsPrice.State in [dsEdit,dsInsert] then
           tmpGoodsPrice.Post;
 
         dataFactory.BeginBatch;
         try
           dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
           dataFactory.AddBatch(tmpBarCode,'TBarCodeV60',nil);
-          if edtGOODS_OPTION1.Checked then //供应链商品
+          dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',nil);
+          if edtGOODS_OPTION1.Checked then
             dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',nil);
-          if isPrice then
-            dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',nil);
           dataFactory.CommitBatch;
         except
           dataFactory.CancelBatch;
@@ -1256,8 +1243,9 @@ begin
         tmpGoodsRelation.Free;
         tmpGoodsPrice.Free;
       end;
-//    end;
+    end;
   dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  ModalResult := MROK;
 end;
 
 procedure TfrmInitGoods.PostDataSet;
@@ -1289,6 +1277,7 @@ procedure TfrmInitGoods.edtGOODS_OPTION1Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION2.Checked := false;
+  if edtInput.CanFocus then edtInput.SetFocus;
 end;
 
 procedure TfrmInitGoods.edtGOODS_OPTION2Click(Sender: TObject);
@@ -1404,25 +1393,31 @@ begin
   end;
 end;
 
-procedure TfrmInitGoods.edtSMALL_UNITSPropertiesChange(Sender: TObject);
+procedure TfrmInitGoods.edtCALC_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
-  if edtSMALL_UNITS.AsString = '' then
-    RzPanel_SMALL.Caption := '';
-end;
-
-procedure TfrmInitGoods.edtBIG_UNITSPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if edtBIG_UNITS.AsString = '' then
-    RzPanel_BIG.Caption := '';
+  if edtSMALL_UNITS.AsString <> '' then
+    RzPanel_SMALL.Caption := edtCALC_UNITS.Text + '=1' + edtSMALL_UNITS.Text;
+  if edtBIG_UNITS.AsString <> '' then
+    RzPanel_BIG.Caption := edtCALC_UNITS.Text + '=1' + edtBIG_UNITS.Text;
 end;
 
 procedure TfrmInitGoods.edtCALC_UNITSSaveValue(Sender: TObject);
 begin
   inherited;
-  RzPanel_CALC1.Caption := edtCALC_UNITS.Text;
-  RzPanel_CALC2.Caption := edtCALC_UNITS.Text;
+  if edtSMALL_UNITS.AsString <> '' then
+    RzPanel_SMALL.Caption := edtCALC_UNITS.Text + '=1' + edtSMALL_UNITS.Text;
+  if edtBIG_UNITS.AsString <> '' then
+    RzPanel_BIG.Caption := edtCALC_UNITS.Text + '=1' + edtBIG_UNITS.Text;
+end;
+
+procedure TfrmInitGoods.edtSMALL_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtSMALL_UNITS.AsString = '' then
+    RzPanel_SMALL.Caption := ''
+  else
+    RzPanel_SMALL.Caption := edtCALC_UNITS.Text + '=1' + edtSMALL_UNITS.Text;
 end;
 
 procedure TfrmInitGoods.edtSMALL_UNITSSaveValue(Sender: TObject);
@@ -1431,7 +1426,16 @@ begin
   if edtSMALL_UNITS.AsString = '' then
     RzPanel_SMALL.Caption := ''
   else
-    RzPanel_SMALL.Caption := '1'+edtSMALL_UNITS.Text+'=';
+    RzPanel_SMALL.Caption := edtCALC_UNITS.Text + '=1' + edtSMALL_UNITS.Text;
+end;
+
+procedure TfrmInitGoods.edtBIG_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtBIG_UNITS.AsString = '' then
+    RzPanel_BIG.Caption := ''
+  else
+    RzPanel_BIG.Caption := edtCALC_UNITS.Text + '=1' + edtBIG_UNITS.Text;
 end;
 
 procedure TfrmInitGoods.edtBIG_UNITSSaveValue(Sender: TObject);
@@ -1440,7 +1444,7 @@ begin
   if edtBIG_UNITS.AsString = '' then
     RzPanel_BIG.Caption := ''
   else
-    RzPanel_BIG.Caption := '1'+edtBIG_UNITS.Text+'=';
+    RzPanel_BIG.Caption := edtCALC_UNITS.Text + '=1' + edtBIG_UNITS.Text;
 end;
 
 procedure TfrmInitGoods.SetDialogForm;
@@ -1453,18 +1457,26 @@ begin
   RzPanel1.Top := 0;
 end;
 
-class function TfrmInitGoods.ShowDialog(Owner:TForm;barcode:string='';autoClose:boolean=false):boolean;
+class function TfrmInitGoods.ShowDialog(Owner:TForm;barcode:string;var GodsId:string):boolean;
 begin
   with TfrmInitGoods.Create(Owner) do
     begin
-      SetDialogForm;
-      Show;
-      if barcode <> '' then
-        if BarCodeSimpleInit(barcode) then
+      try
+        SetDialogForm;
+        if barcode <> '' then
           begin
-            if autoClose then Free
-            else MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
+            if BarCodeSimpleInit(barcode) then
+              begin
+                result := true;
+                GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+                Exit;
+              end;
           end;
+        result := (ShowModal = MROK);
+        if result then GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+      finally
+        Free;
+      end;
     end;
 end;
 
@@ -1472,12 +1484,6 @@ procedure TfrmInitGoods.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Dialog and (Key=#27) then Close;
-end;
-
-procedure TfrmInitGoods.Timer1Timer(Sender: TObject);
-begin
-  inherited;
-  if edtGOODS_OPTION1.Checked and edtInput.CanFocus then edtInput.SetFocus; 
 end;
 
 procedure TfrmInitGoods.btnCloseClick(Sender: TObject);
@@ -1490,12 +1496,26 @@ procedure TfrmInitGoods.RzPanel5Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION1.Checked := true;
+  if edtInput.CanFocus then edtInput.SetFocus; 
 end;
 
 procedure TfrmInitGoods.RzPanel6Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION2.Checked := true;
+end;
+
+procedure TfrmInitGoods.FormShow(Sender: TObject);
+begin
+  inherited;
+  if edtInput.CanFocus then edtInput.SetFocus;
+end;
+
+procedure TfrmInitGoods.ajustPostion;
+begin
+  inherited;
+  RzPanel1.Top := (self.ClientHeight - RzPanel1.Height) div 2 - 1;
+  RzPanel1.Left := (self.ClientWidth - RzPanel1.Width) div 2 - 1;
 end;
 
 initialization

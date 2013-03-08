@@ -5,6 +5,7 @@ inherited frmInitGoods: TfrmInitGoods
   ClientHeight = 567
   ClientWidth = 1047
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -33,12 +34,13 @@ inherited frmInitGoods: TfrmInitGoods
           Align = alRight
           BorderOuter = fsFlat
           TabOrder = 0
+          TabStop = True
           object rzPage: TRzPageControl
             Left = 1
             Top = 1
             Width = 423
             Height = 339
-            ActivePage = TabSheet3
+            ActivePage = TabSheet1
             Align = alClient
             Color = clWindow
             UseColoredTabs = True
@@ -51,7 +53,7 @@ inherited frmInitGoods: TfrmInitGoods
             ParentFont = False
             ShowCardFrame = False
             ShowShadow = False
-            TabIndex = 2
+            TabIndex = 0
             TabOrder = 0
             FixedDimension = 21
             object TabSheet1: TRzTabSheet
@@ -330,6 +332,7 @@ inherited frmInitGoods: TfrmInitGoods
                     Default = True
                   end>
                 Properties.ReadOnly = False
+                Properties.OnChange = edtCALC_UNITSPropertiesChange
                 TabOrder = 4
                 InGrid = False
                 KeyValue = Null
@@ -685,7 +688,7 @@ inherited frmInitGoods: TfrmInitGoods
               object edtBARCODE2: TcxTextEdit
                 Left = 126
                 Top = 129
-                Width = 116
+                Width = 119
                 Height = 23
                 Properties.MaxLength = 30
                 TabOrder = 1
@@ -740,14 +743,14 @@ inherited frmInitGoods: TfrmInitGoods
               object edtBARCODE3: TcxTextEdit
                 Left = 126
                 Top = 245
-                Width = 116
+                Width = 119
                 Height = 23
                 Properties.MaxLength = 30
                 TabOrder = 4
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object edtBIGTO_CALC: TcxTextEdit
-                Left = 185
+                Left = 126
                 Top = 275
                 Width = 40
                 Height = 23
@@ -755,56 +758,35 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object RzPanel_SMALL: TRzPanel
-                Left = 127
+                Left = 164
                 Top = 160
-                Width = 60
+                Width = 110
                 Height = 21
-                Alignment = taRightJustify
+                Alignment = taLeftJustify
                 BorderOuter = fsFlat
                 Color = 16185078
                 FlatColor = clMenuHighlight
                 TabOrder = 14
               end
               object edtSMALLTO_CALC: TcxTextEdit
-                Left = 185
+                Left = 126
                 Top = 159
                 Width = 40
                 Height = 23
+                Style.Edges = [bLeft, bTop, bRight, bBottom]
                 TabOrder = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
-              object RzPanel_CALC1: TRzPanel
-                Left = 223
-                Top = 160
-                Width = 36
+              object RzPanel_BIG: TRzPanel
+                Left = 164
+                Top = 276
+                Width = 110
                 Height = 21
                 Alignment = taLeftJustify
                 BorderOuter = fsFlat
                 Color = 16185078
                 FlatColor = clMenuHighlight
                 TabOrder = 15
-              end
-              object RzPanel_BIG: TRzPanel
-                Left = 127
-                Top = 276
-                Width = 60
-                Height = 21
-                Alignment = taRightJustify
-                BorderOuter = fsFlat
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 16
-              end
-              object RzPanel_CALC2: TRzPanel
-                Left = 223
-                Top = 276
-                Width = 36
-                Height = 21
-                Alignment = taLeftJustify
-                BorderOuter = fsFlat
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 17
               end
             end
           end
@@ -843,7 +825,6 @@ inherited frmInitGoods: TfrmInitGoods
             TextShadowColor = clWhite
             TextShadowDepth = 4
             TabOrder = 0
-            TabStop = False
             ThemeAware = False
             OnClick = btnNextClick
             NumGlyphs = 2
@@ -870,7 +851,6 @@ inherited frmInitGoods: TfrmInitGoods
             TextShadowColor = clWhite
             TextShadowDepth = 4
             TabOrder = 1
-            TabStop = False
             ThemeAware = False
             OnClick = btnPrevClick
             NumGlyphs = 2
@@ -3717,11 +3697,6 @@ inherited frmInitGoods: TfrmInitGoods
     Params = <>
     Left = 646
     Top = 16
-  end
-  object Timer1: TTimer
-    OnTimer = Timer1Timer
-    Left = 156
-    Top = 385
   end
   object cdsGoodsPrice: TZQuery
     FieldDefs = <>

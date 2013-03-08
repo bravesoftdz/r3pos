@@ -1,7 +1,7 @@
 unit ZTuXeDo;
-
+                     
 interface
-uses Windows, Messages, SysUtils, Variants, Classes, ZDataSet, ZDbcIntfs,DB,ZdbHelp,ZBase;
+uses Windows, Messages, SysUtils, Variants, Classes,Dialogs, ZDataSet, ZDbcIntfs,DB,ZdbHelp,ZBase;
   //=========================ATMI 函数 =================================//
   // 资料:http://wenku.baidu.com/view/dae80920af45b307e8719787.html     //
   // 代码:张森荣                  时间:2012-01-06                       //
@@ -56,15 +56,17 @@ type
   	data:integer;		   	//* placeholder for app data */
   end;
 
+
+//tuxedo参数集打包  
   TcoParamList=class(TParams)
-    public
-      class procedure Encode(Params:TParams;Stream:TStream);
-      class procedure Decode(Params:TParams;Stream:TStream);
-      class procedure coSetData(Params:TParams;V:OleVariant);
-      class function coGetData(Params:TParams):OleVariant;
-    end;
+  public
+    class procedure Encode(Params:TParams;Stream:TStream);
+    class procedure Decode(Params:TParams;Stream:TStream);
+    class procedure coSetData(Params:TParams;V:OleVariant);
+    class function coGetData(Params:TParams):OleVariant;
+  end;
 
-
+  
   //通讯数据包
   PftPacked=^ TftPacked;
   TftPacked=packed record
@@ -164,8 +166,10 @@ type
   	sendbuf, recvbuf:pchar;
     sendlen, recvlen:integer;
     FList:TList;
+
   protected
     procedure RaiseError;
+    function  CheckRaiseError: Boolean; //检查是否网络断开，若是返回True,否则抛异常
     procedure ClearBuf;
     procedure CheckPackedError(coPacket:PftPacked);
     procedure ClearList(coList:TList);
@@ -242,7 +246,9 @@ var
   tpcall:Ttpcall;
   tpstrerror:Ttpstrerror;
   gettperrno:Tgettperrno;
+  
 implementation
+
   procedure loadTuxedo;   //初始化运行环境
   begin
     if dllHandle>0 then Exit;
@@ -377,24 +383,25 @@ implementation
     result := true;
   end;
   function coVToStream(Value:oleVariant;Stream:TStream):boolean;
-    var
-      P: Pointer;
-      Size: Integer;
+  var
+    P: Pointer;
+    Size: Integer;
+  begin
+    if VarIsArray(Value) and (VarType(Value) and varTypeMask = varByte) then
     begin
-      if VarIsArray(Value) and (VarType(Value) and varTypeMask = varByte) then
+      Size := VarArrayHighBound(Value, 1) - VarArrayLowBound(Value, 1) + 1;
+      if Size > 0 then
       begin
-        Size := VarArrayHighBound(Value, 1) - VarArrayLowBound(Value, 1) + 1;
-        if Size > 0 then
-        begin
-            P := VarArrayLock(Value);
-            try
-              Stream.Write(P^,Size);
-            finally
-              VarArrayUnlock(Value);
-            end;
+        P := VarArrayLock(Value);
+        try
+          Stream.Write(P^,Size);
+          VarArrayUnlock(Value);
+        finally
         end;
-      end else Exception.Create('无级的OleVariant字节流');
-    end;
+      end;
+    end else
+      Raise Exception.Create('无级的OleVariant字节流');
+  end;
   function  coEncode(src: PftPacked;des:TStream):boolean;
   var
     w:integer;
@@ -477,6 +484,7 @@ implementation
     result := true;
   end;
 
+
 { TcoParamList }
 
 class function TcoParamList.coGetData(Params:TParams): OleVariant;
@@ -487,7 +495,7 @@ begin
   try
     TcoParamList.Encode(Params,Stream);
     Stream.Position := 0;
-    result := coStreamToV(Stream); 
+    result := coStreamToV(Stream);
   finally
     Stream.Free;
   end;
@@ -718,7 +726,7 @@ begin
         end;
       end;
       else
-        Raise Exception.Create('不支持的数据类型'); 
+        Raise Exception.Create('不支持的数据类型');
       end;
     end;
 end;
@@ -772,7 +780,7 @@ begin
         coPacket.Sign := 1;
         coPacket.PackedCount := fList.Count;
         coPacket.PackedSeqNo := i+1;
-        coPacket.SQL := TZFactory(fList[i]).ClassName;
+        coPacket.SQL := TZFactory(fList[i]).ZClassName; //2012.06.12  TZFactory(fList[i]).ClassName;
         coPacket.HasResult := true;
         if TZFactory(fList[i]).Params <>nil then
            coPacket.Params := TcoParamList.coGetData(TZFactory(fList[i]).Params)
@@ -780,7 +788,7 @@ begin
            coPacket.Params := null;
         coPacket.Data := TZQuery(TZFactory(fList[i]).DataSet).Delta;
       end;
-    BSend(coList,'svcBCommit');
+    BSend(coList,'BCommit');
     ClearList(coList);
     BRecv(coList);
     for i:=0 to fList.Count -1 do
@@ -855,7 +863,10 @@ begin
   coPacket.PackedSeqNo := 1;
   coPacket.SQL := AClassName;
   coPacket.HasResult := true;
-  coPacket.Params := TcoParamList.coGetData(Params);
+  if Params=nil then
+    coPacket.Params := null
+  else
+    coPacket.Params := TcoParamList.coGetData(Params);
   coPacket.Data := null;
   Send(@coPacket,'ExecProc');
   Recv(@coPacket);
@@ -867,6 +878,7 @@ function TZTuXeDo.ExecSQL(const SQL: WideString;
   ObjectFactory: TObject): Integer;
 var
   coPacket:TftPacked;
+  SQLList:TstringList;
 begin
   coPacket.Sign := 1;
   coPacket.PackedCount := 1;
@@ -947,6 +959,7 @@ function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String;
 var
   coPacket:TftPacked;
 begin
+  result:=False;
   coPacket.Sign := 1;
   coPacket.PackedCount := 1;
   coPacket.PackedSeqNo := 1;
@@ -961,6 +974,13 @@ begin
   Recv(@coPacket);
   CheckPackedError(@coPacket);
   TZQuery(DataSet).Data := coPacket.Data;
+  //2012.08.29Add判断
+  if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
+  begin
+    TZQuery(DataSet).Close;
+    Raise Exception.Create('执行[GOpen('+AClassName+')]返回无效空数据包...'); 
+  end;
+  result:=TZQuery(DataSet).Active;
 end;
 
 function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String): Boolean;
@@ -972,6 +992,7 @@ function TZTuXeDo.Open(DataSet: TDataSet): Boolean;
 var
   coPacket:TftPacked;
 begin
+  result:=False;
   coPacket.Sign := 1;
   coPacket.PackedCount := 1;
   coPacket.PackedSeqNo := 1;
@@ -983,6 +1004,13 @@ begin
   Recv(@coPacket);
   CheckPackedError(@coPacket);
   TZQuery(DataSet).Data := coPacket.Data;
+  //2012.08.29Add判断
+  if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
+  begin
+    TZQuery(DataSet).Close;
+    Raise Exception.Create('执行[Open()]返回无效空数据包...'); 
+  end;
+  result:=TZQuery(DataSet).Active;
 end;
 
 function TZTuXeDo.OpenBatch: Boolean;
@@ -990,36 +1018,44 @@ var
   coPacket:PftPacked;
   i:integer;
   coList:TList;
+  Qry: TZQuery;
 begin
   result := false;
   coList := TList.Create;
   try
     for i:=0 to fList.Count -1 do
-      begin
-        new(coPacket);
-        coList.Add(coPacket);
-        coPacket.Sign := 1;
-        coPacket.PackedCount := fList.Count;
-        coPacket.PackedSeqNo := i+1;
-        coPacket.SQL := TZFactory(fList[i]).ClassName;
-        coPacket.HasResult := true;
-        if TZFactory(fList[i]).Params <>nil then
-           coPacket.Params := TcoParamList.coGetData(TZFactory(fList[i]).Params)
-        else
-           coPacket.Params := null;
-        coPacket.Data := null;
-      end;
-    BSend(coList,'svcBOpen');
+    begin
+      new(coPacket);
+      coList.Add(coPacket);
+      coPacket.Sign := 1;
+      coPacket.PackedCount := fList.Count;
+      coPacket.PackedSeqNo := i+1;
+      coPacket.SQL := TZFactory(fList[i]).ZClassName; //2012.06.12  TZFactory(fList[i]).ClassName;
+      coPacket.HasResult := true;
+      if TZFactory(fList[i]).Params <>nil then
+         coPacket.Params := TcoParamList.coGetData(TZFactory(fList[i]).Params)
+      else
+         coPacket.Params := null;
+      coPacket.Data := null;
+    end;
+    BSend(coList,'BOpen');
     ClearList(coList);
     BRecv(coList);
     for i:=0 to fList.Count -1 do
+    begin
+      CheckPackedError(PftPacked(coList[i]));
+      Qry:=TZQuery(TZFactory(fList[i]).DataSet);
+      Qry.Data := PftPacked(coList[i]).Data;
+      //2012.08.29增加对空数据包判断
+      if (Qry.Active) and (Qry.FieldCount=0) then
       begin
-        CheckPackedError(PftPacked(coList[i]));
-        TZQuery(TZFactory(fList[i]).DataSet).Data := PftPacked(coList[i]).Data;
+        Qry.Close;
+        Raise Exception.Create('执行[BOpen('+TZFactory(FList[0]).ZClassName+')]返回无效空数据包...'); 
       end;
-    CancelBatch;
+    end;
     result := true;
   finally
+    CancelBatch;
     ClearList(coList);
     coList.Free;
   end;
@@ -1034,9 +1070,36 @@ begin
     errno := gettperrno;
     s := StrPas(tpstrerror(errno));
   except
-    Raise Exception.Create('读取tperrno错误信息失败'); 
+    Raise Exception.Create('读取tperrno错误信息失败');
   end;
   Raise Exception.Create(s);
+end;
+
+function TZTuXeDo.CheckRaiseError: Boolean;
+var
+  errno:integer;
+  errMsg:string;
+begin
+  result:=False;
+  try
+    errno := gettperrno;
+    errMsg:= StrPas(tpstrerror(errno));
+  except
+    Raise Exception.Create('读取tperrno错误信息失败');
+  end;
+  if Pos('Cannot open message catalog LIBWSC_CAT',errMsg)>0 then //判断是否未连接
+  begin
+    //先断开
+    tpterm();
+    //初始化连接
+    loadTuxedo;
+  	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port)));
+   	tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
+    //重新连接
+    Connect;    
+    result:=true;
+  end else
+    Raise Exception.Create(errMsg);
 end;
 
 procedure TZTuXeDo.RollbackTrans;
@@ -1061,7 +1124,7 @@ begin
   else
      coPacket.Params := null;
   coPacket.Data := TZQuery(DataSet).Delta;
-  Send(@coPacket,'GCommit ');
+  Send(@coPacket,'GCommit');
   Recv(@coPacket);
   CheckPackedError(@coPacket);
   result := true;
@@ -1088,7 +1151,16 @@ begin
     ms.Read(sendbuf^,ms.Size);
     recvlen := sendlen;
     recvbuf := tpalloc('CARRAY', nil, recvlen+1);
-  	if tpcall(pchar(SvcName) , sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then RaiseError;
+
+    //2012-07-04 xhh第一次执行若是返回连接错误，则重新连接在执行
+    if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
+    begin
+      if CheckRaiseError then  
+      begin
+        if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
+          RaiseError;
+      end;
+    end;
   finally
     ms.Free;
   end;
@@ -1116,7 +1188,15 @@ begin
     ms.Read(sendbuf^,ms.Size);
     recvlen := sendlen;
     recvbuf := tpalloc('CARRAY', nil, recvlen+1);
-  	if tpcall(pchar(SvcName) , sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then RaiseError;
+    //2012-07-04 xhh第一次执行若是返回连接错误，则重新连接在执行
+   	if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
+    begin
+      if CheckRaiseError then //检测网络断开重连接在执行1次
+      begin
+        if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
+          RaiseError;
+      end;
+    end;
   finally
     ms.Free;
   end;
@@ -1170,7 +1250,7 @@ begin
   try
     ms.Write(recvBuf^,recvLen);
     ms.Position := 0;
-    coDecode(ms,coPacket); 
+    coDecode(ms,coPacket);
     ClearBuf;
   finally
     ms.Free;
@@ -1194,4 +1274,5 @@ end;
 initialization
   dllHandle := 0;
 finalization
-end.                                                                                                                                  .
+end.
+                                                                                            .

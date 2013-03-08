@@ -8444,6 +8444,8 @@ end;
 procedure TParam.SetAsString(const Value: string);
 begin
   if FDataType <> ftFixedChar then FDataType := ftString;
+  if Value='' then
+  Self.Value := null else
   Self.Value := Value;
 end;
 
@@ -8509,6 +8511,11 @@ begin
         else 
           FDataType := ftUnknown;
       end;
+    if VarIsStr(Value) and (VartoStr(Value)='') then
+      begin
+        FData := null;
+        FNull := true
+      end else
     FData := Value;
   end else
     ParamRef.SetAsVariant(Value);

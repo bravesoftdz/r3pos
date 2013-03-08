@@ -88,10 +88,10 @@ type
     RzPanel20: TRzPanel;
     RzPanel21: TRzPanel;
     cdsGoodsPrice: TZQuery;
-    RzPanel22: TRzPanel;
-    RzPanel23: TRzPanel;
-    RzPanel24: TRzPanel;
-    RzPanel25: TRzPanel;
+    RzPanel_SMALL: TRzPanel;
+    RzPanel_CALC1: TRzPanel;
+    RzPanel_BIG: TRzPanel;
+    RzPanel_CALC2: TRzPanel;
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
@@ -1408,47 +1408,39 @@ procedure TfrmInitGoods.edtSMALL_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
   if edtSMALL_UNITS.AsString = '' then
-    lblSMALL_NOTE.Visible := false;
+    RzPanel_SMALL.Caption := '';
 end;
 
 procedure TfrmInitGoods.edtBIG_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
   if edtBIG_UNITS.AsString = '' then
-    lblBIG_NOTE.Visible := false;
+    RzPanel_BIG.Caption := '';
 end;
 
 procedure TfrmInitGoods.edtCALC_UNITSSaveValue(Sender: TObject);
 begin
   inherited;
-  if lblSMALL_NOTE.Visible and (edtSMALL_UNITS.AsString <> '') then
-    lblSMALL_NOTE.Caption := '一'+edtSMALL_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
-  if lblBIG_NOTE.Visible and (edtBIG_UNITS.AsString <> '') then
-    lblBIG_NOTE.Caption := '一'+edtBIG_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
+  RzPanel_CALC1.Caption := edtCALC_UNITS.Text;
+  RzPanel_CALC2.Caption := edtCALC_UNITS.Text;
 end;
 
 procedure TfrmInitGoods.edtSMALL_UNITSSaveValue(Sender: TObject);
 begin
   inherited;
   if edtSMALL_UNITS.AsString = '' then
-    lblSMALL_NOTE.Visible := false
+    RzPanel_SMALL.Caption := ''
   else
-    begin
-      lblSMALL_NOTE.Visible := true;
-      lblSMALL_NOTE.Caption := '一'+edtSMALL_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
-    end;
+    RzPanel_SMALL.Caption := '1'+edtSMALL_UNITS.Text+'=';
 end;
 
 procedure TfrmInitGoods.edtBIG_UNITSSaveValue(Sender: TObject);
 begin
   inherited;
   if edtBIG_UNITS.AsString = '' then
-    lblBIG_NOTE.Visible := false
+    RzPanel_BIG.Caption := ''
   else
-    begin
-      lblBIG_NOTE.Visible := true;
-      lblBIG_NOTE.Caption := '一'+edtBIG_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
-    end;
+    RzPanel_BIG.Caption := '1'+edtBIG_UNITS.Text+'=';
 end;
 
 procedure TfrmInitGoods.SetDialogForm;

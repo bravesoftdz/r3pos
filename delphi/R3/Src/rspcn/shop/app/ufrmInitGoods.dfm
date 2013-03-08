@@ -754,7 +754,7 @@ inherited frmInitGoods: TfrmInitGoods
                 TabOrder = 5
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
-              object RzPanel22: TRzPanel
+              object RzPanel_SMALL: TRzPanel
                 Left = 127
                 Top = 160
                 Width = 60
@@ -773,7 +773,7 @@ inherited frmInitGoods: TfrmInitGoods
                 TabOrder = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
-              object RzPanel23: TRzPanel
+              object RzPanel_CALC1: TRzPanel
                 Left = 223
                 Top = 160
                 Width = 36
@@ -784,7 +784,7 @@ inherited frmInitGoods: TfrmInitGoods
                 FlatColor = clMenuHighlight
                 TabOrder = 15
               end
-              object RzPanel24: TRzPanel
+              object RzPanel_BIG: TRzPanel
                 Left = 127
                 Top = 276
                 Width = 60
@@ -795,7 +795,7 @@ inherited frmInitGoods: TfrmInitGoods
                 FlatColor = clMenuHighlight
                 TabOrder = 16
               end
-              object RzPanel25: TRzPanel
+              object RzPanel_CALC2: TRzPanel
                 Left = 223
                 Top = 276
                 Width = 36

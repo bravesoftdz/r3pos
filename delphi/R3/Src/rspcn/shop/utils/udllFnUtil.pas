@@ -36,6 +36,7 @@ FnNumber=Class
     //deci 保留小数位
     //CarryRule 进位规则
     Class function ConvertToFight(value: Currency; CarryRule,deci: Integer): real;
+    Class function CompareFloat(a,b:real):integer;
   end;
 FnString=Class
   private
@@ -225,6 +226,19 @@ begin
 end;
 
 { FnNumber }
+
+class function FnNumber.CompareFloat(a, b: real): integer;
+var
+  _a,_b:currency;
+begin
+  _a := a;
+  _b := b;
+  if _a>_b then result := 1
+  else
+  if _a<_b then result := -1
+  else
+    result := 0;
+end;
 
 class function FnNumber.ConvertToFight(value: Currency; CarryRule,
   deci: Integer): real;

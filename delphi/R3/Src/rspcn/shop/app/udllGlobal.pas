@@ -48,6 +48,10 @@ type
     function GetNewInPrice(GodsId,UnitId:string):real;
     //取商品标准售价
     function GetNewOutPrice(GodsId,UnitId:string):real;
+    //读取成本价
+    function GetCostPrice(GodsId:string):real;
+    //检测供应链是否允许调价 还回true 允许调价
+    function checkChangePrice(relationId:integer):boolean;
     //创建分类树
     function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean):boolean;overload;
     function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string):boolean;overload;
@@ -462,11 +466,14 @@ begin
           (list[i]<>'GODS_TYPE')
         then
            begin
-           if list[i]='TEANANT_ID' then
+           if list[i]='TENANT_ID' then
               fields := fields+ ''+token.tenantId+' as TENANT_ID'
            else
            if list[i]='SHOP_ID' then
               fields := fields+ ''''+token.tenantId+'0001'' as SHOP_ID'
+           else
+           if list[i]='PRICE_ID' then
+              fields := fields+ '''#'' as PRICE_ID'
            else
            if list[i]='RELATION_ID' then
               fields := fields+ 'isnull(B.RELATION_ID,0) as RELATION_ID'
@@ -480,6 +487,24 @@ begin
     list.Free;
   end;
   result := 'select '+fields+' from PUB_GOODSINFO A left outer join PUB_GOODS_RELATION B on A.GODS_ID=B.GODS_ID '+w;
+end;
+
+function TdllGlobal.checkChangePrice(relationId: integer): boolean;
+var
+  rs: TZQuery;
+begin
+  result:=true;
+  if relationId=0 then Exit;
+  rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+  if rs.Locate('RELATION_ID',relationId,[]) then
+  begin
+    result := (trim(Rs.FieldByName('CHANGE_PRICE').AsString)<>'2');
+  end;
+end;
+
+function TdllGlobal.GetCostPrice(GodsId: string): real;
+begin
+
 end;
 
 initialization

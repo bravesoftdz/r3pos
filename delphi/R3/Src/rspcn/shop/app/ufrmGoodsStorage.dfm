@@ -4,6 +4,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
   Caption = #21830#21697#24211#23384
   ClientHeight = 554
   ClientWidth = 1008
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -109,7 +111,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             NumGlyphs = 2
             Spacing = 5
           end
-          object RzBitBtn3: TRzBitBtn
+          object btnAMOUNT: TRzBitBtn
             Left = 240
             Top = 8
             Width = 74
@@ -130,6 +132,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TextShadowDepth = 4
             TabOrder = 3
             TabStop = False
+            OnClick = btnAMOUNTClick
             Layout = blGlyphTop
             NumGlyphs = 2
             Spacing = 5
@@ -316,6 +319,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             BorderSides = [sdLeft, sdTop]
             TabOrder = 2
             object DBGridEh1: TDBGridEh
+              Tag = -1
               Left = 1
               Top = 1
               Width = 797
@@ -338,7 +342,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghHighlightFocus, dghClearSelection]
-              ReadOnly = True
               RowHeight = 25
               SumList.Active = True
               TabOrder = 0
@@ -353,12 +356,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
+              OnDblClick = DBGridEh1DblClick
               OnDrawColumnCell = DBGridEh1DrawColumnCell
               Columns = <
                 item
                   EditButtons = <>
                   FieldName = 'SEQNO'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #24207#21495
                   Width = 28
                 end
@@ -379,27 +384,31 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   Footer.Value = #21512#35745
                   Footer.ValueType = fvtStaticText
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #21830#21697#21517#31216
-                  Width = 165
+                  Width = 193
                 end
                 item
                   EditButtons = <>
                   FieldName = 'GODS_CODE'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #36135#21495
-                  Width = 68
+                  Width = 75
                 end
                 item
                   EditButtons = <>
                   FieldName = 'BARCODE'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #26465#30721
-                  Width = 110
+                  Width = 104
                 end
                 item
                   EditButtons = <>
                   FieldName = 'SORT_ID1'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #20998#31867
                   Width = 66
                 end
@@ -407,6 +416,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   EditButtons = <>
                   FieldName = 'CALC_UNITS'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #21333#20301
                   Width = 27
                 end
@@ -419,6 +429,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   Footer.DisplayFormat = '#0.###'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #24211#23384
                   Width = 56
                 end
@@ -429,8 +440,9 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   FieldName = 'NEW_INPRICE'
                   Footer.DisplayFormat = '#0.00'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #36827#20215
-                  Width = 51
+                  Width = 52
                 end
                 item
                   Alignment = taRightJustify
@@ -438,15 +450,17 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   EditButtons = <>
                   FieldName = 'NEW_OUTPRICE'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #21806#20215
-                  Width = 52
+                  Width = 53
                 end
                 item
                   EditButtons = <>
                   FieldName = 'TOOL_NAV'
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #25805#20316
-                  Width = 115
+                  Width = 79
                 end>
             end
             object rowToolNav: TRzToolbar
@@ -473,11 +487,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Visible = False
               ToolbarControls = (
                 RzToolButton2
-                RzToolButton3
                 RzSpacer1
                 RzToolButton1)
               object RzToolButton1: TRzToolButton
-                Left = 75
+                Left = 40
                 Top = 0
                 Width = 35
                 Cursor = crHandPoint
@@ -491,6 +504,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Font.Name = #23435#20307
                 Font.Style = [fsBold, fsUnderline]
                 ParentFont = False
+                OnClick = RzToolButton1Click
               end
               object RzToolButton2: TRzToolButton
                 Left = 0
@@ -507,25 +521,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Font.Name = #23435#20307
                 Font.Style = [fsBold, fsUnderline]
                 ParentFont = False
-              end
-              object RzToolButton3: TRzToolButton
-                Left = 35
-                Top = 0
-                Width = 35
-                Cursor = crHandPoint
-                ShowCaption = True
-                UseToolbarButtonSize = False
-                UseToolbarShowCaption = False
-                Caption = #35814#32454
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
-                ParentFont = False
+                OnClick = RzToolButton2Click
               end
               object RzSpacer1: TRzSpacer
-                Left = 70
+                Left = 35
                 Top = 0
                 Width = 5
               end
@@ -533,7 +532,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           end
         end
       end
-      object RzPanel8: TRzPanel
+      object EditPanel: TRzPanel
         Left = 0
         Top = 65
         Width = 1008
@@ -543,7 +542,9 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         BorderOuter = fsNone
         BorderColor = clWhite
         BorderWidth = 10
+        Color = clWhite
         TabOrder = 2
+        Visible = False
         DesignSize = (
           1008
           276)
@@ -570,7 +571,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Width = 99
           Height = 21
           BorderOuter = fsFlatRounded
-          Caption = #26412#24215#21806#20215
+          Caption = #24215#20869#21806#20215
           Color = 16185078
           FlatColor = clMenuHighlight
           TabOrder = 17
@@ -597,12 +598,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           FlatColor = clMenuHighlight
           TabOrder = 11
         end
-        object edtACCT_MNY: TcxTextEdit
+        object edtGODS_CODE: TcxTextEdit
           Left = 120
           Top = 43
           Width = 156
           Height = 23
-          TabOrder = 0
+          TabOrder = 1
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object RzPanel10: TRzPanel
@@ -616,7 +617,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           FlatColor = clMenuHighlight
           TabOrder = 12
         end
-        object cxTextEdit1: TcxTextEdit
+        object edtGODS_NAME: TcxTextEdit
           Left = 120
           Top = 67
           Width = 233
@@ -652,12 +653,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Width = 99
           Height = 21
           BorderOuter = fsFlatRounded
-          Caption = #21442#32771#36827#20215
+          Caption = #36827' '#36135' '#20215
           Color = 16185078
           FlatColor = clMenuHighlight
           TabOrder = 15
         end
-        object cxTextEdit4: TcxTextEdit
+        object edtNEW_INPRICE: TcxTextEdit
           Left = 120
           Top = 155
           Width = 110
@@ -671,12 +672,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Width = 99
           Height = 21
           BorderOuter = fsFlatRounded
-          Caption = #26631#20934#21806#20215
+          Caption = #38646' '#21806' '#20215
           Color = 16185078
           FlatColor = clMenuHighlight
           TabOrder = 16
         end
-        object cxTextEdit5: TcxTextEdit
+        object edtNEW_OUTPRICE: TcxTextEdit
           Left = 120
           Top = 179
           Width = 110
@@ -684,7 +685,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           TabOrder = 6
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
-        object cxTextEdit6: TcxTextEdit
+        object edtSHOP_NEW_OUTPRICE: TcxTextEdit
           Left = 363
           Top = 179
           Width = 110
@@ -692,7 +693,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           TabOrder = 7
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
-        object edtAGIO_RATE: TcxTextEdit
+        object edtGODS_SPELL: TcxTextEdit
           Left = 398
           Top = 67
           Width = 75
@@ -701,7 +702,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           TabOrder = 19
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
-        object cxButtonEdit1: TcxButtonEdit
+        object edtSORT_ID1: TcxButtonEdit
           Left = 120
           Top = 91
           Width = 157
@@ -711,7 +712,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Default = True
             end>
           Properties.ReadOnly = True
-          Properties.OnButtonClick = sortDropPropertiesButtonClick
+          Properties.OnButtonClick = edtSORT_ID1PropertiesButtonClick
           Style.BorderStyle = ebsUltraFlat
           Style.Edges = [bLeft, bTop, bRight, bBottom]
           Style.ButtonStyle = btsUltraFlat
@@ -728,12 +729,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           FlatColor = clMenuHighlight
           TabOrder = 20
         end
-        object cxTextEdit2: TcxTextEdit
+        object edtBARCODE: TcxTextEdit
           Left = 120
           Top = 19
           Width = 156
           Height = 23
-          TabOrder = 1
+          TabOrder = 0
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtCALC_UNITS: TzrComboBoxList
@@ -791,7 +792,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           FlatColor = clMenuHighlight
           TabOrder = 21
         end
-        object cxTextEdit3: TcxTextEdit
+        object edtAMOUNT: TcxTextEdit
           Left = 120
           Top = 210
           Width = 110
@@ -799,7 +800,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           TabOrder = 8
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
-        object cxTextEdit7: TcxTextEdit
+        object edtLOWER_AMOUNT: TcxTextEdit
           Left = 120
           Top = 234
           Width = 110
@@ -818,7 +819,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           FlatColor = clMenuHighlight
           TabOrder = 23
         end
-        object cxTextEdit8: TcxTextEdit
+        object edtUPPER_AMOUNT: TcxTextEdit
           Left = 363
           Top = 235
           Width = 110
@@ -834,6 +835,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Properties.DisplayUnchecked = 'False'
           Properties.Caption = #21551#29992#21253#35013#21333#20301
           TabOrder = 24
+          OnClick = edtUNIT_ID_USINGClick
         end
         object RzBitBtn6: TRzBitBtn
           Left = 861
@@ -858,6 +860,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           TabOrder = 25
           TabStop = False
           ThemeAware = False
+          OnClick = RzBitBtn6Click
           NumGlyphs = 2
           Spacing = 5
         end
@@ -867,7 +870,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Width = 45
           Height = 28
           Anchors = [akTop, akRight]
-          Caption = #21462#28040
+          Caption = #20851#38381
           Color = 15461355
           Font.Charset = GB2312_CHARSET
           Font.Color = clBlack
@@ -884,15 +887,17 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           TabOrder = 26
           TabStop = False
           ThemeAware = False
+          OnClick = RzBitBtn7Click
           NumGlyphs = 2
           Spacing = 5
         end
-        object RzPanel24: TRzPanel
+        object unitPanel: TRzPanel
           Left = 312
           Top = 110
           Width = 569
           Height = 33
           BorderOuter = fsNone
+          ParentColor = True
           TabOrder = 27
           object RzPanel28: TRzPanel
             Left = 459
@@ -927,7 +932,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             FlatColor = clMenuHighlight
             TabOrder = 0
           end
-          object zrComboBoxList1: TzrComboBoxList
+          object edtSMALL_UNITS: TzrComboBoxList
             Left = 99
             Top = 5
             Width = 75
@@ -971,7 +976,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end
-          object cxTextEdit9: TcxTextEdit
+          object edtSMALLTO_CALC: TcxTextEdit
             Left = 206
             Top = 5
             Width = 75
@@ -991,7 +996,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             FlatColor = clMenuHighlight
             TabOrder = 4
           end
-          object zrComboBoxList2: TzrComboBoxList
+          object edtBIG_UNITS: TzrComboBoxList
             Left = 387
             Top = 5
             Width = 75
@@ -1035,7 +1040,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end
-          object cxTextEdit10: TcxTextEdit
+          object edtBIGTO_CALC: TcxTextEdit
             Left = 494
             Top = 5
             Width = 75
@@ -1138,7 +1143,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     Left = 624
     Top = 144
   end
-  object cdsStorage: TZQuery
+  object cdsHeader: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
@@ -1172,5 +1177,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     Params = <>
     Left = 624
     Top = 274
+  end
+  object cdsDetail: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 672
+    Top = 176
   end
 end

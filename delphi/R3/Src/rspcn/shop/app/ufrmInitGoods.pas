@@ -164,7 +164,10 @@ begin
   edtDefault2.Checked := false;
 
   if (FY_TENANT_ID = '') or (FY_RELATION_ID = '') then
-    Raise Exception.Create('当前企业尚未加盟非烟供应链...');
+    begin
+      btnNext.Enabled := false;
+      Raise Exception.Create('当前企业尚未加盟非烟供应链...');
+    end;
 end;
 
 procedure TfrmInitGoods.btnNextClick(Sender: TObject);
@@ -1206,6 +1209,7 @@ end;
 function TfrmInitGoods.BarCodeSimpleInit(barcode:string):boolean;
 begin
   result := false;
+  if not btnNext.Enabled then Exit;
   Simple := true;
   edtGOODS_OPTION1.Checked := true;
   edtInput.Text := barcode;

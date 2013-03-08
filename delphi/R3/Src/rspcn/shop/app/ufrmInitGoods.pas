@@ -8,7 +8,7 @@ uses
   cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, DB, ZBase,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, cxMaskEdit,
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
-  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel;
+  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons;
 
 type
   TfrmInitGoods = class(TfrmWebDialogForm)
@@ -19,7 +19,6 @@ type
     TabSheet1: TRzTabSheet;
     TabSheet2: TRzTabSheet;
     cdsGoodsInfo: TZQuery;
-    cdsSmallBarCode: TZQuery;
     cdsGoodsRelation: TZQuery;
     Label5: TLabel;
     edtBARCODE1: TcxTextEdit;
@@ -34,45 +33,45 @@ type
     Label10: TLabel;
     edtNEW_OUTPRICE: TcxTextEdit;
     lblSORT_ID1: TLabel;
-    cdsBigBarCode: TZQuery;
     cdsBarCode: TZQuery;
     TabSheet3: TRzTabSheet;
-    GroupBox1: TGroupBox;
-    Label4: TLabel;
-    Label6: TLabel;
-    Label9: TLabel;
-    edtSMALL_UNITS: TzrComboBoxList;
-    edtSMALLTO_CALC: TcxTextEdit;
-    edtBARCODE2: TcxTextEdit;
-    edtDefault1: TcxCheckBox;
-    GroupBox2: TGroupBox;
-    Label12: TLabel;
-    Label14: TLabel;
-    Label16: TLabel;
-    edtBIG_UNITS: TzrComboBoxList;
-    edtBIGTO_CALC: TcxTextEdit;
-    edtBARCODE3: TcxTextEdit;
-    edtDefault2: TcxCheckBox;
     edtMoreUnits: TcxCheckBox;
     edtGOODS_OPTION1: TcxRadioButton;
     edtGOODS_OPTION2: TcxRadioButton;
     lblInput: TLabel;
     edtInput: TcxTextEdit;
-    RzPanel6: TRzPanel;
-    RzLabel3: TRzLabel;
-    RzLabel4: TRzLabel;
     RzPanel7: TRzPanel;
-    RzPanel4: TRzPanel;
-    RzLabel5: TRzLabel;
-    RzLabel6: TRzLabel;
-    RzPanel5: TRzPanel;
-    RzLabel1: TRzLabel;
-    RzLabel2: TRzLabel;
     btnNext: TRzBitBtn;
     btnPrev: TRzBitBtn;
     edtTable: TZQuery;
     edtSORT_ID: TcxButtonEdit;
     edtSORT_ID1: TcxTextEdit;
+    RzLabel1: TRzLabel;
+    RzLabel2: TRzLabel;
+    RzLabel3: TRzLabel;
+    RzLabel4: TRzLabel;
+    RzLabel5: TRzLabel;
+    RzLabel6: TRzLabel;
+    Label9: TLabel;
+    Label6: TLabel;
+    Label4: TLabel;
+    edtSMALLTO_CALC: TcxTextEdit;
+    edtSMALL_UNITS: TzrComboBoxList;
+    edtDefault1: TcxCheckBox;
+    edtBARCODE2: TcxTextEdit;
+    Label16: TLabel;
+    Label14: TLabel;
+    Label12: TLabel;
+    edtDefault2: TcxCheckBox;
+    edtBIGTO_CALC: TcxTextEdit;
+    edtBIG_UNITS: TzrComboBoxList;
+    edtBARCODE3: TcxTextEdit;
+    RzLabel7: TRzLabel;
+    RzLabel8: TRzLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    lblSMALL_NOTE: TLabel;
+    lblBIG_NOTE: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
@@ -85,6 +84,11 @@ type
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure edtSORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure edtSMALL_UNITSPropertiesChange(Sender: TObject);
+    procedure edtSMALL_UNITSSaveValue(Sender: TObject);
+    procedure edtBIG_UNITSSaveValue(Sender: TObject);
+    procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
@@ -92,6 +96,7 @@ type
     AObj:TRecord_;
     Finded:boolean;
     Simple:boolean;
+    Dialog:boolean;
     FY_RELATION_ID:string;
     FY_TENANT_ID:string;
     procedure ReadFromObject;
@@ -99,12 +104,13 @@ type
     procedure CheckInput1;
     procedure CheckInput2;
     procedure OpenDataSet(tenantId,godsId:string);
-    procedure EditDataSet;
     procedure PostDataSet;
     procedure SetReadOnly;
     procedure CancelReadOnly;
     procedure Save;
     function  BarCodeSimpleInit(barcode:string):boolean;
+    procedure SetDialogForm;
+    class function ShowDialog(Owner:TForm;barcode:string='';autoClose:boolean=false):boolean;
   end;
 
 implementation
@@ -124,6 +130,7 @@ begin
   inherited;
   Finded := false;
   Simple := false;
+  Dialog := false;
   AObj := TRecord_.Create;
 
   FY_RELATION_ID := '';
@@ -216,7 +223,7 @@ begin
           WriteToObject;
           if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
           Save;
-          if not Simple then ShowMessage('商品保存成功...');
+          if not Simple then ShowMessage('商品添加成功...');
           rzPage.ActivePageIndex := 0;
           btnPrev.Visible := False;
           btnNext.Visible := True;
@@ -229,7 +236,7 @@ begin
       WriteToObject;
       if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
       Save;
-      if not Simple then ShowMessage('商品保存成功...');
+      if not Simple then ShowMessage('商品添加成功...');
       rzPage.ActivePageIndex := 0;
       btnPrev.Visible := False;
       btnNext.Visible := True;
@@ -298,8 +305,10 @@ begin
 
   if Finded then
     begin
-      EditDataSet;
-
+      if cdsGoodsInfo.IsEmpty then
+        cdsGoodsInfo.Append
+      else
+        cdsGoodsInfo.Edit;
       cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
       cdsGoodsInfo.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
       cdsGoodsInfo.FieldByName('GODS_CODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsCode');
@@ -324,6 +333,10 @@ begin
       cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingLocusNo'));
       cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'barterIntegral'));
 
+      if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+        cdsBarCode.Edit
+      else
+        cdsBarCode.Append;
       cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
       cdsBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
       cdsBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
@@ -336,29 +349,41 @@ begin
 
       if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
         begin
-          cdsSmallBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          cdsSmallBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
-          cdsSmallBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
-          cdsSmallBarCode.FieldByName('PROPERTY_01').AsString := '#';
-          cdsSmallBarCode.FieldByName('PROPERTY_02').AsString := '#';
-          cdsSmallBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnits');
-          cdsSmallBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
-          cdsSmallBarCode.FieldByName('BATCH_NO').AsString := '#';
-          cdsSmallBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallBarcode');
+          if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+            cdsBarCode.Edit
+          else
+            cdsBarCode.Append;
+          cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+          cdsBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
+          cdsBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
+          cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+          cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+          cdsBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnits');
+          cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
+          cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
+          cdsBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallBarcode');
         end;
       if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
         begin
-          cdsBigBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          cdsBigBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
-          cdsBigBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
-          cdsBigBarCode.FieldByName('PROPERTY_01').AsString := '#';
-          cdsBigBarCode.FieldByName('PROPERTY_02').AsString := '#';
-          cdsBigBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnits');
-          cdsBigBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
-          cdsBigBarCode.FieldByName('BATCH_NO').AsString := '#';
-          cdsBigBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigBarcode');
+          if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+            cdsBarCode.Edit
+          else
+            cdsBarCode.Append;
+          cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+          cdsBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
+          cdsBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
+          cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+          cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+          cdsBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnits');
+          cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
+          cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
+          cdsBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigBarcode');
         end;
 
+      if cdsGoodsRelation.IsEmpty then
+        cdsGoodsRelation.Append
+      else
+        cdsGoodsRelation.Edit;
       cdsGoodsRelation.FieldByName('ROWS_ID').AsString := TSequence.NewId;
       cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
       cdsGoodsRelation.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
@@ -446,9 +471,12 @@ begin
       Node.text := cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsString;
       rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
 
-      Node := doc.CreateElement('smallBarcode');
-      Node.text := cdsSmallBarCode.FieldByName('BARCODE').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
+      if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+        begin
+          Node := doc.CreateElement('smallBarcode');
+          Node.text := cdsBarCode.FieldByName('BARCODE').AsString;
+          rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
+        end;
     end;
 
   if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
@@ -461,9 +489,12 @@ begin
       Node.text := cdsGoodsInfo.FieldByName('BIGTO_CALC').AsString;
       rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
 
-      Node := doc.CreateElement('bigBarcode');
-      Node.text := cdsBigBarCode.FieldByName('BARCODE').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
+      if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+        begin
+          Node := doc.CreateElement('bigBarcode');
+          Node.text := cdsBarCode.FieldByName('BARCODE').AsString;
+          rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
+        end;
     end;
   
   Node := doc.CreateElement('usingPrice');
@@ -537,7 +568,7 @@ begin
       Raise Exception.Create('计量单位不能为空！');
     end;
 
-  if trim(edtSORT_ID1.Text)='' then
+  if (not Simple) and (trim(edtSORT_ID1.Text)='') then
     begin
       if edtSORT_ID.CanFocus then edtSORT_ID.SetFocus;
       Raise Exception.Create('商品分类不能为空！');
@@ -553,8 +584,15 @@ begin
       if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
       Raise Exception.Create('标准售价不能为空！');
     end;
+
   CheckGodsMaxPrice(edtNEW_INPRICE,'标准进价');
   CheckGodsMaxPrice(edtNEW_OUTPRICE,'标准售价');
+
+  if StrToFloatDef(trim(edtNEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
+    begin
+      if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
+      Raise Exception.Create('标准售价不能小于标准进价！');
+    end;
 end;
 
 procedure TfrmInitGoods.CheckInput2;
@@ -645,14 +683,23 @@ var rs: TZQuery;
 begin
   AObj.ReadFromDataSet(cdsGoodsInfo);
   udllShopUtil.ReadFromObject(AObj,self);
-  edtBARCODE1.Text := cdsBarCode.FieldByName('BARCODE').AsString;
+
+  if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+    edtBARCODE1.Text := cdsBarCode.FieldByName('BARCODE').AsString;
 
   if edtGOODS_OPTION1.Checked and (edtBARCODE1.Text = '') then
     edtBARCODE1.Text := edtInput.Text;
+
   if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-    edtBARCODE2.Text := cdsSmallBarCode.FieldByName('BARCODE').AsString;
+    begin
+      if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+        edtBARCODE2.Text := cdsBarCode.FieldByName('BARCODE').AsString;
+    end;
   if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-    edtBARCODE3.Text := cdsBigBarCode.FieldByName('BARCODE').AsString;
+    begin
+      if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+        edtBARCODE3.Text := cdsBarCode.FieldByName('BARCODE').AsString;
+    end;
 
   if (cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '') and
      (cdsGoodsInfo.FieldByName('UNIT_ID').AsString = cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString) then
@@ -671,13 +718,13 @@ begin
           rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
           if rs.Locate('SORT_ID',cdsGoodsInfo.FieldByName('SORT_ID1').AsString,[]) then
             edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
-          edtSORT_ID.Properties.ReadOnly := true;
+          edtSORT_ID1.Properties.ReadOnly := true;
           SetEditStyle(dsBrowse, edtSORT_ID.Style);
         end
       else
         begin
           edtSORT_ID1.Text := '';
-          edtSORT_ID.Properties.ReadOnly := false;
+          edtSORT_ID1.Properties.ReadOnly := false;
           SetEditStyle(dsInsert, edtSORT_ID.Style);
         end;
 
@@ -698,7 +745,7 @@ begin
       edtMoreUnits.Checked := false;
       btnNext.Caption := '完成';
       edtSORT_ID1.Text := '';
-      edtSORT_ID.Properties.ReadOnly := false;
+      edtSORT_ID1.Properties.ReadOnly := false;
       SetEditStyle(dsInsert, edtSORT_ID.Style);
     end;
 end;
@@ -714,10 +761,18 @@ begin
   udllShopUtil.WriteToObject(AObj,self);
   AObj.FieldByName('BARCODE').AsString := edtBARCODE1.Text;
   AObj.WriteToDataSet(cdsGoodsInfo);
-  EditDataSet;
+
+  if cdsGoodsRelation.IsEmpty then
+    cdsGoodsRelation.Append
+  else
+    cdsGoodsRelation.Edit;
 
   if not Finded then
     begin
+      if cdsGoodsInfo.IsEmpty then
+        cdsGoodsInfo.Append
+      else
+        cdsGoodsInfo.Edit;
       if edtGOODS_OPTION1.Checked then //供应链商品
         begin
           cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
@@ -738,6 +793,10 @@ begin
       cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := 2;
       cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
 
+      if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+        cdsBarCode.Edit
+      else
+        cdsBarCode.Append;
       cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
       cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
       cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
@@ -750,33 +809,41 @@ begin
 
       if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
         begin
-          cdsSmallBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          cdsSmallBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
-          cdsSmallBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-          cdsSmallBarCode.FieldByName('PROPERTY_01').AsString := '#';
-          cdsSmallBarCode.FieldByName('PROPERTY_02').AsString := '#';
-          cdsSmallBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
-          cdsSmallBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
-          cdsSmallBarCode.FieldByName('BATCH_NO').AsString := '#';
+          if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+            cdsBarCode.Edit
+          else
+            cdsBarCode.Append;
+          cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+          cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+          cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+          cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+          cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+          cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
+          cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
+          cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
           if edtGOODS_OPTION1.Checked then //供应链商品
-            cdsSmallBarCode.FieldByName('BARCODE').AsString := edtBARCODE2.Text
+            cdsBarCode.FieldByName('BARCODE').AsString := edtBARCODE2.Text
           else //无条码商品,自编条码
-            cdsSmallBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
+            cdsBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
         end;
       if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
         begin
-          cdsBigBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          cdsBigBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
-          cdsBigBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-          cdsBigBarCode.FieldByName('PROPERTY_01').AsString := '#';
-          cdsBigBarCode.FieldByName('PROPERTY_02').AsString := '#';
-          cdsBigBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
-          cdsBigBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
-          cdsBigBarCode.FieldByName('BATCH_NO').AsString := '#';
+          if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+            cdsBarCode.Edit
+          else
+            cdsBarCode.Append;
+          cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+          cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+          cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+          cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+          cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+          cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
+          cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
+          cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
           if edtGOODS_OPTION1.Checked then //供应链商品
-            cdsBigBarCode.FieldByName('BARCODE').AsString := edtBARCODE3.Text
+            cdsBarCode.FieldByName('BARCODE').AsString := edtBARCODE3.Text
           else //无条码商品,自编条码
-            cdsBigBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
+            cdsBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
         end;
 
       if edtGOODS_OPTION1.Checked then //供应链商品
@@ -803,7 +870,12 @@ begin
       cdsGoodsRelation.FieldByName('GODS_NAME').AsString := cdsGoodsInfo.FieldByName('GODS_NAME').AsString;
       cdsGoodsRelation.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(cdsGoodsRelation.FieldByName('GODS_NAME').AsString,3);
       if Finded then
-        cdsGoodsRelation.FieldByName('SORT_ID1').AsString := cdsGoodsInfo.FieldByName('SORT_ID1').AsString
+        begin
+          if Simple then
+            cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#'
+          else
+            cdsGoodsRelation.FieldByName('SORT_ID1').AsString := cdsGoodsInfo.FieldByName('SORT_ID1').AsString;
+        end
       else
         cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#';
       cdsGoodsRelation.FieldByName('NEW_INPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat;
@@ -812,9 +884,15 @@ begin
 
   // 多包装条码
   if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString = '' then
-    cdsSmallBarCode.Delete;
+    begin
+      if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+        cdsBarCode.Delete;
+    end;
   if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString = '' then
-    cdsBigBarCode.Delete;
+    begin
+      if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+        cdsBarCode.Delete;
+    end;
 
   PostDataSet;
 
@@ -840,30 +918,7 @@ begin
   try
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
     Params.ParamByName('GODS_ID').AsString := godsId;
-    Params.ParamByName('BARCODE_TYPE').AsString := '0';
     dataFactory.Open(cdsBarCode,'TBarCodeV60',Params);
-  finally
-    Params.Free;
-  end;
-
-  Params := TftParamList.Create(nil);
-  cdsSmallBarCode.Close;
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
-    Params.ParamByName('GODS_ID').AsString := godsId;
-    Params.ParamByName('BARCODE_TYPE').AsString := '1';
-    dataFactory.Open(cdsSmallBarCode,'TBarCodeV60',Params);
-  finally
-    Params.Free;
-  end;
-
-  Params := TftParamList.Create(nil);
-  cdsBigBarCode.Close;
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
-    Params.ParamByName('GODS_ID').AsString := godsId;
-    Params.ParamByName('BARCODE_TYPE').AsString := '2';
-    dataFactory.Open(cdsBigBarCode,'TBarCodeV60',Params);
   finally
     Params.Free;
   end;
@@ -882,7 +937,7 @@ end;
 
 procedure TfrmInitGoods.Save;
 var
-  tmpGoodsInfo,tmpBarCode,tmpSmallBarCode,tmpBigBarCode,tmpGoodsRelation: TZQuery;
+  tmpGoodsInfo,tmpBarCode,tmpGoodsRelation: TZQuery;
   Params: TftParamList;
   tmpObj: TRecord_;
 begin
@@ -890,8 +945,6 @@ begin
   try
     dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
     dataFactory.AddBatch(cdsBarCode,'TBarCodeV60',nil);
-    dataFactory.AddBatch(cdsSmallBarCode,'TBarCodeV60',nil);
-    dataFactory.AddBatch(cdsBigBarCode,'TBarCodeV60',nil);
     if edtGOODS_OPTION1.Checked then //供应链商品
       dataFactory.AddBatch(cdsGoodsRelation,'TGoodsRelationV60',nil);
     dataFactory.CommitBatch;
@@ -908,8 +961,6 @@ begin
     begin
       tmpGoodsInfo := TZQuery.Create(nil);
       tmpBarCode := TZQuery.Create(nil);
-      tmpSmallBarCode := TZQuery.Create(nil);
-      tmpBigBarCode := TZQuery.Create(nil);
       tmpGoodsRelation := TZQuery.Create(nil);
       dataFactory.MoveToSqlite;
       try
@@ -928,30 +979,7 @@ begin
         try
           Params.ParamByName('TENANT_ID').AsInteger := cdsBarCode.FieldByName('TENANT_ID').AsInteger;
           Params.ParamByName('GODS_ID').AsString := cdsBarCode.FieldByName('GODS_ID').AsString;
-          Params.ParamByName('BARCODE_TYPE').AsString := cdsBarCode.FieldByName('BARCODE_TYPE').AsString;
           dataFactory.Open(tmpBarCode,'TBarCodeV60',Params);
-        finally
-          Params.Free;
-        end;
-
-        Params := TftParamList.Create(nil);
-        tmpSmallBarCode.Close;
-        try
-          Params.ParamByName('TENANT_ID').AsInteger := cdsSmallBarCode.FieldByName('TENANT_ID').AsInteger;
-          Params.ParamByName('GODS_ID').AsString := cdsSmallBarCode.FieldByName('GODS_ID').AsString;
-          Params.ParamByName('BARCODE_TYPE').AsString := cdsSmallBarCode.FieldByName('BARCODE_TYPE').AsString;
-          dataFactory.Open(tmpSmallBarCode,'TBarCodeV60',Params);
-        finally
-          Params.Free;
-        end;
-
-        Params := TftParamList.Create(nil);
-        tmpBigBarCode.Close;
-        try
-          Params.ParamByName('TENANT_ID').AsInteger := cdsBigBarCode.FieldByName('TENANT_ID').AsInteger;
-          Params.ParamByName('GODS_ID').AsString := cdsBigBarCode.FieldByName('GODS_ID').AsString;
-          Params.ParamByName('BARCODE_TYPE').AsString := cdsBigBarCode.FieldByName('BARCODE_TYPE').AsString;
-          dataFactory.Open(tmpBigBarCode,'TBarCodeV60',Params);
         finally
           Params.Free;
         end;
@@ -979,45 +1007,53 @@ begin
 
         tmpObj := TRecord_.Create;
         try
-          if tmpBarCode.IsEmpty then tmpBarCode.Append
-          else tmpBarCode.Edit;
-          tmpObj.ReadFromDataSet(cdsBarCode);
-          tmpObj.WriteToDataSet(tmpBarCode, false);
+          if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+            begin
+              if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
+                tmpBarCode.Edit
+              else
+                tmpBarCode.Append;
+              tmpObj.ReadFromDataSet(cdsBarCode);
+              tmpObj.WriteToDataSet(tmpBarCode, false);
+            end
+          else
+            begin
+              if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
+                tmpBarCode.Delete;
+            end;
+
+          if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+            begin
+              if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
+                tmpBarCode.Edit
+              else
+                tmpBarCode.Append;
+              tmpObj.ReadFromDataSet(cdsBarCode);
+              tmpObj.WriteToDataSet(tmpBarCode, false);
+            end
+          else
+            begin
+              if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
+                tmpBarCode.Delete;
+            end;
+
+          if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+            begin
+              if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
+                tmpBarCode.Edit
+              else
+                tmpBarCode.Append;
+              tmpObj.ReadFromDataSet(cdsBarCode);
+              tmpObj.WriteToDataSet(tmpBarCode, false);
+            end
+          else
+            begin
+              if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
+                tmpBarCode.Delete;
+            end;
         finally
           tmpObj.Free;
         end;
-
-        if tmpSmallBarCode.IsEmpty then tmpSmallBarCode.Append
-        else tmpSmallBarCode.Edit;
-
-        if cdsSmallBarCode.IsEmpty then
-          tmpSmallBarCode.Delete
-        else
-          begin
-            tmpObj := TRecord_.Create;
-            try
-              tmpObj.ReadFromDataSet(cdsSmallBarCode);
-              tmpObj.WriteToDataSet(tmpSmallBarCode, false);
-            finally
-              tmpObj.Free;
-            end;
-          end;
-
-        if tmpBigBarCode.IsEmpty then tmpBigBarCode.Append
-        else tmpBigBarCode.Edit;
-
-        if cdsBigBarCode.IsEmpty then
-          tmpBigBarCode.Delete
-        else
-          begin
-            tmpObj := TRecord_.Create;
-            try
-              tmpObj.ReadFromDataSet(cdsBigBarCode);
-              tmpObj.WriteToDataSet(tmpBigBarCode, false);
-            finally
-              tmpObj.Free;
-            end;
-          end;
 
         tmpObj := TRecord_.Create;
         try
@@ -1033,10 +1069,6 @@ begin
           tmpGoodsInfo.Post;
         if tmpBarCode.State in [dsEdit,dsInsert] then
           tmpBarCode.Post;
-        if tmpSmallBarCode.State in [dsEdit,dsInsert] then
-          tmpSmallBarCode.Post;
-        if tmpBigBarCode.State in [dsEdit,dsInsert] then
-          tmpBigBarCode.Post;
         if tmpGoodsRelation.State in [dsEdit,dsInsert] then
           tmpGoodsRelation.Post;
 
@@ -1044,8 +1076,6 @@ begin
         try
           dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
           dataFactory.AddBatch(tmpBarCode,'TBarCodeV60',nil);
-          dataFactory.AddBatch(tmpSmallBarCode,'TBarCodeV60',nil);
-          dataFactory.AddBatch(tmpBigBarCode,'TBarCodeV60',nil);
           if edtGOODS_OPTION1.Checked then //供应链商品
             dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',nil);
           dataFactory.CommitBatch;
@@ -1057,65 +1087,20 @@ begin
         dataFactory.MoveToDefault;
         tmpGoodsInfo.Free;
         tmpBarCode.Free;
-        tmpSmallBarCode.Free;
-        tmpBigBarCode.Free;
         tmpGoodsRelation.Free;
       end;
     end;
   dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
-procedure TfrmInitGoods.EditDataSet;
-begin
-  if not (cdsGoodsInfo.State in [dsEdit,dsInsert]) then
-    begin
-      if cdsGoodsInfo.IsEmpty then cdsGoodsInfo.Append
-      else cdsGoodsInfo.Edit;
-    end;
-  if not (cdsBarCode.State in [dsEdit,dsInsert]) then
-    begin
-      if cdsBarCode.IsEmpty then cdsBarCode.Append
-      else cdsBarCode.Edit;
-    end;
-  if not (cdsSmallBarCode.State in [dsEdit,dsInsert]) then
-    begin
-      if cdsSmallBarCode.IsEmpty then cdsSmallBarCode.Append
-      else cdsSmallBarCode.Edit;
-    end;
-  if not (cdsBigBarCode.State in [dsEdit,dsInsert]) then
-    begin
-      if cdsBigBarCode.IsEmpty then cdsBigBarCode.Append
-      else cdsBigBarCode.Edit;
-    end;
-  if not (cdsGoodsRelation.State in [dsEdit,dsInsert]) then
-    begin
-      if cdsGoodsRelation.IsEmpty then cdsGoodsRelation.Append
-      else cdsGoodsRelation.Edit;
-    end;
-end;
-
 procedure TfrmInitGoods.PostDataSet;
 begin
   if cdsGoodsInfo.State in [dsEdit,dsInsert] then
-    begin
-      cdsGoodsInfo.Post;
-    end;
+     cdsGoodsInfo.Post;
   if cdsBarCode.State in [dsEdit,dsInsert] then
-    begin
-      cdsBarCode.Post;
-    end;
-  if cdsSmallBarCode.State in [dsEdit,dsInsert] then
-    begin
-      cdsSmallBarCode.Post;
-    end;
-  if cdsBigBarCode.State in [dsEdit,dsInsert] then
-    begin
-      cdsBigBarCode.Post;
-    end;
+     cdsBarCode.Post;
   if cdsGoodsRelation.State in [dsEdit,dsInsert] then
-    begin
-      cdsGoodsRelation.Post;
-    end;
+     cdsGoodsRelation.Post;
 end;
 
 procedure TfrmInitGoods.FormDestroy(Sender: TObject);
@@ -1242,7 +1227,7 @@ procedure TfrmInitGoods.edtSORT_IDPropertiesButtonClick(Sender: TObject;
 var Obj:TRecord_;
 begin
   inherited;
-  if edtSORT_ID.Properties.ReadOnly then Exit;
+  if edtSORT_ID1.Properties.ReadOnly then Exit;
   Obj := TRecord_.Create;
   try
     if edtGOODS_OPTION1.Checked and (not Finded) then
@@ -1265,6 +1250,74 @@ begin
   finally
     Obj.Free;
   end;
+end;
+
+procedure TfrmInitGoods.edtSMALL_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtSMALL_UNITS.AsString = '' then
+    lblSMALL_NOTE.Visible := false;
+end;
+
+procedure TfrmInitGoods.edtSMALL_UNITSSaveValue(Sender: TObject);
+begin
+  inherited;
+  if edtSMALL_UNITS.AsString = '' then
+    lblSMALL_NOTE.Visible := false
+  else
+    begin
+      lblSMALL_NOTE.Visible := true;
+      lblSMALL_NOTE.Caption := '一'+edtSMALL_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
+    end;
+end;
+
+procedure TfrmInitGoods.edtBIG_UNITSSaveValue(Sender: TObject);
+begin
+  inherited;
+  if edtBIG_UNITS.AsString = '' then
+    lblBIG_NOTE.Visible := false
+  else
+    begin
+      lblBIG_NOTE.Visible := true;
+      lblBIG_NOTE.Caption := '一'+edtBIG_UNITS.Text+'等于多少'+edtCALC_UNITS.Text;
+    end;
+end;
+
+procedure TfrmInitGoods.edtBIG_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtBIG_UNITS.AsString = '' then
+    lblBIG_NOTE.Visible := false;
+end;
+
+procedure TfrmInitGoods.SetDialogForm;
+begin
+  Dialog := true;
+  self.Height := RzPanel1.Height;
+  self.Width := RzPanel1.Width;
+  RzPanel1.Left := 0;
+  RzPanel1.Top := 0;
+end;
+
+class function TfrmInitGoods.ShowDialog(Owner:TForm;barcode:string='';autoClose:boolean=false):boolean;
+begin
+  with TfrmInitGoods.Create(Owner) do
+    begin
+      SetDialogForm;
+      Show;
+      if barcode <> '' then
+        if BarCodeSimpleInit(barcode) then
+          begin
+            if autoClose then Free
+            else ShowMessage('商品添加成功...');
+          end;
+    end;
+end;
+
+procedure TfrmInitGoods.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Dialog and (Key=#27) then Close;
 end;
 
 initialization

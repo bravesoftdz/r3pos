@@ -55,7 +55,7 @@ type
     Bevel2: TBevel;
     RzPanel4: TRzPanel;
     lblCaption: TRzLabel;
-    Image1: TImage;
+    adv03: TImage;
     RzBackground2: TRzBackground;
     RzBackground3: TRzBackground;
     RzBackground1: TRzBackground;
@@ -115,9 +115,11 @@ type
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
+    function  IsChinese(str:string):Boolean;
   public
     AObj:TRecord_;
     Finded:boolean;
+    RspFinded:boolean;
     Simple:boolean;
     Dialog:boolean;
     FY_RELATION_ID:string;
@@ -139,7 +141,8 @@ type
 
 implementation
 
-uses uRspFactory,msxml,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom;
+uses uRspFactory,msxml,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
+     uAdvFactory;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -153,6 +156,7 @@ var
 begin
   inherited;
   Finded := false;
+  RspFinded := false;
   Simple := false;
   Dialog := false;
   AObj := TRecord_.Create;
@@ -187,6 +191,8 @@ begin
   edtDefault1.Checked := false;
   edtDefault2.Checked := false;
 
+  advFactory.getAdvPngImage(adv03.Name,adv03.Picture);
+
   if (FY_TENANT_ID = '') or (FY_RELATION_ID = '') then
     begin
       btnNext.Enabled := false;
@@ -200,6 +206,7 @@ begin
   if rzPage.ActivePageIndex = 0 then
     begin
       Finded := false;
+      RspFinded := false;
       edtSORT_ID.Text := '';
       edtSHOP_NEW_OUTPRICE.Text := '';
       edtDefault1.Checked := false;
@@ -300,38 +307,60 @@ var
   rs,hasGoods:TZQuery;
 begin
   barcode := trim(edtInput.Text);
-  if barcode = '' then Raise Exception.Create('请输入条形码...');
+  if barcode = '' then
+    begin
+      if self.Visible and edtInput.CanFocus then edtInput.SetFocus;
+      Raise Exception.Create('请输入条形码...');
+    end;
+  if IsChinese(barcode) or (Length(barcode) <> 13) then
+    begin
+      if self.Visible and edtInput.CanFocus then edtInput.SetFocus;
+      Raise Exception.Create('条形码格式不合法...');
+    end;
+
   Finded := false;
+  RspFinded := false;
   godsId := '';
 
+  // 查询本地商品
   hasGoods := TZQuery.Create(nil);
   try
-    hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where COMM not in (''02'',''12'') and TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') and BARCODE = '''+barcode+''' ';
+    hasGoods.SQL.Text := 'select TENANT_ID,GODS_ID from PUB_BARCODE where COMM not in (''02'',''12'') and TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') and BARCODE = '''+barcode+''' ';
     dataFactory.Open(hasGoods);
     if not hasGoods.IsEmpty then
       begin
         rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
         if rs.Locate('GODS_ID',hasGoods.FieldByName('GODS_ID').AsString,[]) then
-          Raise Exception.Create('该条码已经存在于本地商品中...');
+          begin
+            if hasGoods.FieldByName('TENANT_ID').AsString <> FY_TENANT_ID then
+              Raise Exception.Create('条形码【'+barcode+'】重复....');
+            Finded := true;
+            godsId := hasGoods.FieldByName('GODS_ID').AsString;
+          end;
       end;
   finally
     hasGoods.Free;
   end;
 
-  try
-    outxml := rspFactory.getGoodsInfo(barcode);
-    doc := rspFactory.CreateXML(outxml);
-    pubGoodsinfoResp := rspFactory.FindNode(doc,'body\pubGoodsinfo');
-    Finded := true;
-    godsId := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId'); 
-  except
-    Finded := false;
-    godsId := '';
-  end;
+  // 查询RSP商品
+  if godsId = '' then
+    begin
+      try
+        outxml := rspFactory.getGoodsInfo(barcode);
+        doc := rspFactory.CreateXML(outxml);
+        pubGoodsinfoResp := rspFactory.FindNode(doc,'body\pubGoodsinfo');
+        Finded := true;
+        RspFinded := true;
+        godsId := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
+      except
+        Finded := false;
+        godsId := '';
+      end;
+    end;
 
   OpenDataSet(FY_TENANT_ID, godsId);
 
-  if Finded then
+  if RspFinded then
     begin
       if cdsGoodsInfo.IsEmpty then
         cdsGoodsInfo.Append
@@ -414,14 +443,16 @@ begin
         cdsGoodsRelation.Edit;
       cdsGoodsRelation.FieldByName('ROWS_ID').AsString := TSequence.NewId;
       cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-      cdsGoodsRelation.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
+      cdsGoodsRelation.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
       cdsGoodsRelation.FieldByName('RELATION_ID').AsInteger := strtoint(FY_RELATION_ID);
+      cdsGoodsRelation.FieldByName('NEW_INPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat;
+      cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat;
       cdsGoodsRelation.FieldByName('ZOOM_RATE').AsFloat := 1.000;
 
       PostDataSet;
-
-      edtTable.Data := cdsGoodsInfo.Data;
     end;
+
+  edtTable.Data := cdsGoodsInfo.Data;
 end;
 
 procedure TfrmInitGoods.uploadGoodsInfo;
@@ -749,23 +780,64 @@ begin
 
   if Finded then
     begin
-      edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
       SetReadOnly;
-      // 非烟供应链允许修改商品分类
-      if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID then
+
+      if RspFinded then //RSP找到商品，除非烟供应链之外不允许修改分类
+      begin
+        if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID then
+          begin
+            rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+            if rs.Locate('SORT_ID',cdsGoodsInfo.FieldByName('SORT_ID1').AsString,[]) then
+              edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
+            edtSORT_ID1.Properties.ReadOnly := true;
+            SetEditStyle(dsBrowse, edtSORT_ID.Style);
+          end
+        else
+          begin
+            edtSORT_ID1.Text := '';
+            edtSORT_ID1.Properties.ReadOnly := false;
+            SetEditStyle(dsInsert, edtSORT_ID.Style);
+          end;
+      end else //本地找到商品，允许修改分类
+      begin
+        edtSORT_ID1.Properties.ReadOnly := false;
+        SetEditStyle(dsInsert, edtSORT_ID.Style);
+        rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+        if Copy(cdsGoodsRelation.FieldByName('COMM').AsString,2,2) <> '2' then
+          begin
+            if cdsGoodsRelation.FieldByName('GODS_CODE').AsString <> '' then
+              edtGODS_CODE.Text :=  cdsGoodsRelation.FieldByName('GODS_CODE').AsString;
+            if cdsGoodsRelation.FieldByName('GODS_NAME').AsString <> '' then
+              edtGODS_NAME.Text :=  cdsGoodsRelation.FieldByName('GODS_NAME').AsString;
+            if cdsGoodsRelation.FieldByName('SORT_ID1').AsString <> '' then
+              edtSORT_ID1.Text := cdsGoodsRelation.FieldByName('SORT_ID1').AsString;
+            if cdsGoodsRelation.FieldByName('NEW_INPRICE').AsString <> '' then
+              edtNEW_INPRICE.Text := cdsGoodsRelation.FieldByName('NEW_INPRICE').AsString;
+            if cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsString <> '' then
+              edtNEW_OUTPRICE.Text := cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsString;
+
+            if rs.Locate('SORT_ID',cdsGoodsRelation.FieldByName('SORT_ID1').AsString,[]) then
+              edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString
+            else
+              edtSORT_ID.Text := '待分类商品';
+          end
+        else
+          begin
+            if rs.Locate('SORT_ID',cdsGoodsInfo.FieldByName('SORT_ID1').AsString,[]) then
+              edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString
+            else
+              edtSORT_ID.Text := '待分类商品';
+          end;
+      end;
+
+      if cdsGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
         begin
-          rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
-          if rs.Locate('SORT_ID',cdsGoodsInfo.FieldByName('SORT_ID1').AsString,[]) then
-            edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
-          edtSORT_ID1.Properties.ReadOnly := true;
-          SetEditStyle(dsBrowse, edtSORT_ID.Style);
-        end
-      else
-        begin
-          edtSORT_ID1.Text := '';
-          edtSORT_ID1.Properties.ReadOnly := false;
-          SetEditStyle(dsInsert, edtSORT_ID.Style);
+          if Copy(cdsGoodsPrice.FieldByName('COMM').AsString,2,2) <> '2' then
+            edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsString
         end;
+
+      if trim(edtSHOP_NEW_OUTPRICE.Text) = '' then
+        edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
 
       if (cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '') or (cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '') then
         begin
@@ -944,7 +1016,7 @@ begin
       cdsGoodsRelation.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(cdsGoodsRelation.FieldByName('GODS_NAME').AsString,3);
       if Finded then
         begin
-          if Simple then
+          if Simple and RspFinded then
             cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#'
           else
             cdsGoodsRelation.FieldByName('SORT_ID1').AsString := cdsGoodsInfo.FieldByName('SORT_ID1').AsString;
@@ -1071,6 +1143,7 @@ begin
   end;
 
   Finded := false;
+  RspFinded := false;
   edtInput.Text := '';
 
   // 本地保存
@@ -1303,6 +1376,7 @@ end;
 procedure TfrmInitGoods.edtInputKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
+  if not edtGOODS_OPTION1.Checked then edtGOODS_OPTION1.Checked := true;
   if Key = #13 then
     if btnNext.Visible then btnNext.Click;
 end;
@@ -1347,20 +1421,26 @@ function TfrmInitGoods.BarCodeSimpleInit(barcode:string):boolean;
 begin
   result := false;
   if not btnNext.Enabled then Exit;
-  Simple := true;
-  edtGOODS_OPTION1.Checked := true;
-  edtInput.Text := barcode;
-  btnNext.Click;
-  if Finded then
-    begin
-      btnNext.Click;
-      if edtMoreUnits.Checked then
-        begin
+  try
+    Simple := true;
+    edtGOODS_OPTION1.Checked := true;
+    edtInput.Text := barcode;
+    btnNext.Click;
+    if Finded then
+      begin
+        btnNext.Click;
+        if edtMoreUnits.Checked then
           btnNext.Click;
-        end;
-    end;
+        result := true;
+      end;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         MessageBox(Handle,pchar(E.Message),'友情提示..',MB_OK);
+       end;
+  end;
   Simple := false;
-  result := true;
 end;
 
 procedure TfrmInitGoods.edtSORT_IDPropertiesButtonClick(Sender: TObject;
@@ -1470,10 +1550,18 @@ begin
                 result := true;
                 GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
                 Exit;
+              end
+            else
+              begin
+                result := (ShowModal = MROK);
+                if result then GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
               end;
+          end
+        else
+          begin
+            result := (ShowModal = MROK);
+            if result then GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
           end;
-        result := (ShowModal = MROK);
-        if result then GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
       finally
         Free;
       end;
@@ -1516,6 +1604,20 @@ begin
   inherited;
   RzPanel1.Top := (self.ClientHeight - RzPanel1.Height) div 2 - 1;
   RzPanel1.Left := (self.ClientWidth - RzPanel1.Width) div 2 - 1;
+end;
+
+function TfrmInitGoods.IsChinese(str: string): Boolean;
+var i:integer;
+begin
+  Result:=False;
+  for i:=0 to length(str)-1 do
+  begin
+    if str[i] in LeadBytes then
+    begin
+      result := true;
+      break;
+    end;
+  end;
 end;
 
 initialization

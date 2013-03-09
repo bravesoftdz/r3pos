@@ -430,6 +430,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Style.Edges = [bLeft, bTop, bRight, bBottom]
                 Style.ButtonStyle = btsUltraFlat
                 TabOrder = 3
+                OnKeyPress = edtSORT_IDKeyPress
               end
               object RzPanel18: TRzPanel
                 Left = 25

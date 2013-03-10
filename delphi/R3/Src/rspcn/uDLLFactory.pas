@@ -79,6 +79,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    //读取令牌信息
+    function getTokenInfo:boolean;
     //url 命名规则 rspcn://appid/moduid
     function open(urltoken:TurlToken;hWnd:THandle):boolean;
     function close(urltoken:TurlToken):boolean;
@@ -260,6 +262,7 @@ var
   idx:integer;
   app:TDLLPlugin;
 begin
+  if not getTokenInfo then Exit;
   idx := find(urltoken.appId);
   if idx<0 then
      begin
@@ -371,6 +374,64 @@ begin
     begin
       TDLLPlugin(FList[i]).resize;
     end;
+end;
+
+function TDLLFactory.getTokenInfo: boolean;
+var tenantId:integer;
+function CheckRegister:boolean;
+var
+  rs:TZQuery;
+begin
+  dataFactory.MoveToSqlite;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
+    dataFactory.Open(rs);
+    result := (rs.Fields[0].AsString<>'');
+    if result then tenantId := rs.Fields[0].asInteger;
+  finally
+    rs.Free;
+  end;
+end;
+var
+  rs:TZQuery;
+begin
+  if (token.tenantId='') and CheckRegister then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+        rs.Close;
+        rs.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,A.TENANT_ID,C.TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
+          'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT=:ACCOUNT';
+        rs.ParamByName('TENANT_ID').AsInteger := tenantId;
+        rs.ParamByName('ACCOUNT').AsString := token.account;
+        dataFactory.Open(rs);
+        if rs.IsEmpty then Raise Exception.Create('读取用户信息失败，请重新登录...'); 
+        token.userId := rs.FieldbyName('USER_ID').AsString;
+        token.account := rs.FieldbyName('ACCOUNT').AsString;
+        token.tenantId := rs.FieldbyName('TENANT_ID').AsString;
+        token.tenantName := rs.FieldbyName('TENANT_NAME').AsString;
+        token.shopId := rs.FieldbyName('SHOP_ID').AsString;
+        token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
+        token.username := rs.FieldbyName('USER_NAME').AsString;
+        rs.Close;
+        rs.SQL.Text := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+        rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+        rs.ParamByName('SHOP_ID').AsString := token.shopId;
+        dataFactory.Open(rs);
+        token.address := rs.FieldbyName('ADDRESS').AsString;
+        token.xsmCode := rs.FieldbyName('XSM_CODE').AsString;
+        token.xsmPWD := rs.FieldbyName('XSM_PSWD').AsString;
+        token.licenseCode := rs.FieldbyName('LICENSE_CODE').AsString;
+        token.legal := rs.FieldbyName('LINKMAN').AsString;
+        token.mobile := rs.FieldbyName('TELEPHONE').AsString;
+        token.Logined := true;
+        token.online := true;
+      finally
+        rs.Free;
+      end;
+     end;
+  result := true;
 end;
 
 { TDLLPlugin }

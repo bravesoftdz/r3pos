@@ -1,30 +1,33 @@
 inherited frmSaleOrder: TfrmSaleOrder
-  Left = 238
-  Top = 96
+  Left = 135
   Caption = #38144#21806#21333
+  ClientWidth = 1032
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
+    Width = 832
     inherited webForm: TRzPanel
+      Width = 832
       inherited PageControl: TRzPageControl
+        Width = 832
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
           inherited order_input: TRzPanel
+            Width = 832
             Height = 149
             inherited RzPanel2: TRzPanel
+              Width = 812
               Height = 129
               DesignSize = (
-                684
+                812
                 129)
               inherited lblHint: TLabel
-                Width = 79
                 Anchors = [akLeft, akTop, akRight]
-                AutoSize = False
               end
               object lblNo: TRzLabel [2]
-                Left = 463
+                Left = 591
                 Top = 16
                 Width = 176
                 Height = 15
@@ -38,7 +41,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object h11: TLabel [3]
-                Left = 386
+                Left = 385
                 Top = 104
                 Width = 124
                 Height = 15
@@ -52,7 +55,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object Label21: TLabel [4]
-                Left = 18
+                Left = 17
                 Top = 80
                 Width = 109
                 Height = 15
@@ -65,8 +68,21 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Style = []
                 ParentFont = False
               end
+              inherited Label26: TLabel
+                Left = 16
+              end
+              inherited Label20: TLabel
+                Left = 16
+              end
+              inherited Label22: TLabel
+                Left = 16
+              end
+              inherited RzBorder1: TRzBorder
+                Left = 16
+                Width = 780
+              end
               object Label2: TLabel [9]
-                Left = 149
+                Left = 148
                 Top = 55
                 Width = 116
                 Height = 15
@@ -80,7 +96,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object Label3: TLabel [10]
-                Left = 149
+                Left = 148
                 Top = 80
                 Width = 116
                 Height = 15
@@ -97,7 +113,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ShowHint = True
               end
               object Label4: TLabel [11]
-                Left = 149
+                Left = 148
                 Top = 105
                 Width = 117
                 Height = 15
@@ -111,7 +127,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object Label5: TLabel [12]
-                Left = 282
+                Left = 281
                 Top = 80
                 Width = 86
                 Height = 15
@@ -128,7 +144,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ShowHint = True
               end
               object Label6: TLabel [13]
-                Left = 282
+                Left = 281
                 Top = 55
                 Width = 86
                 Height = 15
@@ -142,7 +158,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object Label7: TLabel [14]
-                Left = 282
+                Left = 281
                 Top = 105
                 Width = 94
                 Height = 15
@@ -156,7 +172,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object Label12: TLabel [15]
-                Left = 386
+                Left = 385
                 Top = 80
                 Width = 124
                 Height = 15
@@ -170,7 +186,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 ParentFont = False
               end
               object Label13: TLabel [16]
-                Left = 386
+                Left = 385
                 Top = 55
                 Width = 124
                 Height = 15
@@ -189,15 +205,56 @@ inherited frmSaleOrder: TfrmSaleOrder
               inherited edtInput: TcxTextEdit
                 Tag = -1
               end
+              inherited help: TRzBmpButton
+                Left = 780
+              end
+              object RzPanel19: TRzPanel
+                Left = 512
+                Top = 55
+                Width = 284
+                Height = 66
+                Anchors = [akLeft, akTop, akRight]
+                BorderInner = fsFlat
+                BorderOuter = fsStatus
+                BorderColor = clGray
+                BorderWidth = 3
+                Caption = #23454#25910#65306'1000 '#25214#38646#65306'90'
+                Color = clBlack
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clRed
+                Font.Height = -24
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                TabOrder = 2
+                object MarqueeStatus: TRzMarqueeStatus
+                  Left = 5
+                  Top = 5
+                  Width = 274
+                  Height = 56
+                  FrameStyle = fsNone
+                  Align = alClient
+                  Color = clWhite
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clGray
+                  Font.Height = -24
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentColor = False
+                  ParentFont = False
+                  ScrollType = stNone
+                end
+              end
             end
           end
           inherited order_header: TRzPanel
             Top = 149
+            Width = 832
             Height = 27
             object customerInfo: TLabel
               Left = 324
               Top = 10
-              Width = 125
+              Width = 253
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               AutoSize = False
@@ -290,7 +347,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               MultiSelect = False
             end
             object RzPanel7: TRzPanel
-              Left = 458
+              Left = 586
               Top = 6
               Width = 99
               Height = 21
@@ -302,7 +359,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               TabOrder = 3
             end
             object edtSALES_DATE: TcxDateEdit
-              Left = 554
+              Left = 682
               Top = 5
               Width = 141
               Height = 23
@@ -313,8 +370,10 @@ inherited frmSaleOrder: TfrmSaleOrder
           end
           inherited order_grid: TRzPanel
             Top = 176
+            Width = 832
             Height = 164
             inherited DBGridEh1: TDBGridEh
+              Width = 810
               Height = 143
               FrozenCols = 1
               Columns = <
@@ -433,6 +492,7 @@ inherited frmSaleOrder: TfrmSaleOrder
           end
           inherited order_footer: TRzPanel
             Top = 340
+            Width = 832
             Height = 114
             object Label1: TLabel
               Left = 314
@@ -466,7 +526,7 @@ inherited frmSaleOrder: TfrmSaleOrder
             object RzPanel3: TRzPanel
               Left = 0
               Top = 67
-              Width = 704
+              Width = 832
               Height = 47
               Align = alBottom
               BorderOuter = fsFlat
@@ -474,7 +534,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               FlatColor = 6447714
               TabOrder = 5
               object RzPanel4: TRzPanel
-                Left = 344
+                Left = 472
                 Top = 1
                 Width = 360
                 Height = 46
@@ -595,14 +655,14 @@ inherited frmSaleOrder: TfrmSaleOrder
             object edtREMARK: TcxTextEdit
               Left = 106
               Top = -1
-              Width = 343
+              Width = 471
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object RzPanel8: TRzPanel
-              Left = 458
+              Left = 586
               Top = 0
               Width = 99
               Height = 21
@@ -614,7 +674,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               TabOrder = 7
             end
             object edtGUIDE_USER: TzrComboBoxList
-              Left = 554
+              Left = 682
               Top = -1
               Width = 141
               Height = 23
@@ -684,7 +744,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object payment: TRzPanel
-              Left = 458
+              Left = 586
               Top = 32
               Width = 99
               Height = 21
@@ -702,7 +762,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               TabOrder = 10
             end
             object edtPAY_TOTAL: TcxTextEdit
-              Left = 554
+              Left = 682
               Top = 31
               Width = 110
               Height = 23
@@ -725,7 +785,7 @@ inherited frmSaleOrder: TfrmSaleOrder
           object RzPanel11: TRzPanel
             Left = 0
             Top = 0
-            Width = 704
+            Width = 832
             Height = 65
             Align = alTop
             BorderOuter = fsNone
@@ -736,18 +796,18 @@ inherited frmSaleOrder: TfrmSaleOrder
             object RzPanel13: TRzPanel
               Left = 10
               Top = 10
-              Width = 684
+              Width = 812
               Height = 45
               Align = alClient
               BorderOuter = fsFlatRounded
               TabOrder = 0
               DesignSize = (
-                684
+                812
                 45)
               object RzPanel15: TRzPanel
                 Left = 16
                 Top = 12
-                Width = 153
+                Width = 281
                 Height = 22
                 Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsFlatRounded
@@ -756,13 +816,13 @@ inherited frmSaleOrder: TfrmSaleOrder
                 FlatColor = clWindowFrame
                 TabOrder = 0
                 DesignSize = (
-                  153
+                  281
                   22)
                 object serachText: TEdit
                   Tag = -1
                   Left = 6
                   Top = 2
-                  Width = 142
+                  Width = 270
                   Height = 18
                   Hint = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#21830#21697#21517#31216#25110#22791#27880#35828#26126
                   Anchors = [akLeft, akTop, akRight]
@@ -773,7 +833,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 end
               end
               object RzPanel16: TRzPanel
-                Left = 187
+                Left = 315
                 Top = 12
                 Width = 402
                 Height = 22
@@ -837,7 +897,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 end
               end
               object btnFind: TRzBitBtn
-                Left = 600
+                Left = 728
                 Top = 8
                 Width = 65
                 Height = 28
@@ -868,7 +928,7 @@ inherited frmSaleOrder: TfrmSaleOrder
           object RzPanel14: TRzPanel
             Left = 0
             Top = 65
-            Width = 704
+            Width = 832
             Height = 389
             Align = alClient
             BorderInner = fsFlat
@@ -959,7 +1019,7 @@ inherited frmSaleOrder: TfrmSaleOrder
             object DBGridEh2: TDBGridEh
               Left = 11
               Top = 11
-              Width = 683
+              Width = 811
               Height = 368
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -1187,12 +1247,13 @@ inherited frmSaleOrder: TfrmSaleOrder
     end
   end
   inherited toolNav: TRzPanel
+    Width = 1032
     inherited lblCaption: TRzLabel
       Width = 185
       Caption = #38144#21806#21333
     end
     inherited RzPanel12: TRzPanel
-      Left = 184
+      Left = 312
       Width = 520
       DesignSize = (
         520
@@ -1214,6 +1275,12 @@ inherited frmSaleOrder: TfrmSaleOrder
         Left = 340
       end
     end
+    inherited RzPanel18: TRzPanel
+      Left = 832
+    end
+  end
+  inherited RzPanel1: TRzPanel
+    Left = 832
   end
   inherited edtTable: TZQuery
     FieldDefs = <

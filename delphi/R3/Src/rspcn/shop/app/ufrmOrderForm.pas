@@ -106,6 +106,10 @@ type
       Shift: TShiftState);
     procedure PageControlChange(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure N1Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure N5Click(Sender: TObject);
   private
 
     // 散装条码参数
@@ -130,7 +134,7 @@ type
     FinputMode: integer;
     FdbState: TDataSetState;
     FinputFlag: integer;
-    
+
     procedure SetinputMode(const Value: integer);virtual;
     procedure SetdbState(const Value: TDataSetState);virtual;
     procedure SetinputFlag(const Value: integer);virtual;
@@ -157,15 +161,15 @@ type
     procedure InitPrice(GODS_ID,UNIT_ID:string);virtual;
     function CheckRepeat(AObj:TRecord_):boolean;virtual;
 
-    procedure AmountToCalc(Amount:Real);virtual;
-    procedure PriceToCalc(APrice:Real);virtual;
-    procedure AMoneyToCalc(AMoney:Real);virtual;
-    procedure BulkToCalc(AMoney:Real);virtual;
-    procedure AgioToCalc(Agio:Real);virtual;
+    procedure AmountToCalc(Amount:currency);virtual;
+    procedure PriceToCalc(APrice:currency);virtual;
+    procedure AMoneyToCalc(AMoney:currency);virtual;
+    procedure BulkToCalc(AMoney:currency);virtual;
+    procedure AgioToCalc(Agio:currency);virtual;
     procedure PresentToCalc(Present:integer);virtual;
     procedure UnitToCalc(UNIT_ID:string);virtual;
-    procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);virtual;
-    procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);virtual;
+    procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:currency;Appended:boolean=false);virtual;
+    procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:currency;Appended:boolean=false);virtual;
 
     //修改单价
     procedure PriceToGods(id:string);virtual;
@@ -173,7 +177,7 @@ type
     procedure GodsToAmount(id:string);virtual;
     //修改单位
     procedure UnitToGods(id:string);virtual;
-    
+
     procedure ReadFrom(DataSet:TDataSet);virtual;
     procedure CalcWriteTo(edtTable,DataSet:TDataSet;MyField:TField);virtual;
     procedure WriteTo(DataSet:TDataSet);virtual;
@@ -195,7 +199,7 @@ type
     procedure PrintOrder;virtual;
     procedure PreviewOrder;virtual;
     procedure Open(id:string);virtual;
-    
+
     property inputFlag:integer read FinputFlag write SetinputFlag;
     property inputMode:integer read FinputMode write SetinputMode;
     //单据状态
@@ -209,7 +213,7 @@ var
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil,
-  udataFactory,uAdvFactory;
+  udataFactory,uAdvFactory,ufrmInitGoods;
 
 {$R *.dfm}
 
@@ -220,7 +224,7 @@ begin
   FinputFlag := Value;
   case inputFlag of
   0:begin
-      lblInput.Caption := '条码输入';
+      lblInput.Caption := '输入条码';
       lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
     end;
   2:begin
@@ -228,17 +232,17 @@ begin
       lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按回车';
     end;
   3:begin
-      lblInput.Caption := '数量输入';
+      lblInput.Caption := '输入数量';
       lblHint.Caption := '请输入数量后按回车';
     end;
   4:begin
-      lblInput.Caption := '修改单价';
+      lblInput.Caption := '输入单价';
       lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按回车,赠送当前商品输入0后按回车';
     end;
   else
     begin
       FinputFlag := 0;
-      lblInput.Caption := '条码输入';
+      lblInput.Caption := '输入条码';
       lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
     end;
   end;
@@ -314,7 +318,7 @@ procedure TfrmOrderForm.edtInputEnter(Sender: TObject);
 begin
   inherited;
   inputMode := 1;
-
+  edtInput.selectAll;
 end;
 
 procedure TfrmOrderForm.FormKeyDown(Sender: TObject; var Key: Word;
@@ -343,7 +347,7 @@ begin
        inputFlag := 4;
        edtInput.SetFocus;
      end;
-  if Key = VK_F12 then
+  if Key = VK_PAUSE then
      begin
        inputMode := 1;
        inputFlag := 0;
@@ -623,7 +627,7 @@ end;
 procedure TfrmOrderForm.CalcWriteTo(edtTable, DataSet: TDataSet;
   MyField: TField);
 var
-    AMoney,APrice,ACalcMoney,Agio_Rate,Agio_Money:Real;
+    AMoney,APrice,ACalcMoney,Agio_Rate,Agio_Money:currency;
     Field:TField;
 begin
   if MyField=nil then Exit;
@@ -912,10 +916,10 @@ begin
 
 end;
 
-procedure TfrmOrderForm.AmountToCalc(Amount: Real);
+procedure TfrmOrderForm.AmountToCalc(Amount: currency);
 var
   rs:TZQuery;
-  AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:Real;
+  AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:currency;
   Field:TField;
 begin
   if Locked then Exit;
@@ -1022,8 +1026,8 @@ begin
   end;
 end;
 
-procedure TfrmOrderForm.PriceToCalc(APrice: Real);
-var AMount,AMoney,Agio_Rate,Agio_Money:Real;
+procedure TfrmOrderForm.PriceToCalc(APrice: currency);
+var AMount,AMoney,Agio_Rate,Agio_Money:currency;
     Field:TField;
 begin
   if Locked then Exit;
@@ -1034,6 +1038,8 @@ begin
       if Field=nil then Exit;
       Field.AsString := FormatFloat('#0.000',APrice);
       APrice := Field.AsFloat;
+      if (APrice<>0) and (edtTable.FindField('IS_PRESENT')<>nil) then
+         edtTable.FieldbyName('IS_PRESENT').asInteger := 0;
 
       Field := edtTable.FindField('AMOUNT');
       if Field=nil then Exit;
@@ -1089,8 +1095,8 @@ begin
   end;
 end;
 
-procedure TfrmOrderForm.AgioToCalc(Agio: Real);
-var Agio_Rate:Real;
+procedure TfrmOrderForm.AgioToCalc(Agio: currency);
+var Agio_Rate:currency;
     Field:TField;
 begin
   if Locked then Exit;
@@ -1116,8 +1122,8 @@ begin
   end;
 end;
 
-procedure TfrmOrderForm.AMoneyToCalc(AMoney: Real);
-var AMount,APrice,Agio_Rate,Agio_Money:Real;
+procedure TfrmOrderForm.AMoneyToCalc(AMoney: currency);
+var AMount,APrice,Agio_Rate,Agio_Money:currency;
     Field:TField;
 begin
   if Locked then Exit;
@@ -1186,7 +1192,7 @@ begin
   end;
 end;
 
-procedure TfrmOrderForm.BulkToCalc(AMoney: Real);
+procedure TfrmOrderForm.BulkToCalc(AMoney: currency);
 var AMount,APrice,Agio_Rate,Agio_Money,SourceScale:currency;
     Field:TField;
     rs:TZQuery;
@@ -1313,7 +1319,7 @@ begin
 end;
 
 procedure TfrmOrderForm.UnitToCalc(UNIT_ID: string);
-var AMount,SourceScale:Real;
+var AMount,SourceScale:currency;
     Field:TField;
     rs:TZQuery;
     u:integer;
@@ -1473,9 +1479,9 @@ var
   AObj:TRecord_;
   r,bulk:Boolean;
   uid:string;
-  amt:real;
-  mny:real;
-  Pri:real;
+  amt:currency;
+  mny:currency;
+  Pri:currency;
 begin
   result := 2;
   if BarCode='' then Exit;
@@ -1532,22 +1538,41 @@ begin
     try
       if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then
         begin
-          if not dllGlobal.GetGodsFromGodsCode(rs,fndStr) then Exit;
-          if (rs.RecordCount > 1) and not TfrmFindDialog.FindDSDialog(rs,AObj,'GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价') then
+          if length(fndStr)=13 then //是13位条码
              begin
-               fndStr := '';
-               result := 3;
-               Exit;
+               if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
+                  begin
+                     if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
+                     vgds := rs.FieldbyName('GODS_ID').AsString;
+                     vP1 := rs.FieldbyName('PROPERTY_01').AsString;
+                     vP2 := rs.FieldbyName('PROPERTY_02').AsString;
+                     if vP1='' then vP1 := '#';
+                     if vP2='' then vP2 := '#';
+                     uid := rs.FieldbyName('UNIT_ID').AsString;
+                     vBtNo := rs.FieldbyName('BATCH_NO').AsString;
+                  end
+               else
+                  Exit;
              end
           else
              begin
-               vgds := rs.FieldbyName('GODS_ID').AsString;
-               vP1  := '#';
-               vP2  := '#';
-               vBtNo := '#';
-               uid := rs.FieldbyName('UNIT_ID').asString;
+                if not dllGlobal.GetGodsFromGodsCode(rs,fndStr) then Exit;
+                if (rs.RecordCount > 1) and not TfrmFindDialog.FindDSDialog(rs,AObj,'GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价') then
+                   begin
+                     fndStr := '';
+                     result := 3;
+                     Exit;
+                   end
+                else
+                   begin
+                     vgds := rs.FieldbyName('GODS_ID').AsString;
+                     vP1  := '#';
+                     vP2  := '#';
+                     vBtNo := '#';
+                     uid := rs.FieldbyName('UNIT_ID').asString;
+                   end;
              end;
-           end
+        end
         else
            begin
               if (rs.RecordCount > 1) and CheckDupBar(RS) then
@@ -1621,7 +1646,7 @@ begin
   if result=0 then MessageBeep(0);
 end;
 
-procedure TfrmOrderForm.BulkAmount(UNIT_ID: string; Amt, Pri, mny: real;
+procedure TfrmOrderForm.BulkAmount(UNIT_ID: string; Amt, Pri, mny: currency;
   Appended: boolean);
 begin
    if PropertyEnabled then Raise Exception.Create('散装商品不支持带颜色及尺码属性的商品...');
@@ -1658,7 +1683,7 @@ begin
 end;
 
 procedure TfrmOrderForm.WriteAmount(UNIT_ID, PROPERTY_01,
-  PROPERTY_02: string; Amt: real; Appended: boolean);
+  PROPERTY_02: string; Amt: currency; Appended: boolean);
 var b:boolean;
 begin
   b := PropertyEnabled;
@@ -1719,7 +1744,7 @@ procedure TfrmOrderForm.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
   s:string;
   IsNumber,IsFind,isAdd:Boolean;
-  amt:Real;
+  amt:currency;
   AObj:TRecord_;
 begin
   try
@@ -1737,7 +1762,9 @@ begin
            DBGridEh1.Col := 1;
            edtInput.Text := '';
            Exit;
-         end;
+         end
+      else
+      if InputFlag<>0 then Exit;
       if s='' then
          begin
            fndStr := '';
@@ -1830,7 +1857,7 @@ procedure TfrmOrderForm.PriceToGods(id: string);
 var
   Field:TField;
   s:string;
-  agio:real;
+  agio:currency;
   IsAgio:boolean;
 begin
   if dbState = dsBrowse then Exit;
@@ -2312,6 +2339,102 @@ begin
            edtInput.SetFocus;
      end;
 
+end;
+
+procedure TfrmOrderForm.N1Click(Sender: TObject);
+var
+  r,sr:integer;
+begin
+  inherited;
+  if not edtTable.Active then Exit;
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
+  r := edtTable.FieldbyName('SEQNO').AsInteger;
+  edtTable.DisableControls;
+  try
+    edtTable.SortedFields := 'GODS_ID';
+    edtTable.Filtered := false;
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        if edtTable.FieldbyName('SEQNO').AsInteger>=r then
+           begin
+             edtTable.Edit;
+             edtTable.FieldByName('SEQNO').AsInteger := edtTable.FieldByName('SEQNO').AsInteger + 1;
+             edtTable.Post;
+           end;
+        edtTable.Next;
+      end;
+    edtProperty.Filtered := false;
+    edtProperty.First;
+    while not edtProperty.Eof do
+      begin
+        if edtProperty.FieldbyName('SEQNO').AsInteger>=r then
+           begin
+             edtProperty.Edit;
+             edtProperty.FieldByName('SEQNO').AsInteger := edtProperty.FieldByName('SEQNO').AsInteger + 1;
+             edtProperty.Post;
+           end;
+        edtProperty.Next;
+      end;
+    inc(RowID);
+    edtTable.Append;
+    edtTable.FieldByName('GODS_ID').Value := null;
+    edtTable.FieldByName('IS_PRESENT').Value := 0;
+    if edtTable.FindField('SEQNO')<> nil then
+       edtTable.FindField('SEQNO').asInteger := r;
+    edtTable.Post;
+    edtTable.SortedFields := 'SEQNO';
+    edtTable.Locate('SEQNO',r,[]); 
+    edtTable.Edit;
+    fndGODS_ID.KeyValue := null;
+    fndGODS_ID.Text := '';
+    DBGridEh1.Col := 1;
+  finally
+    edtTable.EnableControls;
+  end;
+end;
+
+procedure TfrmOrderForm.N3Click(Sender: TObject);
+begin
+  inherited;
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认删除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       fndGODS_ID.Visible := false;
+       edtTable.Delete;
+       DBGridEh1.SetFocus;
+     end;
+end;
+
+procedure TfrmOrderForm.N4Click(Sender: TObject);
+begin
+  inherited;
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认清除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       fndGODS_ID.Visible := false;
+       EraseRecord;
+       DBGridEh1.SetFocus;
+     end;
+end;
+
+procedure TfrmOrderForm.N5Click(Sender: TObject);
+begin
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认赠送"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       fndGODS_ID.Visible := false;
+       PresentToCalc(1);
+       DBGridEh1.SetFocus;
+     end;
 end;
 
 end.

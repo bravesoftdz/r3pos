@@ -267,6 +267,7 @@ begin
   try
     Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
     Params.ParamByName('STOCK_ID').asString := id;
+    Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
     dataFactory.BeginBatch;
     try
       dataFactory.AddBatch(cdsHeader,'TStockOrderV60',Params);
@@ -455,7 +456,7 @@ begin
     end;
   11:begin
       FInputFlag := value;
-      lblInput.Caption := '整单调价';
+      lblInput.Caption := '结算金额';
       lblHint.Caption := '请直接输入结算金额后按回车健';
     end;
   end;
@@ -683,6 +684,7 @@ var
   pn:TPen;
   b,s:string;
 begin
+  rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;
   br.Assign(DBGridEh2.Canvas.Brush);
   pn := TPen.Create;

@@ -160,6 +160,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TextShadowDepth = 4
             TabOrder = 4
             TabStop = False
+            OnClick = RzBitBtn4Click
             Layout = blGlyphTop
             NumGlyphs = 2
             Spacing = 5
@@ -185,6 +186,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TextShadowDepth = 4
             TabOrder = 5
             TabStop = False
+            OnClick = RzBitBtn5Click
             Layout = blGlyphTop
             NumGlyphs = 2
             Spacing = 5
@@ -213,6 +215,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Style.Edges = []
               Style.ButtonStyle = btsUltraFlat
               TabOrder = 0
+              OnKeyPress = sortDropKeyPress
             end
           end
         end
@@ -258,7 +261,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               DesignSize = (
                 170
                 27)
-              object RzBitBtn2: TRzBitBtn
+              object btnNewSort: TRzBitBtn
                 Left = -1
                 Top = 2
                 Width = 172
@@ -279,6 +282,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 TextShadowDepth = 4
                 TabOrder = 0
                 TabStop = False
+                OnClick = btnNewSortClick
                 Layout = blGlyphTop
                 NumGlyphs = 2
                 Spacing = 5
@@ -791,6 +795,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Caption = #24403#21069#24211#23384
           Color = 16185078
           FlatColor = clMenuHighlight
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clPurple
+          Font.Height = -15
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
           TabOrder = 21
         end
         object edtAMOUNT: TcxTextEdit
@@ -798,6 +808,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Top = 210
           Width = 110
           Height = 23
+          ParentFont = False
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clPurple
+          Style.Font.Height = -15
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = [fsBold]
           TabOrder = 8
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end

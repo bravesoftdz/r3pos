@@ -421,7 +421,7 @@ begin
   m_bFullScreen := true;
   dllFactory := TDLLFactory.Create;
   hotKeyid:=GlobalAddAtom('rspcn');//'Hotkey'名字可以随便取
-  RegisterHotKey(Handle,hotKeyid,0,VK_F12);
+  RegisterHotKey(Handle,hotKeyid,0,VK_PAUSE);
   Initialized := true;
   Timer1.Enabled := true;
   case Message.LParam of
@@ -1151,22 +1151,33 @@ begin
            begin
              Application.Restore;
              SetForegroundWindow(application.Handle);
-           end
+{           end
         else
            begin
-             if Msg.HotKey<>Msg.Unused then
-                WinExec(pchar(Application.ExeName),0);
+             if (Msg.HotKey<>Msg.Unused) and not Focused then
+                begin
+                  WinExec(pchar(Application.ExeName),0);
+                  Exit;
+                end;    }
            end;
+        SetWindowState(wsMaximized);
+        SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
+        SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
         if PageControl1=nil then Exit;
         tabEx := PageControl1.ActivePage as TTabSheetEx;
         if tabEx=nil then Exit;
-        if tabEx.url.appFlag=0 then Exit;
+        if tabEx.url.appFlag=0 then
+           begin
+             tabEx.EWB.SetFocusToDoc;
+             Exit;
+           end;
         childWnd := GetWindow(tabEx.Handle,GW_CHILD);
         while childWnd>0 do
           begin
+            windows.SetFocus(childWnd); 
             Message.Msg := WM_KEYDOWN;
             Message.KeyData := 0;
-            Message.CharCode := VK_F12;
+            Message.CharCode := VK_PAUSE;
             Message.Unused := 0;
             SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
             childWnd := GetWindow(childWnd,GW_HWNDNEXT);

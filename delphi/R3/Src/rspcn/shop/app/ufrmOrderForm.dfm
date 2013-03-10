@@ -742,21 +742,25 @@ inherited frmOrderForm: TfrmOrderForm
     Top = 301
     object N1: TMenuItem
       Caption = #25554#20837#31354#30333#34892
+      OnClick = N1Click
     end
     object N2: TMenuItem
       Caption = #22797#21046#24403#21069#34892
     end
     object N3: TMenuItem
       Caption = #21024#38500#24403#21069#34892
+      OnClick = N3Click
     end
     object N4: TMenuItem
       Caption = #28165#31354#24403#21069#34892
+      OnClick = N4Click
     end
     object N6: TMenuItem
       Caption = '-'
     end
     object N5: TMenuItem
       Caption = #36192#36865#27492#21830#21697
+      OnClick = N5Click
     end
   end
   object Timer1: TTimer

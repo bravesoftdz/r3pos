@@ -2,29 +2,33 @@ inherited frmStockOrder: TfrmStockOrder
   Left = 238
   Top = 96
   Caption = #36827#36135#21333
+  ClientWidth = 992
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
+    Width = 792
     inherited webForm: TRzPanel
+      Width = 792
       inherited PageControl: TRzPageControl
+        Width = 792
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
           inherited order_input: TRzPanel
+            Width = 792
             Height = 149
             inherited RzPanel2: TRzPanel
+              Width = 772
               Height = 129
               DesignSize = (
-                684
+                772
                 129)
               inherited lblHint: TLabel
-                Width = 279
                 Anchors = [akLeft, akTop, akRight]
-                AutoSize = False
               end
               object lblNo: TRzLabel [2]
-                Left = 471
+                Left = 559
                 Top = 16
                 Width = 176
                 Height = 15
@@ -64,6 +68,9 @@ inherited frmStockOrder: TfrmStockOrder
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
+              end
+              inherited RzBorder1: TRzBorder
+                Width = 734
               end
               object Label2: TLabel [9]
                 Left = 149
@@ -127,15 +134,19 @@ inherited frmStockOrder: TfrmStockOrder
               inherited edtInput: TcxTextEdit
                 Tag = -1
               end
+              inherited help: TRzBmpButton
+                Left = 740
+              end
             end
           end
           inherited order_header: TRzPanel
             Top = 149
+            Width = 792
             Height = 27
             object customerInfo: TLabel
               Left = 324
               Top = 10
-              Width = 325
+              Width = 229
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               AutoSize = False
@@ -228,7 +239,7 @@ inherited frmStockOrder: TfrmStockOrder
               MultiSelect = False
             end
             object RzPanel7: TRzPanel
-              Left = 658
+              Left = 546
               Top = 6
               Width = 99
               Height = 21
@@ -240,7 +251,7 @@ inherited frmStockOrder: TfrmStockOrder
               TabOrder = 3
             end
             object edtSTOCK_DATE: TcxDateEdit
-              Left = 754
+              Left = 642
               Top = 5
               Width = 141
               Height = 23
@@ -251,8 +262,10 @@ inherited frmStockOrder: TfrmStockOrder
           end
           inherited order_grid: TRzPanel
             Top = 176
+            Width = 792
             Height = 190
             inherited DBGridEh1: TDBGridEh
+              Width = 770
               Height = 169
               FrozenCols = 1
               Columns = <
@@ -371,6 +384,7 @@ inherited frmStockOrder: TfrmStockOrder
           end
           inherited order_footer: TRzPanel
             Top = 366
+            Width = 792
             Height = 88
             object RzPanel6: TRzPanel
               Left = 10
@@ -386,7 +400,7 @@ inherited frmStockOrder: TfrmStockOrder
             object RzPanel3: TRzPanel
               Left = 0
               Top = 41
-              Width = 704
+              Width = 792
               Height = 47
               Align = alBottom
               BorderOuter = fsFlat
@@ -394,7 +408,7 @@ inherited frmStockOrder: TfrmStockOrder
               FlatColor = 6447714
               TabOrder = 2
               object RzPanel4: TRzPanel
-                Left = 335
+                Left = 423
                 Top = 1
                 Width = 369
                 Height = 46
@@ -515,14 +529,14 @@ inherited frmStockOrder: TfrmStockOrder
             object edtREMARK: TcxTextEdit
               Left = 106
               Top = -1
-              Width = 543
+              Width = 383
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object RzPanel8: TRzPanel
-              Left = 658
+              Left = 545
               Top = 0
               Width = 99
               Height = 21
@@ -534,7 +548,7 @@ inherited frmStockOrder: TfrmStockOrder
               TabOrder = 4
             end
             object edtGUIDE_USER: TzrComboBoxList
-              Left = 754
+              Left = 641
               Top = -1
               Width = 141
               Height = 23
@@ -583,7 +597,7 @@ inherited frmStockOrder: TfrmStockOrder
           object RzPanel11: TRzPanel
             Left = 0
             Top = 0
-            Width = 704
+            Width = 792
             Height = 65
             Align = alTop
             BorderOuter = fsNone
@@ -594,18 +608,18 @@ inherited frmStockOrder: TfrmStockOrder
             object RzPanel13: TRzPanel
               Left = 10
               Top = 10
-              Width = 684
+              Width = 772
               Height = 45
               Align = alClient
               BorderOuter = fsFlatRounded
               TabOrder = 0
               DesignSize = (
-                684
+                772
                 45)
               object RzPanel15: TRzPanel
                 Left = 16
                 Top = 12
-                Width = 353
+                Width = 241
                 Height = 22
                 Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsFlatRounded
@@ -614,13 +628,13 @@ inherited frmStockOrder: TfrmStockOrder
                 FlatColor = clWindowFrame
                 TabOrder = 0
                 DesignSize = (
-                  353
+                  241
                   22)
                 object serachText: TEdit
                   Tag = -1
                   Left = 8
                   Top = 2
-                  Width = 342
+                  Width = 226
                   Height = 18
                   Hint = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#21830#21697#21517#31216#25110#22791#27880#35828#26126
                   Anchors = [akLeft, akTop, akRight]
@@ -631,7 +645,7 @@ inherited frmStockOrder: TfrmStockOrder
                 end
               end
               object RzPanel16: TRzPanel
-                Left = 387
+                Left = 275
                 Top = 12
                 Width = 402
                 Height = 22
@@ -695,7 +709,7 @@ inherited frmStockOrder: TfrmStockOrder
                 end
               end
               object btnFind: TRzBitBtn
-                Left = 800
+                Left = 688
                 Top = 8
                 Width = 65
                 Height = 28
@@ -726,7 +740,7 @@ inherited frmStockOrder: TfrmStockOrder
           object RzPanel14: TRzPanel
             Left = 0
             Top = 65
-            Width = 704
+            Width = 792
             Height = 389
             Align = alClient
             BorderInner = fsFlat
@@ -817,7 +831,7 @@ inherited frmStockOrder: TfrmStockOrder
             object DBGridEh2: TDBGridEh
               Left = 11
               Top = 11
-              Width = 682
+              Width = 770
               Height = 368
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -1024,12 +1038,13 @@ inherited frmStockOrder: TfrmStockOrder
     end
   end
   inherited toolNav: TRzPanel
+    Width = 992
     inherited lblCaption: TRzLabel
       Width = 184
       Caption = #36827#36135#21333
     end
     inherited RzPanel12: TRzPanel
-      Left = 184
+      Left = 272
       Width = 520
       DesignSize = (
         520
@@ -1050,6 +1065,12 @@ inherited frmStockOrder: TfrmStockOrder
         Left = 340
       end
     end
+    inherited RzPanel18: TRzPanel
+      Left = 792
+    end
+  end
+  inherited RzPanel1: TRzPanel
+    Left = 792
   end
   inherited edtTable: TZQuery
     FieldDefs = <

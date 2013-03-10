@@ -3,7 +3,7 @@ unit udllGlobal;
 interface
 
 uses
-  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, RzTreeVw,ZBase;
+  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, RzTreeVw,ZBase,ObjCommon;
 
 type
   TdllGlobal = class(TDataModule)
@@ -41,7 +41,7 @@ type
     //得到供应链企业 in ();
     function GetRelatTenantInWhere:string;
     //得么商品视图
-    function GetViwGoodsInfo(s:string):string;
+    function GetViwGoodsInfo(s:string;all:boolean=true):string;
     //取得我加入的商盟企业
     function GetUnionTenantInWhere:string;
     //取商品标准进价
@@ -78,7 +78,7 @@ var
   bs:TZQuery;
 begin
   ds.Close;
-  ds.SQL.Text := 'select GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO from PUB_BARCODE where TENANT_ID in ('+GetRelatTenantInWhere+') and BARCODE=:BARCODE';
+  ds.SQL.Text := 'select GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO from PUB_BARCODE where TENANT_ID in ('+GetRelatTenantInWhere+') and BARCODE=:BARCODE and COMM not in (''02'',''12'')';
   ds.ParamByName('BARCODE').AsString := barcode;
   OpenSqlite(ds);
   bs := GetZQueryFromName('PUB_GOODSINFO');
@@ -97,7 +97,7 @@ function TdllGlobal.GetGodsFromGodsCode(ds: TZQuery;
   godsCode: string): boolean;
 begin
   ds.Close;
-  ds.SQL.Text := 'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+  ds.SQL.Text := 'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE and COMM not in (''02'',''12'')';
   ds.ParamByName('TENANT_ID').AsString := token.tenantId;
   ds.ParamByName('GODS_CODE').AsString := godsCode;
   OpenSqlite(ds);
@@ -349,6 +349,14 @@ begin
       end;
       rs.Next;
     end;
+    
+    Aobj := TRecord_.Create;
+    Aobj.ReadField(rs);
+    Aobj.FieldByName('SORT_ID').AsString := '#';
+    Aobj.FieldByName('RELATION_ID').AsString := '0';
+    Aobj.FieldByName('LEVEL_ID').AsString := '';
+    Aobj.FieldByName('SORT_NAME').AsString := '无 分 类';
+    rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
 
     if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
       rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
@@ -421,25 +429,34 @@ begin
   end;
 end;
 
-function TdllGlobal.GetViwGoodsInfo(s:string): string;
+function TdllGlobal.GetViwGoodsInfo(s:string;all:boolean=true): string;
 var
   rs:TZQuery;
   w,fields:string;
   list:TStringList;
   i:integer;
 begin
-  w := 'where A.TENANT_ID='+token.tenantId+ ' ';
+  if all then
+     w := 'where A.TENANT_ID='+token.tenantId+ ' '
+  else
+     w := 'where (A.TENANT_ID='+token.tenantId+ ' and A.COMM not in (''02'',''12'')) ';
   rs := GetZQueryFromName('CA_RELATIONS');
   rs.first;
   while not rs.eof do
     begin
       case rs.FieldByName('RELATION_TYPE').AsInteger of
       1:begin
-          w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) ';
+          if not all then
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) '
+          else
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' ) ';
         end
       else
         begin
-          w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) ';
+          if not all then
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) '
+          else
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' ) ';
         end;
       end;
       rs.next;
@@ -486,7 +503,7 @@ begin
   finally
     list.Free;
   end;
-  result := 'select '+fields+' from PUB_GOODSINFO A left outer join PUB_GOODS_RELATION B on A.GODS_ID=B.GODS_ID '+w;
+  result := ParseSQL(dataFactory.iDbType,'select '+fields+' from PUB_GOODSINFO A left outer join PUB_GOODS_RELATION B on A.GODS_ID=B.GODS_ID '+w);
 end;
 
 function TdllGlobal.checkChangePrice(relationId: integer): boolean;

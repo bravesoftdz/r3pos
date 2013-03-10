@@ -72,6 +72,8 @@ type
     RzToolButton3: TRzToolButton;
     RzSpacer1: TRzSpacer;
     RzToolButton4: TRzToolButton;
+    RzPanel19: TRzPanel;
+    MarqueeStatus: TRzMarqueeStatus;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -96,6 +98,7 @@ type
     procedure RzToolButton3Click(Sender: TObject);
     procedure RzToolButton1Click(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
+    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -123,6 +126,7 @@ type
     procedure SetinputFlag(const Value: integer);override;
     function  CheckSale_Limit: Boolean;
     function  checkPayment:boolean;
+    function  payCashMny(s:string):boolean;
     procedure DoShowPayment;
     procedure Calc; //2011.06.09判断是否限量
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
@@ -141,7 +145,7 @@ type
     procedure DoHangUp;
     procedure DoPickUp;
     procedure DoPayZero(s:string);
-    procedure DoPayDialog;
+    procedure DoPayInput(s:string;flag:string);
     procedure DoSaveOrder;
   public
     { Public declarations }
@@ -235,7 +239,7 @@ begin
     AObj.FieldbyName('PAY_ZERO').asFloat := 0;
     AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
     AObj.FieldbyName('PAY_DIBS').asFloat := 0;
-
+{
     AObj.FieldByName('PAY_A').AsFloat := 0;
     AObj.FieldByName('PAY_B').AsFloat := 0;
     AObj.FieldByName('PAY_C').AsFloat := 0;
@@ -246,6 +250,7 @@ begin
     AObj.FieldByName('PAY_H').AsFloat := 0;
     AObj.FieldByName('PAY_I').AsFloat := 0;
     AObj.FieldByName('PAY_J').AsFloat := 0;
+}
     edtACCT_MNY.Text := formatFloat('#0.00',TotalFee);
     edtAGIO_RATE.Text := '100.0';
     DoShowPayment;
@@ -486,6 +491,7 @@ begin
   try
     Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
     Params.ParamByName('SALES_ID').asString := id;
+    Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
     dataFactory.BeginBatch;
     try
       dataFactory.AddBatch(cdsHeader,'TSalesOrderV60',Params);
@@ -911,10 +917,9 @@ end;
 
 function TfrmSaleOrder.checkPayment:boolean;
 var
-  fee,payZero,salMny:currency;
+  fee,allFee,payZero,salMny:currency;
 begin
   fee :=
-    AObj.FieldbyName('PAY_A').AsFloat+
     AObj.FieldbyName('PAY_B').AsFloat+
     AObj.FieldbyName('PAY_C').AsFloat+
     AObj.FieldbyName('PAY_E').AsFloat+
@@ -925,29 +930,39 @@ begin
     AObj.FieldbyName('PAY_J').AsFloat;
   payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
   salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
-  if fee<>(TotalFee-payZero) then
-    begin
-       if MessageBox(Handle,pchar('收款金额与结算金额不相同，剩余未收金额'+formatFloat('#0.00',(TotalFee-payZero) - fee)+'元是否登记欠款?'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
-          begin
-            AObj.FieldbyName('PAY_D').AsFloat := (TotalFee-payZero) - fee;
-            result := true;
-          end
-       else
-          begin
-            AObj.FieldbyName('PAY_D').AsFloat := 0;
-            result := false;
-          end;
-    end;
+  case InputFlag of
+  13,14:begin
+       edtInput.Text := formatFloat('#0.00',(TotalFee-payZero)-fee);
+     end
+  else
+     begin
+        allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
+        if abs(allFee)>abs(TotalFee-payZero) then
+           begin
+             Raise Exception.Create('你已经超额支付了,请正确输入收款金额');
+           end;
+        if fee=0 then
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)
+        else
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee;
+        if AObj.FieldbyName('CASH_MNY').AsFloat=0 then AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldbyName('PAY_A').AsFloat;
+        AObj.FieldbyName('PAY_DIBS').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_DIBS').AsFloat;
+        MarqueeStatus.Caption := '实收:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_DIBS').AsFloat);
+     end;
+  end;
+  result := true;
 end;
 
 procedure TfrmSaleOrder.DoShowPayment;
 var
   fee,payZero,salMny:currency;
-  s:string;
+  s,payInfo:string;
   w:integer;
 begin
-  fee := AObj.FieldbyName('PAY_B').AsFloat+
+  fee :=
+    AObj.FieldbyName('PAY_B').AsFloat+
     AObj.FieldbyName('PAY_C').AsFloat+
+    AObj.FieldbyName('PAY_D').AsFloat+
     AObj.FieldbyName('PAY_E').AsFloat+
     AObj.FieldbyName('PAY_F').AsFloat+
     AObj.FieldbyName('PAY_G').AsFloat+
@@ -967,76 +982,120 @@ begin
     end;
   else
     begin
-      AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee;
-      edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero));
+      if fee=0 then
+         edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero))
+      else
+         edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
       edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
       if TotalFee<>0 then
          edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
       else
          edtAGIO_RATE.Text := '';
+      if inputFlag in [13,14] then
+         edtInput.Text := formatFloat('#0.00#',(TotalFee-payZero)-(fee+AObj.FieldbyName('PAY_A').AsFloat));
     end;
   end;
-
   s := '0000000000';
   w := 0;
+  payInfo := '';
   if AObj.FieldbyName('PAY_A').asFloat<>0 then
      begin
        s[1] := '1';
        payment.Caption := '现金收款';
        inc(w);
+       payInfo := payInfo +'现金:'+formatFloat('#0.0#',AObj.FieldbyName('PAY_A').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_B').asFloat<>0 then
      begin
        s[2] := '1';
-       payment.Caption := getPaymentTitle('B');
+       payment.Caption := getPaymentTitle('B')+'收款';
        inc(w);
+       payInfo := payInfo +getPaymentTitle('B')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_B').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_C').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('C');
+       payment.Caption := getPaymentTitle('C')+'收款';
        inc(w);
        s[3] := '1';
+       payInfo := payInfo +getPaymentTitle('C')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_C').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_D').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('D')+'欠款';
+       inc(w);
+       s[4] := '1';
+       payInfo := payInfo +getPaymentTitle('D')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_D').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_E').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('E');
+       payment.Caption := getPaymentTitle('E')+'收款';
        inc(w);
        s[5] := '1';
+       payInfo := payInfo +getPaymentTitle('E')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_E').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_F').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('F');
+       payment.Caption := getPaymentTitle('F')+'收款';
        inc(w);
        s[6] := '1';
+       payInfo := payInfo +getPaymentTitle('F')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_F').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_G').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('G');
+       payment.Caption := getPaymentTitle('G')+'收款';
        inc(w);
        s[7] := '1';
+       payInfo := payInfo +getPaymentTitle('G')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_G').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_H').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('H');
+       payment.Caption := getPaymentTitle('H')+'收款';
        inc(w);
        s[8] := '1';
+       payInfo := payInfo +getPaymentTitle('H')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_H').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_I').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('I');
+       payment.Caption := getPaymentTitle('I')+'收款';
        inc(w);
        s[9] := '1';
+       payInfo := payInfo +getPaymentTitle('I')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_I').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_J').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('J');
+       payment.Caption := getPaymentTitle('J')+'收款';
        inc(w);
        s[10] := '1';
+       payInfo := payInfo +getPaymentTitle('J')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_J').asFloat)+ ' ';
      end;
   if w>1 then payment.Caption := '组合收款';
+  case inputFlag of
+  13: MarqueeStatus.Caption := payInfo;
+  else
+     begin
+      if TotalFee<>0 then
+         MarqueeStatus.Caption := '合计:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
+      else
+         MarqueeStatus.Caption := '';
+     end;
+  end;
 end;
 
 procedure TfrmSaleOrder.SetinputFlag(const Value: integer);
+function getPayment:string;
+var
+  rs:TZQuery;
+begin
+  result := '';
+  rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
+  rs.First;
+  while not rs.Eof do
+    begin
+      if result <> '' then result := result+' ';
+      result := result +rs.FieldbyName('CODE_ID').asString+'.'+rs.FieldbyName('CODE_NAME').AsString;
+      rs.Next;
+    end;
+end;
 begin
   inherited;
   case Value of
@@ -1057,8 +1116,18 @@ begin
     end;
   11:begin
       FInputFlag := value;
-      lblInput.Caption := '整单调价';
+      lblInput.Caption := '结算金额';
       lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按回车健';
+    end;
+  13:begin
+      FInputFlag := value;
+      lblInput.Caption := '输入金额';
+      lblHint.Caption := '请输入支付金额后按"'+getPayment+'"';
+    end;
+  14:begin
+      FInputFlag := value;
+      lblInput.Caption := '实收现金';
+      lblHint.Caption := '请输入实收现金后按回车或+健';
     end;
   end;
 end;
@@ -1234,6 +1303,7 @@ begin
      edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-AObj.FieldbyName('PAY_ZERO').asFloat)*100/TotalFee)
   else
      edtAGIO_RATE.Text := '';
+  DoShowPayment;
 end;
 
 procedure TfrmSaleOrder.DoPickUp;
@@ -1243,7 +1313,12 @@ end;
 
 procedure TfrmSaleOrder.DoSaveOrder;
 begin
-  SaveOrder;
+  FInputFlag := 1;
+  try
+    SaveOrder;
+  finally
+    FInputFlag := 14;
+  end;
   NewOrder;
 end;
 
@@ -1270,9 +1345,21 @@ begin
   end;
 end;
 
-procedure TfrmSaleOrder.DoPayDialog;
+procedure TfrmSaleOrder.DoPayInput(s:string;flag:string);
+var
+  r:currency;
+  rs:TZQuery;
 begin
-
+  try
+    r := strtoFloat(s);
+  except
+    Raise Exception.Create('你输入的支付金额不正确，请重新输入'); 
+  end;
+  rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
+  flag := uppercase(flag);
+  if not rs.Locate('CODE_ID',flag,[]) then Raise Exception.Create('您输入的支付方式不正确,请重新输入');
+  AObj.FieldByName('PAY_'+flag).AsFloat := r;
+  DoShowPayment; 
 end;
 
 procedure TfrmSaleOrder.FormKeyPress(Sender: TObject; var Key: Char);
@@ -1281,12 +1368,53 @@ begin
   if char(Key) = '*' then
      begin
        key := #0;
-       DoPaydialog;
+//       if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then Raise Exception.Create('没有启用收款方式，不能操作此功能'); 
+       inputMode := 1;
+       inputFlag := 13;
+       DoShowPayment;
+       edtInput.selectAll;
+       edtInput.SetFocus;
      end;
-  if char(Key) = '+' then 
+  if char(Key) = '+' then
      begin
        key := #0;
-       DoSaveOrder;
+       if InputFlag=14 then
+          begin
+            try
+              payCashMny(trim(edtInput.Text));
+              DoSaveOrder;
+              InputFlag := 1;
+            finally
+              edtInput.selectAll;
+              edtInput.SetFocus;
+            end;
+          end
+       else
+          begin
+            if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then
+               begin
+                  try
+                    inputMode := 1;
+                    inputFlag := 14;
+                    checkPayment;
+                    payCashMny(trim(edtInput.Text));
+                    DoSaveOrder;
+                  finally
+                    InputFlag := 1;
+                    edtInput.Text := '';
+                    edtInput.selectAll;
+                    edtInput.SetFocus;
+                  end;
+               end
+            else
+               begin
+                  inputMode := 1;
+                  inputFlag := 14;
+                  checkPayment;
+                  edtInput.selectAll;
+                  edtInput.SetFocus;
+               end;
+          end;
      end;
 end;
 
@@ -1342,6 +1470,7 @@ begin
     if r>0 then edtTable.RecNo := r;
     edtTable.EnableControls;
   end;
+  Calc;
 end;
 
 procedure TfrmSaleOrder.PageControlChange(Sender: TObject);
@@ -1469,6 +1598,7 @@ var
   pn:TPen;
   b,s:string;
 begin
+  rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;
   br.Assign(DBGridEh2.Canvas.Brush);
   pn := TPen.Create;
@@ -1508,7 +1638,7 @@ var
 begin
   rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
   if rs.Locate('CODE_ID',pay,[]) then
-     result := rs.FieldbyName('CODE_NAME').AsString+'收款'
+     result := rs.FieldbyName('CODE_NAME').AsString
   else
      Raise Exception.Create('不支持的收款方式'); 
 end;
@@ -1553,6 +1683,57 @@ begin
      begin
         NewOrder;
      end;
+end;
+
+function TfrmSaleOrder.payCashMny(s:string): boolean;
+var
+  r:currency;
+begin
+  try
+    r := strtoFloat(s);
+  except
+    Raise Exception.Create('你输入的实收现金不正确，请重新输入');
+  end;
+  AObj.FieldByName('CASH_MNY').AsFloat := r;
+  FInputFlag :=1;
+  try
+    checkPayment;
+  finally
+    FInputFlag := 14;
+  end;
+end;
+
+procedure TfrmSaleOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (InputFlag = 14) and (Key=#13) then
+  begin
+    try
+      payCashMny(trim(edtInput.Text));
+      DoSaveOrder;
+      InputFlag := 1;
+    finally
+      Key := #0;
+      edtInput.selectAll;
+      edtInput.SetFocus;
+    end;
+  end
+  else
+    inherited;
+  if InputFlag = 13 then
+  begin
+    case Key of
+    'A','B','C','D','E','F','G','H','I','J','a','b','c','d','e','f','g','h','i','j':begin
+           try
+             DoPayInput(trim(edtInput.Text),Key);
+           finally
+             edtInput.selectAll;
+             Key := #0;
+             edtInput.SetFocus;
+           end;
+         end;
+    end;
+  end;
+
 end;
 
 initialization

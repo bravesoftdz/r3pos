@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=D:\myWork\Delphi\R3\Src\rspcn\debug
+OutputDir=debug
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -139,5 +139,5 @@ Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
 Count=2
-Item0=D:\myWork\Delphi\R3\Src\rspcn\debug
-Item1=debug
+Item0=debug
+Item1=D:\myWork\Delphi\R3\Src\rspcn\debug

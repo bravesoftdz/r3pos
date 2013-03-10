@@ -48,7 +48,8 @@ uses
   ufrmGoodsInfoDropForm in 'app\ufrmGoodsInfoDropForm.pas' {frmGoodsInfoDropForm},
   ObjChangeOrderV60 in 'obj\ObjChangeOrderV60.pas',
   ufrmSysDefine in 'app\ufrmSysDefine.pas' {frmSysDefine},
-  uAdvFactory in 'uAdvFactory.pas';
+  uAdvFactory in 'uAdvFactory.pas',
+  ufrmGoodsSort in 'app\ufrmGoodsSort.pas' {frmGoodsSort};
 
 {$R *.res}
 exports

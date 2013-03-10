@@ -40,7 +40,7 @@ inherited frmInitGoods: TfrmInitGoods
             Top = 1
             Width = 423
             Height = 339
-            ActivePage = TabSheet2
+            ActivePage = TabSheet3
             Align = alClient
             Color = clWindow
             UseColoredTabs = True
@@ -53,7 +53,7 @@ inherited frmInitGoods: TfrmInitGoods
             ParentFont = False
             ShowCardFrame = False
             ShowShadow = False
-            TabIndex = 1
+            TabIndex = 2
             TabOrder = 0
             FixedDimension = 21
             object TabSheet1: TRzTabSheet
@@ -430,7 +430,6 @@ inherited frmInitGoods: TfrmInitGoods
                 Style.Edges = [bLeft, bTop, bRight, bBottom]
                 Style.ButtonStyle = btsUltraFlat
                 TabOrder = 3
-                OnKeyPress = edtSORT_IDKeyPress
               end
               object RzPanel18: TRzPanel
                 Left = 25

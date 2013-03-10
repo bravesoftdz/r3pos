@@ -74,15 +74,7 @@ begin
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
     dataFactory.Open(rs);
     result := (rs.Fields[0].AsString<>'');
-    if result then
-       begin
-         tenantId := rs.Fields[0].AsInteger ;
-         rs.Close;
-         rs.SQL.Text := 'select count(*) from CA_TENANT where TENANT_ID=:TENANT_ID';
-         rs.ParamByName('TENANT_ID').AsInteger := tenantId;
-         dataFactory.Open(rs);
-         result := rs.Fields[0].AsInteger>0;
-       end;
+    if result then tenantId := rs.Fields[0].asInteger;
   finally
     rs.Free;
   end;
@@ -115,6 +107,7 @@ begin
            begin                                                                                                
              dataFactory.signined := true;
              token.shoped := false;
+             token.tenantId := '';
              token.online := online;
              token.account := username;
              token.xsmCode := username;

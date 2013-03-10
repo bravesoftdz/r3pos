@@ -112,13 +112,10 @@ type
     procedure RzPanel6Click(Sender: TObject);
     procedure edtCALC_UNITSPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure edtSORT_IDKeyPress(Sender: TObject; var Key: Char);
   private
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
     function  IsChinese(str:string):Boolean;
-    function  IsNumber(str:string):Boolean;
-    function  IsVaildBarCode(barcode: string):Boolean;
   public
     AObj:TRecord_;
     Finded:boolean;
@@ -255,7 +252,6 @@ begin
           btnPrev.Visible := True;
           btnNext.Visible := True;
           btnNext.Caption := '完成';
-          if self.Visible and edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus;
         end
       else
         begin
@@ -316,7 +312,7 @@ begin
       if self.Visible and edtInput.CanFocus then edtInput.SetFocus;
       Raise Exception.Create('请输入条形码...');
     end;
-  if not IsVaildBarCode(barcode) then
+  if IsChinese(barcode) or (Length(barcode) <> 13) then
     begin
       if self.Visible and edtInput.CanFocus then edtInput.SetFocus;
       Raise Exception.Create('条形码格式不合法...');
@@ -673,15 +669,15 @@ procedure TfrmInitGoods.CheckInput2;
 begin
   if edtGOODS_OPTION1.Checked then //无条码商品不检测条形码
     begin
-      if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBARCODE2.Text)<>'') and not IsVaildBarCode(edtBARCODE2.Text) then
+      if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBARCODE2.Text)='') then
         begin
-          if edtBARCODE2.CanFocus then edtBARCODE2.SetFocus;
-          Raise Exception.Create('小包装条码不合法！');
+          if edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus;
+          Raise Exception.Create('小包装条码不能为空！');
         end;
-      if (trim(edtBIG_UNITS.AsString)<>'') and (trim(edtBARCODE3.Text)<>'') and not IsVaildBarCode(edtBARCODE3.Text) then
+      if (trim(edtBIG_UNITS.AsString)<>'') and (trim(edtBARCODE3.Text)='') then
         begin
-          if edtBARCODE3.CanFocus then edtBARCODE3.SetFocus;
-          Raise Exception.Create('大包装条码不合法！');
+          if edtBIG_UNITS.CanFocus then edtBIG_UNITS.SetFocus;
+          Raise Exception.Create('大包装条码不能为空！');
         end;
       if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBARCODE2.Text)=trim(edtBARCODE1.Text)) then
         begin
@@ -894,15 +890,6 @@ begin
       SetEditStyle(dsBrowse, edtBARCODE2.Style);
       SetEditStyle(dsBrowse, edtBARCODE3.Style);
     end;
-
-  //计量单位默认为第一个
-  if edtCALC_UNITS.AsString = '' then
-    begin
-      rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-      rs.First;
-      edtCALC_UNITS.KeyValue := rs.FieldByName('UNIT_ID').AsString;
-      edtCALC_UNITS.Text := rs.FieldByName('UNIT_NAME').AsString;
-    end;
 end;
 
 procedure TfrmInitGoods.WriteToObject;
@@ -1041,12 +1028,12 @@ begin
     end;
 
   // 多包装条码
-  if (cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString = '') or (trim(edtBARCODE2.Text) = '') then
+  if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString = '' then
     begin
       if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
         cdsBarCode.Delete;
     end;
-  if (cdsGoodsInfo.FieldByName('BIG_UNITS').AsString = '') or (trim(edtBARCODE3.Text) = '') then
+  if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString = '' then
     begin
       if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
         cdsBarCode.Delete;
@@ -1622,7 +1609,7 @@ end;
 function TfrmInitGoods.IsChinese(str: string): Boolean;
 var i:integer;
 begin
-  result := false;
+  Result:=False;
   for i:=0 to length(str)-1 do
   begin
     if str[i] in LeadBytes then
@@ -1631,39 +1618,6 @@ begin
       break;
     end;
   end;
-end;
-
-function TfrmInitGoods.IsNumber(str: string): Boolean;
-var i:integer;
-begin
-  result := true;
-  for i:=1 to length(str) do
-  begin
-    if not (str[i] in ['0'..'9']) then
-    begin
-      result := false;
-      break;
-    end;
-  end;
-end;
-
-function TfrmInitGoods.IsVaildBarCode(barcode: string): Boolean;
-begin
-  result := true;
-  if IsChinese(barcode) then
-    result := false;
-  if not IsNumber(barcode) then
-    result := false;
-  if Length(barcode) <> 13 then
-    result := false;
-end;
-
-procedure TfrmInitGoods.edtSORT_IDKeyPress(Sender: TObject; var Key: Char);
-begin
-  inherited;
-  if Key = #0 then Exit;
-  if (Key <> #13) and (Key <> #27) then
-    edtSORT_IDPropertiesButtonClick(nil, 0);
 end;
 
 initialization

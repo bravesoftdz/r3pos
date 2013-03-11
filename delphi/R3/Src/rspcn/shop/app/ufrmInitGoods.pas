@@ -9,7 +9,7 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, cxMaskEdit,
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
-  RzBckgnd, RzBorder, RzBmpBtn, Math;
+  RzBckgnd, RzBorder, RzBmpBtn, Math, ZLogFile;
 
 type
   TfrmInitGoods = class(TfrmWebDialogForm)
@@ -113,8 +113,9 @@ type
     procedure edtCALC_UNITSPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-    procedure getGoodsInfo;
-    procedure uploadGoodsInfo;
+    procedure GetGoodsInfo;
+    procedure UploadGoodsInfo;
+    procedure CheckGoodsUnits(tenantId:integer;unitId,unitName:string;seqNo:integer);
     function  IsChinese(str:string):Boolean;
     function  CanFocus(Control:TControl):Boolean;
   public
@@ -143,7 +144,7 @@ type
 implementation
 
 uses uRspFactory,msxml,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uAdvFactory;
+     uAdvFactory,uSyncFactory,uRspSyncFactory;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -214,7 +215,7 @@ begin
       edtDefault2.Checked := false;
       if edtGOODS_OPTION1.Checked then
         begin
-          getGoodsInfo;
+          GetGoodsInfo;
           edtBARCODE1.Text := '';
           edtBARCODE2.Text := '';
           edtBARCODE3.Text := '';
@@ -257,7 +258,7 @@ begin
       else
         begin
           WriteToObject;
-          if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
+          if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
           Save;
           if (not Simple) and (not Dialog) then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
           rzPage.ActivePageIndex := 0;
@@ -270,7 +271,7 @@ begin
     begin
       CheckInput2;
       WriteToObject;
-      if (not Finded) and (edtGOODS_OPTION1.Checked) then uploadGoodsInfo;
+      if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
       Save;
       if (not Simple) and (not Dialog) then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
       rzPage.ActivePageIndex := 0;
@@ -299,7 +300,7 @@ begin
     end;
 end;
 
-procedure TfrmInitGoods.getGoodsInfo;
+procedure TfrmInitGoods.GetGoodsInfo;
 var
   barcode,godsId:string;
   outxml:widestring;
@@ -354,8 +355,22 @@ begin
         RspFinded := true;
         godsId := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
       except
-        Finded := false;
-        godsId := '';
+        on E:Exception do
+           begin
+             Finded := false;
+             godsId := '';
+             LogFile.AddLogFile(0, '查询商品信息失败，原因：'+E.Message);
+           end;
+      end;
+    end;
+
+  if not Finded then
+    begin
+      try
+        RspSyncFactory.downloadGoodsSort;
+      except
+        on E:Exception do
+           LogFile.AddLogFile(0, '下载商品分类失败，原因：'+E.Message);
       end;
     end;
 
@@ -390,6 +405,23 @@ begin
       cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingBarter'));
       cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingLocusNo'));
       cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'barterIntegral'));
+
+      if cdsGoodsInfo.FieldByName('CALC_UNITS').AsString <> '' then
+        CheckGoodsUnits(cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger,
+                        cdsGoodsInfo.FieldByName('CALC_UNITS').AsString,
+                        rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsName'),
+                        strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsSeqNo'),0));
+      if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
+        CheckGoodsUnits(cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger,
+                        cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString,
+                        rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsName'),
+                        strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsSeqNo'),0));
+      if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
+        CheckGoodsUnits(cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger,
+                        cdsGoodsInfo.FieldByName('BIG_UNITS').AsString,
+                        rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsName'),
+                        strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsSeqNo'),0));
+
 
       if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
         cdsBarCode.Edit
@@ -456,7 +488,7 @@ begin
   edtTable.Data := cdsGoodsInfo.Data;
 end;
 
-procedure TfrmInitGoods.uploadGoodsInfo;
+procedure TfrmInitGoods.UploadGoodsInfo;
 var
   doc:IXMLDomDocument;
   node:IXMLDOMNode;
@@ -584,6 +616,8 @@ begin
   try
     rspFactory.uploadGoods('<?xml version="1.0" encoding="gb2312"?>'+doc.xml)
   except
+    on E:Exception do
+       LogFile.AddLogFile(0, '上传商品信息失败，原因：'+E.Message);
   end;
 end;
 
@@ -1628,6 +1662,78 @@ begin
     result := (self.Visible) and TcxTextEdit(Control).CanFocus;
   if Control is TzrComboBoxList then
     result := (self.Visible) and TzrComboBoxList(Control).CanFocus;
+end;
+
+procedure TfrmInitGoods.CheckGoodsUnits(tenantId:integer;unitId,unitName:string;seqNo:integer);
+var
+  rs: TZQuery;
+  Params: TftParamList;
+begin
+  rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  if rs.Locate('UNIT_ID', unitId, []) then Exit;
+
+  rs := TZQuery.Create(nil);
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := tenantId;
+      Params.ParamByName('UNIT_ID').AsString := unitId;
+      dataFactory.Open(rs, 'TMeaUnitsV60', Params);
+    finally
+      Params.Free;
+    end;
+
+    if rs.IsEmpty then rs.Append
+    else rs.Edit;
+
+    rs.FieldByName('TENANT_ID').AsInteger := tenantId;
+    rs.FieldByName('UNIT_ID').AsString := unitId;
+    rs.FieldByName('UNIT_NAME').AsString := unitName;
+    rs.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(unitName,3);
+    rs.FieldByName('SEQ_NO').AsInteger := seqNo;
+    rs.Post;
+    dataFactory.UpdateBatch(rs, 'TMeaUnitsV60');
+  finally
+    rs.Free;
+  end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    rs := TZQuery.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      Params := TftParamList.Create(nil);
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := tenantId;
+        Params.ParamByName('UNIT_ID').AsString := unitId;
+        dataFactory.Open(rs, 'TMeaUnitsV60', Params);
+      finally
+        Params.Free;
+      end;
+
+      if rs.IsEmpty then
+        begin
+          rs.Append;
+          rs.FieldByName('UNIT_ID').AsString := TSequence.NewId;
+          rs.FieldByName('TENANT_ID').AsInteger := tenantId;
+        end
+      else rs.Edit;
+
+      rs.FieldByName('UNIT_NAME').AsString := unitName;
+      rs.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(unitName,3);
+      rs.FieldByName('SEQ_NO').AsInteger := seqNo;
+      rs.Post;
+      dataFactory.UpdateBatch(rs,'TMeaUnits');
+    finally
+      rs.Free;
+      dataFactory.MoveToDefault;
+    end;
+  end;
+
+  dllGlobal.GetZQueryFromName('PUB_MEAUNITS').Close;
+  edtCALC_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  edtSMALL_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  edtBIG_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
 end;
 
 initialization

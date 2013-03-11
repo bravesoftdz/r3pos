@@ -37,6 +37,7 @@ type
     RspSetParams:TRspSetParams;
     RspGetGoodsInfo:TRspFunction;
     RspUploadGoods:TRspFunction;
+    RspDownloadSort:TRspFunction;
   public
     { Public declarations }
     function  CreateRspXML: IXMLDomDocument;
@@ -50,6 +51,7 @@ type
     function xsmLogin(username:string;flag:integer):boolean;
     function getGoodsInfo(barcode:string):widestring;
     function uploadGoods(inXml:widestring):boolean;
+    function downloadSort(tenantId,flag:integer;timestamp:int64):widestring;
 
     property timestamp:Int64 read Ftimestamp write Settimestamp;
     property tenantId:integer read FtenantId write SettenantId;
@@ -58,7 +60,7 @@ type
     //最新桌面版本号
     property resVersion:string read FresVersion write SetresVersion;
     property resDesktop:string read FresDesktop write SetresDesktop;
-    property prodParams:string read FprodParams write SetprodParams;    
+    property prodParams:string read FprodParams write SetprodParams;
   end;
 
 var
@@ -85,6 +87,8 @@ begin
   if @RspGetGoodsInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getGoodsInfo方法');
   @RspUploadGoods := GetProcAddress(RspHandle, 'uploadGoods');
   if @RspUploadGoods=nil then Raise Exception.Create('无效Rsp插件包，没有实现uploadGoods方法');
+  @RspDownloadSort := GetProcAddress(RspHandle, 'downloadSort');
+  if @RspDownloadSort=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadSort方法');
 end;
 
 procedure TrspFactory.FreeRspFactory;
@@ -352,6 +356,35 @@ begin
   simpleReturn := FindNode(doc,'body\simpleReturn');
   code := GetNodeValue(simpleReturn,'code');
   result := (code = '1');
+end;
+
+function TrspFactory.downloadSort(tenantId,flag:integer;timestamp:int64):widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(flag);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(timestamp);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('downloadReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(tenantId);
+  FindNode(doc,'body\downloadReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+  outxml := RspDownloadSort(inxml,rspUrl,2);
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
 end;
 
 function TrspFactory.FindElement(root: IXMLDOMNode;

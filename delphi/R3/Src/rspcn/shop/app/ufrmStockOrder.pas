@@ -708,7 +708,7 @@ begin
       ARect := Rect;
       DBGridEh2.canvas.Brush.Color := DBGridEh2.FixedColor;
       DBGridEh2.canvas.FillRect(ARect);
-      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
   finally
     DBGridEh2.Canvas.Brush.Assign(br);

@@ -1,6 +1,7 @@
 inherited frmStockOrder: TfrmStockOrder
   Left = 238
   Top = 96
+  ActiveControl = serachText
   Caption = #36827#36135#21333
   ClientWidth = 992
   OnCreate = FormCreate
@@ -12,6 +13,8 @@ inherited frmStockOrder: TfrmStockOrder
       Width = 792
       inherited PageControl: TRzPageControl
         Width = 792
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 21
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -266,7 +269,7 @@ inherited frmStockOrder: TfrmStockOrder
             Height = 190
             inherited DBGridEh1: TDBGridEh
               Width = 770
-              Height = 169
+              Height = 168
               FrozenCols = 1
               Columns = <
                 item
@@ -281,6 +284,9 @@ inherited frmStockOrder: TfrmStockOrder
                 item
                   EditButtons = <>
                   FieldName = 'GODS_NAME'
+                  Footer.Alignment = taCenter
+                  Footer.Value = #21512#35745
+                  Footer.ValueType = fvtStaticText
                   Footers = <>
                   Title.Caption = #21830#21697#21517#31216
                   Width = 195
@@ -319,6 +325,9 @@ inherited frmStockOrder: TfrmStockOrder
                   DisplayFormat = '#0.###'
                   EditButtons = <>
                   FieldName = 'AMOUNT'
+                  Footer.Alignment = taRightJustify
+                  Footer.DisplayFormat = '#0.###'
+                  Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #25968#37327
                   Width = 49
@@ -337,6 +346,9 @@ inherited frmStockOrder: TfrmStockOrder
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'AMONEY'
+                  Footer.Alignment = taRightJustify
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
@@ -356,6 +368,9 @@ inherited frmStockOrder: TfrmStockOrder
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'AGIO_MONEY'
+                  Footer.Alignment = taRightJustify
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
@@ -745,7 +760,6 @@ inherited frmStockOrder: TfrmStockOrder
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
-            BorderSides = [sdLeft, sdTop, sdRight]
             BorderColor = clWhite
             BorderWidth = 10
             Color = clWhite
@@ -832,7 +846,7 @@ inherited frmStockOrder: TfrmStockOrder
               Left = 11
               Top = 11
               Width = 770
-              Height = 368
+              Height = 367
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -862,7 +876,7 @@ inherited frmStockOrder: TfrmStockOrder
               TitleFont.Style = []
               TitleHeight = 20
               UseMultiTitle = True
-              IsDrawNullRow = False
+              IsDrawNullRow = True
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
@@ -877,13 +891,14 @@ inherited frmStockOrder: TfrmStockOrder
                   Width = 29
                 end
                 item
+                  Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'GLIDE_NO'
                   Footer.Value = #21512#35745
                   Footer.ValueType = fvtStaticText
                   Footers = <>
                   Title.Caption = #21333#21495
-                  Width = 112
+                  Width = 106
                 end
                 item
                   DisplayFormat = '0000-00-00'
@@ -891,6 +906,7 @@ inherited frmStockOrder: TfrmStockOrder
                   FieldName = 'STOCK_DATE'
                   Footers = <>
                   Title.Caption = #36827#36135#26085#26399
+                  Width = 71
                 end
                 item
                   EditButtons = <>

@@ -1,6 +1,6 @@
 inherited frmOrderForm: TfrmOrderForm
-  Left = 99
-  Top = 149
+  Left = 317
+  Top = 279
   ActiveControl = edtInput
   Caption = #21333#25454#22522#31867
   ClientHeight = 522
@@ -148,8 +148,12 @@ inherited frmOrderForm: TfrmOrderForm
                 Style.Font.Height = -19
                 Style.Font.Name = #40657#20307
                 Style.Font.Style = [fsBold]
+                Style.HotTrack = True
+                Style.LookAndFeel.Kind = lfStandard
+                Style.LookAndFeel.NativeStyle = False
+                Style.Shadow = False
                 TabOrder = 0
-                ImeMode = imAlpha
+                ImeMode = imClose
                 OnEnter = edtInputEnter
                 OnExit = edtInputExit
                 OnKeyDown = edtInputKeyDown
@@ -243,7 +247,6 @@ inherited frmOrderForm: TfrmOrderForm
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
-            BorderSides = [sdLeft, sdTop, sdRight]
             BorderColor = clWhite
             BorderWidth = 10
             Color = clWhite
@@ -252,7 +255,7 @@ inherited frmOrderForm: TfrmOrderForm
               Left = 11
               Top = 11
               Width = 682
-              Height = 182
+              Height = 181
               Align = alClient
               AllowedOperations = [alopUpdateEh, alopAppendEh]
               AutoFitColWidths = True
@@ -271,6 +274,7 @@ inherited frmOrderForm: TfrmOrderForm
               OptionsEh = [dghHighlightFocus, dghClearSelection]
               PopupMenu = PopupMenu1
               RowHeight = 25
+              SumList.Active = True
               TabOrder = 0
               TitleFont.Charset = GB2312_CHARSET
               TitleFont.Color = clBlack
@@ -279,7 +283,7 @@ inherited frmOrderForm: TfrmOrderForm
               TitleFont.Style = []
               TitleHeight = 30
               UseMultiTitle = True
-              IsDrawNullRow = False
+              IsDrawNullRow = True
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
@@ -301,6 +305,9 @@ inherited frmOrderForm: TfrmOrderForm
                 item
                   EditButtons = <>
                   FieldName = 'GODS_NAME'
+                  Footer.Alignment = taCenter
+                  Footer.Value = #21512#35745
+                  Footer.ValueType = fvtStaticText
                   Footers = <>
                   Title.Caption = #21830#21697#21517#31216
                   Width = 195

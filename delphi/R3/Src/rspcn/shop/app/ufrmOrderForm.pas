@@ -2226,14 +2226,14 @@ begin
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
-  if ((gdSelected in State) or (gdFocused in State)) then
+  {if ((gdSelected in State) or (gdFocused in State)) then
     begin
       ARect := Rect;
       DBGridEh1.Canvas.Pen.Color := clRed;
       DBGridEh1.Canvas.Pen.Width := 1;
       DBGridEh1.Canvas.Brush.Style := bsClear;
       DbGridEh1.canvas.Rectangle(ARect);
-    end;
+    end; }
   finally
     DBGridEh1.Canvas.Brush.Assign(br);
     DBGridEh1.Canvas.Pen.Assign(pn);

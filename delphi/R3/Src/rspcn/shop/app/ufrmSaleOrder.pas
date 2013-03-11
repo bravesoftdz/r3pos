@@ -946,7 +946,7 @@ begin
         else
           AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee;
         if AObj.FieldbyName('CASH_MNY').AsFloat=0 then AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldbyName('PAY_A').AsFloat;
-        AObj.FieldbyName('PAY_DIBS').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_DIBS').AsFloat;
+        AObj.FieldbyName('PAY_DIBS').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
         MarqueeStatus.Caption := 'สตสี:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  ีามใ:'+formatFloat('#0.0',AObj.FieldbyName('PAY_DIBS').AsFloat);
      end;
   end;
@@ -1622,7 +1622,7 @@ begin
       ARect := Rect;
       DBGridEh2.canvas.Brush.Color := DBGridEh2.FixedColor;
       DBGridEh2.canvas.FillRect(ARect);
-      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
   finally
     DBGridEh2.Canvas.Brush.Assign(br);

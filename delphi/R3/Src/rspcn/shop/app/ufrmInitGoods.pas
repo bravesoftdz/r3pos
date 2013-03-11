@@ -116,6 +116,7 @@ type
     procedure getGoodsInfo;
     procedure uploadGoodsInfo;
     function  IsChinese(str:string):Boolean;
+    function  CanFocus(Control:TControl):Boolean;
   public
     AObj:TRecord_;
     Finded:boolean;
@@ -241,7 +242,7 @@ begin
       rzPage.ActivePageIndex := 1;
       btnPrev.Visible := True;
       btnNext.Visible := True;
-      if self.Visible and edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
+      if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
     end
   else if rzPage.ActivePageIndex = 1 then
     begin
@@ -309,12 +310,12 @@ begin
   barcode := trim(edtInput.Text);
   if barcode = '' then
     begin
-      if self.Visible and edtInput.CanFocus then edtInput.SetFocus;
+      if CanFocus(edtInput) then edtInput.SetFocus;
       Raise Exception.Create('请输入条形码...');
     end;
   if IsChinese(barcode) or (Length(barcode) <> 13) then
     begin
-      if self.Visible and edtInput.CanFocus then edtInput.SetFocus;
+      if CanFocus(edtInput) then edtInput.SetFocus;
       Raise Exception.Create('条形码格式不合法...');
     end;
 
@@ -591,7 +592,7 @@ procedure TfrmInitGoods.CheckInput1;
     begin
       if StrToFloatDef(edtPrice.Text,0) > 999999999 then
         begin
-          if edtPrice.CanFocus then edtPrice.SetFocus;
+          if CanFocus(edtPrice) then edtPrice.SetFocus;
           Raise Exception.Create('输入的〖'+MsgInfo+'〗数值过大，无效...');
         end;
     end;
@@ -600,14 +601,14 @@ begin
     begin
       if trim(edtBARCODE1.Text)='' then
         begin
-          if edtBARCODE1.CanFocus then edtBARCODE1.SetFocus;
+          if CanFocus(edtBARCODE1) then edtBARCODE1.SetFocus;
           Raise Exception.Create('条码不能为空，请输入！');
         end;
     end;
 
   if trim(edtGODS_CODE.Text)='' then
     begin
-      if edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
+      if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
       Raise Exception.Create('货号不能为空，请输入！');
     end;
 
@@ -615,7 +616,7 @@ begin
 
   if trim(edtGODS_NAME.Text)='' then
     begin
-      if edtGODS_NAME.CanFocus then edtGODS_NAME.SetFocus;
+      if CanFocus(edtGODS_NAME) then edtGODS_NAME.SetFocus;
       Raise Exception.Create('商品名称不能为空！');
     end;
 
@@ -623,29 +624,29 @@ begin
 
   if (trim(edtCALC_UNITS.AsString)='') or (trim(edtCALC_UNITS.Text)='') then
     begin
-      if edtCALC_UNITS.CanFocus then edtCALC_UNITS.SetFocus;
+      if CanFocus(edtCALC_UNITS) then edtCALC_UNITS.SetFocus;
       Raise Exception.Create('计量单位不能为空！');
     end;
 
   if (not Simple) and (trim(edtSORT_ID1.Text)='') then
     begin
-      if edtSORT_ID.CanFocus then edtSORT_ID.SetFocus;
+      if CanFocus(edtSORT_ID) then edtSORT_ID.SetFocus;
       Raise Exception.Create('商品分类不能为空！');
     end;
 
   if trim(edtNEW_INPRICE.Text)='' then
     begin
-      if edtNEW_INPRICE.CanFocus then edtNEW_INPRICE.SetFocus;
+      if CanFocus(edtNEW_INPRICE) then edtNEW_INPRICE.SetFocus;
       Raise Exception.Create('标准进价不能为空！');
     end;
   if trim(edtNEW_OUTPRICE.Text)='' then
     begin
-      if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
+      if CanFocus(edtNEW_OUTPRICE) then edtNEW_OUTPRICE.SetFocus;
       Raise Exception.Create('标准售价不能为空！');
     end;
   if trim(edtSHOP_NEW_OUTPRICE.Text)='' then
     begin
-      if edtSHOP_NEW_OUTPRICE.CanFocus then edtSHOP_NEW_OUTPRICE.SetFocus;
+      if CanFocus(edtSHOP_NEW_OUTPRICE) then edtSHOP_NEW_OUTPRICE.SetFocus;
       Raise Exception.Create('店内售价不能为空！');
     end;
 
@@ -655,12 +656,12 @@ begin
 
   if StrToFloatDef(trim(edtNEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
     begin
-      if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
+      if CanFocus(edtNEW_OUTPRICE) then edtNEW_OUTPRICE.SetFocus;
       Raise Exception.Create('标准售价不能小于标准进价！');
     end;
   if StrToFloatDef(trim(edtSHOP_NEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
     begin
-      if edtSHOP_NEW_OUTPRICE.CanFocus then edtSHOP_NEW_OUTPRICE.SetFocus;
+      if CanFocus(edtSHOP_NEW_OUTPRICE) then edtSHOP_NEW_OUTPRICE.SetFocus;
       Raise Exception.Create('店内售价不能小于标准进价！');
     end;
 end;
@@ -671,76 +672,76 @@ begin
     begin
       if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBARCODE2.Text)='') then
         begin
-          if edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus;
+          if CanFocus(edtSMALL_UNITS) then edtSMALL_UNITS.SetFocus;
           Raise Exception.Create('小包装条码不能为空！');
         end;
       if (trim(edtBIG_UNITS.AsString)<>'') and (trim(edtBARCODE3.Text)='') then
         begin
-          if edtBIG_UNITS.CanFocus then edtBIG_UNITS.SetFocus;
+          if CanFocus(edtBIG_UNITS) then edtBIG_UNITS.SetFocus;
           Raise Exception.Create('大包装条码不能为空！');
         end;
       if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBARCODE2.Text)=trim(edtBARCODE1.Text)) then
         begin
-          if edtBARCODE2.CanFocus then edtBARCODE2.SetFocus;
+          if CanFocus(edtBARCODE2) then edtBARCODE2.SetFocus;
           Raise Exception.Create('小包装条码不能与计量单位条码相同！');
         end;
       if (trim(edtBIG_UNITS.AsString)<>'') and (trim(edtBARCODE3.Text)=trim(edtBARCODE1.Text)) then
         begin
-          if edtBARCODE3.CanFocus then edtBARCODE3.SetFocus;
+          if CanFocus(edtBARCODE3) then edtBARCODE3.SetFocus;
           Raise Exception.Create('大包装条码不能与计量单位条码相同！');
         end;
       if (trim(edtSMALL_UNITS.AsString)<>'') and (trim(edtBIG_UNITS.AsString)<>'') and (trim(edtBARCODE3.Text)=trim(edtBARCODE1.Text)) then
         begin
-          if edtBARCODE3.CanFocus then edtBARCODE3.SetFocus;
+          if CanFocus(edtBARCODE3) then edtBARCODE3.SetFocus;
           Raise Exception.Create('大包装条码不能与小包装条码相同！');
         end;
     end;
   
   if (trim(edtSMALL_UNITS.AsString)<>'') and (StrToFloatDef(edtSMALLTO_CALC.Text,0)<=0) then
     begin
-      if edtSMALLTO_CALC.CanFocus then edtSMALLTO_CALC.SetFocus;
+      if CanFocus(edtSMALLTO_CALC) then edtSMALLTO_CALC.SetFocus;
       Raise Exception.Create('小包装单位的换算系数不能小于等于0!');
     end;
   if (trim(edtBIG_UNITS.AsString)<>'') and (StrToFloatDef(edtBIGTO_CALC.Text,0)<=0) then
     begin
-      if edtBIGTO_CALC.CanFocus then   edtBIGTO_CALC.SetFocus;
+      if CanFocus(edtBIGTO_CALC) then   edtBIGTO_CALC.SetFocus;
       Raise Exception.Create('大包装单位的换算系数不能小于等于0!');
     end;
 
   if trim(edtCALC_UNITS.AsString)=trim(edtSMALL_UNITS.AsString) then
     begin
-      if edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus;
+      if CanFocus(edtSMALL_UNITS) then edtSMALL_UNITS.SetFocus;
       Raise Exception.Create('小包装单位不能和计量单位相同！');
     end;
   if trim(edtCALC_UNITS.AsString)=trim(edtBIG_UNITS.AsString) then
     begin
-      if edtBIG_UNITS.CanFocus then edtBIG_UNITS.SetFocus;
+      if CanFocus(edtBIG_UNITS) then edtBIG_UNITS.SetFocus;
       Raise Exception.Create('大包装单位不能和计量单位相同！');
     end;
   if (trim(edtSMALL_UNITS.AsString)=trim(edtBIG_UNITS.AsString)) and (trim(edtSMALL_UNITS.AsString)<>'') then
     begin
-      if edtBIG_UNITS.CanFocus then edtBIG_UNITS.SetFocus;
+      if CanFocus(edtBIG_UNITS) then edtBIG_UNITS.SetFocus;
       Raise Exception.Create('大包装单位不能和小包装单位相同！');
     end;
 
   if (edtDefault1.Checked) and (trim(edtSMALL_UNITS.AsString)='') then
     begin
-      if edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus;
+      if CanFocus(edtSMALL_UNITS) then edtSMALL_UNITS.SetFocus;
       Raise Exception.Create('小包装单位设为默认单位不能为空');
     end;
   if (edtDefault1.Checked) and (StrToFloatDef(edtSMALLTO_CALC.Text,0)<=0) then
     begin
-      if edtSMALLTO_CALC.CanFocus then edtSMALLTO_CALC.SetFocus;
+      if CanFocus(edtSMALLTO_CALC) then edtSMALLTO_CALC.SetFocus;
       Raise Exception.Create('小包装单位的换算系数不能小于等于0!');
     end;
   if (edtDefault2.Checked) and (trim(edtBIG_UNITS.AsString)='') then
     begin
-      if edtBIG_UNITS.CanFocus then edtBIG_UNITS.SetFocus;
+      if CanFocus(edtBIG_UNITS) then edtBIG_UNITS.SetFocus;
       Raise Exception.Create('大包装单位设为默认单位不能为空');
     end;
   if (edtDefault2.Checked) and (StrToFloatDef(edtBIGTO_CALC.Text,0)<=0) then
     begin
-      if edtBIGTO_CALC.CanFocus then edtBIGTO_CALC.SetFocus;
+      if CanFocus(edtBIGTO_CALC) then edtBIGTO_CALC.SetFocus;
       Raise Exception.Create('大包装单位的换算系数不能小于等于0!');
     end;
 end;
@@ -1350,7 +1351,7 @@ procedure TfrmInitGoods.edtGOODS_OPTION1Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION2.Checked := false;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if CanFocus(edtInput) then edtInput.SetFocus;
 end;
 
 procedure TfrmInitGoods.edtGOODS_OPTION2Click(Sender: TObject);
@@ -1584,7 +1585,7 @@ procedure TfrmInitGoods.RzPanel5Click(Sender: TObject);
 begin
   inherited;
   edtGOODS_OPTION1.Checked := true;
-  if edtInput.CanFocus then edtInput.SetFocus; 
+  if CanFocus(edtInput) then edtInput.SetFocus; 
 end;
 
 procedure TfrmInitGoods.RzPanel6Click(Sender: TObject);
@@ -1596,7 +1597,7 @@ end;
 procedure TfrmInitGoods.FormShow(Sender: TObject);
 begin
   inherited;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if CanFocus(edtInput) then edtInput.SetFocus;
 end;
 
 procedure TfrmInitGoods.ajustPostion;
@@ -1618,6 +1619,15 @@ begin
       break;
     end;
   end;
+end;
+
+function TfrmInitGoods.CanFocus(Control: TControl): Boolean;
+begin
+  result := false;
+  if Control is TcxTextEdit then
+    result := (self.Visible) and TcxTextEdit(Control).CanFocus;
+  if Control is TzrComboBoxList then
+    result := (self.Visible) and TzrComboBoxList(Control).CanFocus;
 end;
 
 initialization

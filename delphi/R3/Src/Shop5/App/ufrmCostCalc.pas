@@ -7,7 +7,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus,ZDataSet, RzButton, RzPrgres, StdCtrls,
-  ExtCtrls, ZBase;
+  ExtCtrls, ZBase, DB, uDsUtil, DateUtils;
 
 type
   TfrmCostCalc = class(TfrmBasic)
@@ -17,9 +17,13 @@ type
     Label1: TLabel;
     btnStart: TRzBitBtn;
     Label2: TLabel;
+    LblTime: TLabel;
     procedure btnStartClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
+    FOldPrgPercent:integer;  //循环前的进度
+    FAllPrgCount:integer;    //当前循环总个数据
+    FSubPrgPercent:real;     //子过程中占整个过程%;
     Fid: string;
     Fcflag: integer;
     FcDate: TDate;
@@ -29,6 +33,8 @@ type
     FmDate: TDate;
     FuDate: TDate;
     FPrgPercent: integer;
+    FBegTickCount:integer;
+    FMthCount: integer; //区间月份数
     procedure Setid(const Value: string);
     procedure Setcflag(const Value: integer);
     procedure SetcDate(const Value: TDate);
@@ -38,53 +44,31 @@ type
     procedure SetmDate(const Value: TDate);
     procedure SetuDate(const Value: TDate);
     procedure SetPrgPercent(const Value: integer);
-    { Private declarations }
+    procedure SetBegTickCount(const Value: integer);
   protected
-    procedure DBLock;
-    procedure DBUnLock;
-    function GetTmpSQL(tb:string):string;
-    // function CheckReckMonthDay: Boolean;  //暂时不用 判断是否到了月结帐日
+    procedure CheckCalcReckStatus; //在线版判断是否多人同时在核算
+    procedure ClearCalcReckStatus; //在线版清除核算标记
+    procedure CheckForRck; //判断是否未审核盘点
+    procedure DoSetPrgPercent(CurNo,CurPoint:integer);
+
+    function CheckValidDate(dateStr: string):string;
+    function GetMonthCount:integer; //返回结账月份数
+    function LockCompanyCheck: boolean;
+    function DoCalcDayReckByMth(InParams:TftParamList;ClsFalg:Boolean=True):Boolean; //根据月份区间计算日台账
+    function DoCalcUpdateStorage(InParams:TftParamList):Boolean; //更新库存成本价
+    function DoCalcMonthReck(InParams:TftParamList;CalcFlag:string):Boolean;   //计算月台账
+    function DoCalcAnalyLister:Boolean; //监控商品系数
+
+    function CalcForDayReck(InParams:TftParamList):Boolean;   //计算日结账(flag=1)
+    function CalcForMonthReck(InParams:TftParamList):Boolean; //计算月结账(flag=2)
+    function CalcForMonthData(InParams:TftParamList;CalcFlag:string):Boolean; //计算月账户台账(flag=5)、商品台账(flag=6)
   public
-    { Public declarations }
     pt,pc:integer;
     isfirst:boolean;
     reck_flag:integer;
     reck_day:integer;
-    tempTableName:string;
-    tempTableName1:string;
-    tempTableName2:string;
     //核算前准备
     procedure Prepare;
-    procedure CreateTempTable;
-    procedure PrepareDataForRck;
-    procedure PrepareDataForAcct;
-    procedure CheckForRck;
-    procedure TruncTable(tb:string);
-    procedure CreateTable(tb:string);
-    //自动缴银结账
-    procedure AutoPosReck;
-    //移动平均成本核算<按开单时的平均加计算>
-    procedure Calc0;
-    //日加权移动平均成本核算
-    procedure Calc1;
-    //月加权移动平均成本核算
-    procedure Calc2;
-    //更新库存表成本价
-    procedure UpdateStroage;
-    //生成客户商品账
-    procedure CalcSpz;
-    //生成月账
-    procedure CalcMth;
-    //生成日账记录
-    procedure ClseDay;
-    //生成结账记录
-    procedure ClseRck;
-    //计算账户日台账
-    procedure CalcAcctDay;
-    //计算账户月台账
-    procedure CalcAcctMth;
-    //计算分析数据
-    procedure CalcAnaly;
     //核算单位
     property cid:string read Fid write Setid;
     //核算方式 1日加权移动平均 2月加权移平均 3先进先出
@@ -101,6 +85,8 @@ type
     property uDate:TDate read FuDate write SetuDate;
     //结账类型 0 试算， 1 日结  2 月结
     property flag:integer read Fflag write Setflag;
+    //月结账区间数
+    property MthCount:integer read FMthCount;
     //计算日账户台账
     class function TryCalcDayAcct(Owner:TForm):boolean;
     //计算日商品台账
@@ -118,259 +104,23 @@ type
     //退出上报条件检测
     class function CheckSyncReck(Owner:TForm):boolean;
     property PrgPercent:integer read FPrgPercent write SetPrgPercent;
-
+    property BegTickCount:integer read FBegTickCount write SetBegTickCount;
   end;
+
 implementation
-uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory,ufrmMain,uDsUtil;
+
+uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory,ufrmMain;
+
 {$R *.dfm}
 
+
 { TfrmCostCalc }
-
-procedure TfrmCostCalc.Calc1;
-var
-  i,w:integer;
-  SQL,mySQL:string;
-procedure CreateRck;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    Factor.ExecSQL('delete from RCK_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ');
-    SQL :=
-        'insert into RCK_GOODS_DAYS('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,COMM,TIME_STAMP '+
-        ') '+
-        'select '+
-        ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,''00'','+GetTimeStamp(Factor.iDbType)+' '+
-        'from '+tempTableName1+' where TENANT_ID=0 and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w);
-    Factor.ExecSQL(SQL);
-
-    SQL :=
-        'insert into '+tempTableName2+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-        ')'+
-        'select '+
-        ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+w+1)+' as CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'BAL_AMT as ORG_AMT,BAL_MNY as ORG_MNY,BAL_RTL as ORG_RTL,BAL_CST as ORG_CST,'+
-        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,'+
-        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,'+
-        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,'+
-        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,'+
-        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,'+
-        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,'+
-        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,'+
-        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
-        '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
-        '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ';
-    Factor.ExecSQL(SQL);
-    truncTable(tempTableName1);
-    Factor.ExecSQL('insert into '+tempTableName1+' select * from '+tempTableName2);
-    truncTable(tempTableName2);
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
-    Raise;
-  end;
-end;
-begin
-  //初始化期初
-  SQL :=
-    'insert into '+tempTableName1+'('+
-    'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-    'NEW_INPRICE,NEW_OUTPRICE,'+
-    'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-    'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-    'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-    'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-    'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-    'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-    'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-    'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-    'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-    'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-    'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-    'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-    ')'+
-    'select '+
-    ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+1)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
-    'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
-    'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-    '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-    '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,'+
-    '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,'+
-    '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,'+
-    '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,'+
-    '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,'+
-    '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,'+
-    '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,'+
-    '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
-    '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
-    '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-    'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
-  Factor.ExecSQL(SQL);
-  w := 1;
-  for i:= 1 to pt do
-    begin
-      Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
-      Update;
-      PrgPercent := (i*100 div pt) div 3+5;
-      //Application.ProcessMessages;
-      SQL :=
-        'insert into '+tempTableName1+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-        ')'+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST '+
-        'from '+tempTableName+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' ';
-      Factor.ExecSQL(SQL);
-      //计算成本
-      mySQL :=
-        ParseSQL(Factor.iDbType,
-        'select 0 as TENANT_ID,GODS_ID,BATCH_NO,'+
-        'case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.000000),6) else 0 end as COST_PRICE '+
-        'from '+tempTableName1+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
-        'group by TENANT_ID,GODS_ID,BATCH_NO');
-      //生成数据
-      SQL :=
-        'insert into '+tempTableName1+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST '+
-        ') '+
-        'select '+
-        'j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO,'+
-        'max(NEW_INPRICE) as NEW_INPRICE,max(NEW_OUTPRICE) as NEW_OUTPRICE,'+
-        'sum(ORG_AMT) as ORG_AMT,sum(ORG_AMT)*max(NEW_INPRICE) as ORG_MNY,sum(ORG_AMT)*max(NEW_OUTPRICE) as ORG_RTL,sum(ORG_CST) as ORG_CST,'+
-        'sum(STOCK_AMT) as STOCK_AMT,sum(STOCK_MNY) as STOCK_MNY,sum(STOCK_TAX) as STOCK_TAX,sum(STOCK_RTL) as STOCK_RTL,sum(STOCK_AGO) as STOCK_AGO,sum(STKRT_AMT) as STKRT_AMT,sum(STKRT_MNY) as STKRT_MNY,sum(STKRT_TAX) as STKRT_TAX,'+
-        'sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL,sum(SALE_AGO) as SALE_AGO,sum(SALE_MNY) as SALE_MNY,sum(SALE_TAX) as SALE_TAX,sum(SALRT_AMT) as SALRT_AMT,sum(SALRT_MNY) as SALRT_MNY,sum(SALRT_TAX) as SALRT_TAX,'+
-        'sum(DBIN_AMT) as DBIN_AMT,sum(DBIN_MNY) as DBIN_MNY,sum(DBIN_RTL) as DBIN_RTL,'+
-        'sum(DBOUT_AMT) as DBOUT_AMT,sum(DBOUT_MNY) as DBOUT_MNY,sum(DBOUT_RTL) as DBOUT_RTL,'+
-        'sum(CHANGE1_AMT) as CHANGE1_AMT,sum(CHANGE1_MNY) as CHANGE1_MNY,sum(CHANGE1_RTL) as CHANGE1_RTL,'+
-        'sum(CHANGE2_AMT) as CHANGE2_AMT,sum(CHANGE2_MNY) as CHANGE2_MNY,sum(CHANGE2_RTL) as CHANGE2_RTL,'+
-        'sum(CHANGE3_AMT) as CHANGE3_AMT,sum(CHANGE3_MNY) as CHANGE3_MNY,sum(CHANGE3_RTL) as CHANGE3_RTL,'+
-        'sum(CHANGE4_AMT) as CHANGE4_AMT,sum(CHANGE4_MNY) as CHANGE4_MNY,sum(CHANGE4_RTL) as CHANGE4_RTL,'+
-        'sum(CHANGE5_AMT) as CHANGE5_AMT,sum(CHANGE5_MNY) as CHANGE5_MNY,sum(CHANGE5_RTL) as CHANGE5_RTL,'+
-        'max(c.COST_PRICE) as COST_PRICE,'+
-        'sum(round(SALE_AMT*c.COST_PRICE,2)) as SALE_CST,'+
-        'sum(SALE_MNY)-sum(round(SALE_AMT*c.COST_PRICE,2)) as SALE_PRF,'+
-        'sum(round(SALRT_AMT*c.COST_PRICE,2)) as SALRT_CST,'+
-        'sum(round(DBIN_AMT*c.COST_PRICE,2)) as DBIN_CST,'+
-        'sum(round(DBOUT_AMT*c.COST_PRICE,2)) as DBOUT_CST,'+
-        'sum(round(CHANGE1_AMT*c.COST_PRICE,2)) as CHANGE1_CST,'+
-        'sum(round(CHANGE2_AMT*c.COST_PRICE,2)) as CHANGE2_CST,'+
-        'sum(round(CHANGE3_AMT*c.COST_PRICE,2)) as CHANGE3_CST,'+
-        'sum(round(CHANGE4_AMT*c.COST_PRICE,2)) as CHANGE4_CST,'+
-        'sum(round(CHANGE5_AMT*c.COST_PRICE,2)) as CHANGE5_CST,'+
-        'round(sum(ORG_AMT)+sum(STOCK_AMT)-sum(SALE_AMT)+sum(DBIN_AMT)-sum(DBOUT_AMT)+sum(CHANGE1_AMT)+sum(CHANGE2_AMT)+sum(CHANGE3_AMT)+sum(CHANGE4_AMT)+sum(CHANGE5_AMT),3) as BAL_AMT,'+
-        'round((sum(ORG_AMT)+sum(STOCK_AMT)-sum(SALE_AMT)+sum(DBIN_AMT)-sum(DBOUT_AMT)+sum(CHANGE1_AMT)+sum(CHANGE2_AMT)+sum(CHANGE3_AMT)+sum(CHANGE4_AMT)+sum(CHANGE5_AMT))*max(NEW_INPRICE),2) as BAL_MNY,'+
-        'round((sum(ORG_AMT)+sum(STOCK_AMT)-sum(SALE_AMT)+sum(DBIN_AMT)-sum(DBOUT_AMT)+sum(CHANGE1_AMT)+sum(CHANGE2_AMT)+sum(CHANGE3_AMT)+sum(CHANGE4_AMT)+sum(CHANGE5_AMT))*max(NEW_OUTPRICE),2) as BAL_RTL,'+
-        'round(sum(ORG_CST)+sum(STOCK_MNY)-sum(round(SALE_AMT*c.COST_PRICE,2))+sum(round(DBIN_AMT*c.COST_PRICE,2))-sum(round(DBOUT_AMT*c.COST_PRICE,2))+'+
-        'sum(round(CHANGE1_AMT*c.COST_PRICE,2))+sum(round(CHANGE2_AMT*c.COST_PRICE,2))+sum(round(CHANGE3_AMT*c.COST_PRICE,2))+sum(round(CHANGE4_AMT*c.COST_PRICE,2))+sum(round(CHANGE5_AMT*c.COST_PRICE,2)),2) as BAL_CST '+
-        'from('+
-        'select '+
-        '0 as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL '+
-        'from '+tempTableName1+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
-        ') j left outer join ('+mySQL+') c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and j.BATCH_NO=c.BATCH_NO '+
-        'group by j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO ';
-      Factor.ExecSQL(SQL);
-      w := i;
-      CreateRck;
-    end;
-end;
 
 procedure TfrmCostCalc.Prepare;
 var
   rs:TZQuery;
   e:TDate;
+  myDate:TDate;
 begin
   reck_flag := StrtoIntDef(ShopGlobal.GetParameter('RECK_OPTION'),1);
   reck_day := StrtoIntDef(ShopGlobal.GetParameter('RECK_DAY'),28);
@@ -398,7 +148,7 @@ begin
          rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',cDate);
          Factor.Open(rs);
          if rs.Fields[0].AsString <> '' then
-            Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期');
+            Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期'); 
          isfirst := true;
        end;
 
@@ -440,9 +190,9 @@ begin
            end
          else
            begin
-             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',reck_day));
+             e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',date())+formatfloat('00',reck_day)));
              if e>date() then //还没到结账日
-                eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day))
+                eDate := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day)))
              else
                 eDate := e;
            end;
@@ -452,6 +202,36 @@ begin
          btnStart.Enabled := rs.IsEmpty and (eDate>bDate);
          if eDate<bDate then eDate := bDate;
        end;
+
+    //判断条件
+    myDate := cDate;
+    if calc_flag=2 then myDate := bDate;
+    rs.close;
+    //rs.SQL.Text := 'select max(CREA_DATE) as HDate,min(CREA_DATE) as LDate from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',myDate)+' ';
+    //从3个表单据中取此日期
+    rs.SQL.Text :=
+       'select max(STOCK_DATE) as HDate,min(STOCK_DATE) as LDate from STK_STOCKORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
+       ' union all '+
+       'select max(SALES_DATE) as HDate,min(SALES_DATE) as LDate from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
+       ' union all '+
+       'select max(CHANGE_DATE) as HDate,min(CHANGE_DATE) as LDate from STO_CHANGEORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CHANGE_DATE>'+formatDatetime('YYYYMMDD',myDate)+' ';
+    Factor.Open(rs);
+    if rs.Fields[0].asString<>'' then
+    begin
+      myDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
+      if myDate>(Date()+7) then myDate := Date()+7;
+    end;
+    if (myDate>eDate) and (eDate=0) then eDate := myDate;
+
+    mDate := myDate;
+    uDate := mDate;
+
+    //每次计算都算到最后一天
+    if mDate<eDate then mDate := eDate;
+    if mDate<date() then mDate := date();
+    pt := round(mDate-cDate);
+    //返回本次月结账区间
+    FMthCount:=GetMonthCount;
   finally
     rs.free;
   end;
@@ -496,698 +276,76 @@ begin
 end;
 
 procedure TfrmCostCalc.btnStartClick(Sender: TObject);
-var localDBKey : string;
-var Params:TftParamList;
-var msg : string;
+var
+  i:integer;
+  ReMsg,Rck_Date:string;
+  CalcParams:TftParamList;
+  StrList:TStringlist;
 begin
-  if flag in [1,2] then
-     begin
-       if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
-       if MessageBox(Handle,'结账前，请确认各门店的脱机数据是否上报完毕？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-     end;
-  if not ShopGlobal.offline then
-    begin
-      Params := TftParamList.Create(nil);
-      try
-        localDBKey := getLocalDBKey();
-        Params.ParamByName('localDBKey').AsString := localDBKey;
-        Params.ParamByName('tenantId').AsInteger := Global.TENANT_ID;
-        msg := Factor.ExecProc('TCheckCostCalc',Params) ;
-      finally
-        Params.Free;
-      end;
+  {if FileExists('c:\LogSQL.Log') then
+  begin
+    try
+      StrList:=TStringlist.Create;
+      StrList.LoadFromFile('c:\LogSQL.Log');
+      StrList.Clear;
+      StrList.SaveToFile('c:\LogSQL.Log');
+    finally
+      StrList.Free;
     end;
-
-  if (msg <> 'null') and (msg <> '') then
-    Raise Exception.Create(msg);
-
-  inherited;
+  end;}
+  LblTime.Caption:='[0s]';
+  FBegTickCount:=GetTickCount;
+  CheckCalcReckStatus; //在线版判断是否多人同时在核算
   Label1.Caption:='正在核算需要较长的时间,请稍候....';
   Label11.Caption := '读取参数...';
   Update;
-  //读取参数
+  //1、读取参数
   Prepare;
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
-  DBLock;
+  PrgPercent := 1;
+  Factor.DBLock(true);
   btnStart.Enabled := false;
+  CalcParams:=TftParamList.Create(nil);
   try
-    if Factor.iDbType=5 then Factor.BeginTrans; //对SQLite启动事务，减少IO
-    try
-      Label11.Caption := '核算前检测数据...';
-      Update;
-      PrgPercent := 1;
-      CheckForRck;
-      CreateTempTable;
-      Label11.Caption := '准备核算数据...';
-      Update;
-      //数据准备
-      PrepareDataForRck;
-      Label11.Caption := '正在核算成本...';
-      Update;
-      PrgPercent := 5;
-      //计算成本
-      case calc_flag of
-      0:Calc0;
-      1:Calc1;
-      2:Calc2;
-      end;
-
-      Label11.Caption := '正在更新库存成本...';
-      Update;
-      UpdateStroage;
-
-      Label11.Caption := '正在计算客户商品台账...';
-      Update;
-      CalcSpz;
-      Label11.Caption := '正在计算商品月台账...';
-      Update;
-      if flag in [1,2,6] then CalcMth;
-
-
-      Label11.Caption := '正在计算账户日台账...';
-      Update;
-      AutoPosReck;
-      //数据准备
-      PrepareDataForAcct;
-      CalcAcctDay;
-      Label11.Caption := '正在计算账户月台账...';
-      Update;
-      if flag in [1,2,5] then CalcAcctMth;
-      if Factor.iDbType=5 then Factor.CommitTrans;  //对SQLite启动事务，减少IO
-    except
-      if Factor.iDbType=5 then Factor.RollbackTrans;  //对SQLite启动事务，减少IO
-      Raise;
-    end;
-    Label11.Caption := '输出数据中...';
-    Update;
-    ClseDay;
-    ClseRck;
-    PrgPercent := 100;
-    if (flag in [1,2]) then
-       begin
-         CalcAnaly;
-         MessageBox(Handle,'执行结账完毕.','友情提示..',MB_OK+MB_ICONINFORMATION);
-       end;
-  finally
-    btnStart.Enabled := true;
-    DBUnLock;
-  end;
-  if not ShopGlobal.offline then
-    Factor.ExecSQL('delete from SYS_DEFINE where TENANT_ID = ' + inttostr(Global.TENANT_ID) + ' and DEFINE in (''RCK_ID'',''RCK_TIME'') ');
-  ModalResult := MROK;
-end;
-
-procedure TfrmCostCalc.Calc2;
-var
-  i,b,ept:integer;
-  SQL,mySQL:string;
-  e:TDate;
-procedure CreateRck;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    Factor.ExecSQL('delete from RCK_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',e)+'');
-    SQL :=
-        'insert into RCK_GOODS_DAYS('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,COMM,TIME_STAMP '+
-        ') '+
-        'select '+
-        ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,''00'','+GetTimeStamp(Factor.iDbType)+' '+
-        'from '+tempTableName1+' where TENANT_ID=0 and CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',e)+'';
-    Factor.ExecSQL(SQL);
-
-    truncTable(tempTableName2);
-    SQL :=
-        'insert into '+tempTableName2+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-        ')'+
-        'select '+
-        '0 as TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',e)+' as CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'BAL_AMT as ORG_AMT,BAL_MNY as ORG_MNY,BAL_RTL as ORG_RTL,BAL_CST as ORG_CST,'+
-        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,'+
-        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,'+
-        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,'+
-        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,'+
-        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,'+
-        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,'+
-        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,'+
-        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
-        '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
-        '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',e)+' ';
-    Factor.ExecSQL(SQL);
-    truncTable(tempTableName1);
-    Factor.ExecSQL('insert into '+tempTableName1+' select * from '+tempTableName2);
-    truncTable(tempTableName2);
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
-    Raise;
-  end;
-end;
-begin
-  //初始化期初
-  SQL :=
-    'insert into '+tempTableName1+'('+
-    'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-    'NEW_INPRICE,NEW_OUTPRICE,'+
-    'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,'+
-    'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-    'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-    'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-    'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-    'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-    'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-    'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-    'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-    'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-    'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-    'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-    ')'+
-    'select '+
-    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',bDate)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
-    'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
-    'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-    '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-    '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,'+
-    '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,'+
-    '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,'+
-    '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,'+
-    '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,'+
-    '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,'+
-    '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,'+
-    '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
-    '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
-    '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-    'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate)+' ';
-  Factor.ExecSQL(SQL);
-  b := 1;
-  while true do
-  begin
-    if reck_flag=1 then
-       begin
-         if isfirst and (b=1) then
-            begin
-              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-              if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
-            end
-         else
-            e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
-       end
-    else
-       begin
-         e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-         if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
-            e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
-       end;
-    Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM',bDate+b);
-    Update;
-    //Application.ProcessMessages;
-//    if (bDate+b)<=uDate then //只计算有数据部份
-    begin
-
-      SQL :=
-        'insert into '+tempTableName1+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-        ')'+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST '+
-        'from '+tempTableName+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' ';
-      Factor.ExecSQL(SQL);
-
-      truncTable(tempTableName2);
-
-      SQL :=
-        'insert into '+tempTableName2+'(TENANT_ID,GODS_ID,BATCH_NO,SHOP_ID,CREA_DATE,COST_PRICE) '+
-        'select 0 as TENANT_ID,GODS_ID,BATCH_NO,''#'' as SHOP_ID,0,'+
-        'case when sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(BAL_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.000000),6) else 0 end as COST_PRICE '+
-        'from '+tempTableName1+' '+
-        'group by GODS_ID,BATCH_NO';
-      Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
-
-    end;
-    ept := round(e - bDate);
-    for i:= b to ept do
+    //系统参数值
+    CalcParams.ParamByName('FLAG').AsInteger:=flag; //核算方法(0:移动加权平均;1:日移动加权平均;2:月移动加权平均)
+    CalcParams.ParamByName('CALC_FLAG').AsInteger:=calc_flag; //核算方法(0:移动加权平均;1:日移动加权平均;2:月移动加权平均)
+    CalcParams.ParamByName('RECK_FLAG').AsInteger:=reck_flag; //月结账类型(月底结账、指定日结账)
+    CalcParams.ParamByName('RECK_DAY').AsInteger:=reck_day;   //指定日结账
+    //台账参数
+    CalcParams.ParamByName('CDATE').AsString:=FormatDatetime('YYYYMMDD',cDate); //最后日结日期
+    CalcParams.ParamByName('MDATE').AsString:=FormatDatetime('YYYYMMDD',mDate); //本次日台账日期(最大日期)
+    CalcParams.ParamByName('EDATE').AsString:=FormatDatetime('YYYYMMDD',eDate); //本次日结账日期(之前当天不关账,现在无限制)
+    CalcParams.ParamByName('BDATE').AsString:=FormatDatetime('YYYYMMDD',bDate); //上次月结日期RCK_MONTH_CLOSE.END_DATE
+    CalcParams.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID; //企业ID
+    CalcParams.ParamByName('USER_ID').AsString:=Global.UserID; //操作员ID
+    //根据核算类调用
+    case flag of
+     1: CalcForDayReck(CalcParams); //计算日台账(flag=1)
+     2: CalcForMonthReck(CalcParams); //计算月台账(flag=2)
+     3,4:  //计算日账户(flag=3)、日商品(flag=4)
       begin
-        if (bDate+i)>e then break;
-        Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',bDate+i);
+        Label11.Caption := '核算前检测数据...';
         Update;
-        PrgPercent := (i*100 div (ept-b+1)) div 3+5;
-        //生成数据
-        SQL :=
-          'insert into '+tempTableName1+'('+
-          'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-          'NEW_INPRICE,NEW_OUTPRICE,'+
-          'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-          'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-          'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-          'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-          'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-          'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-          'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-          'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-          'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-          'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-          'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-          'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST,'+
-          'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST '+
-          ') '+
-          'select '+
-          'j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO,'+
-          'max(j.NEW_INPRICE) as NEW_INPRICE,max(j.NEW_OUTPRICE) as NEW_OUTPRICE,'+
-          'sum(j.ORG_AMT) as ORG_AMT,sum(j.ORG_AMT)*max(j.NEW_INPRICE) as ORG_MNY,sum(j.ORG_AMT)*max(j.NEW_OUTPRICE) as ORG_RTL,sum(j.ORG_CST) as ORG_CST,'+
-          'sum(j.STOCK_AMT) as STOCK_AMT,sum(j.STOCK_MNY) as STOCK_MNY,sum(j.STOCK_TAX) as STOCK_TAX,sum(j.STOCK_RTL) as STOCK_RTL,sum(j.STOCK_AGO) as STOCK_AGO,sum(j.STKRT_AMT) as STKRT_AMT,sum(j.STKRT_MNY) as STKRT_MNY,sum(j.STKRT_TAX) as STKRT_TAX,'+
-          'sum(j.SALE_AMT) as SALE_AMT,sum(j.SALE_RTL) as SALE_RTL,sum(j.SALE_AGO) as SALE_AGO,sum(j.SALE_MNY) as SALE_MNY,sum(j.SALE_TAX) as SALE_TAX,'+
-          'sum(j.SALRT_AMT) as SALRT_AMT,sum(j.SALRT_MNY) as SALRT_MNY,sum(j.SALRT_TAX) as SALRT_TAX,'+
-          'sum(j.DBIN_AMT) as DBIN_AMT,sum(j.DBIN_MNY) as DBIN_MNY,sum(j.DBIN_RTL) as DBIN_RTL,'+
-          'sum(j.DBOUT_AMT) as DBOUT_AMT,sum(j.DBOUT_MNY) as DBOUT_MNY,sum(j.DBOUT_RTL) as DBOUT_RTL,'+
-          'sum(j.CHANGE1_AMT) as CHANGE1_AMT,sum(j.CHANGE1_MNY) as CHANGE1_MNY,sum(j.CHANGE1_RTL) as CHANGE1_RTL,'+
-          'sum(j.CHANGE2_AMT) as CHANGE2_AMT,sum(j.CHANGE2_MNY) as CHANGE2_MNY,sum(j.CHANGE2_RTL) as CHANGE2_RTL,'+
-          'sum(j.CHANGE3_AMT) as CHANGE3_AMT,sum(j.CHANGE3_MNY) as CHANGE3_MNY,sum(j.CHANGE3_RTL) as CHANGE3_RTL,'+
-          'sum(j.CHANGE4_AMT) as CHANGE4_AMT,sum(j.CHANGE4_MNY) as CHANGE4_MNY,sum(j.CHANGE4_RTL) as CHANGE4_RTL,'+
-          'sum(j.CHANGE5_AMT) as CHANGE5_AMT,sum(j.CHANGE5_MNY) as CHANGE5_MNY,sum(j.CHANGE5_RTL) as CHANGE5_RTL,max(isnull(c.COST_PRICE,0)) as COST_PRICE,'+
-          'sum(round(j.SALE_AMT*isnull(c.COST_PRICE,0),2)) as SALE_CST,'+
-          'sum(j.SALE_MNY)-sum(round(j.SALE_AMT*isnull(c.COST_PRICE,0),2)) as SALE_PRF,'+
-          'sum(round(j.SALRT_AMT*isnull(c.COST_PRICE,0),2)) as SALRT_CST,'+
-          'sum(round(j.DBIN_AMT*isnull(c.COST_PRICE,0),2)) as DBIN_CST,'+
-          'sum(round(j.DBOUT_AMT*isnull(c.COST_PRICE,0),2)) as DBOUT_CST,'+
-          'sum(round(j.CHANGE1_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE1_CST,'+
-          'sum(round(j.CHANGE2_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE2_CST,'+
-          'sum(round(j.CHANGE3_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE3_CST,'+
-          'sum(round(j.CHANGE4_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE4_CST,'+
-          'sum(round(j.CHANGE5_AMT*isnull(c.COST_PRICE,0),2)) as CHANGE5_CST,'+
-          'sum(j.ORG_AMT+j.STOCK_AMT-j.SALE_AMT+j.DBIN_AMT-j.DBOUT_AMT+j.CHANGE1_AMT+j.CHANGE2_AMT+j.CHANGE3_AMT+j.CHANGE4_AMT+j.CHANGE5_AMT) as BAL_AMT,'+
-          'sum(round((j.ORG_AMT+j.STOCK_AMT-j.SALE_AMT+j.DBIN_AMT-j.DBOUT_AMT+j.CHANGE1_AMT+j.CHANGE2_AMT+j.CHANGE3_AMT+j.CHANGE4_AMT+j.CHANGE5_AMT)*j.NEW_INPRICE,2)) as BAL_MNY,'+
-          'sum(round((j.ORG_AMT+j.STOCK_AMT-j.SALE_AMT+j.DBIN_AMT-j.DBOUT_AMT+j.CHANGE1_AMT+j.CHANGE2_AMT+j.CHANGE3_AMT+j.CHANGE4_AMT+j.CHANGE5_AMT)*j.NEW_OUTPRICE,2)) as BAL_RTL,'+
-          'sum(j.ORG_CST+j.STOCK_MNY-round(j.SALE_AMT*isnull(c.COST_PRICE,0),2)+round(j.DBIN_AMT*isnull(c.COST_PRICE,0),2)-round(j.DBOUT_AMT*isnull(c.COST_PRICE,0),2)+'+
-          'round(j.CHANGE1_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE2_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE3_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE4_AMT*isnull(c.COST_PRICE,0),2)+round(j.CHANGE5_AMT*isnull(c.COST_PRICE,0),2)) as BAL_CST '+
-          'from('+
-          'select '+
-          '0 as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-          'NEW_INPRICE,NEW_OUTPRICE,'+
-          '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
-          'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-          'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-          'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-          'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-          'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-          'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-          'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-          'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-          'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST '+
-          'from '+tempTableName1+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i)+' '+
-          'union all '+
-          'select '+
-          '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',bDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
-          'A.NEW_INPRICE,A.NEW_OUTPRICE,'+
-          'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-          '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-          '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
-          '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
-          '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
-          '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
-          '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
-          '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
-          '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
-          '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
-          'from '+tempTableName1+' A where A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i-1)+' '+
-          ') j left outer join '+tempTableName2+' c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and j.BATCH_NO=c.BATCH_NO '+
-          'group by j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO ';
-        Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
-
+        PrgPercent := 2;
+        //1、以天为单位计算日台账(92)
+        FOldPrgPercent:=PrgPercent; //循环前的进度
+        FAllPrgCount:=MthCount;      //当前循环总个数据
+        FSubPrgPercent:=0.90;  //子过程中占整个过程%;
+        DoCalcDayReckByMth(CalcParams,False);
+        //2、成本核算成功更新最后一天业务库存(平时试算不更新库存)
+        //DoCalcUpdateStorage(CalcParams);
       end;
-      CreateRck;
-      if e>=mDate then break;
-      b := b +round(e-(bDate+b))+1;
-  end;
-end;
-
-procedure TfrmCostCalc.PrepareDataForRck;
-var
-  SQL:string;
-  rs:TZQuery;
-  myDate:TDate;
-begin
-  myDate := cDate;
-  if (calc_flag=2) then myDate := bDate;
-  SQL :=
-    'insert into '+tempTableName+'('+
-    'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-    'NEW_INPRICE,NEW_OUTPRICE,'+
-    'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-    'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-    'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-    'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-    'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-    'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-    'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-    'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-    'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-    'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST '+
-    ') '+
-    'select '+
-    'A.TENANT_ID,A.SHOP_ID,A.CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
-    'max(isnull(B.NEW_INPRICE,0)),max(isnull(B.NEW_OUTPRICE,0)),'+
-    '0,0,0,0,'+
-    'sum(STOCK_AMT),sum(STOCK_MNY),sum(STOCK_TAX),sum(round(STOCK_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(STOCK_AGO),sum(STKRT_AMT),sum(STKRT_MNY),sum(STKRT_TAX),'+
-    'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),case when sum(SALE_AMT)<>0 then sum(SALE_CST)*1.000000/sum(SALE_AMT) else 0 end,sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
-    'sum(DBIN_AMT),sum(round(DBIN_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(DBIN_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(DBIN_CST),'+
-    'sum(DBOUT_AMT),sum(round(DBOUT_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(DBOUT_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(DBOUT_CST),'+
-    'sum(CHANGE1_AMT),sum(round(CHANGE1_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE1_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE1_CST),'+
-    'sum(CHANGE2_AMT),sum(round(CHANGE2_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE2_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE2_CST),'+
-    'sum(CHANGE3_AMT),sum(round(CHANGE3_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE3_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE3_CST),'+
-    'sum(CHANGE4_AMT),sum(round(CHANGE4_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE4_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE4_CST),'+
-    'sum(CHANGE5_AMT),sum(round(CHANGE5_AMT*isnull(B.NEW_INPRICE,0),2)),sum(round(CHANGE5_AMT*isnull(B.NEW_OUTPRICE,0),2)),sum(CHANGE5_CST) '+
-    'from VIW_GOODS_DAYS A,VIW_GOODSPRICEEXT B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
-    'group by A.TENANT_ID,A.SHOP_ID,A.CREA_DATE,A.GODS_ID,A.BATCH_NO ';
-  Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select max(CREA_DATE) as HDate,min(CREA_DATE) as LDate from '+tempTableName+' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-    Factor.Open(rs);
-    if rs.Fields[0].asString<>'' then
-       begin
-         myDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
-         if myDate>(Date()+7) then myDate := Date()+7;
-       end;
-    if (myDate>eDate) and (eDate=0) then eDate := myDate;
-    
-    mDate := myDate;
-    uDate := mDate;
-    
-    //每次计算都算到最后一天
-    if mDate<eDate then mDate := eDate;
-    if mDate<date() then mDate := date();
-    pt := round(mDate-cDate);
-  finally
-    rs.Free;
-  end;
-end;
-
-procedure TfrmCostCalc.Calc0;
-var
-  i,w:integer;
-  SQL,u:string;
-procedure CreateRck;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    Factor.ExecSQL('delete from RCK_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ');
-    SQL :=
-        'insert into RCK_GOODS_DAYS('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,COMM,TIME_STAMP '+
-        ') '+
-        'select '+
-        ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,''00'','+GetTimeStamp(Factor.iDbType)+' '+
-        'from '+tempTableName1+' where TENANT_ID=0 and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w);
-    Factor.ExecSQL(SQL);
-
-    SQL :=
-        'insert into '+tempTableName2+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-        ')'+
-        'select '+
-        ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+w+1)+' as CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'BAL_AMT as ORG_AMT,BAL_MNY as ORG_MNY,BAL_RTL as ORG_RTL,BAL_CST as ORG_CST,'+
-        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,'+
-        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,'+
-        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,'+
-        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,'+
-        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,'+
-        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,'+
-        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,'+
-        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
-        '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
-        '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ';
-    Factor.ExecSQL(SQL);
-    truncTable(tempTableName1);
-    Factor.ExecSQL('insert into '+tempTableName1+' select * from '+tempTableName2);
-    truncTable(tempTableName2);
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
-    Raise;
-  end;
-end;
-begin
-  //初始化期初
-  SQL :=
-    'insert into '+tempTableName1+'('+
-    'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-    'NEW_INPRICE,NEW_OUTPRICE,'+
-    'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-    'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-    'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-    'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-    'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-    'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-    'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-    'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-    'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-    'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-    'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-    'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-    ')'+
-    'select '+
-    ''+inttostr(Global.TENANT_ID)+' as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+1)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
-    'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
-    'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-    '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-    '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,'+
-    '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,'+
-    '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,'+
-    '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,'+
-    '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,'+
-    '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,'+
-    '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,'+
-    '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
-    '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
-    '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-    'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
-  Factor.ExecSQL(SQL);
-  w := 1;
-  for i:= 1 to pt do
-    begin
-      Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
-      Update;
-      PrgPercent := (i*100 div pt) div 3+5;
-      //Application.ProcessMessages;
-      //准备期初
-      SQL :=
-        'insert into '+tempTableName1+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST'+
-        ')'+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALRT_AMT,SALRT_MNY,SALRT_TAX,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,'+
-        'COST_PRICE,SALE_CST,SALE_PRF,SALRT_CST,DBIN_CST,DBOUT_CST,'+
-        'CHANGE1_CST,CHANGE2_CST,CHANGE3_CST,CHANGE4_CST,CHANGE5_CST '+
-        'from '+tempTableName+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' ';
-      Factor.ExecSQL(SQL);
-      //生成数据
-      SQL :=
-        'insert into '+tempTableName1+'('+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST '+
-        ') '+
-        'select jc.*,'+
-       { 'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        }
-        'round(ORG_AMT+STOCK_AMT-SALE_AMT+DBIN_AMT-DBOUT_AMT+CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT,3) as BAL_AMT,'+
-        'round((ORG_AMT+STOCK_AMT-SALE_AMT+DBIN_AMT-DBOUT_AMT+CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*NEW_INPRICE,2) as BAL_MNY,'+
-        'round((ORG_AMT+STOCK_AMT-SALE_AMT+DBIN_AMT-DBOUT_AMT+CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*NEW_OUTPRICE,2) as BAL_RTL,'+
-        'round(ORG_CST+STOCK_MNY-SALE_CST+DBIN_CST-DBOUT_CST+'+
-        'CHANGE1_CST+CHANGE2_CST+CHANGE3_CST+CHANGE4_CST+CHANGE5_CST,2) as BAL_CST from('+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'max(NEW_INPRICE) as NEW_INPRICE,max(NEW_OUTPRICE) as NEW_OUTPRICE,'+
-        'sum(ORG_AMT) as ORG_AMT,sum(ORG_AMT)*max(NEW_INPRICE) as ORG_MNY,sum(ORG_AMT)*max(NEW_OUTPRICE) as ORG_RTL,sum(ORG_CST) as ORG_CST,'+
-        'sum(STOCK_AMT) as STOCK_AMT,sum(STOCK_MNY) as STOCK_MNY,sum(STOCK_TAX) as STOCK_TAX,sum(STOCK_RTL) as STOCK_RTL,sum(STOCK_AGO) as STOCK_AGO,sum(STKRT_AMT) as STKRT_AMT,sum(STKRT_MNY) as STKRT_MNY,sum(STKRT_TAX) as STKRT_TAX,'+
-        'sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL,sum(SALE_AGO) as SALE_AGO,sum(SALE_MNY) as SALE_MNY,sum(SALE_TAX) as SALE_TAX,sum(SALE_CST) as SALE_CST,'+
-        'round(case when sum(SALE_AMT)<>0 then cast(sum(SALE_CST) as decimal(18,3))/(cast(sum(SALE_AMT) as decimal(18,3))*1.000000) else 0 end,6) as COST_PRICE,sum(SALE_PRF) as SALE_PRF,'+
-        'sum(SALRT_AMT) as SALRT_AMT,sum(SALRT_MNY) as SALRT_MNY,sum(SALRT_TAX) as SALRT_TAX,sum(SALRT_CST) as SALRT_CST,'+
-        'sum(DBIN_AMT) as DBIN_AMT,sum(DBIN_MNY) as DBIN_MNY,sum(DBIN_RTL) as DBIN_RTL,sum(DBIN_CST) as DBIN_CST,'+
-        'sum(DBOUT_AMT) as DBOUT_AMT,sum(DBOUT_MNY) as DBOUT_MNY,sum(DBOUT_RTL) as DBOUT_RTL,sum(DBOUT_CST) as DBOUT_CST,'+
-        'sum(CHANGE1_AMT) as CHANGE1_AMT,sum(CHANGE1_MNY) as CHANGE1_MNY,sum(CHANGE1_RTL) as CHANGE1_RTL,sum(CHANGE1_CST) as CHANGE1_CST,'+
-        'sum(CHANGE2_AMT) as CHANGE2_AMT,sum(CHANGE2_MNY) as CHANGE2_MNY,sum(CHANGE2_RTL) as CHANGE2_RTL,sum(CHANGE2_CST) as CHANGE2_CST,'+
-        'sum(CHANGE3_AMT) as CHANGE3_AMT,sum(CHANGE3_MNY) as CHANGE3_MNY,sum(CHANGE3_RTL) as CHANGE3_RTL,sum(CHANGE3_CST) as CHANGE3_CST,'+
-        'sum(CHANGE4_AMT) as CHANGE4_AMT,sum(CHANGE4_MNY) as CHANGE4_MNY,sum(CHANGE4_RTL) as CHANGE4_RTL,sum(CHANGE4_CST) as CHANGE4_CST,'+
-        'sum(CHANGE5_AMT) as CHANGE5_AMT,sum(CHANGE5_MNY) as CHANGE5_MNY,sum(CHANGE5_RTL) as CHANGE5_RTL,sum(CHANGE5_CST) as CHANGE5_CST '+
-        'from('+
-        'select '+
-        '0 as TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST '+
-        'from '+tempTableName1+' A '+
-        ' where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
-        ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ) jc ';
-      Factor.ExecSQL(SQL);
-      w := i;
-      CreateRck;
+     5: CalcForMonthData(CalcParams,'010'); //计算月账户(flag=5) //账户月台账
+     6: CalcForMonthData(CalcParams,'100'); //计算月账户(flag=6) //商品月台账
     end;
-//  Factor.ExecSQL('update STO_STORAGE set ');     
+  finally
+    ClearCalcReckStatus; //在线版清除核算标记
+    CalcParams.Free;
+    Factor.DBLock(False);
+    btnStart.Enabled := true;
+  end;
+  ModalResult := MROK;
 end;
 
 procedure TfrmCostCalc.SeteDate(const Value: TDate);
@@ -1236,186 +394,9 @@ begin
     end;
 end;
 
-procedure TfrmCostCalc.CalcMth;
-var
-  i,b,bl:integer;
-  SQL:string;
-  e:TDate;
-begin
-  b := 1;
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    while true do
-    begin
-      if pt>0 then PrgPercent := (b*100 div pt) div 3+35;
-      //Application.ProcessMessages;
-      if reck_flag=1 then
-         begin
-           if isfirst and (b=1) then
-              begin
-                e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-                if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
-              end
-           else
-              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
-         end
-      else
-         begin
-           e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-           if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
-              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
-         end;
-      SQL := 'delete from RCK_GOODS_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+formatDatetime('YYYYMM',e);
-
-      bl := round(e-bdate);
-      if e>mDate then //最后一个月期末，要按实际有日账记录的数据来取
-         begin
-           bl := round(mDate-bdate);
-         end;
-      Factor.ExecSQL(SQL);
-      SQL :=
-        'insert into RCK_GOODS_MONTH('+
-        'TENANT_ID,SHOP_ID,MONTH,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,ADJ_CST,COMM,TIME_STAMP '+
-        ') '+
-        'select '+
-        'TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMM',e)+',GODS_ID,BATCH_NO,'+
-        'max(NEW_INPRICE),max(NEW_OUTPRICE),'+
-        'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+b)+' then ORG_AMT else 0 end),sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+b)+' then ORG_AMT else 0 end)*max(NEW_INPRICE),sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+b)+' then ORG_AMT else 0 end)*max(NEW_OUTPRICE),sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+b)+' then ORG_CST else 0 end),'+
-        'sum(STOCK_AMT),sum(STOCK_MNY),sum(STOCK_TAX),sum(STOCK_RTL),sum(STOCK_AGO),sum(STKRT_AMT),sum(STKRT_MNY),sum(STKRT_TAX),'+
-        'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
-        'sum(PRIOR_YEAR_AMT),sum(PRIOR_YEAR_MNY),sum(PRIOR_YEAR_TAX),sum(PRIOR_YEAR_CST),sum(PRIOR_MONTH_AMT),sum(PRIOR_MONTH_MNY),sum(PRIOR_MONTH_TAX),sum(PRIOR_MONTH_CST),'+
-        'sum(DBIN_AMT),sum(DBIN_MNY),sum(DBIN_RTL),sum(DBIN_CST),'+
-        'sum(DBOUT_AMT),sum(DBOUT_MNY),sum(DBOUT_RTL),sum(DBOUT_CST),'+
-        'sum(CHANGE1_AMT),sum(CHANGE1_MNY),sum(CHANGE1_RTL),sum(CHANGE1_CST),'+
-        'sum(CHANGE2_AMT),sum(CHANGE2_MNY),sum(CHANGE2_RTL),sum(CHANGE2_CST),'+
-        'sum(CHANGE3_AMT),sum(CHANGE3_MNY),sum(CHANGE3_RTL),sum(CHANGE3_CST),'+
-        'sum(CHANGE4_AMT),sum(CHANGE4_MNY),sum(CHANGE4_RTL),sum(CHANGE4_CST),'+
-        'sum(CHANGE5_AMT),sum(CHANGE5_MNY),sum(CHANGE5_RTL),sum(CHANGE5_CST),'+
-        'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+bl)+' then BAL_AMT else 0 end),sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+bl)+' then BAL_AMT else 0 end)*max(NEW_INPRICE),sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+bl)+' then BAL_AMT else 0 end)*max(NEW_OUTPRICE),sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',bDate+bl)+' then BAL_CST else 0 end),0,''00'' as COMM,'+GetTimeStamp(Factor.iDbType)+' '+
-        'from('+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-        'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-        '0 as PRIOR_YEAR_AMT,0 as PRIOR_YEAR_MNY,0 as PRIOR_YEAR_TAX,0 as PRIOR_YEAR_CST,0 as PRIOR_MONTH_AMT,0 as PRIOR_MONTH_MNY,0 as PRIOR_MONTH_TAX,0 as PRIOR_MONTH_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST '+
-        'from RCK_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' '+
-        'union all '+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        '0 as NEW_INPRICE,0 as NEW_OUTPRICE,'+
-        '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
-        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
-        'SALE_AMT as PRIOR_YEAR_AMT,SALE_MNY as PRIOR_YEAR_MNY,SALE_TAX as PRIOR_YEAR_TAX,SALE_CST as PRIOR_YEAR_CST,0 as PRIOR_MONTH_AMT,0 as PRIOR_MONTH_MNY,0 as PRIOR_MONTH_TAX,0 as PRIOR_MONTH_CST,'+
-        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
-        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
-        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
-        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
-        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
-        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
-        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST,'+
-        '0 as BAL_AMT,0 as BAL_MNY,0 as BAL_RTL,0 as BAL_CST '+
-        'from RCK_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(bDate+b,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(e,-12))+' '+
-        'union all '+
-        'select '+
-        'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-        '0 as NEW_INPRICE,0 as NEW_OUTPRICE,'+
-        '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
-        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
-        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
-        '0 as PRIOR_YEAR_AMT,0 as PRIOR_YEAR_MNY,0 as PRIOR_YEAR_TAX,0 as PRIOR_YEAR_CST,SALE_AMT as PRIOR_MONTH_AMT,SALE_MNY as PRIOR_MONTH_MNY,SALE_TAX as PRIOR_MONTH_TAX,SALE_CST as PRIOR_MONTH_CST,'+
-        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
-        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
-        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
-        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
-        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
-        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
-        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST,'+
-        '0 as BAL_AMT,0 as BAL_MNY,0 as BAL_RTL,0 as BAL_CST '+
-        'from RCK_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(bDate+b,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(e,-1))+' '+
-        ') j group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
-      Factor.ExecSQL(SQL);
-      if e>=mdate then break;
-      b := b +round(e-(bDate+b))+1;
-    end;
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
-    Raise;
-  end;
-end;
-
 procedure TfrmCostCalc.Setflag(const Value: integer);
 begin
   Fflag := Value;
-end;
-
-procedure TfrmCostCalc.ClseRck;
-var
-  i,b:integer;
-  SQL:string;
-  e:TDate;
-begin
-  if not (flag in [1,2]) then Exit;
-  Factor.BeginTrans;
-  try
-    if flag=2 then
-    begin
-      b := 1;
-      while true do
-      begin
-        if reck_flag=1 then
-           begin
-             if isfirst and (b=1) then
-                begin
-                  e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-                  if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
-                end
-             else
-                e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
-           end
-        else
-           begin
-             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-             if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
-                e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
-           end;
-        SQL :=
-           'insert into RCK_MONTH_CLOSE(TENANT_ID,SHOP_ID,MONTH,BEGIN_DATE,END_DATE,CREA_USER,COMM,TIME_STAMP) '+
-           'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMM',e)+','''+formatDatetime('YYYY-MM-DD',bDate+b)+''','''+formatDatetime('YYYY-MM-DD',e)+''','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID);
-        Factor.ExecSQL(SQL);
-        if e>=eDate then break;
-        b := b +round(e-(bDate+b))+1;
-      end;
-    end;
-    Factor.CommitTrans;
-  except
-    Factor.RollbackTrans;
-    raise;
-  end;
 end;
 
 procedure TfrmCostCalc.SetbDate(const Value: TDate);
@@ -1433,404 +414,10 @@ begin
   FuDate := Value;
 end;
 
-function TfrmCostCalc.GetTmpSQL(tb:string):string;
-begin
-  case Factor.iDbType of
-  0,5:result :=
-    'CREATE TABLE '+tb+' ('+
-    '	TENANT_ID int NOT NULL ,'+
-    '	SHOP_ID varchar (13) NOT NULL ,'+
-    '	CREA_DATE int NOT NULL ,'+
-    '	GODS_ID varchar (36)  NOT NULL ,'+
-    '	BATCH_NO varchar (36) NOT NULL ,'+
-    '	NEW_INPRICE decimal(18, 3) NULL ,'+
-    '	NEW_OUTPRICE decimal(18, 3) NULL ,'+
-    '	ORG_AMT decimal(18, 3) NULL ,'+
-    '	ORG_MNY decimal(18, 3) NULL ,'+
-    '	ORG_RTL decimal(18, 3) NULL ,'+
-    '	ORG_CST decimal(18, 3) NULL ,'+
-    '	STOCK_AMT decimal(18, 3) NULL ,'+
-    '	STOCK_MNY decimal(18, 3) NULL ,'+
-    '	STOCK_TAX decimal(18, 3) NULL ,'+
-    '	STOCK_RTL decimal(18, 3) NULL ,'+
-    '	STOCK_AGO decimal(18, 3) NULL ,'+
-    '	STKRT_AMT decimal(18, 3) NULL ,'+
-    '	STKRT_MNY decimal(18, 3) NULL ,'+
-    '	STKRT_TAX decimal(18, 3) NULL ,'+
-    '	SALE_AMT decimal(18, 3) NULL ,'+
-    '	SALE_RTL decimal(18, 3) NULL ,'+
-    '	SALE_AGO decimal(18, 3) NULL ,'+
-    '	SALE_MNY decimal(18, 3) NULL ,'+
-    '	SALE_TAX decimal(18, 3) NULL ,'+
-    '	SALE_CST decimal(18, 3) NULL ,'+
-    '	COST_PRICE decimal(18, 6) NULL ,'+
-    '	SALE_PRF decimal(18, 3) NULL ,'+
-    '	SALRT_AMT decimal(18, 3) NULL ,'+
-    '	SALRT_MNY decimal(18, 3) NULL ,'+
-    '	SALRT_TAX decimal(18, 3) NULL ,'+
-    '	SALRT_CST decimal(18, 3) NULL ,'+
-    '	DBIN_AMT decimal(18, 3) NULL ,'+
-    '	DBIN_MNY decimal(18, 3) NULL ,'+
-    '	DBIN_RTL decimal(18, 3) NULL ,'+
-    '	DBIN_CST decimal(18, 3) NULL ,'+
-    '	DBOUT_AMT decimal(18, 3) NULL ,'+
-    '	DBOUT_MNY decimal(18, 3) NULL ,'+
-    '	DBOUT_RTL decimal(18, 3) NULL ,'+
-    '	DBOUT_CST decimal(18, 3) NULL ,'+
-    '	CHANGE1_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE1_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE1_RTL decimal(18, 3) NULL ,'+
-    '	CHANGE1_CST decimal(18, 3) NULL ,'+
-    '	CHANGE2_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE2_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE2_RTL decimal(18, 3) NULL ,'+
-    '	CHANGE2_CST decimal(18, 3) NULL ,'+
-    '	CHANGE3_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE3_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE3_RTL decimal(18, 3) NULL ,'+
-    '	CHANGE3_CST decimal(18, 3) NULL ,'+
-    '	CHANGE4_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE4_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE4_RTL decimal(18, 3) NULL ,'+
-    '	CHANGE4_CST decimal(18, 3) NULL ,'+
-    '	CHANGE5_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE5_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE5_RTL decimal(18, 3) NULL ,'+
-    '	CHANGE5_CST decimal(18, 3) NULL ,'+
-    '	BAL_AMT decimal(18, 3) NULL ,'+
-    '	BAL_MNY decimal(18, 3) NULL ,'+
-    '	BAL_RTL decimal(18, 3) NULL ,'+
-    '	BAL_CST decimal(18, 3) NULL '+
-    ')';
-  1:result := 
-    'create global temporary table '+tb+' ('+
-    ' TENANT_ID NUMBER(9,0) NOT NULL ,'+
-    ' SHOP_ID varchar2(13) NOT NULL ,'+
-    ' CREA_DATE NUMBER(9,0) NOT NULL ,'+
-    ' GODS_ID varchar2(36)  NOT NULL ,'+
-    ' BATCH_NO varchar2(36) NOT NULL ,'+
-    ' NEW_INPRICE decimal(18, 3) ,'+
-    ' NEW_OUTPRICE decimal(18, 3) ,'+
-    ' ORG_AMT decimal(18, 3) ,'+
-    ' ORG_MNY decimal(18, 3) ,'+
-    ' ORG_RTL decimal(18, 3) ,'+
-    ' ORG_CST decimal(18, 3) ,'+
-    ' STOCK_AMT decimal(18, 3) ,'+
-    ' STOCK_MNY decimal(18, 3) ,'+
-    ' STOCK_TAX decimal(18, 3) ,'+
-    ' STOCK_RTL decimal(18, 3) ,'+
-    ' STOCK_AGO decimal(18, 3) ,'+
-    ' STKRT_AMT decimal(18, 3) ,'+
-    ' STKRT_MNY decimal(18, 3) ,'+
-    ' STKRT_TAX decimal(18, 3) ,'+
-    ' SALE_AMT decimal(18, 3) ,'+
-    ' SALE_RTL decimal(18, 3) ,'+
-    ' SALE_AGO decimal(18, 3) ,'+
-    ' SALE_MNY decimal(18, 3) ,'+
-    ' SALE_TAX decimal(18, 3) ,'+
-    ' SALE_CST decimal(18, 3) ,'+
-    ' COST_PRICE decimal(18, 6) ,'+
-    ' SALE_PRF decimal(18, 3) ,'+
-    ' SALRT_AMT decimal(18, 3) ,'+
-    ' SALRT_MNY decimal(18, 3) ,'+
-    ' SALRT_TAX decimal(18, 3) ,'+
-    ' SALRT_CST decimal(18, 3) ,'+
-    ' DBIN_AMT decimal(18, 3) ,'+
-    ' DBIN_MNY decimal(18, 3) ,'+
-    ' DBIN_RTL decimal(18, 3) ,'+
-    ' DBIN_CST decimal(18, 3) ,'+
-    ' DBOUT_AMT decimal(18, 3) ,'+
-    ' DBOUT_MNY decimal(18, 3) ,'+
-    ' DBOUT_RTL decimal(18, 3) ,'+
-    ' DBOUT_CST decimal(18, 3) ,'+
-    ' CHANGE1_AMT decimal(18, 3) ,'+
-    ' CHANGE1_MNY decimal(18, 3) ,'+
-    ' CHANGE1_RTL decimal(18, 3) ,'+
-    ' CHANGE1_CST decimal(18, 3) ,'+
-    ' CHANGE2_AMT decimal(18, 3) ,'+
-    ' CHANGE2_MNY decimal(18, 3) ,'+
-    ' CHANGE2_RTL decimal(18, 3) ,'+
-    ' CHANGE2_CST decimal(18, 3) ,'+
-    ' CHANGE3_AMT decimal(18, 3) ,'+
-    ' CHANGE3_MNY decimal(18, 3) ,'+
-    ' CHANGE3_RTL decimal(18, 3) ,'+
-    ' CHANGE3_CST decimal(18, 3) ,'+
-    ' CHANGE4_AMT decimal(18, 3) ,'+
-    ' CHANGE4_MNY decimal(18, 3) ,'+
-    ' CHANGE4_RTL decimal(18, 3) ,'+
-    ' CHANGE4_CST decimal(18, 3) ,'+
-    ' CHANGE5_AMT decimal(18, 3) ,'+
-    ' CHANGE5_MNY decimal(18, 3) ,'+
-    ' CHANGE5_RTL decimal(18, 3) ,'+
-    ' CHANGE5_CST decimal(18, 3) ,'+
-    '	BAL_AMT decimal(18, 3) ,'+
-    '	BAL_MNY decimal(18, 3) ,'+
-    '	BAL_RTL decimal(18, 3) ,'+
-    '	BAL_CST decimal(18, 3) '+
-    ') ON COMMIT PRESERVE ROWS';
-  4:result :=
-    'declare global temporary table '+tb+' ('+
-    '	TENANT_ID int NOT NULL ,'+
-    '	SHOP_ID varchar (13) NOT NULL ,'+
-    '	CREA_DATE int NOT NULL ,'+
-    '	GODS_ID varchar (36)  NOT NULL ,'+
-    '	BATCH_NO varchar (36) NOT NULL ,'+
-    '	NEW_INPRICE decimal(18, 3) ,'+
-    '	NEW_OUTPRICE decimal(18, 3) ,'+
-    '	ORG_AMT decimal(18, 3) ,'+
-    '	ORG_MNY decimal(18, 3) ,'+
-    '	ORG_RTL decimal(18, 3) ,'+
-    '	ORG_CST decimal(18, 3) ,'+
-    '	STOCK_AMT decimal(18, 3) ,'+
-    '	STOCK_MNY decimal(18, 3) ,'+
-    '	STOCK_TAX decimal(18, 3) ,'+
-    '	STOCK_RTL decimal(18, 3) ,'+
-    '	STOCK_AGO decimal(18, 3) ,'+
-    '	STKRT_AMT decimal(18, 3) ,'+
-    '	STKRT_MNY decimal(18, 3) ,'+
-    '	STKRT_TAX decimal(18, 3) ,'+
-    '	SALE_AMT decimal(18, 3) ,'+
-    '	SALE_RTL decimal(18, 3) ,'+
-    '	SALE_AGO decimal(18, 3) ,'+
-    '	SALE_MNY decimal(18, 3) ,'+
-    '	SALE_TAX decimal(18, 3) ,'+
-    '	SALE_CST decimal(18, 3) ,'+
-    '	COST_PRICE decimal(18, 6) ,'+
-    '	SALE_PRF decimal(18, 3) ,'+
-    '	SALRT_AMT decimal(18, 3) ,'+
-    '	SALRT_MNY decimal(18, 3) ,'+
-    '	SALRT_TAX decimal(18, 3) ,'+
-    '	SALRT_CST decimal(18, 3) ,'+
-    '	DBIN_AMT decimal(18, 3) ,'+
-    '	DBIN_MNY decimal(18, 3) ,'+
-    '	DBIN_RTL decimal(18, 3) ,'+
-    '	DBIN_CST decimal(18, 3) ,'+
-    '	DBOUT_AMT decimal(18, 3) ,'+
-    '	DBOUT_MNY decimal(18, 3) ,'+
-    '	DBOUT_RTL decimal(18, 3) ,'+
-    '	DBOUT_CST decimal(18, 3) ,'+
-    '	CHANGE1_AMT decimal(18, 3) ,'+
-    '	CHANGE1_MNY decimal(18, 3) ,'+
-    '	CHANGE1_RTL decimal(18, 3) ,'+
-    '	CHANGE1_CST decimal(18, 3) ,'+
-    '	CHANGE2_AMT decimal(18, 3) ,'+
-    '	CHANGE2_MNY decimal(18, 3) ,'+
-    '	CHANGE2_RTL decimal(18, 3) ,'+
-    '	CHANGE2_CST decimal(18, 3) ,'+
-    '	CHANGE3_AMT decimal(18, 3) ,'+
-    '	CHANGE3_MNY decimal(18, 3) ,'+
-    '	CHANGE3_RTL decimal(18, 3) ,'+
-    '	CHANGE3_CST decimal(18, 3) ,'+
-    '	CHANGE4_AMT decimal(18, 3) ,'+
-    '	CHANGE4_MNY decimal(18, 3) ,'+
-    '	CHANGE4_RTL decimal(18, 3) ,'+
-    '	CHANGE4_CST decimal(18, 3) ,'+
-    '	CHANGE5_AMT decimal(18, 3) ,'+
-    '	CHANGE5_MNY decimal(18, 3) ,'+
-    '	CHANGE5_RTL decimal(18, 3) ,'+
-    '	CHANGE5_CST decimal(18, 3) ,'+
-    '	BAL_AMT decimal(18, 3) ,'+
-    '	BAL_MNY decimal(18, 3) ,'+
-    '	BAL_RTL decimal(18, 3) ,'+
-    '	BAL_CST decimal(18, 3) '+
-    ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
-  end;
-end;
-procedure TfrmCostCalc.CreateTempTable;
-var
-  SQL:string;
-  rs:TZQuery;
-begin
-  case Factor.iDbType of
-  0:tempTableName := '#TMP_GOODS_DAYS';
-  5:begin tempTableName := 'TMP_GOODS_DAYS';end;
-  1:begin tempTableName := 'TMP_GOODS_DAYS';end;
-  4:tempTableName := 'session.TMP_GOODS_DAYS';
-  end;
-  tempTableName1 := tempTableName+'_1';
-  tempTableName2 := tempTableName+'_2';
-  //生数据临时表
-  case Factor.iDbType of
-  0:begin
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select OBJECT_ID(N''tempdb..'+tempTableName+''')';
-      Factor.Open(rs);
-      if rs.Fields[0].AsString = '' then
-         begin
-         Factor.ExecSQL(GetTmpSQL(tempTableName));
-         Factor.ExecSQL('CREATE INDEX IX_'+tempTableName+'_CREA_DATE ON '+tempTableName+'(TENANT_ID,CREA_DATE)');
-         end;
-    finally
-      rs.Free;
-    end;
-  end;
-  4:begin
-    Factor.ExecSQL(GetTmpSQL(tempTableName));
-    end;
-  1:begin
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select count(*) from user_tables where table_name='''+tempTableName+'''';
-      Factor.Open(rs);
-      if rs.Fields[0].asInteger = 0 then
-         begin
-           Factor.ExecSQL(GetTmpSQL(tempTableName));
-           Factor.ExecSQL('CREATE INDEX IX_'+tempTableName+'_CREA_DATE ON '+tempTableName+'(TENANT_ID,CREA_DATE)');
-         end;
-    finally
-      rs.Free;
-    end;
-  end;
-  5:begin
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select count(*) from sqlite_master where type=''table'' and name='''+tempTableName+'''';
-      Factor.Open(rs);
-      if rs.Fields[0].asInteger = 0 then
-         begin
-           Factor.ExecSQL(GetTmpSQL(tempTableName));
-           Factor.ExecSQL('CREATE INDEX IX_'+tempTableName+'_CREA_DATE ON '+tempTableName+'(TENANT_ID,CREA_DATE)');
-         end;
-    finally
-      rs.Free;
-    end;
-  end;
-  end;
-
-  case Factor.iDbType of
-  0,1:Factor.ExecSQL('truncate table '+tempTableName);
-  5:Factor.ExecSQL('delete from '+tempTableName);
-  end;
-  //生成中间计算表
-  CreateTable(tempTableName1);
-  CreateTable(tempTableName2);
-end;
-
-procedure TfrmCostCalc.CalcAcctMth;
-var
-  i,b,bl:integer;
-  SQL:string;
-  e:TDate;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    b := 1;
-    while true do
-    begin
-      if pt>0 then PrgPercent := (b*100 div pt) div 3+80;
-      //Application.ProcessMessages;
-      if reck_flag=1 then
-         begin
-           if isfirst and (b=1) then
-              begin
-                e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-                if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
-              end
-           else
-              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
-         end
-      else
-         begin
-           e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day));
-           if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
-              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
-         end;
-      //计算账户账款
-      SQL := 'delete from RCK_ACCT_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+formatDatetime('YYYYMM',e);
-      Factor.ExecSQL(SQL);
-      SQL :=
-        'insert into RCK_ACCT_MONTH('+
-        'TENANT_ID,SHOP_ID,MONTH,ACCOUNT_ID,'+
-        'ORG_MNY,IN_MNY,OUT_MNY,BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY,COMM,TIME_STAMP '+
-        ') '+
-        'select '+
-        'TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMM',e)+',ACCOUNT_ID,'+
-        'sum(ORG_MNY),sum(IN_MNY),sum(OUT_MNY),sum(ORG_MNY)+sum(IN_MNY)-sum(OUT_MNY),'+
-        'sum(PAY_MNY),sum(RECV_MNY),sum(POS_MNY),sum(TRN_IN_MNY),sum(TRN_OUT_MNY),sum(PUSH_MNY),sum(IORO_IN_MNY),sum(IORO_OUT_MNY),'+
-        '''00'' as COMM,'+GetTimeStamp(Factor.iDbType)+' '+
-        'from('+
-        'select '+
-        'B.TENANT_ID,B.SHOP_ID,B.ACCOUNT_ID,'+
-        'isnull(A.BAL_MNY,0)+isnull(B.ORG_MNY,0) as ORG_MNY,0 as IN_MNY,0 as OUT_MNY,0 as BAL_MNY,0 as PAY_MNY,0 as RECV_MNY,0 as POS_MNY,0 as TRN_IN_MNY,0 as TRN_OUT_MNY,0 as PUSH_MNY,0 as IORO_IN_MNY,0 as IORO_OUT_MNY '+
-        'from ACC_ACCOUNT_INFO B left outer join (select * from RCK_ACCT_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH='+formatDatetime('YYYYMM',incmonth(e,-1))+') A '+
-        'on B.TENANT_ID=A.TENANT_ID and B.ACCOUNT_ID=A.ACCOUNT_ID where B.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
-        'union all '+
-        'select '+
-        'TENANT_ID,SHOP_ID,ACCOUNT_ID,'+
-        '0 as ORG_MNY,IN_MNY,OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
-        'from RCK_ACCT_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' '+
-        ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
-      Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
-
-      if e>=eDate then break;
-      b := b +round(e-(bDate+b))+1;
-    end;
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
-    Raise;
-  end;
-end;
-
-procedure TfrmCostCalc.DBLock;
-begin
-  Factor.DBLock(true);
-end;
-
-procedure TfrmCostCalc.DBUnLock;
-begin
-  Factor.DBLock(false);
-end;
-
-procedure TfrmCostCalc.CalcAcctDay;
-var
-  i:integer;
-  SQL,u:string;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    Factor.ExecSQL('delete from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate));
-    for i:= 1 to pt do
-      begin
-        PrgPercent := (i*100 div pt) div 3+60;
-        //Application.ProcessMessages;
-        SQL :=
-          'insert into RCK_ACCT_DAYS('+
-          'TENANT_ID,SHOP_ID,CREA_DATE,ACCOUNT_ID,'+
-          'ORG_MNY,IN_MNY,OUT_MNY,BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY,COMM,TIME_STAMP '+
-          ') '+
-          'select '+
-          'TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+',ACCOUNT_ID,'+
-          'sum(ORG_MNY),sum(IN_MNY),sum(OUT_MNY),sum(ORG_MNY)+sum(IN_MNY)-sum(OUT_MNY),'+
-          'sum(PAY_MNY),sum(RECV_MNY),sum(POS_MNY),sum(TRN_IN_MNY),sum(TRN_OUT_MNY),sum(PUSH_MNY),sum(IORO_IN_MNY),sum(IORO_OUT_MNY),'+
-          '''00'' as COMM,'+GetTimeStamp(Factor.iDbType)+' '+
-          'from('+
-          'select '+
-          'B.TENANT_ID,B.SHOP_ID,B.ACCOUNT_ID,'+
-          'isnull(A.BAL_MNY,0)+isnull(B.ORG_MNY,0) as ORG_MNY,0 as IN_MNY,0 as OUT_MNY,0 as BAL_MNY,0 as PAY_MNY,0 as RECV_MNY,0 as POS_MNY,0 as TRN_IN_MNY,0 as TRN_OUT_MNY,0 as PUSH_MNY,0 as IORO_IN_MNY,0 as IORO_OUT_MNY '+
-          'from ACC_ACCOUNT_INFO B left outer join (select * from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i-1)+') A '+
-          'on B.TENANT_ID=A.TENANT_ID and B.ACCOUNT_ID=A.ACCOUNT_ID where B.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
-          'union all '+
-          'select '+
-          'A.TENANT_ID,B.SHOP_ID,A.ACCOUNT_ID,'+
-          '0 as ORG_MNY,A.IN_MNY,A.OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
-          'from VIW_ACCT_DAYS A,ACC_ACCOUNT_INFO B where A.TENANT_ID=B.TENANT_ID and A.ACCOUNT_ID=B.ACCOUNT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
-          ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
-        Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
-      end;
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
-    Raise;
-  end;
-end;
-
 procedure TfrmCostCalc.CheckForRck;
 var
   rs:TZQuery;
 begin
-  if not (flag in [1,2]) then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
@@ -1908,202 +495,6 @@ begin
     end;
 end;
 
-procedure TfrmCostCalc.AutoPosReck;
-var
-  rs,sv:TZQuery;
-  Str:string;
-  AObj:TRecord_;
-begin
-  if not (flag in [1,2]) then Exit;
-  rs := TZQuery.Create(nil);
-  sv := TZQuery.Create(nil);
-  AObj := TRecord_.Create;
-  try
-    Str :=
-    'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,''1'' as CLSE_TYPE,'+
-    'sum(PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as CLSE_MNY,'+
-    'sum(PAY_A) as PAY_A,'+
-    'sum(PAY_B) as PAY_B,'+
-    'sum(PAY_C) as PAY_C,'+
-    'sum(PAY_D) as PAY_D,'+
-    'sum(PAY_E) as PAY_E,'+
-    'sum(PAY_F) as PAY_F,'+
-    'sum(PAY_G) as PAY_G,'+
-    'sum(PAY_H) as PAY_H,'+
-    'sum(PAY_I) as PAY_I,'+
-    'sum(PAY_J) as PAY_J '+
-    ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2 group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
-
-    Str :=
-    'select A.* from ('+Str+') A where not exists('+
-    'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.CLSE_DATE'+
-    ')';
-    rs.SQL.Text := Str;
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',bDate));
-    rs.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',eDate));
-    Factor.Open(rs);
-    sv.Delta := rs.Delta;
-    rs.First;
-    while not rs.Eof do
-      begin
-        sv.Append;
-        AObj.ReadFromDataSet(rs); 
-        AObj.WriteToDataSet(sv);
-        sv.Post;
-        rs.Next;
-      end;
-    Factor.UpdateBatch(sv,'TCloseForDay');
-  finally
-    AObj.free;
-    sv.Free;
-    rs.Free;
-  end;
-end;
-
-procedure TfrmCostCalc.PrepareDataForAcct;
-var
-  SQL:string;
-  rs:TZQuery;
-  myDate:TDate;
-begin
-  myDate := cDate;
-  if (calc_flag=2) then myDate := bDate;
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select max(CREA_DATE) from VIW_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-    Factor.Open(rs);
-    if rs.Fields[0].asString<>'' then
-       myDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
-//    else
-//       myDate := cDate;
-    if (myDate>eDate) and (eDate=0) then eDate := myDate;
-    
-    mDate := myDate;
-    uDate := mDate;
-    
-    //每次计算都算到最后一天
-    if mDate<eDate then mDate := eDate;
-    if round(mDate-cDate)>pt then pt := round(mDate-cDate);
-  finally
-    rs.Free;
-  end;
-end;
-
-procedure TfrmCostCalc.CalcSpz;
-var
-  i:integer;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-     PrgPercent := PrgPercent+3;
-     Factor.ExecSQL('delete from RCK_C_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate)+'');
-     PrgPercent := PrgPercent+3;
-     Factor.ExecSQL(
-     'insert into RCK_C_GOODS_DAYS(TENANT_ID,SHOP_ID,DEPT_ID,GUIDE_USER,SALES_STYLE,CLIENT_ID,CREA_DATE,GODS_ID,BATCH_NO,IS_PRESENT,'+
-     'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,COMM,TIME_STAMP) '+
-     'select A.TENANT_ID,A.SHOP_ID,'+
-     'case when A.DEPT_ID is null then ''#'' else A.DEPT_ID end,'+
-     'case when A.GUIDE_USER is null then ''#'' else A.GUIDE_USER end,'+
-     'case when A.SALES_STYLE is null then ''#'' else A.SALES_STYLE end,'+
-     'case when A.CLIENT_ID is null then ''#'' else A.CLIENT_ID end,'+
-     'A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
-     'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
-     'sum(A.NOTAX_MONEY) as SALE_MNY,sum(A.TAX_MONEY) as SALE_TAX, '+
-     'sum(round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_CST,max(B.COST_PRICE) as COST_PRICE, '+
-     'sum(A.NOTAX_MONEY-round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_PRF, '+
-     'sum(case when A.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, '+
-     'sum(case when A.SALES_TYPE=3 then A.NOTAX_MONEY else 0 end) as SALRT_MNY, '+
-     'sum(case when A.SALES_TYPE=3 then A.TAX_MONEY else 0 end) as SALRT_TAX, '+
-     'sum(case when A.SALES_TYPE=3 then round(A.CALC_AMOUNT*B.COST_PRICE,2) else 0 end) as SALRT_CST, '+
-     '''00'','+GetTimeStamp(Factor.iDbType)+' from VIW_SALESDATA A,RCK_GOODS_DAYS B '+
-     'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.SALES_DATE=B.CREA_DATE and A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO and '+
-     'A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SALES_DATE>'+formatDatetime('YYYYMMDD',cDate)+' '+
-     'group by A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,'+
-     'case when A.GUIDE_USER is null then ''#'' else A.GUIDE_USER end,'+
-     'case when A.SALES_STYLE is null then ''#'' else A.SALES_STYLE end,'+
-     'case when A.CLIENT_ID is null then ''#'' else A.CLIENT_ID end'+
-     ',A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT'
-     );
-     if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-     if Factor.iDbType <> 5 then Factor.RollbackTrans;
-     Raise;
-  end;
-
-end;
-
-procedure TfrmCostCalc.CalcAnaly;
-var
-  SQL,id,v,v1,v2,sid:string;
-  safe,reas,daySale,w:integer;
-  LRate,HRate:real;
-  rs:TZQuery;
-begin
-  PrgPercent := 0;
-  safe := StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
-  reas := StrtoIntDef(ShopGlobal.GetParameter('REAS_DAY'),14);
-  daySale := StrtoIntDef(ShopGlobal.GetParameter('DAY_SALE_STAND'),90);
-  SQL :=
-    'insert into PUB_GOODS_INSHOP(TENANT_ID,GODS_ID,SHOP_ID,COMM,TIME_STAMP)'+
-    'select TENANT_ID,GODS_ID,SHOP_ID,''00'','+GetTimeStamp(Factor.iDbType)+' from VIW_GOODSPRICE A where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '+
-    'not Exists(select * from PUB_GOODS_INSHOP where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SHOP_ID=A.SHOP_ID)';
-  Factor.ExecSQL(SQL);
-  PrgPercent := 10;
-  //算近期销量
-  SQL :=
-    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
-    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
-    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-  Factor.ExecSQL(SQL);
-  PrgPercent := 20;
-  //日均销量测算
-  SQL :=
-    'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)*1.000000/'+GetDayDiff(Factor.iDbType,'min(SALES_DATE)','max(SALES_DATE)')+',3) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
-    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
-    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-  Factor.ExecSQL(SQL);
-  PrgPercent := 30;
-  //安全库存及合理库存测算
-  SQL :=
-    'update PUB_GOODS_INSHOP set LOWER_AMOUNT=DAY_SALE_AMT*'+inttostr(safe)+',UPPER_AMOUNT=DAY_SALE_AMT*'+inttostr(reas)+' '+
-    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-  Factor.ExecSQL(SQL);
-  PrgPercent := 40;
-  //本月销量
-  SQL :=
-    'update PUB_GOODS_INSHOP set MTH_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMM01',Date)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
-    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
-    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-  Factor.ExecSQL(SQL);
-  PrgPercent := 50;
-  sid := ShopGlobal.GetParameter('SMT_RATE');
-  if sid='' then sid := '2';
-  //计算存销比
-  rs := TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE like ''SMT_RATE_%'' and COMM not in (''02'',''12'')';
-    Factor.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        id := copy(rs.Fields[0].AsString,1,36);
-        v := trim(copy(rs.Fields[0].AsString,38,555));
-        w := pos('-',v);
-        v1:= copy(v,1,w-1);
-        v2:= copy(v,w+1,20);
-        SQL := 'update PUB_GOODS_INSHOP set LOWER_RATE='+v1+',UPPER_RATE='+v2+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and exists(select * from VIW_GOODSINFO where TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SORT_ID'+sid+'='''+id+''')';
-        Factor.ExecSQL(SQL);
-        rs.Next;
-      end;
-  finally
-    rs.Free;
-  end;
-  PrgPercent := 60;
-end;
-
 class function TfrmCostCalc.CalcAnalyLister(Owner: TForm): boolean;
 begin
   with TfrmCostCalc.Create(Owner) do
@@ -2114,7 +505,7 @@ begin
         Label2.Caption := '安全参数测算';
         Show;
         Update;
-        CalcAnaly;
+        DoCalcAnalyLister;
       finally
         free;
       end;
@@ -2124,73 +515,12 @@ end;
 procedure TfrmCostCalc.SetPrgPercent(const Value: integer);
 begin
   FPrgPercent := Value;
-  RzProgressBar1.Percent := Value;
+  if Value<100 then
+    RzProgressBar1.Percent := Value
+  else
+    RzProgressBar1.Percent:=100;
   Update;
 end;
-
-procedure TfrmCostCalc.TruncTable(tb: string);
-begin
-  case Factor.iDbType of
-  0,1:Factor.ExecSQL('truncate table '+tb);
-  4:Factor.ExecSQL(GetTmpSQL(tb)); 
-  5:Factor.ExecSQL('delete from '+tb);
-  end;
-end;
-
-procedure TfrmCostCalc.CreateTable(tb: string);
-var rs:TZQuery;
-begin
-  case Factor.iDbType of
-  0:begin
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select OBJECT_ID(N''tempdb..'+tb+''')';
-      Factor.Open(rs);
-      if rs.Fields[0].AsString = '' then
-         begin
-         Factor.ExecSQL(GetTmpSQL(tb));
-         end;
-    finally
-      rs.Free;
-    end;
-  end;
-  4:begin
-    Factor.ExecSQL(GetTmpSQL(tb));
-    end;
-  1:begin
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select count(*) from user_tables where table_name='''+tb+'''';
-      Factor.Open(rs);
-      if rs.Fields[0].asInteger = 0 then
-         begin
-           Factor.ExecSQL(GetTmpSQL(tb));
-         end;
-    finally
-      rs.Free;
-    end;
-  end;
-  5:begin
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select count(*) from sqlite_master where type=''table'' and name='''+tb+'''';
-      Factor.Open(rs);
-      if rs.Fields[0].asInteger = 0 then
-         begin
-           Factor.ExecSQL(GetTmpSQL(tb));
-         end;
-    finally
-      rs.Free;
-    end;
-  end;
-  end;
-
-  case Factor.iDbType of
-  0,1:Factor.ExecSQL('truncate table '+tb);
-  5:Factor.ExecSQL('delete from '+tb);
-  end;
-end;
-
 
 //判断是否月结账
 class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
@@ -2217,7 +547,8 @@ begin
           if Date() <= (eDate+5) then Exit;
           Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
           Label1.Caption:='请点击〖执行〗开始月结帐 ';
-          result :=(ShowModal=MROK);
+          Show;
+          btnStartClick(nil); // 单机版自动月结
         end;
       end
     finally
@@ -2226,8 +557,8 @@ begin
   end;
 end;
 
-procedure TfrmCostCalc.ClseDay;
-function LockCheck: boolean;
+//锁定电脑判断
+function TfrmCostCalc.LockCompanyCheck: boolean;
 var
   rs:TZQuery;
 begin
@@ -2241,62 +572,6 @@ begin
     rs.Free;
   end;
 end;
-var
-  i:integer;
-begin
-  if not (flag in [1,2]) then
-     begin
-       if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
-       if not (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and not LockCheck then Exit;
-     end;
-  Factor.BeginTrans;
-  try
-    for i:=1 to pt do
-       begin
-         if not (flag in [1,2]) then  {不是在月结状态下,不对当天以前的日期进行预算}
-            begin
-              if (cDate+i)>=Global.sysDate then continue;
-            end;
-         if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
-         begin
-         Factor.ExecSQL('insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-                        'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)
-                        );
-         end;
-       end;
-    Factor.CommitTrans;
-  except
-    Factor.RollbackTrans;
-    raise;
-  end;
-end;
-
-procedure TfrmCostCalc.UpdateStroage;
-begin
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
-  try
-    Factor.ExecSQL(
-       ParseSQL(Factor.iDbType,
-       'update STO_STORAGE set COST_PRICE=('+
-       'select case when sum(BAL_AMT)<>0 then round(sum(BAL_CST)*1.000000/sum(BAL_AMT),6) else 0 end from RCK_GOODS_DAYS '+
-       'where TENANT_ID=STO_STORAGE.TENANT_ID and GODS_ID=STO_STORAGE.GODS_ID and BATCH_NO=STO_STORAGE.BATCH_NO and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+pt)+' '+
-       ') where TENANT_ID='+inttostr(Global.TENANT_ID)
-       )
-    );
-    
-    Factor.ExecSQL(
-       ParseSQL(Factor.iDbType,
-       'update STO_STORAGE set AMONEY=round(AMOUNT*isnull(COST_PRICE,0),2),COST_PRICE=isnull(COST_PRICE,0) '+
-       'where TENANT_ID='+inttostr(Global.TENANT_ID)
-       )
-    );
-    
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-  except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;                      
-    raise;
-  end;
-end;
 
 class function TfrmCostCalc.CheckSyncReck(Owner: TForm): boolean;
 var
@@ -2304,7 +579,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',Date()-1);
+    // rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',Date()-1);
+    // 2012-7-4 计算当天日台账
+    rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',Date());
     uGlobal.Factor.Open(rs);
     result := (rs.Fields[0].AsInteger=0); 
   finally
@@ -2312,6 +589,446 @@ begin
   end;
 end;
 
+// 检测月末结账日期是否有效，月结日期24-31日
+function TfrmCostCalc.CheckValidDate(dateStr: string):string;
+begin
+  if Length(dateStr) <> 8 then
+    Raise Exception.Create('月末结账日期有误！'+dateStr+'无效的日期字符串！');
+
+  if IsValidDate(StrToIntDef(Copy(dateStr,1,4),0),StrToIntDef(Copy(dateStr,5,2),0),StrToIntDef(Copy(dateStr,7,2),0)) then
+    result := dateStr
+  else
+  if IsValidDate(StrToIntDef(Copy(dateStr,1,4),0),StrToIntDef(Copy(dateStr,5,2),0),StrToIntDef(Copy(dateStr,7,2),0)-1) then
+    result := Copy(dateStr,1,4) + Copy(dateStr,5,2) + formatFloat('00',StrToIntDef(Copy(dateStr,7,2),0)-1)
+  else
+  if IsValidDate(StrToIntDef(Copy(dateStr,1,4),0),StrToIntDef(Copy(dateStr,5,2),0),StrToIntDef(Copy(dateStr,7,2),0)-2) then
+    result := Copy(dateStr,1,4) + Copy(dateStr,5,2) + formatFloat('00',StrToIntDef(Copy(dateStr,7,2),0)-2)
+  else
+  if IsValidDate(StrToIntDef(Copy(dateStr,1,4),0),StrToIntDef(Copy(dateStr,5,2),0),StrToIntDef(Copy(dateStr,7,2),0)-3) then
+    result := Copy(dateStr,1,4) + Copy(dateStr,5,2) + formatFloat('00',StrToIntDef(Copy(dateStr,7,2),0)-3)
+  else
+    Raise Exception.Create('月末结账日期有误！'+dateStr+'无效的日期字符串！');
+end;
+
+procedure TfrmCostCalc.CheckCalcReckStatus;
+var localDBKey : string;
+var Params:TftParamList;
+var msg : string;
+begin
+  if flag in [1,2] then
+  begin
+    if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
+    if MessageBox(Handle,'结账前，请确认各门店的脱机数据是否上报完毕？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  end;
+
+  if not ShopGlobal.offline then
+    begin
+      Params := TftParamList.Create(nil);
+      try
+        localDBKey := getLocalDBKey();
+        Params.ParamByName('localDBKey').AsString := localDBKey;
+        Params.ParamByName('tenantId').AsInteger := Global.TENANT_ID;
+        msg := Factor.ExecProc('TCheckCostCalc',Params) ;
+      finally
+        Params.Free;
+      end;
+    end;
+
+  if (msg <> 'null') and (msg <> '') then  Raise Exception.Create(msg);
+end;
+
+procedure TfrmCostCalc.ClearCalcReckStatus;
+begin
+  if not ShopGlobal.offline then
+    Factor.ExecSQL('delete from SYS_DEFINE where TENANT_ID = ' + inttostr(Global.TENANT_ID) + ' and DEFINE in (''RCK_ID'',''RCK_TIME'') ');
+end;
+
+function TfrmCostCalc.CalcForDayReck(InParams:TftParamList): Boolean;
+var
+  i:integer;
+  ReMsg,Rck_Date:string;
+begin
+  Label11.Caption := '核算前检测数据...';
+  Update;
+  PrgPercent := 2;
+  //1、判断日、月结账是否存在未审核盘点
+  if (flag=1)or(flag=2) then CheckForRck;
+
+  //2、以天为单位计算日台账(70)
+  FOldPrgPercent:=PrgPercent; //循环前的进度
+  FAllPrgCount:=MthCount;      //当前循环总个数据
+  FSubPrgPercent:=0.70;  //子过程中占整个过程%;
+  DoCalcDayReckByMth(InParams);
+
+  //3、成本核算成功更新最后一天业务库存
+  DoCalcUpdateStorage(InParams);
+
+  //4、以月份为单位计算日台账
+  FOldPrgPercent:=PrgPercent;  //循环前的进度
+  FAllPrgCount:=MthCount; //当前循环总个数据
+  FSubPrgPercent:=0.20;        //子过程中占整个过程%
+  DoCalcMonthReck(InParams,'110');
+
+  //5、监控商品系数
+  DoCalcAnalyLister;
+  
+  MessageBox(Handle,'执行结账完毕.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  Update;
+end;
+
+function TfrmCostCalc.CalcForMonthData(InParams:TftParamList;CalcFlag:string): Boolean;
+var
+  i:integer;
+  ReMsg,Rck_Date:string;
+begin
+  Label11.Caption := '核算前检测数据...';
+  Update;
+  PrgPercent := 2;
+  //1、以天为单位计算日台账(70)
+  FOldPrgPercent:=PrgPercent; //循环前的进度
+  FAllPrgCount:=MthCount;      //当前循环总个数据
+  FSubPrgPercent:=0.70;  //子过程中占整个过程%;
+  DoCalcDayReckByMth(InParams,False);
+
+  //2、成本核算成功更新最后一天业务库存 (平时试算不更新库存)
+  // DoCalcUpdateStorage(InParams);
+
+  //3、以月份为单位计算日台账
+  FOldPrgPercent:=PrgPercent;  //循环前的进度
+  FAllPrgCount:=MthCount; //当前循环总个数据
+  FSubPrgPercent:=0.25;        //子过程中占整个过程%
+  DoCalcMonthReck(InParams,CalcFlag);
+end;
+
+function TfrmCostCalc.CalcForMonthReck(InParams:TftParamList): Boolean;
+var
+  i:integer;
+  ReMsg,Rck_Date:string;
+begin
+  if LockCompanyCheck=False then Raise Exception.Create('不是锁定电脑，不能月结账');
+  Label11.Caption := '核算前检测数据...';
+  Update;
+  PrgPercent := 2;
+  //1、判断日、月结账是否存在未审核盘点
+  if (flag=1)or(flag=2) then CheckForRck;
+
+  //2、以天为单位计算日台账(70)
+  FOldPrgPercent:=PrgPercent; //循环前的进度
+  FAllPrgCount:=MthCount;      //当前循环总个数据
+  FSubPrgPercent:=0.65;  //子过程中占整个过程%;
+  DoCalcDayReckByMth(InParams,True);
+
+  //3、成本核算成功更新最后一天业务库存
+  DoCalcUpdateStorage(InParams);
+
+  //4、以月份为单位计算日台账
+  FOldPrgPercent:=PrgPercent;  //循环前的进度
+  FAllPrgCount:=MthCount; //当前循环总个数据
+  FSubPrgPercent:=0.24;        //子过程中占整个过程%
+  DoCalcMonthReck(InParams,'111');
+
+  //5、监控商品系数
+  DoCalcAnalyLister;
+  
+  MessageBox(Handle,'执行结账完毕.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  Update;
+end;
+
+function TfrmCostCalc.GetMonthCount: integer;
+var
+  b:integer;
+  CurMthCount:integer;
+  e:TDate;
+begin
+  CurMthCount:=0;
+  try
+    b := 1;
+    while true do
+    begin
+      if reck_flag=1 then
+      begin
+        if isfirst and (b=1) then
+        begin
+          e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
+          if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+        end else
+          e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
+      end else
+      begin
+        e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day)));
+        //2012.08.29xhh修改月结账区间判断
+        if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
+          e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day)));
+      end;
+      Inc(CurMthCount); //月份累+1
+
+      if e>=mDate then break; 
+      b := b +round(e-(bDate+b))+1;
+    end;
+  except
+    raise;
+  end;
+  result:=CurMthCount;
+end;
+
+procedure TfrmCostCalc.DoSetPrgPercent(CurNo,CurPoint:integer);
+var
+  SingleValue:real;
+  CurValue:integer;
+begin
+  if (CurPoint<0) or (CurPoint>10) then CurPoint:=10;
+  SingleValue:=(100.000*FSubPrgPercent)/FAllPrgCount;
+  SingleValue:=SingleValue*(CurNo-1)*1.000+Round(SingleValue*CurPoint*1.000/10.0);
+  CurValue:=Round(SingleValue);
+  if (FOldPrgPercent+CurValue)>PrgPercent then
+    PrgPercent:=FOldPrgPercent+CurValue;
+  SetBegTickCount(0); //设置运行时间  
+end;
+
+function TfrmCostCalc.DoCalcDayReckByMth(InParams: TftParamList; ClsFalg: Boolean): Boolean;
+var
+  i,b,ept:integer;
+  CurNo:integer;
+  e:TDate;
+  ReckBegDate:TDate;
+  ReckMonth:string;
+  ReMsg:string;
+begin
+  result:=False;
+  CurNo:=0;
+  b := 1;
+  while true do
+  begin
+    if reck_flag=1 then
+    begin
+      if isfirst and (b=1) then
+      begin
+        e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
+        if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+      end else
+        e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
+    end else
+    begin
+      e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day)));
+      //2012.08.29xhh修改月结账区间判断
+      if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
+        e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day)));
+    end;
+    //2013.02.24判断当前最大业务日期
+    if e> mDate then e:=mDate;
+
+    CurNo:=CurNo+1;
+    ReckBegDate:=bDate+b;
+    //[移动加权、日移动加权]判断该区间是否日结账(cDate上次日结账日期)
+    if (Fcflag in [0,1]) and (cDate>e) then
+    begin
+      b := b +round(e-(bDate+b))+1;
+      Continue;
+    end;
+    //[移动加权、日移动加权]
+    if (Fcflag in [0,1]) and (cDate>=ReckBegDate) then
+      ReckBegDate:=cDate+1; //上次日结账日期+1;
+
+    InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDateTime('YYYYMMDD',ReckBegDate);  //区间开始日期
+    InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',e); //区间结束日期
+    if e>mDate then
+    begin
+      InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',mDate); //区间结束日期
+      if ReckBegDate =  mDate then
+        ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)
+      else
+        ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)+'-'+FormatDatetime('YYYY-MM-DD',mDate); //核算区间
+    end else
+    begin
+      if ReckBegDate = e then
+        ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)
+      else
+        ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)+'-'+FormatDatetime('YYYY-MM-DD',e); //核算区间
+    end;
+    //设置最新结账日期
+    InParams.ParamByName('CDATE').AsString:=FormatDatetime('YYYYMMDD',cDate); //最后日结日期
+
+    //A、计算商品成本、生成日台账
+    Label11.Caption := '正在核算['+ReckMonth+']成本...';
+    Update;
+    InParams.ParamByName('CALC_CMD_IDX').AsInteger:=1;
+    ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
+    if ReMsg<>'RCK_OK' then Raise Exception.Create('核算成本['+ReckMonth+']出错<'+ReMsg+'>');
+    DoSetPrgPercent(CurNo,5); //设置进度
+    //B、自动交班结账昨天日期
+    Label11.Caption := '交班结账['+ReckMonth+']';
+    Update;
+    InParams.ParamByName('CALC_CMD_IDX').AsInteger:=2;
+    ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
+    if ReMsg<>'RCK_OK' then Raise Exception.Create('交班结账['+ReckMonth+']出错<'+ReMsg+'>');
+    DoSetPrgPercent(CurNo,7); //设置进度
+
+    //C、账款日台账
+    Label11.Caption := '核算账户['+ReckMonth+']';
+    Update;
+    InParams.ParamByName('CALC_CMD_IDX').AsInteger:=3;
+    ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
+    if ReMsg<>'RCK_OK' then Raise Exception.Create('核算账户['+ReckMonth+']出错<'+ReMsg+'>');
+    DoSetPrgPercent(CurNo,9); //设置进度
+
+    //D、插入日结表头关账
+    if (ClsFalg) and (LockCompanyCheck) and (cDate<e) then //只有日结内时间要生成记录已生成日台账部份
+    begin
+      Label11.Caption := '正在生成['+ReckMonth+']日结账';
+      Update;
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=4;
+      ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
+      if ReMsg<>'RCK_OK' then Raise Exception.Create('日结账['+ReckMonth+']出错<'+ReMsg+'>');
+      cDate:=e;
+      DoSetPrgPercent(CurNo,10); //设置进度
+    end;
+
+    if e>=mDate then break;
+    b := b +round(e-(bDate+b))+1;
+  end;
+end;
+
+function TfrmCostCalc.DoCalcUpdateStorage(InParams: TftParamList): Boolean;
+var
+  ReMsg:string;
+begin
+  result:=False;
+  Label11.Caption := '正在更新库存成本...';
+  Update;
+  InParams.ParamByName('CALC_CMD_IDX').AsInteger:=5;
+  InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDatetime('YYYYMMDD',mDate); //更新日期
+  ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
+  if ReMsg<>'RCK_OK' then Raise Exception.Create('更新库存成本出错<'+ReMsg+'>');
+  PrgPercent := PrgPercent+5;
+  result:=True;
+  SetBegTickCount(0);
+end;
+
+function TfrmCostCalc.DoCalcAnalyLister: Boolean;
+var
+  ReMsg:string;
+  InParams:TftParamList;
+begin
+  result:=False;
+  //统计商品(安全参数测算)
+  Label11.Caption := '正在商品安全参数测算...';
+  Update;
+  InParams:=TftParamList.Create(nil);
+  try
+    InParams.ParamByName('SAFE_DAY').AsInteger:=StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
+    InParams.ParamByName('REAS_DAY').AsInteger:=StrtoIntDef(ShopGlobal.GetParameter('REAS_DAY'),14);
+    InParams.ParamByName('DAY_SALE_STAND').AsInteger:=StrtoIntDef(ShopGlobal.GetParameter('DAY_SALE_STAND'),90);
+    InParams.ParamByName('SMT_RATE').AsString:=ShopGlobal.GetParameter('SMT_RATE');
+    ReMsg:=Factor.ExecProc('TCostCalcForAnalyLister',InParams);
+    if ReMsg<>'RCK_OK' then Raise Exception.Create('商品安全参数测算出错<'+ReMsg+'>');
+    PrgPercent := 100;
+    Update;
+    SetBegTickCount(0);
+  finally
+    InParams.Free;
+  end;
+  result:=True;
+end;
+
+function TfrmCostCalc.DoCalcMonthReck(InParams: TftParamList;CalcFlag:string): Boolean;
+var
+  i:integer;
+  b,bl:integer;
+  RckBegDate,e:TDate;
+  RckMonth:string;
+  ReMsg:string;
+begin
+  i:=0;
+  b := 1;
+  while true do
+  begin
+    Inc(i);  //序号+1
+    if reck_flag=1 then
+    begin
+      if isfirst and (b=1) then
+      begin
+        e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
+        if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+      end else
+        e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
+    end else
+    begin
+      e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',bDate+b-1)+formatfloat('00',reck_day)));
+      //2012.08.29xhh修改月结账区间判断
+      if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
+        e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day)));
+    end;
+    RckBegDate:=bDate+b; //开始日期
+    RckMonth:=FormatDatetime('YYYYMM',e);
+    Label11.Caption := '正在核算['+RckMonth+']月台账...';
+    Update;
+    //设置结账日期(区间)
+    InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDatetime('YYYYMMDD',RckBegDate); //月结账开始日期
+    InParams.ParamByName('RCK_END_DATE').AsString:=FormatDatetime('YYYYMMDD',e); //月结账结束日期
+
+    //计算商品月台账流水
+    if Copy(CalcFlag,1,1)='1' then
+    begin
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=1;
+      ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
+      if ReMsg<>'RCK_OK' then Raise Exception.Create('计算商品月账出错<'+ReMsg+'>');
+      DoSetPrgPercent(i,6); //设置进度
+    end;
+
+    //计算账户台账流水
+    if Copy(CalcFlag,2,1)='1' then
+    begin
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=2;
+      ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
+      if ReMsg<>'RCK_OK' then Raise Exception.Create('计算帐户月账出错<'+ReMsg+'>');
+      DoSetPrgPercent(i,8); //设置进度
+    end;
+
+    //计算月台账结账的记录
+    if Copy(CalcFlag,3,1)='1' then
+    begin
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=3;
+      ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
+      if ReMsg<>'RCK_OK' then Raise Exception.Create('月结账出错<'+ReMsg+'>');
+      DoSetPrgPercent(i,10); //设置进度
+    end;
+    
+    if e>=eDate then break; //月份结账
+    b := b +round(e-(bDate+b))+1;
+    SetBegTickCount(0);
+  end;
+  
+  //核算当前月份
+  if FormatDateTime('YYYYMM',eDate)<>FormatDateTime('YYYYMM',mDate) then
+  begin
+    Inc(i);
+    InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',mDate); //区间结束日期
+    if Copy(CalcFlag,1,1)='1' then
+    begin
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=1;
+      ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
+      if ReMsg<>'RCK_OK' then Raise Exception.Create('计算商品月账出错<'+ReMsg+'>');
+      DoSetPrgPercent(i,5); //设置进度
+    end;
+    //计算账户台账流水
+    if Copy(CalcFlag,2,1)='1' then
+    begin
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=2;
+      ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
+      if ReMsg<>'RCK_OK' then Raise Exception.Create('计算帐户月账出错<'+ReMsg+'>');
+      DoSetPrgPercent(i,10); //设置进度
+    end;
+  end;
+end;
+
+
+procedure TfrmCostCalc.SetBegTickCount(const Value: integer);
+var
+  CurValue:integer;
+begin
+  CurValue:=(GetTickCount-FBegTickCount) div 1000;
+  LblTime.Caption:='['+IntToStr(CurValue)+'s]';
+  LblTime.Left:=self.Width-LblTime.Width-6;
+end;
+
 end.
-
-

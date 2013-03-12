@@ -61,7 +61,21 @@ inherited frmCostCalc: TfrmCostCalc
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object btnStart: TRzBitBtn [5]
+  object LblTime: TLabel [5]
+    Left = 315
+    Top = 23
+    Width = 30
+    Height = 12
+    Anchors = [akTop, akRight]
+    Caption = '[0'#31186']'
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clBlue
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
+  end
+  object btnStart: TRzBitBtn [6]
     Left = 139
     Top = 157
     Height = 28

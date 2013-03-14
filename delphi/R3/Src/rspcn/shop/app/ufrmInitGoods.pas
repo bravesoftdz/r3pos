@@ -112,7 +112,6 @@ type
     procedure RzPanel6Click(Sender: TObject);
     procedure edtCALC_UNITSPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
   private
     function  GetFinded:boolean;
     procedure GetGoodsInfo;
@@ -2008,12 +2007,6 @@ begin
   end;
 
   RefreshUnits;
-end;
-
-procedure TfrmInitGoods.BitBtn1Click(Sender: TObject);
-begin
-  inherited;
-  SyncFactory.SyncBasic;
 end;
 
 initialization

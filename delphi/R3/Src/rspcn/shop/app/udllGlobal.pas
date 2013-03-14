@@ -35,6 +35,7 @@ type
     function getMyDeptId:string;
     function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean;
 
+    function GetSFVersion:string;
     function GetVersionFlag:integer;
     function sysDate:TDatetime;
     function GetParameter(paramname:string):string;
@@ -207,6 +208,17 @@ begin
       end;
   finally
     rs.Free;
+  end;
+end;
+
+function TdllGlobal.GetSFVersion:string;
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    result := F.ReadString('soft','SFVersion','.LCL');
+  finally
+    F.Free;
   end;
 end;
 

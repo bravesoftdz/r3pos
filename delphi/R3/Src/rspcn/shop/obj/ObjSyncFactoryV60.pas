@@ -16,7 +16,7 @@ type
     procedure SetMaxCol(const Value: integer);
   protected
     procedure InitSQL(AGlobal: IdbHelp;TimeStamp:boolean=true);virtual;
-    function GetRowAccessor: TZRowAccessor;
+    function  GetRowAccessor: TZRowAccessor;
     procedure FillParams(ZQuery: TZQuery);virtual;
   public
     function CheckUnique(s:string):boolean;
@@ -118,7 +118,46 @@ var
   r:integer;
   WasNull:boolean;
   Comm:string;
+  rs:TZQuery;
 begin
+  if Params.ParamByName('TABLE_NAME').AsString = 'SYS_DEFINE' then
+  begin
+    if FieldbyName('DEFINE').asString='USING_DATE' then
+       begin
+         rs := TZQuery.Create(nil);
+         try
+           rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+           rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
+           rs.Params[1].AsString := FieldbyName('DEFINE').AsString;
+           AGlobal.Open(rs);
+           if not rs.IsEmpty then
+              begin
+                if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
+                   FieldbyName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
+                if rs.FieldByName('VALUE').AsString<>FieldbyName('VALUE').AsString then
+                   FieldbyName('TIME_STAMP').asInteger := Params.ParambyName('SYN_TIME_STAMP').asInteger;
+              end;
+         finally
+           rs.Free;
+         end;
+       end
+  end;
+
+  if Params.ParamByName('TABLE_NAME').AsString = 'SYS_SEQUENCE' then
+  begin
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select * from SYS_SEQUENCE where TENANT_ID=:TENANT_ID and SEQU_ID=:SEQU_ID';
+      rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
+      rs.Params[1].AsString := FieldbyName('SEQU_ID').AsString;
+      AGlobal.Open(rs);
+      if rs.FieldByName('FLAG_TEXT').AsString > FieldbyName('FLAG_TEXT').AsString then Exit;
+      if rs.FieldByName('SEQU_NO').AsInteger > FieldbyName('SEQU_NO').AsInteger then Exit;
+    finally
+      rs.Free;
+    end;
+  end;
+
   InitSQL(AGlobal);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger in [0,2]) then
@@ -167,13 +206,18 @@ end;
 function TSyncSingleTableV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var Str:string;
 begin
-  if Params.ParambyName('TABLE_FIELDS').AsString = '' then
-    Str := 'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP'
+  if (Params.FindParam('TABLE_FIELDS') <> nil) and (trim(Params.ParamByName('TABLE_FIELDS').AsString) <> '') then
+    Str := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from '+Params.ParambyName('TABLE_NAME').AsString
   else
-    Str := 'select '+Params.ParambyName('TABLE_FIELDS').AsString+' from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP';
+    Str := 'select * from '+Params.ParamByName('TABLE_NAME').AsString;
+
+  if (Params.FindParam('WHERE_STR') <> nil) and (trim(Params.ParamByName('WHERE_STR').AsString) <> '') then
+    Str := Str + ' where ' + Params.ParamByName('WHERE_STR').AsString
+  else
+    Str := Str + ' where TENANT_ID = :TENANT_ID and TIME_STAMP > :TIME_STAMP';
 
   if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+     Str := Str + ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
   SelectSQL.Text := Str + ' order by TIME_STAMP asc';
 end;

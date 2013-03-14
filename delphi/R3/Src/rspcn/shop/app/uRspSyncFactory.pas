@@ -31,7 +31,7 @@ var
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
-  timestamp := SyncFactory.GetSynTimeStamp('RSP_PUB_GOODSSORT');
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT');
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadSort(strtoint(token.tenantId), 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -83,7 +83,7 @@ begin
           Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
-          SyncFactory.SetSynTimeStamp('RSP_PUB_GOODSSORT',maxtimestamp,'#');
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT',maxtimestamp,'#');
         finally
           Params.free;
         end;

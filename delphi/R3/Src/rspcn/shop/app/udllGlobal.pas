@@ -21,6 +21,7 @@ type
     PUB_UNION_INFO: TZQuery;
     PUB_PAYMENT: TZQuery;
     PUB_GOODSSORT: TZQuery;
+    PUB_REGION_INFO: TZQuery;
   private
     { Private declarations }
     procedure OpenPubGoodsInfo;

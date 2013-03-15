@@ -335,4 +335,15 @@ object dllGlobal: TdllGlobal
         ParamType = ptUnknown
       end>
   end
+  object PUB_REGION_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE='#39'8'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <>
+    Left = 384
+    Top = 288
+  end
 end

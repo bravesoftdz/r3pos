@@ -16,16 +16,12 @@ type
     FhWnd: THandle;
     procedure SethWnd(const Value: THandle);
     procedure OnEnterPress(CurrentForm: TForm; Key: Char);
-    { Private declarations }
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     procedure ajustPostion;virtual;
     procedure showForm;virtual;
     property hWnd:THandle read FhWnd write SethWnd;
-    
   end;
   
 implementation
@@ -80,6 +76,7 @@ end;
 procedure TfrmWebForm.SethWnd(const Value: THandle);
 begin
   FhWnd := Value;
+  windows.SetParent(Handle,Value);
 end;
 
 procedure TfrmWebForm.showForm;

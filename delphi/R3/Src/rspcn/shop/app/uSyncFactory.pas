@@ -6,6 +6,12 @@ uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase, ObjCommon, ZLogFile,
   Dialogs;
 
+const
+  MSC_SET_MAX=WM_USER+1;
+  MSC_SET_POSITION=WM_USER+2;
+  MSC_SET_CAPTION=WM_USER+3;
+  MSC_SET_CLOSE=WM_USER+4;
+
 type
   PSynTableInfo=^TSynTableInfo;
 
@@ -18,23 +24,26 @@ type
     whereStr:string;//where条件
     synFlag:integer;
     keyFlag:integer; //0是按表结构关健字 1是按业务关健字
+    tableFlag:integer;
     syncTenantId:string;//时间戳控制TENANT_ID
     syncShopId:string;//时间戳控制SHOP_ID
   end;
 
   TSyncFactory=class
   private
-    beginTime:Int64;
     _Start:Int64;
     FList:TList;
     FStoped: boolean;
+    FProHandle:Hwnd;
     FSyncTimeStamp: int64;
     FParams: TftParamList;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetStoped(const Value: boolean);
+    procedure SetProHandle(const Value: Hwnd);
   protected
     SubmitRecordNum:integer;
+    FinishIndex:integer;
     procedure SetTicket;
     function GetTicket:Int64;
   public
@@ -49,6 +58,7 @@ type
     procedure ReadTimeStamp;
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
+    function  GetTableName(tableFlag:integer):string;
     function  GetFactoryName(node:PSynTableInfo):string;
     function  GetTableFields(tbName:string):string;
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
@@ -56,9 +66,14 @@ type
     procedure SyncList;
     // 同步基础数据
     procedure SyncBasic;
+    // 进度条控制
+    procedure SetProMax(max:integer);
+    procedure SetProPosition(position:integer);
+    procedure SetProCaption(caption:integer);
     property  Params:TftParamList read FParams write SetParams;
     property  SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property  Stoped:boolean read FStoped write SetStoped;
+    property  ProHandle:Hwnd read FProHandle write SetProHandle;
   end; 
 
 var SyncFactory:TSyncFactory;
@@ -215,7 +230,7 @@ end;
 procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
 var
   cs,rs:TZQuery;
-  i:integer;
+  i,j:integer;
   tmpObj:TRecord_;
   maxTimeStamp:int64;
   ZClassName,SFVersion:string;
@@ -280,6 +295,7 @@ begin
     cs.CreateDataSet;
     //分包同步
     i := 1;
+    j := 0;
     rs.First;
     while (not rs.Eof) and (not Stoped) do
       begin
@@ -307,6 +323,9 @@ begin
             cs.FieldDefs := rs.FieldDefs;
             cs.CreateDataSet;
             i := 1;
+            inc(j);
+            Application.ProcessMessages;
+            SetProPosition(FinishIndex * 100 + (100 div (rs.RecordCount div SubmitRecordNum + 1) * j) );
           end;
       end;
     LogFile.AddLogFile(0,'保存<'+n^.tbName+'>保存时长:'+inttostr(GetTicket));
@@ -325,12 +344,18 @@ end;
 procedure TSyncFactory.SyncList;
 var i:integer;
 begin
+  SetProMax(FList.Count * 100);
   for i:=0 to FList.Count -1 do
   begin
-    Application.ProcessMessages;
     case PSynTableInfo(FList[i])^.synFlag of
     0,1,2,3,4,10,20,21,22,23,29:
-      SyncSingleTable(FList[i]);
+      begin
+        Application.ProcessMessages;
+        SetProCaption(PSynTableInfo(FList[i])^.tableFlag);
+        SyncSingleTable(FList[i]);
+        FinishIndex := (i+1);
+        SetProPosition(FinishIndex * 100);
+      end;
     end;
   end;
 end;
@@ -338,19 +363,15 @@ end;
 procedure TSyncFactory.SyncBasic;
 begin
   try
-    beginTime := GetTickCount;
-
     InitSyncList1;
     SyncList;
     dllGlobal.GetZQueryFromName('CA_RELATIONS').Close;
 
     InitSyncList;
     SyncList;
-
-    LogFile.AddLogFile(0, '总共同步时长：'+inttostr(GetTickCount-beginTime));
   finally
     ReadTimeStamp;
-  end;
+  end
 end;
 
 procedure TSyncFactory.ClearSyncList;
@@ -384,6 +405,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;SHOP_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 0;
     n^.tbtitle := '门店资料';
     FList.Add(n);
 
@@ -392,6 +414,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;DEPT_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 1;
     n^.tbtitle := '部门资料';
     FList.Add(n);
 
@@ -400,6 +423,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;DUTY_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 2;
     n^.tbtitle := '职务资料';
     FList.Add(n);
 
@@ -408,6 +432,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;ROLE_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 3;
     n^.tbtitle := '角色资料';
     FList.Add(n);
 
@@ -416,6 +441,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;USER_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 4;
     n^.tbtitle := '用户资料';
     FList.Add(n);
 
@@ -424,6 +450,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;MODU_ID;ROLE_ID;ROLE_TYPE';
     n^.synFlag := 0;
     n^.keyFlag := 1;
+    n^.tableFlag := 5;
     n^.tbtitle := '操作权限';
     FList.Add(n);
 
@@ -432,6 +459,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;PRICE_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 6;
     n^.tbtitle := '客户等级';
     FList.Add(n);
 
@@ -440,6 +468,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;UNION_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 7;
     n^.tbtitle := '商盟档案';
     FList.Add(n);
 
@@ -448,6 +477,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;UNION_ID;INDEX_ID';
     n^.keyFlag := 0;
     n^.synFlag := 0;
+    n^.tableFlag := 8;
     n^.tbtitle := '商盟指标';
     FList.Add(n);
 
@@ -456,6 +486,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;CLIENT_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 9;
     n^.tbtitle := '客户档案';
     FList.Add(n);
 
@@ -464,6 +495,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;CUST_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 10;
     n^.tbtitle := '会员档案';
     FList.Add(n);
 
@@ -472,6 +504,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;UNION_ID;CUST_ID;INDEX_ID';
     n^.synFlag := 0;
     n^.keyFlag := 1;
+    n^.tableFlag := 11;
     n^.tbtitle := '会员档案';
     FList.Add(n);
 
@@ -480,6 +513,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;GODS_ID';
     n^.synFlag := 0;
     n^.keyFlag := 0;
+    n^.tableFlag := 12;
     n^.tbtitle := '最新进价';
     FList.Add(n);
   end;
@@ -494,6 +528,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.syncShopId := token.shopId;
+    n^.tableFlag := 13;
     n^.tbtitle := '最新售价';
     FList.Add(n);
   end;
@@ -508,6 +543,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 2;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 14;
     n^.tbtitle := '供应链';
     FList.Add(n);
 
@@ -518,6 +554,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 2;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 15;
     n^.tbtitle := '其他编码';
     FList.Add(n);
 
@@ -528,6 +565,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 2;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 16;
     n^.tbtitle := '货品分类';
     FList.Add(n);
 
@@ -538,6 +576,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 2;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 17;
     n^.tbtitle := '颜色档案';
     FList.Add(n);
 
@@ -548,6 +587,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 2;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 18;
     n^.tbtitle := '尺码档案';
     FList.Add(n);
 
@@ -558,6 +598,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 2;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 19;
     n^.tbtitle := '计量单位';
     FList.Add(n);
   end;
@@ -598,6 +639,7 @@ procedure TSyncFactory.InitSyncList;
     n^.selectSQL := str;
     n^.synFlag := 3;
     n^.keyFlag := 0;
+    n^.tableFlag := 20;
     n^.tbtitle := '条码表';
     FList.Add(n);
   end;
@@ -611,6 +653,7 @@ procedure TSyncFactory.InitSyncList;
     n^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,NEAR_BUY_DATE,FREQUENCY,COMM,TIME_STAMP';
     n^.synFlag := 4;
     n^.keyFlag := 1;
+    n^.tableFlag := 21;
     n^.tbtitle := 'IC档案';
     FList.Add(n);
   end;
@@ -623,6 +666,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;ACCOUNT_ID';
     n^.tableFields := 'TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,COMM,TIME_STAMP';
     n^.synFlag := 10;
+    n^.tableFlag := 22;
     n^.tbtitle := '账户资料';
     n^.keyFlag := 0;
     FList.Add(n);
@@ -658,6 +702,7 @@ procedure TSyncFactory.InitSyncList;
     n^.selectSQL := str;
     n^.synFlag := 20;
     n^.keyFlag := 0;
+    n^.tableFlag := 23;
     n^.tbtitle := '企业资料';
     FList.Add(n);
   end;
@@ -672,6 +717,7 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 21;
     n^.keyFlag := 1;
     n^.syncTenantId := syncTenantId;
+    n^.tableFlag := 24;
     n^.tbtitle := '供应链商品';
     FList.Add(n);
   end;
@@ -723,6 +769,7 @@ procedure TSyncFactory.InitSyncList;
     n^.selectSQL := str;
     n^.synFlag := 22;
     n^.keyFlag := 0;
+    n^.tableFlag := 25;
     n^.tbtitle := '商品档案';
     FList.Add(n);
   end;
@@ -735,6 +782,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;SEQU_ID';
     n^.synFlag := 23;
     n^.keyFlag := 0;
+    n^.tableFlag := 26;
     n^.tbtitle := '序列号控制表';
     FList.Add(n);
   end;
@@ -747,6 +795,7 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;DEFINE';
     n^.synFlag := 29;
     n^.keyFlag := 0;
+    n^.tableFlag := 27;
     n^.tbtitle := '参数定义表';
     FList.Add(n);
   end;
@@ -792,6 +841,39 @@ begin
   InitList23;
 
   InitList29;
+end;
+
+function TSyncFactory.GetTableName(tableFlag: integer): string;
+var i:integer;
+begin
+  for i:=0 to FList.Count -1 do
+  begin
+    if PSynTableInfo(FList[i])^.tableFlag = tableFlag then
+    begin
+      result := PSynTableInfo(FList[i])^.tbTitle;
+      break;
+    end;
+  end;
+end;
+
+procedure TSyncFactory.SetProHandle(const Value: Hwnd);
+begin
+  FProHandle := Value;
+end;
+
+procedure TSyncFactory.SetProCaption(caption: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_CAPTION, caption, 0);
+end;
+
+procedure TSyncFactory.SetProMax(max: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_MAX, max, 0);
+end;
+
+procedure TSyncFactory.SetProPosition(position: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
 end;
 
 initialization

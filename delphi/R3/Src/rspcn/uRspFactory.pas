@@ -35,6 +35,8 @@ type
   protected
     RspLogin:TRspFunction;
     RspSetParams:TRspSetParams;
+    RspGetTenantInfo:TRspFunction;
+    RspGetShopInfo:TRspFunction;
     RspGetGoodsInfo:TRspFunction;
     RspUploadGoods:TRspFunction;
     RspDownloadSort:TRspFunction;
@@ -49,6 +51,8 @@ type
     function  DesEncode(inStr, Key: string): string;
 
     function xsmLogin(username:string;flag:integer):boolean;
+    function getTenantInfo(tenantId:integer):widestring;
+    function getShopInfo(tenantId:integer;shopId:string):widestring;
     function getGoodsInfo(barcode:string):widestring;
     function uploadGoods(inXml:widestring):boolean;
     function downloadSort(tenantId,flag:integer;timestamp:int64):widestring;
@@ -83,6 +87,10 @@ begin
   if @RspLogin=nil then Raise Exception.Create('无效Rsp插件包，没有实现coLogin方法');
   @RspSetParams := GetProcAddress(RspHandle, 'SetParams');
   if @RspSetParams=nil then Raise Exception.Create('无效Rsp插件包，没有实现SetParams方法');
+  @RspGetTenantInfo := GetProcAddress(RspHandle, 'getTenantInfo');
+  if @RspGetTenantInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getTenantInfo方法');
+  @RspGetShopInfo := GetProcAddress(RspHandle, 'getShopInfo');
+  if @RspGetShopInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getShopInfo方法');
   @RspGetGoodsInfo := GetProcAddress(RspHandle, 'getGoodsInfo');
   if @RspGetGoodsInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getGoodsInfo方法');
   @RspUploadGoods := GetProcAddress(RspHandle, 'uploadGoods');
@@ -318,6 +326,62 @@ begin
      end
   else
      Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
+end;
+
+function TrspFactory.getTenantInfo(tenantId:integer): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '3';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('caTenant');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(tenantId);
+  FindNode(doc,'body\caTenant').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+
+  outxml := RspGetTenantInfo(inxml,rspUrl,2);
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
+end;
+
+function TrspFactory.getShopInfo(tenantId:integer;shopId:string): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('caShopInfo');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+
+  Node := doc.createElement('shopId');
+  Node.text := shopId;
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  outxml := RspGetShopInfo(inxml,rspUrl,2);
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
 end;
 
 function TrspFactory.getGoodsInfo(barcode:string): widestring;

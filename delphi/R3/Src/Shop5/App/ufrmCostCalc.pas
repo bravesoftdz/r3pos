@@ -793,8 +793,10 @@ var
   ReckBegDate:TDate;
   ReckMonth:string;
   ReMsg:string;
+  ClsFlag:Boolean;
 begin
   result:=False;
+  ClsFlag:=False;
   CurNo:=0;
   b := 1;
   while true do
@@ -858,6 +860,9 @@ begin
     //B、自动交班结账昨天日期
     Label11.Caption := '交班结账['+ReckMonth+']';
     Update;
+    //2013.03.17只对当前业务日期之前的进行日结关账(日结关账小于当前业务日期)
+    if (e>=Global.sysDate) then
+      InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',Global.sysDate-1); //区间结束日期
     InParams.ParamByName('CALC_CMD_IDX').AsInteger:=2;
     ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
     if ReMsg<>'RCK_OK' then Raise Exception.Create('交班结账['+ReckMonth+']出错<'+ReMsg+'>');
@@ -876,6 +881,13 @@ begin
     begin
       Label11.Caption := '正在生成['+ReckMonth+']日结账';
       Update;
+      //2013.03.17只对当前业务日期之前的进行日结关账(日结关账小于当前业务日期)
+      if (e>=Global.sysDate) then
+      begin
+        e:=Global.sysDate-1;
+        InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',e); //区间结束日期
+        ClsFlag:=true;
+      end;
       InParams.ParamByName('CALC_CMD_IDX').AsInteger:=4;
       ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
       if ReMsg<>'RCK_OK' then Raise Exception.Create('日结账['+ReckMonth+']出错<'+ReMsg+'>');
@@ -884,6 +896,7 @@ begin
     end;
 
     if e>=mDate then break;
+    if ClsFlag then break; //最后一次关账也退出
     b := b +round(e-(bDate+b))+1;
   end;
 end;

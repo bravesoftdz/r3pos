@@ -365,7 +365,7 @@ begin
   for i:=0 to FRckDays do
   begin
     CurRckDate:=FReckBegDate+i;
-    if iDbType <> 5 then FdbHelp.BeginTrans;
+    //if iDbType <> 5 then FdbHelp.BeginTrans;
     try
       //生成到台账表(RCK_GOODS_DAYS)每天1次生成
       SQL :=
@@ -439,9 +439,9 @@ begin
           ' group by SHOP_ID,GODS_ID,BATCH_NO'
         );
       FdbHelp.ExecSQL(SQL);
-      if iDbType <> 5 then FdbHelp.CommitTrans;
+      //if iDbType <> 5 then FdbHelp.CommitTrans;
     except
-      if iDbType <> 5 then FdbHelp.RollbackTrans;
+      //if iDbType <> 5 then FdbHelp.RollbackTrans;
       Inc(iError);
       Raise;
     end;
@@ -619,13 +619,13 @@ begin
     ' group by SHOP_ID,GODS_ID,BATCH_NO'
     );
 
-  if iDbType <> 5 then FdbHelp.BeginTrans;
+  //if iDbType <> 5 then FdbHelp.BeginTrans;
   try
     FdbHelp.ExecSQL(SQL);
-    if iDbType <> 5 then FdbHelp.CommitTrans;
+    //if iDbType <> 5 then FdbHelp.CommitTrans;
     result:=true;
   except
-    if iDbType <> 5 then FdbHelp.RollbackTrans;
+    //if iDbType <> 5 then FdbHelp.RollbackTrans;
     Raise;
   end;
 end;
@@ -1307,13 +1307,13 @@ begin
 
   if OpenCloseForDay then
   begin
-    if iDbType<>5 then FdbHelp.BeginTrans;
+    //if iDbType<>5 then FdbHelp.BeginTrans;
     try
       InsertRecordCloseForDay(Rs); //插入交班结账
       result:=InsertRecordAccRecvAble;  //插入对应应收款
-      if iDbType<>5 then FdbHelp.CommitTrans;
+      //if iDbType<>5 then FdbHelp.CommitTrans;
     except
-      if iDbType<>5 then FdbHelp.RollbackTrans;
+      //if iDbType<>5 then FdbHelp.RollbackTrans;
       Raise;
     end;
   end;
@@ -1901,7 +1901,7 @@ begin
   FdbHelp.ExecSQL(SQL);    
 
   //4、生成月台账临时表
-  if iDbType <> 5 then FdbHelp.BeginTrans;
+  //if iDbType <> 5 then FdbHelp.BeginTrans;
   try
     //A、生成月台账汇总插入(RCK_GOODS_MONTH)
     SQL :=
@@ -1949,9 +1949,9 @@ begin
     ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
     FdbHelp.ExecSQL(SQL); 
 
-    if iDbType <> 5 then FdbHelp.CommitTrans;
+    //if iDbType <> 5 then FdbHelp.CommitTrans;
   except
-    if iDbType <> 5 then FdbHelp.RollbackTrans;
+    //if iDbType <> 5 then FdbHelp.RollbackTrans;
     Raise;
   end;
   result:=true;
@@ -1994,7 +1994,7 @@ begin
   FdbHelp.ExecSQL('delete from RCK_ACCT_DAYS where TENANT_ID='+inttostr(TENANT_ID)+SQL);
 
   //2、启动事务循环每天插入
-  if iDbType<>5 then FdbHelp.BeginTrans;
+  //if iDbType<>5 then FdbHelp.BeginTrans;
   try
     //开始循环执行
     for i:= 0 to pt do
@@ -2023,10 +2023,10 @@ begin
         ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
       FdbHelp.ExecSQL(ParseSQL(iDbType,SQL));
     end;
-    if iDbType<>5 then FdbHelp.CommitTrans;
+    //if iDbType<>5 then FdbHelp.CommitTrans;
     result:=True;
   except
-    if iDbType<>5 then FdbHelp.RollbackTrans;
+    //if iDbType<>5 then FdbHelp.RollbackTrans;
     raise;
   end;
 end;
@@ -2038,7 +2038,7 @@ var
   SQL:string;
 begin
   result:=False;
-  if iDbType <> 5 then FdbHelp.BeginTrans;
+  //if iDbType <> 5 then FdbHelp.BeginTrans;
   try
     //1、删除历史数据
     SQL := 'delete from RCK_ACCT_MONTH where TENANT_ID='+inttostr(TENANT_ID)+' and MONTH='+formatDatetime('YYYYMM',RckEnd_Date);
@@ -2074,10 +2074,10 @@ begin
         ' group by TENANT_ID,SHOP_ID,ACCOUNT_ID'
       );
     FdbHelp.ExecSQL(SQL);
-    if iDbType <> 5 then FdbHelp.CommitTrans;
+    //if iDbType <> 5 then FdbHelp.CommitTrans;
     result:=true;
   except
-    if iDbType <> 5 then FdbHelp.RollbackTrans;
+    //if iDbType <> 5 then FdbHelp.RollbackTrans;
     Raise;
   end;
 end;

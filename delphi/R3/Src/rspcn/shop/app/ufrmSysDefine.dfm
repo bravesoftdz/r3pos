@@ -1,8 +1,8 @@
 inherited frmSysDefine: TfrmSysDefine
   Left = 180
-  Top = 146
+  Top = 0
   Caption = #31995#32479#35774#32622
-  ClientHeight = 508
+  ClientHeight = 683
   ClientWidth = 873
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,18 +11,18 @@ inherited frmSysDefine: TfrmSysDefine
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     Width = 873
-    Height = 461
+    Height = 636
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
       Width = 873
-      Height = 461
+      Height = 636
       Align = alClient
       object RzPanel1: TRzPanel
         Left = 0
         Top = 0
         Width = 168
-        Height = 461
+        Height = 636
         Align = alLeft
         BorderOuter = fsNone
         TabOrder = 0
@@ -1472,6 +1472,7 @@ inherited frmSysDefine: TfrmSysDefine
             FFFEFEFCFC00}
           Color = clBtnFace
           TabOrder = 0
+          OnClick = RzBmpButton1Click
         end
         object RzBmpButton2: TRzBmpButton
           Left = 1
@@ -2906,6 +2907,7 @@ inherited frmSysDefine: TfrmSysDefine
             FFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFFE}
           Color = clBtnFace
           TabOrder = 1
+          OnClick = RzBmpButton2Click
         end
         object RzBmpButton3: TRzBmpButton
           Left = 0
@@ -4346,6 +4348,7 @@ inherited frmSysDefine: TfrmSysDefine
             FDFBFBFDFBFBFBFBFBFDFBFBFDFBFAFFFFFE}
           Color = clBtnFace
           TabOrder = 2
+          OnClick = RzBmpButton3Click
         end
         object RzBmpButton4: TRzBmpButton
           Left = 0
@@ -5786,16 +5789,17 @@ inherited frmSysDefine: TfrmSysDefine
             FDFBFBFDFBFBFBFBFBFDFBFBFDFBFAFFFFFE}
           Color = clBtnFace
           TabOrder = 3
+          OnClick = RzBmpButton4Click
         end
       end
       object PageControl: TRzPageControl
         Left = 168
         Top = 0
         Width = 705
-        Height = 461
-        ActivePage = TabSheet1
+        Height = 636
+        ActivePage = TabSheet2
         Align = alClient
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 1
         FixedDimension = 21
         object TabSheet1: TRzTabSheet
@@ -5896,7 +5900,7 @@ inherited frmSysDefine: TfrmSysDefine
             Left = 0
             Top = 121
             Width = 701
-            Height = 263
+            Height = 440
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdBottom]
@@ -6038,19 +6042,19 @@ inherited frmSysDefine: TfrmSysDefine
           end
           object RzPanel9: TRzPanel
             Left = 0
-            Top = 384
+            Top = 561
             Width = 701
-            Height = 52
+            Height = 50
             Align = alBottom
             BorderOuter = fsNone
             Color = clWhite
             TabOrder = 2
             DesignSize = (
               701
-              52)
-            object btnSave: TRzBitBtn
+              50)
+            object btnSaveShopInfo: TRzBitBtn
               Left = 590
-              Top = 15
+              Top = 13
               Width = 70
               Height = 28
               Anchors = [akTop]
@@ -6070,11 +6074,660 @@ inherited frmSysDefine: TfrmSysDefine
               TextShadowDepth = 4
               TabOrder = 0
               ThemeAware = False
-              OnClick = btnSaveClick
+              OnClick = btnSaveShopInfoClick
               NumGlyphs = 2
               Spacing = 5
             end
           end
+        end
+        object TabSheet2: TRzTabSheet
+          Color = 16645629
+          Caption = #31995#32479#21442#25968
+          object RzPanel12: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 701
+            Height = 561
+            Align = alClient
+            BorderOuter = fsFlat
+            BorderSides = [sdBottom]
+            Color = clWhite
+            TabOrder = 0
+            object Bevel1: TBevel
+              Left = 95
+              Top = 32
+              Width = 580
+              Height = 2
+              Shape = bsTopLine
+            end
+            object RzLabel7: TRzLabel
+              Left = 30
+              Top = 25
+              Width = 60
+              Height = 15
+              Caption = #31995#32479#35774#32622
+            end
+            object RzLabel2: TRzLabel
+              Left = 30
+              Top = 280
+              Width = 60
+              Height = 15
+              Caption = #23567#31080#25171#21360
+            end
+            object Bevel2: TBevel
+              Left = 95
+              Top = 287
+              Width = 580
+              Height = 1
+              Shape = bsTopLine
+            end
+            object Bevel3: TBevel
+              Left = 95
+              Top = 467
+              Width = 580
+              Height = 1
+              Shape = bsTopLine
+            end
+            object RzLabel3: TRzLabel
+              Left = 30
+              Top = 460
+              Width = 60
+              Height = 15
+              Caption = #38065#31665#35774#32622
+            end
+            object RzLabel4: TRzLabel
+              Left = 30
+              Top = 170
+              Width = 60
+              Height = 15
+              Caption = #25955#35013#26465#30721
+            end
+            object Bevel4: TBevel
+              Left = 95
+              Top = 177
+              Width = 580
+              Height = 2
+              Shape = bsTopLine
+            end
+            object edtZERO_OUT: TcxCheckBox
+              Left = 45
+              Top = 130
+              Width = 153
+              Height = 23
+              Properties.DisplayUnchecked = 'False'
+              Properties.Caption = #20801#35768#38646#24211#23384#20986#24211
+              TabOrder = 10
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel11: TRzPanel
+              Left = 45
+              Top = 60
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #21551#29992#26085#26399
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 11
+            end
+            object edtUSING_DATE: TcxDateEdit
+              Left = 141
+              Top = 59
+              Width = 145
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              TabOrder = 9
+            end
+            object RzPanel14: TRzPanel
+              Left = 45
+              Top = 420
+              Width = 99
+              Height = 20
+              BorderOuter = fsFlatRounded
+              Caption = #23567#31080#35828#26126
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 12
+            end
+            object edtFOOTER: TcxMemo
+              Left = 141
+              Top = 419
+              Width = 460
+              Height = 22
+              Lines.Strings = (
+                #25964#35831#20445#30041#23567#31080','#20197#20316#21806#21518#20381#25454)
+              TabOrder = 3
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel15: TRzPanel
+              Left = 45
+              Top = 315
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #25171#21360#31471#21475
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 13
+            end
+            object edtTicketPrintComm: TcxComboBox
+              Left = 141
+              Top = 314
+              Width = 145
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #27809#23433#35013
+                'LPT1'
+                'LPT2'
+                'LPT3'
+                'LPT4'
+                'COM1'
+                'COM2'
+                'COM3'
+                'COM4'
+                'COM5'
+                'COM6'
+                'COM7'
+                'COM8'
+                'COM9'
+                'COM10'
+                'COM11'
+                'COM12'
+                'COM13'
+                'COM14'
+                'COM15'
+                'COM16'
+                'COM17'
+                'COM18'
+                'COM19'
+                'COM20'
+                'COM21'
+                'COM22'
+                'COM23'
+                'COM24'
+                'COM25'
+                'Windows'#39537#21160
+                #35843#35797#27169#24335)
+              TabOrder = 7
+            end
+            object RzPanel16: TRzPanel
+              Left = 360
+              Top = 315
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #36208#32440#31354#34892
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 14
+            end
+            object cxNullRow: TcxSpinEdit
+              Left = 456
+              Top = 314
+              Width = 51
+              Height = 23
+              TabOrder = 2
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel17: TRzPanel
+              Left = 45
+              Top = 350
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #25171#21360#32440#23485
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 15
+            end
+            object edtPRINTERWIDTH: TcxComboBox
+              Left = 141
+              Top = 349
+              Width = 145
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                '57.5'#177'0.5mm'
+                '79.5'#177'0.5mm')
+              TabOrder = 4
+            end
+            object RzPanel18: TRzPanel
+              Left = 45
+              Top = 385
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #25171#21360#26631#39064
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 16
+            end
+            object edtTitle: TcxTextEdit
+              Left = 141
+              Top = 384
+              Width = 145
+              Height = 23
+              TabOrder = 8
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel19: TRzPanel
+              Left = 360
+              Top = 385
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #25171#21360#21697#21517
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 17
+            end
+            object edtTICKET_PRINT_NAME: TcxComboBox
+              Left = 456
+              Top = 384
+              Width = 145
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #21697#21517
+                #21697#21517'+'#36135#21495
+                #21697#21517'+'#26465#30721
+                #21697#21517'+'#35268#26684
+                #21697#21517'+'#35268#26684'+'#36135#21495
+                #21697#21517'+'#35268#26684'+'#26465#30721)
+              TabOrder = 5
+            end
+            object RzPanel21: TRzPanel
+              Left = 360
+              Top = 350
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #22797#21046#25171#21360
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 18
+            end
+            object edtTicketCopy: TcxSpinEdit
+              Left = 456
+              Top = 349
+              Width = 51
+              Height = 23
+              TabOrder = 6
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel22: TRzPanel
+              Left = 45
+              Top = 495
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #38065#31665#24320#20851
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 19
+            end
+            object RzPanel23: TRzPanel
+              Left = 360
+              Top = 495
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #38065#31665#36895#29575
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 20
+            end
+            object cxCashBox: TcxComboBox
+              Left = 141
+              Top = 494
+              Width = 100
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #27809#23433#35013
+                #25509#25171#21360#26426
+                'COM1'
+                'COM2'
+                'COM3'
+                'COM4'
+                'COM5'
+                'COM6'
+                'COM7'
+                'COM8'
+                'COM9')
+              TabOrder = 0
+            end
+            object cxCashBoxRate: TcxComboBox
+              Left = 456
+              Top = 494
+              Width = 100
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                '2400'
+                '9600'
+                '115200')
+              TabOrder = 1
+            end
+            object RzPanel25: TRzPanel
+              Left = 45
+              Top = 95
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #21333#20215#23567#25968#20301
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 24
+            end
+            object edtPosDight: TcxSpinEdit
+              Left = 141
+              Top = 94
+              Width = 41
+              Height = 23
+              Properties.MaxValue = 3.000000000000000000
+              TabOrder = 21
+              Value = 2
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel26: TRzPanel
+              Left = 360
+              Top = 95
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #37329#39069#23567#25968#20301
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 25
+            end
+            object edtPOSCALCDIGHT: TcxComboBox
+              Left = 456
+              Top = 94
+              Width = 145
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #20998
+                #35282
+                #20803
+                #21313
+                #30334)
+              TabOrder = 23
+            end
+            object RzPanel27: TRzPanel
+              Left = 360
+              Top = 60
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #36827#20301#27861#21017
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 26
+            end
+            object edtCARRYRULE: TcxComboBox
+              Left = 456
+              Top = 59
+              Width = 145
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #22235#33293#20116#20837
+                #22235#36827#20116#12289#20061#36827#21313
+                #30452#25509#33293#21435#23567#25968#20301
+                #22235#33293#20445#20116#20845#20837
+                #26377#23567#25968#21017#36827#20301)
+              TabOrder = 22
+            end
+            object RzPanel28: TRzPanel
+              Left = 45
+              Top = 205
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #26631' '#35782' '#30721
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 35
+            end
+            object RzPanel29: TRzPanel
+              Left = 45
+              Top = 240
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #21830#21697#20195#30721
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 36
+            end
+            object RzPanel30: TRzPanel
+              Left = 360
+              Top = 205
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #25968#25454#27573'1'
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 37
+            end
+            object RzPanel31: TRzPanel
+              Left = 360
+              Top = 240
+              Width = 99
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #25968#25454#27573'2'
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 38
+            end
+            object RzPanel32: TRzPanel
+              Left = 595
+              Top = 240
+              Width = 60
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #20301#23567#25968
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 39
+            end
+            object RzPanel33: TRzPanel
+              Left = 595
+              Top = 205
+              Width = 60
+              Height = 21
+              BorderOuter = fsFlatRounded
+              Caption = #20301#23567#25968
+              Color = 16185078
+              FlatColor = clMenuHighlight
+              TabOrder = 40
+            end
+            object edtFlag: TcxTextEdit
+              Left = 141
+              Top = 204
+              Width = 82
+              Height = 23
+              TabOrder = 30
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtID: TcxComboBox
+              Left = 141
+              Top = 239
+              Width = 82
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                '1'#20301#25968
+                '2'#20301#25968
+                '3'#20301#25968
+                '4'#20301#25968
+                '5'#20301#25968
+                '6'#20301#25968)
+              TabOrder = 29
+            end
+            object edtID1: TcxComboBox
+              Left = 456
+              Top = 204
+              Width = 58
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #26080
+                #21333#20215
+                #37329#39069
+                #25968#37327)
+              TabOrder = 28
+            end
+            object edtLEN1: TcxComboBox
+              Left = 511
+              Top = 204
+              Width = 65
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                '1'#20301#25968
+                '2'#20301#25968
+                '3'#20301#25968
+                '4'#20301#25968
+                '5'#20301#25968
+                '6'#20301#25968)
+              TabOrder = 31
+            end
+            object edtDEC1: TcxTextEdit
+              Left = 573
+              Top = 204
+              Width = 25
+              Height = 23
+              TabOrder = 34
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtID2: TcxComboBox
+              Left = 456
+              Top = 239
+              Width = 58
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                #26080
+                #21333#20215
+                #37329#39069
+                #25968#37327)
+              TabOrder = 27
+            end
+            object edtLEN2: TcxComboBox
+              Left = 511
+              Top = 239
+              Width = 65
+              Height = 23
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              Properties.Items.Strings = (
+                '1'#20301#25968
+                '2'#20301#25968
+                '3'#20301#25968
+                '4'#20301#25968
+                '5'#20301#25968
+                '6'#20301#25968)
+              TabOrder = 32
+            end
+            object edtDEC2: TcxTextEdit
+              Left = 573
+              Top = 239
+              Width = 25
+              Height = 23
+              TabOrder = 33
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+          end
+          object RzPanel24: TRzPanel
+            Left = 0
+            Top = 561
+            Width = 701
+            Height = 50
+            Align = alBottom
+            BorderOuter = fsNone
+            Color = clWhite
+            TabOrder = 1
+            DesignSize = (
+              701
+              50)
+            object btnSaveSysDefine: TRzBitBtn
+              Left = 590
+              Top = 13
+              Width = 70
+              Height = 28
+              Anchors = [akTop, akRight]
+              Caption = #20445#23384
+              Color = 15461355
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              HighlightColor = 14276036
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 0
+              ThemeAware = False
+              OnClick = btnSaveSysDefineClick
+              NumGlyphs = 2
+              Spacing = 5
+            end
+            object btnDefault: TRzBitBtn
+              Left = 489
+              Top = 13
+              Width = 70
+              Height = 28
+              Anchors = [akTop, akRight]
+              Caption = #40664#35748
+              Color = 15461355
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              HighlightColor = 14276036
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 1
+              ThemeAware = False
+              OnClick = btnDefaultClick
+              NumGlyphs = 2
+              Spacing = 5
+            end
+          end
+        end
+        object TabSheet3: TRzTabSheet
+          Color = 16645629
+          Caption = #29992#25143#31649#29702
+        end
+        object TabSheet4: TRzTabSheet
+          Color = 16645629
+          Caption = #25968#25454#22791#20221#19982#24674#22797
         end
       end
     end
@@ -6108,5 +6761,12 @@ inherited frmSysDefine: TfrmSysDefine
     Params = <>
     Left = 64
     Top = 383
+  end
+  object cdsSysDefine: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 64
+    Top = 415
   end
 end

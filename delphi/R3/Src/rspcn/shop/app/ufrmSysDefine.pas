@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmWebToolForm, ExtCtrls, RzPanel, StdCtrls, RzLabel, RzTabs,
   RzBmpBtn, jpeg, RzButton, cxControls, cxContainer, cxEdit, cxTextEdit,
   ComCtrls, RzPrgres, cxMaskEdit, cxButtonEdit, zrComboBoxList, DB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, msxml;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, msxml,
+  cxDropDownEdit, cxCalendar, cxCheckBox, cxMemo, cxSpinEdit, IniFiles;
 
 type
   TfrmSysDefine = class(TfrmWebToolForm)
@@ -37,24 +38,91 @@ type
     RzPanel8: TRzPanel;
     edtLINKMAN: TcxTextEdit;
     RzPanel9: TRzPanel;
-    btnSave: TRzBitBtn;
+    btnSaveShopInfo: TRzBitBtn;
     RzPanel10: TRzPanel;
     Photo: TImage;
     cdsTenant: TZQuery;
     cdsShopInfo: TZQuery;
+    TabSheet2: TRzTabSheet;
+    TabSheet3: TRzTabSheet;
+    TabSheet4: TRzTabSheet;
+    edtUSING_DATE: TcxDateEdit;
+    edtZERO_OUT: TcxCheckBox;
+    edtFOOTER: TcxMemo;
+    edtTicketPrintComm: TcxComboBox;
+    cxNullRow: TcxSpinEdit;
+    edtTicketCopy: TcxSpinEdit;
+    edtPRINTERWIDTH: TcxComboBox;
+    edtTitle: TcxTextEdit;
+    edtTICKET_PRINT_NAME: TcxComboBox;
+    cxCashBox: TcxComboBox;
+    cxCashBoxRate: TcxComboBox;
+    RzPanel11: TRzPanel;
+    RzPanel12: TRzPanel;
+    RzPanel14: TRzPanel;
+    RzPanel15: TRzPanel;
+    RzPanel16: TRzPanel;
+    RzPanel17: TRzPanel;
+    RzPanel18: TRzPanel;
+    RzPanel19: TRzPanel;
+    RzPanel21: TRzPanel;
+    RzPanel22: TRzPanel;
+    RzPanel23: TRzPanel;
+    Bevel1: TBevel;
+    RzLabel7: TRzLabel;
+    RzLabel2: TRzLabel;
+    Bevel2: TBevel;
+    Bevel3: TBevel;
+    RzLabel3: TRzLabel;
+    RzPanel24: TRzPanel;
+    btnSaveSysDefine: TRzBitBtn;
+    cdsSysDefine: TZQuery;
+    edtPosDight: TcxSpinEdit;
+    edtCARRYRULE: TcxComboBox;
+    edtPOSCALCDIGHT: TcxComboBox;
+    RzPanel25: TRzPanel;
+    RzPanel26: TRzPanel;
+    RzPanel27: TRzPanel;
+    edtID2: TcxComboBox;
+    edtID1: TcxComboBox;
+    edtID: TcxComboBox;
+    edtFlag: TcxTextEdit;
+    edtLEN1: TcxComboBox;
+    edtLEN2: TcxComboBox;
+    edtDEC2: TcxTextEdit;
+    edtDEC1: TcxTextEdit;
+    RzLabel4: TRzLabel;
+    Bevel4: TBevel;
+    RzPanel28: TRzPanel;
+    RzPanel29: TRzPanel;
+    RzPanel30: TRzPanel;
+    RzPanel31: TRzPanel;
+    RzPanel32: TRzPanel;
+    RzPanel33: TRzPanel;
+    btnDefault: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure btnSaveClick(Sender: TObject);
+    procedure btnSaveShopInfoClick(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
+    procedure btnSaveSysDefineClick(Sender: TObject);
+    procedure btnDefaultClick(Sender: TObject);
   private
     FirstLogin:boolean;
     function  CheckRegister:boolean;
     procedure OpenShopInfo(tenantId:string='';shopId:string='');
     procedure GetShopInfo;
-    procedure ReadFromObject;
+    procedure OpenSysDefine;
+    procedure ReadFromObject(PageIndex:integer);
     procedure WriteToObject;
     procedure SaveShopInfo;
     procedure SaveRegisterParams;
+    procedure ReadSysDefine;
+    procedure ReadBarCodeRule;
+    procedure SaveSysDefine;
   public
     AObj:TRecord_;
   end;
@@ -62,7 +130,7 @@ type
 implementation
 
 uses udllGlobal,udataFactory,uTokenFactory,uRspFactory,udllShopUtil,EncDec,ufrmSyncData,
-     uSyncFactory;
+     uSyncFactory,udllFnUtil;
 
 {$R *.dfm}
 
@@ -105,6 +173,8 @@ begin
     RzBmpButton3.Visible := false;
     RzBmpButton4.Visible := false;
   end;
+
+  PageControl.ActivePageIndex := 0;
 end;
 
 procedure TfrmSysDefine.FormShow(Sender: TObject);
@@ -115,7 +185,7 @@ begin
   else
     OpenShopInfo;
 
-  ReadFromObject;
+  ReadFromObject(0);
 end;
 
 procedure TfrmSysDefine.GetShopInfo;
@@ -264,12 +334,16 @@ begin
   AObj.Free;
 end;
 
-procedure TfrmSysDefine.ReadFromObject;
+procedure TfrmSysDefine.ReadFromObject(PageIndex:integer);
 begin
-  if PageControl.ActivePageIndex = 0 then
+  if PageIndex = 0 then
   begin
     AObj.ReadFromDataSet(cdsShopInfo);
     udllShopUtil.ReadFromObject(AObj,self);
+  end;
+  if PageIndex = 1 then
+  begin
+    ReadSysDefine;
   end;
 end;
 
@@ -293,11 +367,10 @@ begin
   end;
 end;
 
-procedure TfrmSysDefine.btnSaveClick(Sender: TObject);
+procedure TfrmSysDefine.btnSaveShopInfoClick(Sender: TObject);
 begin
   inherited;
-  if PageControl.ActivePageIndex = 0 then
-    SaveShopInfo;
+  SaveShopInfo;
 end;
 
 procedure TfrmSysDefine.SaveShopInfo;
@@ -318,14 +391,17 @@ begin
     Raise;
   end;
 
-  if FirstLogin then
+  if FirstLogin or (dataFactory.iDbType <> 5) then
   begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
-      dataFactory.ExecProc('TTenantInitV60',Params);
-    finally
-      Params.Free;
+    if FirstLogin then
+    begin
+      Params := TftParamList.Create(nil);
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.ExecProc('TTenantInitV60',Params);
+      finally
+        Params.Free;
+      end;
     end;
 
     tmpTenant := TZQuery.Create(nil);
@@ -379,7 +455,7 @@ begin
         Raise;
       end;
 
-      dataFactory.ExecProc('TTenantInitV60',Params);
+      if FirstLogin then dataFactory.ExecProc('TTenantInitV60',Params);
     finally
       Params.Free;
       tmpTenant.Free;
@@ -387,29 +463,38 @@ begin
       dataFactory.MoveToDefault;
     end;
 
-    SaveRegisterParams;
-
-    token.tenantId := cdsShopInfo.FieldByName('TENANT_ID').AsString;
-    token.shopId := cdsShopInfo.FieldByName('SHOP_ID').AsString;
-
-    with TfrmSyncData.Create(self) do
+    if FirstLogin then
     begin
-      try
-        hWnd := self.Handle;
-        ShowForm;
-        BringToFront;
-        SyncFactory.SyncBasic;
-      finally
-        Free;
+      SaveRegisterParams;
+      token.tenantId := cdsShopInfo.FieldByName('TENANT_ID').AsString;
+      token.shopId := cdsShopInfo.FieldByName('SHOP_ID').AsString;
+      with TfrmSyncData.Create(self) do
+      begin
+        try
+          hWnd := self.Handle;
+          ShowForm;
+          BringToFront;
+          SyncFactory.SyncBasic;
+        finally
+          Free;
+        end;
       end;
     end;
   end;
 
   OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
 
+  dllGlobal.GetZQueryFromName('CA_TENANT').Close;
+  dllGlobal.GetZQueryFromName('CA_SHOP_INFO').Close;
+
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 
-  if FirstLogin then RzBmpButton2.Visible := true;
+  if FirstLogin then
+  begin
+    RzBmpButton2.Visible := true;
+    RzBmpButton3.Visible := true;
+    RzBmpButton4.Visible := true;
+  end;
 end;
 
 procedure TfrmSysDefine.SaveRegisterParams;
@@ -423,6 +508,317 @@ begin
   finally
     dataFactory.MoveToDefault;
   end;
+end;
+
+procedure TfrmSysDefine.RzBmpButton1Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  if PageControl.ActivePageIndex <> 0 then
+  begin
+    if FirstLogin then
+      GetShopInfo
+    else
+      OpenShopInfo;
+    ReadFromObject(0);
+  end;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 0;
+end;
+
+procedure TfrmSysDefine.RzBmpButton2Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  if PageControl.ActivePageIndex <> 1 then
+  begin
+    OpenSysDefine;
+    ReadFromObject(1);
+  end;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 1;
+end;
+
+procedure TfrmSysDefine.RzBmpButton3Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 2;
+end;
+
+procedure TfrmSysDefine.RzBmpButton4Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 3;
+end;
+
+procedure TfrmSysDefine.SaveSysDefine;
+  procedure SetValue(rs:TZQuery;name,value: string);
+  begin
+    if rs.Locate('DEFINE', name, []) then
+      rs.Edit
+    else
+      rs.Append;
+    rs.FieldByName('DEFINE').AsString := name;
+    rs.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.FieldByName('VALUE').AsString := value;
+    rs.FieldByName('VALUE_TYPE').AsString := '0';
+    rs.Post;
+  end;
+var
+  F:TIniFile;
+  Params:TftParamList;
+  tmpSysDefine:TZQuery;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
+  try
+    F.WriteString('SYS_DEFINE','PRINTNULL',cxNullRow.Value);
+    F.WriteString('SYS_DEFINE','TICKETCOPY',edtTicketCopy.Value);
+    F.WriteString('SYS_DEFINE','PRINTERCOMM',Inttostr(edtTicketPrintComm.ItemIndex));
+    F.WriteString('SYS_DEFINE','TICKET_PRINT_NAME',Inttostr(edtTICKET_PRINT_NAME.ItemIndex));
+    F.WriteString('SYS_DEFINE','FOOTER',EncStr(edtFOOTER.Text,ENC_KEY));
+    F.WriteString('SYS_DEFINE','TITLE',EncStr(edtTitle.Text,ENC_KEY));
+    if edtPRINTERWIDTH.ItemIndex = 1 then
+       F.WriteString('SYS_DEFINE','PRINTERWIDTH','38')
+    else
+       F.WriteString('SYS_DEFINE','PRINTERWIDTH','33');
+    F.WriteString('SYS_DEFINE','CASHBOX',Inttostr(cxCashBox.ItemIndex));
+    F.WriteString('SYS_DEFINE','CASHBOXRATE',cxCashBoxRate.Text);
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+
+  SetValue(cdsSysDefine,'BUIK_FLAG',trim(edtFlag.Text));
+  SetValue(cdsSysDefine,'BUIK_ID',inttostr(edtID.ItemIndex));
+  SetValue(cdsSysDefine,'BUIK_ID1',inttostr(edtID1.ItemIndex));
+  SetValue(cdsSysDefine,'BUIK_ID2',inttostr(edtID2.ItemIndex));
+  SetValue(cdsSysDefine,'BUIK_LEN1',inttostr(edtLEN1.ItemIndex));
+  SetValue(cdsSysDefine,'BUIK_LEN2',inttostr(edtLEN2.ItemIndex));
+  SetValue(cdsSysDefine,'BUIK_DEC1',trim(edtDEC1.Text));
+  SetValue(cdsSysDefine,'BUIK_DEC2',trim(edtDEC2.Text));
+  SetValue(cdsSysDefine,'USING_DATE', FormatDateTime('YYYY-MM-DD', edtUSING_DATE.Date));
+  SetValue(cdsSysDefine,'POSDIGHT', inttostr(edtPosDight.value));
+  SetValue(cdsSysDefine,'POSCALCDIGHT', inttostr(edtPosCalcDight.ItemIndex-2));
+  if edtCARRYRULE.ItemIndex = -1 then
+     SetValue(cdsSysDefine,'CARRYRULE', inttostr(0))
+  else
+     SetValue(cdsSysDefine,'CARRYRULE', inttostr(edtCARRYRULE.ItemIndex));
+  if edtZERO_OUT.Checked then
+     SetValue(cdsSysDefine,'ZERO_OUT', '1')
+  else
+     SetValue(cdsSysDefine,'ZERO_OUT', '0');
+
+  try
+    if not dataFactory.UpdateBatch(cdsSysDefine, 'TSysDefineV60') then
+       cdsSysDefine.CancelUpdates;
+  except
+    on E:Exception do
+    begin
+      cdsSysDefine.CancelUpdates;
+      Raise Exception.Create('保存失败' + E.Message);
+    end;
+  end;
+
+  //保存本地
+  if dataFactory.iDbType <> 5 then
+  begin
+    dataFactory.MoveToSqlite;
+    Params := TftParamList.Create(nil);
+    tmpSysDefine := TZQuery.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
+
+      SetValue(tmpSysDefine,'BUIK_FLAG',trim(edtFlag.Text));
+      SetValue(tmpSysDefine,'BUIK_ID',inttostr(edtID.ItemIndex));
+      SetValue(tmpSysDefine,'BUIK_ID1',inttostr(edtID1.ItemIndex));
+      SetValue(tmpSysDefine,'BUIK_ID2',inttostr(edtID2.ItemIndex));
+      SetValue(tmpSysDefine,'BUIK_LEN1',inttostr(edtLEN1.ItemIndex));
+      SetValue(tmpSysDefine,'BUIK_LEN2',inttostr(edtLEN2.ItemIndex));
+      SetValue(tmpSysDefine,'BUIK_DEC1',trim(edtDEC1.Text));
+      SetValue(tmpSysDefine,'BUIK_DEC2',trim(edtDEC2.Text));
+      SetValue(tmpSysDefine,'USING_DATE', FormatDateTime('YYYY-MM-DD', edtUSING_DATE.Date));
+      SetValue(tmpSysDefine,'POSDIGHT', inttostr(edtPosDight.value));
+      SetValue(tmpSysDefine,'POSCALCDIGHT', inttostr(edtPosCalcDight.ItemIndex-2));
+      if edtCARRYRULE.ItemIndex = -1 then
+         SetValue(tmpSysDefine,'CARRYRULE', inttostr(0))
+      else
+         SetValue(tmpSysDefine,'CARRYRULE', inttostr(edtCARRYRULE.ItemIndex));
+      if edtZERO_OUT.Checked then
+         SetValue(tmpSysDefine,'ZERO_OUT', '1')
+      else
+         SetValue(tmpSysDefine,'ZERO_OUT', '0');
+
+      try
+        if not dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60') then
+          tmpSysDefine.CancelUpdates;
+      except
+        on E:Exception do
+        begin
+          tmpSysDefine.CancelUpdates;
+          Raise Exception.Create('保存失败' + E.Message);
+        end;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      Params.Free;
+      tmpSysDefine.Free;
+    end;
+  end;
+
+  dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
+
+  MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
+end;
+
+procedure TfrmSysDefine.OpenSysDefine;
+var Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.Open(cdsSysDefine, 'TSysDefineV60', Params);
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TfrmSysDefine.btnSaveSysDefineClick(Sender: TObject);
+begin
+  inherited;
+  SaveSysDefine;
+end;
+
+procedure TfrmSysDefine.ReadSysDefine;
+var
+  Define,Value:string;
+  F:TIniFile;
+begin
+  ReadBarCodeRule;
+
+  if cdsSysDefine.Locate('DEFINE','USING_DATE',[]) then
+     edtUSING_DATE.Date := udllFnUtil.FnTime.fnStrtoDate(cdsSysDefine.FieldByName('VALUE').AsString)
+  else
+     edtUSING_DATE.Date := udllFnUtil.FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD',now()));
+
+  if cdsSysDefine.Locate('DEFINE','ZERO_OUT',[]) then
+  begin
+    if cdsSysDefine.FieldByName('VALUE').AsString = '1' then
+       edtZERO_OUT.Checked := true
+    else
+       edtZERO_OUT.Checked := false;
+  end
+  else
+     edtZERO_OUT.Checked := false;
+
+  if cdsSysDefine.Locate('DEFINE','CARRYRULE',[]) then
+     edtCARRYRULE.ItemIndex := StrtoIntDef(cdsSysDefine.FieldByName('VALUE').AsString,0)
+  else
+     edtCARRYRULE.ItemIndex := 0;
+
+  if cdsSysDefine.Locate('DEFINE','POSDIGHT',[]) then
+     edtPosDight.Value := StrtoIntDef(cdsSysDefine.FieldByName('VALUE').AsString,2)
+  else
+     edtPosDight.Value := 2;
+
+  if cdsSysDefine.Locate('DEFINE','POSCALCDIGHT',[]) then
+     edtPosCalcDight.ItemIndex := StrtoIntDef(cdsSysDefine.FieldByName('VALUE').AsString,0) + 2
+  else
+     edtPosCalcDight.ItemIndex := 0;
+
+  //设备参数
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
+  try
+    cxNullRow.Value := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTNULL','0'),0);
+    edtTicketCopy.Value := StrtoIntDef(F.ReadString('SYS_DEFINE','TICKETCOPY','1'),1);
+    edtTicketPrintComm.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTERCOMM','0'),0);
+    edtTICKET_PRINT_NAME.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','TICKET_PRINT_NAME','0'),0);
+    edtFOOTER.Text := DecStr(F.ReadString('SYS_DEFINE','FOOTER',EncStr('敬请保留小票,以作售后依据',ENC_KEY)),ENC_KEY);
+    edtTITLE.Text := DecStr(F.ReadString('SYS_DEFINE','TITLE',EncStr('[企业简称]',ENC_KEY)),ENC_KEY);
+    if F.ReadString('SYS_DEFINE','PRINTERWIDTH','33')='38' then
+       edtPRINTERWIDTH.ItemIndex := 1
+    else
+       edtPRINTERWIDTH.ItemIndex := 0;
+    cxCashBox.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','CASHBOX','0'),0);
+    cxCashBoxRate.ItemIndex := cxCashBoxRate.Properties.Items.IndexOf(F.ReadString('SYS_DEFINE','CASHBOXRATE','0'));
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+end;
+
+procedure TfrmSysDefine.ReadBarCodeRule;
+begin
+  if cdsSysDefine.Locate('DEFINE','BUIK_FLAG',[]) then
+     edtFlag.Text := cdsSysDefine.FieldbyName('VALUE').asString
+  else
+     edtFlag.Text := '';
+  if cdsSysDefine.Locate('DEFINE','BUIK_ID',[]) then
+     edtID.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').asString,-1)
+  else
+     edtID.ItemIndex := -1;
+  if cdsSysDefine.Locate('DEFINE','BUIK_ID1',[]) then
+     edtID1.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+  else
+     edtID1.ItemIndex := -1;
+  if cdsSysDefine.Locate('DEFINE','BUIK_ID2',[]) then
+     edtID2.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+  else
+     edtID2.ItemIndex := -1;
+  if cdsSysDefine.Locate('DEFINE','BUIK_LEN1',[]) then
+     edtLEN1.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+  else
+     edtLEN1.ItemIndex := -1;
+  if cdsSysDefine.Locate('DEFINE','BUIK_LEN2',[]) then
+     edtLEN2.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+  else
+     edtLEN2.ItemIndex := -1;
+  if cdsSysDefine.Locate('DEFINE','BUIK_DEC1',[]) then
+     edtDEC1.Text := cdsSysDefine.FieldbyName('VALUE').AsString
+  else
+     edtDEC1.Text := '';
+  if cdsSysDefine.Locate('DEFINE','BUIK_DEC2',[]) then
+     edtDEC2.Text := cdsSysDefine.FieldbyName('VALUE').AsString
+  else
+     edtDEC2.Text := '';
+end;
+
+procedure TfrmSysDefine.btnDefaultClick(Sender: TObject);
+begin
+  inherited;
+  edtZERO_OUT.checked := false;
+
+  edtPosDight.Value :='2';
+  edtPOSCALCDIGHT.ItemIndex := 0;
+  edtCARRYRULE.ItemIndex := 0;
+
+  edtFlag.Text := '2';
+  edtID.ItemIndex := 5;
+  edtID1.ItemIndex := 2;
+  edtID2.ItemIndex := 0;
+  edtLEN1.ItemIndex := 4;
+  edtLEN2.ItemIndex := -1;
+  edtDEC1.Text := '2';
+  edtDEC2.Text := '2';
+
+  cxNullRow.Value := '0';
+  edtTicketCopy.Value := '1';
+  edtPRINTERWIDTH.ItemIndex := 0;
+  edtTicketPrintComm.ItemIndex := 0;
+  edtTICKET_PRINT_NAME.ItemIndex := 0;
+  edtTITLE.Text := '[企业简称]';
+  edtFOOTER.Text := '敬请保留小票,以作售后依据';
+
+  cxCashBox.ItemIndex := 0;
+  cxCashBoxRate.ItemIndex := -1;
 end;
 
 initialization

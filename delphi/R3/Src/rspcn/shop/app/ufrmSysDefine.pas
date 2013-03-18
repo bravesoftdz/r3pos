@@ -100,6 +100,7 @@ type
     RzPanel32: TRzPanel;
     RzPanel33: TRzPanel;
     btnDefault: TRzBitBtn;
+    btnRspSync: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -110,8 +111,9 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure btnSaveSysDefineClick(Sender: TObject);
     procedure btnDefaultClick(Sender: TObject);
+    procedure btnRspSyncClick(Sender: TObject);
   private
-    FirstLogin:boolean;
+    FFirstLogin:boolean;
     function  CheckRegister:boolean;
     procedure OpenShopInfo(tenantId:string='';shopId:string='');
     procedure GetShopInfo;
@@ -123,14 +125,16 @@ type
     procedure ReadSysDefine;
     procedure ReadBarCodeRule;
     procedure SaveSysDefine;
+    procedure SetFirstLogin(const Value: boolean);
   public
     AObj:TRecord_;
+    property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
   end;
 
 implementation
 
 uses udllGlobal,udataFactory,uTokenFactory,uRspFactory,udllShopUtil,EncDec,ufrmSyncData,
-     uSyncFactory,udllFnUtil;
+     uSyncFactory,udllFnUtil,uRspSyncFactory;
 
 {$R *.dfm}
 
@@ -163,9 +167,6 @@ begin
   edtREGION_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_REGION_INFO');
 
   FirstLogin := not CheckRegister;
-
-  if FirstLogin then RzProgressBar1.Percent := 0
-  else RzProgressBar1.Percent := 99;
 
   if FirstLogin then
   begin
@@ -390,20 +391,9 @@ begin
     dataFactory.CancelBatch;
     Raise;
   end;
-
+{
   if FirstLogin or (dataFactory.iDbType <> 5) then
   begin
-    if FirstLogin then
-    begin
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
-        dataFactory.ExecProc('TTenantInitV60',Params);
-      finally
-        Params.Free;
-      end;
-    end;
-
     tmpTenant := TZQuery.Create(nil);
     tmpShopInfo := TZQuery.Create(nil);
     Params := TftParamList.Create(nil);
@@ -462,13 +452,24 @@ begin
       tmpShopInfo.Free;
       dataFactory.MoveToDefault;
     end;
+  end;
+}
+  if FirstLogin then
+  begin
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
+      dataFactory.ExecProc('TTenantInitV60',Params);
+    finally
+      Params.Free;
+    end;
 
-    if FirstLogin then
-    begin
-      SaveRegisterParams;
-      token.tenantId := cdsShopInfo.FieldByName('TENANT_ID').AsString;
-      token.shopId := cdsShopInfo.FieldByName('SHOP_ID').AsString;
-      with TfrmSyncData.Create(self) do
+    SaveRegisterParams;
+
+    btnRspSync.Click;
+    RspSyncFactory.copyGoodsSort;
+
+    with TfrmSyncData.Create(self) do
       begin
         try
           hWnd := self.Handle;
@@ -479,22 +480,18 @@ begin
           Free;
         end;
       end;
-    end;
-  end;
 
-  OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
+    FirstLogin := false;
+    RzBmpButton2.Visible := true;
+    RzBmpButton3.Visible := true;
+    RzBmpButton4.Visible := true;
+    OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
+  end;
 
   dllGlobal.GetZQueryFromName('CA_TENANT').Close;
   dllGlobal.GetZQueryFromName('CA_SHOP_INFO').Close;
 
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
-
-  if FirstLogin then
-  begin
-    RzBmpButton2.Visible := true;
-    RzBmpButton3.Visible := true;
-    RzBmpButton4.Visible := true;
-  end;
 end;
 
 procedure TfrmSysDefine.SaveRegisterParams;
@@ -508,6 +505,22 @@ begin
   finally
     dataFactory.MoveToDefault;
   end;
+
+  token.userId := cdsShopInfo.FieldbyName('SHOP_ID').AsString;
+  token.account := token.xsmCode;
+  token.tenantId := cdsTenant.FieldbyName('TENANT_ID').AsString;
+  token.tenantName := cdsTenant.FieldbyName('TENANT_NAME').AsString;
+  token.shopId := cdsShopInfo.FieldbyName('SHOP_ID').AsString;
+  token.shopName := cdsShopInfo.FieldbyName('SHOP_NAME').AsString;
+  token.username := cdsShopInfo.FieldbyName('LINKMAN').AsString;
+  token.address := cdsShopInfo.FieldbyName('ADDRESS').AsString;
+  token.xsmCode := cdsShopInfo.FieldbyName('XSM_CODE').AsString;
+  token.xsmPWD := cdsShopInfo.FieldbyName('XSM_PSWD').AsString;
+  token.licenseCode := cdsShopInfo.FieldbyName('LICENSE_CODE').AsString;
+  token.legal := cdsShopInfo.FieldbyName('LINKMAN').AsString;
+  token.mobile := cdsShopInfo.FieldbyName('TELEPHONE').AsString;
+  token.Logined := true;
+  token.online := true;
 end;
 
 procedure TfrmSysDefine.RzBmpButton1Click(Sender: TObject);
@@ -696,9 +709,7 @@ begin
 end;
 
 procedure TfrmSysDefine.ReadSysDefine;
-var
-  Define,Value:string;
-  F:TIniFile;
+var F:TIniFile;
 begin
   ReadBarCodeRule;
 
@@ -758,25 +769,25 @@ end;
 procedure TfrmSysDefine.ReadBarCodeRule;
 begin
   if cdsSysDefine.Locate('DEFINE','BUIK_FLAG',[]) then
-     edtFlag.Text := cdsSysDefine.FieldbyName('VALUE').asString
+     edtFlag.Text := cdsSysDefine.FieldbyName('VALUE').AsString
   else
-     edtFlag.Text := '';
+     edtFlag.Text := '2';
   if cdsSysDefine.Locate('DEFINE','BUIK_ID',[]) then
-     edtID.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').asString,-1)
+     edtID.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,5)
   else
-     edtID.ItemIndex := -1;
+     edtID.ItemIndex := 5;
   if cdsSysDefine.Locate('DEFINE','BUIK_ID1',[]) then
-     edtID1.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+     edtID1.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,2)
   else
-     edtID1.ItemIndex := -1;
+     edtID1.ItemIndex := 2;
   if cdsSysDefine.Locate('DEFINE','BUIK_ID2',[]) then
-     edtID2.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+     edtID2.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,0)
   else
-     edtID2.ItemIndex := -1;
+     edtID2.ItemIndex := 0;
   if cdsSysDefine.Locate('DEFINE','BUIK_LEN1',[]) then
-     edtLEN1.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
+     edtLEN1.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,4)
   else
-     edtLEN1.ItemIndex := -1;
+     edtLEN1.ItemIndex := 4;
   if cdsSysDefine.Locate('DEFINE','BUIK_LEN2',[]) then
      edtLEN2.ItemIndex := StrtoIntDef(cdsSysDefine.FieldbyName('VALUE').AsString,-1)
   else
@@ -784,11 +795,11 @@ begin
   if cdsSysDefine.Locate('DEFINE','BUIK_DEC1',[]) then
      edtDEC1.Text := cdsSysDefine.FieldbyName('VALUE').AsString
   else
-     edtDEC1.Text := '';
+     edtDEC1.Text := '2';
   if cdsSysDefine.Locate('DEFINE','BUIK_DEC2',[]) then
      edtDEC2.Text := cdsSysDefine.FieldbyName('VALUE').AsString
   else
-     edtDEC2.Text := '';
+     edtDEC2.Text := '2';
 end;
 
 procedure TfrmSysDefine.btnDefaultClick(Sender: TObject);
@@ -819,6 +830,37 @@ begin
 
   cxCashBox.ItemIndex := 0;
   cxCashBoxRate.ItemIndex := -1;
+end;
+
+procedure TfrmSysDefine.btnRspSyncClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmSyncData.Create(self) do
+  begin
+    try
+      hWnd := self.Handle;
+      ShowForm;
+      BringToFront;
+      RspSyncFactory.SyncAll;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmSysDefine.SetFirstLogin(const Value: boolean);
+begin
+  FFirstLogin := Value;
+  if Value then
+  begin
+    btnRspSync.Visible := false;
+    RzProgressBar1.Percent := 0;
+  end
+  else
+  begin
+    btnRspSync.Visible := true;
+    RzProgressBar1.Percent := 99;
+  end;
 end;
 
 initialization

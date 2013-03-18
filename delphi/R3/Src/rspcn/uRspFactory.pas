@@ -39,6 +39,11 @@ type
     RspGetShopInfo:TRspFunction;
     RspGetGoodsInfo:TRspFunction;
     RspUploadGoods:TRspFunction;
+    RspDownloadTenants:TRspFunction;
+    RspDownloadServiceLines:TRspFunction;
+    RspDownloadRelations:TRspFunction;
+    RspQueryUnion:TRspFunction;
+    RspListModules:TRspFunction;
     RspDownloadSort:TRspFunction;
   public
     { Public declarations }
@@ -55,6 +60,11 @@ type
     function getShopInfo(tenantId:integer;shopId:string):widestring;
     function getGoodsInfo(barcode:string):widestring;
     function uploadGoods(inXml:widestring):boolean;
+    function downloadTenants(tenantId,flag:integer;timestamp:int64):widestring;
+    function downloadServiceLines(tenantId,flag:integer;timestamp:int64):widestring;
+    function downloadRelations(tenantId,flag:integer;timestamp:int64):widestring;
+    function downloadUnion(tenantId,supTenantId,flag:integer;timestamp:int64):widestring;
+    function downloadModules(tenantId,flag:integer;timestamp:int64):widestring;
     function downloadSort(tenantId,flag:integer;timestamp:int64):widestring;
 
     property timestamp:Int64 read Ftimestamp write Settimestamp;
@@ -71,6 +81,8 @@ var
   rspFactory: TrspFactory;
 
 implementation
+
+uses udataFactory;
 
 const
   pubpwd = 'SaRi0+jf';
@@ -95,6 +107,16 @@ begin
   if @RspGetGoodsInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getGoodsInfo方法');
   @RspUploadGoods := GetProcAddress(RspHandle, 'uploadGoods');
   if @RspUploadGoods=nil then Raise Exception.Create('无效Rsp插件包，没有实现uploadGoods方法');
+  @RspDownloadTenants := GetProcAddress(RspHandle, 'downloadTenants');
+  if @RspDownloadTenants=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadTenants方法');
+  @RspDownloadServiceLines := GetProcAddress(RspHandle, 'downloadServiceLines');
+  if @RspDownloadServiceLines=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadServiceLines方法');
+  @RspDownloadRelations := GetProcAddress(RspHandle, 'downloadRelations');
+  if @RspDownloadRelations=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadRelations方法');
+  @RspQueryUnion := GetProcAddress(RspHandle, 'queryUnion');
+  if @RspQueryUnion=nil then Raise Exception.Create('无效Rsp插件包，没有实现queryUnion方法');
+  @RspListModules := GetProcAddress(RspHandle, 'listModules');
+  if @RspListModules=nil then Raise Exception.Create('无效Rsp插件包，没有实现listModules方法');
   @RspDownloadSort := GetProcAddress(RspHandle, 'downloadSort');
   if @RspDownloadSort=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadSort方法');
 end;
@@ -422,6 +444,160 @@ begin
   result := (code = '1');
 end;
 
+function TrspFactory.downloadTenants(tenantId, flag: integer; timestamp: int64): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(flag);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(timestamp);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('downloadReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\downloadReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+  outxml := RspDownloadTenants(inxml,rspUrl,2);
+
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
+end;
+
+function TrspFactory.downloadServiceLines(tenantId, flag: integer; timestamp: int64): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(flag);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(timestamp);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('downloadReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\downloadReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+  outxml := RspDownloadServiceLines(inxml,rspUrl,2);
+
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
+end;
+
+function TrspFactory.downloadRelations(tenantId, flag: integer; timestamp: int64): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(flag);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(timestamp);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('downloadReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\downloadReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+  outxml := RspDownloadRelations(inxml,rspUrl,2);
+
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
+end;
+
+function TrspFactory.downloadUnion(tenantId, supTenantId, flag: integer; timestamp: int64): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(1);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(timestamp);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('pubUnionQueryReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(tenantId);
+  FindNode(doc,'body\pubUnionQueryReq').appendChild(Node);
+
+  Node := doc.createElement('supTenantId');
+  Node.text := inttostr(supTenantId);
+  FindNode(doc,'body\pubUnionQueryReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+  outxml := RspQueryUnion(inxml,rspUrl,2);
+
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
+end;
+
+function TrspFactory.downloadModules(tenantId, flag: integer; timestamp: int64): widestring;
+var
+  doc:IXMLDomDocument;
+  node:IXMLDOMNode;
+  inxml,outxml:widestring;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(flag);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(timestamp);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('listModulesReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\listModulesReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
+  outxml := RspListModules(inxml,rspUrl,1);
+
+  doc := CreateXML(outxml);
+  CheckRecAck(doc);
+  result := outxml;
+end;
+
 function TrspFactory.downloadSort(tenantId,flag:integer;timestamp:int64):widestring;
 var
   doc:IXMLDomDocument;
@@ -444,7 +620,7 @@ begin
   Node.text := inttostr(tenantId);
   FindNode(doc,'body\downloadReq').appendChild(Node);
 
-  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+  inxml := '<?xml version="1.0" encoding="gb2312"?>'+doc.xml;
   outxml := RspDownloadSort(inxml,rspUrl,2);
   doc := CreateXML(outxml);
   CheckRecAck(doc);

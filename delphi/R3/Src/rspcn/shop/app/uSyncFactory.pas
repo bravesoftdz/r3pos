@@ -30,22 +30,21 @@ type
   end;
 
   TSyncFactory=class
-  private
+  protected
     _Start:Int64;
     FList:TList;
     FStoped: boolean;
     FProHandle:Hwnd;
     FSyncTimeStamp: int64;
     FParams: TftParamList;
+    SubmitRecordNum:integer;
+    FinishIndex:integer;
+    procedure SetTicket;
+    function  GetTicket:Int64;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetStoped(const Value: boolean);
     procedure SetProHandle(const Value: Hwnd);
-  protected
-    SubmitRecordNum:integer;
-    FinishIndex:integer;
-    procedure SetTicket;
-    function GetTicket:Int64;
   public
     Locked:integer;
     constructor Create;
@@ -194,7 +193,7 @@ begin
       begin
         rs.SQL.Text := 'select 1 from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
         rs.Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-        rs.Params.ParamByName('SHOP_ID').AsString := '#';
+        rs.Params.ParamByName('SHOP_ID').AsString := SHOP_ID;
         rs.Params.ParamByName('TABLE_NAME').AsString := tbName;
         dataFactory.Open(rs);
         if rs.IsEmpty then
@@ -392,6 +391,7 @@ begin
   n^.whereStr := '(TENANT_ID = :TENANT_ID or RELATI_ID = :TENANT_ID) and TIME_STAMP > :TIME_STAMP';
   n^.synFlag := 1;
   n^.keyFlag := 1;
+  n^.tableFlag := 0;
   n^.tbtitle := '供应关系';
   FList.Add(n);
 end;

@@ -36,6 +36,7 @@ type
     function getMyDeptId:string;
     function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean;
 
+    function GetProductId:string;
     function GetSFVersion:string;
     function GetVersionFlag:integer;
     function sysDate:TDatetime;
@@ -209,6 +210,17 @@ begin
       end;
   finally
     rs.Free;
+  end;
+end;
+
+function TdllGlobal.GetProductId: string;
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    result := F.ReadString('soft','ProductID','R3_RYC');
+  finally
+    F.Free;
   end;
 end;
 

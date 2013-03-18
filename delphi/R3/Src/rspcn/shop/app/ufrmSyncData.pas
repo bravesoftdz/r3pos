@@ -39,7 +39,7 @@ type
 
 implementation
 
-uses uSyncFactory;
+uses uSyncFactory,uRspSyncFactory;
 
 {$R *.dfm}
 
@@ -80,13 +80,17 @@ procedure TfrmSyncData.FormCreate(Sender: TObject);
 begin
   inherited;
   SyncFactory.ProHandle := self.Handle;
+  RspSyncFactory.ProHandle := self.Handle;
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg') then
      Image1.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg');
 end;
 
 procedure TfrmSyncData.WM_SetCaption(var Message: TMessage);
 begin
-  SetShowTitle('正在同步<'+SyncFactory.GetTableName(Message.WParam)+'>...');
+  if Message.LParam = 0 then
+    SetShowTitle('正在同步<'+SyncFactory.GetTableName(Message.WParam)+'>...')
+  else
+    SetShowTitle('正在同步<'+RspSyncFactory.GetTableName(Message.WParam)+'>...');
 end;
 
 procedure TfrmSyncData.WM_SetMax(var Message: TMessage);

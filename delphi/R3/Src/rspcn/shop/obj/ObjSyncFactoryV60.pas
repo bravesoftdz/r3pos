@@ -29,6 +29,14 @@ type
     property MaxCol:integer read FMaxCol write SetMaxCol;
   end;
 
+  TSyncCaModuleV60=class(TSyncSingleTableV60)
+  public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
 implementation
 
 function TSyncSingleTableV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
@@ -319,8 +327,68 @@ begin
   inherited;
 end;
 
+function TSyncCaModuleV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where PROD_ID=:PROD_ID'),Params);
+end;
+
+function TSyncCaModuleV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+   InitSQL(AGlobal);
+   try
+     FillParams(InsertQuery);
+     AGlobal.ExecQuery(InsertQuery);
+   except
+     on E:Exception do
+        begin
+          if CheckUnique(E.Message) then
+             begin
+               FillParams(UpdateQuery);
+               AGlobal.ExecQuery(UpdateQuery);
+             end
+          else
+             Raise;
+        end;
+   end;
+end;
+
+function TSyncCaModuleV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+  rs :TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    Str := 'select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').asString+''' and TIME_STAMP>'+Params.ParambyName('TIME_STAMP').asString;
+    if Params.ParamByName('SYN_COMM').AsBoolean then
+       Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+    rs.SQL.Text := Str;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger=0 then
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP=0 and PROD_ID='''+Params.ParambyName('PROD_ID').asString+''''
+    else
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').asString+'''';
+    SelectSQL.Text := Str;
+  finally
+    rs.Free;
+  end;
+end;
+
+function TSyncCaModuleV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from CA_MODULE where PROD_ID=:PROD_ID',Params);
+  result := true;
+end;
+
 initialization
   RegisterClass(TSyncSingleTableV60);
+  RegisterClass(TSyncCaModuleV60);
 finalization
   UnRegisterClass(TSyncSingleTableV60);
+  UnRegisterClass(TSyncCaModuleV60);
 end.

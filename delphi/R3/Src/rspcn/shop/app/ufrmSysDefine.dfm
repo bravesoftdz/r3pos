@@ -5816,16 +5816,16 @@ inherited frmSysDefine: TfrmSysDefine
             Color = clWhite
             TabOrder = 0
             object RzLabel1: TRzLabel
-              Left = 161
+              Left = 141
               Top = 41
               Width = 83
               Height = 15
               Caption = #20449#24687#23436#25972#24230':'
             end
             object RzProgressBar1: TRzProgressBar
-              Left = 162
+              Left = 141
               Top = 85
-              Width = 143
+              Width = 145
               Height = 17
               BorderOuter = fsFlat
               BorderWidth = 0
@@ -5835,11 +5835,11 @@ inherited frmSysDefine: TfrmSysDefine
               TotalParts = 0
             end
             object btnChangeImage: TRzBitBtn
-              Left = 71
+              Left = 45
               Top = 79
-              Width = 60
+              Width = 52
               Height = 28
-              Caption = #26356#25442#22836#20687
+              Caption = #26356' '#25442
               Color = 15461355
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
@@ -5879,7 +5879,7 @@ inherited frmSysDefine: TfrmSysDefine
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object RzPanel10: TRzPanel
-              Left = 75
+              Left = 45
               Top = 18
               Width = 50
               Height = 48
@@ -6057,7 +6057,7 @@ inherited frmSysDefine: TfrmSysDefine
               Top = 13
               Width = 70
               Height = 28
-              Anchors = [akTop]
+              Anchors = [akTop, akRight]
               Caption = #20445#23384
               Color = 15461355
               Font.Charset = GB2312_CHARSET
@@ -6075,6 +6075,32 @@ inherited frmSysDefine: TfrmSysDefine
               TabOrder = 0
               ThemeAware = False
               OnClick = btnSaveShopInfoClick
+              NumGlyphs = 2
+              Spacing = 5
+            end
+            object btnRspSync: TRzBitBtn
+              Left = 497
+              Top = 13
+              Width = 70
+              Height = 28
+              Anchors = [akTop, akRight]
+              Caption = #21516#27493#36164#26009
+              Color = 15461355
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              HighlightColor = 14276036
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 1
+              ThemeAware = False
+              OnClick = btnRspSyncClick
               NumGlyphs = 2
               Spacing = 5
             end
@@ -6109,49 +6135,49 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzLabel2: TRzLabel
               Left = 30
-              Top = 280
+              Top = 245
               Width = 60
               Height = 15
               Caption = #23567#31080#25171#21360
             end
             object Bevel2: TBevel
               Left = 95
-              Top = 287
+              Top = 252
               Width = 580
               Height = 1
               Shape = bsTopLine
             end
             object Bevel3: TBevel
               Left = 95
-              Top = 467
+              Top = 432
               Width = 580
               Height = 1
               Shape = bsTopLine
             end
             object RzLabel3: TRzLabel
               Left = 30
-              Top = 460
+              Top = 425
               Width = 60
               Height = 15
               Caption = #38065#31665#35774#32622
             end
             object RzLabel4: TRzLabel
               Left = 30
-              Top = 170
+              Top = 135
               Width = 60
               Height = 15
               Caption = #25955#35013#26465#30721
             end
             object Bevel4: TBevel
               Left = 95
-              Top = 177
+              Top = 142
               Width = 580
               Height = 2
               Shape = bsTopLine
             end
             object edtZERO_OUT: TcxCheckBox
               Left = 45
-              Top = 130
+              Top = 95
               Width = 153
               Height = 23
               Properties.DisplayUnchecked = 'False'
@@ -6180,7 +6206,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel14: TRzPanel
               Left = 45
-              Top = 420
+              Top = 385
               Width = 99
               Height = 20
               BorderOuter = fsFlatRounded
@@ -6191,7 +6217,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtFOOTER: TcxMemo
               Left = 141
-              Top = 419
+              Top = 384
               Width = 460
               Height = 22
               Lines.Strings = (
@@ -6201,7 +6227,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel15: TRzPanel
               Left = 45
-              Top = 315
+              Top = 280
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6212,7 +6238,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtTicketPrintComm: TcxComboBox
               Left = 141
-              Top = 314
+              Top = 279
               Width = 145
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6254,7 +6280,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel16: TRzPanel
               Left = 360
-              Top = 315
+              Top = 280
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6265,7 +6291,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object cxNullRow: TcxSpinEdit
               Left = 456
-              Top = 314
+              Top = 279
               Width = 51
               Height = 23
               TabOrder = 2
@@ -6273,7 +6299,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel17: TRzPanel
               Left = 45
-              Top = 350
+              Top = 315
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6284,7 +6310,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtPRINTERWIDTH: TcxComboBox
               Left = 141
-              Top = 349
+              Top = 314
               Width = 145
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6296,7 +6322,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel18: TRzPanel
               Left = 45
-              Top = 385
+              Top = 350
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6307,7 +6333,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtTitle: TcxTextEdit
               Left = 141
-              Top = 384
+              Top = 349
               Width = 145
               Height = 23
               TabOrder = 8
@@ -6315,7 +6341,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel19: TRzPanel
               Left = 360
-              Top = 385
+              Top = 350
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6326,7 +6352,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtTICKET_PRINT_NAME: TcxComboBox
               Left = 456
-              Top = 384
+              Top = 349
               Width = 145
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6342,7 +6368,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel21: TRzPanel
               Left = 360
-              Top = 350
+              Top = 315
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6353,7 +6379,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtTicketCopy: TcxSpinEdit
               Left = 456
-              Top = 349
+              Top = 314
               Width = 51
               Height = 23
               TabOrder = 6
@@ -6361,7 +6387,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel22: TRzPanel
               Left = 45
-              Top = 495
+              Top = 460
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6372,7 +6398,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel23: TRzPanel
               Left = 360
-              Top = 495
+              Top = 460
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6383,7 +6409,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object cxCashBox: TcxComboBox
               Left = 141
-              Top = 494
+              Top = 459
               Width = 100
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6404,7 +6430,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object cxCashBoxRate: TcxComboBox
               Left = 456
-              Top = 494
+              Top = 459
               Width = 100
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6416,7 +6442,7 @@ inherited frmSysDefine: TfrmSysDefine
               TabOrder = 1
             end
             object RzPanel25: TRzPanel
-              Left = 45
+              Left = 226
               Top = 95
               Width = 99
               Height = 21
@@ -6426,19 +6452,9 @@ inherited frmSysDefine: TfrmSysDefine
               FlatColor = clMenuHighlight
               TabOrder = 24
             end
-            object edtPosDight: TcxSpinEdit
-              Left = 141
-              Top = 94
-              Width = 41
-              Height = 23
-              Properties.MaxValue = 3.000000000000000000
-              TabOrder = 21
-              Value = 2
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
             object RzPanel26: TRzPanel
               Left = 360
-              Top = 95
+              Top = 60
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6449,7 +6465,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtPOSCALCDIGHT: TcxComboBox
               Left = 456
-              Top = 94
+              Top = 59
               Width = 145
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6464,7 +6480,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel27: TRzPanel
               Left = 360
-              Top = 60
+              Top = 95
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6475,7 +6491,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtCARRYRULE: TcxComboBox
               Left = 456
-              Top = 59
+              Top = 94
               Width = 145
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6490,7 +6506,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel28: TRzPanel
               Left = 45
-              Top = 205
+              Top = 170
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6501,7 +6517,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel29: TRzPanel
               Left = 45
-              Top = 240
+              Top = 205
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6512,7 +6528,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel30: TRzPanel
               Left = 360
-              Top = 205
+              Top = 170
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6523,7 +6539,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel31: TRzPanel
               Left = 360
-              Top = 240
+              Top = 205
               Width = 99
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6534,7 +6550,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel32: TRzPanel
               Left = 595
-              Top = 240
+              Top = 205
               Width = 60
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6545,7 +6561,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel33: TRzPanel
               Left = 595
-              Top = 205
+              Top = 170
               Width = 60
               Height = 21
               BorderOuter = fsFlatRounded
@@ -6556,7 +6572,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtFlag: TcxTextEdit
               Left = 141
-              Top = 204
+              Top = 169
               Width = 82
               Height = 23
               TabOrder = 30
@@ -6564,7 +6580,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtID: TcxComboBox
               Left = 141
-              Top = 239
+              Top = 204
               Width = 82
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6580,7 +6596,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtID1: TcxComboBox
               Left = 456
-              Top = 204
+              Top = 169
               Width = 58
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6594,7 +6610,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtLEN1: TcxComboBox
               Left = 511
-              Top = 204
+              Top = 169
               Width = 65
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6610,7 +6626,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtDEC1: TcxTextEdit
               Left = 573
-              Top = 204
+              Top = 169
               Width = 25
               Height = 23
               TabOrder = 34
@@ -6618,7 +6634,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtID2: TcxComboBox
               Left = 456
-              Top = 239
+              Top = 204
               Width = 58
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6632,7 +6648,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtLEN2: TcxComboBox
               Left = 511
-              Top = 239
+              Top = 204
               Width = 65
               Height = 23
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -6648,10 +6664,20 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object edtDEC2: TcxTextEdit
               Left = 573
-              Top = 239
+              Top = 204
               Width = 25
               Height = 23
               TabOrder = 33
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtPosDight: TcxSpinEdit
+              Left = 322
+              Top = 94
+              Width = 41
+              Height = 23
+              Properties.MaxValue = 3.000000000000000000
+              TabOrder = 21
+              Value = 2
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
           end
@@ -6699,7 +6725,7 @@ inherited frmSysDefine: TfrmSysDefine
               Width = 70
               Height = 28
               Anchors = [akTop, akRight]
-              Caption = #40664#35748
+              Caption = #24674#22797#40664#35748
               Color = 15461355
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack

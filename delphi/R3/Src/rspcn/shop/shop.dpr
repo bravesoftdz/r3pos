@@ -49,7 +49,24 @@ uses
   ObjChangeOrderV60 in 'obj\ObjChangeOrderV60.pas',
   ufrmSysDefine in 'app\ufrmSysDefine.pas' {frmSysDefine},
   uAdvFactory in 'uAdvFactory.pas',
-  ufrmGoodsSort in 'app\ufrmGoodsSort.pas' {frmGoodsSort};
+  ufrmGoodsSort in 'app\ufrmGoodsSort.pas' {frmGoodsSort},
+  ufrmCustomer in 'app\ufrmCustomer.pas' {frmCustomer},
+  ufrmDownStockOrder in 'app\ufrmDownStockOrder.pas' {frmDownStockOrder},
+  ufrmShopReport in 'app\ufrmShopReport.pas' {frmShopReport},
+  ufrmReportForm in 'app\ufrmReportForm.pas' {frmReportForm},
+  ufrmSaleReport in 'app\ufrmSaleReport.pas' {frmSaleReport},
+  ufrmStockReport in 'app\ufrmStockReport.pas' {frmStockReport},
+  ufrmStocksCalc in 'app\ufrmStocksCalc.pas' {frmStocksCalc},
+  ufrmProfitReport in 'app\ufrmProfitReport.pas' {frmProfitReport},
+  uSyncFactory in 'app\uSyncFactory.pas',
+  uRspSyncFactory in 'app\uRspSyncFactory.pas',
+  ufrmSyncData in 'app\ufrmSyncData.pas' {frmSyncData},
+  ObjMeaUnitsV60 in 'obj\ObjMeaUnitsV60.pas',
+  ObjShopInfoV60 in 'obj\ObjShopInfoV60.pas',
+  ObjSyncFactoryV60 in 'obj\ObjSyncFactoryV60.pas',
+  ObjSysDefineV60 in 'obj\ObjSysDefineV60.pas',
+  ObjTenantV60 in 'obj\ObjTenantV60.pas',
+  ufrmStorageReport in 'app\ufrmStorageReport.pas' {frmStorageReport};
 
 {$R *.res}
 exports

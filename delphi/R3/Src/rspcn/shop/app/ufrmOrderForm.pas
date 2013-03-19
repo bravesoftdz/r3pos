@@ -8,7 +8,7 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder, pngimage;
+  Menus, RzBorder, pngimage, RzBckgnd;
 
 const
 
@@ -35,12 +35,10 @@ const
 type
   TfrmOrderForm = class(TfrmWebToolForm)
     RzPanel12: TRzPanel;
-    btnNav: TRzBitBtn;
     PageControl: TRzPageControl;
     TabSheet1: TRzTabSheet;
     order_input: TRzPanel;
     RzPanel2: TRzPanel;
-    lblInput: TLabel;
     lblHint: TLabel;
     edtInput: TcxTextEdit;
     help: TRzBmpButton;
@@ -64,16 +62,49 @@ type
     Label20: TLabel;
     Label22: TLabel;
     RzBorder1: TRzBorder;
-    btnPrint: TRzBitBtn;
-    btnPreview: TRzBitBtn;
-    btnExport: TRzBitBtn;
     Timer1: TTimer;
-    RzPanel1: TRzPanel;
-    adv01: TImage;
-    RzPanel17: TRzPanel;
-    adv02: TImage;
+    photoPanel: TRzPanel;
     RzPanel18: TRzPanel;
     lblCaption: TRzLabel;
+    lblInput: TRzLabel;
+    barcode_top: TRzPanel;
+    barcode_panel_top_right: TImage;
+    barcode_panel_top_line: TImage;
+    barcode_botton: TRzPanel;
+    barcode_panel_bottom_line: TImage;
+    barcode_panel_left_line: TImage;
+    barcode_panel_right_line: TImage;
+    footer_bottom: TRzPanel;
+    footer_panel_bottom_left: TImage;
+    footer_panel_bottom_right: TImage;
+    footer_panel_bottom_line: TImage;
+    footerb_panel_left_line: TImage;
+    footerb_panel_right_line: TImage;
+    barcodeb_panel_right_line: TImage;
+    barcodeb_panel_left_line: TImage;
+    footer_top: TRzPanel;
+    footer_panel_top_line: TImage;
+    footer_panel_right_line: TImage;
+    footer_panel_left_line: TImage;
+    barcode_panel_top_left: TImage;
+    adv_top: TRzPanel;
+    adv_photo_top_left: TImage;
+    adv_photo_top_right: TImage;
+    adv_photo_top_line: TImage;
+    adv_bottom: TRzPanel;
+    adv_photo_bottom_left: TImage;
+    adv_photo_bottom_right: TImage;
+    adv_photo_bottom_line: TImage;
+    adv_photo_left_line: TImage;
+    RzPanel1: TRzPanel;
+    adv01: TImage;
+    adv02: TImage;
+    RzPanel17: TRzPanel;
+    adv_photo_right_line: TImage;
+    Image1: TImage;
+    btnPrint: TRzBmpButton;
+    btnNav: TRzBmpButton;
+    btnPreview: TRzBmpButton;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -124,13 +155,13 @@ type
 
     //临时变量
     fndStr:string;
-    RowID:integer;
     Locked:boolean;
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
 
     { Private declarations }
   protected
+    RowID:integer;
     FinputMode: integer;
     FdbState: TDataSetState;
     FinputFlag: integer;
@@ -290,6 +321,8 @@ begin
   PageControl.ActivePageIndex := 0;
   fndGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  DBGridEh1.Columns.BeginUpdate;
+  try
   Column := FindColumn('UNIT_ID');
   rs.First;
   while not rs.Eof do
@@ -298,6 +331,9 @@ begin
       Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       rs.Next;
     end;
+  finally
+    DBGridEh1.Columns.EndUpdate;
+  end;
   advFactory.getAdvPngImage(adv01.Name,adv01.Picture);
   advFactory.getAdvPngImage(adv02.Name,adv02.Picture);
 end;
@@ -2216,7 +2252,7 @@ begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
   begin
-    DBGridEh1.Canvas.Brush.Color := clAqua;
+    DBGridEh1.Canvas.Brush.Color := clWhite;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then
@@ -2315,7 +2351,7 @@ begin
   inherited;
   case PageControl.ActivePageIndex of
   0:begin
-       btnNav.Caption := '查询单据';
+       btnNav.Caption := '历史单据';
        lblCaption.Caption := Caption;
     end;
   1:begin
@@ -2323,10 +2359,6 @@ begin
        lblCaption.Caption := Caption+'列表';
     end;
   end;
-  btnPrint.Visible := (PageControl.ActivePageIndex>0);
-  btnPreview.Visible := (PageControl.ActivePageIndex>0);
-  btnExport.Visible := (PageControl.ActivePageIndex>0);
-
 end;
 
 procedure TfrmOrderForm.Timer1Timer(Sender: TObject);

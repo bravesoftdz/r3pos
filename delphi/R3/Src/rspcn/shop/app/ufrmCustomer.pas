@@ -37,7 +37,7 @@ type
     RzBitBtn4: TRzBitBtn;
     RzBitBtn5: TRzBitBtn;
     RzPanel8: TRzPanel;
-    sortDrop: TcxButtonEdit;
+    priceGrade: TcxButtonEdit;
     RzToolButton3: TRzToolButton;
     RzToolButton4: TRzToolButton;
   private

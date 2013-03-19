@@ -8,38 +8,16 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
-    RzPanel3: TRzPanel;
-    RzPanel4: TRzPanel;
-    btnSave: TRzBitBtn;
-    btnSPrint: TRzBitBtn;
-    btnSPreview: TRzBitBtn;
-    btnNew: TRzBitBtn;
     TabSheet2: TRzTabSheet;
-    edtCLIENT_ID: TzrComboBoxList;
-    edtREMARK: TcxTextEdit;
-    RzPanel5: TRzPanel;
-    RzPanel6: TRzPanel;
-    RzPanel7: TRzPanel;
-    edtSALES_DATE: TcxDateEdit;
-    RzPanel8: TRzPanel;
-    edtGUIDE_USER: TzrComboBoxList;
-    RzPanel9: TRzPanel;
-    edtACCT_MNY: TcxTextEdit;
-    RzPanel10: TRzPanel;
-    edtAGIO_RATE: TcxTextEdit;
-    payment: TRzPanel;
-    edtPAY_TOTAL: TcxTextEdit;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     cdsICGlide: TZQuery;
-    lblNo: TRzLabel;
     Label1: TLabel;
     h11: TLabel;
-    Label21: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -48,7 +26,6 @@ type
     Label7: TLabel;
     Label12: TLabel;
     Label13: TLabel;
-    customerInfo: TLabel;
     RzPanel11: TRzPanel;
     RzPanel13: TRzPanel;
     RzPanel14: TRzPanel;
@@ -74,6 +51,43 @@ type
     RzToolButton4: TRzToolButton;
     RzPanel19: TRzPanel;
     MarqueeStatus: TRzMarqueeStatus;
+    edtBK_CLIENT_ID: TRzPanel;
+    RzPanel21: TRzPanel;
+    RzBackground1: TRzBackground;
+    RzLabel1: TRzLabel;
+    edtCLIENT_ID: TzrComboBoxList;
+    RzPanel5: TRzPanel;
+    RzPanel20: TRzPanel;
+    RzBackground2: TRzBackground;
+    RzLabel2: TRzLabel;
+    edtSALES_DATE: TcxDateEdit;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
+    Image2: TImage;
+    edtREMARK: TcxTextEdit;
+    RzPanel3: TRzPanel;
+    RzPanel4: TRzPanel;
+    RzBackground3: TRzBackground;
+    RzLabel3: TRzLabel;
+    edtGUIDE_USER: TzrComboBoxList;
+    RzPanel6: TRzPanel;
+    RzPanel7: TRzPanel;
+    RzBackground4: TRzBackground;
+    edtACCT_MNY: TcxTextEdit;
+    edtAGIO_RATE: TcxTextEdit;
+    RzPanel8: TRzPanel;
+    RzLabel5: TRzLabel;
+    RzBackground5: TRzBackground;
+    RzLabel4: TRzLabel;
+    RzPanel9: TRzPanel;
+    RzPanel10: TRzPanel;
+    RzBackground6: TRzBackground;
+    payment: TRzLabel;
+    edtPAY_TOTAL: TcxTextEdit;
+    Image3: TImage;
+    Image4: TImage;
+    Image5: TImage;
+    RzLabel6: TRzLabel;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -1247,8 +1261,56 @@ begin
 end;
 
 procedure TfrmSaleOrder.DoHangUp;
+var
+  s:string;
+  mm:TMemoryStream;
 begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...');
+  if edtTable.IsEmpty then Raise Exception.Create('不能挂一张空单据...');
+  AObj.FieldbyName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
+  AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
+  AObj.FieldByName('SALES_TYPE').AsInteger := 4;
+  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+  AObj.FieldByName('CREA_USER').AsString := token.UserID;
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  AObj.FieldByName('CHK_USER').AsString := token.userId;
+  AObj.FieldByName('LOCUS_STATUS').AsString := '3';
+  edtTable.DisableControls;
+  try
+    cdsHeader.Edit;
+    AObj.WriteToDataSet(cdsHeader);
+    cdsHeader.Post;
+    s := formatDatetime('YYYYMMDD_HHNNSS',now());
+    ForceDirectories(ExtractFilePath(ParamStr(0))+'HangUp');
+    mm := TMemoryStream.Create;
+    try
+      mm.Clear;
+      cdsHeader.SaveToStream(mm);
+      mm.Position := 0;
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'HangUp\H'+s+'.dat');
 
+      mm.Clear;
+      edtTable.SaveToStream(mm);
+      mm.Position := 0;
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'HangUp\D'+s+'.dat');
+
+      mm.Clear;
+      edtProperty.SaveToStream(mm);
+      mm.Position := 0;
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'HangUp\P'+s+'.dat');
+    finally
+      mm.Free;
+    end;
+    edtTable.EnableControls;
+  except
+    edtTable.EnableControls;
+    Raise;
+  end;
+  dbState := dsBrowse;
+  MessageBox(Handle,'挂单成功，取单请按F10键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  NewOrder;
 end;
 
 procedure TfrmSaleOrder.DoIsPresent(s:string);
@@ -1307,8 +1369,53 @@ begin
 end;
 
 procedure TfrmSaleOrder.DoPickUp;
+var
+  sr: TSearchRec;
+  FileAttrs: Integer;
+  s,tmp:string;
+  h:TZQuery;
+  mm:TMemoryStream;
 begin
-
+  FileAttrs := 0;
+  FileAttrs := FileAttrs + faAnyFile;
+  s:= '';
+  if FindFirst(ExtractFilePath(ParamStr(0))+'HangUp\*.dat', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        if (sr.Attr and FileAttrs) = sr.Attr then
+        begin
+        if (copy(sr.Name,1,1)='H') then
+           begin
+             tmp := extractFileName(sr.Name);
+             delete(tmp,1,1);
+             if tmp>s then s := tmp;
+           end;
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+  if not edtTable.IsEmpty and (MessageBox(Handle,'是否清空当前录入的所有商品？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+  NewOrder;
+  mm := TMemoryStream.Create;
+  h := TZQuery.Create(nil);
+  try
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'HangUp\H'+s);
+    H.LoadFromStream(mm);
+    AObj.ReadFromDataSet(H,false); 
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'HangUp\D'+s);
+    edtTable.LoadFromStream(mm);
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'HangUp\P'+s);
+    edtProperty.LoadFromStream(mm);
+  finally
+    h.Free;
+    mm.Free;
+  end;
+  edtTable.Last;
+  RowId := edtTable.FieldbyName('SEQNO').AsInteger;
+  DeleteFile(ExtractFilePath(ParamStr(0))+'HangUp\'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'HangUp\D'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'HangUp\P'+s);
+  Calc;
 end;
 
 procedure TfrmSaleOrder.DoSaveOrder;
@@ -1486,9 +1593,6 @@ begin
        lblCaption.Caption := '销售单列表';
     end;
   end;
-  btnPrint.Visible := (PageControl.ActivePageIndex>0);
-  btnPreview.Visible := (PageControl.ActivePageIndex>0);
-  btnExport.Visible := (PageControl.ActivePageIndex>0);
 end;
 
 procedure TfrmSaleOrder.btnNavClick(Sender: TObject);
@@ -1504,9 +1608,9 @@ end;
 procedure TfrmSaleOrder.SetdbState(const Value: TDataSetState);
 begin
   inherited;
-  case Value of
+{  case Value of
   dsBrowse:begin
-       btnSave.Caption := '新增销售单';
+//       btnSave.Caption := '新增销售单';
        btnNew.Caption := '删除';
      end;
   else
@@ -1515,9 +1619,7 @@ begin
        btnNew.Caption := '清空';
      end;
   end;
-  lblNo.Visible := (Value<>dsInsert);
-  if not cdsHeader.IsEmpty then
-  lblNo.Caption := '单号:'+AObj.FieldbyName('GLIDE_NO').AsString;
+  if not cdsHeader.IsEmpty then     }
 end;
 
 procedure TfrmSaleOrder.OpenList;
@@ -1673,16 +1775,7 @@ end;
 
 procedure TfrmSaleOrder.btnNewClick(Sender: TObject);
 begin
-  if dbState = dsBrowse then
-     begin
-        if messageBox(handle,'是否删除当前销售单？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-        open(cdsList.FieldbyName('SALES_ID').AsString);
-        DeleteOrder;
-     end
-  else
-     begin
-        NewOrder;
-     end;
+  NewOrder;
 end;
 
 function TfrmSaleOrder.payCashMny(s:string): boolean;

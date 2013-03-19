@@ -189,7 +189,7 @@ inherited frmCustomer: TfrmCustomer
             BorderOuter = fsFlat
             Color = clWhite
             TabOrder = 6
-            object sortDrop: TcxButtonEdit
+            object priceGrade: TcxButtonEdit
               Tag = -1
               Left = -1
               Top = 2
@@ -467,7 +467,7 @@ inherited frmCustomer: TfrmCustomer
                 RzSpacer1
                 RzToolButton1)
               object RzToolButton1: TRzToolButton
-                Left = 110
+                Left = 116
                 Top = 0
                 Width = 35
                 Cursor = crHandPoint
@@ -499,12 +499,12 @@ inherited frmCustomer: TfrmCustomer
                 ParentFont = False
               end
               object RzSpacer1: TRzSpacer
-                Left = 105
+                Left = 111
                 Top = 0
                 Width = 5
               end
               object RzToolButton3: TRzToolButton
-                Left = 67
+                Left = 73
                 Top = 0
                 Width = 38
                 ShowCaption = True
@@ -520,7 +520,7 @@ inherited frmCustomer: TfrmCustomer
               object RzToolButton4: TRzToolButton
                 Left = 35
                 Top = 0
-                Width = 32
+                Width = 38
                 ShowCaption = True
                 UseToolbarShowCaption = False
                 Caption = #20805#20540

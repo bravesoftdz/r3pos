@@ -790,7 +790,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=''#'' and TABLE_NAME=''#''';
+    rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL';
     rs.Params.AssignValues(Params);
     AGlobal.Open(rs);
     SyncTimeStamp := StrtoInt64Def(rs.Fields[0].asString,0);

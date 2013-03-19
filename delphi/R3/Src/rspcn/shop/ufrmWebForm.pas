@@ -25,7 +25,7 @@ type
   end;
   
 implementation
-uses dllApi;
+uses dllApi,udllShopUtil;
 {$R *.dfm}
 
 { TForm1 }
@@ -99,11 +99,12 @@ constructor TfrmWebForm.Create(AOwner: TComponent);
 begin
   inherited;
   setWindowLong(handle,GWL_EXSTYLE,WS_EX_TOOLWINDOW);
+  Initform(self);
 end;
 
 destructor TfrmWebForm.Destroy;
 begin
-
+  Freeform(self);
   inherited;
 end;
 

@@ -29,7 +29,6 @@ type
     edtGUIDE_USER: TzrComboBoxList;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    lblNo: TRzLabel;
     h11: TLabel;
     Label21: TLabel;
     Label2: TLabel;
@@ -300,7 +299,7 @@ begin
   CheckInvaid;
   WriteToObject(AObj,self);
 
-  AObj.FieldByName('STOCK_TYPE').AsInteger := 4;
+  AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.userId;
   AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
@@ -601,9 +600,7 @@ begin
        btnNew.Caption := 'Çå¿Õ';
      end;
   end;
-  lblNo.Visible := (Value<>dsInsert);
   if not cdsHeader.IsEmpty then
-  lblNo.Caption := 'µ¥ºÅ:'+AObj.FieldbyName('GLIDE_NO').AsString;
 end;
 
 procedure TfrmStockOrder.OpenList;

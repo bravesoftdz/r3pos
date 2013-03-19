@@ -201,7 +201,12 @@ begin
       if form.Components[i] is TcxComboBox then
          AddCbxPickList(TcxComboBox(form.Components[i]));
       if form.Components[i] is TDBGridEh then
-         InitGridPickList(TDBGridEh(form.Components[i]));
+         begin
+           TDBGridEh(form.Components[i]).isDrawRows := true;
+           TDBGridEh(form.Components[i]).Row1Color := TDBGridEh(form.Components[i]).Color;
+           TDBGridEh(form.Components[i]).Row2Color := TDBGridEh(form.Components[i]).FixedColor;
+           InitGridPickList(TDBGridEh(form.Components[i]));
+         end;
     end;
 end;
 //Ï¤·Åform´°Ìå
@@ -219,12 +224,16 @@ begin
   if dbState = dsBrowse then
      begin
        AStyle.BorderStyle := ebsUltraFlat;
-       AStyle.Color := $00F6F6F6;
+       AStyle.Color := $00EBEBEB;
+       AStyle.Edges := [];
+       AStyle.hotTrack := false;
      end
   else
      begin
        AStyle.BorderStyle := ebsUltraFlat;
        AStyle.Color := clWhite;
+       AStyle.Edges := [];
+       AStyle.hotTrack := false;
      end;
 end;
 procedure SetFrameEditStatus(frame:Tframe;dbState:TDataSetState);

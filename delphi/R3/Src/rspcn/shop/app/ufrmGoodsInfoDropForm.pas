@@ -33,8 +33,8 @@ uses udllGlobal;
 
 function TfrmGoodsInfoDropForm.showForm: boolean;
 begin
-  result := inherited showForm;
   DataSource1.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  result := inherited showForm;
 end;
 
 procedure TfrmGoodsInfoDropForm.FormClose(Sender: TObject;

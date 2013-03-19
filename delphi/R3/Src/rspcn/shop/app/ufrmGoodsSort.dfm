@@ -1,4 +1,6 @@
 inherited frmGoodsSort: TfrmGoodsSort
+  Left = 202
+  Top = 227
   Caption = #21830#21697#20998#31867
   ClientHeight = 196
   ClientWidth = 346
@@ -149,7 +151,7 @@ inherited frmGoodsSort: TfrmGoodsSort
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 56
-    Top = 72
+    Left = 65528
+    Top = 104
   end
 end

@@ -61,19 +61,13 @@ type
   TfrmBrowerForm = class(TForm)
     pnlAddressBar: TPanel;
     btnBack: TRzBmpButton;
-    btnForward: TRzBmpButton;
     btnGo: TRzBmpButton;
-    btnStop: TRzBmpButton;
     RzPanel1: TRzPanel;
     IEAddress1: TIEAddress;
     RzPanel2: TRzPanel;
     serachText: TEdit;
-    RzBmpButton1: TRzBmpButton;
     ImageList1: TImageList;
-    RzPanel3: TRzPanel;
-    PageControl1: TRzPageControl;
     RzProgressBar1: TRzProgressBar;
-    toolleft: TRzPanel;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -85,26 +79,30 @@ type
     RzBmpButton4: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     RzTrayIcon1: TRzTrayIcon;
-    Image5: TImage;
     lblUserName: TRzLabel;
-    RzPanel6: TRzPanel;
-    Image6: TImage;
-    Image7: TImage;
-    Image8: TImage;
     Image9: TImage;
-    button_close: TImage;
-    button_active: TImage;
     btnPageClose: TRzBmpButton;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     Timer1: TTimer;
+    tool_left: TImage;
+    RzPanel3: TRzPanel;
+    PageControl1: TRzPageControl;
+    toolleft: TRzPanel;
+    Image12: TImage;
+    Image5: TImage;
     RzBmpButton3: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
     RzBmpButton7: TRzBmpButton;
     RzBmpButton8: TRzBmpButton;
-    Image10: TImage;
-    Image11: TImage;
-    Image12: TImage;
+    RzBmpButton9: TRzBmpButton;
+    RzBmpButton10: TRzBmpButton;
+    Image6: TImage;
+    button_close: TImage;
+    home_down: TImage;
+    button_active: TImage;
+    Image7: TImage;
+    RzBmpButton1: TRzBmpButton;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -201,6 +199,9 @@ type
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
+    function  Install:boolean;
+    
     property Initialized:boolean read FInitialized write SetInitialized;
   end;
 
@@ -246,17 +247,19 @@ begin
       TabEx.url.url := TabEx.EWB.LocationURL;
       PageControl1.ActivePage.Caption := copy(w,1,10);
       TtabSheetEx(PageControl1.ActivePage).button.Caption := PageControl1.ActivePage.Caption;
-      BtnForward.Enabled := TabEx.CanForward;
+     // BtnForward.Enabled := TabEx.CanForward;
       btnBack.Enabled := TabEx.CanBack;
-      btnStop.Enabled := TabEx.CanStop;
+      btnGo.Enabled := true;
+     // btnStop.Enabled := TabEx.CanStop;
     end;
   1:begin
       Caption := TabEx.LocationName+' -- rspcn';
       PageControl1.ActivePage.Caption := TabEx.LocationName;
       TtabSheetEx(PageControl1.ActivePage).button.Caption := PageControl1.ActivePage.Caption;
-      BtnForward.Enabled := false;
+     // BtnForward.Enabled := false;
       btnBack.Enabled := false;
-      btnStop.Enabled := false;
+      btnGo.Enabled := false;
+     // btnStop.Enabled := false;
     end;
   end;
 end;
@@ -342,13 +345,18 @@ end;
 
 procedure TfrmBrowerForm.btnStopClick(Sender: TObject);
 begin
-  btnStop.Enabled := False;
-  (PageControl1.ActivePage as TTabSheetEx).EWB.Stop;
+//  btnStop.Enabled := False;
+//  (PageControl1.ActivePage as TTabSheetEx).EWB.Stop;
 end;
 
 procedure TfrmBrowerForm.btnGoClick(Sender: TObject);
+var
+  tabEx:TTabSheetEx;
 begin
-  LoadUrl(IEAddress1.Text,'');
+  inherited;
+  if PageControl1=nil then Exit;
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  tabEx.EWB.Refresh;
 end;
 
 procedure TfrmBrowerForm.CommandStateChangeEvent(Sender: TObject; Command: Integer; Enable: WordBool);
@@ -386,8 +394,8 @@ end;
 
 procedure TfrmBrowerForm.btnForwardClick(Sender: TObject);
 begin
-  btnForward.Enabled := False;
-  (PageControl1.ActivePage as TTabSheetEx).EWB.GoForward;
+//  btnForward.Enabled := False;
+//  (PageControl1.ActivePage as TTabSheetEx).EWB.GoForward;
 
 
 end;
@@ -904,26 +912,26 @@ procedure TfrmBrowerForm.pageButtonSort;
 var
   i,w:integer;
 begin
-  w := 0;
+  if token.logined then w := tool_left.Width+1 else w := 0;
   btnPageClose.Visible := false;
   for i:=0 to pageControl1.PageCount-1 do
     begin
-      TTabSheetEx(pageControl1.Pages[i]).button.Left := w+1;
-      w := w + TTabSheetEx(pageControl1.Pages[i]).button.Width+1;
+      TTabSheetEx(pageControl1.Pages[i]).button.Left := w;
+      w := w + TTabSheetEx(pageControl1.Pages[i]).button.Width;
       TTabSheetEx(pageControl1.Pages[i]).button.Down := (pageControl1.ActivePageIndex = i);
       if TTabSheetEx(pageControl1.Pages[i]).button.Down then
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite
+         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack
       else
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack;
+         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite;
       if (pageControl1.ActivePageIndex = i) and (i>0) then
          begin
            btnPageClose.Visible := true;
-           btnPageClose.Top := 4;
-           btnPageClose.Left := w - 12;
+           btnPageClose.Top := 5;
+           btnPageClose.Left := w - 20;
            btnPageClose.BringToFront;
          end;
     end;
-
+  pageTab.Repaint;
 end;
 
 procedure TfrmBrowerForm.PageButtonClick(Sender: TObject);
@@ -967,6 +975,17 @@ end;
 
 procedure TfrmBrowerForm.Timer1Timer(Sender: TObject);
 begin
+  if token.logined and not toolleft.Visible and (pageControl1.PageCount>0) then
+     begin
+       TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
+       pageButtonSort;
+     end
+  else
+  if not token.logined and toolleft.Visible and (pageControl1.PageCount>0) then
+     begin
+       TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
+       pageButtonSort;
+     end;
   toolleft.Visible := token.logined;
   if token.logined then
      begin
@@ -1044,17 +1063,17 @@ end;
 
 procedure TfrmBrowerForm.RzBmpButton6Click(Sender: TObject);
 begin
-  LoadXsm('http://test.xinshangmeng.com/ecweb/order/cgtHome.htm','xsmorder',15000);
+  LoadXsm('http://sntest.xinshangmeng.com/ecweb/order/cgtHome.htm','xsmorder',15000);
 end;
 
 procedure TfrmBrowerForm.RzBmpButton7Click(Sender: TObject);
 begin
-  loadurl('rspcn://built-in/app.html','app',15000);
+  LoadXsm('http://txzpt.xinshangmeng.com/t/index.php?app=home&mod=User&act=index','chart',15000);
 end;
 
 procedure TfrmBrowerForm.RzBmpButton8Click(Sender: TObject);
 begin
-  LoadXsm('http://txzpt.xinshangmeng.com/t/index.php?app=home&mod=User&act=index','chart',15000);
+  LoadXsm('http://sntest.xinshangmeng.com/ecweb/order/cgtHome.htm','xsmorder',15000);
 end;
 
 procedure TfrmBrowerForm.RzBmpButton3Click(Sender: TObject);
@@ -1198,6 +1217,17 @@ begin
        if (_url.appFlag>0) and (_url.moduname<>TTabSheetEx(PageControl1.ActivePage).url.moduname) then Exit;
        result := false;
      end;
+end;
+
+function TfrmBrowerForm.Install: boolean;
+begin
+  jsExt :=  TjavaScriptExt.Create;
+  CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
+  CoInternetGetSession(0, InternetSession, 0);
+  InternetSession.RegisterNameSpace(Factory, Class_NSHandler, 'rspcn', 0, nil, 0);
+
+  jsExt := nil;
+  if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
 end;
 
 initialization

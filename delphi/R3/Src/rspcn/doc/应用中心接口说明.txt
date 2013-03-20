@@ -4,7 +4,6 @@
 window.external.getVerify
 说明：调用此方法返回校验码图片的url地址
 
-
 2.登录
 window.external.signIn(username,password,vertify)
 说明：传入用户名，密码及校验码，系统到uc平台认证。
@@ -44,6 +43,15 @@ window.external.getToken(appId)
 	</rspcn> 
         2.加密
         base64(des(令牌,通行密钥))      
+        3.base64编码表
+           EncodeTable: array[0..63] of Char =
+             'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+             'abcdefghijklmnopqrstuvwxyz' +
+             '0123456789+/';
+        4.目前应用中心没有完成开发，前期先指定通行密钥为“SaRi0+jf”
+
+        index.html?token=
+
  
 4.注销
 window.external.signOut

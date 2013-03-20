@@ -22,11 +22,16 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TfrmBrowerForm, frmBrowerForm);
-  if not Runed then
-  begin
-    Application.CreateForm(TUcFactory, UcFactory);
-    Application.CreateForm(TrspFactory, rspFactory);
-    PostMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
-  end;
+  if paramStr(2)='-install' then
+     frmBrowerForm.Install
+  else
+     begin
+       if not Runed then
+       begin
+         Application.CreateForm(TUcFactory, UcFactory);
+         Application.CreateForm(TrspFactory, rspFactory);
+         PostMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
+       end;
+     end;
   Application.Run;
 end.

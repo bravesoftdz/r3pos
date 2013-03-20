@@ -8,49 +8,19 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg;
 
 type
   TfrmStockOrder = class(TfrmOrderForm)
-    RzPanel3: TRzPanel;
-    RzPanel4: TRzPanel;
-    btnSave: TRzBitBtn;
-    btnSPrint: TRzBitBtn;
-    btnSPreview: TRzBitBtn;
-    btnNew: TRzBitBtn;
     TabSheet2: TRzTabSheet;
-    edtCLIENT_ID: TzrComboBoxList;
-    edtREMARK: TcxTextEdit;
-    RzPanel5: TRzPanel;
-    RzPanel6: TRzPanel;
-    RzPanel7: TRzPanel;
-    edtSTOCK_DATE: TcxDateEdit;
-    RzPanel8: TRzPanel;
-    edtGUIDE_USER: TzrComboBoxList;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    h11: TLabel;
-    Label21: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label6: TLabel;
     customerInfo: TLabel;
     RzPanel11: TRzPanel;
-    RzPanel13: TRzPanel;
     RzPanel14: TRzPanel;
     zrComboBoxList1: TzrComboBoxList;
     cxComboBox1: TcxComboBox;
-    RzPanel15: TRzPanel;
-    serachText: TEdit;
-    RzPanel16: TRzPanel;
-    dateFlag: TcxComboBox;
-    Label8: TLabel;
-    btnFind: TRzBitBtn;
     DBGridEh2: TDBGridEh;
-    D1: TcxDateEdit;
-    D2: TcxDateEdit;
-    Label9: TLabel;
     dsList: TDataSource;
     cdsList: TZQuery;
     rowToolNav: TRzToolbar;
@@ -58,7 +28,67 @@ type
     RzToolButton2: TRzToolButton;
     RzToolButton3: TRzToolButton;
     RzSpacer1: TRzSpacer;
-    RzToolButton4: TRzToolButton;
+    RzLabel1: TRzLabel;
+    RzLabel2: TRzLabel;
+    RzLabel3: TRzLabel;
+    edtBK_CLIENT_ID: TRzPanel;
+    RzPanel21: TRzPanel;
+    RzBackground1: TRzBackground;
+    RzLabel6: TRzLabel;
+    edtCLIENT_ID: TzrComboBoxList;
+    edtBK_SALES_DATE: TRzPanel;
+    RzPanel20: TRzPanel;
+    RzBackground2: TRzBackground;
+    RzLabel7: TRzLabel;
+    edtSTOCK_DATE: TcxDateEdit;
+    Image2: TImage;
+    edtBK_GUIDE_USER: TRzPanel;
+    RzPanel4: TRzPanel;
+    RzBackground3: TRzBackground;
+    RzLabel8: TRzLabel;
+    edtGUIDE_USER: TzrComboBoxList;
+    edtREMARK: TcxTextEdit;
+    edtBK_ACCT_MNY: TRzPanel;
+    RzLabel9: TRzLabel;
+    RzPanel7: TRzPanel;
+    RzBackground4: TRzBackground;
+    RzLabel10: TRzLabel;
+    edtACCT_MNY: TcxTextEdit;
+    edtAGIO_RATE: TcxTextEdit;
+    RzPanel8: TRzPanel;
+    RzBackground5: TRzBackground;
+    RzLabel11: TRzLabel;
+    edtBK_PAY_TOTAL: TRzPanel;
+    RzPanel10: TRzPanel;
+    RzBackground6: TRzBackground;
+    payment: TRzLabel;
+    edtPAY_TOTAL: TcxTextEdit;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
+    RzLabel4: TRzLabel;
+    RzLabel5: TRzLabel;
+    RzLabel12: TRzLabel;
+    RzLabel15: TRzLabel;
+    RzLabel14: TRzLabel;
+    RzLabel13: TRzLabel;
+    RzPanel3: TRzPanel;
+    RzPanel6: TRzPanel;
+    RzPanel9: TRzPanel;
+    RzBackground7: TRzBackground;
+    RzLabel17: TRzLabel;
+    dateFlag: TcxComboBox;
+    D1: TcxDateEdit;
+    RzPanel23: TRzPanel;
+    RzPanel22: TRzPanel;
+    RzBackground8: TRzBackground;
+    RzLabel16: TRzLabel;
+    D2: TcxDateEdit;
+    RzPanel5: TRzPanel;
+    Image1: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    serachText: TEdit;
+    btnFind: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -82,6 +112,14 @@ type
     procedure btnNewClick(Sender: TObject);
     procedure DBGridEh1Columns8UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure edtPAY_TOTALPropertiesChange(Sender: TObject);
+    procedure edtACCT_MNYPropertiesChange(Sender: TObject);
+    procedure edtAGIO_RATEPropertiesChange(Sender: TObject);
+    procedure PageControlChange(Sender: TObject);
+    procedure serachTextEnter(Sender: TObject);
+    procedure serachTextExit(Sender: TObject);
+    procedure edtTableAfterDelete(DataSet: TDataSet);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -95,11 +133,17 @@ type
     TotalFee:Currency;
     //结算数量
     TotalAmt:Currency;
+
+    searchTxt:string;
   protected
     procedure SetdbState(const Value: TDataSetState);override;
     procedure SetinputFlag(const Value: integer);override;
+    function  checkPayment:boolean;
+    function  payCashMny(s:string):boolean;
+    procedure DoShowPayment;
     procedure Calc; //2011.06.09判断是否限量
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
+    function getPaymentTitle(pay:string):string;
 
     //快捷健
     function doShortCut(s:string):boolean;override;
@@ -108,6 +152,10 @@ type
     procedure DoGuideUser(s:string);
     procedure DoNewOrder;
     procedure DoSaveOrder;
+    procedure DoHangUp;
+    procedure DoPickUp;
+    procedure DoPayZero(s:string);
+    procedure DoPayInput(s:string;flag:string);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -137,8 +185,6 @@ uses utokenFactory,udllDsUtil,udllShopUtil,udllFnUtil, udllGlobal, udataFactory;
 procedure TfrmStockOrder.Calc;
 var
   r:integer;
-  TotalFee:real;
-  TotalAmt:real;
   Controls:boolean;
 begin
   Controls := edtTable.ControlsDisabled;
@@ -156,6 +202,12 @@ begin
   finally
     edtTable.Locate('SEQNO',r,[]); 
     if not Controls then edtTable.EnableControls;
+  end;
+  if (dbState<>dsBrowse) then
+  begin
+    edtACCT_MNY.Text := formatFloat('#0.00',TotalFee);
+    edtAGIO_RATE.Text := '100.0';
+    DoShowPayment;
   end;
 end;
 
@@ -305,7 +357,7 @@ begin
   AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
-
+  if not checkPayment then Exit;
   dataFactory.BeginBatch;
   try
     cdsHeader.Edit;
@@ -440,23 +492,52 @@ begin
 end;
 
 procedure TfrmStockOrder.SetinputFlag(const Value: integer);
+function getPayment:string;
+var
+  rs:TZQuery;
+begin
+  result := '';
+  rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
+  rs.First;
+  while not rs.Eof do
+    begin
+      if result <> '' then result := result+' ';
+      result := result +rs.FieldbyName('CODE_ID').asString+'.'+rs.FieldbyName('CODE_NAME').AsString;
+      rs.Next;
+    end;
+end;
 begin
   inherited;
   case Value of
+  5:begin
+      FInputFlag := value;
+      lblInput.Caption := '进货类型';
+      lblHint.Caption := '"1.正常进货、2.赠送商品" 请输入类型序号后按 enter 健';
+    end;
   6:begin
       FInputFlag := value;
-      lblInput.Caption := '供 应 商';
-      lblHint.Caption := '请输入完整的"供应商编码或手机号"后按回车';
+      lblInput.Caption := '会员卡号';
+      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按 enter 健';
     end;
   7:begin
       FInputFlag := value;
-      lblInput.Caption := '收 货 员';
-      lblHint.Caption := '请输入收货员员工编号后按回车';
+      lblInput.Caption := '导 购 员';
+      lblHint.Caption := '请输入导购员员工编号后按 enter 健';
     end;
   11:begin
       FInputFlag := value;
       lblInput.Caption := '结算金额';
-      lblHint.Caption := '请直接输入结算金额后按回车健';
+      lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按 enter 健';
+    end;
+  13:begin
+      FInputFlag := value;
+      lblInput.Caption := '输入金额';
+      lblHint.Caption := '请输入支付金额后按"'+getPayment+'"';
+    end;
+  14:begin
+      FInputFlag := value;
+      lblInput.Caption := '实收现金';
+      lblHint.Caption := '请输入实收现金后按 enter 健或+健';
     end;
   end;
 end;
@@ -484,6 +565,14 @@ begin
   if Key = VK_F8 then
      begin
        DoNewOrder;
+     end;
+  if Key = VK_F9 then
+     begin
+       DoHangUp;
+     end;
+  if Key = VK_F10 then
+     begin
+       DoPickUp;
      end;
   if Key = VK_F11 then
      begin
@@ -561,6 +650,9 @@ begin
   7:begin
       if s<>'' then DoGuideUser(s);
     end;
+  11:begin
+      if s<>'' then DoPayZero(s);
+    end;
   else
     result := false;
   end;
@@ -568,11 +660,56 @@ end;
 
 procedure TfrmStockOrder.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  inherited;
-  if char(Key) = '+' then 
+  if char(Key) = '*' then
      begin
        key := #0;
-       DoSaveOrder;
+//       if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then Raise Exception.Create('没有启用收款方式，不能操作此功能'); 
+       inputMode := 1;
+       inputFlag := 13;
+       DoShowPayment;
+       edtInput.selectAll;
+       edtInput.SetFocus;
+     end;
+  if char(Key) = '+' then
+     begin
+       key := #0;
+       if InputFlag=14 then
+          begin
+            try
+              payCashMny(trim(edtInput.Text));
+              DoSaveOrder;
+              InputFlag := 1;
+            finally
+              edtInput.selectAll;
+              edtInput.SetFocus;
+            end;
+          end
+       else
+          begin
+            if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then
+               begin
+                  try
+                    inputMode := 1;
+                    inputFlag := 14;
+                    checkPayment;
+                    payCashMny(trim(edtInput.Text));
+                    DoSaveOrder;
+                  finally
+                    InputFlag := 1;
+                    edtInput.Text := '';
+                    edtInput.selectAll;
+                    edtInput.SetFocus;
+                  end;
+               end
+            else
+               begin
+                  inputMode := 1;
+                  inputFlag := 14;
+                  checkPayment;
+                  edtInput.selectAll;
+                  edtInput.SetFocus;
+               end;
+          end;
      end;
 end;
 
@@ -591,28 +728,25 @@ begin
   inherited;
   case Value of
   dsBrowse:begin
-       btnSave.Caption := '新增进货单';
-       btnNew.Caption := '删除';
+       btnNew.Caption := '新增';
      end;
   else
      begin
-       btnSave.Caption := '保存并新增';
        btnNew.Caption := '清空';
      end;
   end;
-  if not cdsHeader.IsEmpty then
 end;
 
 procedure TfrmStockOrder.OpenList;
 begin
   cdsList.Close;
-  cdsList.SQL.Text := 'select A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,B.CLIENT_NAME,A.STOCK_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
+  cdsList.SQL.Text := 'select A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,B.CLIENT_NAME,A.STOCK_MNY,A.STOCK_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
     'from STK_STOCKORDER A '+
-    'left outer join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+    'left outer join VIW_CLIENTINFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
     'where A.TENANT_ID=:TENANT_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=4 ';
-  if trim(serachText.Text)<>'' then
-    cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(serachText.Text)+'%'' or REMARK like ''%'+trim(serachText.Text)+'%'' or GLIDE_NO like ''%'+trim(serachText.Text)+'%''';
+  if trim(searchTxt)<>'' then
+    cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(searchTxt)+'%'' or REMARK like ''%'+trim(searchTxt)+'%'' or GLIDE_NO like ''%'+trim(searchTxt)+'%''';
   cdsList.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
   cdsList.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsList.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
@@ -626,27 +760,27 @@ begin
   0:begin
       D1.Date := date();
       D2.Date := date();
-      D1.Properties.ReadOnly := true;
-      D2.Properties.ReadOnly := true;
+//      D1.Properties.ReadOnly := true;
+//      D2.Properties.ReadOnly := true;
     end;
   1:begin
       D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',date));
       D2.Date := date();
-      D1.Properties.ReadOnly := true;
-      D2.Properties.ReadOnly := true;
+//      D1.Properties.ReadOnly := true;
+//      D2.Properties.ReadOnly := true;
     end;
   2:begin
       D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',date));
       D2.Date := date();
-      D1.Properties.ReadOnly := true;
-      D2.Properties.ReadOnly := true;
+//      D1.Properties.ReadOnly := true;
+//      D2.Properties.ReadOnly := true;
     end;
   else
     begin
       D1.Date := date();
       D2.Date := date();
-      D1.Properties.ReadOnly := false;
-      D2.Properties.ReadOnly := false;
+//      D1.Properties.ReadOnly := false;
+//      D2.Properties.ReadOnly := false;
     end;
   end;
 end;
@@ -697,7 +831,7 @@ begin
          rowToolNav.SetBounds(ARect.Left+11,ARect.Top+11,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
        end
     else
-       DBGridEh2.Canvas.Brush.Color := clAqua;
+       DBGridEh2.Canvas.Brush.Color := clWhite;
   end;
   DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then
@@ -746,17 +880,8 @@ end;
 
 procedure TfrmStockOrder.btnNewClick(Sender: TObject);
 begin
-  if dbState = dsBrowse then
-     begin
-        if messageBox(handle,'是否删除当前进货单？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-        open(cdsList.FieldbyName('STOCK_ID').AsString);
-        DeleteOrder;
-     end
-  else
-     begin
-        NewOrder;
-     end;
-     
+  if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前销售单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  NewOrder;
 end;
 
 procedure TfrmStockOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
@@ -776,6 +901,490 @@ begin
   if abs(r)>100 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
   AgioToCalc(r);
+end;
+
+function TfrmStockOrder.checkPayment: boolean;
+var
+  fee,allFee,payZero,stockMny:currency;
+begin
+  fee :=
+    AObj.FieldbyName('PAY_B').AsFloat+
+    AObj.FieldbyName('PAY_C').AsFloat+
+    AObj.FieldbyName('PAY_E').AsFloat+
+    AObj.FieldbyName('PAY_F').AsFloat+
+    AObj.FieldbyName('PAY_G').AsFloat+
+    AObj.FieldbyName('PAY_H').AsFloat+
+    AObj.FieldbyName('PAY_I').AsFloat+
+    AObj.FieldbyName('PAY_J').AsFloat;
+  payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
+  stockMny := AObj.FieldbyName('STOCK_MNY').AsFloat;
+  case InputFlag of
+  13,14:begin
+       edtInput.Text := formatFloat('#0.00',(TotalFee-payZero)-fee);
+     end
+  else
+     begin
+        allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
+        if abs(allFee)>abs(TotalFee-payZero) then
+           begin
+             Raise Exception.Create('你已经超额支付了,请正确输入付款金额');
+           end;
+        if fee=0 then
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)
+        else
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee;
+     end;
+  end;
+  result := true;
+end;
+
+procedure TfrmStockOrder.DoShowPayment;
+var
+  fee,payZero,salMny:currency;
+  s,payInfo:string;
+  w:integer;
+begin
+  fee :=
+    AObj.FieldbyName('PAY_B').AsFloat+
+    AObj.FieldbyName('PAY_C').AsFloat+
+    AObj.FieldbyName('PAY_D').AsFloat+
+    AObj.FieldbyName('PAY_E').AsFloat+
+    AObj.FieldbyName('PAY_F').AsFloat+
+    AObj.FieldbyName('PAY_G').AsFloat+
+    AObj.FieldbyName('PAY_H').AsFloat+
+    AObj.FieldbyName('PAY_I').AsFloat+
+    AObj.FieldbyName('PAY_J').AsFloat;
+  payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
+  salMny := AObj.FieldbyName('STOCK_MNY').AsFloat;
+  case dbState of
+  dsBrowse:begin
+      edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
+      if TotalFee<>0 then
+         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
+      else
+         edtAGIO_RATE.Text := '';
+    end;
+  else
+    begin
+      if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
+         edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero))
+      else
+         edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
+      if TotalFee<>0 then
+         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
+      else
+         edtAGIO_RATE.Text := '';
+      if inputFlag in [13,14] then
+         edtInput.Text := formatFloat('#0.00#',(TotalFee-payZero)-(fee+AObj.FieldbyName('PAY_A').AsFloat));
+    end;
+  end;
+  s := '0000000000';
+  w := 0;
+  payInfo := '';
+  if AObj.FieldbyName('PAY_A').asFloat<>0 then
+     begin
+       s[1] := '1';
+       payment.Caption := '现金付款';
+       inc(w);
+       payInfo := payInfo +'现金:'+formatFloat('#0.0#',AObj.FieldbyName('PAY_A').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_B').asFloat<>0 then
+     begin
+       s[2] := '1';
+       payment.Caption := getPaymentTitle('B')+'付款';
+       inc(w);
+       payInfo := payInfo +getPaymentTitle('B')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_B').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_C').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('C')+'付款';
+       inc(w);
+       s[3] := '1';
+       payInfo := payInfo +getPaymentTitle('C')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_C').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_D').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('D')+'欠款';
+       inc(w);
+       s[4] := '1';
+       payInfo := payInfo +getPaymentTitle('D')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_D').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_E').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('E')+'付款';
+       inc(w);
+       s[5] := '1';
+       payInfo := payInfo +getPaymentTitle('E')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_E').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_F').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('F')+'付款';
+       inc(w);
+       s[6] := '1';
+       payInfo := payInfo +getPaymentTitle('F')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_F').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_G').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('G')+'付款';
+       inc(w);
+       s[7] := '1';
+       payInfo := payInfo +getPaymentTitle('G')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_G').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_H').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('H')+'付款';
+       inc(w);
+       s[8] := '1';
+       payInfo := payInfo +getPaymentTitle('H')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_H').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_I').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('I')+'付款';
+       inc(w);
+       s[9] := '1';
+       payInfo := payInfo +getPaymentTitle('I')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_I').asFloat)+ ' ';
+     end;
+  if AObj.FieldbyName('PAY_J').asFloat<>0 then
+     begin
+       payment.Caption := getPaymentTitle('J')+'付款';
+       inc(w);
+       s[10] := '1';
+       payInfo := payInfo +getPaymentTitle('J')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_J').asFloat)+ ' ';
+     end;
+  if w>1 then payment.Caption := '组合付款';
+end;
+
+function TfrmStockOrder.payCashMny(s: string): boolean;
+var
+  r:currency;
+begin
+  try
+    r := strtoFloat(s);
+  except
+    Raise Exception.Create('你输入的实收现金不正确，请重新输入');
+  end;
+  AObj.FieldByName('CASH_MNY').AsFloat := r;
+  FInputFlag :=1;
+  try
+    checkPayment;
+  finally
+    FInputFlag := 14;
+  end;
+end;
+
+procedure TfrmStockOrder.DoHangUp;
+var
+  s:string;
+  mm:TMemoryStream;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...');
+  if edtTable.IsEmpty then Raise Exception.Create('不能挂一张空单据...');
+  AObj.FieldbyName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
+  AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
+  AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
+  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+  AObj.FieldByName('CREA_USER').AsString := token.UserID;
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  AObj.FieldByName('CHK_USER').AsString := token.userId;
+  AObj.FieldByName('LOCUS_STATUS').AsString := '3';
+  edtTable.DisableControls;
+  try
+    cdsHeader.Edit;
+    AObj.WriteToDataSet(cdsHeader);
+    cdsHeader.Post;
+    s := formatDatetime('YYYYMMDD_HHNNSS',now());
+    ForceDirectories(ExtractFilePath(ParamStr(0))+'temp\stock');
+    mm := TMemoryStream.Create;
+    try
+      mm.Clear;
+      cdsHeader.SaveToStream(mm);
+      mm.Position := 0;
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\stock\H'+s+'.dat');
+
+      mm.Clear;
+      edtTable.SaveToStream(mm);
+      mm.Position := 0;
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\stock\D'+s+'.dat');
+
+      mm.Clear;
+      edtProperty.SaveToStream(mm);
+      mm.Position := 0;
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\stock\P'+s+'.dat');
+    finally
+      mm.Free;
+    end;
+    edtTable.EnableControls;
+  except
+    edtTable.EnableControls;
+    Raise;
+  end;
+  dbState := dsBrowse;
+  MessageBox(Handle,'挂单成功，取单请按F10键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  NewOrder;
+end;
+
+procedure TfrmStockOrder.DoPayInput(s, flag: string);
+var
+  r:currency;
+  rs:TZQuery;
+begin
+  try
+    r := strtoFloat(s);
+  except
+    Raise Exception.Create('你输入的支付金额不正确，请重新输入'); 
+  end;
+  rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
+  flag := uppercase(flag);
+  if not rs.Locate('CODE_ID',flag,[]) then Raise Exception.Create('您输入的支付方式不正确,请重新输入');
+  AObj.FieldByName('PAY_'+flag).AsFloat := r;
+  DoShowPayment; 
+end;
+
+procedure TfrmStockOrder.DoPayZero(s: string);
+var
+  mny:currency;
+  IsAgio:boolean;
+begin
+  s := trim(s);
+  IsAgio := (s[1]='/');
+  if IsAgio then delete(s,1,1);
+  s := trim(s);
+  try
+    mny := StrtoFloat(s);
+  except
+    Raise Exception.create('你输入的数值无效无效');
+  end;
+  if IsAgio then
+     if abs(mny)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确')
+  else
+     if abs(mny)>totalfee then Raise Exception.Create('输入的金额过大，请确认是否输入正确');
+  if not IsAgio then
+     begin
+       AObj.FieldbyName('PAY_ZERO').asFloat := totalFee-mny;
+       edtACCT_MNY.Text := formatFloat('#0.00',mny);
+     end
+  else
+     begin
+       AObj.FieldbyName('PAY_ZERO').AsString := formatFloat('#0.00',totalfee-(totalFee*mny/100));
+       edtACCT_MNY.Text := formatFloat('#0.00',totalfee-AObj.FieldbyName('PAY_ZERO').asFloat);
+     end;
+  if TotalFee<>0 then
+     edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-AObj.FieldbyName('PAY_ZERO').asFloat)*100/TotalFee)
+  else
+     edtAGIO_RATE.Text := '';
+  DoShowPayment;
+end;
+
+procedure TfrmStockOrder.DoPickUp;
+var
+  sr: TSearchRec;
+  FileAttrs: Integer;
+  s,tmp:string;
+  h:TZQuery;
+  mm:TMemoryStream;
+begin
+  FileAttrs := 0;
+  FileAttrs := FileAttrs + faAnyFile;
+  s:= '';
+  if FindFirst(ExtractFilePath(ParamStr(0))+'temp\stock\*.dat', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        if (sr.Attr and FileAttrs) = sr.Attr then
+        begin
+        if (copy(sr.Name,1,1)='H') then
+           begin
+             tmp := extractFileName(sr.Name);
+             delete(tmp,1,1);
+             if tmp>s then s := tmp;
+           end;
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+  if not edtTable.IsEmpty and (MessageBox(Handle,'是否清空当前录入的所有商品？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+  NewOrder;
+  mm := TMemoryStream.Create;
+  h := TZQuery.Create(nil);
+  try
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\stock\H'+s);
+    H.LoadFromStream(mm);
+    AObj.ReadFromDataSet(H,false); 
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\stock\D'+s);
+    edtTable.LoadFromStream(mm);
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\stock\P'+s);
+    edtProperty.LoadFromStream(mm);
+  finally
+    h.Free;
+    mm.Free;
+  end;
+  edtTable.Last;
+  RowId := edtTable.FieldbyName('SEQNO').AsInteger;
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\stock\'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\stock\D'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\stock\P'+s);
+  Calc;
+end;
+
+function TfrmStockOrder.getPaymentTitle(pay: string): string;
+var
+  rs:TZQuery;
+begin
+  rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
+  if rs.Locate('CODE_ID',pay,[]) then
+     result := rs.FieldbyName('CODE_NAME').AsString
+  else
+     Raise Exception.Create('不支持的收款方式'); 
+end;
+
+procedure TfrmStockOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (InputFlag = 14) and (Key=#13) then
+  begin
+    try
+      payCashMny(trim(edtInput.Text));
+      DoSaveOrder;
+      InputFlag := 1;
+    finally
+      Key := #0;
+      edtInput.selectAll;
+      edtInput.SetFocus;
+    end;
+  end
+  else
+    inherited;
+  if InputFlag = 13 then
+  begin
+    case Key of
+    'A','B','C','D','E','F','G','H','I','J','a','b','c','d','e','f','g','h','i','j':begin
+           try
+             DoPayInput(trim(edtInput.Text),Key);
+           finally
+             edtInput.selectAll;
+             Key := #0;
+             edtInput.SetFocus;
+           end;
+         end;
+    end;
+  end;
+end;
+procedure TfrmStockOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
+var
+  r:currency;
+begin
+  inherited;
+  if edtPAY_TOTAL.Focused then
+     begin
+       r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
+       AObj.FieldbyName('PAY_A').AsFloat := r;
+       AObj.FieldbyName('PAY_B').AsFloat := 0;
+       AObj.FieldbyName('PAY_C').AsFloat := 0;
+       AObj.FieldbyName('PAY_D').AsFloat := 0;
+       AObj.FieldbyName('PAY_E').AsFloat := 0;
+       AObj.FieldbyName('PAY_F').AsFloat := 0;
+       AObj.FieldbyName('PAY_G').AsFloat := 0;
+       AObj.FieldbyName('PAY_H').AsFloat := 0;
+       AObj.FieldbyName('PAY_I').AsFloat := 0;
+       AObj.FieldbyName('PAY_J').AsFloat := 0;
+       payment.Caption := '现金收款';
+     end;
+end;
+
+procedure TfrmStockOrder.edtACCT_MNYPropertiesChange(Sender: TObject);
+var
+  r,fee:currency;
+begin
+  inherited;
+  if edtACCT_MNY.Focused then
+     begin
+       r := StrtoFloatDef(edtACCT_MNY.Text,0);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-r;
+       if TotalFee<>0 then
+          edtAGIO_RATE.Text := formatFloat('#0.0',r*100/TotalFee)
+       else
+          edtAGIO_RATE.Text := '';
+       fee :=
+        AObj.FieldbyName('PAY_B').AsFloat+
+        AObj.FieldbyName('PAY_C').AsFloat+
+        AObj.FieldbyName('PAY_D').AsFloat+
+        AObj.FieldbyName('PAY_E').AsFloat+
+        AObj.FieldbyName('PAY_F').AsFloat+
+        AObj.FieldbyName('PAY_G').AsFloat+
+        AObj.FieldbyName('PAY_H').AsFloat+
+        AObj.FieldbyName('PAY_I').AsFloat+
+        AObj.FieldbyName('PAY_J').AsFloat;
+       if fee=0 then
+          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+       else
+          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+     end;
+end;
+
+procedure TfrmStockOrder.edtAGIO_RATEPropertiesChange(Sender: TObject);
+var
+  r,fee:currency;
+begin
+  inherited;
+  if edtAGIO_RATE.Focused then
+     begin
+       r := StrtoFloatDef(edtAGIO_RATE.Text,0);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
+       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_ZERO').AsFloat);
+       fee :=
+        AObj.FieldbyName('PAY_B').AsFloat+
+        AObj.FieldbyName('PAY_C').AsFloat+
+        AObj.FieldbyName('PAY_D').AsFloat+
+        AObj.FieldbyName('PAY_E').AsFloat+
+        AObj.FieldbyName('PAY_F').AsFloat+
+        AObj.FieldbyName('PAY_G').AsFloat+
+        AObj.FieldbyName('PAY_H').AsFloat+
+        AObj.FieldbyName('PAY_I').AsFloat+
+        AObj.FieldbyName('PAY_J').AsFloat;
+       if fee=0 then
+          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+       else
+          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+     end;
+end;
+
+procedure TfrmStockOrder.PageControlChange(Sender: TObject);
+begin
+  inherited;
+  case PageControl.ActivePageIndex of
+  0:begin
+       btnNav.Caption := '历史单据';
+       lblCaption.Caption := '进货单';
+    end;
+  1:begin
+       btnNav.Caption := '返回';
+       lblCaption.Caption := '进货单列表';
+    end;
+  end;
+end;
+
+procedure TfrmStockOrder.serachTextEnter(Sender: TObject);
+begin
+  inherited;
+  serachText.Text := searchTxt;
+  serachText.SelectAll;
+
+end;
+
+procedure TfrmStockOrder.serachTextExit(Sender: TObject);
+begin
+  inherited;
+  serachText.Text := serachText.Hint;
+
+end;
+
+procedure TfrmStockOrder.edtTableAfterDelete(DataSet: TDataSet);
+begin
+  inherited;
+  if not edtTable.ControlsDisabled then Calc;
+
 end;
 
 initialization

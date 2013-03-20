@@ -2,9 +2,9 @@ unit udllShopUtil;
 
 interface
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, RzPanel, 
   Dialogs, ExtCtrls, StdCtrls, cxMaskEdit, cxDropDownEdit, cxControls, cxContainer,
-  cxEdit, cxTextEdit,ZDataSet,ZBase,DB,DBGridEh,cxButtonEdit, cxCalendar,cxMemo,zrComboBoxList,
+  cxEdit, cxTextEdit,ZDataSet,ZBase,Grids,DBGrids,DB,DBGridEh,cxButtonEdit, cxCalendar,cxMemo,zrComboBoxList,
   cxRadioGroup,cxSpinEdit,cxCheckBox;
 
 //添加下拉选择框
@@ -194,7 +194,7 @@ begin
 end;
 //初始form窗体
 procedure Initform(form:Tform);
-var i:integer;
+var i,j:integer;
 begin
   for i:=0 to form.ComponentCount -1 do
     begin
@@ -203,10 +203,16 @@ begin
       if form.Components[i] is TDBGridEh then
          begin
            TDBGridEh(form.Components[i]).isDrawRows := true;
+           TDBGridEh(form.Components[i]).Color := $00F6F6F6;
+           TDBGridEh(form.Components[i]).FixedColor := $00FAFAEF;
            TDBGridEh(form.Components[i]).Row1Color := TDBGridEh(form.Components[i]).Color;
            TDBGridEh(form.Components[i]).Row2Color := TDBGridEh(form.Components[i]).FixedColor;
+           TDBGridEh(form.Components[i]).footerColor := $0083E4FF;
+           for j:=0 to TDBGridEh(form.Components[i]).Columns.Count-1 do
+              TDBGridEh(form.Components[i]).Columns[j].Title.Color := $00F0E598;
+           TDBGridEh(form.Components[i]).Options := TDBGridEh(form.Components[i]).Options - [dgRowSelect];
            InitGridPickList(TDBGridEh(form.Components[i]));
-         end;
+         end;                                                            
     end;
 end;
 //悉放form窗体
@@ -381,6 +387,14 @@ begin
   for i:=0 to form.ComponentCount -1 do
     begin
       if form.Components[i].tag <0 then continue;
+      if form.Components[i] is TrzPanel then
+         begin
+           if copy(form.Components[i].Name,1,5)<>'edtBK' then continue; 
+           if dbState = dsBrowse then
+              TrzPanel(form.Components[i]).Color := $00EBEBEB
+           else
+              TrzPanel(form.Components[i]).Color := clWhite;
+         end;
       if form.Components[i] is TcxComboBox then
          begin
            if form.Components[i].Tag = 1 then

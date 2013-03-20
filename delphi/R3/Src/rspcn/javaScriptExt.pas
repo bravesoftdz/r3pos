@@ -53,8 +53,10 @@ type
     function iDbType: Integer;safecall;
     procedure moveToRemote;safecall;
     procedure moveToSqlite;safecall;
-    
+
     function getUserInfo: WideString; safecall;
+    function getLocalJson(const doMain: WideString): WideString; safecall;
+    procedure setLocalJson(const doMain: WideString; const json: WideString); safecall;
   end;
 
 implementation
@@ -116,6 +118,7 @@ begin
              token.username := username;
              token.Logined := true;
              token.online := online;
+             dataFactory.signined := true;
              result := true;
              Exit;
              //if rspFactory.xsmLogin(username,3) then
@@ -210,6 +213,7 @@ begin
     token.mobile := rs.FieldbyName('TELEPHONE').AsString;
     token.Logined := true;
     token.online := online;
+    dataFactory.signined := true;
   finally
     rs.Free;
   end;
@@ -461,7 +465,41 @@ end;
 
 function TjavaScriptExt.getUserInfo: WideString;
 begin
-  result := token.encode;
+  result := token.encodeJson;
+end;
+
+function TjavaScriptExt.getLocalJson(const doMain: WideString): WideString;
+var
+  F:Textfile;
+  s:string;
+begin
+  result := '';
+  AssignFile(F,ExtractFilePath(Application.ExeName)+'temp\'+doMain+'.dat');
+  reset(F);
+  try
+  while not system.eof(F) do
+    begin
+      readln(F,S);
+      result := result + s;
+    end;
+  finally
+    closefile(F);
+  end;
+end;
+
+procedure TjavaScriptExt.setLocalJson(const doMain, json: WideString);
+var
+  F:TextFile;
+  s:string;
+begin
+  AssignFile(F,ExtractFilePath(Application.ExeName)+'temp\'+doMain+'.dat');
+  rewrite(F);
+  try
+    s := json;
+    writeln(F,s);
+  finally
+    closefile(F);
+  end;
 end;
 
 initialization

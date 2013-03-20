@@ -39,8 +39,6 @@ type
     TabSheet1: TRzTabSheet;
     order_input: TRzPanel;
     RzPanel2: TRzPanel;
-    lblHint: TLabel;
-    edtInput: TcxTextEdit;
     help: TRzBmpButton;
     order_header: TRzPanel;
     order_grid: TRzPanel;
@@ -58,9 +56,6 @@ type
     N4: TMenuItem;
     N5: TMenuItem;
     N6: TMenuItem;
-    Label26: TLabel;
-    Label20: TLabel;
-    Label22: TLabel;
     RzBorder1: TRzBorder;
     Timer1: TTimer;
     photoPanel: TRzPanel;
@@ -101,10 +96,18 @@ type
     adv02: TImage;
     RzPanel17: TRzPanel;
     adv_photo_right_line: TImage;
-    Image1: TImage;
     btnPrint: TRzBmpButton;
     btnNav: TRzBmpButton;
     btnPreview: TRzBmpButton;
+    lblModifyUnit: TRzLabel;
+    lblModifyAmt: TRzLabel;
+    lblModifyPrice: TRzLabel;
+    lblHint: TRzLabel;
+    barcode: TRzPanel;
+    barcode_input_left: TImage;
+    barcode_input_right: TImage;
+    barcode_input_line: TImage;
+    edtInput: TcxTextEdit;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -244,7 +247,7 @@ var
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil,
-  udataFactory,uAdvFactory,ufrmInitGoods;
+  udataFactory,uAdvFactory;//,ufrmInitGoods;
 
 {$R *.dfm}
 
@@ -256,11 +259,11 @@ begin
   case inputFlag of
   0:begin
       lblInput.Caption := '输入条码';
-      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
+      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按 enter 健';
     end;
   2:begin
       lblInput.Caption := '单位切换';
-      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按回车';
+      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按 enter 健';
     end;
   3:begin
       lblInput.Caption := '输入数量';
@@ -268,13 +271,13 @@ begin
     end;
   4:begin
       lblInput.Caption := '输入单价';
-      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按回车,赠送当前商品输入0后按回车';
+      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按 enter 健,赠送当前商品输入0后按 enter 健';
     end;
   else
     begin
       FinputFlag := 0;
       lblInput.Caption := '输入条码';
-      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按回车';
+      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按 enter 健';
     end;
   end;
 end;
@@ -334,6 +337,7 @@ begin
   finally
     DBGridEh1.Columns.EndUpdate;
   end;
+  InputFlag := 0;
   advFactory.getAdvPngImage(adv01.Name,adv01.Picture);
   advFactory.getAdvPngImage(adv02.Name,adv02.Picture);
 end;
@@ -346,6 +350,7 @@ end;
 procedure TfrmOrderForm.edtInputExit(Sender: TObject);
 begin
   inherited;
+  edtInput.Text := edtInput.Hint;
 //  inputMode := 0;
 
 end;
@@ -354,6 +359,7 @@ procedure TfrmOrderForm.edtInputEnter(Sender: TObject);
 begin
   inherited;
   inputMode := 1;
+  edtInput.Text := '';
   edtInput.selectAll;
 end;
 
@@ -1576,7 +1582,7 @@ begin
         begin
           if length(fndStr)=13 then //是13位条码
              begin
-               if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
+               {if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
                   begin
                      if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
                      vgds := rs.FieldbyName('GODS_ID').AsString;
@@ -1588,7 +1594,7 @@ begin
                      vBtNo := rs.FieldbyName('BATCH_NO').AsString;
                   end
                else
-                  Exit;
+                  Exit;    }
              end
           else
              begin
@@ -2282,7 +2288,7 @@ procedure TfrmOrderForm.DBGridEh1GetCellParams(Sender: TObject;
   Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
-  inherited;
+  inherited;                                
   if edtTable.FieldbyName('IS_PRESENT').AsInteger<>0 then
      AFont.Color := clRed;
   if edtTable.FieldbyName('AMOUNT').AsFloat < 0 then

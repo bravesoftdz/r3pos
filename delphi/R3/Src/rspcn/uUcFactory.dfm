@@ -9,6 +9,7 @@ object UcFactory: TUcFactory
     MaxLineAction = maException
     ReadTimeout = 0
     AllowCookies = True
+    HandleRedirects = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
     Request.ContentLength = -1

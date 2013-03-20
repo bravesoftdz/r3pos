@@ -188,16 +188,16 @@ end;
 destructor TDLLFactory.Destroy;
 var i:integer;
 begin
-  for i:=0 to FList.Count-1 do
-    begin
-      TObject(FList[i]).Free;
-    end;
-  FList.Free;
   for i:=0 to FDataSets.Count-1 do
     begin
       TObject(FDataSets[i]).Free;
     end;
   FDataSets.Free;
+  for i:=0 to FList.Count-1 do
+    begin
+      TObject(FList[i]).Free;
+    end;
+  FList.Free;
   inherited;
 end;
 

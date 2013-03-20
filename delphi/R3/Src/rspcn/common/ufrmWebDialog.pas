@@ -24,11 +24,25 @@ type
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   end;
 
 implementation
-
+uses udllShopUtil;
 {$R *.dfm}
+
+constructor TfrmWebDialog.Create(AOwner: TComponent);
+begin
+  inherited;
+  Initform(self);
+end;
+
+destructor TfrmWebDialog.Destroy;
+begin
+  Freeform(self);
+  inherited;
+end;
 
 procedure TfrmWebDialog.RzBmpButton2Click(Sender: TObject);
 begin

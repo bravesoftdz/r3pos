@@ -14,7 +14,7 @@ inherited frmWebToolForm: TfrmWebToolForm
     Height = 47
     Align = alTop
     BorderOuter = fsNone
-    Color = 8026232
+    Color = 12040119
     TabOrder = 1
   end
 end

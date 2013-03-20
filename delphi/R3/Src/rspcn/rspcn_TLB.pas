@@ -12,7 +12,7 @@ unit rspcn_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/3/8 18:33:05 from Type Library described below.
+// File generated on 2013/3/20 11:18:14 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\myWork\Delphi\R3\Src\rspcn\rspcn.tlb (1)
@@ -110,6 +110,8 @@ type
     procedure moveToRemote; safecall;
     procedure moveToSqlite; safecall;
     function getUserInfo: WideString; safecall;
+    function getLocalJson(const doMain: WideString): WideString; safecall;
+    procedure setLocalJson(const doMain: WideString; const json: WideString); safecall;
   end;
 
 // *********************************************************************//
@@ -159,6 +161,8 @@ type
     procedure moveToRemote; dispid 237;
     procedure moveToSqlite; dispid 238;
     function getUserInfo: WideString; dispid 239;
+    function getLocalJson(const doMain: WideString): WideString; dispid 240;
+    procedure setLocalJson(const doMain: WideString; const json: WideString); dispid 241;
   end;
 
 // *********************************************************************//

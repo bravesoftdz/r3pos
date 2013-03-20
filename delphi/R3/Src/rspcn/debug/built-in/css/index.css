@@ -1,226 +1,47 @@
 @charset "utf-8";
+a { color:#505050; }
+a:hover { color:#0B67AC; }
+body {height:100%; color:#505050;}
+.main{ background:url(../images/main_bg.jpg) repeat-x; height:650px;}
 
-/* CSS Document */
-html,body {
-	margin: 0px;
-	height: 100%;
-}
+/*左边主页面样式*/
+.left_table{min-width:500px; margin-left:10px; width:95%;}
+.myapp_title{margin:15px 5px 2px 0px;  clear:both;}
+.myapp_ico{ float:left;background:url(../images/app_bg.png) repeat-x; height:242px;}
+.myapp_ico div { width:60px;float:left; margin:15px 10px 30px 10px; text-align:center; font-size:14px;}
+.myapp_ico div img{ width:55px; height:55px; margin:0px 0px 5px 0px;}
+.move{ margin:35px 10px 10px 0px;clear:both; min-height:100px;}
+.link_title{ margin-top:22px; clear:both; margin-bottom:10px; margin-right:0px;}
+.link_box{background:url(../images/link_bg.png) repeat-x; height:77px;}
+.link_left{width:100%; height:77px; margin:0px;}
+.link_right{height:77px; margin-right:0px;}
+.link_text{ float:left;text-align:center; margin:10px 15px 0px 15px;}
+.link_box a{ color:#505050; margin:15px 5px 10px 5px; font-size:14px;line-height:30px; text-align:center; font-weight:lighter;}
+/*左边报表样式*/
+.right_table{min-width:273px; margin-left:0px; margin-right:10px;}
+.message{ width:273px; clear: both;}
+.message_title{ clear:both; margin-top:15px;}
+.total{ width:273px; height:269px; margin-top:5px; background:url(../images/tx_pic.png) no-repeat;}
+.tab_total1{ float:left; margin-left:10px; margin-top:5px;}
+.tab_total2{ float:right; margin-right:10px;margin-top:5px;}
+.total_pic{ clear:both; padding:5px 5px 5px 5px; position:static;}
+.total_bar{ margin-top:10px;}
+.total_text{ font-size:14px; margin-left:10px; margin-top:2px; }
+.total_table{ font-size:12px; border:1px solid #95999B; text-align:center; width:100%; margin-top:10px;}
+.total_talbe tr td{ border:1px solid #95999B; height:22px; line-height:22px;}
+.col{ border:1px solid #95999B; height:22px; line-height:25px;}
 
-body,div,address,blockquote,iframe,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,h5,h6,p,pre,table,caption,th,td,form,legend,fieldset,input,button,select,textarea
-	{
-	margin: 0;
-	padding: 0;
-	font-weight: normal;
-	font-style: normal;
-	font-size: 100%;
-	font-family: inherit;
-}
+/*图片跑马灯效果*/
+#demo {background: #FFF;overflow:hidden;border: 0px dashed #CCC;width:100%;}
+#demo img {border: 0px solid #F2F2F2;}
+#indemo {float: left;width: 800%;}
+#demo1 {float: left;}
+#demo2 {float: left;}
 
-br {
-	line-height: 8px;
-}
+/*无图片的圆角框*/
+.holder2 {color:#000;}
 
-ol,ul,li {
-	list-style: none;
-}
-
-img {
-	border: 0;
-	padding: 0;
-	margin: 0;
-}
-
-a {
-	color: inherit;
-	text-decoration: none;
-}
-
-/*去除float的类*/
-.clearfloat {
-	clear: both;
-	height: 0 !important;
-	font-size: 1px;
-	line-height: 0px;
-}
-
-.font1 {
-	font-size: 20px;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	color: #2791c0;
-}
-
-.font2 {
-	font-size: 14px;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	color: #7b7b7b;
-}
-
-#container {
-	min-width: 1200px;
-	width: 100%;
-	overflow: hidden;
-	margin: 0 auto;
-	height: 100%;
-	background-color: #E9E9E9;
-}
-
-#mid {
-	width: 860px;
-	overflow: hidden;
-	float: left;
-	margin-left: 12px;
-	background-color: #FFFFFF;
-}
-
-#mid #midHeader {
-	padding-left: 10px;
-	height: 60px;
-	line-height: 45px;
-	vertical-align: middle;
-	width: 850px;
-	overflow: hidden;
-	background-color: #E9E9E9;
-}
-
-#mid #application {
-	width: 858px;
-	border: 1px solid #CCCCCC;
-	overflow: hidden;
-	margin-top: 0px;
-	height: auto;
-}
-
-#mid #application li {
-	font-size: 12px;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	color: #494949;
-	width: 85px;
-	height: 90px;
-	float: left;
-	display: inline-block;
-	overflow: hidden;
-	text-align: center;
-	padding-top: 10px;
-}
-
-#adsFla {
-	width: 860px;
-	height: 205px;
-	overflow: hidden;
-	margin-top: 20px;
-	position: absolute;
-	bottom: 125px;
-}
-
-#adsFla .adsDd {
-	border-bottom: 1px solid #cbcbcb;
-	height: 164px;
-	overflow: hidden;
-}
-
-#adsFla .adsDt {
-	height: 38px;
-	overflow: hidden;
-}
-
-#adsFla .adsDt li {
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	font-size: 16px;
-	line-height: 38px;
-	vertical-align: middle;
-	text-align: center;
-	height: 38px;
-	background-color: #e55252;
-	color: #ffffff;
-	border-left: 1px solid #cbcbcb;
-	float: left;
-	display: block;
-	cursor: pointer;
-	padding: 0 20px;
-}
-
-#adsFla .adsDt li.hover {
-	background-color: #992424;
-	color: #ffffff;
-	border-left: 1px solid #cbcbcb;
-	float: left;
-	display: block;
-	cursor: pointer;
-}
-
-#links {
-	width: 860px;
-	overflow: hidden;
-	position: absolute;
-	bottom: 10px;
-}
-
-#links .dt {
-	padding-left: 10px;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	font-size: 14px;
-	color: #606060;
-	height: 25px;
-	line-height: 25px;
-	vertical-align: middle;
-}
-
-#links .dd {
-	width: 858px;
-	border: 1px solid #cbcbcb;
-	height: 65px;
-	overflow: hidden;
-}
-
-#right {
-	float: left;
-	margin-left: 12px;
-	overflow: hidden;
-	background-color: #58595d;
-	height: 100%;
-	position: relative;
-}
-
-#right .rTitle {
-	height: 35px;
-	width: 100%;
-	overflow: hidden;
-	text-align: center;
-	background-color: #3a97c5;
-	line-height: 35px;
-	vertical-align: middle;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	font-size: 16px;
-	color: #ffffff;
-}
-
-#right .rTip {
-	width: 100%;
-	text-align: center;
-	vertical-align: middle;
-}
-
-#right .rLine {
-	margin-top: 30px;
-	height: 35px;
-	width: 100%;
-	overflow: hidden;
-	text-align: center;
-	background-color: #ed8900;
-	line-height: 35px;
-	vertical-align: middle;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	font-size: 16px;
-	color: #ffffff;
-	height: 35px;
-	margin-top: 30px;
-}
-
-.tipfont {
-	font-size: 18px;
-	font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";
-	color: #FFFFEE;
-	font-size: 22px;
-	display: inline-block;
-	vertical-align: middle;
-}
+.b1 {height:1px; font-size:1px; overflow:hidden; display:block; background:#aaa; margin:0 5px;}
+.b2 {height:1px; font-size:1px; overflow:hidden; display:block; background:#fff; border-right:2px solid #aaa; border-left:2px solid #aaa; margin:0 3px;}
+.b3 {height:1px; font-size:1px; overflow:hidden; display:block; background:#fff; border-right:1px solid #aaa; border-left:1px solid #aaa; margin:0 2px;}
+.b4 {height:2px; font-size:1px; overflow:hidden; display:block; background:#fff; border-right:1px solid #aaa; border-left:1px solid #aaa; margin:0 1px;}

@@ -8,13 +8,10 @@ uses
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase,ObjCommon,
-  zrComboBoxList, RzBorder, cxCheckBox;
+  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd;
 
 type
   TfrmGoodsStorage = class(TfrmWebToolForm)
-    lblCaption: TRzLabel;
-    RzPanel15: TRzPanel;
-    btnNav: TRzBitBtn;
     RzPanel11: TRzPanel;
     RzPanel13: TRzPanel;
     RzPanel2: TRzPanel;
@@ -23,13 +20,7 @@ type
     RzPanel5: TRzPanel;
     rzTree: TRzTreeView;
     RzPanel6: TRzPanel;
-    RzBitBtn1: TRzBitBtn;
     btnNewSort: TRzBitBtn;
-    btnPrint: TRzBitBtn;
-    btnPreview: TRzBitBtn;
-    btnAMOUNT: TRzBitBtn;
-    RzBitBtn4: TRzBitBtn;
-    RzBitBtn5: TRzBitBtn;
     RzPanel1: TRzPanel;
     sortDrop: TcxButtonEdit;
     dsList: TDataSource;
@@ -40,45 +31,8 @@ type
     RzToolButton1: TRzToolButton;
     RzToolButton2: TRzToolButton;
     RzSpacer1: TRzSpacer;
-    serachText: TEdit;
     EditPanel: TRzPanel;
-    RzPanel9: TRzPanel;
-    edtGODS_CODE: TcxTextEdit;
-    RzPanel10: TRzPanel;
-    edtGODS_NAME: TcxTextEdit;
-    RzPanel12: TRzPanel;
-    RzPanel14: TRzPanel;
-    RzPanel16: TRzPanel;
-    edtNEW_INPRICE: TcxTextEdit;
-    RzPanel17: TRzPanel;
-    edtNEW_OUTPRICE: TcxTextEdit;
-    edtSHOP_NEW_OUTPRICE: TcxTextEdit;
-    RzPanel18: TRzPanel;
-    RzPanel19: TRzPanel;
-    edtGODS_SPELL: TcxTextEdit;
-    edtSORT_ID1: TcxButtonEdit;
-    RzPanel20: TRzPanel;
-    edtBARCODE: TcxTextEdit;
-    edtCALC_UNITS: TzrComboBoxList;
-    RzPanel21: TRzPanel;
-    edtAMOUNT: TcxTextEdit;
-    edtLOWER_AMOUNT: TcxTextEdit;
-    RzPanel22: TRzPanel;
-    RzPanel23: TRzPanel;
-    edtUPPER_AMOUNT: TcxTextEdit;
     RzBorder1: TRzBorder;
-    edtUNIT_ID_USING: TcxCheckBox;
-    RzBitBtn6: TRzBitBtn;
-    RzBitBtn7: TRzBitBtn;
-    unitPanel: TRzPanel;
-    RzPanel25: TRzPanel;
-    edtSMALL_UNITS: TzrComboBoxList;
-    RzPanel26: TRzPanel;
-    edtSMALLTO_CALC: TcxTextEdit;
-    RzPanel27: TRzPanel;
-    edtBIG_UNITS: TzrComboBoxList;
-    RzPanel28: TRzPanel;
-    edtBIGTO_CALC: TcxTextEdit;
     cdsGoodsInfo: TZQuery;
     cdsHeader: TZQuery;
     cdsGodsRelation: TZQuery;
@@ -86,11 +40,114 @@ type
     cdsGoodsExt: TZQuery;
     cdsBarcode: TZQuery;
     cdsDetail: TZQuery;
+    lblCaption: TRzLabel;
+    RzPanel8: TRzPanel;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton3: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzPanel15: TRzPanel;
+    Image1: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    serachText: TEdit;
+    btnFind: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    RzBmpButton5: TRzBmpButton;
+    barcode_top: TRzPanel;
+    barcode_panel_top_left: TImage;
+    barcode_panel_top_right: TImage;
+    barcode_panel_top_line: TImage;
+    barcode_panel_left_line: TImage;
+    barcode_panel_right_line: TImage;
+    barcode_botton: TRzPanel;
+    barcode_panel_bottom_line: TImage;
+    barcodeb_panel_right_line: TImage;
+    barcodeb_panel_left_line: TImage;
+    btnAMOUNT: TRzBmpButton;
+    RzBmpButton6: TRzBmpButton;
+    RzBmpButton7: TRzBmpButton;
+    edtBK_BARCODE: TRzPanel;
+    RzPanel24: TRzPanel;
+    RzBackground1: TRzBackground;
+    RzLabel6: TRzLabel;
+    edtBARCODE: TcxTextEdit;
+    edtBK_GODS_CODE: TRzPanel;
+    RzPanel29: TRzPanel;
+    RzBackground2: TRzBackground;
+    RzLabel1: TRzLabel;
+    edtGODS_CODE: TcxTextEdit;
+    edtBK_GODS_NAME: TRzPanel;
+    RzPanel30: TRzPanel;
+    RzBackground3: TRzBackground;
+    RzLabel2: TRzLabel;
+    edtGODS_NAME: TcxTextEdit;
+    RzPanel31: TRzPanel;
+    RzBackground8: TRzBackground;
+    RzLabel16: TRzLabel;
+    edtGODS_SPELL: TcxTextEdit;
+    edtBK_SORT_ID1: TRzPanel;
+    RzPanel19: TRzPanel;
+    RzBackground4: TRzBackground;
+    RzLabel3: TRzLabel;
+    edtSORT_ID1: TcxButtonEdit;
+    edtBK_CALC_UNITS: TRzPanel;
+    RzPanel32: TRzPanel;
+    RzBackground5: TRzBackground;
+    RzLabel4: TRzLabel;
+    edtCALC_UNITS: TzrComboBoxList;
+    edtUNIT_ID_USING: TcxCheckBox;
+    edtBK_SMALL_UNITS: TRzPanel;
+    RzPanel33: TRzPanel;
+    RzBackground6: TRzBackground;
+    RzLabel5: TRzLabel;
+    RzPanel34: TRzPanel;
+    RzBackground7: TRzBackground;
+    RzLabel7: TRzLabel;
+    edtSMALL_UNITS: TzrComboBoxList;
+    edtSMALLTO_CALC: TcxTextEdit;
+    edtBK_BIG_UNITS: TRzPanel;
+    RzPanel35: TRzPanel;
+    RzBackground9: TRzBackground;
+    RzLabel8: TRzLabel;
+    RzPanel36: TRzPanel;
+    RzBackground10: TRzBackground;
+    RzLabel9: TRzLabel;
+    edtBIG_UNITS: TzrComboBoxList;
+    edtBIGTO_CALC: TcxTextEdit;
+    edtBK_NEW_INPRICE: TRzPanel;
+    RzPanel25: TRzPanel;
+    RzBackground11: TRzBackground;
+    RzLabel10: TRzLabel;
+    edtNEW_INPRICE: TcxTextEdit;
+    edtBK_NEW_OUTPRICE: TRzPanel;
+    RzPanel26: TRzPanel;
+    RzBackground12: TRzBackground;
+    RzLabel11: TRzLabel;
+    edtNEW_OUTPRICE: TcxTextEdit;
+    edtBK_SHOW_NEW_OUTPRICE: TRzPanel;
+    RzPanel27: TRzPanel;
+    RzBackground13: TRzBackground;
+    RzLabel12: TRzLabel;
+    edtSHOP_NEW_OUTPRICE: TcxTextEdit;
+    edtBK_AMOUNT: TRzPanel;
+    RzPanel37: TRzPanel;
+    RzBackground14: TRzBackground;
+    RzLabel13: TRzLabel;
+    edtAMOUNT: TcxTextEdit;
+    edtBK_LOWER_AMOUNT: TRzPanel;
+    RzPanel21: TRzPanel;
+    RzBackground15: TRzBackground;
+    RzLabel14: TRzLabel;
+    edtBK_UPPER_AMOUNT: TRzPanel;
+    RzPanel39: TRzPanel;
+    RzBackground16: TRzBackground;
+    RzLabel15: TRzLabel;
+    edtUPPER_AMOUNT: TcxTextEdit;
+    edtLOWER_AMOUNT: TcxTextEdit;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure btnNavClick(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -99,19 +156,24 @@ type
     procedure edtUNIT_ID_USINGClick(Sender: TObject);
     procedure RzToolButton2Click(Sender: TObject);
     procedure RzBitBtn7Click(Sender: TObject);
-    procedure RzBitBtn6Click(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure btnAMOUNTClick(Sender: TObject);
     procedure RzToolButton1Click(Sender: TObject);
-    procedure RzBitBtn1Click(Sender: TObject);
-    procedure RzBitBtn4Click(Sender: TObject);
     procedure sortDropKeyPress(Sender: TObject; var Key: Char);
-    procedure RzBitBtn5Click(Sender: TObject);
     procedure btnNewSortClick(Sender: TObject);
+    procedure btnFindClick(Sender: TObject);
+    procedure RzBmpButton6Click(Sender: TObject);
+    procedure RzBmpButton7Click(Sender: TObject);
+    procedure serachTextEnter(Sender: TObject);
+    procedure serachTextExit(Sender: TObject);
+    procedure serachTextChange(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
     FSortId:string;
+    searchTxt:string;
     relationId:integer;
     relationType:integer;
     AObj:TRecord_;
@@ -139,7 +201,7 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmInitGoods,ufrmGoodsSort;
+uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort;//,ufrmInitGoods;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -189,7 +251,7 @@ begin
          rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
        end
     else
-       DBGridEh1.Canvas.Brush.Color := clAqua;
+       DBGridEh1.Canvas.Brush.Color := clWhite;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then
@@ -305,10 +367,10 @@ begin
             result := ' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
           end;
      end;
-  if trim(serachText.Text) <> '' then
+  if trim(searchTxt) <> '' then
      begin
        if result <> '' then result := result +' and ';
-       result := result + '(jp.GODS_NAME like ''%'+trim(serachText.Text)+'%'' or jp.GODS_CODE like ''%'+trim(serachText.Text)+'%'' or jp.BARCODE like ''%'+trim(serachText.Text)+'%'')';
+       result := result + '(jp.GODS_NAME like ''%'+trim(searchTxt)+'%'' or jp.GODS_CODE like ''%'+trim(searchTxt)+'%'' or jp.BARCODE like ''%'+trim(searchTxt)+'%'')';
      end;
   case storFlag of
   0:begin
@@ -321,12 +383,6 @@ begin
     end;
   end;
 
-end;
-
-procedure TfrmGoodsStorage.btnNavClick(Sender: TObject);
-begin
-  inherited;
-  Open;
 end;
 
 procedure TfrmGoodsStorage.rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -555,32 +611,43 @@ begin
   SetFormEditStatus(self,Value);
   if relationId=0 then Exit;
   SetEditStyle(dsBrowse,edtBARCODE.Style);
+  edtBK_BARCODE.Color := edtBARCODE.Style.Color;
   edtBARCODE.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtCALC_UNITS.Style);
+  edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
   edtCALC_UNITS.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtSMALL_UNITS.Style);
+  edtBK_SMALL_UNITS.Color := edtSMALL_UNITS.Style.Color;
   edtSMALL_UNITS.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtBIG_UNITS.Style);
+  edtBK_BIG_UNITS.Color := edtBIG_UNITS.Style.Color;
   edtBIG_UNITS.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtBIGTO_CALC.Style);
   edtBIGTO_CALC.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtSMALLTO_CALC.Style);
   edtSMALLTO_CALC.Properties.ReadOnly := true;
+  edtUNIT_ID_USING.Properties.ReadOnly := true;
   if not dllGlobal.checkChangePrice(relationId) then
      begin
         SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);
+        edtBK_NEW_INPRICE.Color := edtNEW_INPRICE.Style.Color;
         edtNEW_INPRICE.Properties.ReadOnly := true;
         SetEditStyle(dsBrowse,edtNEW_OUTPRICE.Style);
+        edtBK_NEW_OUTPRICE.Color := edtNEW_OUTPRICE.Style.Color;
         edtNEW_OUTPRICE.Properties.ReadOnly := true;
      end;
   if relationType=1 then Exit;
   SetEditStyle(dsBrowse,edtNEW_OUTPRICE.Style);
+  edtBK_NEW_OUTPRICE.Color := edtNEW_OUTPRICE.Style.Color;
   edtNEW_OUTPRICE.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtGODS_CODE.Style);
+  edtBK_GODS_CODE.Color := edtGODS_CODE.Style.Color;
   edtGODS_CODE.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtGODS_NAME.Style);
+  edtBK_GODS_NAME.Color := edtGODS_NAME.Style.Color;
   edtGODS_NAME.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtSORT_ID1.Style);
+  edtBK_SORT_ID1.Color := edtSORT_ID1.Style.Color;
   edtSORT_ID1.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtGODS_SPELL.Style);
   edtGODS_SPELL.Properties.ReadOnly := true;
@@ -622,7 +689,8 @@ end;
 procedure TfrmGoodsStorage.edtUNIT_ID_USINGClick(Sender: TObject);
 begin
   inherited;
-  unitPanel.Visible := edtUNIT_ID_USING.Checked;
+  edtBK_SMALL_UNITS.Visible := edtUNIT_ID_USING.Checked;
+  edtBK_BIG_UNITS.Visible := edtUNIT_ID_USING.Checked;
 end;
 
 procedure TfrmGoodsStorage.RzToolButton2Click(Sender: TObject);
@@ -637,16 +705,10 @@ begin
   EditPanel.Visible := false;
 end;
 
-procedure TfrmGoodsStorage.RzBitBtn6Click(Sender: TObject);
-begin
-  inherited;
-  SaveInfo;
-  EditPanel.Visible := false;
-end;
-
 procedure TfrmGoodsStorage.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
+  if cdsList.IsEmpty then Exit;
   openinfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
 end;
 
@@ -779,7 +841,7 @@ begin
            if rs.FieldbyName('RELATION_TYPE').AsInteger=1 then
               result := strtoint(token.tenantId)
            else
-              Raise Exception.Create('不能更改供应链中的商品分类');
+              Raise Exception.Create('不能更改供应链中的商品');
          end;
        end;
      end
@@ -858,45 +920,6 @@ begin
   cdsList.Delete;
 end;
 
-procedure TfrmGoodsStorage.RzBitBtn1Click(Sender: TObject);
-var
-  gid:string;
-begin
-  inherited;
-  if TfrmInitGoods.ShowDialog(self,'',gid) then
-     begin
-       editPanel.Visible := false;
-       open;
-       cdsList.Locate('GODS_ID',gid,[]); 
-     end;
-end;
-
-procedure TfrmGoodsStorage.RzBitBtn4Click(Sender: TObject);
-var
-  gid:string;
-begin
-  inherited;
-  if MessageBox(Handle,'是否删除选中的所有商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  gid := cdsList.FieldbyName('GODS_ID').AsString;
-  cdsList.DisableControls;
-  try
-    cdsList.First;
-    while not cdsList.Eof do
-      begin
-        if cdsList.FieldbyName('A').AsString='1' then
-           begin
-             DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
-             cdsList.Delete;
-           end
-        else
-           cdsList.Next;
-      end;
-  finally
-    cdsList.Locate('GODS_ID',gid,[]); 
-    cdsList.EnableControls;
-  end;
-end;
-
 procedure TfrmGoodsStorage.sortDropKeyPress(Sender: TObject;
   var Key: Char);
 begin
@@ -966,12 +989,66 @@ begin
   end;
 end;
 
-procedure TfrmGoodsStorage.RzBitBtn5Click(Sender: TObject);
+procedure TfrmGoodsStorage.btnNewSortClick(Sender: TObject);
+var
+  AObj:TRecord_;
+begin
+  inherited;
+  AObj := TRecord_.Create;
+  try
+    if TfrmGoodsSort.ShowDialog(self,'',AObj) then
+       begin
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmGoodsStorage.btnFindClick(Sender: TObject);
 var
   gid:string;
 begin
   inherited;
-  if FSortId='' then Raise Exception.Create('请选择更改的目标分类。'); 
+  {if TfrmInitGoods.ShowDialog(self,'',gid) then
+     begin
+       editPanel.Visible := false;
+       open;
+       cdsList.Locate('GODS_ID',gid,[]); 
+     end;  }
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton6Click(Sender: TObject);
+var
+  gid:string;
+begin
+  inherited;
+  if MessageBox(Handle,'是否删除选中的所有商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  gid := cdsList.FieldbyName('GODS_ID').AsString;
+  cdsList.DisableControls;
+  try
+    cdsList.First;
+    while not cdsList.Eof do
+      begin
+        if cdsList.FieldbyName('A').AsString='1' then
+           begin
+             DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
+             cdsList.Delete;
+           end
+        else
+           cdsList.Next;
+      end;
+  finally
+    cdsList.Locate('GODS_ID',gid,[]);
+    cdsList.EnableControls;
+  end;
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton7Click(Sender: TObject);
+var
+  gid:string;
+begin
+  inherited;
+  if FSortId='' then Raise Exception.Create('请选择更改的目标分类。');
   if MessageBox(Handle,'是否修改选中的所有商品分类？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('GODS_ID').AsString;
   cdsList.DisableControls;
@@ -988,24 +1065,42 @@ begin
            cdsList.Next;
       end;
   finally
-    cdsList.Locate('GODS_ID',gid,[]); 
+    cdsList.Locate('GODS_ID',gid,[]);
     cdsList.EnableControls;
   end;
 end;
 
-procedure TfrmGoodsStorage.btnNewSortClick(Sender: TObject);
-var
-  AObj:TRecord_;
+procedure TfrmGoodsStorage.serachTextEnter(Sender: TObject);
 begin
   inherited;
-  AObj := TRecord_.Create;
-  try
-    if TfrmGoodsSort.ShowDialog(self,'',AObj) then
-       begin
-       end;
-  finally
-    AObj.Free;
-  end;
+  serachText.Text := searchTxt;
+  serachText.SelectAll;
+end;
+
+procedure TfrmGoodsStorage.serachTextExit(Sender: TObject);
+begin
+  inherited;
+  serachText.Text := serachText.Hint;
+end;
+
+procedure TfrmGoodsStorage.serachTextChange(Sender: TObject);
+begin
+  inherited;
+  if serachText.Focused then searchTxt := serachText.Text;
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton5Click(Sender: TObject);
+begin
+  inherited;
+  EditPanel.Visible := false;
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton4Click(Sender: TObject);
+begin
+  inherited;
+  SaveInfo;
+  EditPanel.Visible := false;
+
 end;
 
 initialization

@@ -17,30 +17,11 @@ type
     cdsDetail: TZQuery;
     cdsICGlide: TZQuery;
     Label1: TLabel;
-    h11: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
-    Label12: TLabel;
-    Label13: TLabel;
     RzPanel11: TRzPanel;
-    RzPanel13: TRzPanel;
     RzPanel14: TRzPanel;
     zrComboBoxList1: TzrComboBoxList;
     cxComboBox1: TcxComboBox;
-    RzPanel15: TRzPanel;
-    serachText: TEdit;
-    RzPanel16: TRzPanel;
-    dateFlag: TcxComboBox;
-    Label8: TLabel;
-    btnFind: TRzBitBtn;
     DBGridEh2: TDBGridEh;
-    D1: TcxDateEdit;
-    D2: TcxDateEdit;
-    Label9: TLabel;
     dsList: TDataSource;
     cdsList: TZQuery;
     rowToolNav: TRzToolbar;
@@ -48,7 +29,6 @@ type
     RzToolButton2: TRzToolButton;
     RzToolButton3: TRzToolButton;
     RzSpacer1: TRzSpacer;
-    RzToolButton4: TRzToolButton;
     RzPanel19: TRzPanel;
     MarqueeStatus: TRzMarqueeStatus;
     edtBK_CLIENT_ID: TRzPanel;
@@ -56,7 +36,7 @@ type
     RzBackground1: TRzBackground;
     RzLabel1: TRzLabel;
     edtCLIENT_ID: TzrComboBoxList;
-    RzPanel5: TRzPanel;
+    edtBK_SALES_DATE: TRzPanel;
     RzPanel20: TRzPanel;
     RzBackground2: TRzBackground;
     RzLabel2: TRzLabel;
@@ -65,12 +45,12 @@ type
     btnNew: TRzBmpButton;
     Image2: TImage;
     edtREMARK: TcxTextEdit;
-    RzPanel3: TRzPanel;
+    edtBK_GUIDE_USER: TRzPanel;
     RzPanel4: TRzPanel;
     RzBackground3: TRzBackground;
     RzLabel3: TRzLabel;
     edtGUIDE_USER: TzrComboBoxList;
-    RzPanel6: TRzPanel;
+    edtBK_ACCT_MNY: TRzPanel;
     RzPanel7: TRzPanel;
     RzBackground4: TRzBackground;
     edtACCT_MNY: TcxTextEdit;
@@ -79,7 +59,7 @@ type
     RzLabel5: TRzLabel;
     RzBackground5: TRzBackground;
     RzLabel4: TRzLabel;
-    RzPanel9: TRzPanel;
+    edtBK_PAY_TOTAL: TRzPanel;
     RzPanel10: TRzPanel;
     RzBackground6: TRzBackground;
     payment: TRzLabel;
@@ -88,6 +68,33 @@ type
     Image4: TImage;
     Image5: TImage;
     RzLabel6: TRzLabel;
+    RzLabel7: TRzLabel;
+    RzLabel8: TRzLabel;
+    RzLabel9: TRzLabel;
+    RzLabel10: TRzLabel;
+    RzLabel11: TRzLabel;
+    RzLabel12: TRzLabel;
+    RzLabel13: TRzLabel;
+    RzLabel14: TRzLabel;
+    RzLabel15: TRzLabel;
+    RzPanel3: TRzPanel;
+    RzPanel6: TRzPanel;
+    RzPanel9: TRzPanel;
+    RzBackground7: TRzBackground;
+    RzLabel17: TRzLabel;
+    dateFlag: TcxComboBox;
+    D1: TcxDateEdit;
+    RzPanel23: TRzPanel;
+    RzPanel22: TRzPanel;
+    RzBackground8: TRzBackground;
+    RzLabel16: TRzLabel;
+    D2: TcxDateEdit;
+    btnFind: TRzBmpButton;
+    RzPanel5: TRzPanel;
+    Image1: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    serachText: TEdit;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -113,6 +120,12 @@ type
     procedure RzToolButton1Click(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure edtPAY_TOTALPropertiesChange(Sender: TObject);
+    procedure edtACCT_MNYPropertiesChange(Sender: TObject);
+    procedure edtAGIO_RATEPropertiesChange(Sender: TObject);
+    procedure serachTextEnter(Sender: TObject);
+    procedure serachTextExit(Sender: TObject);
+    procedure edtTableAfterDelete(DataSet: TDataSet);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -134,6 +147,8 @@ type
     CarryRule:integer;
     //保留小数位
     Deci:integer;
+    
+    searchTxt:string;
   protected
     procedure SetdbState(const Value: TDataSetState);override;
     procedure PresentToCalc(Present:integer);override;
@@ -996,7 +1011,7 @@ begin
     end;
   else
     begin
-      if fee=0 then
+      if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
          edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero))
       else
          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
@@ -1116,22 +1131,22 @@ begin
   5:begin
       FInputFlag := value;
       lblInput.Caption := '销售类型';
-      lblHint.Caption := '"1.正常销售、2.赠送商品、3.积分兑换" 请输入类型序号后按回车';
+      lblHint.Caption := '"1.正常销售、2.赠送商品、3.积分兑换" 请输入类型序号后按 enter 健';
     end;
   6:begin
       FInputFlag := value;
       lblInput.Caption := '会员卡号';
-      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按回车';
+      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按 enter 健';
     end;
   7:begin
       FInputFlag := value;
       lblInput.Caption := '导 购 员';
-      lblHint.Caption := '请输入导购员员工编号后按回车';
+      lblHint.Caption := '请输入导购员员工编号后按 enter 健';
     end;
   11:begin
       FInputFlag := value;
       lblInput.Caption := '结算金额';
-      lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按回车健';
+      lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按 enter 健';
     end;
   13:begin
       FInputFlag := value;
@@ -1141,7 +1156,7 @@ begin
   14:begin
       FInputFlag := value;
       lblInput.Caption := '实收现金';
-      lblHint.Caption := '请输入实收现金后按回车或+健';
+      lblHint.Caption := '请输入实收现金后按 enter 健或+健';
     end;
   end;
 end;
@@ -1283,23 +1298,23 @@ begin
     AObj.WriteToDataSet(cdsHeader);
     cdsHeader.Post;
     s := formatDatetime('YYYYMMDD_HHNNSS',now());
-    ForceDirectories(ExtractFilePath(ParamStr(0))+'HangUp');
+    ForceDirectories(ExtractFilePath(ParamStr(0))+'temp\sales');
     mm := TMemoryStream.Create;
     try
       mm.Clear;
       cdsHeader.SaveToStream(mm);
       mm.Position := 0;
-      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'HangUp\H'+s+'.dat');
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\sales\H'+s+'.dat');
 
       mm.Clear;
       edtTable.SaveToStream(mm);
       mm.Position := 0;
-      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'HangUp\D'+s+'.dat');
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s+'.dat');
 
       mm.Clear;
       edtProperty.SaveToStream(mm);
       mm.Position := 0;
-      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'HangUp\P'+s+'.dat');
+      mm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\sales\P'+s+'.dat');
     finally
       mm.Free;
     end;
@@ -1340,7 +1355,7 @@ var
 begin
   s := trim(s);
   IsAgio := (s[1]='/');
-  delete(s,1,1);
+  if IsAgio then delete(s,1,1);
   s := trim(s);
   try
     mny := StrtoFloat(s);
@@ -1379,7 +1394,7 @@ begin
   FileAttrs := 0;
   FileAttrs := FileAttrs + faAnyFile;
   s:= '';
-  if FindFirst(ExtractFilePath(ParamStr(0))+'HangUp\*.dat', FileAttrs, sr) = 0 then
+  if FindFirst(ExtractFilePath(ParamStr(0))+'temp\sales\*.dat', FileAttrs, sr) = 0 then
     begin
       repeat
         if (sr.Attr and FileAttrs) = sr.Attr then
@@ -1399,12 +1414,12 @@ begin
   mm := TMemoryStream.Create;
   h := TZQuery.Create(nil);
   try
-    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'HangUp\H'+s);
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\sales\H'+s);
     H.LoadFromStream(mm);
     AObj.ReadFromDataSet(H,false); 
-    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'HangUp\D'+s);
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s);
     edtTable.LoadFromStream(mm);
-    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'HangUp\P'+s);
+    mm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\sales\P'+s);
     edtProperty.LoadFromStream(mm);
   finally
     h.Free;
@@ -1412,9 +1427,9 @@ begin
   end;
   edtTable.Last;
   RowId := edtTable.FieldbyName('SEQNO').AsInteger;
-  DeleteFile(ExtractFilePath(ParamStr(0))+'HangUp\'+s);
-  DeleteFile(ExtractFilePath(ParamStr(0))+'HangUp\D'+s);
-  DeleteFile(ExtractFilePath(ParamStr(0))+'HangUp\P'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\P'+s);
   Calc;
 end;
 
@@ -1585,8 +1600,8 @@ begin
   inherited;
   case PageControl.ActivePageIndex of
   0:begin
-       btnNav.Caption := '查询单据';
-       lblCaption.Caption := '商品销售';
+       btnNav.Caption := '历史单据';
+       lblCaption.Caption := '销售单';
     end;
   1:begin
        btnNav.Caption := '返回';
@@ -1608,18 +1623,15 @@ end;
 procedure TfrmSaleOrder.SetdbState(const Value: TDataSetState);
 begin
   inherited;
-{  case Value of
+  case Value of
   dsBrowse:begin
-//       btnSave.Caption := '新增销售单';
-       btnNew.Caption := '删除';
+       btnNew.Caption := '新增';
      end;
   else
      begin
-       btnSave.Caption := '保存并新增';
        btnNew.Caption := '清空';
      end;
   end;
-  if not cdsHeader.IsEmpty then     }
 end;
 
 procedure TfrmSaleOrder.OpenList;
@@ -1630,8 +1642,8 @@ begin
     'left outer join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
     'where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and A.SALES_TYPE=4 ';
-  if trim(serachText.Text)<>'' then
-    cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(serachText.Text)+'%'' or REMARK like ''%'+trim(serachText.Text)+'%'' or GLIDE_NO like ''%'+trim(serachText.Text)+'%''';
+  if trim(searchTxt)<>'' then
+    cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(searchTxt)+'%'' or REMARK like ''%'+trim(searchTxt)+'%'' or GLIDE_NO like ''%'+trim(searchTxt)+'%''';
   cdsList.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
   cdsList.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsList.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
@@ -1716,7 +1728,7 @@ begin
          rowToolNav.SetBounds(ARect.Left+11,ARect.Top+11,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
        end
     else
-       DBGridEh2.Canvas.Brush.Color := clAqua;
+       DBGridEh2.Canvas.Brush.Color := clWhite;
   end;
   DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then
@@ -1775,6 +1787,7 @@ end;
 
 procedure TfrmSaleOrder.btnNewClick(Sender: TObject);
 begin
+  if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前销售单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   NewOrder;
 end;
 
@@ -1826,6 +1839,108 @@ begin
          end;
     end;
   end;
+
+end;
+
+procedure TfrmSaleOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
+var
+  r:currency;
+begin
+  inherited;
+  if edtPAY_TOTAL.Focused then
+     begin
+       r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
+       AObj.FieldbyName('PAY_A').AsFloat := r;
+       AObj.FieldbyName('PAY_B').AsFloat := 0;
+       AObj.FieldbyName('PAY_C').AsFloat := 0;
+       AObj.FieldbyName('PAY_D').AsFloat := 0;
+       AObj.FieldbyName('PAY_E').AsFloat := 0;
+       AObj.FieldbyName('PAY_F').AsFloat := 0;
+       AObj.FieldbyName('PAY_G').AsFloat := 0;
+       AObj.FieldbyName('PAY_H').AsFloat := 0;
+       AObj.FieldbyName('PAY_I').AsFloat := 0;
+       AObj.FieldbyName('PAY_J').AsFloat := 0;
+       payment.Caption := '现金收款';
+     end;
+end;
+
+procedure TfrmSaleOrder.edtACCT_MNYPropertiesChange(Sender: TObject);
+var
+  r,fee:currency;
+begin
+  inherited;
+  if edtACCT_MNY.Focused then
+     begin
+       r := StrtoFloatDef(edtACCT_MNY.Text,0);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-r;
+       if TotalFee<>0 then
+          edtAGIO_RATE.Text := formatFloat('#0.0',r*100/TotalFee)
+       else
+          edtAGIO_RATE.Text := '';
+       fee :=
+        AObj.FieldbyName('PAY_B').AsFloat+
+        AObj.FieldbyName('PAY_C').AsFloat+
+        AObj.FieldbyName('PAY_D').AsFloat+
+        AObj.FieldbyName('PAY_E').AsFloat+
+        AObj.FieldbyName('PAY_F').AsFloat+
+        AObj.FieldbyName('PAY_G').AsFloat+
+        AObj.FieldbyName('PAY_H').AsFloat+
+        AObj.FieldbyName('PAY_I').AsFloat+
+        AObj.FieldbyName('PAY_J').AsFloat;
+       if fee=0 then
+          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+       else
+          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+     end;
+end;
+
+procedure TfrmSaleOrder.edtAGIO_RATEPropertiesChange(Sender: TObject);
+var
+  r,fee:currency;
+begin
+  inherited;
+  if edtAGIO_RATE.Focused then
+     begin
+       r := StrtoFloatDef(edtAGIO_RATE.Text,0);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
+       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_ZERO').AsFloat);
+       fee :=
+        AObj.FieldbyName('PAY_B').AsFloat+
+        AObj.FieldbyName('PAY_C').AsFloat+
+        AObj.FieldbyName('PAY_D').AsFloat+
+        AObj.FieldbyName('PAY_E').AsFloat+
+        AObj.FieldbyName('PAY_F').AsFloat+
+        AObj.FieldbyName('PAY_G').AsFloat+
+        AObj.FieldbyName('PAY_H').AsFloat+
+        AObj.FieldbyName('PAY_I').AsFloat+
+        AObj.FieldbyName('PAY_J').AsFloat;
+       if fee=0 then
+          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+       else
+          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+     end;
+end;
+
+procedure TfrmSaleOrder.serachTextEnter(Sender: TObject);
+begin
+  inherited;
+  serachText.Text := searchTxt;
+  serachText.SelectAll;
+
+
+end;
+
+procedure TfrmSaleOrder.serachTextExit(Sender: TObject);
+begin
+  inherited;
+  serachText.Text := serachText.Hint;
+
+end;
+
+procedure TfrmSaleOrder.edtTableAfterDelete(DataSet: TDataSet);
+begin
+  inherited;
+  if not edtTable.ControlsDisabled then Calc;
 
 end;
 

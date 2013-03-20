@@ -218,8 +218,16 @@ begin
   try
     if frmSortDropFrom.DropForm(sortDrop,obj) then
     begin
-      FSortId := Obj.FieldbyName('SORT_ID').AsString;
-      sortDrop.Text := Obj.FieldbyName('SORT_NAME').AsString;
+      if Obj.Count>0 then
+         begin
+            FSortId := Obj.FieldbyName('SORT_ID').AsString;
+            sortDrop.Text := Obj.FieldbyName('SORT_NAME').AsString;
+         end
+      else
+         begin
+            FSortId := '';
+            sortDrop.Text := '';
+         end;
     end;
   finally
     Obj.Free;
@@ -1080,7 +1088,7 @@ end;
 procedure TfrmGoodsStorage.serachTextExit(Sender: TObject);
 begin
   inherited;
-  serachText.Text := serachText.Hint;
+  if serachTxt='' then serachText.Text := serachText.Hint;
 end;
 
 procedure TfrmGoodsStorage.serachTextChange(Sender: TObject);

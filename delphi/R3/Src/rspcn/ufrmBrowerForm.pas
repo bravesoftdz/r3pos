@@ -233,10 +233,13 @@ begin
      begin
        case TabEx.url.appFlag of
        0:begin
-           IEAddress1.Text := TabEx.EWB.LocationURL;
+           if isRspcn(TabEx.url.showUrl) then
+              IEAddress1.Text := TabEx.url.showUrl
+           else
+              IEAddress1.Text := TabEx.EWB.LocationURL;
          end;
        1:begin
-           IEAddress1.Text := encodeUrl(TabEx.url);
+           IEAddress1.Text := TabEx.url.showUrl;
          end;
        end;
      end;
@@ -516,7 +519,7 @@ begin
     with (PageControl1.ActivePage as TTabSheetEx) do
     case url.appFlag of
     0:begin
-        EWB.Go(_url,TimeOut);
+        EWB.Go(urlToken.url,TimeOut);
         if EWB.CanFocus then EWB.SetFocusToDoc;
       end;
     1:begin
@@ -817,6 +820,7 @@ begin
            begin
               urlToken.appFlag := 0;
               urlToken.url := curSheet.EWB.LocationURL;
+              urlToken.showUrl := curSheet.EWB.LocationURL;
               curSheet := CreateNewTabBrowser(urlToken);
               if Assigned(curSheet) then
                  begin
@@ -832,13 +836,14 @@ end;
 procedure TfrmBrowerForm.OpenHome;
 var
   tabEx:TtabSheetEx;
+  url:TurlToken;
 begin
   if PageControl1.PageCount=0 then
      begin
        if token.logined then
-          LoadUrl('rspcn://built-in/index.html','home')
+          LoadUrl('rspcn://local-in/index.html','home')
        else
-          LoadUrl('rspcn://built-in/login.html','home');
+          LoadUrl('rspcn://local-in/login.html','home');
      end
   else
      begin
@@ -846,9 +851,15 @@ begin
        PageControl1.ActivePageIndex := 0;
        pageButtonSort;
        if token.logined then
-          tabEx.EWB.Go('rspcn://built-in/index.html',15000)
+          begin
+            url := decodeUrl('rspcn://built-in/index.html');
+            tabEx.EWB.Go(url.url,15000);
+          end
        else
-          tabEx.EWB.Go('rspcn://built-in/login.html',15000);
+          begin
+            url := decodeUrl('rspcn://built-in/login.html');
+            tabEx.EWB.Go(url.url,15000);
+          end;
      end;
 end;
 

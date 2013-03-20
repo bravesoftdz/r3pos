@@ -461,13 +461,13 @@ inherited frmOrderForm: TfrmOrderForm
                   Left = 4
                   Top = 2
                   Width = 194
-                  Height = 25
+                  Height = 24
                   ParentFont = False
                   Style.BorderStyle = ebsNone
                   Style.Font.Charset = GB2312_CHARSET
                   Style.Font.Color = clBlack
-                  Style.Font.Height = -12
-                  Style.Font.Name = #24494#36719#38597#40657
+                  Style.Font.Height = -16
+                  Style.Font.Name = #23435#20307
                   Style.Font.Style = [fsBold]
                   Style.HotTrack = False
                   Style.LookAndFeel.Kind = lfStandard

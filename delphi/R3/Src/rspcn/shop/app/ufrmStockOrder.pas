@@ -1376,7 +1376,7 @@ end;
 procedure TfrmStockOrder.serachTextExit(Sender: TObject);
 begin
   inherited;
-  serachText.Text := serachText.Hint;
+  if serachTxt='' then serachText.Text := serachText.Hint;
 
 end;
 

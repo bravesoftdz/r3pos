@@ -10,6 +10,7 @@ object frmWebForm: TfrmWebForm
   ClientHeight = 462
   ClientWidth = 846
   Color = clWhite
+  TransparentColor = True
   TransparentColorValue = clFuchsia
   Ctl3D = False
   Font.Charset = GB2312_CHARSET

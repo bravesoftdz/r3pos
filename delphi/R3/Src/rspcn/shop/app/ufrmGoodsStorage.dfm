@@ -3357,7 +3357,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
   end
   inherited toolNav: TRzPanel
     Width = 942
-    Color = 12040119
     object lblCaption: TRzLabel
       Left = 0
       Top = 0

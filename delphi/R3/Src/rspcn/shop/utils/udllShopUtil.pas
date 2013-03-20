@@ -6,7 +6,8 @@ uses
   Dialogs, ExtCtrls, StdCtrls, cxMaskEdit, cxDropDownEdit, cxControls, cxContainer,
   cxEdit, cxTextEdit,ZDataSet,ZBase,Grids,DBGrids,DB,DBGridEh,cxButtonEdit, cxCalendar,cxMemo,zrComboBoxList,
   cxRadioGroup,cxSpinEdit,cxCheckBox;
-
+const
+  ColumnTitleColor=$00F0E598;
 //添加下拉选择框
 procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TZQuery=nil);
 //清除下拉选择框

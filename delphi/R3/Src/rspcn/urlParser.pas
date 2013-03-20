@@ -2,7 +2,7 @@ unit urlParser;
 
 interface
 uses
-  SysUtils, windows, Classes;
+  SysUtils, windows, Classes,Forms;
 type
   PurlToken=^TurlToken;
   TurlToken=record
@@ -11,6 +11,7 @@ type
     moduname:string;
     appFlag:integer;
     url:string;
+    showUrl:string;
   end;
 function decodeUrl(url:string):TurlToken;
 function encodeUrl(urltoken:TurlToken):string;
@@ -24,6 +25,7 @@ function decodeUrl(url:string):TurlToken;
 var sl:TStringList;
 begin
   result.url := url;
+  result.url := url;
   delete(url,1,8);
   sl := TStringList.Create;
   try
@@ -33,6 +35,13 @@ begin
     result.appId := sl[0];
     if result.appId='built-in' then
        result.appFlag := 0
+    else
+    if result.appId='local-in' then
+       begin
+         result.appFlag := 0;
+         delete(url,1,8);
+         result.url := 'file:///'+StringReplace(ExtractFilePath(Application.ExeName),'\','/',[rfReplaceAll])+'built-in'+url;
+       end
     else
        result.appFlag := 1;
 //    sl.Delete(0);

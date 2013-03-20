@@ -13,12 +13,8 @@ type
     Image3: TImage;
     RzFormShape1: TRzFormShape;
     Image2: TImage;
-    RzBmpButton2: TRzBmpButton;
     RzPanel1: TRzPanel;
-    RzPanel6: TRzPanel;
-    Image6: TImage;
-    Image7: TImage;
-    Image8: TImage;
+    RzBmpButton2: TRzBmpButton;
     procedure RzBmpButton2Click(Sender: TObject);
   private
     { Private declarations }

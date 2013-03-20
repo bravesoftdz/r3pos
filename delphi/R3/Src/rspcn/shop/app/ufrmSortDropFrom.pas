@@ -4,14 +4,18 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmDropForm, ExtCtrls, RzPanel, ComCtrls, RzTreeVw, ImgList, ZBase;
+  Dialogs, ufrmDropForm, ExtCtrls, RzPanel, ComCtrls, RzTreeVw, ImgList, ZBase,
+  StdCtrls, RzLabel;
 
 type
   TfrmSortDropFrom = class(TfrmDropForm)
     rzTree: TRzTreeView;
     ImageList1: TImageList;
+    RzPanel2: TRzPanel;
+    RzLabel1: TRzLabel;
     procedure rzTreeClick(Sender: TObject);
     procedure rzTreeKeyPress(Sender: TObject; var Key: Char);
+    procedure RzLabel1Click(Sender: TObject);
   private
     { Private declarations }
     FRelationId: string;
@@ -53,7 +57,7 @@ begin
      begin
        SaveObj.Clear;
        TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
-       ModalResult := MROK; 
+       ModalResult := MROK;
      end;
 end;
 
@@ -62,6 +66,13 @@ begin
   inherited;
   if Key=#13 then
      rzTreeClick(nil);
+end;
+
+procedure TfrmSortDropFrom.RzLabel1Click(Sender: TObject);
+begin
+  inherited;
+  SaveObj.Clear;
+  ModalResult := MROK;
 end;
 
 initialization

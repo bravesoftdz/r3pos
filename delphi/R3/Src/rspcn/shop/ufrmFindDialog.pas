@@ -6,23 +6,30 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialog, RzPanel, RzBmpBtn, RzForms, jpeg, ExtCtrls,
   cxControls, cxContainer, cxEdit, cxTextEdit, RzButton, Grids, DBGridEh,
-  DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase;
+  DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, StdCtrls,
+  RzLabel;
 
 type
   TfrmFindDialog = class(TfrmWebDialog)
-    RzPanel2: TRzPanel;
-    findText: TcxTextEdit;
-    RzBitBtn2: TRzBitBtn;
-    RzBitBtn1: TRzBitBtn;
-    DBGridEh1: TDBGridEh;
     rs: TZQuery;
     DataSource1: TDataSource;
-    procedure RzBitBtn1Click(Sender: TObject);
-    procedure RzBitBtn2Click(Sender: TObject);
+    RzPanel3: TRzPanel;
+    DBGridEh1: TDBGridEh;
+    btnFind: TRzBmpButton;
+    RzPanel5: TRzPanel;
+    Image4: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    serachText: TEdit;
+    RzLabel1: TRzLabel;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure btnFindClick(Sender: TObject);
+    procedure serachTextEnter(Sender: TObject);
+    procedure serachTextExit(Sender: TObject);
   private
     FMuiltSelect: boolean;
+    searchTxt:string;
     { Private declarations }
     procedure decodeFields(str:string);
     procedure SetMuiltSelect(const Value: boolean);
@@ -106,19 +113,6 @@ begin
     end;
 end;
 
-procedure TfrmFindDialog.RzBitBtn1Click(Sender: TObject);
-begin
-  inherited;
-  close;
-end;
-
-procedure TfrmFindDialog.RzBitBtn2Click(Sender: TObject);
-begin
-  inherited;
-  if DataSource1.DataSet.IsEmpty then Raise Exception.Create('没有数据在选择列表');
-  ModalResult := MROK;
-end;
-
 procedure TfrmFindDialog.SetMuiltSelect(const Value: boolean);
 begin
   FMuiltSelect := Value;
@@ -165,6 +159,29 @@ begin
     br.Free;
     pn.Free;
   end;
+end;
+
+procedure TfrmFindDialog.btnFindClick(Sender: TObject);
+begin
+  inherited;
+  if DataSource1.DataSet.IsEmpty then Raise Exception.Create('没有数据在选择列表');
+  ModalResult := MROK;
+
+end;
+
+procedure TfrmFindDialog.serachTextEnter(Sender: TObject);
+begin
+  inherited;
+  serachText.Text := searchTxt;
+  serachText.SelectAll;
+
+end;
+
+procedure TfrmFindDialog.serachTextExit(Sender: TObject);
+begin
+  inherited;
+  if serachTxt='' then serachText.Text := serachText.Hint;
+
 end;
 
 end.

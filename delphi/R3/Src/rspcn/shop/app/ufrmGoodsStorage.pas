@@ -1088,7 +1088,7 @@ end;
 procedure TfrmGoodsStorage.serachTextExit(Sender: TObject);
 begin
   inherited;
-  if serachTxt='' then serachText.Text := serachText.Hint;
+  if searchTxt='' then serachText.Text := serachText.Hint;
 end;
 
 procedure TfrmGoodsStorage.serachTextChange(Sender: TObject);

@@ -27,9 +27,14 @@ type
     procedure btnFindClick(Sender: TObject);
     procedure serachTextEnter(Sender: TObject);
     procedure serachTextExit(Sender: TObject);
+    procedure rsFilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure serachTextKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure serachTextChange(Sender: TObject);
   private
     FMuiltSelect: boolean;
-    searchTxt:string;
+    serachTxt:string;
     { Private declarations }
     procedure decodeFields(str:string);
     procedure SetMuiltSelect(const Value: boolean);
@@ -86,6 +91,7 @@ begin
         else
            result := false;
       finally
+        DataSource1.DataSet.OnFilterRecord := nil;
         free;
       end;
     end;
@@ -108,6 +114,7 @@ begin
         else
            result := false;
       finally
+        DataSource1.DataSet.OnFilterRecord := nil;
         free;
       end;
     end;
@@ -172,7 +179,7 @@ end;
 procedure TfrmFindDialog.serachTextEnter(Sender: TObject);
 begin
   inherited;
-  serachText.Text := searchTxt;
+  serachText.Text := serachTxt;
   serachText.SelectAll;
 
 end;
@@ -181,6 +188,48 @@ procedure TfrmFindDialog.serachTextExit(Sender: TObject);
 begin
   inherited;
   if serachTxt='' then serachText.Text := serachText.Hint;
+
+end;
+
+procedure TfrmFindDialog.rsFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+var
+  i:integer;
+begin
+  inherited;
+  Accept := false;
+  for i:=0 to DataSet.Fields.Count-1 do
+    begin
+      Accept := (Pos(serachTxt,DataSet.Fields[i].AsString)>0);
+      if Accept then Exit;
+    end;
+end;
+
+procedure TfrmFindDialog.serachTextKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       DataSource1.DataSet.OnFilterRecord := rs.OnFilterRecord;
+       DataSource1.DataSet.Filtered := (trim(serachTxt)<>'');
+       Key := #0;
+       btnFind.SetFocus;
+     end;
+end;
+
+procedure TfrmFindDialog.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key=VK_UP then DataSource1.DataSet.Prior;
+  if Key=VK_DOWN then DataSource1.DataSet.Next;
+end;
+
+procedure TfrmFindDialog.serachTextChange(Sender: TObject);
+begin
+  inherited;
+  if serachText.Focused then serachTxt := serachText.Text;
 
 end;
 

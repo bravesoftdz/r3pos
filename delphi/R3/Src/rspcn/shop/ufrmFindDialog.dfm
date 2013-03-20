@@ -2,6 +2,7 @@ inherited frmFindDialog: TfrmFindDialog
   Caption = 'frmFindDialog'
   ClientWidth = 433
   OldCreateOrder = True
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 15
   inherited pnlAddressBar: TPanel
@@ -435,13 +436,16 @@ inherited frmFindDialog: TfrmFindDialog
         BorderStyle = bsNone
         TabOrder = 0
         Text = #35831#36755#20837#25628#32034#20869#23481
+        OnChange = serachTextChange
         OnEnter = serachTextEnter
         OnExit = serachTextExit
+        OnKeyPress = serachTextKeyPress
       end
     end
   end
   object rs: TZQuery
     FieldDefs = <>
+    OnFilterRecord = rsFilterRecord
     CachedUpdates = True
     Params = <>
     Left = 112

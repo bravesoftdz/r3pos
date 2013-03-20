@@ -120,6 +120,7 @@ type
     procedure serachTextEnter(Sender: TObject);
     procedure serachTextExit(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
+    procedure serachTextChange(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -1376,7 +1377,7 @@ end;
 procedure TfrmStockOrder.serachTextExit(Sender: TObject);
 begin
   inherited;
-  if serachTxt='' then serachText.Text := serachText.Hint;
+  if searchTxt='' then serachText.Text := serachText.Hint;
 
 end;
 
@@ -1385,6 +1386,12 @@ begin
   inherited;
   if not edtTable.ControlsDisabled then Calc;
 
+end;
+
+procedure TfrmStockOrder.serachTextChange(Sender: TObject);
+begin
+  inherited;
+  if serachText.Focused then searchTxt := serachText.Text;
 end;
 
 initialization

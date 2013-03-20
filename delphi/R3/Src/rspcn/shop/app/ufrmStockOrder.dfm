@@ -12,6 +12,7 @@ inherited frmStockOrder: TfrmStockOrder
       Width = 865
       inherited PageControl: TRzPageControl
         Width = 865
+        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -3881,6 +3882,7 @@ inherited frmStockOrder: TfrmStockOrder
                   BorderStyle = bsNone
                   TabOrder = 0
                   Text = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#22791#27880#35828#26126
+                  OnChange = serachTextChange
                   OnEnter = serachTextEnter
                   OnExit = serachTextExit
                 end

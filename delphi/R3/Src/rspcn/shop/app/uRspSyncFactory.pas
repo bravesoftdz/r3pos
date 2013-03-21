@@ -764,8 +764,13 @@ begin
   n^.tableFlag := 4;
   n^.tbtitle := '商品分类';
   FList.Add(n);
+  new(n);
+  n^.tbname := 'CA_MODULE';
+  n^.tableFlag := 5;
+  n^.tbtitle := '功能模块';
+  FList.Add(n);
 
-  SetProMax(5);
+  SetProMax(6);
   SetProPosition(0);
   SetProCaption(0);
   Application.ProcessMessages;
@@ -787,6 +792,10 @@ begin
   Application.ProcessMessages;
   downloadGoodsSort;
   SetProPosition(5);
+  SetProCaption(5);
+  Application.ProcessMessages;
+  downloadModules;
+  SetProPosition(6);
 end;
 
 procedure TRspSyncFactory.SetProCaption(caption: integer);

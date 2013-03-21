@@ -8,7 +8,8 @@ uses
   RzBmpBtn, jpeg, RzButton, cxControls, cxContainer, cxEdit, cxTextEdit,
   ComCtrls, RzPrgres, cxMaskEdit, cxButtonEdit, zrComboBoxList, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, msxml,
-  cxDropDownEdit, cxCalendar, cxCheckBox, cxMemo, cxSpinEdit, IniFiles;
+  cxDropDownEdit, cxCalendar, cxCheckBox, cxMemo, cxSpinEdit, IniFiles,
+  Grids, DBGridEh, RzBckgnd, RzBorder, ObjCommon;
 
 type
   TfrmSysDefine = class(TfrmWebToolForm)
@@ -22,23 +23,8 @@ type
     TabSheet1: TRzTabSheet;
     RzPanel2: TRzPanel;
     RzPanel3: TRzPanel;
-    btnChangeImage: TRzBitBtn;
-    RzPanel20: TRzPanel;
-    edtSHOP_NAME: TcxTextEdit;
     RzLabel1: TRzLabel;
     RzProgressBar1: TRzProgressBar;
-    RzPanel4: TRzPanel;
-    edtLICENSE_CODE: TcxTextEdit;
-    edtREGION_ID: TzrComboBoxList;
-    RzPanel5: TRzPanel;
-    RzPanel6: TRzPanel;
-    edtADDRESS: TcxTextEdit;
-    edtTELEPHONE: TcxTextEdit;
-    RzPanel7: TRzPanel;
-    RzPanel8: TRzPanel;
-    edtLINKMAN: TcxTextEdit;
-    RzPanel9: TRzPanel;
-    btnSaveShopInfo: TRzBitBtn;
     RzPanel10: TRzPanel;
     Photo: TImage;
     cdsTenant: TZQuery;
@@ -46,61 +32,243 @@ type
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
-    edtUSING_DATE: TcxDateEdit;
     edtZERO_OUT: TcxCheckBox;
-    edtFOOTER: TcxMemo;
-    edtTicketPrintComm: TcxComboBox;
-    cxNullRow: TcxSpinEdit;
-    edtTicketCopy: TcxSpinEdit;
-    edtPRINTERWIDTH: TcxComboBox;
-    edtTitle: TcxTextEdit;
-    edtTICKET_PRINT_NAME: TcxComboBox;
-    cxCashBox: TcxComboBox;
-    cxCashBoxRate: TcxComboBox;
-    RzPanel11: TRzPanel;
     RzPanel12: TRzPanel;
-    RzPanel14: TRzPanel;
-    RzPanel15: TRzPanel;
-    RzPanel16: TRzPanel;
-    RzPanel17: TRzPanel;
-    RzPanel18: TRzPanel;
-    RzPanel19: TRzPanel;
-    RzPanel21: TRzPanel;
-    RzPanel22: TRzPanel;
-    RzPanel23: TRzPanel;
     Bevel1: TBevel;
     RzLabel7: TRzLabel;
     RzLabel2: TRzLabel;
-    Bevel2: TBevel;
-    Bevel3: TBevel;
     RzLabel3: TRzLabel;
-    RzPanel24: TRzPanel;
-    btnSaveSysDefine: TRzBitBtn;
     cdsSysDefine: TZQuery;
-    edtPosDight: TcxSpinEdit;
-    edtCARRYRULE: TcxComboBox;
-    edtPOSCALCDIGHT: TcxComboBox;
-    RzPanel25: TRzPanel;
-    RzPanel26: TRzPanel;
-    RzPanel27: TRzPanel;
-    edtID2: TcxComboBox;
-    edtID1: TcxComboBox;
-    edtID: TcxComboBox;
-    edtFlag: TcxTextEdit;
-    edtLEN1: TcxComboBox;
-    edtLEN2: TcxComboBox;
-    edtDEC2: TcxTextEdit;
-    edtDEC1: TcxTextEdit;
     RzLabel4: TRzLabel;
     Bevel4: TBevel;
+    RzPanel34: TRzPanel;
+    DBGridEh1: TDBGridEh;
+    cdsUsers: TZQuery;
+    DataSource1: TDataSource;
+    RzLabel6: TRzLabel;
+    Bevel6: TBevel;
+    RzLabel5: TRzLabel;
+    Bevel5: TBevel;
+    RzLabel8: TRzLabel;
+    Bevel7: TBevel;
+    RzPanel40: TRzPanel;
+    RzBackground1: TRzBackground;
+    RzLabel9: TRzLabel;
+    edtBK_BARCODE: TRzPanel;
+    RzPanel41: TRzPanel;
+    RzBackground2: TRzBackground;
+    RzLabel10: TRzLabel;
+    edtSHOP_NAME: TcxTextEdit;
+    RzPanel20: TRzPanel;
+    RzPanel42: TRzPanel;
+    RzBackground3: TRzBackground;
+    RzLabel11: TRzLabel;
+    edtLICENSE_CODE: TcxTextEdit;
+    RzPanel4: TRzPanel;
+    RzPanel43: TRzPanel;
+    RzBackground4: TRzBackground;
+    RzLabel12: TRzLabel;
+    edtLINKMAN: TcxTextEdit;
+    RzPanel7: TRzPanel;
+    RzPanel8: TRzPanel;
+    RzBackground5: TRzBackground;
+    RzLabel13: TRzLabel;
+    edtTELEPHONE: TcxTextEdit;
+    RzPanel6: TRzPanel;
+    RzPanel44: TRzPanel;
+    RzBackground6: TRzBackground;
+    RzLabel14: TRzLabel;
+    edtADDRESS: TcxTextEdit;
+    RzPanel45: TRzPanel;
+    RzPanel46: TRzPanel;
+    RzBackground7: TRzBackground;
+    RzLabel15: TRzLabel;
+    edtREGION_ID: TzrComboBoxList;
+    btnSaveShopInfo: TRzBmpButton;
+    btnSync: TRzBmpButton;
+    RzPanel5: TRzPanel;
+    RzPanel9: TRzPanel;
+    RzBackground8: TRzBackground;
+    RzLabel16: TRzLabel;
+    edtUSING_DATE: TcxDateEdit;
+    RzPanel11: TRzPanel;
+    RzPanel47: TRzPanel;
+    RzBackground9: TRzBackground;
+    RzLabel17: TRzLabel;
+    edtPOSCALCDIGHT: TcxComboBox;
+    RzPanel26: TRzPanel;
+    RzPanel48: TRzPanel;
+    RzBackground10: TRzBackground;
+    RzLabel18: TRzLabel;
+    edtPosDight: TcxSpinEdit;
+    RzPanel25: TRzPanel;
+    RzPanel49: TRzPanel;
+    RzBackground11: TRzBackground;
+    RzLabel19: TRzLabel;
+    edtCARRYRULE: TcxComboBox;
+    RzPanel27: TRzPanel;
+    RzPanel50: TRzPanel;
+    RzBackground12: TRzBackground;
+    RzLabel20: TRzLabel;
+    edtFlag: TcxTextEdit;
     RzPanel28: TRzPanel;
+    RzPanel51: TRzPanel;
+    RzBackground13: TRzBackground;
+    RzLabel21: TRzLabel;
+    edtID: TcxComboBox;
     RzPanel29: TRzPanel;
+    RzPanel52: TRzPanel;
+    RzBackground14: TRzBackground;
+    RzLabel22: TRzLabel;
+    edtID1: TcxComboBox;
+    edtLEN1: TcxComboBox;
+    edtDEC1: TcxTextEdit;
     RzPanel30: TRzPanel;
+    RzPanel33: TRzPanel;
+    RzBackground15: TRzBackground;
+    RzLabel23: TRzLabel;
+    edtID2: TcxComboBox;
+    edtLEN2: TcxComboBox;
+    edtDEC2: TcxTextEdit;
     RzPanel31: TRzPanel;
     RzPanel32: TRzPanel;
-    RzPanel33: TRzPanel;
-    btnDefault: TRzBitBtn;
-    btnRspSync: TRzBitBtn;
+    RzBackground16: TRzBackground;
+    RzLabel24: TRzLabel;
+    RzPanel53: TRzPanel;
+    RzPanel54: TRzPanel;
+    RzBackground17: TRzBackground;
+    RzLabel25: TRzLabel;
+    RzPanel55: TRzPanel;
+    RzPanel56: TRzPanel;
+    RzBackground18: TRzBackground;
+    RzLabel26: TRzLabel;
+    edtTicketPrintComm: TcxComboBox;
+    RzPanel15: TRzPanel;
+    RzPanel57: TRzPanel;
+    RzBackground19: TRzBackground;
+    RzLabel27: TRzLabel;
+    edtPRINTERWIDTH: TcxComboBox;
+    RzPanel17: TRzPanel;
+    RzPanel58: TRzPanel;
+    RzBackground20: TRzBackground;
+    RzLabel28: TRzLabel;
+    edtTitle: TcxTextEdit;
+    RzPanel18: TRzPanel;
+    RzPanel59: TRzPanel;
+    RzBackground21: TRzBackground;
+    RzLabel29: TRzLabel;
+    edtFOOTER: TcxMemo;
+    RzPanel14: TRzPanel;
+    RzPanel60: TRzPanel;
+    RzBackground22: TRzBackground;
+    RzLabel30: TRzLabel;
+    cxNullRow: TcxSpinEdit;
+    RzPanel16: TRzPanel;
+    RzPanel21: TRzPanel;
+    RzBackground23: TRzBackground;
+    RzLabel31: TRzLabel;
+    edtTicketCopy: TcxSpinEdit;
+    RzPanel61: TRzPanel;
+    RzPanel62: TRzPanel;
+    RzBackground24: TRzBackground;
+    RzLabel32: TRzLabel;
+    edtTICKET_PRINT_NAME: TcxComboBox;
+    RzPanel19: TRzPanel;
+    RzPanel63: TRzPanel;
+    RzBackground25: TRzBackground;
+    RzLabel33: TRzLabel;
+    cxCashBox: TcxComboBox;
+    RzPanel22: TRzPanel;
+    RzPanel23: TRzPanel;
+    RzBackground26: TRzBackground;
+    RzLabel34: TRzLabel;
+    cxCashBoxRate: TcxComboBox;
+    btnDefault: TRzBmpButton;
+    btnSaveSysDefine: TRzBmpButton;
+    Bevel2: TBevel;
+    Bevel3: TBevel;
+    rowToolNav: TRzToolbar;
+    RzToolButton1: TRzToolButton;
+    RzToolButton2: TRzToolButton;
+    RzSpacer1: TRzSpacer;
+    RzPanel35: TRzPanel;
+    RzPanel69: TRzPanel;
+    RzBackground32: TRzBackground;
+    RzLabel40: TRzLabel;
+    edtSaveFolder: TcxTextEdit;
+    btnBackUp: TRzBmpButton;
+    RzPanel70: TRzPanel;
+    RzPanel71: TRzPanel;
+    RzBackground33: TRzBackground;
+    RzLabel41: TRzLabel;
+    edtBackUpFile: TcxTextEdit;
+    btnRecovery: TRzBmpButton;
+    RzLabel42: TRzLabel;
+    RzLabel43: TRzLabel;
+    RzLabel44: TRzLabel;
+    RzLabel45: TRzLabel;
+    OpenBackUpDialog: TOpenDialog;
+    SaveFolderDialog: TSaveDialog;
+    OpenImageDialog: TOpenDialog;
+    EditPanel: TRzPanel;
+    pnl_left_line: TImage;
+    pnl_right_line: TImage;
+    pnl_top: TRzPanel;
+    pnl_top_left: TImage;
+    pnl_top_right: TImage;
+    pnl_top_line: TImage;
+    pnl_bottom: TRzPanel;
+    barcode_panel_bottom_line: TImage;
+    barcodeb_panel_right_line: TImage;
+    barcodeb_panel_left_line: TImage;
+    RzPanel66: TRzPanel;
+    RzPanel67: TRzPanel;
+    RzBackground30: TRzBackground;
+    RzLabel38: TRzLabel;
+    edtMOBILE: TcxTextEdit;
+    RzPanel39: TRzPanel;
+    RzPanel68: TRzPanel;
+    RzBackground31: TRzBackground;
+    RzLabel39: TRzLabel;
+    edtROLE_NAMES: TcxTextEdit;
+    RzPanel24: TRzPanel;
+    RzPanel64: TRzPanel;
+    RzBackground27: TRzBackground;
+    RzLabel35: TRzLabel;
+    edtACCOUNT: TcxTextEdit;
+    RzPanel36: TRzPanel;
+    RzPanel65: TRzPanel;
+    RzBackground28: TRzBackground;
+    RzLabel36: TRzLabel;
+    edtUSER_NAME: TcxTextEdit;
+    btnSaveUsers: TRzBmpButton;
+    btnNewUsers: TRzBmpButton;
+    RzPanel13: TRzPanel;
+    RzBackground34: TRzBackground;
+    btnGrantRights: TRzLabel;
+    RzSpacer2: TRzSpacer;
+    RzToolButton3: TRzToolButton;
+    RzPanel37: TRzPanel;
+    RzBackground29: TRzBackground;
+    RzLabel37: TRzLabel;
+    pnl_changepswd: TRzPanel;
+    RzPanel72: TRzPanel;
+    RzPanel73: TRzPanel;
+    RzBackground35: TRzBackground;
+    RzLabel46: TRzLabel;
+    edtOLD_PSWD: TcxTextEdit;
+    RzPanel38: TRzPanel;
+    RzPanel74: TRzPanel;
+    RzBackground36: TRzBackground;
+    RzLabel47: TRzLabel;
+    edtNEW_PSWD1: TcxTextEdit;
+    RzPanel75: TRzPanel;
+    RzPanel76: TRzPanel;
+    RzBackground37: TRzBackground;
+    RzLabel48: TRzLabel;
+    edtNEW_PSWD2: TcxTextEdit;
+    btnChange: TRzBmpButton;
+    btnCancel: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -111,30 +279,74 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure btnSaveSysDefineClick(Sender: TObject);
     procedure btnDefaultClick(Sender: TObject);
-    procedure btnRspSyncClick(Sender: TObject);
+    procedure btnSyncClick(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure btnSaveUsersClick(Sender: TObject);
+    procedure btnNewUsersClick(Sender: TObject);
+    procedure btnGrantRightsClick(Sender: TObject);
+    procedure RzToolButton2Click(Sender: TObject);
+    procedure RzToolButton1Click(Sender: TObject);
+    procedure RzLabel40Click(Sender: TObject);
+    procedure btnBackUpClick(Sender: TObject);
+    procedure RzLabel41Click(Sender: TObject);
+    procedure btnRecoveryClick(Sender: TObject);
+    procedure RzLabel9Click(Sender: TObject);
+    procedure RzToolButton3Click(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure RzLabel37Click(Sender: TObject);
+    procedure btnChangeClick(Sender: TObject);
   private
+    FCurUserId:string;
+    FCurUserName:string;
+    FCurUserPswd:string;
+    FCurUserAccount:string;
+    FCurUserRoleIds:string;
+    FNewUser:boolean;
     FFirstLogin:boolean;
     function  CheckRegister:boolean;
     procedure OpenShopInfo(tenantId:string='';shopId:string='');
     procedure GetShopInfo;
-    procedure OpenSysDefine;
-    procedure ReadFromObject(PageIndex:integer);
-    procedure WriteToObject;
     procedure SaveShopInfo;
     procedure SaveRegisterParams;
+    procedure InitTenant;
+    procedure SyncData;
+    
+    procedure OpenSysDefine;
     procedure ReadSysDefine;
     procedure ReadBarCodeRule;
     procedure SaveSysDefine;
+
+    procedure OpenUsers;
+    procedure SaveUsers;
+    procedure GrantRights;
+    procedure CheckUsersInfo;
+
+    procedure ReadFromObject(PageIndex:integer);
+    procedure WriteToObject;
+
     procedure SetFirstLogin(const Value: boolean);
+    procedure SetNewUser(const Value: boolean);
+    procedure SetCurUserId(const Value: string);
+    procedure SetCurUserName(const Value: string);
+    procedure SetCurUserPswd(const Value: string);
+    procedure SetCurUserAccount(const Value: string);
+    procedure SetCurUserRoleIds(const Value: string);
   public
     AObj:TRecord_;
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
+    property NewUser:boolean read FNewUser write SetNewUser;
+    property CurUserId:string read FCurUserId write SetCurUserId;
+    property CurUserName:string read FCurUserName write SetCurUserName;
+    property CurUserPswd:string read FCurUserPswd write SetCurUserPswd;
+    property CurUserAccount:string read FCurUserAccount write SetCurUserAccount;
+    property CurUserRoleIds:string read FCurUserRoleIds write SetCurUserRoleIds;
   end;
 
 implementation
 
 uses udllGlobal,udataFactory,uTokenFactory,uRspFactory,udllShopUtil,EncDec,ufrmSyncData,
-     uSyncFactory,udllFnUtil,uRspSyncFactory;
+     uSyncFactory,udllFnUtil,uRspSyncFactory,uRightsFactory,udllDsUtil,ufrmUserRights;
 
 {$R *.dfm}
 
@@ -145,7 +357,7 @@ begin
   rs := TZQuery.Create(nil);
   dataFactory.MoveToSqlite;
   try
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0 ';
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
     dataFactory.Open(rs);
     result := (rs.Fields[0].AsString <> '');
   finally
@@ -161,8 +373,6 @@ begin
   AObj := TRecord_.Create;
   
   for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
-  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\Photo.bmp') then
-     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\Photo.bmp');
 
   edtREGION_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_REGION_INFO');
 
@@ -175,12 +385,23 @@ begin
     RzBmpButton4.Visible := false;
   end;
 
+  dbState := dsInsert;
+  edtROLE_NAMES.Properties.ReadOnly := true;
+  edtSaveFolder.Properties.ReadOnly := true;
+  edtBackUpFile.Properties.ReadOnly := true;
+  if (token.userId <> 'admin') and (token.userId <> 'system') and (token.account <> token.xsmCode) then
+     RzToolButton3.Visible := false
+  else
+     RzToolButton3.Visible := true;
   PageControl.ActivePageIndex := 0;
 end;
 
 procedure TfrmSysDefine.FormShow(Sender: TObject);
 begin
   inherited;
+  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
+     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
+
   if FirstLogin then
     GetShopInfo
   else
@@ -444,8 +665,6 @@ begin
         dataFactory.CancelBatch;
         Raise;
       end;
-
-      if FirstLogin then dataFactory.ExecProc('TTenantInitV60',Params);
     finally
       Params.Free;
       tmpTenant.Free;
@@ -456,31 +675,8 @@ begin
 }
   if FirstLogin then
   begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
-      dataFactory.ExecProc('TTenantInitV60',Params);
-    finally
-      Params.Free;
-    end;
-
     SaveRegisterParams;
-
-    btnRspSync.Click;
-    RspSyncFactory.copyGoodsSort;
-
-    with TfrmSyncData.Create(self) do
-      begin
-        try
-          hWnd := self.Handle;
-          ShowForm;
-          BringToFront;
-          SyncFactory.SyncBasic;
-        finally
-          Free;
-        end;
-      end;
-
+    SyncData;
     FirstLogin := false;
     RzBmpButton2.Visible := true;
     RzBmpButton3.Visible := true;
@@ -556,6 +752,33 @@ procedure TfrmSysDefine.RzBmpButton3Click(Sender: TObject);
 var i:integer;
 begin
   inherited;
+  if PageControl.ActivePageIndex <> 2 then
+  begin
+    OpenUsers;
+    edtACCOUNT.Text := token.account;
+    edtUSER_NAME.Text := token.username;
+    edtMOBILE.Text := token.mobile;
+    cdsUsers.DisableControls;
+    try
+      CurUserId := token.userId;
+      CurUserName := token.username;
+      CurUserAccount := token.account;
+      if cdsUsers.Locate('USER_ID',token.userId,[]) then
+         begin
+           edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
+           CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
+           CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
+         end
+      else
+         begin
+           edtROLE_NAMES.Text := '管理员';
+           CurUserPswd := '';
+           CurUserRoleIds := '';
+         end;
+    finally
+      cdsUsers.EnableControls;
+    end;
+  end;
   for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
   PageControl.ActivePageIndex := 2;
 end;
@@ -564,6 +787,10 @@ procedure TfrmSysDefine.RzBmpButton4Click(Sender: TObject);
 var i:integer;
 begin
   inherited;
+  if PageControl.ActivePageIndex <> 3 then
+  begin
+    edtSaveFolder.Text := ExtractFilePath(Application.ExeName)+'backup\'+'db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak'; 
+  end;
   for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
   PageControl.ActivePageIndex := 3;
 end;
@@ -832,20 +1059,10 @@ begin
   cxCashBoxRate.ItemIndex := -1;
 end;
 
-procedure TfrmSysDefine.btnRspSyncClick(Sender: TObject);
+procedure TfrmSysDefine.btnSyncClick(Sender: TObject);
 begin
   inherited;
-  with TfrmSyncData.Create(self) do
-  begin
-    try
-      hWnd := self.Handle;
-      ShowForm;
-      BringToFront;
-      RspSyncFactory.SyncAll;
-    finally
-      Free;
-    end;
-  end;
+  SyncData;
 end;
 
 procedure TfrmSysDefine.SetFirstLogin(const Value: boolean);
@@ -853,14 +1070,486 @@ begin
   FFirstLogin := Value;
   if Value then
   begin
-    btnRspSync.Visible := false;
+    btnSaveShopInfo.Caption := '开通';
+    btnSync.Visible := false;
     RzProgressBar1.Percent := 0;
   end
   else
   begin
-    btnRspSync.Visible := true;
+    btnSaveShopInfo.Caption := '保存';
+    btnSync.Visible := true;
     RzProgressBar1.Percent := 99;
   end;
+end;
+
+procedure TfrmSysDefine.InitTenant;
+var Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
+    dataFactory.ExecProc('TTenantInitV60',Params);
+  finally
+    Params.Free;
+  end;
+  RightsFactory.InitialRights;
+end;
+
+procedure TfrmSysDefine.OpenUsers;
+begin
+  cdsUsers.Close;
+  cdsUsers.SQL.Text :=
+    'select a.USER_ID,a.TENANT_ID,a.SHOP_ID,b.SHOP_NAME as SHOP_ID_TEXT,a.ACCOUNT,a.USER_NAME,a.PASS_WRD,a.ROLE_IDS,a.ROLE_NAMES as ROLE_IDS_TEXT,a.MOBILE '+
+    'from   CA_USERS a '+
+    '       left join CA_SHOP_INFO b on a.TENANT_ID=b.TENANT_ID and a.SHOP_ID=b.SHOP_ID '+
+    'where  a.COMM not in (''02'',''12'') '+
+    '       and a.TENANT_ID='+token.tenantId+' '+
+    'order by a.USER_ID';
+  dataFactory.Open(cdsUsers);
+end;
+
+procedure TfrmSysDefine.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+  br:TBrush;
+  pn:TPen;
+begin
+  rowToolNav.Visible := not cdsUsers.IsEmpty;
+  br := TBrush.Create;
+  br.Assign(DBGridEh1.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh1.Canvas.Pen);
+  try
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
+  begin
+    if Column.FieldName = 'TOOL_NAV' then
+       begin
+         ARect := Rect;
+         rowToolNav.Visible := true;
+         rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
+       end
+    else
+       DBGridEh1.Canvas.Brush.Color := clWhite;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := DBGridEh1.FixedColor;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsUsers.RecNo)),length(Inttostr(cdsUsers.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  finally
+    DBGridEh1.Canvas.Brush.Assign(br);
+    DBGridEh1.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
+end;
+
+procedure TfrmSysDefine.SaveUsers;
+var
+  tmpUsers:TZQuery;
+  Params:TftParamList;
+begin
+  CheckUsersInfo;
+  if NewUser then CurUserId := TSequence.NewId;
+
+  tmpUsers := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('USER_ID').AsString := CurUserId;
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.Open(tmpUsers,'TUsersV60',Params);
+
+    if tmpUsers.IsEmpty then
+       begin
+         tmpUsers.Append;
+         tmpUsers.FieldByName('USER_ID').AsString := CurUserId;
+         tmpUsers.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+         tmpUsers.FieldByName('ROLE_IDS').AsString := '#';
+         tmpUsers.FieldByName('ROLE_IDS_TEXT').AsString := '#';
+         tmpUsers.FieldByName('DUTY_IDS').AsString := token.tenantId + '001';
+         tmpUsers.FieldByName('DUTY_IDS_TEXT').AsString := '老板';
+         tmpUsers.FieldByName('PASS_WRD').AsString := EncStr('1234',ENC_KEY);
+         tmpUsers.FieldByName('DEPT_ID').AsString := token.tenantId + '001';
+         tmpUsers.FieldByName('SEX').AsString := '0';
+         tmpUsers.FieldByName('DEGREES').AsString := '3';
+         tmpUsers.FieldByName('IDN_TYPE').AsString := '1';
+       end
+    else tmpUsers.Edit;
+
+    tmpUsers.FieldByName('ACCOUNT').AsString := trim(edtACCOUNT.Text);
+    tmpUsers.FieldByName('USER_NAME').AsString := trim(edtUSER_NAME.Text);
+    tmpUsers.FieldByName('USER_SPELL').AsString := fnString.GetWordSpell(tmpUsers.FieldByName('USER_NAME').AsString,3);
+    tmpUsers.FieldByName('SHOP_ID').AsString := token.shopId;
+    tmpUsers.FieldByName('MOBILE').AsString := trim(edtMOBILE.Text);
+    tmpUsers.Post;
+
+    dataFactory.UpdateBatch(tmpUsers,'TUsersV60');
+  finally
+    tmpUsers.Free;
+    Params.Free;
+  end;
+  OpenUsers;
+  cdsUsers.Locate('USER_ID',CurUserId,[]);
+
+  // 本地保存
+  if dataFactory.iDbType <> 5 then
+  begin
+    dataFactory.MoveToSqlite;
+    tmpUsers := TZQuery.Create(nil);
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('USER_ID').AsString := CurUserId;
+      Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      dataFactory.Open(tmpUsers,'TUsersV60',Params);
+
+      if tmpUsers.IsEmpty then
+         begin
+           tmpUsers.Append;
+           tmpUsers.FieldByName('USER_ID').AsString := CurUserId;
+           tmpUsers.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+           tmpUsers.FieldByName('ROLE_IDS').AsString := '#';
+           tmpUsers.FieldByName('ROLE_IDS_TEXT').AsString := '#';
+           tmpUsers.FieldByName('DUTY_IDS').AsString := token.tenantId + '001';
+           tmpUsers.FieldByName('DUTY_IDS_TEXT').AsString := '老板';
+           tmpUsers.FieldByName('PASS_WRD').AsString := EncStr('1234',ENC_KEY);
+           tmpUsers.FieldByName('DEPT_ID').AsString := token.tenantId + '001';
+           tmpUsers.FieldByName('SEX').AsString := '0';
+           tmpUsers.FieldByName('DEGRESS').AsString := '3';
+           tmpUsers.FieldByName('IDN_TYPE').AsString := '1';
+         end
+      else tmpUsers.Edit;
+
+      tmpUsers.FieldByName('ACCOUNT').AsString := trim(edtACCOUNT.Text);
+      tmpUsers.FieldByName('USER_NAME').AsString := trim(edtUSER_NAME.Text);
+      tmpUsers.FieldByName('USER_SPELL').AsString := fnString.GetWordSpell(tmpUsers.FieldByName('USER_NAME').AsString,3);
+      tmpUsers.FieldByName('SHOP_ID').AsString := token.shopId;
+      tmpUsers.FieldByName('MOBILE').AsString := trim(edtMOBILE.Text);
+      tmpUsers.Post;
+
+      dataFactory.UpdateBatch(tmpUsers,'TUsersV60');
+    finally
+      tmpUsers.Free;
+      Params.Free;
+      dataFactory.MoveToDefault;
+    end;
+  end;
+
+  NewUser := false;
+  dllGlobal.GetZQueryFromName('CA_USERS').Close;
+  MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
+end;
+
+procedure TfrmSysDefine.btnSaveUsersClick(Sender: TObject);
+begin
+  inherited;
+  SaveUsers;
+end;
+
+procedure TfrmSysDefine.btnNewUsersClick(Sender: TObject);
+begin
+  inherited;
+  NewUser := true;
+  CurUserId := '';
+  CurUserName := '';
+  CurUserPswd := '';
+  CurUserAccount := '';
+  CurUserRoleIds := '';
+  edtACCOUNT.Text := '';
+  edtUSER_NAME.Text := '';
+  edtMOBILE.Text := '';
+end;
+
+procedure TfrmSysDefine.CheckUsersInfo;
+begin
+  if trim(edtACCOUNT.Text) = '' then
+     begin
+       if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+       Raise Exception.Create('用户账号不允许为空！');
+     end;
+  if trim(edtUSER_NAME.Text) = '' then
+     begin
+       if edtUSER_NAME.CanFocus then edtUSER_NAME.SetFocus;
+       Raise Exception.Create('用户姓名不允许为空！');
+     end;
+end;
+
+procedure TfrmSysDefine.GrantRights;
+var roleIds,roleNames:string;
+begin
+  if CurUserId = '' then Exit;
+  if not cdsUsers.Locate('USER_ID',CurUserId,[]) then Raise Exception.Create('管理员权限不允许修改...');
+  roleIds := CurUserRoleIds;
+  if TfrmUserRights.ShowUserRight(CurUserId,
+                                  CurUserName,
+                                  CurUserAccount,
+                                  roleIds,roleNames) then
+  begin
+    if not (cdsUsers.State in [dsInsert,dsEdit]) then cdsUsers.Edit;
+    if roleNames = '' then roleNames := '#';
+    cdsUsers.FieldByName('ROLE_IDS').AsString:=roleIds;
+    cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString:=roleNames;
+    cdsUsers.Post;
+    edtROLE_NAMES.Text := roleNames;
+  end;
+end;
+
+procedure TfrmSysDefine.btnGrantRightsClick(Sender: TObject);
+begin
+  inherited;
+  GrantRights;
+end;
+
+procedure TfrmSysDefine.RzToolButton2Click(Sender: TObject);
+begin
+  inherited;
+  NewUser := false;
+  CurUserId := cdsUsers.FieldByName('USER_ID').AsString;
+  CurUserName := cdsUsers.FieldByName('USER_NAME').AsString;
+  CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
+  CurUserAccount := cdsUsers.FieldByName('ACCOUNT').AsString;
+  CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
+  edtACCOUNT.Text := cdsUsers.FieldByName('ACCOUNT').AsString;
+  edtUSER_NAME.Text := cdsUsers.FieldByName('USER_NAME').AsString;
+  edtMOBILE.Text := cdsUsers.FieldByName('MOBILE').AsString;
+  edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
+end;
+
+procedure TfrmSysDefine.RzToolButton1Click(Sender: TObject);
+begin
+  inherited;
+  if MessageBox(Handle,Pchar('确定要删除'+cdsUsers.FieldByName('USER_NAME').AsString+'吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
+  begin
+    try
+      cdsUsers.CommitUpdates;
+      cdsUsers.Delete;
+      dataFactory.UpdateBatch(cdsUsers,'TUsersV60');
+    Except
+      cdsUsers.CancelUpdates;
+      Raise;
+    end;
+  end;
+end;
+
+procedure TfrmSysDefine.RzLabel40Click(Sender: TObject);
+begin
+  inherited;
+  SaveFolderDialog.FileName := 'db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak';
+  if SaveFolderDialog.Execute then
+     begin
+       edtSaveFolder.Text := SaveFolderDialog.FileName;
+     end;
+end;
+
+procedure TfrmSysDefine.btnBackUpClick(Sender: TObject);
+begin
+  inherited;
+  if trim(edtSaveFolder.Text) = '' then Raise Exception.Create('请选择数据存储位置...');
+  ForceDirectories(ExtractFileDir(trim(edtSaveFolder.Text))); 
+  if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(trim(edtSaveFolder.Text)),false) then
+     MessageBox(Handle,'数据备份成功...','友情提示..',MB_OK)
+  else MessageBox(Handle,'数据备份失败...','友情提示..',MB_OK);
+end;
+
+procedure TfrmSysDefine.RzLabel41Click(Sender: TObject);
+begin
+  inherited;
+  if OpenBackUpDialog.Execute then
+     begin
+       edtBackUpFile.Text := OpenBackUpDialog.FileName;
+     end;
+end;
+
+procedure TfrmSysDefine.btnRecoveryClick(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  if trim(edtBackUpFile.Text) = '' then Raise Exception.Create('请选择要恢复的备份文件...');
+  try
+    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),false) then
+       begin
+         if CopyFile(pchar(trim(edtBackUpFile.Text)),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+            begin
+              rs := TZQuery.Create(nil);
+              dataFactory.MoveToSqlite;
+              try
+                rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
+                dataFactory.Open(rs);
+                MessageBox(Handle,'数据恢复成功...','友情提示..',MB_OK);
+                if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
+                   DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
+              finally
+                dataFactory.MoveToDefault;
+                rs.Free;
+              end;
+            end
+         else
+            begin
+              Raise Exception.Create('数据恢复失败...');
+            end;
+       end
+    else
+       begin
+         MessageBox(Handle,'数据恢复失败...','友情提示..',MB_OK);
+       end;
+  except
+    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+       begin
+         if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
+            DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
+       end;
+    Raise Exception.Create('数据恢复失败...');
+  end;
+end;
+
+procedure TfrmSysDefine.RzLabel9Click(Sender: TObject);
+var img:string;
+begin
+  inherited;
+  if OpenImageDialog.Execute then
+     begin
+       img := OpenImageDialog.FileName;
+       if CopyFile(pchar(img),pchar(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp'),false) then
+          begin
+            if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
+               Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
+          end;
+     end;
+end;
+
+procedure TfrmSysDefine.SetCurUserAccount(const Value: string);
+begin
+  FCurUserAccount := Value;
+end;
+
+procedure TfrmSysDefine.SetCurUserId(const Value: string);
+begin
+  FCurUserId := Value;
+  if (FCurUserId = token.userId) and (token.account <> token.xsmCode) and (token.account <> 'system') then
+     RzPanel37.Visible := true
+  else
+     RzPanel37.Visible := false;
+end;
+
+procedure TfrmSysDefine.SetCurUserName(const Value: string);
+begin
+  FCurUserName := Value;
+end;
+
+procedure TfrmSysDefine.SetCurUserPswd(const Value: string);
+begin
+  FCurUserPswd := Value;
+end;
+
+procedure TfrmSysDefine.SetCurUserRoleIds(const Value: string);
+begin
+  FCurUserRoleIds := Value;
+end;
+
+procedure TfrmSysDefine.RzToolButton3Click(Sender: TObject);
+var str:string;
+begin
+  inherited;
+  if MessageBox(Handle,Pchar('确定要重置'+cdsUsers.FieldByName('USER_NAME').AsString+'的密码为1234吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
+  begin
+    str := 'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where USER_ID='''+cdsUsers.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+token.tenantId;
+    if dataFactory.ExecSQL(str) > 0 then
+      MessageBox(handle,Pchar('提示:密码重置成功...'),Pchar(Caption),MB_OK)
+    else
+      MessageBox(handle,Pchar('提示:密码重置失败...'),Pchar(Caption),MB_OK);
+  end;
+end;
+
+procedure TfrmSysDefine.btnCancelClick(Sender: TObject);
+begin
+  inherited;
+  pnl_changepswd.Visible := false;
+end;
+
+procedure TfrmSysDefine.RzLabel37Click(Sender: TObject);
+begin
+  inherited;
+  pnl_changepswd.Visible := true;
+end;
+
+procedure TfrmSysDefine.btnChangeClick(Sender: TObject);
+var
+  str,newPswd:string;
+begin
+  inherited;
+  if edtOLD_PSWD.Text = '' then
+  begin
+    if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
+    Raise Exception.Create('请输入旧密码...');
+  end;
+  if edtNEW_PSWD1.Text = '' then
+  begin
+    if edtNEW_PSWD1.CanFocus then edtNEW_PSWD1.SetFocus;
+    Raise Exception.Create('请输入新密码...');
+  end;
+  if edtNEW_PSWD2.Text = '' then
+  begin
+    if edtNEW_PSWD2.CanFocus then edtNEW_PSWD2.SetFocus;
+    Raise Exception.Create('请再输入一次...');
+  end;
+  if edtNEW_PSWD1.Text <> edtNEW_PSWD2.Text then
+  begin
+    if edtNEW_PSWD2.CanFocus then edtNEW_PSWD2.SetFocus;
+    Raise Exception.Create('两次密码输入不一致...');
+  end;
+  if edtOLD_PSWD.Text <> DecStr(CurUserPswd,ENC_KEY) then
+  begin
+    if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
+    Raise Exception.Create('旧密码密码输入错误...');
+  end;
+  newPswd := UpperCase(edtNEW_PSWD1.Text);
+  if (lowercase(CurUserId)<>'admin') then
+    str := 'update CA_USERS set PASS_WRD=''' + EncStr(newPswd,ENC_KEY) + ''',COMM=' + GetCommStr(dataFactory.iDbType) +
+           ',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and '+
+           'USER_ID=''' + token.userId + ''''
+  else
+    str := 'update SYS_DEFINE set VALUE=''' + EncStr(newPswd,ENC_KEY) + ''',COMM=' + GetCommStr(dataFactory.iDbType) +
+           ',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and '+
+           'DEFINE=''PASSWRD''';
+  try
+    if dataFactory.ExecSQL(str) <> 1 then Raise Exception.Create('无法修改'+CurUserName+'账户的密码');
+    MessageBox(Handle,'密码修改成功...','友情提示..',MB_OK);
+    pnl_changepswd.Visible := false;
+  except           
+    Raise Exception.Create('修改失败...');
+  end;
+end;
+
+procedure TfrmSysDefine.SyncData;
+begin
+  with TfrmSyncData.Create(self) do
+  begin
+    try
+      hWnd := self.Handle;
+      ShowForm;
+      BringToFront;
+      RspSyncFactory.SyncAll;
+      RspSyncFactory.copyGoodsSort;
+      InitTenant;
+      SyncFactory.SyncBasic;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmSysDefine.SetNewUser(const Value: boolean);
+begin
+  FNewUser := Value;
+  if FNewUser then
+     RzPanel13.Visible := false
+  else
+     RzPanel13.Visible := true; 
 end;
 
 initialization

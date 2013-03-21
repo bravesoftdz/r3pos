@@ -1,30 +1,46 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 180
-  Top = 0
+  Left = 184
+  Top = 24
   Caption = #31995#32479#35774#32622
-  ClientHeight = 683
-  ClientWidth = 873
+  ClientHeight = 659
+  ClientWidth = 920
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
+  object RzLabel6: TRzLabel [0]
+    Left = 30
+    Top = 25
+    Width = 60
+    Height = 15
+    Caption = #31995#32479#35774#32622
+  end
+  object Bevel6: TBevel [1]
+    Left = 95
+    Top = 32
+    Width = 580
+    Height = 2
+    Shape = bsTopLine
+  end
   inherited ScrollBox: TScrollBox
-    Width = 873
-    Height = 636
+    Width = 920
+    Height = 612
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 873
-      Height = 636
+      Width = 920
+      Height = 612
       Align = alClient
+      Color = 15461355
       object RzPanel1: TRzPanel
         Left = 0
         Top = 0
         Width = 168
-        Height = 636
+        Height = 612
         Align = alLeft
         BorderOuter = fsNone
+        Color = 15461355
         TabOrder = 0
         object RzBmpButton1: TRzBmpButton
           Left = 0
@@ -5795,36 +5811,39 @@ inherited frmSysDefine: TfrmSysDefine
       object PageControl: TRzPageControl
         Left = 168
         Top = 0
-        Width = 705
-        Height = 636
+        Width = 752
+        Height = 612
         ActivePage = TabSheet1
         Align = alClient
+        Color = 15461355
+        UseColoredTabs = True
+        ParentColor = False
         TabIndex = 0
         TabOrder = 1
         FixedDimension = 21
         object TabSheet1: TRzTabSheet
-          Color = 16645629
+          Color = 15461355
           Caption = #24215#38138#20449#24687
           object RzPanel2: TRzPanel
             Left = 0
             Top = 0
-            Width = 701
+            Width = 748
             Height = 121
             Align = alTop
             BorderOuter = fsGroove
             BorderSides = [sdBottom]
-            Color = clWhite
+            Color = 15461355
             TabOrder = 0
             object RzLabel1: TRzLabel
-              Left = 141
+              Left = 150
               Top = 41
               Width = 83
               Height = 15
               Caption = #20449#24687#23436#25972#24230':'
             end
             object RzProgressBar1: TRzProgressBar
-              Left = 141
-              Top = 85
+              Left = 150
+              Top = 81
               Width = 145
               Height = 17
               BorderOuter = fsFlat
@@ -5834,50 +5853,6 @@ inherited frmSysDefine: TfrmSysDefine
               Percent = 99
               TotalParts = 0
             end
-            object btnChangeImage: TRzBitBtn
-              Left = 45
-              Top = 79
-              Width = 52
-              Height = 28
-              Caption = #26356' '#25442
-              Color = 15461355
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              HighlightColor = 14276036
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 0
-              ThemeAware = False
-              NumGlyphs = 2
-              Spacing = 5
-            end
-            object RzPanel20: TRzPanel
-              Left = 360
-              Top = 37
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #24215#38138#21517#31216
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 1
-            end
-            object edtSHOP_NAME: TcxTextEdit
-              Left = 456
-              Top = 36
-              Width = 145
-              Height = 23
-              Properties.MaxLength = 30
-              TabOrder = 2
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
             object RzPanel10: TRzPanel
               Left = 45
               Top = 18
@@ -5885,7 +5860,7 @@ inherited frmSysDefine: TfrmSysDefine
               Height = 48
               BorderOuter = fsFlat
               Color = clWhite
-              TabOrder = 3
+              TabOrder = 0
               object Photo: TImage
                 Left = 1
                 Top = 1
@@ -5895,234 +5870,1062 @@ inherited frmSysDefine: TfrmSysDefine
                 Stretch = True
               end
             end
+            object RzPanel40: TRzPanel
+              Left = 45
+              Top = 78
+              Width = 50
+              Height = 25
+              BorderOuter = fsFlat
+              BorderSides = [sdRight, sdBottom]
+              FlatColor = clGray
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 1
+              object RzBackground1: TRzBackground
+                Left = 0
+                Top = 0
+                Width = 49
+                Height = 24
+                Active = True
+                Align = alClient
+                FrameColor = 9145227
+                GradientColorStart = clWhite
+                GradientColorStop = 14277081
+                ImageStyle = isStretch
+                ShowGradient = True
+                ShowImage = False
+                ShowTexture = False
+              end
+              object RzLabel9: TRzLabel
+                Left = 0
+                Top = 0
+                Width = 49
+                Height = 24
+                Align = alClient
+                Alignment = taCenter
+                Caption = #26356#25442
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                Transparent = True
+                Layout = tlCenter
+                OnClick = RzLabel9Click
+                ShadowColor = 16250871
+                ShadowDepth = 1
+                TextStyle = tsShadow
+              end
+            end
+            object edtBK_BARCODE: TRzPanel
+              Left = 360
+              Top = 43
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              DesignSize = (
+                260
+                31)
+              object RzPanel41: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground2: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel10: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #24215#38138#21517#31216
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtSHOP_NAME: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 25
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
           end
           object RzPanel3: TRzPanel
             Left = 0
             Top = 121
-            Width = 701
-            Height = 440
+            Width = 748
+            Height = 466
             Align = alClient
-            BorderOuter = fsFlat
+            BorderOuter = fsGroove
             BorderSides = [sdBottom]
-            Color = clWhite
+            Color = 15461355
             TabOrder = 1
+            object RzPanel20: TRzPanel
+              Left = 45
+              Top = 30
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 0
+              DesignSize = (
+                260
+                31)
+              object RzPanel42: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground3: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel11: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #32463#33829#35768#21487#35777
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtLICENSE_CODE: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 25
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
             object RzPanel4: TRzPanel
               Left = 45
-              Top = 40
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #32463#33829#35768#21487#35777
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 0
-            end
-            object edtLICENSE_CODE: TcxTextEdit
-              Left = 141
-              Top = 39
-              Width = 145
-              Height = 23
-              Properties.MaxLength = 30
+              Top = 87
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
               TabOrder = 1
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel5: TRzPanel
-              Left = 360
-              Top = 40
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25152#23646#22320#21306
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 3
-            end
-            object edtREGION_ID: TzrComboBoxList
-              Left = 456
-              Top = 39
-              Width = 145
-              Height = 23
-              Properties.AutoSelect = False
-              Properties.Buttons = <
-                item
-                  Default = True
-                end>
-              Properties.ReadOnly = False
-              TabOrder = 2
-              InGrid = False
-              KeyValue = Null
-              FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-              KeyField = 'CODE_ID'
-              ListField = 'CODE_NAME'
-              Columns = <
-                item
-                  EditButtons = <>
-                  FieldName = 'CODE_NAME'
-                  Footers = <>
-                  Title.Caption = #21517#31216
-                  Width = 100
+              DesignSize = (
+                260
+                31)
+              object RzPanel43: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground4: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
                 end
-                item
-                  EditButtons = <>
-                  FieldName = 'CODE_ID'
-                  Footers = <>
-                  Title.Caption = #32534#30721
-                  Width = 40
-                end>
-              DropWidth = 250
-              DropHeight = 228
-              ShowTitle = True
-              AutoFitColWidth = True
-              ShowButton = True
-              LocateStyle = lsDark
-              Buttons = [zbClear]
-              DropListStyle = lsFixed
-              MultiSelect = False
-            end
-            object RzPanel6: TRzPanel
-              Left = 45
-              Top = 140
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #32463#33829#22320#22336
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 4
-            end
-            object edtADDRESS: TcxTextEdit
-              Left = 141
-              Top = 139
-              Width = 460
-              Height = 23
-              Properties.MaxLength = 50
-              TabOrder = 5
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                object RzLabel12: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #36127' '#36131' '#20154
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtLINKMAN: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 10
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             object RzPanel7: TRzPanel
               Left = 360
-              Top = 90
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #32852#31995#30005#35805
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 7
+              Top = 87
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              DesignSize = (
+                260
+                31)
+              object RzPanel8: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground5: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel13: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #32852#31995#30005#35805
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtTELEPHONE: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 20
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
-            object edtTELEPHONE: TcxTextEdit
-              Left = 456
-              Top = 89
-              Width = 145
-              Height = 23
-              Properties.MaxLength = 30
-              TabOrder = 6
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel8: TRzPanel
+            object RzPanel6: TRzPanel
               Left = 45
-              Top = 90
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #36127' '#36131' '#20154
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 8
+              Top = 143
+              Width = 575
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 3
+              DesignSize = (
+                575
+                31)
+              object RzPanel44: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground6: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel14: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #32463#33829#22320#22336
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtADDRESS: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 468
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 25
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
-            object edtLINKMAN: TcxTextEdit
-              Left = 141
-              Top = 89
-              Width = 145
-              Height = 23
-              Properties.MaxLength = 30
-              TabOrder = 9
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            object RzPanel45: TRzPanel
+              Left = 360
+              Top = 30
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 4
+              DesignSize = (
+                260
+                31)
+              object RzPanel46: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground7: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel15: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25152#23646#21306#22495
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtREGION_ID: TzrComboBoxList
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                KeyField = 'CODE_ID'
+                ListField = 'CODE_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'CODE_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                    Width = 100
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CODE_ID'
+                    Footers = <>
+                    Title.Caption = #32534#30721
+                    Width = 40
+                  end>
+                DropWidth = 250
+                DropHeight = 228
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
-          end
-          object RzPanel9: TRzPanel
-            Left = 0
-            Top = 561
-            Width = 701
-            Height = 50
-            Align = alBottom
-            BorderOuter = fsNone
-            Color = clWhite
-            TabOrder = 2
-            DesignSize = (
-              701
-              50)
-            object btnSaveShopInfo: TRzBitBtn
-              Left = 590
-              Top = 13
-              Width = 70
-              Height = 28
-              Anchors = [akTop, akRight]
+            object btnSaveShopInfo: TRzBmpButton
+              Left = 550
+              Top = 210
+              Width = 72
+              Bitmaps.TransparentColor = clFuchsia
+              Bitmaps.Up.Data = {
+                86190000424D86190000000000003600000028000000480000001E0000000100
+                1800000000005019000000000000000000000000000000000000EBEBEBEBEBEB
+                EAEAEAE6E6E6DDDDDDD4D4D4CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCECECE
+                D0D0D0D8D8D8E2E2E2E9E9E9EBEBEBEBEBEBEBEBEBEAEAEAE2E2E2CECECEB3B3
+                B39F9F9F94949492929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                929292929292929292929292929292929292929292939393989898A7A7A7C0C0
+                C0D9D9D9E7E7E7EBEBEBEBEBEBE3E3E3C7C7C7BCBCBCC9C9C9DADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADAD0D0D0BCBCBC959595919191B4B4B4D9D9D9E9
+                E9E9E9E9E9D4D4D4D2D2D2DADADADADADADBDBDBDADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAA6A6A6919191BFBFBFE2E2E2E4E4E4DDDDDD
+                DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADAD9D9D9939393A5A5A5D7D7D7E2E2E2E7E7E7DBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DAC1C1C1969696CFCFCFE4E4E4E7E7E7DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D5929292CE
+                CECEE5E5E5E7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA939393CECECEE8E8E8E8E8E8
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADAD9D9D99C9C9CD2D2D2EAEAEAECECECDBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DACFCFCFB1B1B1DCDCDCEBEBEBF0F0F0E3E3E3DADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADABFBFBFCDCDCDE6
+                E6E6EBEBEBECECECEEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAD3D3D3C9C9C9E3E3E3EAEAEAEBEBEBEBEBEB
+                EBEBEBEBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+                DEDEDED4D4D4D6D6D6E4E4E4EAEAEAEBEBEBEBEBEBEBEBEBEBEBEBEAEAEAE7E7
+                E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1E1E1E1E5E5E5E9E9
+                E9EBEBEBEBEBEBEBEBEB}
+              Color = clBtnFace
               Caption = #20445#23384
-              Color = 15461355
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              HighlightColor = 14276036
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 0
-              ThemeAware = False
+              TabOrder = 5
               OnClick = btnSaveShopInfoClick
-              NumGlyphs = 2
-              Spacing = 5
             end
-            object btnRspSync: TRzBitBtn
-              Left = 497
-              Top = 13
-              Width = 70
-              Height = 28
-              Anchors = [akTop, akRight]
-              Caption = #21516#27493#36164#26009
-              Color = 15461355
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              HighlightColor = 14276036
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 1
-              ThemeAware = False
-              OnClick = btnRspSyncClick
-              NumGlyphs = 2
-              Spacing = 5
+            object btnSync: TRzBmpButton
+              Left = 419
+              Top = 210
+              Width = 106
+              Height = 29
+              Bitmaps.TransparentColor = clFuchsia
+              Bitmaps.Up.Data = {
+                76240000424D762400000000000036000000280000006A0000001D0000000100
+                1800000000004024000000000000000000000000000000000000EBEBEBEAEAEA
+                E5E5E5D9D9D9D0D0D0CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCECECED0D0D0D9D9D9E5E5E5EAEAEAEBEBEB0000E9E9E9E0E0E0
+                C7C7C7AAAAAA9999999393939292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                929292929292939393999999AAAAAAC7C7C7E0E0E0E9E9E90000E4E4E4C7C7C7
+                C6C6C6D2D2D2DADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADAD0D0D0B9B9B98A8A8A9C9C9CC5C5C5E4E4E40000DADADAD8D8D8
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADAD3D3D38E8E8EA9A9A9D9D9D90000E1E1E1DFDFDF
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADABBBBBB979797D0D0D00000EAEAEADBDBDB
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADAD5D5D5929292CECECE0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CECECE0000EEEEEEDBDBDB
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA979797D0D0D00000EFEFEFDFDFDF
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADAD6D6D6A9A9A9D9D9D90000EDEDEDE9E9E9
+                DBDBDBDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADAC6C6C6C5C5C5E4E4E40000EBEBEBEFEFEF
+                E8E8E8E0E0E0DCDCDCDADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADAD7D7D7CACACAE0E0E0E9E9E90000EBEBEBEBEBEB
+                EAEAEAE6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E5E5E5E1E1E1DADADAD9D9D9E5E5E5EAEAEAEBEBEB0000}
+              Color = clBtnFace
+              Caption = #25968#25454#21516#27493
+              TabOrder = 6
+              OnClick = btnSyncClick
             end
           end
         end
         object TabSheet2: TRzTabSheet
-          Color = 16645629
+          Color = 15461355
           Caption = #31995#32479#21442#25968
           object RzPanel12: TRzPanel
             Left = 0
             Top = 0
-            Width = 701
-            Height = 561
+            Width = 748
+            Height = 587
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdBottom]
-            Color = clWhite
+            Color = 15461355
             TabOrder = 0
             object Bevel1: TBevel
               Left = 95
               Top = 32
-              Width = 580
+              Width = 600
               Height = 2
               Shape = bsTopLine
             end
@@ -6140,23 +6943,9 @@ inherited frmSysDefine: TfrmSysDefine
               Height = 15
               Caption = #23567#31080#25171#21360
             end
-            object Bevel2: TBevel
-              Left = 95
-              Top = 252
-              Width = 580
-              Height = 1
-              Shape = bsTopLine
-            end
-            object Bevel3: TBevel
-              Left = 95
-              Top = 432
-              Width = 580
-              Height = 1
-              Shape = bsTopLine
-            end
             object RzLabel3: TRzLabel
               Left = 30
-              Top = 425
+              Top = 435
               Width = 60
               Height = 15
               Caption = #38065#31665#35774#32622
@@ -6171,595 +6960,4635 @@ inherited frmSysDefine: TfrmSysDefine
             object Bevel4: TBevel
               Left = 95
               Top = 142
-              Width = 580
+              Width = 600
+              Height = 2
+              Shape = bsTopLine
+            end
+            object Bevel2: TBevel
+              Left = 94
+              Top = 252
+              Width = 600
+              Height = 2
+              Shape = bsTopLine
+            end
+            object Bevel3: TBevel
+              Left = 94
+              Top = 442
+              Width = 600
               Height = 2
               Shape = bsTopLine
             end
             object edtZERO_OUT: TcxCheckBox
-              Left = 45
-              Top = 95
-              Width = 153
+              Left = 46
+              Top = 97
+              Width = 136
               Height = 23
               Properties.DisplayUnchecked = 'False'
               Properties.Caption = #20801#35768#38646#24211#23384#20986#24211
-              TabOrder = 10
+              TabOrder = 0
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel5: TRzPanel
+              Left = 45
+              Top = 54
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 1
+              DesignSize = (
+                260
+                31)
+              object RzPanel9: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground8: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel16: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21551#29992#26085#26399
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtUSING_DATE: TcxDateEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
             end
             object RzPanel11: TRzPanel
-              Left = 45
-              Top = 60
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #21551#29992#26085#26399
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 11
-            end
-            object edtUSING_DATE: TcxDateEdit
-              Left = 141
-              Top = 59
-              Width = 145
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              TabOrder = 9
-            end
-            object RzPanel14: TRzPanel
-              Left = 45
-              Top = 385
-              Width = 99
-              Height = 20
-              BorderOuter = fsFlatRounded
-              Caption = #23567#31080#35828#26126
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 12
-            end
-            object edtFOOTER: TcxMemo
-              Left = 141
-              Top = 384
-              Width = 460
-              Height = 22
-              Lines.Strings = (
-                #25964#35831#20445#30041#23567#31080','#20197#20316#21806#21518#20381#25454)
-              TabOrder = 3
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel15: TRzPanel
-              Left = 45
-              Top = 280
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25171#21360#31471#21475
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 13
-            end
-            object edtTicketPrintComm: TcxComboBox
-              Left = 141
-              Top = 279
-              Width = 145
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #27809#23433#35013
-                'LPT1'
-                'LPT2'
-                'LPT3'
-                'LPT4'
-                'COM1'
-                'COM2'
-                'COM3'
-                'COM4'
-                'COM5'
-                'COM6'
-                'COM7'
-                'COM8'
-                'COM9'
-                'COM10'
-                'COM11'
-                'COM12'
-                'COM13'
-                'COM14'
-                'COM15'
-                'COM16'
-                'COM17'
-                'COM18'
-                'COM19'
-                'COM20'
-                'COM21'
-                'COM22'
-                'COM23'
-                'COM24'
-                'COM25'
-                'Windows'#39537#21160
-                #35843#35797#27169#24335)
-              TabOrder = 7
-            end
-            object RzPanel16: TRzPanel
-              Left = 360
-              Top = 280
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #36208#32440#31354#34892
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 14
-            end
-            object cxNullRow: TcxSpinEdit
-              Left = 456
-              Top = 279
-              Width = 51
-              Height = 23
+              Left = 365
+              Top = 54
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
               TabOrder = 2
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel17: TRzPanel
-              Left = 45
-              Top = 315
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25171#21360#32440#23485
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 15
-            end
-            object edtPRINTERWIDTH: TcxComboBox
-              Left = 141
-              Top = 314
-              Width = 145
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                '57.5'#177'0.5mm'
-                '79.5'#177'0.5mm')
-              TabOrder = 4
-            end
-            object RzPanel18: TRzPanel
-              Left = 45
-              Top = 350
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25171#21360#26631#39064
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 16
-            end
-            object edtTitle: TcxTextEdit
-              Left = 141
-              Top = 349
-              Width = 145
-              Height = 23
-              TabOrder = 8
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel19: TRzPanel
-              Left = 360
-              Top = 350
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25171#21360#21697#21517
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 17
-            end
-            object edtTICKET_PRINT_NAME: TcxComboBox
-              Left = 456
-              Top = 349
-              Width = 145
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #21697#21517
-                #21697#21517'+'#36135#21495
-                #21697#21517'+'#26465#30721
-                #21697#21517'+'#35268#26684
-                #21697#21517'+'#35268#26684'+'#36135#21495
-                #21697#21517'+'#35268#26684'+'#26465#30721)
-              TabOrder = 5
-            end
-            object RzPanel21: TRzPanel
-              Left = 360
-              Top = 315
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #22797#21046#25171#21360
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 18
-            end
-            object edtTicketCopy: TcxSpinEdit
-              Left = 456
-              Top = 314
-              Width = 51
-              Height = 23
-              TabOrder = 6
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object RzPanel22: TRzPanel
-              Left = 45
-              Top = 460
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #38065#31665#24320#20851
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 19
-            end
-            object RzPanel23: TRzPanel
-              Left = 360
-              Top = 460
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #38065#31665#36895#29575
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 20
-            end
-            object cxCashBox: TcxComboBox
-              Left = 141
-              Top = 459
-              Width = 100
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #27809#23433#35013
-                #25509#25171#21360#26426
-                'COM1'
-                'COM2'
-                'COM3'
-                'COM4'
-                'COM5'
-                'COM6'
-                'COM7'
-                'COM8'
-                'COM9')
-              TabOrder = 0
-            end
-            object cxCashBoxRate: TcxComboBox
-              Left = 456
-              Top = 459
-              Width = 100
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                '2400'
-                '9600'
-                '115200')
-              TabOrder = 1
-            end
-            object RzPanel25: TRzPanel
-              Left = 226
-              Top = 95
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #21333#20215#23567#25968#20301
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 24
+              DesignSize = (
+                260
+                31)
+              object RzPanel47: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground9: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel17: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #37329#39069#23567#25968#20301
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtPOSCALCDIGHT: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #20998
+                  #35282
+                  #20803
+                  #21313
+                  #30334)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
             end
             object RzPanel26: TRzPanel
-              Left = 360
-              Top = 60
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #37329#39069#23567#25968#20301
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 25
+              Left = 218
+              Top = 94
+              Width = 148
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 3
+              DesignSize = (
+                148
+                31)
+              object RzPanel48: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground10: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel18: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21333#20215#23567#25968#20301
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtPosDight: TcxSpinEdit
+                Left = 105
+                Top = 4
+                Width = 41
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxValue = 3.000000000000000000
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+                Value = 2
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
-            object edtPOSCALCDIGHT: TcxComboBox
-              Left = 456
-              Top = 59
-              Width = 145
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #20998
-                #35282
-                #20803
-                #21313
-                #30334)
-              TabOrder = 23
+            object RzPanel25: TRzPanel
+              Left = 365
+              Top = 94
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 4
+              DesignSize = (
+                260
+                31)
+              object RzPanel49: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground11: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel19: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #36827#20301#27861#21017
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtCARRYRULE: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #22235#33293#20116#20837
+                  #22235#36827#20116#12289#20061#36827#21313
+                  #30452#25509#33293#21435#23567#25968#20301
+                  #22235#33293#20445#20116#20845#20837
+                  #26377#23567#25968#21017#36827#20301)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
             end
             object RzPanel27: TRzPanel
-              Left = 360
-              Top = 95
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #36827#20301#27861#21017
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 26
-            end
-            object edtCARRYRULE: TcxComboBox
-              Left = 456
-              Top = 94
-              Width = 145
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #22235#33293#20116#20837
-                #22235#36827#20116#12289#20061#36827#21313
-                #30452#25509#33293#21435#23567#25968#20301
-                #22235#33293#20445#20116#20845#20837
-                #26377#23567#25968#21017#36827#20301)
-              TabOrder = 22
+              Left = 45
+              Top = 164
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 5
+              DesignSize = (
+                260
+                31)
+              object RzPanel50: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground12: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel20: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #26631' '#35782' '#30721
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtFlag: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             object RzPanel28: TRzPanel
               Left = 45
-              Top = 170
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #26631' '#35782' '#30721
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 35
+              Top = 204
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 6
+              DesignSize = (
+                260
+                31)
+              object RzPanel51: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground13: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel21: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21830#21697#20195#30721
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtID: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  '1'#20301#25968
+                  '2'#20301#25968
+                  '3'#20301#25968
+                  '4'#20301#25968
+                  '5'#20301#25968
+                  '6'#20301#25968)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
             end
             object RzPanel29: TRzPanel
-              Left = 45
-              Top = 205
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #21830#21697#20195#30721
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 36
+              Left = 365
+              Top = 164
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 7
+              object RzPanel52: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground14: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel22: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25968#25454#27573'1'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtID1: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 62
+                Height = 23
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #26080
+                  #21333#20215
+                  #37329#39069
+                  #25968#37327)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+              object edtLEN1: TcxComboBox
+                Left = 164
+                Top = 4
+                Width = 66
+                Height = 23
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  '1'#20301#25968
+                  '2'#20301#25968
+                  '3'#20301#25968
+                  '4'#20301#25968
+                  '5'#20301#25968
+                  '6'#20301#25968)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 2
+              end
+              object edtDEC1: TcxTextEdit
+                Left = 227
+                Top = 4
+                Width = 30
+                Height = 23
+                TabOrder = 3
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             object RzPanel30: TRzPanel
-              Left = 360
-              Top = 170
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25968#25454#27573'1'
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 37
+              Left = 365
+              Top = 204
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 8
+              object RzPanel33: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground15: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel23: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25968#25454#27573'2'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtID2: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 62
+                Height = 23
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #26080
+                  #21333#20215
+                  #37329#39069
+                  #25968#37327)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+              object edtLEN2: TcxComboBox
+                Left = 164
+                Top = 4
+                Width = 66
+                Height = 23
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  '1'#20301#25968
+                  '2'#20301#25968
+                  '3'#20301#25968
+                  '4'#20301#25968
+                  '5'#20301#25968
+                  '6'#20301#25968)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 2
+              end
+              object edtDEC2: TcxTextEdit
+                Left = 227
+                Top = 4
+                Width = 30
+                Height = 23
+                TabOrder = 3
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             object RzPanel31: TRzPanel
-              Left = 360
-              Top = 205
-              Width = 99
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #25968#25454#27573'2'
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 38
-            end
-            object RzPanel32: TRzPanel
-              Left = 595
-              Top = 205
-              Width = 60
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #20301#23567#25968
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 39
-            end
-            object RzPanel33: TRzPanel
-              Left = 595
-              Top = 170
-              Width = 60
-              Height = 21
-              BorderOuter = fsFlatRounded
-              Caption = #20301#23567#25968
-              Color = 16185078
-              FlatColor = clMenuHighlight
-              TabOrder = 40
-            end
-            object edtFlag: TcxTextEdit
-              Left = 141
-              Top = 169
-              Width = 82
-              Height = 23
-              TabOrder = 30
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object edtID: TcxComboBox
-              Left = 141
-              Top = 204
-              Width = 82
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                '1'#20301#25968
-                '2'#20301#25968
-                '3'#20301#25968
-                '4'#20301#25968
-                '5'#20301#25968
-                '6'#20301#25968)
-              TabOrder = 29
-            end
-            object edtID1: TcxComboBox
-              Left = 456
-              Top = 169
-              Width = 58
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #26080
-                #21333#20215
-                #37329#39069
-                #25968#37327)
-              TabOrder = 28
-            end
-            object edtLEN1: TcxComboBox
-              Left = 511
-              Top = 169
-              Width = 65
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                '1'#20301#25968
-                '2'#20301#25968
-                '3'#20301#25968
-                '4'#20301#25968
-                '5'#20301#25968
-                '6'#20301#25968)
-              TabOrder = 31
-            end
-            object edtDEC1: TcxTextEdit
-              Left = 573
-              Top = 169
-              Width = 25
-              Height = 23
-              TabOrder = 34
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object edtID2: TcxComboBox
-              Left = 456
-              Top = 204
-              Width = 58
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                #26080
-                #21333#20215
-                #37329#39069
-                #25968#37327)
-              TabOrder = 27
-            end
-            object edtLEN2: TcxComboBox
-              Left = 511
-              Top = 204
-              Width = 65
-              Height = 23
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Properties.DropDownListStyle = lsFixedList
-              Properties.Items.Strings = (
-                '1'#20301#25968
-                '2'#20301#25968
-                '3'#20301#25968
-                '4'#20301#25968
-                '5'#20301#25968
-                '6'#20301#25968)
-              TabOrder = 32
-            end
-            object edtDEC2: TcxTextEdit
-              Left = 573
-              Top = 204
-              Width = 25
-              Height = 23
-              TabOrder = 33
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-            object edtPosDight: TcxSpinEdit
-              Left = 322
-              Top = 94
-              Width = 41
-              Height = 23
-              Properties.MaxValue = 3.000000000000000000
-              TabOrder = 21
-              Value = 2
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            end
-          end
-          object RzPanel24: TRzPanel
-            Left = 0
-            Top = 561
-            Width = 701
-            Height = 50
-            Align = alBottom
-            BorderOuter = fsNone
-            Color = clWhite
-            TabOrder = 1
-            DesignSize = (
-              701
-              50)
-            object btnSaveSysDefine: TRzBitBtn
-              Left = 590
-              Top = 13
+              Left = 624
+              Top = 164
               Width = 70
-              Height = 28
-              Anchors = [akTop, akRight]
-              Caption = #20445#23384
-              Color = 15461355
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              HighlightColor = 14276036
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 0
-              ThemeAware = False
-              OnClick = btnSaveSysDefineClick
-              NumGlyphs = 2
-              Spacing = 5
+              Height = 31
+              BorderOuter = fsStatus
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 9
+              object RzPanel32: TRzPanel
+                Left = 1
+                Top = 1
+                Width = 68
+                Height = 29
+                Align = alClient
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground16: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 67
+                  Height = 28
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel24: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 67
+                  Height = 28
+                  Align = alClient
+                  Caption = ' '#20301#23567#25968
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
             end
-            object btnDefault: TRzBitBtn
-              Left = 489
-              Top = 13
+            object RzPanel53: TRzPanel
+              Left = 624
+              Top = 204
               Width = 70
-              Height = 28
-              Anchors = [akTop, akRight]
+              Height = 31
+              BorderOuter = fsStatus
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 10
+              object RzPanel54: TRzPanel
+                Left = 1
+                Top = 1
+                Width = 68
+                Height = 29
+                Align = alClient
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground17: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 67
+                  Height = 28
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel25: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 67
+                  Height = 28
+                  Align = alClient
+                  Caption = ' '#20301#23567#25968
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+            end
+            object RzPanel55: TRzPanel
+              Left = 45
+              Top = 274
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 11
+              DesignSize = (
+                260
+                31)
+              object RzPanel56: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground18: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel26: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25171#21360#31471#21475
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtTicketPrintComm: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #27809#23433#35013
+                  'LPT1'
+                  'LPT2'
+                  'LPT3'
+                  'LPT4'
+                  'COM1'
+                  'COM2'
+                  'COM3'
+                  'COM4'
+                  'COM5'
+                  'COM6'
+                  'COM7'
+                  'COM8'
+                  'COM9'
+                  'COM10'
+                  'COM11'
+                  'COM12'
+                  'COM13'
+                  'COM14'
+                  'COM15'
+                  'COM16'
+                  'COM17'
+                  'COM18'
+                  'COM19'
+                  'COM20'
+                  'COM21'
+                  'COM22'
+                  'COM23'
+                  'COM24'
+                  'COM25'
+                  'Windows'#39537#21160
+                  #35843#35797#27169#24335)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+            end
+            object RzPanel15: TRzPanel
+              Left = 45
+              Top = 314
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 12
+              DesignSize = (
+                260
+                31)
+              object RzPanel57: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground19: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel27: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25171#21360#32440#23485
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtPRINTERWIDTH: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  '57.5'#177'0.5mm'
+                  '79.5'#177'0.5mm')
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+            end
+            object RzPanel17: TRzPanel
+              Left = 45
+              Top = 354
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 13
+              DesignSize = (
+                260
+                31)
+              object RzPanel58: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground20: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel28: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25171#21360#26631#39064
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtTitle: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
+            object RzPanel18: TRzPanel
+              Left = 45
+              Top = 394
+              Width = 580
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 14
+              DesignSize = (
+                580
+                31)
+              object RzPanel59: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground21: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel29: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #23567#31080#35828#26126
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtFOOTER: TcxMemo
+                Left = 105
+                Top = 4
+                Width = 473
+                Height = 22
+                Anchors = [akLeft, akTop, akRight]
+                Lines.Strings = (
+                  #25964#35831#20445#30041#23567#31080','#20197#20316#21806#21518#20381#25454)
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
+            object RzPanel14: TRzPanel
+              Left = 365
+              Top = 274
+              Width = 159
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 15
+              DesignSize = (
+                159
+                31)
+              object RzPanel60: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground22: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel30: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #36208#32440#31354#34892
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object cxNullRow: TcxSpinEdit
+                Left = 105
+                Top = 4
+                Width = 51
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
+            object RzPanel16: TRzPanel
+              Left = 365
+              Top = 314
+              Width = 159
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 16
+              DesignSize = (
+                159
+                31)
+              object RzPanel21: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground23: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel31: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #22797#21046#25171#21360
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtTicketCopy: TcxSpinEdit
+                Left = 105
+                Top = 4
+                Width = 51
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
+            object RzPanel61: TRzPanel
+              Left = 365
+              Top = 354
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 17
+              DesignSize = (
+                260
+                31)
+              object RzPanel62: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground24: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel32: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #25171#21360#21697#21517
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtTICKET_PRINT_NAME: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #21697#21517
+                  #21697#21517'+'#36135#21495
+                  #21697#21517'+'#26465#30721
+                  #21697#21517'+'#35268#26684
+                  #21697#21517'+'#35268#26684'+'#36135#21495
+                  #21697#21517'+'#35268#26684'+'#26465#30721)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+            end
+            object RzPanel19: TRzPanel
+              Left = 45
+              Top = 464
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 18
+              DesignSize = (
+                260
+                31)
+              object RzPanel63: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground25: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel33: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #38065#31665#24320#20851
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object cxCashBox: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #27809#23433#35013
+                  #25509#25171#21360#26426
+                  'COM1'
+                  'COM2'
+                  'COM3'
+                  'COM4'
+                  'COM5'
+                  'COM6'
+                  'COM7'
+                  'COM8'
+                  'COM9')
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+            end
+            object RzPanel22: TRzPanel
+              Left = 365
+              Top = 464
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 19
+              DesignSize = (
+                260
+                31)
+              object RzPanel23: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground26: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel34: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #38065#31665#36895#29575
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object cxCashBoxRate: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  '2400'
+                  '9600'
+                  '115200')
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+            end
+            object btnDefault: TRzBmpButton
+              Left = 432
+              Top = 531
+              Width = 106
+              Height = 29
+              Bitmaps.TransparentColor = clFuchsia
+              Bitmaps.Up.Data = {
+                76240000424D762400000000000036000000280000006A0000001D0000000100
+                1800000000004024000000000000000000000000000000000000EBEBEBEAEAEA
+                E5E5E5D9D9D9D0D0D0CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCECECED0D0D0D9D9D9E5E5E5EAEAEAEBEBEB0000E9E9E9E0E0E0
+                C7C7C7AAAAAA9999999393939292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                929292929292939393999999AAAAAAC7C7C7E0E0E0E9E9E90000E4E4E4C7C7C7
+                C6C6C6D2D2D2DADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADAD0D0D0B9B9B98A8A8A9C9C9CC5C5C5E4E4E40000DADADAD8D8D8
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADAD3D3D38E8E8EA9A9A9D9D9D90000E1E1E1DFDFDF
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADABBBBBB979797D0D0D00000EAEAEADBDBDB
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADAD5D5D5929292CECECE0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA929292CECECE0000EEEEEEDBDBDB
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADA979797D0D0D00000EFEFEFDFDFDF
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADAD6D6D6A9A9A9D9D9D90000EDEDEDE9E9E9
+                DBDBDBDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADAC6C6C6C5C5C5E4E4E40000EBEBEBEFEFEF
+                E8E8E8E0E0E0DCDCDCDADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADAD7D7D7CACACAE0E0E0E9E9E90000EBEBEBEBEBEB
+                EAEAEAE6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+                E6E6E6E5E5E5E1E1E1DADADAD9D9D9E5E5E5EAEAEAEBEBEB0000}
+              Color = clBtnFace
               Caption = #24674#22797#40664#35748
-              Color = 15461355
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              HighlightColor = 14276036
-              HotTrack = True
-              HotTrackColor = 3983359
-              HotTrackColorType = htctActual
-              ParentFont = False
-              TextShadowColor = clWhite
-              TextShadowDepth = 4
-              TabOrder = 1
-              ThemeAware = False
+              TabOrder = 20
               OnClick = btnDefaultClick
-              NumGlyphs = 2
-              Spacing = 5
+            end
+            object btnSaveSysDefine: TRzBmpButton
+              Left = 555
+              Top = 531
+              Width = 72
+              Bitmaps.TransparentColor = clFuchsia
+              Bitmaps.Up.Data = {
+                86190000424D86190000000000003600000028000000480000001E0000000100
+                1800000000005019000000000000000000000000000000000000EBEBEBEBEBEB
+                EAEAEAE6E6E6DDDDDDD4D4D4CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+                CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCECECE
+                D0D0D0D8D8D8E2E2E2E9E9E9EBEBEBEBEBEBEBEBEBEAEAEAE2E2E2CECECEB3B3
+                B39F9F9F94949492929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                9292929292929292929292929292929292929292929292929292929292929292
+                929292929292929292929292929292929292929292939393989898A7A7A7C0C0
+                C0D9D9D9E7E7E7EBEBEBEBEBEBE3E3E3C7C7C7BCBCBCC9C9C9DADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADAD0D0D0BCBCBC959595919191B4B4B4D9D9D9E9
+                E9E9E9E9E9D4D4D4D2D2D2DADADADADADADBDBDBDADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAA6A6A6919191BFBFBFE2E2E2E4E4E4DDDDDD
+                DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADAD9D9D9939393A5A5A5D7D7D7E2E2E2E7E7E7DBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DAC1C1C1969696CFCFCFE4E4E4E7E7E7DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D5929292CE
+                CECEE5E5E5E7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+                CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA939393CECECEE8E8E8E8E8E8
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADAD9D9D99C9C9CD2D2D2EAEAEAECECECDBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DACFCFCFB1B1B1DCDCDCEBEBEBF0F0F0E3E3E3DADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADABFBFBFCDCDCDE6
+                E6E6EBEBEBECECECEEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAD3D3D3C9C9C9E3E3E3EAEAEAEBEBEBEBEBEB
+                EBEBEBEBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+                DEDEDED4D4D4D6D6D6E4E4E4EAEAEAEBEBEBEBEBEBEBEBEBEBEBEBEAEAEAE7E7
+                E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1E1E1E1E5E5E5E9E9
+                E9EBEBEBEBEBEBEBEBEB}
+              Color = clBtnFace
+              Caption = #20445#23384
+              TabOrder = 21
+              OnClick = btnSaveSysDefineClick
             end
           end
         end
         object TabSheet3: TRzTabSheet
-          Color = 16645629
+          Color = 15461355
           Caption = #29992#25143#31649#29702
+          DesignSize = (
+            748
+            587)
+          object RzPanel34: TRzPanel
+            Left = 10
+            Top = 275
+            Width = 728
+            Height = 278
+            Anchors = [akLeft, akTop, akRight]
+            BorderOuter = fsStatus
+            Color = clWhite
+            TabOrder = 0
+            object DBGridEh1: TDBGridEh
+              Left = 1
+              Top = 1
+              Width = 726
+              Height = 276
+              Align = alClient
+              AutoFitColWidths = True
+              BorderStyle = bsNone
+              DataSource = DataSource1
+              Flat = True
+              FooterColor = clWindow
+              FooterFont.Charset = GB2312_CHARSET
+              FooterFont.Color = clBlack
+              FooterFont.Height = -15
+              FooterFont.Name = #23435#20307
+              FooterFont.Style = []
+              FooterRowCount = 1
+              FrozenCols = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              ReadOnly = True
+              RowHeight = 20
+              TabOrder = 0
+              TitleFont.Charset = GB2312_CHARSET
+              TitleFont.Color = clBlack
+              TitleFont.Height = -15
+              TitleFont.Name = #23435#20307
+              TitleFont.Style = []
+              TitleHeight = 20
+              UseMultiTitle = True
+              IsDrawNullRow = False
+              CurrencySymbol = #65509
+              DecimalNumber = 2
+              DigitalNumber = 12
+              OnDrawColumnCell = DBGridEh1DrawColumnCell
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  Title.Caption = #24207#21495
+                  Width = 36
+                end
+                item
+                  Alignment = taRightJustify
+                  EditButtons = <>
+                  FieldName = 'ACCOUNT'
+                  Footers = <>
+                  Title.Caption = #29992#25143#36134#21495
+                  Width = 76
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'USER_NAME'
+                  Footers = <>
+                  Title.Caption = #29992#25143#22995#21517
+                  Width = 95
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ROLE_IDS_TEXT'
+                  Footers = <>
+                  Title.Caption = #35282#33394
+                  Width = 108
+                end
+                item
+                  Alignment = taRightJustify
+                  EditButtons = <>
+                  FieldName = 'MOBILE'
+                  Footers = <>
+                  Title.Caption = #31227#21160#30005#35805
+                  Width = 134
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'TOOL_NAV'
+                  Footers = <>
+                  Title.Caption = #25805#20316
+                  Width = 154
+                end>
+            end
+            object rowToolNav: TRzToolbar
+              Left = 447
+              Top = 57
+              Width = 150
+              Align = alNone
+              AutoStyle = False
+              Margin = 0
+              TopMargin = 0
+              TextOptions = ttoCustom
+              BorderInner = fsNone
+              BorderOuter = fsNone
+              BorderSides = [sdTop]
+              BorderWidth = 0
+              Color = clWhite
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 1
+              Visible = False
+              ToolbarControls = (
+                RzToolButton2
+                RzSpacer1
+                RzToolButton1
+                RzSpacer2
+                RzToolButton3)
+              object RzToolButton1: TRzToolButton
+                Left = 40
+                Top = 0
+                Width = 35
+                Cursor = crHandPoint
+                ShowCaption = True
+                UseToolbarButtonSize = False
+                UseToolbarShowCaption = False
+                Caption = #21024#38500
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold, fsUnderline]
+                ParentFont = False
+                OnClick = RzToolButton1Click
+              end
+              object RzToolButton2: TRzToolButton
+                Left = 0
+                Top = 0
+                Width = 35
+                Cursor = crHandPoint
+                ShowCaption = True
+                UseToolbarButtonSize = False
+                UseToolbarShowCaption = False
+                Caption = #20462#25913
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold, fsUnderline]
+                ParentFont = False
+                OnClick = RzToolButton2Click
+              end
+              object RzSpacer1: TRzSpacer
+                Left = 35
+                Top = 0
+                Width = 5
+              end
+              object RzSpacer2: TRzSpacer
+                Left = 75
+                Top = 0
+                Width = 5
+              end
+              object RzToolButton3: TRzToolButton
+                Left = 80
+                Top = 0
+                Width = 70
+                Cursor = crHandPoint
+                ShowCaption = True
+                UseToolbarButtonSize = False
+                UseToolbarShowCaption = False
+                Caption = #37325#32622#23494#30721
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold, fsUnderline]
+                ParentFont = False
+                OnClick = RzToolButton3Click
+              end
+            end
+          end
+          object EditPanel: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 748
+            Height = 249
+            Align = alTop
+            BorderOuter = fsNone
+            BorderColor = 15461355
+            BorderWidth = 10
+            Color = 14606046
+            TabOrder = 1
+            DesignSize = (
+              748
+              249)
+            object pnl_left_line: TImage
+              Left = 10
+              Top = 18
+              Width = 2
+              Height = 213
+              Align = alLeft
+              AutoSize = True
+              Picture.Data = {
+                07544269746D617076000000424D760000000000000036000000280000000200
+                000008000000010018000000000040000000120B0000120B0000000000000000
+                00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
+                00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
+                0000}
+              Stretch = True
+            end
+            object pnl_right_line: TImage
+              Left = 736
+              Top = 18
+              Width = 2
+              Height = 213
+              Align = alRight
+              AutoSize = True
+              Picture.Data = {
+                07544269746D617066000000424D660000000000000036000000280000000200
+                000006000000010018000000000030000000120B0000120B0000000000000000
+                0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF
+                0000ECECECFFFFFF0000ECECECFFFFFF0000}
+              Stretch = True
+            end
+            object pnl_top: TRzPanel
+              Left = 10
+              Top = 10
+              Width = 728
+              Height = 8
+              Align = alTop
+              BorderOuter = fsNone
+              Color = 14606046
+              TabOrder = 0
+              object pnl_top_left: TImage
+                Left = 0
+                Top = 0
+                Width = 19
+                Height = 8
+                Align = alLeft
+                AutoSize = True
+                Picture.Data = {
+                  07544269746D617016020000424D160200000000000036000000280000001300
+                  0000080000000100180000000000E0010000120B0000120B0000000000000000
+                  00009F9F9F9C9C9CCACACADDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000BFBF
+                  BF898989B9B9B9D8D8D8DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000DFDFDF848484
+                  9D9D9DC6C6C6DBDBDBDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000EBEBEBBBBBBB808080A5
+                  A5A5C8C8C8DADADADDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000EBEBEBEBEBEBA5A5A5828282A1A1
+                  A1C0C0C0D4D4D4DCDCDCDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDE000000E2E2E2EBEBEBEBEBEBAFAFAF808080949494
+                  B2B2B2C8C8C8D3D3D3D9D9D9DCDCDCDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDE000000EBEBEBE2E2E2EBEBEBEBEBEBD0D0D08E8E8E8585859A
+                  9A9AACACACB7B7B7BFBFBFC1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1000000EBEBEBEBEBEBE2E2E2EBEBEBEBEBEBE1E1E1C4C4C49F9F9F9191
+                  918585858888888A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A00
+                  0000}
+              end
+              object pnl_top_right: TImage
+                Left = 718
+                Top = 0
+                Width = 10
+                Height = 8
+                Align = alRight
+                AutoSize = True
+                Picture.Data = {
+                  07544269746D617036010000424D360100000000000036000000280000000A00
+                  000008000000010018000000000000010000120B0000120B0000000000000000
+                  0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDDDDDDDDDDDDF2F2F2
+                  0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDED7D7D7E3E3E3EBEBEB
+                  0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDBDBDBCECECEF0F0F0E2E2E2
+                  0000DEDEDEDEDEDEDEDEDEDEDEDEDDDDDDDADADAC8C8C8D8D8D8EBEBEBEBEBEB
+                  0000DEDEDEDEDEDEDEDEDEDCDCDCD4D4D4C0C0C0C7C7C7EBEBEBE2E2E2EBEBEB
+                  0000DCDCDCD9D9D9D3D3D3C8C8C8B5B5B5C6C6C6E2E2E2EBEBEBEBEBEBE2E2E2
+                  0000BFBFBFB7B7B7ACACACACACACD4D4D4EBEBEBEBEBEBE2E2E2EBEBEBEBEBEB
+                  00009C9C9CA8A8A8C2C2C2EAEAEAEBEBEBE2E2E2EBEBEBEBEBEBE2E2E2EBEBEB
+                  0000}
+              end
+              object pnl_top_line: TImage
+                Left = 19
+                Top = 0
+                Width = 699
+                Height = 8
+                Align = alClient
+                AutoSize = True
+                Picture.Data = {
+                  07544269746D6170D6000000424DD60000000000000036000000280000000600
+                  0000080000000100180000000000A0000000120B0000120B0000000000000000
+                  0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000DEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDE0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000DEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000DEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDE0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C100008A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  0000}
+                Stretch = True
+              end
+            end
+            object pnl_bottom: TRzPanel
+              Left = 10
+              Top = 231
+              Width = 728
+              Height = 8
+              Align = alBottom
+              BorderOuter = fsNone
+              Color = 14606046
+              TabOrder = 1
+              object barcode_panel_bottom_line: TImage
+                Left = 2
+                Top = 0
+                Width = 724
+                Height = 8
+                Align = alClient
+                AutoSize = True
+                Picture.Data = {
+                  07544269746D617096000000424D960000000000000036000000280000000400
+                  000008000000010018000000000060000000120B0000120B0000000000000000
+                  0000FFFFFFFFFFFFFFFFFFFFFFFFDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+                  DEDE}
+                Stretch = True
+              end
+              object barcodeb_panel_right_line: TImage
+                Left = 726
+                Top = 0
+                Width = 2
+                Height = 8
+                Align = alRight
+                AutoSize = True
+                Picture.Data = {
+                  07544269746D617066000000424D660000000000000036000000280000000200
+                  000006000000010018000000000030000000120B0000120B0000000000000000
+                  0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF
+                  0000ECECECFFFFFF0000ECECECFFFFFF0000}
+              end
+              object barcodeb_panel_left_line: TImage
+                Left = 0
+                Top = 0
+                Width = 2
+                Height = 8
+                Align = alLeft
+                AutoSize = True
+                Picture.Data = {
+                  07544269746D617076000000424D760000000000000036000000280000000200
+                  000008000000010018000000000040000000120B0000120B0000000000000000
+                  00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
+                  00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
+                  0000}
+              end
+            end
+            object RzPanel66: TRzPanel
+              Left = 45
+              Top = 134
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              object RzPanel67: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground30: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel38: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #31227#21160#30005#35805
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtMOBILE: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Properties.MaxLength = 11
+                TabOrder = 1
+              end
+            end
+            object RzPanel39: TRzPanel
+              Left = 45
+              Top = 182
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 3
+              object RzPanel68: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground31: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel39: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #35282'    '#33394
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtROLE_NAMES: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Properties.MaxLength = 11
+                TabOrder = 1
+              end
+            end
+            object RzPanel24: TRzPanel
+              Left = 45
+              Top = 38
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 4
+              DesignSize = (
+                260
+                31)
+              object RzPanel64: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground27: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel35: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #29992#25143#36134#21495
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtACCOUNT: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 20
+                TabOrder = 1
+              end
+            end
+            object RzPanel36: TRzPanel
+              Left = 45
+              Top = 86
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 5
+              DesignSize = (
+                260
+                31)
+              object RzPanel65: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground28: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel36: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #29992#25143#22995#21517
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtUSER_NAME: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 20
+                TabOrder = 1
+              end
+            end
+            object btnSaveUsers: TRzBmpButton
+              Left = 652
+              Top = 199
+              Width = 72
+              Bitmaps.TransparentColor = clFuchsia
+              Bitmaps.Up.Data = {
+                86190000424D86190000000000003600000028000000480000001E0000000100
+                1800000000005019000000000000000000000000000000000000DEDEDEDEDEDE
+                DDDDDDDADADAD1D1D1C8C8C8C3C3C3C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C2C2C2
+                C5C5C5CCCCCCD5D5D5DCDCDCDEDEDEDEDEDEDEDEDEDDDDDDD5D5D5C2C2C2A9A9
+                A99696968C8C8C8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A9090909E9E9EB5B5
+                B5CDCDCDDBDBDBDEDEDEDEDEDED6D6D6BCBCBCB8B8B8C8C8C8DADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADAD0D0D0BABABA8F8F8F898989AAAAAACDCDCDDC
+                DCDCDCDCDCCACACAD0D0D0DADADADADADADBDBDBDADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAA2A2A2898989B4B4B4D5D5D5D7D7D7DBDBDB
+                DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADAD9D9D98E8E8E9C9C9CCBCBCBD8D8D8E7E7E7DBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DAC0C0C08E8E8EC4C4C4DEDEDEE7E7E7DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D58A8A8AC2
+                C2C2DFDFDFE7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8B8B8BC3C3C3E1E1E1E8E8E8
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADAD9D9D9939393C6C6C6E2E2E2ECECECDBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DACECECEA7A7A7D0D0D0DFDFDFEFEFEFE3E3E3DADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADABABABAC1C1C1DA
+                DADADEDEDEE4E4E4EEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAD2D2D2BEBEBED6D6D6DDDDDDDEDEDEDEDEDE
+                E3E3E3EBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+                DEDEDED1D1D1CBCBCBD7D7D7DDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFDF
+                DFDCDCDCDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDADADAD6D6D6D9D9D9DCDC
+                DCDEDEDEDEDEDEDEDEDE}
+              Color = clBtnFace
+              Anchors = [akTop, akRight]
+              Caption = #20445#23384
+              TabOrder = 6
+              OnClick = btnSaveUsersClick
+            end
+            object btnNewUsers: TRzBmpButton
+              Left = 564
+              Top = 199
+              Width = 72
+              Bitmaps.TransparentColor = clFuchsia
+              Bitmaps.Up.Data = {
+                86190000424D86190000000000003600000028000000480000001E0000000100
+                1800000000005019000000000000000000000000000000000000DEDEDEDEDEDE
+                DDDDDDDADADAD1D1D1C8C8C8C3C3C3C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C2C2C2
+                C5C5C5CCCCCCD5D5D5DCDCDCDEDEDEDEDEDEDEDEDEDDDDDDD5D5D5C2C2C2A9A9
+                A99696968C8C8C8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A9090909E9E9EB5B5
+                B5CDCDCDDBDBDBDEDEDEDEDEDED6D6D6BCBCBCB8B8B8C8C8C8DADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADAD0D0D0BABABA8F8F8F898989AAAAAACDCDCDDC
+                DCDCDCDCDCCACACAD0D0D0DADADADADADADBDBDBDADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAA2A2A2898989B4B4B4D5D5D5D7D7D7DBDBDB
+                DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADAD9D9D98E8E8E9C9C9CCBCBCBD8D8D8E7E7E7DBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DAC0C0C08E8E8EC4C4C4DEDEDEE7E7E7DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D58A8A8AC2
+                C2C2DFDFDFE7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADA8B8B8BC3C3C3E1E1E1E8E8E8
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADAD9D9D9939393C6C6C6E2E2E2ECECECDBDBDBDADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DACECECEA7A7A7D0D0D0DFDFDFEFEFEFE3E3E3DADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADABABABAC1C1C1DA
+                DADADEDEDEE4E4E4EEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                DADADADADADADADADADADADADADAD2D2D2BEBEBED6D6D6DDDDDDDEDEDEDEDEDE
+                E3E3E3EBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+                DEDEDED1D1D1CBCBCBD7D7D7DDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFDF
+                DFDCDCDCDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDADADAD6D6D6D9D9D9DCDC
+                DCDEDEDEDEDEDEDEDEDE}
+              Color = clBtnFace
+              Anchors = [akTop, akRight]
+              Caption = #26032#22686
+              TabOrder = 7
+              OnClick = btnNewUsersClick
+            end
+            object RzPanel13: TRzPanel
+              Left = 314
+              Top = 187
+              Width = 75
+              Height = 22
+              BorderOuter = fsFlat
+              FlatColor = clGray
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -13
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 8
+              object RzBackground34: TRzBackground
+                Left = 1
+                Top = 1
+                Width = 73
+                Height = 20
+                Active = True
+                Align = alClient
+                FrameColor = 9145227
+                GradientColorStart = clWhite
+                GradientColorStop = 14277081
+                ImageStyle = isStretch
+                ShowGradient = True
+                ShowImage = False
+                ShowTexture = False
+              end
+              object btnGrantRights: TRzLabel
+                Left = 1
+                Top = 1
+                Width = 73
+                Height = 20
+                Align = alClient
+                Alignment = taCenter
+                Caption = #25480' '#26435
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -13
+                Font.Name = #23435#20307
+                Font.Style = [fsUnderline]
+                ParentFont = False
+                Transparent = True
+                Layout = tlCenter
+                OnClick = btnGrantRightsClick
+                ShadowColor = 16250871
+                ShadowDepth = 1
+                TextStyle = tsShadow
+              end
+            end
+            object RzPanel37: TRzPanel
+              Left = 314
+              Top = 43
+              Width = 75
+              Height = 22
+              BorderOuter = fsFlat
+              FlatColor = clGray
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -13
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 9
+              object RzBackground29: TRzBackground
+                Left = 1
+                Top = 1
+                Width = 73
+                Height = 20
+                Active = True
+                Align = alClient
+                FrameColor = 9145227
+                GradientColorStart = clWhite
+                GradientColorStop = 14277081
+                ImageStyle = isStretch
+                ShowGradient = True
+                ShowImage = False
+                ShowTexture = False
+              end
+              object RzLabel37: TRzLabel
+                Left = 1
+                Top = 1
+                Width = 73
+                Height = 20
+                Align = alClient
+                Alignment = taCenter
+                Caption = #20462#25913#23494#30721
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -13
+                Font.Name = #23435#20307
+                Font.Style = [fsUnderline]
+                ParentFont = False
+                Transparent = True
+                Layout = tlCenter
+                OnClick = RzLabel37Click
+                ShadowColor = 16250871
+                ShadowDepth = 1
+                TextStyle = tsShadow
+              end
+            end
+            object pnl_changepswd: TRzPanel
+              Left = 416
+              Top = 18
+              Width = 320
+              Height = 213
+              Align = alRight
+              BorderOuter = fsNone
+              Color = 14606046
+              TabOrder = 10
+              Visible = False
+              DesignSize = (
+                320
+                213)
+              object RzPanel72: TRzPanel
+                Left = 13
+                Top = 19
+                Width = 260
+                Height = 31
+                BorderOuter = fsStatus
+                BorderWidth = 1
+                Color = clWhite
+                FlatColor = 9145227
+                TabOrder = 0
+                DesignSize = (
+                  260
+                  31)
+                object RzPanel73: TRzPanel
+                  Left = 2
+                  Top = 2
+                  Width = 103
+                  Height = 27
+                  Align = alLeft
+                  BorderOuter = fsFlat
+                  BorderSides = [sdRight, sdBottom]
+                  FlatColor = clGray
+                  TabOrder = 0
+                  object RzBackground35: TRzBackground
+                    Left = 0
+                    Top = 0
+                    Width = 102
+                    Height = 26
+                    Active = True
+                    Align = alClient
+                    FrameColor = 9145227
+                    GradientColorStart = clWhite
+                    GradientColorStop = 14277081
+                    ImageStyle = isStretch
+                    ShowGradient = True
+                    ShowImage = False
+                    ShowTexture = False
+                  end
+                  object RzLabel46: TRzLabel
+                    Left = 0
+                    Top = 0
+                    Width = 102
+                    Height = 26
+                    Align = alClient
+                    Alignment = taCenter
+                    Caption = #26087#23494#30721
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -15
+                    Font.Name = #23435#20307
+                    Font.Style = []
+                    ParentFont = False
+                    Transparent = True
+                    Layout = tlCenter
+                    ShadowColor = 16250871
+                    ShadowDepth = 1
+                    TextStyle = tsShadow
+                  end
+                end
+                object edtOLD_PSWD: TcxTextEdit
+                  Left = 105
+                  Top = 4
+                  Width = 153
+                  Height = 23
+                  Anchors = [akLeft, akTop, akRight]
+                  Properties.EchoMode = eemPassword
+                  Properties.MaxLength = 20
+                  TabOrder = 1
+                end
+              end
+              object RzPanel38: TRzPanel
+                Left = 13
+                Top = 67
+                Width = 260
+                Height = 31
+                BorderOuter = fsStatus
+                BorderWidth = 1
+                Color = clWhite
+                FlatColor = 9145227
+                TabOrder = 1
+                DesignSize = (
+                  260
+                  31)
+                object RzPanel74: TRzPanel
+                  Left = 2
+                  Top = 2
+                  Width = 103
+                  Height = 27
+                  Align = alLeft
+                  BorderOuter = fsFlat
+                  BorderSides = [sdRight, sdBottom]
+                  FlatColor = clGray
+                  TabOrder = 0
+                  object RzBackground36: TRzBackground
+                    Left = 0
+                    Top = 0
+                    Width = 102
+                    Height = 26
+                    Active = True
+                    Align = alClient
+                    FrameColor = 9145227
+                    GradientColorStart = clWhite
+                    GradientColorStop = 14277081
+                    ImageStyle = isStretch
+                    ShowGradient = True
+                    ShowImage = False
+                    ShowTexture = False
+                  end
+                  object RzLabel47: TRzLabel
+                    Left = 0
+                    Top = 0
+                    Width = 102
+                    Height = 26
+                    Align = alClient
+                    Alignment = taCenter
+                    Caption = #26032#23494#30721
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -15
+                    Font.Name = #23435#20307
+                    Font.Style = []
+                    ParentFont = False
+                    Transparent = True
+                    Layout = tlCenter
+                    ShadowColor = 16250871
+                    ShadowDepth = 1
+                    TextStyle = tsShadow
+                  end
+                end
+                object edtNEW_PSWD1: TcxTextEdit
+                  Left = 105
+                  Top = 4
+                  Width = 153
+                  Height = 23
+                  Anchors = [akLeft, akTop, akRight]
+                  Properties.EchoMode = eemPassword
+                  Properties.MaxLength = 20
+                  TabOrder = 1
+                end
+              end
+              object RzPanel75: TRzPanel
+                Left = 13
+                Top = 115
+                Width = 260
+                Height = 31
+                BorderOuter = fsStatus
+                BorderWidth = 1
+                Color = clWhite
+                FlatColor = 9145227
+                TabOrder = 2
+                DesignSize = (
+                  260
+                  31)
+                object RzPanel76: TRzPanel
+                  Left = 2
+                  Top = 2
+                  Width = 103
+                  Height = 27
+                  Align = alLeft
+                  BorderOuter = fsFlat
+                  BorderSides = [sdRight, sdBottom]
+                  FlatColor = clGray
+                  TabOrder = 0
+                  object RzBackground37: TRzBackground
+                    Left = 0
+                    Top = 0
+                    Width = 102
+                    Height = 26
+                    Active = True
+                    Align = alClient
+                    FrameColor = 9145227
+                    GradientColorStart = clWhite
+                    GradientColorStop = 14277081
+                    ImageStyle = isStretch
+                    ShowGradient = True
+                    ShowImage = False
+                    ShowTexture = False
+                  end
+                  object RzLabel48: TRzLabel
+                    Left = 0
+                    Top = 0
+                    Width = 102
+                    Height = 26
+                    Align = alClient
+                    Alignment = taCenter
+                    Caption = #37325#26032#36755#20837
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -15
+                    Font.Name = #23435#20307
+                    Font.Style = []
+                    ParentFont = False
+                    Transparent = True
+                    Layout = tlCenter
+                    ShadowColor = 16250871
+                    ShadowDepth = 1
+                    TextStyle = tsShadow
+                  end
+                end
+                object edtNEW_PSWD2: TcxTextEdit
+                  Left = 105
+                  Top = 4
+                  Width = 153
+                  Height = 23
+                  Anchors = [akLeft, akTop, akRight]
+                  Properties.EchoMode = eemPassword
+                  Properties.MaxLength = 20
+                  TabOrder = 1
+                end
+              end
+              object btnChange: TRzBmpButton
+                Left = 64
+                Top = 168
+                Width = 72
+                Bitmaps.TransparentColor = clFuchsia
+                Bitmaps.Up.Data = {
+                  86190000424D86190000000000003600000028000000480000001E0000000100
+                  1800000000005019000000000000000000000000000000000000DEDEDEDEDEDE
+                  DDDDDDDADADAD1D1D1C8C8C8C3C3C3C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C2C2C2
+                  C5C5C5CCCCCCD5D5D5DCDCDCDEDEDEDEDEDEDEDEDEDDDDDDD5D5D5C2C2C2A9A9
+                  A99696968C8C8C8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A9090909E9E9EB5B5
+                  B5CDCDCDDBDBDBDEDEDEDEDEDED6D6D6BCBCBCB8B8B8C8C8C8DADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADAD0D0D0BABABA8F8F8F898989AAAAAACDCDCDDC
+                  DCDCDCDCDCCACACAD0D0D0DADADADADADADBDBDBDADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADAA2A2A2898989B4B4B4D5D5D5D7D7D7DBDBDB
+                  DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADAD9D9D98E8E8E9C9C9CCBCBCBD8D8D8E7E7E7DBDBDBDADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DAC0C0C08E8E8EC4C4C4DEDEDEE7E7E7DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D58A8A8AC2
+                  C2C2DFDFDFE7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8B8B8BC3C3C3E1E1E1E8E8E8
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADAD9D9D9939393C6C6C6E2E2E2ECECECDBDBDBDADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DACECECEA7A7A7D0D0D0DFDFDFEFEFEFE3E3E3DADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADABABABAC1C1C1DA
+                  DADADEDEDEE4E4E4EEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADAD2D2D2BEBEBED6D6D6DDDDDDDEDEDEDEDEDE
+                  E3E3E3EBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+                  DEDEDED1D1D1CBCBCBD7D7D7DDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFDF
+                  DFDCDCDCDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDADADAD6D6D6D9D9D9DCDC
+                  DCDEDEDEDEDEDEDEDEDE}
+                Color = clBtnFace
+                Anchors = [akTop, akRight]
+                Caption = #30830#35748
+                TabOrder = 3
+                OnClick = btnChangeClick
+              end
+              object btnCancel: TRzBmpButton
+                Left = 176
+                Top = 168
+                Width = 72
+                Bitmaps.TransparentColor = clFuchsia
+                Bitmaps.Up.Data = {
+                  86190000424D86190000000000003600000028000000480000001E0000000100
+                  1800000000005019000000000000000000000000000000000000DEDEDEDEDEDE
+                  DDDDDDDADADAD1D1D1C8C8C8C3C3C3C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
+                  C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C2C2C2
+                  C5C5C5CCCCCCD5D5D5DCDCDCDEDEDEDEDEDEDEDEDEDDDDDDD5D5D5C2C2C2A9A9
+                  A99696968C8C8C8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
+                  8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A9090909E9E9EB5B5
+                  B5CDCDCDDBDBDBDEDEDEDEDEDED6D6D6BCBCBCB8B8B8C8C8C8DADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADAD0D0D0BABABA8F8F8F898989AAAAAACDCDCDDC
+                  DCDCDCDCDCCACACAD0D0D0DADADADADADADBDBDBDADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADAA2A2A2898989B4B4B4D5D5D5D7D7D7DBDBDB
+                  DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADAD9D9D98E8E8E9C9C9CCBCBCBD8D8D8E7E7E7DBDBDBDADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DAC0C0C08E8E8EC4C4C4DEDEDEE7E7E7DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D58A8A8AC2
+                  C2C2DFDFDFE7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADA8A8A8AC1C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADA8A8A8AC1
+                  C1C1DFDFDFE6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADA8B8B8BC3C3C3E1E1E1E8E8E8
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADAD9D9D9939393C6C6C6E2E2E2ECECECDBDBDBDADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DACECECEA7A7A7D0D0D0DFDFDFEFEFEFE3E3E3DADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADABABABAC1C1C1DA
+                  DADADEDEDEE4E4E4EEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+                  DADADADADADADADADADADADADADAD2D2D2BEBEBED6D6D6DDDDDDDEDEDEDEDEDE
+                  E3E3E3EBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+                  E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+                  DEDEDED1D1D1CBCBCBD7D7D7DDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFDF
+                  DFDCDCDCDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB
+                  DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDADADAD6D6D6D9D9D9DCDC
+                  DCDEDEDEDEDEDEDEDEDE}
+                Color = clBtnFace
+                Anchors = [akTop, akRight]
+                Caption = #21462#28040
+                TabOrder = 4
+                OnClick = btnCancelClick
+              end
+            end
+          end
         end
         object TabSheet4: TRzTabSheet
-          Color = 16645629
+          Color = 15461355
           Caption = #25968#25454#22791#20221#19982#24674#22797
+          object RzLabel5: TRzLabel
+            Left = 30
+            Top = 65
+            Width = 90
+            Height = 15
+            Caption = #26412#22320#25968#25454#22791#20221
+          end
+          object Bevel5: TBevel
+            Left = 130
+            Top = 72
+            Width = 510
+            Height = 2
+            Shape = bsTopLine
+          end
+          object RzLabel8: TRzLabel
+            Left = 30
+            Top = 247
+            Width = 90
+            Height = 15
+            Caption = #26412#22320#25968#25454#24674#22797
+          end
+          object Bevel7: TBevel
+            Left = 130
+            Top = 254
+            Width = 510
+            Height = 2
+            Shape = bsTopLine
+          end
+          object RzLabel42: TRzLabel
+            Left = 32
+            Top = 152
+            Width = 450
+            Height = 15
+            Caption = #35831#28857#20987#8220#27983#35272#8221#25353#38062#65292#36873#25321#25968#25454#23384#20648#20301#32622#65292#20877#28857#20987#8220#24320#22987#22791#20221#8221#25353#38062
+          end
+          object RzLabel43: TRzLabel
+            Left = 32
+            Top = 192
+            Width = 248
+            Height = 15
+            Caption = #24314#35758#65306#19981#35201#22791#20221#21040'C'#30424#65292#20197#20813#25968#25454#20002#22833
+          end
+          object RzLabel44: TRzLabel
+            Left = 32
+            Top = 336
+            Width = 420
+            Height = 15
+            Caption = #35831#28857#20987#8220#27983#35272#8221#25353#38062#65292#36873#25321#22791#20221#25991#20214#65292#20877#28857#20987#8220#24320#22987#24674#22797#8221#25353#38062
+          end
+          object RzLabel45: TRzLabel
+            Left = 32
+            Top = 376
+            Width = 210
+            Height = 15
+            Caption = #27880#24847#65306#25968#25454#24674#22797#23558#35206#30422#24403#21069#25968#25454
+          end
+          object RzPanel35: TRzPanel
+            Left = 30
+            Top = 95
+            Width = 491
+            Height = 31
+            BorderOuter = fsStatus
+            BorderWidth = 1
+            Color = clWhite
+            FlatColor = 9145227
+            TabOrder = 0
+            DesignSize = (
+              491
+              31)
+            object RzPanel69: TRzPanel
+              Left = 386
+              Top = 2
+              Width = 103
+              Height = 27
+              Align = alRight
+              BorderOuter = fsFlat
+              BorderSides = [sdRight, sdBottom]
+              FlatColor = clGray
+              TabOrder = 0
+              object RzBackground32: TRzBackground
+                Left = 0
+                Top = 0
+                Width = 102
+                Height = 26
+                Active = True
+                Align = alClient
+                FrameColor = 9145227
+                GradientColorStart = clWhite
+                GradientColorStop = 14277081
+                ImageStyle = isStretch
+                ShowGradient = True
+                ShowImage = False
+                ShowTexture = False
+              end
+              object RzLabel40: TRzLabel
+                Left = 0
+                Top = 0
+                Width = 102
+                Height = 26
+                Align = alClient
+                Alignment = taCenter
+                Caption = #27983#35272
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                Transparent = True
+                Layout = tlCenter
+                OnClick = RzLabel40Click
+                ShadowColor = 16250871
+                ShadowDepth = 1
+                TextStyle = tsShadow
+              end
+            end
+            object edtSaveFolder: TcxTextEdit
+              Left = 2
+              Top = 4
+              Width = 384
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              Properties.MaxLength = 20
+              Properties.ReadOnly = True
+              TabOrder = 1
+            end
+          end
+          object btnBackUp: TRzBmpButton
+            Left = 528
+            Top = 95
+            Width = 106
+            Height = 29
+            Bitmaps.TransparentColor = clFuchsia
+            Bitmaps.Up.Data = {
+              76240000424D762400000000000036000000280000006A0000001D0000000100
+              1800000000004024000000000000000000000000000000000000EBEBEBEAEAEA
+              E5E5E5D9D9D9D0D0D0CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCECECED0D0D0D9D9D9E5E5E5EAEAEAEBEBEB0000E9E9E9E0E0E0
+              C7C7C7AAAAAA9999999393939292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              929292929292939393999999AAAAAAC7C7C7E0E0E0E9E9E90000E4E4E4C7C7C7
+              C6C6C6D2D2D2DADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADAD0D0D0B9B9B98A8A8A9C9C9CC5C5C5E4E4E40000DADADAD8D8D8
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADAD3D3D38E8E8EA9A9A9D9D9D90000E1E1E1DFDFDF
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADABBBBBB979797D0D0D00000EAEAEADBDBDB
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADAD5D5D5929292CECECE0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CECECE0000EEEEEEDBDBDB
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA979797D0D0D00000EFEFEFDFDFDF
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADAD6D6D6A9A9A9D9D9D90000EDEDEDE9E9E9
+              DBDBDBDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADAC6C6C6C5C5C5E4E4E40000EBEBEBEFEFEF
+              E8E8E8E0E0E0DCDCDCDADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADAD7D7D7CACACAE0E0E0E9E9E90000EBEBEBEBEBEB
+              EAEAEAE6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E5E5E5E1E1E1DADADAD9D9D9E5E5E5EAEAEAEBEBEB0000}
+            Color = clBtnFace
+            Caption = #24320#22987#22791#20221
+            TabOrder = 1
+            OnClick = btnBackUpClick
+          end
+          object RzPanel70: TRzPanel
+            Left = 30
+            Top = 277
+            Width = 491
+            Height = 31
+            BorderOuter = fsStatus
+            BorderWidth = 1
+            Color = clWhite
+            FlatColor = 9145227
+            TabOrder = 2
+            DesignSize = (
+              491
+              31)
+            object RzPanel71: TRzPanel
+              Left = 386
+              Top = 2
+              Width = 103
+              Height = 27
+              Align = alRight
+              BorderOuter = fsFlat
+              BorderSides = [sdRight, sdBottom]
+              FlatColor = clGray
+              TabOrder = 0
+              object RzBackground33: TRzBackground
+                Left = 0
+                Top = 0
+                Width = 102
+                Height = 26
+                Active = True
+                Align = alClient
+                FrameColor = 9145227
+                GradientColorStart = clWhite
+                GradientColorStop = 14277081
+                ImageStyle = isStretch
+                ShowGradient = True
+                ShowImage = False
+                ShowTexture = False
+              end
+              object RzLabel41: TRzLabel
+                Left = 0
+                Top = 0
+                Width = 102
+                Height = 26
+                Align = alClient
+                Alignment = taCenter
+                Caption = #27983#35272
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -15
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                Transparent = True
+                Layout = tlCenter
+                OnClick = RzLabel41Click
+                ShadowColor = 16250871
+                ShadowDepth = 1
+                TextStyle = tsShadow
+              end
+            end
+            object edtBackUpFile: TcxTextEdit
+              Left = 2
+              Top = 4
+              Width = 384
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              Properties.MaxLength = 20
+              Properties.ReadOnly = True
+              TabOrder = 1
+            end
+          end
+          object btnRecovery: TRzBmpButton
+            Left = 528
+            Top = 277
+            Width = 106
+            Height = 29
+            Bitmaps.TransparentColor = clFuchsia
+            Bitmaps.Up.Data = {
+              76240000424D762400000000000036000000280000006A0000001D0000000100
+              1800000000004024000000000000000000000000000000000000EBEBEBEAEAEA
+              E5E5E5D9D9D9D0D0D0CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+              CDCDCDCDCDCDCECECED0D0D0D9D9D9E5E5E5EAEAEAEBEBEB0000E9E9E9E0E0E0
+              C7C7C7AAAAAA9999999393939292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              9292929292929292929292929292929292929292929292929292929292929292
+              929292929292939393999999AAAAAAC7C7C7E0E0E0E9E9E90000E4E4E4C7C7C7
+              C6C6C6D2D2D2DADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADAD0D0D0B9B9B98A8A8A9C9C9CC5C5C5E4E4E40000DADADAD8D8D8
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADAD3D3D38E8E8EA9A9A9D9D9D90000E1E1E1DFDFDF
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADABBBBBB979797D0D0D00000EAEAEADBDBDB
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADAD5D5D5929292CECECE0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CDCDCD0000EEEEEEDADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA929292CECECE0000EEEEEEDBDBDB
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADA979797D0D0D00000EFEFEFDFDFDF
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADAD6D6D6A9A9A9D9D9D90000EDEDEDE9E9E9
+              DBDBDBDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADAC6C6C6C5C5C5E4E4E40000EBEBEBEFEFEF
+              E8E8E8E0E0E0DCDCDCDADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+              DADADADADADADADADADADADAD7D7D7CACACAE0E0E0E9E9E90000EBEBEBEBEBEB
+              EAEAEAE6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6E6
+              E6E6E6E5E5E5E1E1E1DADADAD9D9D9E5E5E5EAEAEAEBEBEB0000}
+            Color = clBtnFace
+            Caption = #24320#22987#24674#22797
+            TabOrder = 3
+            OnClick = btnRecoveryClick
+          end
         end
       end
     end
   end
   inherited toolNav: TRzPanel
-    Width = 873
+    Width = 920
     object lblCaption: TRzLabel
       Left = 14
       Top = 11
@@ -6794,5 +11623,32 @@ inherited frmSysDefine: TfrmSysDefine
     Params = <>
     Left = 64
     Top = 415
+  end
+  object cdsUsers: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 64
+    Top = 447
+  end
+  object DataSource1: TDataSource
+    DataSet = cdsUsers
+    Left = 104
+    Top = 447
+  end
+  object OpenBackUpDialog: TOpenDialog
+    Filter = #25152#26377#25991#20214
+    Left = 103
+    Top = 384
+  end
+  object SaveFolderDialog: TSaveDialog
+    Filter = #25152#26377#25991#20214
+    Left = 104
+    Top = 351
+  end
+  object OpenImageDialog: TOpenDialog
+    Filter = #22270#29255#25991#20214'|*.bmp'
+    Left = 103
+    Top = 416
   end
 end

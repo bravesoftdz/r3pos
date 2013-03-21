@@ -169,6 +169,7 @@ type
     procedure serachTextChange(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -201,7 +202,7 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort;//,ufrmInitGoods;
+uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -324,8 +325,9 @@ begin
    'left outer join (select TENANT_ID,GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+''' group by TENANT_ID,GODS_ID) c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
    'left outer join  PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID '+
    'left outer join  PUB_GOODSPRICE prc on j.TENANT_ID=prc.TENANT_ID and j.GODS_ID=prc.GODS_ID and j.SHOP_ID=prc.SHOP_ID and j.PRICE_ID=trim(prc.PRICE_ID) ) jp '+
-   'left outer join  PUB_GOODSPRICE shp on jp.TENANT_ID=shp.TENANT_ID and jp.GODS_ID=shp.GODS_ID and jp.CUR_SHOP_ID=shp.SHOP_ID and jp.PRICE_ID=trim(shp.PRICE_ID) '+GetOpenWhere + ' order by jp.GODS_CODE'
+   'left outer join  PUB_GOODSPRICE shp on jp.TENANT_ID=shp.TENANT_ID and jp.GODS_ID=shp.GODS_ID and jp.CUR_SHOP_ID=shp.SHOP_ID and jp.PRICE_ID=trim(shp.PRICE_ID) '+GetOpenWhere + ' '
   );
+  cdsList.SQL.Text := cdsList.SQL.Text + ' order by GODS_CODE';
   dataFactory.Open(cdsList);
 end;
 
@@ -1017,12 +1019,12 @@ var
   gid:string;
 begin
   inherited;
-  {if TfrmInitGoods.ShowDialog(self,'',gid) then
+  if TfrmInitGoods.ShowDialog(self,'',gid) then
      begin
        editPanel.Visible := false;
        open;
        cdsList.Locate('GODS_ID',gid,[]); 
-     end;  }
+     end; 
 end;
 
 procedure TfrmGoodsStorage.RzBmpButton6Click(Sender: TObject);
@@ -1067,10 +1069,11 @@ begin
         if cdsList.FieldbyName('A').AsString='1' then
            begin
              UpdateSort(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
-             cdsList.Delete;
-           end
-        else
-           cdsList.Next;
+             cdsList.Edit;
+             cdsList.FieldbyName('SORT_ID1').AsString := ESortId;
+             cdsList.Post;
+           end;
+        cdsList.Next;
       end;
   finally
     cdsList.Locate('GODS_ID',gid,[]);
@@ -1109,6 +1112,12 @@ begin
   SaveInfo;
   EditPanel.Visible := false;
 
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  Open;
 end;
 
 initialization

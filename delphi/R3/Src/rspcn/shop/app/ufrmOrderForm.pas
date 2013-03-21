@@ -247,7 +247,7 @@ var
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil,
-  udataFactory,uAdvFactory;//,ufrmInitGoods;
+  udataFactory,uAdvFactory,ufrmInitGoods;
 
 {$R *.dfm}
 
@@ -1582,7 +1582,7 @@ begin
         begin
           if length(fndStr)=13 then //ÊÇ13Î»ÌõÂë
              begin
-               {if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
+               if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
                   begin
                      if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
                      vgds := rs.FieldbyName('GODS_ID').AsString;
@@ -1594,7 +1594,7 @@ begin
                      vBtNo := rs.FieldbyName('BATCH_NO').AsString;
                   end
                else
-                  Exit;    }
+                  Exit;    
              end
           else
              begin

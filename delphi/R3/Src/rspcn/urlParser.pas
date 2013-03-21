@@ -25,7 +25,7 @@ function decodeUrl(url:string):TurlToken;
 var sl:TStringList;
 begin
   result.url := url;
-  result.url := url;
+  result.showUrl := url;
   delete(url,1,8);
   sl := TStringList.Create;
   try
@@ -34,24 +34,26 @@ begin
     if sl.Count=0 then Raise Exception.Create('无效地址'); 
     result.appId := sl[0];
     if result.appId='built-in' then
-       result.appFlag := 0
+       begin
+         result.appFlag := 0;
+         sl.Delete(0);
+       end
     else
     if result.appId='local-in' then
        begin
+         sl.Delete(0); 
          result.appFlag := 0;
          delete(url,1,8);
          result.url := 'file:///'+StringReplace(ExtractFilePath(Application.ExeName),'\','/',[rfReplaceAll])+'built-in'+url;
        end
     else
        result.appFlag := 1;
-//    sl.Delete(0);
-//    if sl.Count=0 then Raise Exception.Create('无效地址'); 
     if sl[sl.count-1]='' then sl.Delete(sl.count-1);
     if sl.Count=0 then Raise Exception.Create('无效地址'); 
     result.moduname := sl[sl.count-1];
     sl.Delete(sl.count-1);
     if sl.Count=0 then
-    result.path := '';
+    result.path := '/' else
     result.path := sl.DelimitedText;
   finally
     sl.Free;

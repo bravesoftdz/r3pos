@@ -5797,9 +5797,9 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 0
         Width = 705
         Height = 636
-        ActivePage = TabSheet2
+        ActivePage = TabSheet1
         Align = alClient
-        TabIndex = 1
+        TabIndex = 0
         TabOrder = 1
         FixedDimension = 21
         object TabSheet1: TRzTabSheet

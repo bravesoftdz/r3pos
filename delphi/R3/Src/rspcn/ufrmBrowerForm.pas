@@ -136,6 +136,8 @@ type
     FInitialized: boolean;
     { Private declarations }
     procedure DownloadCompleteEvent(Sender: TObject);
+    procedure NavigateComplete2(ASender: TObject;
+      const pDisp: IDispatch; var URL: OleVariant);
     procedure CommandStateChangeEvent(Sender: TObject; Command: Integer; Enable: WordBool);
     procedure GetHostInfoEvent(Sender: TCustomEmbeddedWB;
       var pInfo: TDOCHOSTUIINFO);
@@ -179,7 +181,7 @@ type
     m_bCreatedManually: Boolean;
     m_bResizable: Boolean;
     m_bFullScreen: Boolean;
-    procedure UpdateControls;
+    procedure UpdateControls(_EWB:TEmbeddedWB=nil);
     procedure LoadXsm(_url:string;appId:string;TimeOut:integer=15000);
     procedure LoadUrl(_url:string;appId:string;TimeOut:integer=15000);
     function CheckUrlExists(_url:TurlToken):boolean;
@@ -222,18 +224,31 @@ var
   iBorderSize,
   iCaptSize: Integer;
 
-procedure TfrmBrowerForm.UpdateControls;
+procedure TfrmBrowerForm.UpdateControls(_EWB:TEmbeddedWB=nil);
 var
   TabEx: TTabSheetEx;
   w:widestring;
+  i:integer;
 begin
-  TabEx := (PageControl1.ActivePage as TTabSheetEx);
+  if _EWB=nil then
+     TabEx := (PageControl1.ActivePage as TTabSheetEx)
+  else
+     begin
+       for i:=0 to PageControl1.PageCount-1 do
+         begin
+           if TTabSheetEx(PageControl1.Pages[i]).EWB=_EWB then
+              begin
+                TabEx := TTabSheetEx(PageControl1.Pages[i]);
+                break;
+              end;
+         end;
+     end;
   if TabEx=nil then Exit;
   if not IEAddress1.Focused then
      begin
        case TabEx.url.appFlag of
        0:begin
-           if isRspcn(TabEx.url.showUrl) then
+           if isRspcn(TabEx.url.url) then
               IEAddress1.Text := TabEx.url.showUrl
            else
               IEAddress1.Text := TabEx.EWB.LocationURL;
@@ -248,8 +263,8 @@ begin
       w := TabEx.EWB.LocationName;
       Caption := TabEx.EWB.LocationName+' -- rspcn';
       TabEx.url.url := TabEx.EWB.LocationURL;
-      PageControl1.ActivePage.Caption := copy(w,1,10);
-      TtabSheetEx(PageControl1.ActivePage).button.Caption := PageControl1.ActivePage.Caption;
+      TabEx.Caption := copy(w,1,10);
+      TabEx.button.Caption := TabEx.Caption;
      // BtnForward.Enabled := TabEx.CanForward;
       btnBack.Enabled := TabEx.CanBack;
       btnGo.Enabled := true;
@@ -257,8 +272,8 @@ begin
     end;
   1:begin
       Caption := TabEx.LocationName+' -- rspcn';
-      PageControl1.ActivePage.Caption := TabEx.LocationName;
-      TtabSheetEx(PageControl1.ActivePage).button.Caption := PageControl1.ActivePage.Caption;
+      TabEx.Caption := TabEx.LocationName;
+      TabEx.button.Caption := TabEx.Caption;
      // BtnForward.Enabled := false;
       btnBack.Enabled := false;
       btnGo.Enabled := false;
@@ -270,7 +285,7 @@ end;
 procedure TfrmBrowerForm.DownloadCompleteEvent(Sender: TObject);
 begin
 //  TEmbeddedWB(Sender).SetFocusToDoc;
-  UpdateControls;
+  UpdateControls(TEmbeddedWB(Sender));
 end;
 
 function TfrmBrowerForm.CreateNewTabBrowser(UrlToken: TurlToken):TTabSheetEx;
@@ -322,6 +337,7 @@ begin
           OnWindowSetLeft := WindowSetLeftEvent;
           OnWindowSetTop := WindowSetTopEvent;
           OnWindowSetWidth := WindowSetWidthEvent;
+          OnNavigateComplete2 := NavigateComplete2;
           OnMove := MoveEvent;
           OnMoveBy := MoveByEvent;
           OnWindowSetResizable := WindowSetResizableEvent;
@@ -798,6 +814,7 @@ begin
                 begin
                   case urlToken.appFlag of
                   0:begin
+                      Cancel := true;
                       curSheet.EWB.Go(urlToken.url,15);
                       ppdisp := curSheet.EWB.Application;
                       if curSheet.EWB.CanFocus then curSheet.EWB.SetFocusToDoc;
@@ -975,7 +992,7 @@ begin
     begin
       if lowercase(TTabSheetEx(PageControl1.Pages[i]).url.appId)=lowercase(_url.appId) then
          begin
-           if (_url.appFlag>0) and (_url.moduname<>TTabSheetEx(PageControl1.ActivePage).url.moduname) then continue;
+           if (_url.appFlag>0) and (_url.moduname<>TTabSheetEx(PageControl1.Pages[i]).url.moduname) then continue;
            result := true;
            PageControl1.ActivePageIndex := i;
            pageButtonSort;
@@ -1239,6 +1256,12 @@ begin
 
   jsExt := nil;
   if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
+end;
+
+procedure TfrmBrowerForm.NavigateComplete2(ASender: TObject;
+  const pDisp: IDispatch; var URL: OleVariant);
+begin
+  UpdateControls(TEmbeddedWB(ASender));
 end;
 
 initialization

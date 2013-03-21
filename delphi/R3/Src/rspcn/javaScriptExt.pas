@@ -98,6 +98,7 @@ begin
 end;
 var
   rs:TZQuery;
+  isXsm:boolean;
 begin
   result := false;
   signOut;
@@ -157,10 +158,10 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := tenantId;
     dataFactory.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('无效登录名.'); 
-
-    if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or (rs.FieldByName('ROLE_IDS').AsString = 'xsm')) then
+    isXsm := (rs.FieldByName('ROLE_IDS').AsString = 'xsm');
+    if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or isXsm) then
         begin
-          rs.SQL.Text := 'select DIMI_DATE from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
+          rs.SQL.Text := 'select DIMI_DATE,PASS_WRD from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
           ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and A.DIMI_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()))+' and A.DIMI_DATE is not null ';
           dataFactory.Open(rs);
           if not rs.IsEmpty then Raise Exception.Create(username+'用户账号已经离职,不能登录。');
@@ -175,7 +176,7 @@ begin
         end
      else
         begin
-          if (rs.FieldbyName('ROLE_IDS').AsString='xsm') and online then //在线使用并属于新商盟用户
+          if isXsm and online then //在线使用并属于新商盟用户
              begin
                if UcFactory.xsmLogin(username,password) then
                   begin
@@ -474,6 +475,7 @@ var
   s:string;
 begin
   result := '';
+  if not fileExists(ExtractFilePath(Application.ExeName)+'temp\'+doMain+'.dat') then exit;
   AssignFile(F,ExtractFilePath(Application.ExeName)+'temp\'+doMain+'.dat');
   reset(F);
   try

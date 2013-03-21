@@ -101,13 +101,13 @@ begin
     urlToken := decodeUrl(url);
 
     if urlToken.path='/' then
-       Url := stringReplace(ExtractFilePath(Application.exename)+
+       Url := stringReplace(ExtractFilePath(Application.exename)+'built-in/'+
           urlToken.moduname,'/','\',[rfReplaceAll])
     else
-       Url := stringReplace(ExtractFilePath(Application.exename)+
+       Url := stringReplace(ExtractFilePath(Application.exename)+'built-in/'+
           urlToken.path+'/'+urlToken.moduname,'/','\',[rfReplaceAll]);
 
-    F := TFileStream.Create(Url, fmOpenRead);
+    F := TFileStream.Create(Url, fmShareDenyNone);
     try
       CreateStreamOnHGlobal(0, True, DataStream);
       TOleStream.Create(DataStream).CopyFrom(F, F.Size);

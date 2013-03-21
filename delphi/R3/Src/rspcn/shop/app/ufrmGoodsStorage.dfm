@@ -1624,6 +1624,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Top = 172
           Width = 893
           Height = 2
+          Anchors = [akLeft, akTop, akRight]
         end
         object barcode_panel_left_line: TImage
           Left = 10
@@ -4059,6 +4060,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         Color = clBtnFace
         Caption = #26597#25214
         TabOrder = 2
+        OnClick = RzBmpButton2Click
       end
       object RzPanel15: TRzPanel
         Left = 11
@@ -4166,13 +4168,13 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Top = 6
           Width = 249
           Height = 18
-          Hint = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#22791#27880#35828#26126
+          Hint = #36755#20837#21830#21697#21517#31216#12289#36135#21495#12289#26465#30721
           Anchors = [akLeft, akTop, akRight]
           BevelInner = bvNone
           BevelOuter = bvNone
           BorderStyle = bsNone
           TabOrder = 0
-          Text = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#22791#27880#35828#26126
+          Text = #36755#20837#21830#21697#21517#31216#12289#36135#21495#12289#26465#30721
           OnChange = serachTextChange
           OnEnter = serachTextEnter
           OnExit = serachTextExit

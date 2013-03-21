@@ -62,7 +62,12 @@ uses
   ObjSyncFactoryV60 in 'obj\ObjSyncFactoryV60.pas',
   ObjSysDefineV60 in 'obj\ObjSysDefineV60.pas',
   ObjTenantV60 in 'obj\ObjTenantV60.pas',
-  ufrmStorageReport in 'app\ufrmStorageReport.pas' {frmStorageReport};
+  ufrmStorageReport in 'app\ufrmStorageReport.pas' {frmStorageReport},
+  uRspSyncFactory in 'app\uRspSyncFactory.pas',
+  ufrmSysDefine in 'app\ufrmSysDefine.pas' {frmSysDefine},
+  ufrmSyncData in 'app\ufrmSyncData.pas' {frmSyncData},
+  ufrmInitGoods in 'app\ufrmInitGoods.pas' {frmInitGoods},
+  ObjCustomerV60 in 'obj\ObjCustomerV60.pas';
 
 {$R *.res}
 exports

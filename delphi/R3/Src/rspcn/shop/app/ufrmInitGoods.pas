@@ -196,8 +196,6 @@ begin
   edtDefault1.Checked := false;
   edtDefault2.Checked := false;
 
-  advFactory.getAdvPngImage(adv03.Name,adv03.Picture);
-
   if (FY_TENANT_ID = '') or (FY_RELATION_ID = '') then
     begin
       btnNext.Enabled := false;
@@ -1831,6 +1829,7 @@ end;
 procedure TfrmInitGoods.FormShow(Sender: TObject);
 begin
   inherited;
+  advFactory.getAdvPngImage(adv03.Name,adv03.Picture);
   if CanFocus(edtInput) then edtInput.SetFocus;
 end;
 

@@ -3,7 +3,7 @@ unit ObjMeaUnitsV60;
 interface
 
 uses
-  SysUtils, zBase, Classes, ZIntf, ObjCommon, ZDataset, DB;
+  SysUtils, ZBase, Classes, ZIntf, ObjCommon, ZDataset, DB;
 
 type
 
@@ -36,7 +36,7 @@ procedure TMeaUnitsV60.InitClass;
 begin
   inherited;
   SelectSQL.Text :=
-    'select TENANT_ID,UNIT_ID,UNIT_NAME,UNIT_SPELL,SEQ_NO,COMM,TIME_STAMP from PUB_MEAUNITS where TENANT_ID=:TENANT_ID and UNIT_ID=:UNIT_ID';
+    'select TENANT_ID,UNIT_ID,UNIT_NAME,UNIT_SPELL,SEQ_NO,COMM,TIME_STAMP from PUB_MEAUNITS where UNIT_ID=:UNIT_ID';
 
   InsertSQL.Text :=
     'insert into PUB_MEAUNITS '+
@@ -49,15 +49,15 @@ begin
     ') ';
 
   UpdateSQL.Text :=
-    'update 	PUB_MEAUNITS '+
-    'set			TENANT_ID=:TENANT_ID,UNIT_ID=:UNIT_ID,UNIT_NAME=:UNIT_NAME,UNIT_SPELL=:UNIT_SPELL,SEQ_NO=:SEQ_NO '+
+    'update   PUB_MEAUNITS '+
+    'set      TENANT_ID=:TENANT_ID,UNIT_ID=:UNIT_ID,UNIT_NAME=:UNIT_NAME,UNIT_SPELL=:UNIT_SPELL,SEQ_NO=:SEQ_NO '+
     '         COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
-    'where    TENANT_ID=:OLD_TENANT_ID and UNIT_ID=:OLD_UNIT_ID';
+    'where    UNIT_ID=:OLD_UNIT_ID';
 
   DeleteSQL.Text :=
-    'update 	PUB_MEAUNITS '+
-    'set			COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
-    'where    TENANT_ID=:OLD_TENANT_ID and UNIT_ID=:OLD_UNIT_ID';
+    'update   PUB_MEAUNITS '+
+    'set      COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
+    'where    UNIT_ID=:OLD_UNIT_ID';
 end;
 
 initialization
@@ -65,7 +65,3 @@ initialization
 finalization
   UnRegisterClass(TMeaUnitsV60);
 end.
-
-
-
-

@@ -330,7 +330,7 @@ begin
   // 查询自经营商品
   hasGoods := TZQuery.Create(nil);
   try
-    hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where  TENANT_ID = ' + FY_TENANT_ID + ' and BARCODE = '''+barcode+''' ';
+    hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where TENANT_ID = ' + FY_TENANT_ID + ' and BARCODE = '''+barcode+''' ';
     dataFactory.Open(hasGoods);
     if not hasGoods.IsEmpty then
       begin
@@ -423,6 +423,45 @@ begin
     end;
 
   OpenDataSet(FY_TENANT_ID, godsId);
+
+  if LocalFinded then
+    begin
+      if Copy(cdsGoodsInfo.FieldByName('COMM').AsString,2,2) = '2' then
+        begin
+          cdsGoodsInfo.Edit;
+          cdsGoodsInfo.Post;
+        end;
+      cdsBarCode.First;
+      while not cdsBarCode.Eof do
+        begin
+          if Copy(cdsBarCode.FieldByName('COMM').AsString,2,2) = '2' then
+            begin
+              cdsBarCode.Edit;
+              cdsBarCode.Post;
+            end;
+          cdsBarCode.Next;
+        end;
+      if cdsGoodsRelation.IsEmpty then
+        begin
+          cdsGoodsRelation.Append;
+          cdsGoodsRelation.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+          cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+          cdsGoodsRelation.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+          cdsGoodsRelation.FieldByName('RELATION_ID').AsInteger := strtoint(FY_RELATION_ID);
+          cdsGoodsRelation.FieldByName('NEW_INPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat;
+          cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat;
+          cdsGoodsRelation.FieldByName('ZOOM_RATE').AsFloat := 1.000;
+          cdsGoodsRelation.Post;
+        end
+      else
+        begin
+          if Copy(cdsGoodsRelation.FieldByName('COMM').AsString,2,2) = '2' then
+            begin
+              cdsGoodsRelation.Edit;
+              cdsGoodsRelation.Post;
+            end;
+        end;
+    end;
 
   if RemoteFinded then
     begin
@@ -1226,12 +1265,12 @@ begin
   if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString = '' then
     begin
       if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
-        cdsBarCode.Delete;
+         cdsBarCode.Delete;
     end;
   if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString = '' then
     begin
       if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
-        cdsBarCode.Delete;
+         cdsBarCode.Delete;
     end;
 
   PostDataSet;
@@ -1856,7 +1895,7 @@ begin
 
     dataFactory.MoveToRemote;
     try
-      tmpUnits.SQL.Text := 'select * from PUB_MEAUNITS where TENANT_ID='+FY_TENANT_ID+' and UNIT_ID in ('+unitIds+')';
+      tmpUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
       dataFactory.Open(tmpUnits);
     finally
       dataFactory.MoveToDefault;
@@ -1864,7 +1903,7 @@ begin
 
     dataFactory.MoveToSqlite;
     try
-      cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where TENANT_ID='+FY_TENANT_ID+' and UNIT_ID in ('+unitIds+')';
+      cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
       dataFactory.Open(cdsUnits);
     finally
       dataFactory.MoveToDefault;
@@ -1910,7 +1949,7 @@ begin
   cdsUnits := TZQuery.Create(nil);
   dataFactory.MoveToSqlite;
   try
-    cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where TENANT_ID='+FY_TENANT_ID+' and UNIT_ID in ('+unitIds+')';
+    cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
     dataFactory.Open(cdsUnits);
 
     if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('CALC_UNITS').AsString,[]) then
@@ -1960,7 +1999,7 @@ begin
   begin
     cdsUnits := TZQuery.Create(nil);
     try
-      cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where TENANT_ID='+FY_TENANT_ID+' and UNIT_ID in ('+unitIds+')';
+      cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
       dataFactory.Open(cdsUnits);
 
       if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('CALC_UNITS').AsString,[]) then

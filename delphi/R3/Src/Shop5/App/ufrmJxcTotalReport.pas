@@ -314,7 +314,7 @@ begin
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT*1.000/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
-    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
+    ',sum(case when A.MONTH='+P1_D1.asString+' then round(A.ORG_AMT*C.NEW_OUTPRICE,2) else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
@@ -345,10 +345,10 @@ begin
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.000/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
-    ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
+    ',sum(case when A.MONTH='+mx+' then round(A.BAL_AMT*C.NEW_OUTPRICE,2) else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     ' group by A.TENANT_ID,B.REGION_ID';
 
   strSql :=
@@ -476,7 +476,7 @@ begin
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_AMT*1.000/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
-    ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
+    ',sum(case when A.MONTH='+P2_D1.asString+' then round(A.ORG_AMT*C.NEW_OUTPRICE,2) else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
@@ -507,10 +507,10 @@ begin
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.000/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
-    ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
+    ',sum(case when A.MONTH='+mx+' then round(A.BAL_AMT*C.NEW_OUTPRICE,2) else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
 
   strSql :=
@@ -584,7 +584,7 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+inttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_AMT*1.000/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
-    ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
+    ',sum(case when A.MONTH='+P3_D1.asString+' then round(A.ORG_AMT*C.NEW_OUTPRICE,2) else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
@@ -614,10 +614,10 @@ begin
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.000/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
-    ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
+    ',sum(case when A.MONTH='+mx+' then round(A.BAL_AMT*C.NEW_OUTPRICE,2) else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+inttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
 
   case GodsStateIdx of
@@ -848,7 +848,7 @@ begin
     ' A.TENANT_ID'+SORT_ID_Fields+
     ',A.GODS_ID '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_AMT*1.000/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
-    ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
+    ',sum(case when A.MONTH='+P4_D1.asString+' then round(A.ORG_AMT*C.NEW_OUTPRICE,2) else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
@@ -879,10 +879,10 @@ begin
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.000/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
-    ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
+    ',sum(case when A.MONTH='+mx+' then round(A.BAL_AMT*C.NEW_OUTPRICE,2) else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
 
   strSql :=

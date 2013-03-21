@@ -530,7 +530,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.DEPT_ID';
 
   Result := ParseSQL(Factor.iDbType,
@@ -662,7 +662,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
@@ -870,7 +870,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
@@ -1009,7 +1009,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
 
   case GodsStateIdx of
@@ -1393,7 +1393,7 @@ begin
     ',(case when cast(A.AMOUNT as decimal(18,3))<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/cast(A.AMOUNT as decimal(18,3)) else 0 end) as AVG_PROFIT'+    //--µ¥Î»Ã«Àû
     ',B.SHOP_NAME '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
 
   Result := ParseSQL(Factor.iDbType,
     'select j.* '+

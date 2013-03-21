@@ -435,11 +435,11 @@ begin
     ',B.REGION_ID as REGION_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+   //数量
     ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_CST) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2)) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2))-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   //关联行政区域
@@ -601,11 +601,11 @@ begin
     ',B.SHOP_ID as SHOP_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
     ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(-sum(CHANGE'+CodeId+'_CST) as decimal(10,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2)) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.SHOP_ID';
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
@@ -714,11 +714,11 @@ begin
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
     ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_CST) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2)) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2))-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
 
   case GodsStateIdx of
@@ -903,11 +903,11 @@ begin
     ',A.GODS_ID as GODS_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as AMOUNT '+      //数量
     ',case when cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(-CHANGE'+CodeId+'_CST) as decimal(18,3))*1.000/cast(sum(-CHANGE'+CodeId+'_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2)) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(round(-CHANGE'+CodeId+'_AMT*C.NEW_OUTPRICE,2))-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
 
   strSql :=
@@ -1033,7 +1033,7 @@ begin
     ',-(A.RTL_MONEY-A.COST_MONEY) as PROFIT_MONEY '+                   //--差额毛利
     ',B.SHOP_NAME '+
     'from VIW_CHANGEDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
 
   strSql :=
     'select j.* '+

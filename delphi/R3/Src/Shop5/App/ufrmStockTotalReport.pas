@@ -316,7 +316,7 @@ begin
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+  
     ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.000/cast(sum(STOCK_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+

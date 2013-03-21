@@ -971,10 +971,14 @@ begin
       if (e<=(bDate+b-1)) or (formatDatetime('YYYYMM',bDate+b-1)=formatDatetime('YYYYMM',e)) then
         e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day)));
     end;
+    //2013.03.21最后一个月期末，要按实际有日账记录的数据来取
+    if e>mDate then e:=mDate;
+        
     RckBegDate:=bDate+b; //开始日期
     RckMonth:=FormatDatetime('YYYYMM',e);
     Label11.Caption := '正在核算['+RckMonth+']月台账...';
     Update;
+
     //设置结账日期(区间)
     InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDatetime('YYYYMMDD',RckBegDate); //月结账开始日期
     InParams.ParamByName('RCK_END_DATE').AsString:=FormatDatetime('YYYYMMDD',e); //月结账结束日期

@@ -298,7 +298,7 @@ begin
       ',REGION_ID'+
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
-      ',sum(BAL_RTL) as BAL_RTL'+
+      ',sum(BAL_RTL) as BAL_RTL'+ 
       ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
       ',case when cast(sum(BAL_AMT) as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
@@ -332,7 +332,7 @@ begin
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-      ',sum(BAL_RTL) as BAL_RTL '+
+      ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,B.REGION_ID';
 
@@ -482,7 +482,7 @@ begin
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_CST)*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_RTL*1.000)/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-      ',sum(BAL_RTL) as BAL_RTL '+
+      ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';
 
@@ -589,7 +589,7 @@ begin
       ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lvField+',C.RELATION_ID '+
       ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',sum(BAL_RTL) as BAL_RTL '+
+      ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
@@ -811,7 +811,7 @@ begin
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-      ',sum(BAL_RTL) as BAL_RTL '+
+      ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,A.BATCH_NO,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';

@@ -418,12 +418,12 @@ begin
     ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',case when cast((sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3))*100.00/cast((sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.000/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   strSql :=
@@ -585,12 +585,12 @@ begin
     ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',case when cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.000/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
 
   strSql :=
@@ -702,12 +702,12 @@ begin
     ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',case when cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when cast(sum(STOCK_AMT) as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.000/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
 
   case GodsStateIdx of
@@ -900,13 +900,13 @@ begin
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as STOCK_MNY_TAX_AGO '+
     ',case when cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when cast(sum(STOCK_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.000/cast(sum(STOCK_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
 
   strSql :=
@@ -1037,7 +1037,7 @@ begin
     ',A.CALC_MONEY+isnull(A.AGIO_MONEY,0) as RTL_MONEY '+
     ',B.SHOP_NAME '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
     
   strSql := 
     'select j.* '+

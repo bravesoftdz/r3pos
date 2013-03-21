@@ -355,8 +355,8 @@ begin
       ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-      ',sum(BAL_RTL) as BAL_RTL '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+ 
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,B.SHOP_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'C')+' '+
       ',C.RELATION_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.SORT_ID7,C.SORT_ID8,C.SORT_ID9,C.SORT_ID10 '+

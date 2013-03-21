@@ -403,13 +403,13 @@ begin
     ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
     ',case when cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBIN_RTL) as DBIN_RTL '+
+    ',sum(round(DBIN_AMT*C.NEW_OUTPRICE,2)) as DBIN_RTL '+  
     ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
     ',case when cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.000/cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',sum(DBOUT_RTL) as DBOUT_RTL '+
+    ',sum(round(DBOUT_AMT*C.NEW_OUTPRICE,2)) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   strSql :=
@@ -566,13 +566,13 @@ begin
     ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
     ',case when cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBIN_RTL) as DBIN_RTL '+
+    ',sum(round(DBIN_AMT*C.NEW_OUTPRICE,2)) as DBIN_RTL '+
     ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
     ',case when cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.000/cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',sum(DBOUT_RTL) as DBOUT_RTL '+
+    ',sum(round(DBOUT_AMT*C.NEW_OUTPRICE,2)) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
 
   strSql :=    
@@ -681,12 +681,12 @@ begin
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lvField+',C.RELATION_ID '+
     ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBIN_RTL) as DBIN_RTL '+
+    ',sum(round(DBIN_AMT*C.NEW_OUTPRICE,2)) as DBIN_RTL '+
     ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',sum(DBOUT_RTL) as DBOUT_RTL '+
+    ',sum(round(DBOUT_AMT*C.NEW_OUTPRICE,2)) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
 
   case GodsStateIdx of
@@ -871,13 +871,13 @@ begin
     ',sum(DBIN_AMT*1.000/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',case when cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.000/cast(sum(DBIN_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
-    ',sum(DBIN_RTL) as DBIN_RTL '+
+    ',sum(round(DBIN_AMT*C.NEW_OUTPRICE,2)) as DBIN_RTL '+
     ',sum(DBOUT_AMT*1.000/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',sum(DBOUT_RTL) as DBOUT_RTL '+
+    ',sum(round(DBOUT_AMT*C.NEW_OUTPRICE,2)) as DBOUT_RTL '+
     ',case when cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.000/cast(sum(DBOUT_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID'+SORT_ID_Group+',A.GODS_ID';
     
   strSql :=
@@ -1005,7 +1005,7 @@ begin
       ',C.GODS_CODE as GODS_CODE '+
       ',C.GODS_NAME as GODS_NAME '+   //关联商品表
       'from VIW_MOVEINDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
       ' '+ strWhere + ' ';
 
   strSql :=
@@ -1064,7 +1064,7 @@ begin
       ',C.GODS_CODE as GODS_CODE '+
       ',C.GODS_NAME as GODS_NAME '+   //关联商品表  SAL_SALESORDER
       'from VIW_MOVEOUTDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
       ' '+ strWhere + ' ';
 
    strSql :=

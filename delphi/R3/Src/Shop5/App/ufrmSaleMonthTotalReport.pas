@@ -382,7 +382,7 @@ begin
     ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.000/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
-    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then round(ORG_AMT*isnull(R.NEW_INPRICE,C.NEW_INPRICE),2) else 0 end) as ORG_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
 
     ',sum(STOCK_AMT*1.000/'+UnitCalc+') as STOCK_AMT '+   //进货数量
@@ -423,7 +423,7 @@ begin
 
     ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.000/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
-    ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+mx+' then round(BAL_AMT*isnull(R.NEW_INPRICE,C.NEW_INPRICE),2) else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
     ','+inttostr(Day)+' as DAYS_AMT '+ //销售天数
     ' from ' +GetAllTab(strWhere)+' '+
@@ -768,7 +768,7 @@ begin
     ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.000/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
-    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then round(ORG_AMT*C.NEW_OUTPRICE,2) else 0 end) as ORG_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
 
     ',sum(STOCK_AMT*1.000/'+UnitCalc+') as STOCK_AMT '+   //进货数量
@@ -811,10 +811,10 @@ begin
 
     ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.000/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
-    ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+mx+' then round(BAL_AMT*C.NEW_OUTPRICE,2) else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
     ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID';
 

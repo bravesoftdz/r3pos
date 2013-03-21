@@ -321,7 +321,7 @@ begin
     strSql :=
       'SELECT A.TYPE_ID,sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL,sum(SALE_PRF) as SALE_PRF from '+ //œ˙ €∂Ó
       ' ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TYPE_ID'; 
     Result :=  ParseSQL(Factor.iDbType,strSql);
   end else

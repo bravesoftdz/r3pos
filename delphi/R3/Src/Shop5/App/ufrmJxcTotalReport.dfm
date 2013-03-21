@@ -1,5 +1,5 @@
 inherited frmJxcTotalReport: TfrmJxcTotalReport
-  Left = 194
+  Top = 103
   Width = 959
   Height = 624
   Caption = #36827#38144#23384#32479#35745#34920

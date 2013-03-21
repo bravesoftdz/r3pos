@@ -7,26 +7,26 @@ inherited frmAllRckReport: TfrmAllRckReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1262
-    Height = 683
+    Width = 1270
+    Height = 694
     inherited RzPanel2: TRzPanel
-      Width = 1252
-      Height = 673
+      Width = 1260
+      Height = 684
       inherited RzPage: TRzPageControl
-        Width = 1047
-        Height = 667
+        Width = 1055
+        Height = 678
         OnDblClick = RzPageDblClick
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32508#21512#21488#36134
           inherited RzPanel3: TRzPanel
-            Width = 1045
-            Height = 640
+            Width = 1053
+            Height = 651
             inherited Panel4: TPanel
-              Width = 1035
-              Height = 630
+              Width = 1043
+              Height = 641
               inherited w1: TRzPanel
-                Width = 1035
+                Width = 1043
                 Height = 82
                 object LblRckType: TLabel
                   Left = 9
@@ -226,12 +226,12 @@ inherited frmAllRckReport: TfrmAllRckReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 1035
-                Height = 548
+                Width = 1043
+                Height = 559
                 inherited DBGridEh1: TDBGridEh
                   Tag = 1
-                  Width = 1031
-                  Height = 544
+                  Width = 1039
+                  Height = 555
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -271,8 +271,8 @@ inherited frmAllRckReport: TfrmAllRckReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1050
-        Height = 667
+        Left = 1058
+        Height = 678
         Visible = False
         inherited Panel2: TPanel
           Height = 644
@@ -287,15 +287,15 @@ inherited frmAllRckReport: TfrmAllRckReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1262
+    Width = 1270
     inherited Image3: TImage
-      Width = 308
+      Width = 320
     end
     inherited Image14: TImage
-      Left = 1242
+      Left = 1250
     end
     inherited Image1: TImage
-      Left = 662
+      Left = 670
       Width = 580
     end
     inherited CoolBar1: TCoolBar
@@ -353,7 +353,7 @@ inherited frmAllRckReport: TfrmAllRckReport
     Left = 632
     Top = 169
     ReportForm = {
-      18000000321E0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000002B1E0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -594,7 +594,7 @@ inherited frmAllRckReport: TfrmAllRckReport
       FEFEFF060000000A00205661726961626C6573000000000200736C0014006364
       735F436867426F64792E22534C30303030220002006A650014006364735F4368
       67426F64792E224A4530303030220004006B68796800000000040079687A6800
-      0000000200647A000000000000000000000000FDFF0100000000}
+      0000000200647A000000000000000000000000}
   end
   object frfSalesOrder: TfrReport
     InitialZoom = pzDefault
@@ -605,7 +605,7 @@ inherited frmAllRckReport: TfrmAllRckReport
     Left = 640
     Top = 225
     ReportForm = {
-      18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000BD200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -867,6 +867,6 @@ inherited frmAllRckReport: TfrmAllRckReport
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000FDFF0100000000}
+      0000000000}
   end
 end

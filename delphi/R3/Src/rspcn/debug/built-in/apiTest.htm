@@ -1,0 +1,289 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<script src="js/rspcn.js" type="text/javascript"></script>
+<script src="js/json.js" type="text/javascript"></script>
+<head>
+<title>测试API</title>
+</head>
+<html>
+<body>
+<form>
+	<input type='button' value='signIn' onclick='signIn()' />
+	<input type='button' value='signOut' onclick='signOut()' />
+	username: <input type='text' id='username' value='620902102291' />
+	password: <input type='text' id='password' value='1' />
+	</p>
+	<input type='button' value='connect' onclick='connect()' />
+	<input type='button' value='disconnect' onclick='disconnect()' />
+	</p>
+	<input type='button' value='createDataSet' onclick='createDataSet()' />
+	<input type='button' value='eraseDataSet' onclick='eraseDataSet()' />
+	</p>
+	<input type='button' value='setSQL' onclick='setSQL()' />
+	<input type='button' value='open' onclick='openDataSet()' />
+	SQL: <input type='text' id='openSQL' size='100' value='select * from ca_shop_info where tenant_id = 500000007' />
+	</p>
+	<input type='button' value='openParams' onclick='openParams()' />
+	OpenNS: <input type='text' id='openns' size='30' value='Tenant@caTenant' />
+	Params: <input type='text' id='openparams' size='100' value='{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"}]}' />
+	</p>
+	<input type='button' value='append' onclick='append()' />
+	<input type='button' value='edit' onclick='edit()' />
+	</p>
+	<input type='button' value='post' onclick='post()' />
+	</p>
+	<input type='button' value='getAsString' onclick='getAsString()' />
+	<input type='button' value='getAsInteger' onclick='getAsInteger()' />
+	<input type='button' value='getAsValue' onclick='getAsValue()' />
+	<input type='button' value='getAsDouble' onclick='getAsDouble()' />
+	getFieldName: <input type='text' id='getFieldName' value='SHOP_NAME' />
+	</p>
+	<input type='button' value='setAsString' onclick='setAsString()' />
+	<input type='button' value='setAsInteger' onclick='setAsInteger()' />
+	<input type='button' value='setAsValue' onclick='setAsValue()' />
+	<input type='button' value='setAsDouble' onclick='setAsDouble()' />
+	setFieldName: <input type='text' id='setFieldName' />
+	setValue: <input type='text' id='setValue' />
+	</p>
+	<input type='button' value='first' onclick='first()' />
+	<input type='button' value='last' onclick='last()' />
+	<input type='button' value='next' onclick='next()' />
+	<input type='button' value='prior' onclick='prior()' />
+	</p>
+	<input type='button' value='eof' onclick='eof()' />
+	</p>
+	<input type='button' value='getLastError' onclick='getLastError()' />
+	</p>
+	<input type='button' value='locate' onclick='locate()' /> 
+	locateFieldName: <input type='text' id='locateFieldName' value='TENANT_ID;SHOP_ID' />
+	locateValue: <input type='text' id='locateValue' size='100' value='{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}' />
+	</p>
+	<input type='button' value='execSQL' onclick='execSQL()' />
+	SQL: <input type='text' id='executeSQL' size='100' value="update ca_shop_info set shop_name = '总店' where shop_id = '5000000070001'" />
+	</p>
+	<input type='button' value='iDbType' onclick='iDbType()' />
+	<input type='button' value='moveToRemote' onclick='moveToRemote()' />
+	<input type='button' value='moveToSqlite' onclick='moveToSqlite()' />
+	</p>
+	<input type='button' value='testObj' onclick='testObj()' />
+	</p>
+	</p>
+	<input type='button' value='testJson' onclick='testJson()' />
+</form>
+</body>
+</html>
+<script>
+var ds = new dataset();
+function signIn() {
+	var username = document.getElementById('username').value;
+	var password = document.getElementById('password').value;
+	if (username == '' || password == '') {
+		return;
+	}
+	var verify = rsp.getVerify();
+	var ret = rsp.signIn(username, password, '123456', true);
+	if (ret) {
+		alert('登录成功');
+	} else {
+		alert('登录失败');
+	}
+}
+function signOut() {
+	rsp.signOut();
+}
+function connect() {
+	try {
+		var ret = rsp.connect();
+		if(ret) {
+			alert('连接成功');
+		} else {
+			alert('连接失败');
+		}
+	} catch (e){
+		alert(e.message);
+	}
+}
+function disconnect() {
+	rsp.disconnect();
+}
+function createDataSet() {
+	ds.createDataSet();
+}
+function setSQL() {
+	var sql = document.getElementById('openSQL').value;
+	if (sql == '') {
+		return;
+	}
+	ds.setSQL(sql);
+}
+function openDataSet() {
+	factor.open(ds);
+}
+function openParams() {
+	var ns = document.getElementById('openns').value;
+	var params = document.getElementById('openparams').value;
+	factor.open(ds, ns, params);
+}
+function eraseDataSet() {
+	ds.eraseDataSet();
+}
+function append() {
+	ds.append();
+}
+function edit() {
+	ds.edit();
+}
+function post() {
+	ds.post();
+}
+function getAsString() {
+	var fieldName = document.getElementById('getFieldName').value;
+	if (fieldName == '') {
+		return;
+	}
+	var ret = ds.getAsString(fieldName);
+	alert('getAsString return ' + ret);
+}
+function getAsInteger() {
+	var fieldName = document.getElementById('getFieldName').value;
+	if (fieldName == '') {
+		return;
+	}
+	var ret = ds.getAsInteger(fieldName);
+	alert('getAsInteger return ' + ret);
+}
+function getAsValue() {
+	var fieldName = document.getElementById('getFieldName').value;
+	if (fieldName == '') {
+		return;
+	}
+	var ret = ds.getAsValue(fieldName);
+	alert('getAsValue return ' + ret);
+}
+function getAsDouble() {
+	var fieldName = document.getElementById('getFieldName').value;
+	if (fieldName == '') {
+		return;
+	}
+	var ret = ds.getAsDouble(fieldName);
+	alert('getAsDouble return ' + ret);
+}
+function setAsString() {
+	var fieldName = document.getElementById('setFieldName').value;
+	var value = document.getElementById('setValue').value;
+	if (fieldName == '' || value == '') {
+		return;
+	}
+	ds.setAsString(fieldName, value);
+}
+function setAsInteger() {
+	var fieldName = document.getElementById('setFieldName').value;
+	var value = document.getElementById('setValue').value;
+	if (fieldName == '' || value == '') {
+		return;
+	}
+	ds.setAsInteger(fieldName, value);
+}
+function setAsValue() {
+	var fieldName = document.getElementById('setFieldName').value;
+	var value = document.getElementById('setValue').value;
+	if (fieldName == '' || value == '') {
+		return;
+	}
+	ds.setAsValue(fieldName, value);
+}
+function setAsDouble() {
+	var fieldName = document.getElementById('setFieldName').value;
+	var value = document.getElementById('setValue').value;
+	if (fieldName == '' || value == '') {
+		return;
+	}
+	ds.setAsDouble(fieldName, value);
+}
+function first() {
+	ds.first();
+}
+function last() {
+	ds.last();
+}
+function next() {
+	ds.next();
+}
+function prior() {
+	ds.prior();
+}
+function eof() {
+	var ret = ds.eof();
+	alert('eof return ' + ret);
+}
+function getLastError() {
+	var ret = ds.getLastError();
+	alert('getLastError return ' + ret);
+}
+function locate() {
+	var locateFieldName = document.getElementById('locateFieldName').value;
+	var locateValue = document.getElementById('locateValue').value;
+	if (locateFieldName == '' || locateValue == '') {
+		return;
+	};
+	var ret = ds.locate(locateFieldName, locateValue);
+	alert('locate return ' + ret);
+}
+function execSQL() {
+	var sql = document.getElementById('executeSQL').value;
+	if (sql == '') {
+		return;
+	}
+	var ret = factor.execSQL(sql);
+	alert('execSQL return ' + ret)
+}
+function iDbType() {
+	var ret = factor.iDbType();
+	alert('iDbType=' + ret)
+}
+function moveToRemote() {
+	factor.moveToRemote();
+}
+function moveToSqlite() {
+	factor.moveToSqlite();
+}
+function testObj() {
+	var cdsHeader = new dataset();
+	var cdsDetail = new dataset();
+	cdsHeader.createDataSet();
+	cdsDetail.createDataSet();
+	factor.beginBatch();
+	try {
+		factor.addBatch(cdsHeader, 'TDbOrder');
+		factor.addBatch(cdsDetail, 'TDbData');
+		factor.commitBatch();
+	} catch (e) {
+		factor.cancelBatch();
+		alert(e.message);
+	}
+}
+function testJson() {
+	var jsonStr = '{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}';
+	var jsonObj = JSON.parse(jsonStr);
+	alert(jsonObj.params[0].name + ' ' + jsonObj.params[0].datatype + ' ' + jsonObj.params[0].value);
+	alert(jsonObj.params[1].name + ' ' + jsonObj.params[1].datatype + ' ' + jsonObj.params[1].value);
+
+	var jsonObj1 = eval('(' + '{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}' + ')');
+	alert(jsonObj.params[0].name + ' ' + jsonObj.params[0].datatype + ' ' + jsonObj.params[0].value);
+	alert(jsonObj.params[1].name + ' ' + jsonObj.params[1].datatype + ' ' + jsonObj.params[1].value);
+
+	var jsonObj2 = {
+		"params" : [ {
+			"name" : "TENANT_ID",
+			"datatype" : "integer",
+			"value" : "500000007"
+		}, {
+			"name" : "SHOP_ID",
+			"datatype" : "string",
+			"value" : "5000000070034"
+		} ]
+	};
+	alert(jsonObj.params[0].name + ' ' + jsonObj.params[0].datatype + ' ' + jsonObj.params[0].value);
+	alert(jsonObj.params[1].name + ' ' + jsonObj.params[1].datatype + ' ' + jsonObj.params[1].value);
+}
+</script>

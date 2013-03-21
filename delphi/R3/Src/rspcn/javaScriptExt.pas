@@ -97,7 +97,7 @@ begin
 //  end;
 end;
 var
-  rs:TZQuery;
+  rs,us:TZQuery;
   isXsm:boolean;
 begin
   result := false;
@@ -107,7 +107,7 @@ begin
      begin
         if not online then Raise Exception.Create('没开通零售终端不支持离线使用');  
         if UcFactory.xsmLogin(username,password) then
-           begin                                                                                                
+           begin
              dataFactory.signined := true;
              token.shoped := false;
              token.tenantId := '';
@@ -152,6 +152,7 @@ begin
      end;
   //开始登录
   rs := TZQuery.Create(nil);
+  us := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,A.TENANT_ID,C.TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
       'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT in ('''+username+''','''+lowercase(username)+''','''+uppercase(username)+''')';
@@ -161,11 +162,11 @@ begin
     isXsm := (rs.FieldByName('ROLE_IDS').AsString = 'xsm');
     if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or isXsm) then
         begin
-          rs.SQL.Text := 'select DIMI_DATE,PASS_WRD from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
+          us.SQL.Text := 'select DIMI_DATE,PASS_WRD from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
           ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' ';
-          dataFactory.Open(rs);
-          if rs.IsEmpty then Raise Exception.Create(username+'用户账号不存在,不能登录。');
-          if (rs.FieldbyName('DIMI_DATE').AsString<>'') and (rs.FieldbyName('DIMI_DATE').AsString<=FormatDateTime('YYYY-MM-DD',Date())) then  Raise Exception.Create(username+'用户账号已经离职,不能登录。');
+          dataFactory.Open(us);
+          if us.IsEmpty then Raise Exception.Create(username+'用户账号不存在,不能登录。');
+          if (us.FieldbyName('DIMI_DATE').AsString<>'') and (us.FieldbyName('DIMI_DATE').AsString<=FormatDateTime('YYYY-MM-DD',Date())) then Raise Exception.Create(username+'用户账号已经离职,不能登录。');
         end;
 
      if username='system' then
@@ -217,6 +218,7 @@ begin
     token.online := online;
     dataFactory.signined := true;
   finally
+    us.Free;
     rs.Free;
   end;
   result := true;

@@ -162,9 +162,10 @@ begin
     if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or isXsm) then
         begin
           rs.SQL.Text := 'select DIMI_DATE,PASS_WRD from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
-          ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and A.DIMI_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()))+' and A.DIMI_DATE is not null ';
+          ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' ';
           dataFactory.Open(rs);
-          if not rs.IsEmpty then Raise Exception.Create(username+'用户账号已经离职,不能登录。');
+          if rs.IsEmpty then Raise Exception.Create(username+'用户账号不存在,不能登录。');
+          if (rs.FieldbyName('DIMI_DATE').AsString<>'') and (rs.FieldbyName('DIMI_DATE').AsString<=FormatDateTime('YYYY-MM-DD',Date())) then  Raise Exception.Create(username+'用户账号已经离职,不能登录。');
         end;
 
      if username='system' then

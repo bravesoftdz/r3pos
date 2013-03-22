@@ -953,7 +953,7 @@ begin
        edtZERO_OUT.Checked := false;
   end
   else
-     edtZERO_OUT.Checked := false;
+    edtZERO_OUT.Checked := true;
 
   if cdsSysDefine.Locate('DEFINE','CARRYRULE',[]) then
      edtCARRYRULE.ItemIndex := StrtoIntDef(cdsSysDefine.FieldByName('VALUE').AsString,0)
@@ -1032,7 +1032,7 @@ end;
 procedure TfrmSysDefine.btnDefaultClick(Sender: TObject);
 begin
   inherited;
-  edtZERO_OUT.checked := false;
+  edtZERO_OUT.checked := true;
 
   edtPosDight.Value :='2';
   edtPOSCALCDIGHT.ItemIndex := 0;

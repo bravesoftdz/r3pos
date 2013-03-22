@@ -1,177 +1,249 @@
 inherited frmInitGoods: TfrmInitGoods
-  Left = 127
-  Top = 120
+  Left = 404
+  Top = 126
   Caption = #21830#21697#21021#22987#21270#21521#23548
-  ClientHeight = 567
-  ClientWidth = 1047
+  ClientHeight = 425
+  ClientWidth = 613
+  OldCreateOrder = True
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
-  inherited ScrollBox: TScrollBox
-    Width = 1047
-    Height = 567
-    inherited webForm: TRzPanel
-      Width = 1047
-      Height = 567
-      inherited bkgImage: TImage
-        Width = 1047
-        Height = 567
-      end
-      object RzPanel1: TRzPanel
-        Left = 88
-        Top = 46
-        Width = 616
-        Height = 435
-        BorderOuter = fsFlatRounded
-        BorderWidth = 2
+  inherited pnlAddressBar: TPanel
+    Width = 613
+    inherited RzFormShape1: TRzFormShape
+      Width = 613
+    end
+    inherited Image3: TImage
+      Width = 195
+    end
+    inherited Image1: TImage
+      Left = 403
+    end
+    object RzLabel26: TRzLabel [4]
+      Left = 10
+      Top = 7
+      Width = 106
+      Height = 16
+      Alignment = taCenter
+      Caption = #21830#21697#21021#22987#21270#21521#23548
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited RzBmpButton2: TRzBmpButton
+      Left = 582
+    end
+  end
+  inherited RzPanel1: TRzPanel
+    Width = 613
+    Height = 395
+    object RzPanel2: TRzPanel
+      Left = 1
+      Top = 1
+      Width = 611
+      Height = 393
+      Align = alClient
+      BorderOuter = fsFlatRounded
+      BorderWidth = 2
+      TabOrder = 0
+      object RzPanel3: TRzPanel
+        Left = 184
+        Top = 4
+        Width = 423
+        Height = 340
+        Align = alClient
+        BorderOuter = fsFlat
         TabOrder = 0
-        object RzPanel2: TRzPanel
-          Left = 187
-          Top = 45
-          Width = 425
-          Height = 341
-          Align = alRight
-          BorderOuter = fsFlat
+        object rzPage: TRzPageControl
+          Left = 1
+          Top = 1
+          Width = 421
+          Height = 338
+          ActivePage = TabSheet3
+          Align = alClient
+          Color = clWindow
+          UseColoredTabs = True
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clBlack
+          Font.Height = -15
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentColor = False
+          ParentFont = False
+          ShowCardFrame = False
+          ShowShadow = False
           TabOrder = 0
-          TabStop = True
-          object rzPage: TRzPageControl
-            Left = 1
-            Top = 1
-            Width = 423
-            Height = 339
-            ActivePage = TabSheet3
-            Align = alClient
-            Color = clWindow
-            UseColoredTabs = True
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -15
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentColor = False
-            ParentFont = False
-            ShowCardFrame = False
-            ShowShadow = False
-            TabIndex = 2
-            TabOrder = 0
-            FixedDimension = 21
-            object TabSheet1: TRzTabSheet
+          TabStop = False
+          FixedDimension = 0
+          object TabSheet1: TRzTabSheet
+            Color = 15461355
+            TabVisible = False
+            Caption = #24320#22987#21521#23548
+            object RzBackground1: TRzBackground
+              Left = 8
+              Top = 11
+              Width = 406
+              Height = 49
+              Active = True
+              Align = alNone
+              GradientColorStart = clGray
+              GradientColorStop = clWhite
+              GradientDirection = gdVerticalEnd
+              ImageStyle = isCenter
+              ShowGradient = True
+              ShowImage = False
+              ShowTexture = False
+            end
+            object RzLabel1: TRzLabel
+              Left = 20
+              Top = 23
+              Width = 100
+              Height = 24
+              Caption = #31532#19968#27493#65306
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -24
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+              Transparent = True
+            end
+            object RzLabel2: TRzLabel
+              Left = 111
+              Top = 32
+              Width = 150
+              Height = 15
+              Caption = #35831#36873#25321#28155#21152#30340#26032#21697#31867#22411
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+            end
+            object RzBorder1: TRzBorder
+              Left = 8
+              Top = 60
+              Width = 407
+              Height = 270
+            end
+            object RzLabel6: TRzLabel
+              Left = 64
+              Top = 152
+              Width = 315
+              Height = 15
+              Caption = #25195#20837#26465#22411#30721#21518#31995#32479#23558#21040#20135#21697#24211#26816#27979#26159#21542#21830#21697#23384#22312
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+            end
+            object RzLabel10: TRzLabel
+              Left = 64
+              Top = 245
+              Width = 315
+              Height = 15
+              Caption = #27809#26377#26465#22411#30721#30340#21830#21697#31995#32479#23558#33258#21160#29983#25104#19968#20010#24215#20869#26465#30721
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+            end
+            object edtGOODS_OPTION1: TcxRadioButton
+              Left = 40
+              Top = 115
+              Width = 17
+              Height = 17
+              Checked = True
+              TabOrder = 0
+              TabStop = True
+              OnClick = edtGOODS_OPTION1Click
+            end
+            object edtGOODS_OPTION2: TcxRadioButton
+              Left = 40
+              Top = 210
+              Width = 17
+              Height = 17
+              TabOrder = 1
+              OnClick = edtGOODS_OPTION2Click
+            end
+            object edtBK_BARCODE: TRzPanel
+              Left = 64
+              Top = 108
+              Width = 313
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
               Color = clWhite
-              Caption = #24320#22987#21521#23548
-              object RzBackground1: TRzBackground
-                Left = 8
-                Top = 11
-                Width = 406
-                Height = 49
-                Active = True
-                Align = alNone
-                GradientColorStart = clGray
-                GradientColorStop = clWhite
-                GradientDirection = gdVerticalEnd
-                ImageStyle = isCenter
-                ShowGradient = True
-                ShowImage = False
-                ShowTexture = False
-              end
-              object RzLabel1: TRzLabel
-                Left = 20
-                Top = 23
-                Width = 100
-                Height = 24
-                Caption = #31532#19968#27493#65306
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWhite
-                Font.Height = -24
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
-                ParentFont = False
-                Transparent = True
-              end
-              object RzLabel2: TRzLabel
-                Left = 111
-                Top = 32
-                Width = 150
-                Height = 15
-                Caption = #35831#36873#25321#28155#21152#30340#26032#21697#31867#22411
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWhite
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Transparent = True
-              end
-              object RzBorder1: TRzBorder
-                Left = 8
-                Top = 60
-                Width = 407
-                Height = 250
-              end
-              object RzLabel6: TRzLabel
-                Left = 72
-                Top = 128
-                Width = 330
-                Height = 15
-                Caption = #25195#20837#26465#22411#30721#21518#31995#32479#23558#21040#20135#21697#24211#26816#27979#26159#21542#21830#21697#23384#22312#12290
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clGreen
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Transparent = True
-              end
-              object RzLabel10: TRzLabel
-                Left = 72
-                Top = 205
-                Width = 330
-                Height = 15
-                Caption = #27809#26377#26465#22411#30721#30340#21830#21697#31995#32479#23558#33258#21160#29983#25104#19968#20010#24215#20869#26465#30721#12290
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clGreen
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Transparent = True
-              end
-              object edtGOODS_OPTION1: TcxRadioButton
-                Left = 56
-                Top = 99
-                Width = 17
-                Height = 17
-                Checked = True
+              FlatColor = 9145227
+              TabOrder = 2
+              DesignSize = (
+                313
+                31)
+              object RzPanel24: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
                 TabOrder = 0
-                TabStop = True
-                OnClick = edtGOODS_OPTION1Click
-              end
-              object RzPanel5: TRzPanel
-                Left = 75
-                Top = 97
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21830#21697#26465#22411#30721
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 3
-                OnClick = RzPanel5Click
-              end
-              object edtGOODS_OPTION2: TcxRadioButton
-                Left = 56
-                Top = 178
-                Width = 216
-                Height = 17
-                Caption = #27809#26377#26465#22411#30721#30340#21830#21697
-                TabOrder = 1
-                OnClick = edtGOODS_OPTION2Click
+                object RzBackground4: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel11: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21830#21697#26465#24418#30721
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  OnClick = RzLabel11Click
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
               object edtInput: TcxTextEdit
-                Left = 171
-                Top = 96
+                Left = 105
+                Top = 4
                 Width = 205
                 Height = 23
+                Anchors = [akLeft, akTop, akRight]
                 ParentFont = False
                 Style.BorderColor = clGray
                 Style.BorderStyle = ebsUltraFlat
@@ -180,152 +252,501 @@ inherited frmInitGoods: TfrmInitGoods
                 Style.Font.Height = -15
                 Style.Font.Name = #40657#20307
                 Style.Font.Style = [fsBold]
-                TabOrder = 2
+                TabOrder = 1
                 OnKeyPress = edtInputKeyPress
               end
-              object RzPanel6: TRzPanel
-                Left = 75
-                Top = 175
-                Width = 173
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 4
-                OnClick = RzPanel6Click
+            end
+            object RzPanel5: TRzPanel
+              Left = 64
+              Top = 202
+              Width = 313
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 3
+              object RzPanel23: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 309
+                Height = 27
+                Align = alClient
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground5: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 308
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel12: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 308
+                  Height = 26
+                  Align = alClient
+                  Caption = '  '#28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  OnClick = RzLabel12Click
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
             end
-            object TabSheet2: TRzTabSheet
-              Color = clWindow
-              Caption = #21830#21697#23646#24615
-              object RzBorder2: TRzBorder
-                Left = 8
-                Top = 60
-                Width = 407
-                Height = 250
+          end
+          object TabSheet2: TRzTabSheet
+            Color = 15461355
+            TabVisible = False
+            Caption = #21830#21697#23646#24615
+            object RzBorder2: TRzBorder
+              Left = 8
+              Top = 60
+              Width = 407
+              Height = 270
+            end
+            object RzBackground2: TRzBackground
+              Left = 8
+              Top = 11
+              Width = 406
+              Height = 49
+              Active = True
+              Align = alNone
+              GradientColorStart = clGray
+              GradientColorStop = clWhite
+              GradientDirection = gdVerticalEnd
+              ImageStyle = isCenter
+              ShowGradient = True
+              ShowImage = False
+              ShowTexture = False
+            end
+            object RzLabel3: TRzLabel
+              Left = 111
+              Top = 32
+              Width = 120
+              Height = 15
+              Caption = #22635#20889#21830#21697#30456#20851#23646#24615
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+            end
+            object RzLabel9: TRzLabel
+              Left = 20
+              Top = 23
+              Width = 100
+              Height = 24
+              Caption = #31532#20108#27493#65306
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -24
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+              Transparent = True
+            end
+            object edtMoreUnits: TcxCheckBox
+              Left = 196
+              Top = 200
+              Width = 136
+              Height = 23
+              Properties.DisplayUnchecked = 'False'
+              Properties.OnChange = edtMoreUnitsPropertiesChange
+              Properties.Caption = #21551#29992#21253#35013#21333#20301
+              TabOrder = 8
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtSORT_ID1: TcxTextEdit
+              Left = 286
+              Top = 72
+              Width = 116
+              Height = 23
+              TabStop = False
+              Properties.MaxLength = 30
+              TabOrder = 9
+              Visible = False
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel6: TRzPanel
+              Left = 24
+              Top = 68
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 0
+              DesignSize = (
+                260
+                31)
+              object RzPanel8: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground6: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel13: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #26465' '#22411' '#30721
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
-              object RzBackground2: TRzBackground
-                Left = 8
-                Top = 11
-                Width = 406
-                Height = 49
-                Active = True
-                Align = alNone
-                GradientColorStart = clGray
-                GradientColorStop = clWhite
-                GradientDirection = gdVerticalEnd
-                ImageStyle = isCenter
-                ShowGradient = True
-                ShowImage = False
-                ShowTexture = False
+              object edtBARCODE1: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 30
+                TabOrder = 0
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtBARCODE1KeyPress
               end
-              object RzLabel3: TRzLabel
-                Left = 111
-                Top = 32
-                Width = 120
-                Height = 15
-                Caption = #22635#20889#21830#21697#30456#20851#23646#24615
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWhite
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Transparent = True
-              end
-              object RzLabel9: TRzLabel
-                Left = 20
-                Top = 23
-                Width = 100
-                Height = 24
-                Caption = #31532#20108#27493#65306
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWhite
-                Font.Height = -24
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
-                ParentFont = False
-                Transparent = True
-              end
-              object RzPanel17: TRzPanel
-                Left = 25
-                Top = 250
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #38646' '#21806' '#20215
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 15
-              end
-              object RzPanel16: TRzPanel
-                Left = 25
-                Top = 220
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #36827' '#36135' '#20215
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 14
-              end
-              object RzPanel14: TRzPanel
-                Left = 25
-                Top = 190
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #35745#37327#21333#20301
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 13
-              end
-              object RzPanel10: TRzPanel
-                Left = 25
-                Top = 130
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21830#21697#21517#31216
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 11
-              end
-              object RzPanel9: TRzPanel
-                Left = 25
-                Top = 100
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21830#21697#36135#21495
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 10
+            end
+            object RzPanel25: TRzPanel
+              Left = 24
+              Top = 100
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 1
+              DesignSize = (
+                260
+                31)
+              object RzPanel26: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground7: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel14: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21830#21697#36135#21495
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
               object edtGODS_CODE: TcxTextEdit
-                Left = 121
-                Top = 99
-                Width = 116
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
+                Anchors = [akLeft, akTop, akRight]
                 Properties.MaxLength = 20
-                TabOrder = 1
+                TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtGODS_CODEKeyPress
+              end
+            end
+            object RzPanel9: TRzPanel
+              Left = 24
+              Top = 132
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              DesignSize = (
+                260
+                31)
+              object RzPanel27: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground8: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel15: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21830#21697#21517#31216
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
               object edtGODS_NAME: TcxTextEdit
-                Left = 121
-                Top = 129
-                Width = 208
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
+                Anchors = [akLeft, akTop, akRight]
                 Properties.MaxLength = 50
-                TabOrder = 2
+                TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtGODS_NAMEKeyPress
+              end
+            end
+            object RzPanel10: TRzPanel
+              Left = 24
+              Top = 164
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 3
+              DesignSize = (
+                260
+                31)
+              object RzPanel28: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground9: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel16: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21830#21697#31867#21035
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtSORT_ID: TcxButtonEdit
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = True
+                Properties.OnButtonClick = edtSORT_IDPropertiesButtonClick
+                Style.BorderStyle = ebsUltraFlat
+                Style.Edges = [bLeft, bTop, bRight, bBottom]
+                Style.ButtonStyle = btsUltraFlat
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 0
+                OnKeyDown = edtSORT_IDKeyDown
+                OnKeyPress = edtSORT_IDKeyPress
+              end
+            end
+            object RzPanel12: TRzPanel
+              Left = 24
+              Top = 196
+              Width = 167
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 4
+              DesignSize = (
+                167
+                31)
+              object RzPanel29: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground10: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel17: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #35745#37327#21333#20301
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
               object edtCALC_UNITS: TzrComboBoxList
-                Left = 121
-                Top = 189
+                Left = 105
+                Top = 4
                 Width = 60
                 Height = 23
+                Anchors = [akLeft, akTop, akRight]
                 Properties.AutoSelect = False
                 Properties.Buttons = <
                   item
@@ -333,7 +754,9 @@ inherited frmInitGoods: TfrmInitGoods
                   end>
                 Properties.ReadOnly = False
                 Properties.OnChange = edtCALC_UNITSPropertiesChange
-                TabOrder = 4
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 0
+                OnKeyPress = edtCALC_UNITSKeyPress
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -367,283 +790,386 @@ inherited frmInitGoods: TfrmInitGoods
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
+            end
+            object RzPanel14: TRzPanel
+              Left = 24
+              Top = 228
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 5
+              DesignSize = (
+                260
+                31)
+              object RzPanel16: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground11: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel18: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #36827' '#36135' '#20215
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
               object edtNEW_INPRICE: TcxTextEdit
-                Left = 121
-                Top = 219
-                Width = 116
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
-                TabOrder = 5
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object edtNEW_OUTPRICE: TcxTextEdit
-                Left = 121
-                Top = 249
-                Width = 116
-                Height = 23
-                TabOrder = 6
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object edtMoreUnits: TcxCheckBox
-                Left = 189
-                Top = 189
-                Width = 136
-                Height = 23
-                Properties.DisplayUnchecked = 'False'
-                Properties.OnChange = edtMoreUnitsPropertiesChange
-                Properties.Caption = #21551#29992#21253#35013#21333#20301
-                TabOrder = 8
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object edtSORT_ID1: TcxTextEdit
-                Left = 270
-                Top = 99
-                Width = 116
-                Height = 23
-                Properties.MaxLength = 30
-                TabOrder = 9
-                Visible = False
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object RzPanel12: TRzPanel
-                Left = 25
-                Top = 160
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21830#21697#31867#21035
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 12
-              end
-              object edtSORT_ID: TcxButtonEdit
-                Left = 121
-                Top = 159
-                Width = 116
-                Height = 23
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = True
-                Properties.OnButtonClick = edtSORT_IDPropertiesButtonClick
-                Style.BorderStyle = ebsUltraFlat
-                Style.Edges = [bLeft, bTop, bRight, bBottom]
-                Style.ButtonStyle = btsUltraFlat
-                TabOrder = 3
-              end
-              object RzPanel18: TRzPanel
-                Left = 25
-                Top = 280
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #24215#20869#21806#20215
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 16
-              end
-              object edtSHOP_NEW_OUTPRICE: TcxTextEdit
-                Left = 121
-                Top = 279
-                Width = 116
-                Height = 23
-                TabOrder = 7
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object RzPanel8: TRzPanel
-                Left = 25
-                Top = 70
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #26465' '#24418' '#30721
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 17
-              end
-              object edtBARCODE1: TcxTextEdit
-                Left = 121
-                Top = 69
-                Width = 116
-                Height = 23
-                Properties.MaxLength = 30
+                Anchors = [akLeft, akTop, akRight]
                 TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtNEW_INPRICEKeyPress
               end
             end
-            object TabSheet3: TRzTabSheet
-              Color = clWindow
-              Caption = #21830#21697#21253#35013
-              object RzBorder3: TRzBorder
-                Left = 8
-                Top = 60
-                Width = 407
-                Height = 250
+            object RzPanel30: TRzPanel
+              Left = 24
+              Top = 260
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 6
+              DesignSize = (
+                260
+                31)
+              object RzPanel31: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground12: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel19: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #38646' '#21806' '#20215
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
-              object RzBackground3: TRzBackground
-                Left = 8
-                Top = 11
-                Width = 406
-                Height = 49
-                Active = True
-                Align = alNone
-                GradientColorStart = clGray
-                GradientColorStop = clWhite
-                GradientDirection = gdVerticalEnd
-                ImageStyle = isCenter
-                ShowGradient = True
-                ShowImage = False
-                ShowTexture = False
-              end
-              object RzLabel7: TRzLabel
-                Left = 25
-                Top = 74
-                Width = 45
-                Height = 15
-                Caption = #23567#21253#35013
-              end
-              object RzLabel8: TRzLabel
-                Left = 25
-                Top = 190
-                Width = 45
-                Height = 15
-                Caption = #22823#21253#35013
-              end
-              object Bevel1: TBevel
-                Left = 75
-                Top = 80
-                Width = 300
-                Height = 2
-                Shape = bsTopLine
-              end
-              object Bevel2: TBevel
-                Left = 75
-                Top = 196
-                Width = 300
-                Height = 2
-                Shape = bsTopLine
-              end
-              object RzLabel4: TRzLabel
-                Left = 111
-                Top = 32
-                Width = 135
-                Height = 15
-                Caption = #35774#32622#21830#21697#30340#21253#35013#23646#24615
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWhite
-                Font.Height = -15
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                Transparent = True
-              end
-              object RzLabel5: TRzLabel
-                Left = 20
-                Top = 23
-                Width = 100
-                Height = 24
-                Caption = #31532#19977#27493#65306
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWhite
-                Font.Height = -24
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
-                ParentFont = False
-                Transparent = True
-              end
-              object edtDefault1: TcxCheckBox
-                Left = 205
-                Top = 100
-                Width = 121
+              object edtNEW_OUTPRICE: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
-                Properties.DisplayUnchecked = 'False'
-                Properties.Caption = #35774#20026#31649#29702#21333#20301
-                TabOrder = 6
+                Anchors = [akLeft, akTop, akRight]
+                TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                OnClick = edtDefault1Click
+                OnKeyPress = edtNEW_OUTPRICEKeyPress
               end
-              object edtDefault2: TcxCheckBox
-                Left = 205
-                Top = 216
-                Width = 121
+            end
+            object RzPanel17: TRzPanel
+              Left = 24
+              Top = 292
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 7
+              DesignSize = (
+                260
+                31)
+              object RzPanel18: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 1
+                object RzBackground13: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel20: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #24215#20869#21806#20215
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtSHOP_NEW_OUTPRICE: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
-                Properties.DisplayUnchecked = 'False'
-                Properties.Caption = #35774#20026#31649#29702#21333#20301
-                TabOrder = 8
+                Anchors = [akLeft, akTop, akRight]
+                TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                OnClick = edtDefault2Click
+                OnKeyPress = edtSHOP_NEW_OUTPRICEKeyPress
               end
-              object RzPanel11: TRzPanel
-                Left = 30
-                Top = 100
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21253#35013#21333#20301
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 7
-              end
-              object RzPanel13: TRzPanel
-                Left = 30
-                Top = 160
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21253#35013#31995#25968
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 9
-              end
-              object RzPanel15: TRzPanel
-                Left = 30
-                Top = 246
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21253#35013#26465#30721
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 10
-              end
-              object RzPanel19: TRzPanel
-                Left = 30
-                Top = 216
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21253#35013#21333#20301
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 11
-              end
-              object RzPanel20: TRzPanel
-                Left = 30
-                Top = 130
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21253#35013#26465#30721
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 12
-              end
-              object RzPanel21: TRzPanel
-                Left = 30
-                Top = 276
-                Width = 99
-                Height = 21
-                BorderOuter = fsFlatRounded
-                Caption = #21253#35013#31995#25968
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 13
+            end
+          end
+          object TabSheet3: TRzTabSheet
+            Color = 15461355
+            TabVisible = False
+            Caption = #21830#21697#21253#35013
+            object RzBorder3: TRzBorder
+              Left = 8
+              Top = 60
+              Width = 407
+              Height = 270
+            end
+            object RzBackground3: TRzBackground
+              Left = 8
+              Top = 11
+              Width = 406
+              Height = 49
+              Active = True
+              Align = alNone
+              GradientColorStart = clGray
+              GradientColorStop = clWhite
+              GradientDirection = gdVerticalEnd
+              ImageStyle = isCenter
+              ShowGradient = True
+              ShowImage = False
+              ShowTexture = False
+            end
+            object RzLabel7: TRzLabel
+              Left = 25
+              Top = 71
+              Width = 45
+              Height = 15
+              Caption = #23567#21253#35013
+            end
+            object RzLabel8: TRzLabel
+              Left = 25
+              Top = 203
+              Width = 45
+              Height = 15
+              Caption = #22823#21253#35013
+            end
+            object Bevel1: TBevel
+              Left = 75
+              Top = 77
+              Width = 300
+              Height = 2
+              Shape = bsTopLine
+            end
+            object Bevel2: TBevel
+              Left = 75
+              Top = 209
+              Width = 300
+              Height = 2
+              Shape = bsTopLine
+            end
+            object RzLabel4: TRzLabel
+              Left = 111
+              Top = 32
+              Width = 135
+              Height = 15
+              Caption = #35774#32622#21830#21697#30340#21253#35013#23646#24615
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+            end
+            object RzLabel5: TRzLabel
+              Left = 20
+              Top = 23
+              Width = 100
+              Height = 24
+              Caption = #31532#19977#27493#65306
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -24
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+              Transparent = True
+            end
+            object edtDefault1: TcxCheckBox
+              Left = 213
+              Top = 101
+              Width = 121
+              Height = 23
+              Properties.DisplayUnchecked = 'False'
+              Properties.Caption = #35774#20026#31649#29702#21333#20301
+              TabOrder = 6
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              OnClick = edtDefault1Click
+            end
+            object edtDefault2: TcxCheckBox
+              Left = 213
+              Top = 229
+              Width = 121
+              Height = 23
+              Properties.DisplayUnchecked = 'False'
+              Properties.Caption = #35774#20026#31649#29702#21333#20301
+              TabOrder = 7
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              OnClick = edtDefault2Click
+            end
+            object RzPanel32: TRzPanel
+              Left = 32
+              Top = 97
+              Width = 178
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 0
+              DesignSize = (
+                178
+                31)
+              object RzPanel33: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground14: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel21: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21253#35013#21333#20301
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
               object edtSMALL_UNITS: TzrComboBoxList
-                Left = 126
-                Top = 99
+                Left = 105
+                Top = 4
                 Width = 70
                 Height = 23
+                Anchors = [akLeft, akTop, akRight]
                 Properties.AutoSelect = False
                 Properties.Buttons = <
                   item
@@ -651,7 +1177,8 @@ inherited frmInitGoods: TfrmInitGoods
                   end>
                 Properties.ReadOnly = False
                 Properties.OnChange = edtSMALL_UNITSPropertiesChange
-                TabOrder = 0
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -685,18 +1212,260 @@ inherited frmInitGoods: TfrmInitGoods
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
+            end
+            object RzPanel11: TRzPanel
+              Left = 32
+              Top = 129
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 1
+              DesignSize = (
+                260
+                31)
+              object RzPanel34: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground15: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel22: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21253#35013#26465#30721
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
               object edtBARCODE2: TcxTextEdit
-                Left = 126
-                Top = 129
-                Width = 119
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
+                Anchors = [akLeft, akTop, akRight]
                 Properties.MaxLength = 30
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
+            end
+            object RzPanel20: TRzPanel
+              Left = 32
+              Top = 161
+              Width = 148
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              DesignSize = (
+                148
+                31)
+              object RzPanel35: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground16: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel23: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21253#35013#31995#25968
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtSMALLTO_CALC: TcxTextEdit
+                Left = 105
+                Top = 4
+                Width = 40
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                Style.Edges = [bLeft, bTop, bRight, bBottom]
+                TabOrder = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
+            object RzPanel13: TRzPanel
+              Left = 179
+              Top = 161
+              Width = 114
+              Height = 31
+              BorderOuter = fsStatus
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 8
+              object RzPanel36: TRzPanel
+                Left = 1
+                Top = 1
+                Width = 112
+                Height = 29
+                Align = alClient
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground17: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 111
+                  Height = 28
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzPanel_SMALL: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 111
+                  Height = 28
+                  Align = alClient
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+            end
+            object RzPanel37: TRzPanel
+              Left = 32
+              Top = 225
+              Width = 178
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 3
+              object RzPanel38: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground18: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel24: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21253#35013#21333#20301
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
               object edtBIG_UNITS: TzrComboBoxList
-                Left = 126
-                Top = 215
+                Left = 105
+                Top = 4
                 Width = 70
                 Height = 23
                 Properties.AutoSelect = False
@@ -706,7 +1475,8 @@ inherited frmInitGoods: TfrmInitGoods
                   end>
                 Properties.ReadOnly = False
                 Properties.OnChange = edtBIG_UNITSPropertiesChange
-                TabOrder = 3
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -740,221 +1510,690 @@ inherited frmInitGoods: TfrmInitGoods
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
+            end
+            object RzPanel15: TRzPanel
+              Left = 32
+              Top = 257
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 4
+              object RzPanel19: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground19: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel25: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21253#35013#26465#30721
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
               object edtBARCODE3: TcxTextEdit
-                Left = 126
-                Top = 245
-                Width = 119
+                Left = 105
+                Top = 4
+                Width = 153
                 Height = 23
                 Properties.MaxLength = 30
-                TabOrder = 4
+                TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+            end
+            object RzPanel39: TRzPanel
+              Left = 179
+              Top = 289
+              Width = 114
+              Height = 31
+              BorderOuter = fsStatus
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 9
+              object RzPanel40: TRzPanel
+                Left = 1
+                Top = 1
+                Width = 112
+                Height = 29
+                Align = alClient
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground20: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 111
+                  Height = 28
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzPanel_BIG: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 111
+                  Height = 28
+                  Align = alClient
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+            end
+            object RzPanel41: TRzPanel
+              Left = 32
+              Top = 289
+              Width = 148
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 5
+              object RzPanel42: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground21: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel27: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #21253#35013#31995#25968
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
               end
               object edtBIGTO_CALC: TcxTextEdit
-                Left = 126
-                Top = 275
+                Left = 105
+                Top = 4
                 Width = 40
                 Height = 23
-                TabOrder = 5
+                TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object RzPanel_SMALL: TRzPanel
-                Left = 164
-                Top = 160
-                Width = 110
-                Height = 21
-                Alignment = taLeftJustify
-                BorderOuter = fsFlat
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 14
-              end
-              object edtSMALLTO_CALC: TcxTextEdit
-                Left = 126
-                Top = 159
-                Width = 40
-                Height = 23
-                Style.Edges = [bLeft, bTop, bRight, bBottom]
-                TabOrder = 2
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
-              object RzPanel_BIG: TRzPanel
-                Left = 164
-                Top = 276
-                Width = 110
-                Height = 21
-                Alignment = taLeftJustify
-                BorderOuter = fsFlat
-                Color = 16185078
-                FlatColor = clMenuHighlight
-                TabOrder = 15
               end
             end
           end
         end
-        object RzPanel3: TRzPanel
-          Left = 4
-          Top = 386
-          Width = 608
-          Height = 45
-          Align = alBottom
-          BorderOuter = fsFlat
-          BorderSides = [sdLeft, sdRight, sdBottom]
-          Color = clWhite
+      end
+      object RzPanel4: TRzPanel
+        Left = 4
+        Top = 344
+        Width = 603
+        Height = 45
+        Align = alBottom
+        BorderOuter = fsFlat
+        BorderSides = [sdLeft, sdRight, sdBottom]
+        Color = 15461355
+        TabOrder = 1
+        object btnNext: TRzBmpButton
+          Left = 522
+          Top = 7
+          Width = 72
+          Bitmaps.TransparentColor = clFuchsia
+          Bitmaps.Up.Data = {
+            86190000424D86190000000000003600000028000000480000001E0000000100
+            1800000000005019000000000000000000000000000000000000EBEBEBEBEBEB
+            EAEAEAE6E6E6DDDDDDD4D4D4CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCECECE
+            D0D0D0D8D8D8E2E2E2E9E9E9EBEBEBEBEBEBEBEBEBEAEAEAE2E2E2CECECEB3B3
+            B39F9F9F94949492929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            929292929292929292929292929292929292929292939393989898A7A7A7C0C0
+            C0D9D9D9E7E7E7EBEBEBEBEBEBE3E3E3C7C7C7BCBCBCC9C9C9DADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADAD0D0D0BCBCBC959595919191B4B4B4D9D9D9E9
+            E9E9E9E9E9D4D4D4D2D2D2DADADADADADADBDBDBDADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADAA6A6A6919191BFBFBFE2E2E2E4E4E4DDDDDD
+            DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADAD9D9D9939393A5A5A5D7D7D7E2E2E2E7E7E7DBDBDBDADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DAC1C1C1969696CFCFCFE4E4E4E7E7E7DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D5929292CE
+            CECEE5E5E5E7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA939393CECECEE8E8E8E8E8E8
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADAD9D9D99C9C9CD2D2D2EAEAEAECECECDBDBDBDADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DACFCFCFB1B1B1DCDCDCEBEBEBF0F0F0E3E3E3DADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADABFBFBFCDCDCDE6
+            E6E6EBEBEBECECECEEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADAD3D3D3C9C9C9E3E3E3EAEAEAEBEBEBEBEBEB
+            EBEBEBEBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+            DEDEDED4D4D4D6D6D6E4E4E4EAEAEAEBEBEBEBEBEBEBEBEBEBEBEBEAEAEAE7E7
+            E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1E1E1E1E5E5E5E9E9
+            E9EBEBEBEBEBEBEBEBEB}
+          Color = clBtnFace
+          Caption = #19979#19968#27493
+          TabOrder = 0
+          OnClick = btnNextClick
+        end
+        object btnPrev: TRzBmpButton
+          Left = 426
+          Top = 7
+          Width = 72
+          Bitmaps.TransparentColor = clFuchsia
+          Bitmaps.Up.Data = {
+            86190000424D86190000000000003600000028000000480000001E0000000100
+            1800000000005019000000000000000000000000000000000000EBEBEBEBEBEB
+            EAEAEAE6E6E6DDDDDDD4D4D4CECECECDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD
+            CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCECECE
+            D0D0D0D8D8D8E2E2E2E9E9E9EBEBEBEBEBEBEBEBEBEAEAEAE2E2E2CECECEB3B3
+            B39F9F9F94949492929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            9292929292929292929292929292929292929292929292929292929292929292
+            929292929292929292929292929292929292929292939393989898A7A7A7C0C0
+            C0D9D9D9E7E7E7EBEBEBEBEBEBE3E3E3C7C7C7BCBCBCC9C9C9DADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADAD0D0D0BCBCBC959595919191B4B4B4D9D9D9E9
+            E9E9E9E9E9D4D4D4D2D2D2DADADADADADADBDBDBDADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADAA6A6A6919191BFBFBFE2E2E2E4E4E4DDDDDD
+            DCDCDCDADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADAD9D9D9939393A5A5A5D7D7D7E2E2E2E7E7E7DBDBDBDADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DAC1C1C1969696CFCFCFE4E4E4E7E7E7DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADAD5D5D5929292CE
+            CECEE5E5E5E7E7E7DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADA929292CDCDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADA929292CD
+            CDCDE5E5E5E6E6E6DADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADA939393CECECEE8E8E8E8E8E8
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADAD9D9D99C9C9CD2D2D2EAEAEAECECECDBDBDBDADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DACFCFCFB1B1B1DCDCDCEBEBEBF0F0F0E3E3E3DADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADABFBFBFCDCDCDE6
+            E6E6EBEBEBECECECEEEEEEE3E3E3DBDBDBDADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADADA
+            DADADADADADADADADADADADADADAD3D3D3C9C9C9E3E3E3EAEAEAEBEBEBEBEBEB
+            EBEBEBEBEBEBE7E7E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1
+            DEDEDED4D4D4D6D6D6E4E4E4EAEAEAEBEBEBEBEBEBEBEBEBEBEBEBEAEAEAE7E7
+            E7E4E4E4E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
+            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E1E1E1E1E1E1E5E5E5E9E9
+            E9EBEBEBEBEBEBEBEBEB}
+          Color = clBtnFace
+          Caption = #19978#19968#27493
           TabOrder = 1
-          DesignSize = (
-            608
-            45)
-          object btnNext: TRzBitBtn
-            Left = 499
-            Top = 7
-            Width = 70
-            Height = 28
-            Anchors = [akTop]
-            Caption = #19979#19968#27493
-            Color = 15461355
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            HighlightColor = 14276036
-            HotTrack = True
-            HotTrackColor = 3983359
-            HotTrackColorType = htctActual
-            ParentFont = False
-            TextShadowColor = clWhite
-            TextShadowDepth = 4
-            TabOrder = 0
-            ThemeAware = False
-            OnClick = btnNextClick
-            NumGlyphs = 2
-            Spacing = 5
-          end
-          object btnPrev: TRzBitBtn
-            Left = 408
-            Top = 7
-            Width = 70
-            Height = 28
-            Anchors = [akTop]
-            Caption = #19978#19968#27493
-            Color = 15461355
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            HighlightColor = 14276036
-            HotTrack = True
-            HotTrackColor = 3983359
-            HotTrackColorType = htctActual
-            ParentFont = False
-            TextShadowColor = clWhite
-            TextShadowDepth = 4
-            TabOrder = 1
-            ThemeAware = False
-            OnClick = btnPrevClick
-            NumGlyphs = 2
-            Spacing = 5
-          end
+          OnClick = btnPrevClick
         end
-        object RzPanel7: TRzPanel
-          Left = 4
-          Top = 45
-          Width = 180
-          Height = 341
-          Align = alLeft
-          BorderOuter = fsFlat
-          Color = clWhite
-          TabOrder = 2
-          object adv03: TImage
-            Left = 1
-            Top = 1
-            Width = 178
-            Height = 339
-            Align = alClient
-          end
-        end
-        object RzPanel4: TRzPanel
-          Left = 4
-          Top = 4
-          Width = 608
-          Height = 41
-          Align = alTop
-          BorderOuter = fsNone
-          Color = clGray
-          TabOrder = 3
-          object lblCaption: TRzLabel
-            Left = 16
-            Top = 8
-            Width = 150
-            Height = 24
-            Caption = #28155#21152#32463#33829#21830#21697
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clWhite
-            Font.Height = -24
-            Font.Name = #40657#20307
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
-          object btnClose: TRzBmpButton
-            Left = 594
-            Top = 5
-            Width = 9
-            Height = 9
-            Bitmaps.TransparentColor = clFuchsia
-            Bitmaps.Up.Data = {
-              32010000424D3201000000000000360000002800000009000000090000000100
-              180000000000FC00000000000000000000000000000000000000FF00FFFF00FF
-              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00FF00FFAFAFAFAFAFAFFF
-              00FFFF00FFFF00FFAFAFAFAFAFAFFF00FF00FF00FFAFAFAFAFAFAFAFAFAFFF00
-              FFAFAFAFAFAFAFAFAFAFFF00FF00FF00FFFF00FFAFAFAFAFAFAFAFAFAFAFAFAF
-              AFAFAFFF00FFFF00FF00FF00FFFF00FFFF00FFAFAFAFAEAEAEAFAFAFFF00FFFF
-              00FFFF00FF00FF00FFFF00FFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFFF00FFFF00
-              FF00FF00FFAFAFAFAFAFAFAFAFAFFF00FFAFAFAFAFAFAFAFAFAFFF00FF00FF00
-              FFAFAFAFAFAFAFFF00FFFF00FFFF00FFAFAFAFAFAFAFFF00FF00FF00FFFF00FF
-              FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00}
-            Color = clBtnFace
-            TabOrder = 0
-            Visible = False
-            OnClick = btnCloseClick
-          end
+      end
+      object RzPanel7: TRzPanel
+        Left = 4
+        Top = 4
+        Width = 180
+        Height = 340
+        Align = alLeft
+        BorderOuter = fsFlat
+        Color = clWhite
+        TabOrder = 2
+        object adv03: TImage
+          Left = 1
+          Top = 1
+          Width = 178
+          Height = 338
+          Align = alClient
         end
       end
     end
-  end
-  object cdsGoodsInfo: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 450
-    Top = 16
-  end
-  object cdsGoodsRelation: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 514
-    Top = 16
-  end
-  object cdsBarCode: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 578
-    Top = 16
-  end
-  object edtTable: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 646
-    Top = 16
   end
   object cdsGoodsPrice: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 370
-    Top = 16
+    Left = 106
+    Top = 440
+  end
+  object cdsGoodsInfo: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 138
+    Top = 440
+  end
+  object cdsGoodsRelation: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 170
+    Top = 440
+  end
+  object cdsBarCode: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 202
+    Top = 440
+  end
+  object edtTable: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 238
+    Top = 440
   end
 end

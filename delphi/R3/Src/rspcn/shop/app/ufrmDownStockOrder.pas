@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzButton, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, StdCtrls,
-  RzLabel, Menus;
+  RzLabel, Menus, RzBmpBtn;
 
 type
   TfrmDownStockOrder = class(TfrmWebDialogForm)
@@ -14,7 +14,6 @@ type
     RzPanel2: TRzPanel;
     RzPanel3: TRzPanel;
     RzPanel4: TRzPanel;
-    btnOK: TRzBitBtn;
     cdsTable: TZQuery;
     OrderDataSource: TDataSource;
     DBGridEh1: TDBGridEh;
@@ -24,6 +23,7 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
+    btnOK: TRzBmpButton;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnOKClick(Sender: TObject);
@@ -35,8 +35,9 @@ type
   private
     { Private declarations }
   public
-     procedure Open;
-     procedure Save;
+    procedure Open;
+    procedure Save;
+    procedure ajustPostion;override;
   end;
 
 implementation
@@ -265,6 +266,7 @@ begin
 
     vParams := TftParamList.Create(nil);
     try
+      vParams.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
       vParams.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
       vParams.ParamByName('SHOP_ID').AsString := token.shopId;
       vParams.ParamByName('STOCK_ID').AsString := '';
@@ -350,6 +352,7 @@ begin
 
         cdsHeader.FieldbyName('STOCK_AMT').AsFloat := sumAmt;
         cdsHeader.FieldByName('STOCK_MNY').AsFloat := sumMny;
+        cdsHeader.FieldByName('PAY_A').AsFloat := cdsHeader.FieldByName('STOCK_MNY').AsFloat;
 
         cdsHeader.Post;
         orderList.Next;
@@ -412,7 +415,7 @@ procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
 begin
   inherited;
   Save;
-  ShowMessage('卷烟入库成功...');
+  MessageBox(Handle,'卷烟入库成功...','友情提示..',MB_OK);
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1TitleClick(Column: TColumnEh);
@@ -494,6 +497,13 @@ begin
     cdsTable.First;
     cdsTable.EnableControls;
   end;
+end;
+
+procedure TfrmDownStockOrder.ajustPostion;
+begin
+  inherited;
+  RzPanel1.Top := (self.ClientHeight - RzPanel1.Height) div 2 - 1;
+  RzPanel1.Left := (self.ClientWidth - RzPanel1.Width) div 2 - 1;
 end;
 
 initialization

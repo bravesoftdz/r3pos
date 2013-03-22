@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, RzBmpBtn, RzForms, jpeg, ExtCtrls, RzPanel;
+  Dialogs, RzBmpBtn, RzForms, jpeg, ExtCtrls, RzPanel, DB, DBGridEh;
 
 type
   TfrmWebDialog = class(TForm)
@@ -16,16 +16,22 @@ type
     RzPanel1: TRzPanel;
     RzBmpButton2: TRzBmpButton;
     procedure RzBmpButton2Click(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
-    { Private declarations }
+    FdbState: TDataSetState;
+    procedure OnEnterPress(CurrentForm: TForm; Key: Char);
+  protected
+    procedure SetdbState(const Value: TDataSetState); virtual;
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
+    destructor  Destroy; override;
+    property dbState:TDataSetState read FdbState write SetdbState;
   end;
 
 implementation
+
 uses udllShopUtil;
+
 {$R *.dfm}
 
 constructor TfrmWebDialog.Create(AOwner: TComponent);
@@ -42,7 +48,39 @@ end;
 
 procedure TfrmWebDialog.RzBmpButton2Click(Sender: TObject);
 begin
-  close;
+  Close;
+end;
+
+procedure TfrmWebDialog.SetdbState(const Value: TDataSetState);
+begin
+  FdbState := Value;
+  SetFormEditStatus(self,Value);
+end;
+
+procedure TfrmWebDialog.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  OnEnterPress(Self,Key);
+end;
+
+procedure TfrmWebDialog.OnEnterPress(CurrentForm: TForm; Key: Char);
+begin
+  with CurrentForm do
+  begin
+    if not Visible then Exit;
+    if (Key = #13) then
+    begin
+      if (ActiveControl=nil) or
+         not ((ActiveControl.ClassNameIs('TcxCustomInnerMemo')) or
+              (ActiveControl is TDbGridEh)
+              )
+      then
+      begin
+        SendMessage(handle, WM_NEXTDLGCTL, 0, 0);
+        while (ActiveControl.ClassNameIs('TcxCustomInnerMemo')) do
+           SendMessage(handle, WM_NEXTDLGCTL, 0, 0);
+      end;
+    end;
+  end;
 end;
 
 end.

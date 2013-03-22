@@ -13,7 +13,10 @@ object frmWebDialog: TfrmWebDialog
   Font.Height = -15
   Font.Name = #23435#20307
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
+  Position = poOwnerFormCenter
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 15
   object pnlAddressBar: TPanel
@@ -23,7 +26,7 @@ object frmWebDialog: TfrmWebDialog
     Height = 30
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 0
+    TabOrder = 1
     DesignSize = (
       379
       30)
@@ -3136,6 +3139,6 @@ object frmWebDialog: TfrmWebDialog
     BorderColor = 15461355
     Color = 15461355
     FlatColor = 3618615
-    TabOrder = 1
+    TabOrder = 0
   end
 end

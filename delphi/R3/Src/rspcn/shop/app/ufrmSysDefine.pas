@@ -54,7 +54,7 @@ type
     RzPanel40: TRzPanel;
     RzBackground1: TRzBackground;
     RzLabel9: TRzLabel;
-    edtBK_BARCODE: TRzPanel;
+    RzPanel77: TRzPanel;
     RzPanel41: TRzPanel;
     RzBackground2: TRzBackground;
     RzLabel10: TRzLabel;
@@ -612,7 +612,7 @@ begin
     dataFactory.CancelBatch;
     Raise;
   end;
-  FirstLogin := true;
+
   if FirstLogin or (dataFactory.iDbType <> 5) then
   begin
     tmpTenant := TZQuery.Create(nil);
@@ -1489,11 +1489,11 @@ procedure TfrmSysDefine.RzLabel37Click(Sender: TObject);
 begin
   inherited;
   pnl_changepswd.Visible := true;
+  if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
 end;
 
 procedure TfrmSysDefine.btnChangeClick(Sender: TObject);
-var
-  str,newPswd:string;
+var str,newPswd:string;
 begin
   inherited;
   if edtOLD_PSWD.Text = '' then

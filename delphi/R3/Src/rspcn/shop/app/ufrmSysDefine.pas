@@ -1156,6 +1156,7 @@ var
   Params:TftParamList;
 begin
   CheckUsersInfo;
+
   if NewUser then CurUserId := TSequence.NewId;
 
   tmpUsers := TZQuery.Create(nil);
@@ -1189,18 +1190,11 @@ begin
     tmpUsers.FieldByName('MOBILE').AsString := trim(edtMOBILE.Text);
     tmpUsers.Post;
 
-    CurUserName := tmpUsers.FieldByName('USER_NAME').AsString;
-    CurUserPswd := tmpUsers.FieldByName('PASS_WRD').AsString;
-    CurUserAccount := tmpUsers.FieldByName('ACCOUNT').AsString;
-    CurUserRoleIds := tmpUsers.FieldByName('ROLE_IDS').AsString;
-
     dataFactory.UpdateBatch(tmpUsers,'TUsersV60');
   finally
     tmpUsers.Free;
     Params.Free;
   end;
-  OpenUsers;
-  cdsUsers.Locate('USER_ID',CurUserId,[]);
 
   // 本地保存
   if dataFactory.iDbType <> 5 then
@@ -1246,6 +1240,15 @@ begin
   end;
 
   NewUser := false;
+  OpenUsers;
+  if cdsUsers.Locate('USER_ID',CurUserId,[]) then
+  begin
+    CurUserId := cdsUsers.FieldByName('USER_ID').AsString;
+    CurUserName := cdsUsers.FieldByName('USER_NAME').AsString;
+    CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
+    CurUserAccount := cdsUsers.FieldByName('ACCOUNT').AsString;
+    CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
+  end;
   dllGlobal.GetZQueryFromName('CA_USERS').Close;
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
@@ -1268,6 +1271,7 @@ begin
   edtACCOUNT.Text := '';
   edtUSER_NAME.Text := '';
   edtMOBILE.Text := '';
+  edtROLE_NAMES.Text := '';
 end;
 
 procedure TfrmSysDefine.CheckUsersInfo;
@@ -1439,6 +1443,11 @@ begin
      RzPanel37.Visible := true
   else
      RzPanel37.Visible := false;
+
+  if (CurUserId = '') or (not cdsUsers.Locate('USER_ID',CurUserId,[])) then
+     RzPanel13.Visible := false
+  else
+     RzPanel13.Visible := true;
 end;
 
 procedure TfrmSysDefine.SetCurUserName(const Value: string);
@@ -1551,10 +1560,6 @@ end;
 procedure TfrmSysDefine.SetNewUser(const Value: boolean);
 begin
   FNewUser := Value;
-  if FNewUser then
-     RzPanel13.Visible := false
-  else
-     RzPanel13.Visible := true; 
 end;
 
 initialization

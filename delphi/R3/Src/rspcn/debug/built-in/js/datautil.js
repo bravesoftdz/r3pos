@@ -64,4 +64,15 @@ Date.prototype.showMonthLastDay = function()
     var   MonthLastDay=new   Date(MonthNextFirstDay-86400000);     
 	return MonthLastDay;
 };     
+//获得本周的开端日期   
+Date.prototype.getWeekStartDate = function() {  
+	var weekStartDate = new Date(this.getYear(), this.getMonth(), this.getDate()-this.getDay());  
+	return weekStartDate;  
+};
+  
+//获得本周的停止日期   
+Date.prototype.getWeekEndDate = function() {  
+	var weekEndDate = new Date(this.getYear(), this.getMonth(), this.getDate() + (6 - this.getDay()));  
+	return weekEndDate;  
+}; 
 

@@ -2,6 +2,9 @@
 	$().ready( function() {	
 		var jsonObj = JSON.parse(rsp.getUserInfo());
 		var tenantId = jsonObj.tenantId;
+		if(tenantId==''){
+			return;	
+		}
 		$("#userInfo").html(jsonObj.shopName);
 		jrtx_tj(tenantId);	//今日提醒
 		bytx_tj(tenantId);	//本月提醒
@@ -181,7 +184,7 @@
 			d = d.showMonthLastDay();		//本月第一天日期
 			var d2 = d.format('yyyyMMdd');		//本月最后一天日期
 			ds.createDataSet();	
-			ds.setSQL("select * from (select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"' and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' group by A.GODS_ID,B.GODS_NAME) order by CALC_MONEY desc limit 10");
+			ds.setSQL("select * from (select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and b.comm not in ('02','12') and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' group by A.GODS_ID,B.GODS_NAME) order by CALC_MONEY desc limit 10");
 			var dataset = factor.open(ds);
 			ds.first();
 			var cnt = 1;
@@ -212,7 +215,7 @@
 	function kc_tj(tenant_id){
 		try{
 			ds.createDataSet();	
-			ds.setSQL("select count(distinct A.GODS_ID) as GODS_AMT,sum(A.AMOUNT) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"'");
+			ds.setSQL("select count(distinct A.GODS_ID) as GODS_AMT,sum(A.AMOUNT) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id);
 			var dataset = factor.open(ds);
 			ds.first();
 			var goods_amt = ds.getAsString("GODS_AMT");
@@ -226,3 +229,4 @@
 			return;
 		}
 	}
+	

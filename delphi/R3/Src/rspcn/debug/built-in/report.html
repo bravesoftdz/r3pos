@@ -12,7 +12,6 @@
 <script type="text/javascript" src="./js/FusionCharts.js"></script>
 <script type="text/javascript" src="./js/jquery-1.6.1.min.js"></script>
 <script type="text/javascript" src="./js/report.js"></script>
-
 </head>
 <body>
 <div class="report_title">
@@ -30,8 +29,7 @@
             <div class="report_total_left"><a href="rspcn://shop.dll/TfrmSaleReport" target="_blank"><img src="images/total_pic1.jpg" /></a></div>
             <div class="report_total_text">
               <div class="type"><a href="rspcn://shop.dll/TfrmSaleReport" target="_blank"><img src="images/dot1.jpg" width="28" height="28" />销售统计报表</a></div>
-              <div class="detail">按日期、分类、商品统计情况<br />
-                (今日销售卷烟45条，560元，非烟890元，善类占比38.6%。)</div>
+              <div class="detail">按日期、分类、商品统计情况<br /><div id="tjqk"></div></div>
             </div>
             <div class="report_total_right"><img src="images/report_fx_right.jpg" border="0" /></div>
           </div>
@@ -41,8 +39,7 @@
             <div class="report_total_left"><a href="rspcn://shop.dll/TfrmStockReport" target="_blank"><img src="images/total_pic2.jpg"/></a></div>
             <div class="report_total_text">
               <div class="type"><a href="rspcn://shop.dll/TfrmStockReport" target="_blank"><img src="images/dot1.jpg" width="28" height="28" />进货分析报表</a></div>
-              <div class="detail">按日期、分类、商品统计情况<br />
-                (今日销售卷烟45条，560元，非烟890元，善类占比38.6%。)</div>
+              <div class="detail">按日期、分类、商品统计情况<br /><div id="jhtjqk"></div></div>
             </div>
             <div class="report_total_right"><img src="images/report_fx_right.jpg" border="0" /></div>
           </div>
@@ -52,8 +49,7 @@
             <div class="report_total_left"><a href="rspcn://shop.dll/TfrmStorageReport" target="_blank"><img src="images/total_pic3.jpg"/></a></div>
             <div class="report_total_text">
               <div class="type"><a href="rspcn://shop.dll/TfrmStorageReport" target="_blank"><img src="images/dot1.jpg" width="28" height="28" />库存分析报表</a></div>
-              <div class="detail">按日期、分类、商品统计情况<br />
-                (今日销售卷烟45条，560元，非烟890元，善类占比38.6%。)</div>
+              <div class="detail">按日期、分类、商品统计情况<br /><div id="kcqk"></div></div>
             </div>
             <div class="report_total_right"><img src="images/report_fx_right.jpg" border="0" /></div>
           </div>
@@ -63,8 +59,7 @@
             <div class="report_total_left"><a href="rspcn://shop.dll/TfrmProfitReport" target="_blank"><img src="images/total_pic4.jpg"/></a></div>
             <div class="report_total_text">
               <div class="type"><a href="rspcn://shop.dll/TfrmProfitReport" target="_blank"><img src="images/dot1.jpg" width="28" height="28" />盈利分析报表</a></div>
-              <div class="detail">按日期、分类、商品统计情况<br />
-                (今日销售卷烟45条，560元，非烟890元，善类占比38.6%。)</div>
+              <div class="detail">按日期、分类、商品统计情况<br /><div id="yltjqk"></div></div>
             </div>
             <div class="report_total_right"><img src="images/report_fx_right.jpg" border="0" /></div>
           </div>
@@ -74,8 +69,7 @@
             <div class="report_total_left"><img src="images/total_pic5.jpg"/></div>
             <div class="report_total_text">
               <div class="type"><img src="images/dot1.jpg" width="28" height="28" />消费者统计报表</div>
-              <div class="detail">按日期、分类、商品统计情况<br />
-                (今日销售卷烟45条，560元，非烟890元，善类占比38.6%。)</div>
+              <div class="detail">按日期、分类、商品统计情况<br /><div class="tjqk"></div></div>
             </div>
             <div class="report_total_right"><img src="images/report_fx_right.jpg" border="0" /></div>
           </div>
@@ -89,8 +83,8 @@
 					  <div class="tab_total1"><img id="jyfl"  src="images/jy_01.png"  /></div>
 					  <div class="tab_total2"><img id="fyfl" src="images/jy_2.png"  /></div>
 					  <div class="total_pic">
-					   	<div id="jyfldiv"><img src="images/chat_pic.png" width="253" height="200" /> </div>
-						<div id="fyfldiv" style="display:none;"><img src="images/chat_pic.png" width="253" height="200" /> </div>
+					   	<div id="jyfldiv" class="total_bar"></div>
+						<div id="fyfldiv" class="total_bar" style="display:none;"></div>
 					  </div>
 					</div>
 					<div class="total">
@@ -98,7 +92,7 @@
 					  <div class="tab_total2"><img id="fypm" src="images/jypm_2.png" width="111" height="27" /></div>
 					  <div  class="total_pic" style="height:250px;">
 					  	 <div id="jypmdiv" align="center" class="total_bar"></div>	
-					   	 <div id="fypmdiv" align="center" class="total_bar"></div>
+					   	 <div id="fypmdiv" align="center" class="total_bar" style="display:none;"></div>
 					  </div>
 					</div>
               	</div>

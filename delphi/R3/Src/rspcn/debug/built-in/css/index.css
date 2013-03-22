@@ -27,7 +27,7 @@ body {height:100%; color:#505050;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft
 .tab_total1{ float:left; margin-left:10px; margin-top:5px; cursor:pointer;}
 .tab_total2{ float:right; margin-right:10px;margin-top:5px; cursor:pointer;}
 .total_pic{ clear:both; padding:5px 5px 5px 5px; position:static;}
-.total_bar{ margin-top:10px;}
+.total_bar{ margin:10px 10px 0px 5px; background:url(../images/total_bar_bg.png) repeat}
 .total_text{ font-size:14px; margin-left:10px; margin-top:2px; }
 .total_table{ font-size:12px; border:1px solid #95999B; text-align:center; width:100%; margin-top:10px;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
 .total_talbe tr td{ border:1px solid #95999B; height:13px; line-height:18px;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; font-size:10px;}

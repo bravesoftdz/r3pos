@@ -1189,6 +1189,11 @@ begin
     tmpUsers.FieldByName('MOBILE').AsString := trim(edtMOBILE.Text);
     tmpUsers.Post;
 
+    CurUserName := tmpUsers.FieldByName('USER_NAME').AsString;
+    CurUserPswd := tmpUsers.FieldByName('PASS_WRD').AsString;
+    CurUserAccount := tmpUsers.FieldByName('ACCOUNT').AsString;
+    CurUserRoleIds := tmpUsers.FieldByName('ROLE_IDS').AsString;
+
     dataFactory.UpdateBatch(tmpUsers,'TUsersV60');
   finally
     tmpUsers.Free;

@@ -1,22 +1,26 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 269
-  Top = 221
+  Left = 163
+  Top = 142
   Caption = #20250#21592#31649#29702
+  ClientHeight = 543
+  ClientWidth = 887
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
+    Width = 887
+    Height = 496
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 846
-      Height = 415
+      Width = 887
+      Height = 496
       Align = alClient
       object RzPanel11: TRzPanel
         Left = 0
         Top = 0
-        Width = 846
+        Width = 887
         Height = 44
         Align = alTop
         BorderOuter = fsNone
@@ -26,7 +30,7 @@ inherited frmCustomer: TfrmCustomer
         object RzPanel13: TRzPanel
           Left = 0
           Top = 0
-          Width = 846
+          Width = 887
           Height = 44
           Align = alClient
           BorderOuter = fsNone
@@ -996,8 +1000,8 @@ inherited frmCustomer: TfrmCustomer
       object RzPanel2: TRzPanel
         Left = 0
         Top = 390
-        Width = 846
-        Height = 25
+        Width = 887
+        Height = 106
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1007,8 +1011,8 @@ inherited frmCustomer: TfrmCustomer
         object RzPanel3: TRzPanel
           Left = 10
           Top = 10
-          Width = 826
-          Height = 5
+          Width = 867
+          Height = 86
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1016,7 +1020,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 1
             Top = 1
             Width = 172
-            Height = 3
+            Height = 84
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1024,7 +1028,7 @@ inherited frmCustomer: TfrmCustomer
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = -25
+              Top = 56
               Width = 171
               Height = 27
               Align = alBottom
@@ -1064,7 +1068,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 0
               Top = 0
               Width = 171
-              Height = 248
+              Height = 56
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1079,7 +1083,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 173
             Top = 1
             Width = 10
-            Height = 3
+            Height = 84
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1089,8 +1093,8 @@ inherited frmCustomer: TfrmCustomer
           object RzPanel7: TRzPanel
             Left = 183
             Top = 1
-            Width = 642
-            Height = 3
+            Width = 683
+            Height = 84
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1099,8 +1103,8 @@ inherited frmCustomer: TfrmCustomer
               Tag = -1
               Left = 1
               Top = 0
-              Width = 641
-              Height = 3
+              Width = 682
+              Height = 84
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -1174,7 +1178,7 @@ inherited frmCustomer: TfrmCustomer
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'MOBILE'
+                  FieldName = 'MOVE_TELE'
                   Footers = <>
                   ReadOnly = True
                   Title.Caption = #25163#26426
@@ -1251,13 +1255,11 @@ inherited frmCustomer: TfrmCustomer
               TabOrder = 1
               Visible = False
               ToolbarControls = (
-                RzToolButton2
-                RzToolButton4
-                RzToolButton3
-                RzSpacer1
-                RzToolButton1)
-              object RzToolButton1: TRzToolButton
-                Left = 116
+                toolEdit
+                toolSpacer
+                toolDelete)
+              object toolDelete: TRzToolButton
+                Left = 40
                 Top = 0
                 Width = 35
                 Cursor = crHandPoint
@@ -1271,8 +1273,9 @@ inherited frmCustomer: TfrmCustomer
                 Font.Name = #23435#20307
                 Font.Style = [fsBold, fsUnderline]
                 ParentFont = False
+                OnClick = toolDeleteClick
               end
-              object RzToolButton2: TRzToolButton
+              object toolEdit: TRzToolButton
                 Left = 0
                 Top = 0
                 Width = 35
@@ -1287,40 +1290,13 @@ inherited frmCustomer: TfrmCustomer
                 Font.Name = #23435#20307
                 Font.Style = [fsBold, fsUnderline]
                 ParentFont = False
-                OnClick = RzToolButton2Click
+                OnClick = toolEditClick
               end
-              object RzSpacer1: TRzSpacer
-                Left = 111
-                Top = 0
-                Width = 5
-              end
-              object RzToolButton3: TRzToolButton
-                Left = 73
-                Top = 0
-                Width = 38
-                ShowCaption = True
-                UseToolbarShowCaption = False
-                Caption = #20817#25442
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
-                ParentFont = False
-              end
-              object RzToolButton4: TRzToolButton
+              object toolSpacer: TRzSpacer
                 Left = 35
                 Top = 0
-                Width = 38
-                ShowCaption = True
-                UseToolbarShowCaption = False
-                Caption = #20805#20540
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
-                ParentFont = False
+                Width = 5
+                Grooved = True
               end
             end
           end
@@ -1329,7 +1305,7 @@ inherited frmCustomer: TfrmCustomer
       object EditPanel: TRzPanel
         Left = 0
         Top = 44
-        Width = 846
+        Width = 887
         Height = 346
         Align = alTop
         BorderOuter = fsNone
@@ -1339,7 +1315,7 @@ inherited frmCustomer: TfrmCustomer
         TabOrder = 2
         Visible = False
         DesignSize = (
-          846
+          887
           346)
         object barcode_panel_left_line: TImage
           Left = 10
@@ -1357,7 +1333,7 @@ inherited frmCustomer: TfrmCustomer
           Stretch = True
         end
         object barcode_panel_right_line: TImage
-          Left = 834
+          Left = 875
           Top = 18
           Width = 2
           Height = 310
@@ -1373,12 +1349,12 @@ inherited frmCustomer: TfrmCustomer
         object RzBorder1: TRzBorder
           Left = 139
           Top = 173
-          Width = 678
+          Width = 719
           Height = 2
           Anchors = [akLeft, akTop, akRight]
         end
-        object RzBmpButton4: TRzBmpButton
-          Left = 658
+        object btnSave: TRzBmpButton
+          Left = 699
           Top = 291
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1591,11 +1567,11 @@ inherited frmCustomer: TfrmCustomer
           Color = clBtnFace
           Anchors = [akTop, akRight]
           Caption = #20445#23384
-          TabOrder = 0
-          OnClick = RzBmpButton4Click
+          TabOrder = 9
+          OnClick = btnSaveClick
         end
         object RzBmpButton5: TRzBmpButton
-          Left = 744
+          Left = 785
           Top = 291
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1808,18 +1784,18 @@ inherited frmCustomer: TfrmCustomer
           Color = clBtnFace
           Anchors = [akTop, akRight]
           Caption = #20851#38381
-          TabOrder = 1
+          TabOrder = 10
           OnClick = RzBmpButton5Click
         end
         object barcode_top: TRzPanel
           Left = 10
           Top = 10
-          Width = 826
+          Width = 867
           Height = 8
           Align = alTop
           BorderOuter = fsNone
           Color = 14606046
-          TabOrder = 2
+          TabOrder = 11
           object barcode_panel_top_left: TImage
             Left = 0
             Top = 0
@@ -1848,7 +1824,7 @@ inherited frmCustomer: TfrmCustomer
               0000}
           end
           object barcode_panel_top_right: TImage
-            Left = 816
+            Left = 857
             Top = 0
             Width = 10
             Height = 8
@@ -1870,7 +1846,7 @@ inherited frmCustomer: TfrmCustomer
           object barcode_panel_top_line: TImage
             Left = 19
             Top = 0
-            Width = 797
+            Width = 838
             Height = 8
             Align = alClient
             AutoSize = True
@@ -1889,16 +1865,16 @@ inherited frmCustomer: TfrmCustomer
         object barcode_botton: TRzPanel
           Left = 10
           Top = 328
-          Width = 826
+          Width = 867
           Height = 8
           Align = alBottom
           BorderOuter = fsNone
           Color = 14606046
-          TabOrder = 3
+          TabOrder = 12
           object barcode_panel_bottom_line: TImage
             Left = 2
             Top = 0
-            Width = 822
+            Width = 863
             Height = 8
             Align = alClient
             AutoSize = True
@@ -1912,7 +1888,7 @@ inherited frmCustomer: TfrmCustomer
             Stretch = True
           end
           object barcodeb_panel_right_line: TImage
-            Left = 824
+            Left = 865
             Top = 0
             Width = 2
             Height = 8
@@ -1946,7 +1922,7 @@ inherited frmCustomer: TfrmCustomer
           Height = 22
           BorderOuter = fsFlat
           FlatColor = clGray
-          TabOrder = 4
+          TabOrder = 13
           object RzBackground7: TRzBackground
             Left = 1
             Top = 1
@@ -1978,6 +1954,7 @@ inherited frmCustomer: TfrmCustomer
             ParentFont = False
             Transparent = True
             Layout = tlCenter
+            OnClick = RzLabel17Click
             ShadowColor = 16250871
             ShadowDepth = 1
             TextStyle = tsShadow
@@ -1991,7 +1968,7 @@ inherited frmCustomer: TfrmCustomer
           BorderOuter = fsFlatRounded
           BorderColor = 15461355
           Color = 15461355
-          TabOrder = 5
+          TabOrder = 14
           object Image2: TImage
             Left = 2
             Top = 2
@@ -2235,16 +2212,16 @@ inherited frmCustomer: TfrmCustomer
             Transparent = True
           end
         end
-        object edtBK_BARCODE: TRzPanel
+        object edtBK_CUST_NAME: TRzPanel
           Left = 142
           Top = 60
-          Width = 491
+          Width = 419
           Height = 31
           BorderOuter = fsStatus
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 6
+          TabOrder = 1
           object RzPanel24: TRzPanel
             Left = 2
             Top = 2
@@ -2291,15 +2268,25 @@ inherited frmCustomer: TfrmCustomer
               TextStyle = tsShadow
             end
           end
-          object RzPanel12: TRzPanel
-            Left = 277
+          object edtCUST_NAME: TcxTextEdit
+            Left = 105
+            Top = 4
+            Width = 171
+            Height = 23
+            Properties.MaxLength = 30
+            Properties.OnChange = edtCUST_NAMEPropertiesChange
+            TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object RzPanel34: TRzPanel
+            Left = 276
             Top = 2
             Width = 48
             Height = 27
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdRight]
-            TabOrder = 1
-            object RzBackground2: TRzBackground
+            TabOrder = 2
+            object RzBackground15: TRzBackground
               Left = 2
               Top = 0
               Width = 44
@@ -2314,14 +2301,14 @@ inherited frmCustomer: TfrmCustomer
               ShowImage = False
               ShowTexture = False
             end
-            object RzLabel3: TRzLabel
+            object RzLabel16: TRzLabel
               Left = 2
               Top = 0
               Width = 44
               Height = 27
               Align = alClient
               Alignment = taCenter
-              Caption = #24615#21035
+              Caption = #25340#38899#30721
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
               Font.Height = -15
@@ -2335,43 +2322,17 @@ inherited frmCustomer: TfrmCustomer
               TextStyle = tsShadow
             end
           end
-          object edtCUST_NAME: TcxTextEdit
-            Left = 105
+          object edtCUST_SPELL: TcxTextEdit
+            Left = 323
             Top = 4
-            Width = 171
+            Width = 93
             Height = 23
             Properties.MaxLength = 30
-            TabOrder = 2
+            TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
-          object cxRadioButton1: TcxRadioButton
-            Left = 338
-            Top = 8
-            Width = 49
-            Height = 17
-            Caption = #22899
-            Checked = True
-            TabOrder = 3
-            TabStop = True
-          end
-          object cxRadioButton2: TcxRadioButton
-            Left = 382
-            Top = 8
-            Width = 49
-            Height = 17
-            Caption = #30007
-            TabOrder = 4
-          end
-          object cxRadioButton3: TcxRadioButton
-            Left = 426
-            Top = 8
-            Width = 49
-            Height = 17
-            Caption = #20445#23494
-            TabOrder = 5
-          end
         end
-        object edtBK_GODS_NAME: TRzPanel
+        object edtBK_CUST_CODE: TRzPanel
           Left = 142
           Top = 25
           Width = 235
@@ -2380,7 +2341,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 7
+          TabOrder = 0
           object RzPanel30: TRzPanel
             Left = 2
             Top = 2
@@ -2437,16 +2398,16 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object edtBK_CALC_UNITS: TRzPanel
-          Left = 142
-          Top = 96
+        object edtBK_MOVE_TELE: TRzPanel
+          Left = 398
+          Top = 132
           Width = 235
           Height = 31
           BorderOuter = fsStatus
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 8
+          TabOrder = 5
           object RzPanel32: TRzPanel
             Left = 2
             Top = 2
@@ -2503,7 +2464,7 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object RzPanel14: TRzPanel
+        object edtBK_BIRTHDAY: TRzPanel
           Left = 398
           Top = 96
           Width = 235
@@ -2512,7 +2473,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 9
+          TabOrder = 3
           object RzPanel16: TRzPanel
             Left = 2
             Top = 2
@@ -2577,7 +2538,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = 15461355
           FlatColor = 9145227
-          TabOrder = 10
+          TabOrder = 15
           object RzPanel18: TRzPanel
             Left = 2
             Top = 2
@@ -2646,7 +2607,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = 15461355
           FlatColor = 9145227
-          TabOrder = 11
+          TabOrder = 16
           object RzPanel20: TRzPanel
             Left = 2
             Top = 2
@@ -2706,7 +2667,7 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object RzPanel21: TRzPanel
+        object edtBK_QQ: TRzPanel
           Left = 142
           Top = 183
           Width = 235
@@ -2715,7 +2676,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 12
+          TabOrder = 6
           object RzPanel22: TRzPanel
             Left = 2
             Top = 2
@@ -2772,7 +2733,7 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object RzPanel23: TRzPanel
+        object edtBK_MSN: TRzPanel
           Left = 398
           Top = 183
           Width = 235
@@ -2781,7 +2742,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 13
+          TabOrder = 7
           object RzPanel25: TRzPanel
             Left = 2
             Top = 2
@@ -2838,7 +2799,7 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object RzPanel26: TRzPanel
+        object edtBK_FAMI_ADDR: TRzPanel
           Left = 142
           Top = 219
           Width = 491
@@ -2847,7 +2808,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 14
+          TabOrder = 8
           object RzPanel27: TRzPanel
             Left = 2
             Top = 2
@@ -2904,7 +2865,7 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object RzPanel28: TRzPanel
+        object edtBK_PRICE_ID: TRzPanel
           Left = 142
           Top = 132
           Width = 235
@@ -2913,7 +2874,7 @@ inherited frmCustomer: TfrmCustomer
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 15
+          TabOrder = 4
           object RzPanel29: TRzPanel
             Left = 2
             Top = 2
@@ -3003,7 +2964,7 @@ inherited frmCustomer: TfrmCustomer
           Height = 22
           BorderOuter = fsFlat
           FlatColor = clGray
-          TabOrder = 16
+          TabOrder = 17
           object RzBackground13: TRzBackground
             Left = 1
             Top = 1
@@ -3035,6 +2996,7 @@ inherited frmCustomer: TfrmCustomer
             ParentFont = False
             Transparent = True
             Layout = tlCenter
+            OnClick = RzLabel12Click
             ShadowColor = 16250871
             ShadowDepth = 1
             TextStyle = tsShadow
@@ -3047,7 +3009,7 @@ inherited frmCustomer: TfrmCustomer
           Height = 22
           BorderOuter = fsFlat
           FlatColor = clGray
-          TabOrder = 17
+          TabOrder = 18
           object RzBackground14: TRzBackground
             Left = 1
             Top = 1
@@ -3079,19 +3041,104 @@ inherited frmCustomer: TfrmCustomer
             ParentFont = False
             Transparent = True
             Layout = tlCenter
+            OnClick = RzLabel13Click
             ShadowColor = 16250871
             ShadowDepth = 1
             TextStyle = tsShadow
+          end
+        end
+        object edtBK_SEX: TRzPanel
+          Left = 142
+          Top = 96
+          Width = 235
+          Height = 31
+          BorderOuter = fsStatus
+          BorderWidth = 1
+          Color = clWhite
+          FlatColor = 9145227
+          TabOrder = 2
+          object RzPanel36: TRzPanel
+            Left = 2
+            Top = 2
+            Width = 103
+            Height = 27
+            Align = alLeft
+            BorderOuter = fsFlat
+            BorderSides = [sdRight, sdBottom]
+            FlatColor = clGray
+            TabOrder = 0
+            object RzBackground16: TRzBackground
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 26
+              Active = True
+              Align = alClient
+              FrameColor = 9145227
+              GradientColorStart = clWhite
+              GradientColorStop = 14277081
+              ImageStyle = isStretch
+              ShowGradient = True
+              ShowImage = False
+              ShowTexture = False
+            end
+            object RzLabel14: TRzLabel
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 26
+              Align = alClient
+              Alignment = taCenter
+              Caption = #20250#21592#24615#21035
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object edtSEX1: TcxRadioButton
+            Left = 108
+            Top = 8
+            Width = 38
+            Height = 17
+            Caption = #22899
+            Checked = True
+            TabOrder = 1
+            TabStop = True
+          end
+          object edtSEX3: TcxRadioButton
+            Left = 181
+            Top = 8
+            Width = 49
+            Height = 17
+            Caption = #20445#23494
+            TabOrder = 2
+          end
+          object edtSEX2: TcxRadioButton
+            Left = 144
+            Top = 8
+            Width = 38
+            Height = 17
+            Caption = #30007
+            TabOrder = 3
           end
         end
       end
     end
   end
   inherited toolNav: TRzPanel
+    Width = 887
     object lblCaption: TRzLabel
       Left = 0
       Top = 0
-      Width = 294
+      Width = 335
       Height = 47
       Align = alClient
       Alignment = taCenter
@@ -3111,7 +3158,7 @@ inherited frmCustomer: TfrmCustomer
       TextStyle = tsShadow
     end
     object RzPanel8: TRzPanel
-      Left = 294
+      Left = 335
       Top = 0
       Width = 552
       Height = 47
@@ -3928,7 +3975,7 @@ inherited frmCustomer: TfrmCustomer
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 432
+    Left = 640
     Top = 368
   end
 end

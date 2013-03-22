@@ -7215,6 +7215,7 @@ object frmBrowerForm: TfrmBrowerForm
       Color = clBtnFace
       Anchors = [akTop, akRight]
       TabOrder = 7
+      OnClick = RzBmpButton5Click
     end
     object RzBmpButton1: TRzBmpButton
       Left = 886

@@ -131,6 +131,7 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     FWindowState: TWindowState;
     FInitialized: boolean;
@@ -1262,6 +1263,11 @@ procedure TfrmBrowerForm.NavigateComplete2(ASender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
 begin
   UpdateControls(TEmbeddedWB(ASender));
+end;
+
+procedure TfrmBrowerForm.RzBmpButton5Click(Sender: TObject);
+begin
+  LoadUrl('rspcn://shop.dll/TfrmSysDefine','shop.dll');
 end;
 
 initialization

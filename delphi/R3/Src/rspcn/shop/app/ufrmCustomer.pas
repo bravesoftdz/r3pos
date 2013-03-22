@@ -24,11 +24,9 @@ type
     RzPanel7: TRzPanel;
     DBGridEh1: TDBGridEh;
     rowToolNav: TRzToolbar;
-    RzToolButton1: TRzToolButton;
-    RzToolButton2: TRzToolButton;
-    RzSpacer1: TRzSpacer;
-    RzToolButton3: TRzToolButton;
-    RzToolButton4: TRzToolButton;
+    toolDelete: TRzToolButton;
+    toolEdit: TRzToolButton;
+    toolSpacer: TRzSpacer;
     RzPanel8: TRzPanel;
     RzBmpButton1: TRzBmpButton;
     RzBmpButton3: TRzBmpButton;
@@ -48,7 +46,7 @@ type
     EditPanel: TRzPanel;
     barcode_panel_left_line: TImage;
     barcode_panel_right_line: TImage;
-    RzBmpButton4: TRzBmpButton;
+    btnSave: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     barcode_top: TRzPanel;
     barcode_panel_top_left: TImage;
@@ -63,22 +61,19 @@ type
     RzLabel17: TRzLabel;
     RzPanel10: TRzPanel;
     Image2: TImage;
-    edtBK_BARCODE: TRzPanel;
+    edtBK_CUST_NAME: TRzPanel;
     RzPanel24: TRzPanel;
     RzBackground1: TRzBackground;
     RzLabel6: TRzLabel;
-    RzPanel12: TRzPanel;
-    RzBackground2: TRzBackground;
-    RzLabel3: TRzLabel;
-    edtBK_GODS_NAME: TRzPanel;
+    edtBK_CUST_CODE: TRzPanel;
     RzPanel30: TRzPanel;
     RzBackground3: TRzBackground;
     RzLabel2: TRzLabel;
-    edtBK_CALC_UNITS: TRzPanel;
+    edtBK_MOVE_TELE: TRzPanel;
     RzPanel32: TRzPanel;
     RzBackground5: TRzBackground;
     RzLabel4: TRzLabel;
-    RzPanel14: TRzPanel;
+    edtBK_BIRTHDAY: TRzPanel;
     RzPanel16: TRzPanel;
     RzBackground4: TRzBackground;
     RzLabel5: TRzLabel;
@@ -90,25 +85,22 @@ type
     RzPanel20: TRzPanel;
     RzBackground8: TRzBackground;
     RzLabel8: TRzLabel;
-    RzPanel21: TRzPanel;
+    edtBK_QQ: TRzPanel;
     RzPanel22: TRzPanel;
     RzBackground9: TRzBackground;
     RzLabel9: TRzLabel;
-    RzPanel23: TRzPanel;
+    edtBK_MSN: TRzPanel;
     RzPanel25: TRzPanel;
     RzBackground10: TRzBackground;
     RzLabel10: TRzLabel;
-    RzPanel26: TRzPanel;
+    edtBK_FAMI_ADDR: TRzPanel;
     RzPanel27: TRzPanel;
     RzBackground11: TRzBackground;
     RzLabel11: TRzLabel;
     RzBorder1: TRzBorder;
     edtCUST_CODE: TcxTextEdit;
     edtCUST_NAME: TcxTextEdit;
-    cxRadioButton1: TcxRadioButton;
-    cxRadioButton2: TcxRadioButton;
-    cxRadioButton3: TcxRadioButton;
-    RzPanel28: TRzPanel;
+    edtBK_PRICE_ID: TRzPanel;
     RzPanel29: TRzPanel;
     RzBackground12: TRzBackground;
     RzLabel1: TRzLabel;
@@ -128,6 +120,17 @@ type
     cmbPRICE_ID: TzrComboBoxList;
     cdsCustomer: TZQuery;
     fndPRICE_ID: TzrComboBoxList;
+    RzPanel34: TRzPanel;
+    RzBackground15: TRzBackground;
+    RzLabel16: TRzLabel;
+    edtBK_SEX: TRzPanel;
+    RzPanel36: TRzPanel;
+    RzBackground16: TRzBackground;
+    RzLabel14: TRzLabel;
+    edtSEX1: TcxRadioButton;
+    edtSEX3: TcxRadioButton;
+    edtSEX2: TcxRadioButton;
+    edtCUST_SPELL: TcxTextEdit;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure serachTextChange(Sender: TObject);
@@ -137,13 +140,18 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure RzToolButton2Click(Sender: TObject);
+    procedure toolEditClick(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
-    procedure RzBmpButton4Click(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure RzBmpButton7Click(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
     procedure btnFindClick(Sender: TObject);
+    procedure RzLabel13Click(Sender: TObject);
+    procedure RzLabel17Click(Sender: TObject);
+    procedure RzLabel12Click(Sender: TObject);
+    procedure edtCUST_NAMEPropertiesChange(Sender: TObject);
+    procedure toolDeleteClick(Sender: TObject);
   private
     { Private declarations }
     searchTxt:string;
@@ -159,6 +167,7 @@ type
     procedure OpenInfo(custId:string);
     procedure SaveInfo;
     procedure DeleteInfo(custId:string);
+    procedure unDeleteInfo(custId:string);
     procedure UpdateGrade(custId:string);
     procedure NewInfo;
 
@@ -171,7 +180,7 @@ var
   frmCustomer: TfrmCustomer;
 
 implementation
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil;
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,udllFnUtil;
 {$R *.dfm}
 
 { TfrmCustomer }
@@ -194,6 +203,7 @@ begin
       Column.PickList.Add(rs.FieldbyName('PRICE_NAME').AsString);  
       rs.Next;
     end;
+   rzTree.Items.Add(nil,'回收站');
 end;
 
 function TfrmCustomer.FindColumn(fieldname: string): TColumnEh;
@@ -213,10 +223,19 @@ end;
 procedure TfrmCustomer.Open;
 begin
   cdsList.Close;
-  cdsList.SQL.Text := 'select 0 as A,A.TENANT_ID,A.CUST_ID,CUST_NAME,CUST_CODE,MOVE_TELE as MOBILE,BIRTHDAY,A.PRICE_ID,B.INTEGRAL,B.BALANCE '+
+  cdsList.SQL.Text := 'select 0 as A,A.TENANT_ID,A.CUST_ID,CUST_NAME,CUST_CODE,MOVE_TELE,BIRTHDAY,A.PRICE_ID,A.COMM,B.INTEGRAL,B.BALANCE '+
      'from PUB_CUSTOMER A,PUB_IC_INFO B '+
-     'where A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and B.UNION_ID=''#'' and A.TENANT_ID=:TENANT_ID';
+     'where A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and B.UNION_ID=''#'' and A.TENANT_ID=:TENANT_ID ';
   cdsList.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  if Assigned(rzTree.Selected) and (rzTree.Selected.Level=0) then
+     begin
+       if rzTree.Selected.Text='回收站' then
+          cdsList.SQL.Text := cdsList.SQL.Text + ' and a.COMM in (''12'',''02'') '
+       else
+          cdsList.SQL.Text := cdsList.SQL.Text + ' and a.COMM not in (''12'',''02'') ';
+     end
+  else
+     cdsList.SQL.Text := cdsList.SQL.Text + ' and a.COMM not in (''12'',''02'') ';
   if Assigned(rzTree.Selected) and (rzTree.Selected.Level>0) then
      begin
        cdsList.SQL.Text := cdsList.SQL.Text + ' and a.PRICE_ID='''+TRecord_(rzTree.Selected.Data).FieldbyName('PRICE_ID').AsString+'''';
@@ -245,7 +264,12 @@ procedure TfrmCustomer.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
   if rzTree.CanFocus then Open;
-
+  toolSpacer.Visible := Node.Text<>'回收站';
+  toolEdit.Visible := Node.Text<>'回收站';
+  if toolEdit.Visible then
+     toolDelete.Caption := '删除'
+  else
+     toolDelete.Caption := '还原';
 end;
 
 procedure TfrmCustomer.serachTextChange(Sender: TObject);
@@ -286,7 +310,7 @@ begin
   pn.Assign(DBGridEh1.Canvas.Pen);
   try
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
+    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
   begin
     if Column.FieldName = 'TOOL_NAV' then
        begin
@@ -361,7 +385,10 @@ begin
        Raise;
     end;
     ReadInfo;
-    dbState := dsEdit;
+    if cdsCustomer.FieldByName('COMM').AsString[2]='2' then
+       dbState := dsBrowse
+    else
+       dbState := dsEdit;
     EditPanel.Visible := true;
     if edtCUST_CODE.CanFocus then edtCUST_CODE.SetFocus;
   finally
@@ -427,18 +454,44 @@ procedure TfrmCustomer.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
+  btnSave.Visible := dbState <> dsBrowse;
 end;
 
 procedure TfrmCustomer.ReadInfo;
 begin
   AObj.ReadFromDataSet(cdsCustomer);
   ReadFromObject(AObj,self);
-
+  case AObj.FieldbyName('SEX').AsInteger of
+  1:edtSEX1.Checked := true;
+  2:edtSEX2.Checked := true;
+  else
+    edtSEX3.Checked := true;
+  end;
 end;
 
 procedure TfrmCustomer.WriteInfo;
+var rs:TZQuery;
 begin
   WriteToObject(AObj,self);
+  if edtSEX1.Checked then AObj.FieldbyName('SEX').AsInteger := 1;
+  if edtSEX2.Checked then AObj.FieldbyName('SEX').AsInteger := 2;
+  if edtSEX3.Checked then AObj.FieldbyName('SEX').AsInteger := 3;
+  AObj.FieldbyName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  if AObj.FieldbyName('REGION_ID').AsString='' then
+     begin
+       rs := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
+       if rs.Locate('SHOP_ID',token.shopId,[]) then
+          AObj.FieldbyName('REGION_ID').AsString := rs.FieldbyName('REGION_ID').AsString
+       else
+          AObj.FieldbyName('REGION_ID').AsString := '999999';
+     end;
+  if AObj.FieldbyName('SHOP_ID').AsString='' then AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
+  if AObj.FieldbyName('CUST_ID').AsString='' then AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId();
+  if AObj.FieldbyName('CREA_USER').AsString='' then AObj.FieldbyName('CREA_USER').AsString := token.userId;
+  if AObj.FieldbyName('CREA_DATE').AsString='' then AObj.FieldbyName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD',now());
+  cdsCustomer.Edit;
+  AObj.WriteToDataSet(cdsCustomer);
+  cdsCustomer.Post;
 
 end;
 
@@ -456,7 +509,7 @@ begin
 
 end;
 
-procedure TfrmCustomer.RzToolButton2Click(Sender: TObject);
+procedure TfrmCustomer.toolEditClick(Sender: TObject);
 begin
   inherited;
   openinfo(cdsList.FieldbyName('CUST_ID').AsString);
@@ -470,7 +523,7 @@ begin
   openinfo(cdsList.FieldbyName('CUST_ID').AsString);
 end;
 
-procedure TfrmCustomer.RzBmpButton4Click(Sender: TObject);
+procedure TfrmCustomer.btnSaveClick(Sender: TObject);
 begin
   inherited;
   SaveInfo;
@@ -543,12 +596,94 @@ procedure TfrmCustomer.NewInfo;
 begin
   OpenInfo('');
   dbState := dsInsert;
+  edtSEX1.Checked := true;
+  cmbPRICE_ID.KeyValue := cmbPRICE_ID.DataSet.FieldbyName('PRICE_ID').asString;
+  cmbPRICE_ID.Text := cmbPRICE_ID.DataSet.FieldbyName('PRICE_NAME').asString;
 end;
 
 procedure TfrmCustomer.btnFindClick(Sender: TObject);
 begin
   inherited;
   NewInfo;
+end;
+
+procedure TfrmCustomer.RzLabel13Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'当前功能还没有开通，敬请期待','友情提示..',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmCustomer.RzLabel17Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'当前功能还没有开通，敬请期待','友情提示..',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmCustomer.RzLabel12Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'当前功能还没有开通，敬请期待','友情提示..',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmCustomer.edtCUST_NAMEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtCUST_NAME.Focused then edtCUST_SPELL.Text := FnString.GetWordSpell(edtCUST_NAME.Text,3) ;
+end;
+
+procedure TfrmCustomer.unDeleteInfo(custId: string);
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create;
+  try
+    dataFactory.BeginBatch;
+    try
+       Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+       Params.ParamByName('CUST_ID').AsString := custId;
+       dataFactory.AddBatch(cdsCustomer,'TCustomerV60',Params);
+       dataFactory.OpenBatch;
+    except
+       dataFactory.CancelBatch;
+       Raise;
+    end;
+    cdsCustomer.First;
+    while not cdsCustomer.Eof do
+       begin
+         cdsCustomer.Edit;
+         cdsCustomer.FieldbyName('COMM').AsString := '10';
+         cdsCustomer.Post;
+         cdsCustomer.Next;
+       end;
+    dataFactory.BeginBatch;
+    try
+       dataFactory.AddBatch(cdsCustomer,'TCustomerV60',nil);
+       dataFactory.CommitBatch;
+    except
+       dataFactory.CancelBatch;
+       Raise;
+    end;
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TfrmCustomer.toolDeleteClick(Sender: TObject);
+begin
+  inherited;
+  if cdsList.FieldbyName('COMM').AsString[2]<>'2' then
+     begin
+       if MessageBox(Handle,'是否删除当前行的会员？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       DeleteInfo(cdsList.FieldbyName('CUST_ID').AsString);
+       cdsList.Delete;
+     end
+  else
+     begin
+       if MessageBox(Handle,'是否还原当前行的会员？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       unDeleteInfo(cdsList.FieldbyName('CUST_ID').AsString);
+       cdsList.Delete;
+     end;
+
 end;
 
 initialization

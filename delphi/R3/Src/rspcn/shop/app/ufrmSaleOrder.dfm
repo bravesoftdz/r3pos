@@ -12,7 +12,6 @@ inherited frmSaleOrder: TfrmSaleOrder
       Width = 894
       inherited PageControl: TRzPageControl
         Width = 894
-        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -3511,6 +3510,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                     Default = True
                   end>
                 Properties.ReadOnly = True
+                Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
                 InGrid = False
                 KeyValue = Null
@@ -3834,8 +3834,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3919,8 +3919,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267

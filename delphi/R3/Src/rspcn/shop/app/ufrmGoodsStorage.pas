@@ -28,9 +28,9 @@ type
     RzPanel7: TRzPanel;
     DBGridEh1: TDBGridEh;
     rowToolNav: TRzToolbar;
-    RzToolButton1: TRzToolButton;
-    RzToolButton2: TRzToolButton;
-    RzSpacer1: TRzSpacer;
+    toolDelete: TRzToolButton;
+    toolEdit: TRzToolButton;
+    toolSpacer: TRzSpacer;
     EditPanel: TRzPanel;
     RzBorder1: TRzBorder;
     cdsGoodsInfo: TZQuery;
@@ -51,7 +51,7 @@ type
     Image4: TImage;
     serachText: TEdit;
     btnFind: TRzBmpButton;
-    RzBmpButton4: TRzBmpButton;
+    btnSave: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     barcode_top: TRzPanel;
     barcode_panel_top_left: TImage;
@@ -154,11 +154,11 @@ type
     procedure edtSORT_ID1PropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure edtUNIT_ID_USINGClick(Sender: TObject);
-    procedure RzToolButton2Click(Sender: TObject);
+    procedure toolEditClick(Sender: TObject);
     procedure RzBitBtn7Click(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure btnAMOUNTClick(Sender: TObject);
-    procedure RzToolButton1Click(Sender: TObject);
+    procedure toolDeleteClick(Sender: TObject);
     procedure sortDropKeyPress(Sender: TObject; var Key: Char);
     procedure btnNewSortClick(Sender: TObject);
     procedure btnFindClick(Sender: TObject);
@@ -168,8 +168,9 @@ type
     procedure serachTextExit(Sender: TObject);
     procedure serachTextChange(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
-    procedure RzBmpButton4Click(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
+    procedure edtGODS_NAMEPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -193,6 +194,7 @@ type
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
     procedure DeleteInfo(godsId:string;Relation:integer=0);
+    procedure unDeleteInfo(godsId:string;Relation:integer=0);
     procedure UpdateSort(godsId:string;Relation:integer=0);
     procedure Open;
     procedure showForm;override;
@@ -251,7 +253,7 @@ begin
   pn.Assign(DBGridEh1.Canvas.Pen);
   try
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
+    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
   begin
     if Column.FieldName = 'TOOL_NAV' then
        begin
@@ -286,6 +288,7 @@ begin
   inherited;
   storFlag := 0;
   dllGlobal.CreateGoodsSortTree(rzTree,true);
+  rzTree.Items.Add(nil,'回收站');
   edtCALC_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   edtSMALL_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   edtBIG_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
@@ -318,10 +321,10 @@ begin
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,
    'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
-   'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.PRICE_ID,c.AMOUNT,'+
+   'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.PRICE_ID,j.COMM,c.AMOUNT,'+
    'isnull(ext.NEW_INPRICE,j.NEW_INPRICE) as NEW_INPRICE,'+
    'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P '+
-   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID',false)+') j '+
+   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID,COMM',true)+') j '+
    'left outer join (select TENANT_ID,GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+''' group by TENANT_ID,GODS_ID) c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
    'left outer join  PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID '+
    'left outer join  PUB_GOODSPRICE prc on j.TENANT_ID=prc.TENANT_ID and j.GODS_ID=prc.GODS_ID and j.SHOP_ID=prc.SHOP_ID and j.PRICE_ID=trim(prc.PRICE_ID) ) jp '+
@@ -362,19 +365,29 @@ end;
 var
   w:string;
 begin
+  if Assigned(rzTree.Selected) and (rzTree.Selected.Level=0) then
+     begin
+       if rzTree.Selected.Text='回收站' then
+          result := ' jp.COMM in (''12'',''02'') '
+       else
+          result := ' jp.COMM not in (''12'',''02'') ';
+     end
+  else
+     result := ' jp.COMM not in (''12'',''02'') ';
   if Assigned(rzTree.Selected) and (rzTree.Selected.Level>0) then
      begin
+       if result <> '' then result := result +' and ';
        if rzTree.Selected.Level=1 then
           begin
             begin
               if TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString='#' then
-              result := ' jp.SORT_ID1=''#'' ' else
-              result := ' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+'';
+              result := result +' jp.SORT_ID1=''#'' ' else
+              result := result +' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+'';
             end;
           end
        else
           begin
-            result := ' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
+            result := result +' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
           end;
      end;
   if trim(searchTxt) <> '' then
@@ -399,6 +412,12 @@ procedure TfrmGoodsStorage.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
   if rzTree.CanFocus then Open;
+  toolSpacer.Visible := Node.Text<>'回收站';
+  toolEdit.Visible := Node.Text<>'回收站';
+  if toolEdit.Visible then
+     toolDelete.Caption := '删除'
+  else
+     toolDelete.Caption := '还原';
 end;
 
 procedure TfrmGoodsStorage.OpenInfo(godsId: string;Relation:integer=0);
@@ -462,7 +481,10 @@ begin
        Raise;
     end;
     ReadInfo;
-    dbState := dsEdit;
+    if cdsGoodsInfo.FieldByName('COMM').AsString[2]='2' then
+       dbState := dsBrowse
+    else
+       dbState := dsEdit;
     EditPanel.Visible := true;
     if edtBARCODE.CanFocus then edtBARCODE.SetFocus;
   finally
@@ -619,6 +641,7 @@ procedure TfrmGoodsStorage.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
+  btnSave.Visible := dbState <> dsBrowse;
   if relationId=0 then Exit;
   SetEditStyle(dsBrowse,edtBARCODE.Style);
   edtBK_BARCODE.Color := edtBARCODE.Style.Color;
@@ -661,7 +684,6 @@ begin
   edtSORT_ID1.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtGODS_SPELL.Style);
   edtGODS_SPELL.Properties.ReadOnly := true;
-
 end;
 
 procedure TfrmGoodsStorage.FormCreate(Sender: TObject);
@@ -703,7 +725,7 @@ begin
   edtBK_BIG_UNITS.Visible := edtUNIT_ID_USING.Checked;
 end;
 
-procedure TfrmGoodsStorage.RzToolButton2Click(Sender: TObject);
+procedure TfrmGoodsStorage.toolEditClick(Sender: TObject);
 begin
   inherited;
   openinfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
@@ -922,12 +944,21 @@ begin
   end;
 end;
 
-procedure TfrmGoodsStorage.RzToolButton1Click(Sender: TObject);
+procedure TfrmGoodsStorage.toolDeleteClick(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,'是否删除当前行的商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
-  cdsList.Delete;
+  if cdsList.FieldbyName('COMM').AsString[2]<>'2' then
+     begin
+       if MessageBox(Handle,'是否删除当前行的商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
+       cdsList.Delete;
+     end
+  else
+     begin
+       if MessageBox(Handle,'是否还原当前行的商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       unDeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
+       cdsList.Delete;
+     end;
 end;
 
 procedure TfrmGoodsStorage.sortDropKeyPress(Sender: TObject;
@@ -1106,7 +1137,7 @@ begin
   EditPanel.Visible := false;
 end;
 
-procedure TfrmGoodsStorage.RzBmpButton4Click(Sender: TObject);
+procedure TfrmGoodsStorage.btnSaveClick(Sender: TObject);
 begin
   inherited;
   SaveInfo;
@@ -1118,6 +1149,151 @@ procedure TfrmGoodsStorage.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
   Open;
+end;
+
+procedure TfrmGoodsStorage.edtGODS_NAMEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtGODS_NAME.Focused then edtGODS_SPELL.Text := FnString.GetWordSpell(edtGODS_NAME.Text,3) ;
+
+end;
+
+procedure TfrmGoodsStorage.unDeleteInfo(godsId: string; Relation: integer);
+function getRelatonTenant(flag:integer):integer;
+var
+  rs:TZQuery;
+begin
+  if relation=0 then
+     begin
+       result := strtoint(token.tenantId);
+       Exit;
+     end;
+  rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+  if rs.Locate('RELATION_ID',relation,[]) then
+     begin
+       case flag of
+       0:result := rs.FieldbyName('TENANT_ID').AsInteger;
+       else
+         begin
+           if rs.FieldbyName('RELATION_TYPE').AsInteger=1 then
+              result := strtoint(token.tenantId)
+           else
+              Raise Exception.Create('不能更改供应链中的商品');
+         end;
+       end;
+     end
+  else
+     raise Exception.Create('缓存中没找到当前供应链，数据同步后重试');
+end;
+var
+  Params:TftParamList;
+begin
+  EditPanel.Visible := false;
+  Params := TftParamList.Create;
+  try
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('PRICE_ID').AsString := '#';
+    Params.ParamByName('GODS_ID').AsString := godsId;
+    Params.ParamByName('CHANGE_ID').AsString := getTodayId;
+    Params.ParamByName('RELATION_ID').AsInteger := Relation;
+    dataFactory.BeginBatch;
+    try
+       if Relation=0 then
+          Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId)
+       else
+          Params.ParamByName('TENANT_ID').AsInteger := getRelatonTenant(0);
+       dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',Params);
+       dataFactory.AddBatch(cdsBarcode,'TBarCodeV60',Params);
+       Params.ParamByName('TENANT_ID').AsInteger := getRelatonTenant(1);
+       dataFactory.AddBatch(cdsGodsRelation,'TGoodsRelationV60',Params);
+       Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+       dataFactory.AddBatch(cdsGoodsPrice,'TGoodsPriceV60',Params);
+       dataFactory.AddBatch(cdsGoodsExt,'TGoodsInfoExtV60',Params);
+       dataFactory.OpenBatch;
+    except
+       dataFactory.CancelBatch;
+       Raise;
+    end;
+    case RelationId of
+    0:begin
+        cdsGoodsInfo.Edit;
+        cdsGoodsInfo.FieldByName('COMM').AsString := '10';
+        cdsGoodsInfo.Post;
+        cdsGodsRelation.First;
+        while not cdsGodsRelation.Eof do
+           begin
+             cdsGodsRelation.Edit;
+             cdsGodsRelation.FieldByName('COMM').AsString := '10';
+             cdsGodsRelation.Post;
+             cdsGodsRelation.Next;
+           end;
+        cdsBarcode.First;
+        while not cdsBarcode.Eof do
+           begin
+             cdsBarcode.Edit;
+             cdsBarcode.FieldByName('COMM').AsString := '10';
+             cdsBarcode.Post;
+             cdsBarcode.Next;
+           end;
+        cdsGoodsPrice.First;
+        while not cdsGoodsPrice.Eof do
+           begin
+             cdsGoodsPrice.Edit;
+             cdsGoodsPrice.FieldByName('COMM').AsString := '10';
+             cdsGoodsPrice.Post;
+             cdsGoodsPrice.Next;
+           end;
+        cdsGoodsExt.First;
+        while not cdsGoodsExt.Eof do
+           begin
+             cdsGoodsExt.Edit;
+             cdsGoodsExt.FieldByName('COMM').AsString := '10';
+             cdsGoodsExt.Post;
+             cdsGoodsExt.Next;
+           end;
+      end
+    else
+      begin
+        cdsGodsRelation.First;
+        while not cdsGodsRelation.Eof do
+           begin
+             cdsGodsRelation.Edit;
+             cdsGodsRelation.FieldByName('COMM').AsString := '10';
+             cdsGodsRelation.Post;
+             cdsGodsRelation.Next;
+           end;
+        while not cdsGoodsPrice.Eof do
+           begin
+             cdsGoodsPrice.Edit;
+             cdsGoodsPrice.FieldByName('COMM').AsString := '10';
+             cdsGoodsPrice.Post;
+             cdsGoodsPrice.Next;
+           end;
+        cdsGoodsExt.First;
+        while not cdsGoodsExt.Eof do
+           begin
+             cdsGoodsExt.Edit;
+             cdsGoodsExt.FieldByName('COMM').AsString := '10';
+             cdsGoodsExt.Post;
+             cdsGoodsExt.Next;
+           end;
+      end;
+    end;
+    dataFactory.BeginBatch;
+    try
+       dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
+       dataFactory.AddBatch(cdsBarcode,'TBarCodeV60',nil);
+       dataFactory.AddBatch(cdsGodsRelation,'TGoodsRelationV60',nil);
+       dataFactory.AddBatch(cdsGoodsPrice,'TGoodsPriceV60',nil);
+       dataFactory.AddBatch(cdsGoodsExt,'TGoodsInfoExtV60',nil);
+       dataFactory.CommitBatch;
+    except
+       dataFactory.CancelBatch;
+       Raise;
+    end;
+  finally
+    Params.Free;
+  end;
 end;
 
 initialization

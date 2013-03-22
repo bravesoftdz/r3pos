@@ -1558,10 +1558,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               TabOrder = 1
               Visible = False
               ToolbarControls = (
-                RzToolButton2
-                RzSpacer1
-                RzToolButton1)
-              object RzToolButton1: TRzToolButton
+                toolEdit
+                toolSpacer
+                toolDelete)
+              object toolDelete: TRzToolButton
                 Left = 40
                 Top = 0
                 Width = 35
@@ -1576,9 +1576,9 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Font.Name = #23435#20307
                 Font.Style = [fsBold, fsUnderline]
                 ParentFont = False
-                OnClick = RzToolButton1Click
+                OnClick = toolDeleteClick
               end
-              object RzToolButton2: TRzToolButton
+              object toolEdit: TRzToolButton
                 Left = 0
                 Top = 0
                 Width = 35
@@ -1593,12 +1593,13 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Font.Name = #23435#20307
                 Font.Style = [fsBold, fsUnderline]
                 ParentFont = False
-                OnClick = RzToolButton2Click
+                OnClick = toolEditClick
               end
-              object RzSpacer1: TRzSpacer
+              object toolSpacer: TRzSpacer
                 Left = 35
                 Top = 0
                 Width = 5
+                Grooved = True
               end
             end
           end
@@ -1655,7 +1656,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             0000ECECECFFFFFF0000ECECECFFFFFF0000}
           Stretch = True
         end
-        object RzBmpButton4: TRzBmpButton
+        object btnSave: TRzBmpButton
           Left = 754
           Top = 258
           Width = 72
@@ -1869,8 +1870,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Color = clBtnFace
           Anchors = [akTop, akRight]
           Caption = #20445#23384
-          TabOrder = 0
-          OnClick = RzBmpButton4Click
+          TabOrder = 13
+          OnClick = btnSaveClick
         end
         object RzBmpButton5: TRzBmpButton
           Left = 840
@@ -2086,7 +2087,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Color = clBtnFace
           Anchors = [akTop, akRight]
           Caption = #20851#38381
-          TabOrder = 1
+          TabOrder = 14
           OnClick = RzBmpButton5Click
         end
         object barcode_top: TRzPanel
@@ -2097,7 +2098,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Align = alTop
           BorderOuter = fsNone
           Color = 14606046
-          TabOrder = 2
+          TabOrder = 15
           object barcode_panel_top_left: TImage
             Left = 0
             Top = 0
@@ -2172,7 +2173,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Align = alBottom
           BorderOuter = fsNone
           Color = 14606046
-          TabOrder = 3
+          TabOrder = 16
           object barcode_panel_bottom_line: TImage
             Left = 2
             Top = 0
@@ -2226,7 +2227,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 4
+          TabOrder = 0
           object RzPanel24: TRzPanel
             Left = 2
             Top = 2
@@ -2291,7 +2292,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 5
+          TabOrder = 1
           object RzPanel29: TRzPanel
             Left = 2
             Top = 2
@@ -2356,7 +2357,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 6
+          TabOrder = 2
           object RzPanel30: TRzPanel
             Left = 2
             Top = 2
@@ -2408,6 +2409,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 233
             Height = 23
+            Properties.OnChange = edtGODS_NAMEPropertiesChange
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -2474,7 +2476,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 7
+          TabOrder = 6
           object RzPanel19: TRzPanel
             Left = 2
             Top = 2
@@ -2547,7 +2549,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 8
+          TabOrder = 3
           object RzPanel32: TRzPanel
             Left = 2
             Top = 2
@@ -2658,7 +2660,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 9
+          TabOrder = 4
           object RzPanel33: TRzPanel
             Left = 2
             Top = 2
@@ -2812,7 +2814,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 10
+          TabOrder = 5
           object RzPanel35: TRzPanel
             Left = 2
             Top = 2
@@ -2966,7 +2968,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 11
+          TabOrder = 7
           object RzPanel25: TRzPanel
             Left = 2
             Top = 2
@@ -3031,7 +3033,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 12
+          TabOrder = 8
           object RzPanel26: TRzPanel
             Left = 2
             Top = 2
@@ -3096,7 +3098,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 13
+          TabOrder = 9
           object RzPanel27: TRzPanel
             Left = 2
             Top = 2
@@ -3161,7 +3163,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 14
+          TabOrder = 10
           object RzPanel37: TRzPanel
             Left = 2
             Top = 2
@@ -3232,7 +3234,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 15
+          TabOrder = 12
           object RzPanel21: TRzPanel
             Left = 2
             Top = 2
@@ -3297,7 +3299,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 16
+          TabOrder = 11
           object RzPanel39: TRzPanel
             Left = 2
             Top = 2

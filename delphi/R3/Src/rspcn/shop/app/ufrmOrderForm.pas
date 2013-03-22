@@ -144,6 +144,7 @@ type
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
 
     // 散装条码参数
@@ -1792,8 +1793,8 @@ begin
   try
   if Key=#13 then
     begin
-      if (dbState = dsBrowse) then Exit;
       s := trim(edtInput.Text);
+      if (dbState = dsBrowse) then NewOrder;
       edtInput.SelectAll;
       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       Key := #0;
@@ -2473,6 +2474,12 @@ begin
        PresentToCalc(1);
        DBGridEh1.SetFocus;
      end;
+end;
+
+procedure TfrmOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not edtInput.Focused then inherited;
+
 end;
 
 end.

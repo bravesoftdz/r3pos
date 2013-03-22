@@ -1721,7 +1721,7 @@ begin
   pn.Assign(DBGridEh2.Canvas.Pen);
   try
   if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh2.Focused) then
+    (gdFocused in State) or not DBGridEh2.Focused or (Column.FieldName = 'TOOL_NAV')) then
   begin
     if Column.FieldName = 'TOOL_NAV' then
        begin

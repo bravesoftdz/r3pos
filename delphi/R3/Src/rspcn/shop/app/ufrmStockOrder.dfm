@@ -12,7 +12,6 @@ inherited frmStockOrder: TfrmStockOrder
       Width = 865
       inherited PageControl: TRzPageControl
         Width = 865
-        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -288,6 +287,8 @@ inherited frmStockOrder: TfrmStockOrder
                     Default = True
                   end>
                 Properties.ReadOnly = True
+                Style.HotTrack = False
+                Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
                 InGrid = False
                 KeyValue = Null
@@ -409,6 +410,8 @@ inherited frmStockOrder: TfrmStockOrder
                 Height = 23
                 Anchors = [akTop, akRight]
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Style.HotTrack = False
+                Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
               end
             end
@@ -1182,7 +1185,7 @@ inherited frmStockOrder: TfrmStockOrder
               object edtGUIDE_USER: TzrComboBoxList
                 Left = 105
                 Top = 4
-                Width = 123
+                Width = 106
                 Height = 23
                 Anchors = [akTop, akRight]
                 Properties.AutoSelect = False
@@ -1191,6 +1194,8 @@ inherited frmStockOrder: TfrmStockOrder
                     Default = True
                   end>
                 Properties.ReadOnly = True
+                Style.HotTrack = False
+                Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
                 InGrid = False
                 KeyValue = Null

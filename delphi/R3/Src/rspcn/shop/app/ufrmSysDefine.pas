@@ -612,7 +612,7 @@ begin
     dataFactory.CancelBatch;
     Raise;
   end;
-{
+  FirstLogin := true;
   if FirstLogin or (dataFactory.iDbType <> 5) then
   begin
     tmpTenant := TZQuery.Create(nil);
@@ -672,7 +672,7 @@ begin
       dataFactory.MoveToDefault;
     end;
   end;
-}
+
   if FirstLogin then
   begin
     SaveRegisterParams;

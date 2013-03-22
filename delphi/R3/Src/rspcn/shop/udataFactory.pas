@@ -79,7 +79,10 @@ begin
   0:result := sqlite.AddBatch(DataSet,AClassName,Params);
   else
     begin
-      dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params) ) ;
+      if Params<>nil then
+         dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params) )
+      else
+         dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,'') ;
       FDataSets.Add(DataSet);
     end;
   end;
@@ -112,8 +115,8 @@ begin
   0:sqlite.CancelBatch;
   else
     begin
+      dbHelp.CancelBatch;
       FDataSets.Clear;
-      dbHelp.CommitBatch;
     end;
   end;
 end;
@@ -336,7 +339,10 @@ begin
   0:result := sqlite.UpdateBatch(DataSet,AClassName,Params);
   else
     begin
-      dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params));
+      if Params<>nil then
+         dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params))
+      else
+         dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,'');
       TZQuery(DataSet).CommitUpdates;
     end;
   end;

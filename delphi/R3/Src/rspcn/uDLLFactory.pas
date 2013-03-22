@@ -104,7 +104,6 @@ procedure TDLLFactory.AddBatch(ds: OleVariant; const ns,
 var
   rs:TZQuery;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   rs := TZQuery.Create(nil);
   rs.Delta := ds;
   if Params<>'' then
@@ -136,13 +135,12 @@ procedure TDLLFactory.CancelBatch;
 var
   i:integer;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+  dataFactory.CancelBatch;
   for i:=0 to FDataSets.Count-1 do
     begin
       TObject(FDataSets[i]).Free;
     end;
   FDataSets.Clear;
-  dataFactory.CancelBatch;
 end;
 
 function TDLLFactory.close(urltoken:TurlToken): boolean;
@@ -164,7 +162,6 @@ procedure TDLLFactory.CommitBatch;
 var
   i:integer;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.CommitBatch;
   for i:=0 to FDataSets.Count-1 do
     begin
@@ -296,9 +293,8 @@ function TDLLFactory.OpenBatch: OleVariant;
 var
   i:integer;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.OpenBatch;
-  result:=VarArrayCreate([0,FList.Count-1],varVariant);
+  result:=VarArrayCreate([0,FDataSets.Count-1],varVariant);
   for i:=0 to FDataSets.Count-1 do
     begin
       result[i] := TZQuery(FDataSets[i]).Data;

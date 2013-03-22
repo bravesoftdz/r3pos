@@ -833,7 +833,10 @@ begin
          rowToolNav.SetBounds(ARect.Left+11,ARect.Top+11,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
        end
     else
-       DBGridEh2.Canvas.Brush.Color := clWhite;
+       begin
+         DBGridEh2.Canvas.Font.Color := clBlack;
+         DBGridEh2.Canvas.Brush.Color := clWhite;
+       end;
   end;
   DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then

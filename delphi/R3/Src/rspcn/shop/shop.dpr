@@ -67,7 +67,9 @@ uses
   ufrmSysDefine in 'app\ufrmSysDefine.pas' {frmSysDefine},
   ufrmSyncData in 'app\ufrmSyncData.pas' {frmSyncData},
   ufrmInitGoods in 'app\ufrmInitGoods.pas' {frmInitGoods},
-  ObjCustomerV60 in 'obj\ObjCustomerV60.pas';
+  ObjCustomerV60 in 'obj\ObjCustomerV60.pas',
+  uRightsFactory in 'app\uRightsFactory.pas',
+  ufrmUserRights in 'app\ufrmUserRights.pas' {frmUserRights};
 
 {$R *.res}
 exports

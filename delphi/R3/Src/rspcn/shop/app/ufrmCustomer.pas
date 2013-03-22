@@ -319,7 +319,10 @@ begin
          rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top-1);
        end
     else
-       DBGridEh1.Canvas.Brush.Color := clWhite;
+       begin
+         DBGridEh1.Canvas.Font.Color := clBlack;
+         DBGridEh1.Canvas.Brush.Color := clWhite;
+       end;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then

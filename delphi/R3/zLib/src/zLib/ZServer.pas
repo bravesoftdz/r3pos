@@ -232,14 +232,7 @@ end;
 destructor TDoInvokeDispatch.Destroy;
 begin
   if Assigned(Session) and Assigned(Session.dbResolver) then
-     begin
-       try
-         ConnCache.Push(Session.dbResolver);
-       finally
-         Session.dbResolver := nil;
-         dbLock := false;
-       end;
-     end;
+     ConnCache.Push(Session.dbResolver);
   inherited;
 end;
 
@@ -777,14 +770,6 @@ end;
 
 destructor TZSession.Destroy;
 begin
-  if Assigned(dbResolver) then
-     begin
-       try
-         ConnCache.Push(dbResolver);
-       finally
-         dbResolver := nil;
-       end;
-     end;
   inherited;
 end;
 

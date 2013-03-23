@@ -76,6 +76,7 @@ IdbDllHelp = Interface(IUnknown)
     function OpenBatch: OleVariant; stdcall;
     procedure CommitBatch; stdcall;
     procedure CancelBatch; stdcall;
+    procedure MoveToDefault; stdcall;
    end;
 
 IZFactory= interface(IUnknown)

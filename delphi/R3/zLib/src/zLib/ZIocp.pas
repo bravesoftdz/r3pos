@@ -447,7 +447,7 @@ begin
            end;
         inc(c);
       end;
-    if (Worker=nil) and (List.Count < 50) then
+    if (Worker=nil) and (List.Count < (SystemInfo.dwNumberOfProcessors*ThreadCacheSize)) then
       begin
         //if (List.Count=0) or ((List.Count > 0) and (FWaitTime>500)) then
         //begin
@@ -682,7 +682,6 @@ begin
   try
     DataCache.Delete(integer(ASocket));
     SocketCache.Remove(Pointer(ASocket));
-    Sessions.Delete(ASocket.Session);
     ASocket.Free;
   finally
     UnLock;
@@ -889,6 +888,7 @@ begin
   Dispose(FSendBuffer);
   FInterpreter.DoInvokeDispatch := nil;
   FInterpreter.Free;
+  if Assigned(Session) then Sessions.Delete(Session);
   GZip := nil;
   inherited;
 end;
@@ -1277,7 +1277,6 @@ begin
           else
             begin
               DataCache.Delete(SessionId);
-              Sessions.Delete(TServerClientSocket(SessionId).Session);
               SocketCache.Remove(Pointer(SessionId));
               TServerClientSocket(SessionId).Free;
             end;
@@ -1286,8 +1285,6 @@ begin
        begin  //Ôç¾ÍÇå³ýÁË
          DataCache.Delete(SessionId);
          SocketCache.Remove(Pointer(SessionId));
-//         Sessions.Delete(TServerClientSocket(SessionId).Session);
-//         TServerClientSocket(SessionId).Free;
        end;
   finally
     UnLock;

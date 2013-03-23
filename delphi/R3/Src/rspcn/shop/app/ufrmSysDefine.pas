@@ -307,6 +307,7 @@ type
     procedure RzLabel37Click(Sender: TObject);
     procedure btnChangeClick(Sender: TObject);
   private
+    SyncDataing:boolean;
     FCurUserId:string;
     FCurUserName:string;
     FCurUserPswd:string;
@@ -344,6 +345,7 @@ type
     procedure SetCurUserRoleIds(const Value: string);
   public
     AObj:TRecord_;
+    function checkCanClose:boolean;override;
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
     property NewUser:boolean read FNewUser write SetNewUser;
     property CurUserId:string read FCurUserId write SetCurUserId;
@@ -1605,6 +1607,7 @@ end;
 
 procedure TfrmSysDefine.SyncData;
 begin
+  SyncDataing := true;
   with TfrmSyncData.Create(self) do
   begin
     try
@@ -1617,6 +1620,7 @@ begin
       SyncFactory.SyncBasic;
     finally
       Free;
+      SyncDataing := false;
     end;
   end;
 end;
@@ -1624,6 +1628,14 @@ end;
 procedure TfrmSysDefine.SetNewUser(const Value: boolean);
 begin
   FNewUser := Value;
+end;
+
+function TfrmSysDefine.checkCanClose: boolean;
+begin
+  if SyncDataing then
+     result := false
+  else
+     result := true;
 end;
 
 initialization

@@ -28,9 +28,6 @@ type
     RzToolButton2: TRzToolButton;
     RzToolButton3: TRzToolButton;
     RzSpacer1: TRzSpacer;
-    RzLabel1: TRzLabel;
-    RzLabel2: TRzLabel;
-    RzLabel3: TRzLabel;
     edtBK_CLIENT_ID: TRzPanel;
     RzPanel21: TRzPanel;
     RzBackground1: TRzBackground;
@@ -65,12 +62,6 @@ type
     edtPAY_TOTAL: TcxTextEdit;
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
-    RzLabel4: TRzLabel;
-    RzLabel5: TRzLabel;
-    RzLabel12: TRzLabel;
-    RzLabel15: TRzLabel;
-    RzLabel14: TRzLabel;
-    RzLabel13: TRzLabel;
     RzPanel3: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel9: TRzPanel;
@@ -89,6 +80,20 @@ type
     Image4: TImage;
     serachText: TEdit;
     btnFind: TRzBmpButton;
+    RzLabel1: TRzLabel;
+    RzLabel2: TRzLabel;
+    RzLabel3: TRzLabel;
+    RzLabel12: TRzLabel;
+    RzLabel4: TRzLabel;
+    RzLabel5: TRzLabel;
+    RzLabel13: TRzLabel;
+    RzLabel14: TRzLabel;
+    RzLabel15: TRzLabel;
+    RzPanel19: TRzPanel;
+    Image5: TImage;
+    MarqueeStatus: TRzMarqueeStatus;
+    Image6: TImage;
+    Image7: TImage;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -384,7 +389,6 @@ begin
     cdsDetail.CancelUpdates;
     Raise;
   end;
-  Open(AObj.FieldbyName('STOCK_ID').AsString);
   dbState := dsBrowse;
 end;
 
@@ -481,7 +485,9 @@ begin
     begin
       SaveOrder;
       if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
-         NewOrder;
+         NewOrder
+      else
+         Open(AObj.FieldbyName('SALES_ID').AsString);
     end;
   end;
 end;
@@ -527,7 +533,7 @@ begin
     end;
   11:begin
       FInputFlag := value;
-      lblInput.Caption := '结算金额';
+      lblInput.Caption := '应付金额';
       lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按 enter 健';
     end;
   13:begin
@@ -680,6 +686,7 @@ begin
               payCashMny(trim(edtInput.Text));
               DoSaveOrder;
               InputFlag := 1;
+              edtInput.Text := '';
             finally
               edtInput.selectAll;
               edtInput.SetFocus;
@@ -695,9 +702,9 @@ begin
                     checkPayment;
                     payCashMny(trim(edtInput.Text));
                     DoSaveOrder;
+                    edtInput.Text := '';
                   finally
                     InputFlag := 1;
-                    edtInput.Text := '';
                     edtInput.selectAll;
                     edtInput.SetFocus;
                   end;
@@ -925,19 +932,24 @@ begin
   stockMny := AObj.FieldbyName('STOCK_MNY').AsFloat;
   case InputFlag of
   13,14:begin
+       if (TotalFee-payZero)-fee=0 then
+       edtInput.Text := '' else
        edtInput.Text := formatFloat('#0.00',(TotalFee-payZero)-fee);
      end
   else
      begin
-        allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
+        if dbState = dsInsert then
+           allFee := fee
+        else
+           allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
         if abs(allFee)>abs(TotalFee-payZero) then
            begin
              Raise Exception.Create('你已经超额支付了,请正确输入付款金额');
            end;
         if fee=0 then
-          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-AObj.FieldbyName('PAY_D').AsFloat
         else
-          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee;
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee-AObj.FieldbyName('PAY_D').AsFloat;
      end;
   end;
   result := true;
@@ -952,7 +964,7 @@ begin
   fee :=
     AObj.FieldbyName('PAY_B').AsFloat+
     AObj.FieldbyName('PAY_C').AsFloat+
-    AObj.FieldbyName('PAY_D').AsFloat+
+//    AObj.FieldbyName('PAY_D').AsFloat+
     AObj.FieldbyName('PAY_E').AsFloat+
     AObj.FieldbyName('PAY_F').AsFloat+
     AObj.FieldbyName('PAY_G').AsFloat+
@@ -973,7 +985,9 @@ begin
   else
     begin
       if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
-         edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero))
+         begin
+           edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero)-AObj.FieldbyName('PAY_D').AsFloat);
+         end
       else
          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
       edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
@@ -988,6 +1002,7 @@ begin
   s := '0000000000';
   w := 0;
   payInfo := '';
+  payment.Caption := '本次付款';
   if AObj.FieldbyName('PAY_A').asFloat<>0 then
      begin
        s[1] := '1';
@@ -1013,7 +1028,7 @@ begin
      begin
        payment.Caption := getPaymentTitle('D')+'欠款';
        inc(w);
-       s[4] := '1';
+       s[4] := '0';
        payInfo := payInfo +getPaymentTitle('D')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_D').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_E').asFloat<>0 then
@@ -1059,6 +1074,16 @@ begin
        payInfo := payInfo +getPaymentTitle('J')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_J').asFloat)+ ' ';
      end;
   if w>1 then payment.Caption := '组合付款';
+  case inputFlag of
+  13: MarqueeStatus.Caption := payInfo;
+  else
+     begin
+      if TotalFee<>0 then
+         MarqueeStatus.Caption := '合计:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
+      else
+         MarqueeStatus.Caption := '';
+     end;
+  end;
 end;
 
 function TfrmStockOrder.payCashMny(s: string): boolean;
@@ -1087,7 +1112,7 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...');
-  if edtTable.IsEmpty then Raise Exception.Create('不能挂一张空单据...');
+  if TotalAmt=0 then Raise Exception.Create('不能挂一张空单据...');
   AObj.FieldbyName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
   AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
@@ -1253,6 +1278,7 @@ begin
       payCashMny(trim(edtInput.Text));
       DoSaveOrder;
       InputFlag := 1;
+      edtInput.Text := '';
     finally
       Key := #0;
       edtInput.selectAll;
@@ -1287,7 +1313,7 @@ begin
        AObj.FieldbyName('PAY_A').AsFloat := r;
        AObj.FieldbyName('PAY_B').AsFloat := 0;
        AObj.FieldbyName('PAY_C').AsFloat := 0;
-       AObj.FieldbyName('PAY_D').AsFloat := 0;
+       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat)-r;
        AObj.FieldbyName('PAY_E').AsFloat := 0;
        AObj.FieldbyName('PAY_F').AsFloat := 0;
        AObj.FieldbyName('PAY_G').AsFloat := 0;

@@ -388,7 +388,7 @@ begin
        Raise;
     end;
     ReadInfo;
-    if cdsCustomer.FieldByName('COMM').AsString[2]='2' then
+    if not cdsCustomer.IsEmpty and (cdsCustomer.FieldByName('COMM').AsString[2]='2') then
        dbState := dsBrowse
     else
        dbState := dsEdit;

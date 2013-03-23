@@ -127,6 +127,7 @@ begin
      result := rs.FieldbyName('VALUE').AsString
   else
      result := '';
+  if paramname='USING_PAYMENT' then result := '1';
 end;
 
 function TdllGlobal.GetRelatTenantInWhere: string;

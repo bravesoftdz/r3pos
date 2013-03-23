@@ -26,7 +26,7 @@ uses
   ufrmWebToolForm in 'ufrmWebToolForm.pas' {frmWebToolForm},
   ufrmWebDialogForm in 'ufrmWebDialogForm.pas' {frmWebDialogForm},
   ufrmOrderForm in 'app\ufrmOrderForm.pas' {frmOrderForm},
-  ufrmStockOrder in 'app\ufrmStockOrder.pas' {frmStockOrder},
+  ufrmPosInOrder in 'app\ufrmPosInOrder.pas' {frmPosInOrder},
   udllGlobal in 'app\udllGlobal.pas' {dllGlobal: TDataModule},
   ObjCommon in 'obj\ObjCommon.pas',
   ufrmWebDialog in '..\common\ufrmWebDialog.pas' {frmWebDialog},
@@ -38,7 +38,7 @@ uses
   ObjSalesOrderV60 in 'obj\ObjSalesOrderV60.pas',
   ufrmDialogProperty in 'app\ufrmDialogProperty.pas' {frmDialogProperty},
   ObjGetPrice in 'obj\ObjGetPrice.pas',
-  ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
+  ufrmPosOutOrder in 'app\ufrmPosOutOrder.pas' {frmPosOutOrder},
   ObjStockOrderV60 in 'obj\ObjStockOrderV60.pas',
   ObjGoodsInfoV60 in 'obj\ObjGoodsInfoV60.pas',
   ufrmGoodsStorage in 'app\ufrmGoodsStorage.pas' {frmGoodsStorage},
@@ -46,7 +46,7 @@ uses
   ufrmSortDropFrom in 'app\ufrmSortDropFrom.pas' {frmSortDropFrom},
   ufrmGoodsInfoDropForm in 'app\ufrmGoodsInfoDropForm.pas' {frmGoodsInfoDropForm},
   ObjChangeOrderV60 in 'obj\ObjChangeOrderV60.pas',
-  uAdvFactory in 'uAdvFactory.pas',
+  uCacheFactory in 'app\uCacheFactory.pas',
   ufrmGoodsSort in 'app\ufrmGoodsSort.pas' {frmGoodsSort},
   ufrmCustomer in 'app\ufrmCustomer.pas' {frmCustomer},
   ufrmDownStockOrder in 'app\ufrmDownStockOrder.pas' {frmDownStockOrder},
@@ -69,7 +69,9 @@ uses
   ufrmInitGoods in 'app\ufrmInitGoods.pas' {frmInitGoods},
   ObjCustomerV60 in 'obj\ObjCustomerV60.pas',
   uRightsFactory in 'app\uRightsFactory.pas',
-  ufrmUserRights in 'app\ufrmUserRights.pas' {frmUserRights};
+  ufrmUserRights in 'app\ufrmUserRights.pas' {frmUserRights},
+  ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
+  ufrmStockOrder in 'app\ufrmStockOrder.pas' {frmStockOrder};
 
 {$R *.res}
 exports

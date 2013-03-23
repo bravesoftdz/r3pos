@@ -99,15 +99,16 @@ type
     btnPrint: TRzBmpButton;
     btnNav: TRzBmpButton;
     btnPreview: TRzBmpButton;
-    lblModifyUnit: TRzLabel;
-    lblModifyAmt: TRzLabel;
-    lblModifyPrice: TRzLabel;
-    lblHint: TRzLabel;
     barcode: TRzPanel;
     barcode_input_left: TImage;
     barcode_input_right: TImage;
     barcode_input_line: TImage;
     edtInput: TcxTextEdit;
+    helpPanel: TRzPanel;
+    lblModifyUnit: TRzLabel;
+    lblModifyAmt: TRzLabel;
+    lblModifyPrice: TRzLabel;
+    lblHint: TRzLabel;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -145,6 +146,7 @@ type
     procedure N4Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormResize(Sender: TObject);
   private
 
     // 散装条码参数
@@ -220,6 +222,7 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
     function DecodeBarcode(BarCode: string):integer;
+
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -260,7 +263,7 @@ begin
   case inputFlag of
   0:begin
       lblInput.Caption := '输入条码';
-      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按 enter 健';
+      lblHint.Caption := '无法扫码时可用健盘输入条码数字串后按 enter 健';
     end;
   2:begin
       lblInput.Caption := '单位切换';
@@ -272,13 +275,13 @@ begin
     end;
   4:begin
       lblInput.Caption := '输入单价';
-      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按 enter 健,赠送当前商品输入0后按 enter 健';
+      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按 enter 健,赠送商品输入0后按 enter 健';
     end;
   else
     begin
       FinputFlag := 0;
       lblInput.Caption := '输入条码';
-      lblHint.Caption := '请用扫码枪对准商品条码标签，如果无法扫码可用健盘输入条码数字串后按 enter 健';
+      lblHint.Caption := '无法扫码时可用健盘输入条码数字串后按 enter 健';
     end;
   end;
 end;
@@ -286,7 +289,7 @@ end;
 procedure TfrmOrderForm.helpClick(Sender: TObject);
 begin
   inherited;
-//  help.Down := not help.Down;
+  help.Down := not help.Down;
   if help.Down then
      order_input.Height := 147
   else
@@ -341,6 +344,8 @@ begin
   InputFlag := 0;
   advFactory.getAdvPngImage(adv01.Name,adv01.Picture);
   advFactory.getAdvPngImage(adv02.Name,adv02.Picture);
+  help.down := false;
+  if Assigned(help.OnClick) then help.OnClick(help);
 end;
 
 destructor TfrmOrderForm.Destroy;
@@ -370,7 +375,7 @@ begin
   inherited;
   if Key = VK_F1 then
      begin
-       helpClick(nil);
+       if Assigned(help.OnClick) then help.OnClick(help);
      end;
   if Key = VK_F2 then
      begin
@@ -2260,6 +2265,8 @@ begin
     (gdFocused in State) or not DBGridEh1.Focused) then
   begin
     DBGridEh1.Canvas.Brush.Color := clWhite;
+    DbGridEh1.Canvas.Font.Size := DbGridEh1.Canvas.Font.Size+2;
+    DbGridEh1.Canvas.Font.Style := [fsBold];
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then
@@ -2480,6 +2487,12 @@ procedure TfrmOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if not edtInput.Focused then inherited;
 
+end;
+
+procedure TfrmOrderForm.FormResize(Sender: TObject);
+begin
+  inherited;
+  if width <= 1024 then photoPanel.Visible := false else photoPanel.Visible := true;
 end;
 
 end.

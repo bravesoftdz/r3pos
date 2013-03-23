@@ -208,7 +208,7 @@ begin
            TDBGridEh(form.Components[i]).FixedColor := $00FAFAEF;
            TDBGridEh(form.Components[i]).Row1Color := TDBGridEh(form.Components[i]).Color;
            TDBGridEh(form.Components[i]).Row2Color := TDBGridEh(form.Components[i]).FixedColor;
-           TDBGridEh(form.Components[i]).footerColor := $0083E4FF;
+           TDBGridEh(form.Components[i]).footerColor := $00F0E598;//$0083E4FF;
            for j:=0 to TDBGridEh(form.Components[i]).Columns.Count-1 do
               TDBGridEh(form.Components[i]).Columns[j].Title.Color := $00F0E598;
            TDBGridEh(form.Components[i]).Options := TDBGridEh(form.Components[i]).Options - [dgRowSelect];
@@ -231,9 +231,10 @@ begin
   if dbState = dsBrowse then
      begin
        AStyle.BorderStyle := ebsUltraFlat;
-       AStyle.Color := $00EBEBEB;
+       AStyle.Color := clBtnFace;//$00EBEBEB;
        AStyle.Edges := [];
        AStyle.hotTrack := false;
+       AStyle.ButtonTransParency := ebtHideInactive;
      end
   else
      begin
@@ -241,6 +242,7 @@ begin
        AStyle.Color := clWhite;
        AStyle.Edges := [];
        AStyle.hotTrack := false;
+       AStyle.ButtonTransParency := ebtInactive;
      end;
 end;
 procedure SetFrameEditStatus(frame:Tframe;dbState:TDataSetState);
@@ -402,11 +404,13 @@ begin
            begin
              SetEditStyle(dsBrowse,TcxComboBox(form.Components[i]).Style);
              TcxComboBox(form.Components[i]).Properties.ReadOnly := True;
+             TcxComboBox(form.Components[i]).Enabled := false;
            end
            else
            begin
              SetEditStyle(dbState,TcxComboBox(form.Components[i]).Style);
              TcxComboBox(form.Components[i]).Properties.ReadOnly := (dbState=dsBrowse);
+             TcxComboBox(form.Components[i]).Enabled := true;
            end;
          end;
       if form.Components[i] is TcxRadioGroup then
@@ -428,11 +432,13 @@ begin
            begin
              SetEditStyle(dsBrowse,TcxButtonEdit(form.Components[i]).Style);
              TcxButtonEdit(form.Components[i]).Properties.ReadOnly := True;
+             TcxButtonEdit(form.Components[i]).Enabled := false;
            end
            else
            begin
              SetEditStyle(dbState,TcxButtonEdit(form.Components[i]).Style);
              TcxButtonEdit(form.Components[i]).Properties.ReadOnly := (dbState=dsBrowse);
+             TcxButtonEdit(form.Components[i]).Enabled := true;
            end;
          end;
       if form.Components[i] is TcxSpinEdit then
@@ -480,11 +486,13 @@ begin
            begin
              SetEditStyle(dsBrowse,TzrComboBoxList(form.Components[i]).Style);
              TzrComboBoxList(form.Components[i]).Properties.ReadOnly := true;
+             TzrComboBoxList(form.Components[i]).Enabled := false;
            end
            else
            begin
              SetEditStyle(dbState,TzrComboBoxList(form.Components[i]).Style);
              TzrComboBoxList(form.Components[i]).Properties.ReadOnly := (dbState=dsBrowse);
+             TzrComboBoxList(form.Components[i]).Enabled := true;
            end;
          end;
       if form.Components[i] is TcxDateEdit then
@@ -493,11 +501,13 @@ begin
            begin
              SetEditStyle(dsBrowse,TcxDateEdit(form.Components[i]).Style);
              TcxDateEdit(form.Components[i]).Properties.ReadOnly := true;
+             TcxDateEdit(form.Components[i]).Enabled := false;
            end
            else
            begin
              SetEditStyle(dbState,TcxDateEdit(form.Components[i]).Style);
              TcxDateEdit(form.Components[i]).Properties.ReadOnly := (dbState=dsBrowse);
+             TcxDateEdit(form.Components[i]).Enabled := true;
            end;
          end;
       if form.Components[i] is TcxMemo then

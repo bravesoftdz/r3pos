@@ -67,7 +67,7 @@ var
   dataFactory: TdataFactory;
 
 implementation
-uses dllApi;
+uses dllApi,uTokenFactory;
 {$R *.dfm}
 
 { TdataFactory }
@@ -241,6 +241,12 @@ begin
   else
     if remote.InTransaction then Raise Exception.Create('在事务中，不能切换连接');
   end;
+  remote.MoveToDefault;
+  if not token.online then
+     begin
+       dbFlag := 0;
+       Exit;
+     end;
   F := TIniFile.Create(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'r3.cfg');
   try
     if F.ReadString('db','SFVersion','.LCL')='.LCL' then

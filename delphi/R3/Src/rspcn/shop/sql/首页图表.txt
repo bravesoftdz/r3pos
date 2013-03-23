@@ -1,0 +1,62 @@
+//今日提醒 
+select BILL_DATE,sum(OUT_AMOUNT),sum(SALE_MONEY),sum(SALE_MONEY-OUT_MONEY) from RCK_STOCKS_DATA 
+where TENANT_ID=:TENANT_ID and BILL_DATE in (:D1,:D2)
+group by BILL_DATE
+
+
+locate('BILL_DATE',33232)
+
+
+//本月提醒 
+select BILL_DATE / 100,sum(OUT_AMOUNT),sum(SALE_MONEY),sum(SALE_MONEY-OUT_MONEY) from RCK_STOCKS_DATA
+where TENANT_ID=:TENANT_ID and BILL_DATE>:D1 and BILL_DATE<:D2
+group by BILL_DATE / 100
+
+
+BILL_DATE / 100 是整除 不同数据库所有不同，当前为SQLITE写法
+
+//今日排名
+select j.* from (
+select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B
+where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.SALES_DATE=:D1
+group by A.GODS_ID,B.GODS_NAME
+) order by CALC_MONEY limit 10
+
+limit 5 是sqlite写法，其他要分开写
+
+//本月排名
+select j.* from (
+select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B
+where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2
+group by A.GODS_ID,B.GODS_NAME
+) order by CALC_MONEY limit 10
+
+
+
+//取库存
+
+select count(distinct A.GODS_ID) as GODS_AMT,sum(A.AMOUNT) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from 
+STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID
+
+
+select j.* from (
+select A.GODS_ID,B.GODS_NAME,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as PRF_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B
+where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and B.RELATION_ID=1000006
+group by A.GODS_ID,B.GODS_NAME
+) order by PRF_MONEY limit 10
+
+
+主界面应用图标的链接清单
+
+商品销售：rspcn://shop.dll/TfrmSaleOrder
+非烟入库：rspcn://shop.dll/TfrmStockOrder
+卷烟入库：rspcn://shop.dll/TfrmDownStockOrder
+商品库存：rspcn://shop.dll/TfrmGoodsStorage
+经营分析：rspcn://local-in/report.html
+会员管理：rspcn://shop.dll/TfrmCustomer
+
+
+进货统计报表:rspcn://shop.dll/TfrmStockReport
+销售统计报表:rspcn://shop.dll/TfrmSaleReport
+库存统计报表:rspcn://shop.dll/TfrmStorageReport
+利润分析报表:rspcn://shop.dll/TfrmProfitReport

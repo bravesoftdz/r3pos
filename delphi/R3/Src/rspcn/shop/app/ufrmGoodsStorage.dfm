@@ -3234,7 +3234,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 12
+          TabOrder = 11
           object RzPanel21: TRzPanel
             Left = 2
             Top = 2
@@ -3299,7 +3299,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 11
+          TabOrder = 12
           object RzPanel39: TRzPanel
             Left = 2
             Top = 2

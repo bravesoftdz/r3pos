@@ -4,6 +4,7 @@ inherited frmWebDialogForm: TfrmWebDialogForm
   Caption = 'frmWebDialogForm'
   ClientHeight = 720
   ClientWidth = 1262
+  Color = 15461355
   OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96

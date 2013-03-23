@@ -1,0 +1,49 @@
+    'CREATE TABLE RCK_STOCKS_DATA '+
+    '( '+
+    '	ID char (36) NOT NULL , '+
+    '	TENANT_ID int NOT NULL , '+
+    '	SHOP_ID varchar (13) NOT NULL , '+
+    '	BILL_ID char (36) NOT NULL , '+
+    '	BILL_CODE varchar (20) NULL , '+
+    '	BILL_TYPE int NOT NULL , '+
+    '	BILL_NAME varchar (10) NULL , '+
+    '	BILL_DATE int NOT NULL , '+
+    '	SEQNO int NOT NULL , '+
+    '	RELATION_ID int NOT NULL , '+
+    '	GODS_ID char (36) NOT NULL , '+
+    '	GODS_CODE varchar (20) NOT NULL , '+
+    '	GODS_NAME varchar (50) NOT NULL , '+
+    '	BARCODE varchar (30) NULL , '+
+    '	SORT_ID varchar (36) NOT NULL , '+
+    '	SORT_NAME varchar (10) NULL , '+
+    '	CLIENT_ID varchar (36) NOT NULL , '+
+    '	CLIENT_CODE varchar (20) NULL , '+
+    '	CLIENT_NAME varchar (50) NULL , '+
+    '	UNIT_ID varchar (36) NOT NULL , '+
+    '	UNIT_NAME varchar (10) NULL , '+
+    '	CONV_RATE decimal(18, 3) NOT NULL , '+
+    ' BATCH_NO varchar (36) NOT NULL £¬ '+
+    ' PROPERTY_01 varchar (36) NOT NULL , '+
+    ' PROPERTY_02 varchar (36) NOT NULL , '+
+    '	IN_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	IN_PRICE  decimal(18, 6) NOT NULL DEFAULT 0, '+
+    '	IN_MONEY  decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	IN_TAX  decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' OUT_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' OUT_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
+    ' OUT_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' SALE_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
+    ' SALE_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' SALE_TAX decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
+    ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	GUIDE_USER varchar (36) NULL , '+
+    '	GUIDE_NAME varchar (20) NULL , '+
+    '	CREA_USER varchar (36) NULL , '+
+    '	CREA_NAME varchar (20) NULL , '+
+    '	CONSTRAINT PK_RCK_STOCKS_DATA PRIMARY KEY  '+
+    '	( '+
+    '		ID '+
+    '	) '+
+    ')'

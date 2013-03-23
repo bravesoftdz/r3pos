@@ -5,6 +5,7 @@ inherited frmOrderForm: TfrmOrderForm
   ClientHeight = 522
   ClientWidth = 904
   OnKeyDown = FormKeyDown
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -116,51 +117,6 @@ inherited frmOrderForm: TfrmOrderForm
                   0000ECECECFFFFFF0000ECECECFFFFFF0000}
                 Stretch = True
               end
-              object lblModifyUnit: TRzLabel
-                Left = 17
-                Top = 54
-                Width = 88
-                Height = 20
-                Caption = #20462#25913#21333#20301'  [F2] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object lblModifyAmt: TRzLabel
-                Left = 17
-                Top = 76
-                Width = 88
-                Height = 20
-                Caption = #20462#25913#25968#37327'  [F3] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object lblModifyPrice: TRzLabel
-                Left = 17
-                Top = 98
-                Width = 88
-                Height = 20
-                Caption = #20462#25913#21333#20215'  [F4] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
               object lblHint: TRzLabel
                 Left = 329
                 Top = 13
@@ -183,7 +139,6 @@ inherited frmOrderForm: TfrmOrderForm
                 Height = 16
                 AllowAllUp = True
                 GroupIndex = 3
-                Down = True
                 Bitmaps.Down.Data = {
                   36030000424D3603000000000000360000002800000010000000100000000100
                   18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
@@ -242,6 +197,7 @@ inherited frmOrderForm: TfrmOrderForm
                 Color = clBtnFace
                 Anchors = [akTop, akRight]
                 TabOrder = 0
+                Visible = False
                 OnClick = helpClick
               end
               object barcode_top: TRzPanel
@@ -481,6 +437,62 @@ inherited frmOrderForm: TfrmOrderForm
                   OnKeyPress = edtInputKeyPress
                 end
               end
+              object helpPanel: TRzPanel
+                Left = 198
+                Top = 53
+                Width = 465
+                Height = 68
+                Anchors = [akTop, akRight]
+                BorderOuter = fsNone
+                BorderColor = 15461355
+                Color = 14606046
+                TabOrder = 4
+                object lblModifyUnit: TRzLabel
+                  Left = 17
+                  Top = 0
+                  Width = 88
+                  Height = 20
+                  Caption = #20462#25913#21333#20301'  [F2] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object lblModifyAmt: TRzLabel
+                  Left = 17
+                  Top = 24
+                  Width = 88
+                  Height = 20
+                  Caption = #20462#25913#25968#37327'  [F3] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object lblModifyPrice: TRzLabel
+                  Left = 17
+                  Top = 48
+                  Width = 88
+                  Height = 20
+                  Caption = #20462#25913#21333#20215'  [F4] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
             end
           end
           object order_header: TRzPanel
@@ -520,6 +532,11 @@ inherited frmOrderForm: TfrmOrderForm
               Color = 16185078
               DataSource = dsTable
               Flat = True
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
               FooterColor = clWindow
               FooterFont.Charset = GB2312_CHARSET
               FooterFont.Color = clBlack
@@ -530,8 +547,9 @@ inherited frmOrderForm: TfrmOrderForm
               FrozenCols = 2
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghHighlightFocus, dghClearSelection]
+              ParentFont = False
               PopupMenu = PopupMenu1
-              RowHeight = 25
+              RowHeight = 30
               SumList.Active = True
               TabOrder = 0
               TitleFont.Charset = GB2312_CHARSET
@@ -540,7 +558,6 @@ inherited frmOrderForm: TfrmOrderForm
               TitleFont.Name = #23435#20307
               TitleFont.Style = []
               TitleHeight = 30
-              UseMultiTitle = True
               IsDrawNullRow = True
               CurrencySymbol = #65509
               DecimalNumber = 2

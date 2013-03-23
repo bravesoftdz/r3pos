@@ -45,145 +45,6 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Left = 872
                 Height = 113
               end
-              inherited lblHint: TRzLabel
-                Anchors = [akLeft, akTop, akRight]
-                Font.Color = clGray
-              end
-              object RzLabel7: TRzLabel [8]
-                Left = 144
-                Top = 54
-                Width = 90
-                Height = 20
-                Caption = #36192#36865'/'#20817#25442' [F5] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel8: TRzLabel [9]
-                Left = 144
-                Top = 76
-                Width = 88
-                Height = 20
-                Caption = #20250#21592#21345#21495'  [F6] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel9: TRzLabel [10]
-                Left = 144
-                Top = 98
-                Width = 83
-                Height = 20
-                Caption = #23548' '#36141' '#21592'  [F7] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel10: TRzLabel [11]
-                Left = 275
-                Top = 54
-                Width = 62
-                Height = 20
-                Caption = #28165#23631'  [F8] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel11: TRzLabel [12]
-                Left = 275
-                Top = 76
-                Width = 62
-                Height = 20
-                Caption = #25346#21333'  [F9] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel12: TRzLabel [13]
-                Left = 275
-                Top = 98
-                Width = 70
-                Height = 20
-                Caption = #21462#21333'  [F10] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel13: TRzLabel [14]
-                Left = 386
-                Top = 54
-                Width = 96
-                Height = 20
-                Caption = #25972#21333#35843#20215'  [F11] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel14: TRzLabel [15]
-                Left = 386
-                Top = 76
-                Width = 95
-                Height = 20
-                Caption = #25910#27454#26041#24335'  [ *   ] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 6570814
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel15: TRzLabel [16]
-                Left = 386
-                Top = 98
-                Width = 95
-                Height = 20
-                Caption = #25910#38134#32467#36134'  [ +  ] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 6572100
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
               inherited help: TRzBmpButton
                 Left = 842
               end
@@ -217,10 +78,10 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Tag = -1
                 end
               end
-              object RzPanel19: TRzPanel
-                Left = 512
+              object RzPanel19: TRzPanel [9]
+                Left = 16
                 Top = 59
-                Width = 346
+                Width = 406
                 Height = 56
                 Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsNone
@@ -234,10 +95,13 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Style = []
                 ParentFont = False
                 TabOrder = 1
+                DesignSize = (
+                  406
+                  56)
                 object Image5: TImage
                   Left = 5
                   Top = 0
-                  Width = 336
+                  Width = 396
                   Height = 56
                   Align = alClient
                   AutoSize = True
@@ -265,12 +129,13 @@ inherited frmSaleOrder: TfrmSaleOrder
                 object MarqueeStatus: TRzMarqueeStatus
                   Left = 5
                   Top = 2
-                  Width = 336
+                  Width = 396
                   Height = 52
                   FrameStyle = fsNone
+                  Anchors = [akLeft, akTop, akRight]
                   Color = 15461355
                   Font.Charset = GB2312_CHARSET
-                  Font.Color = clGray
+                  Font.Color = clMaroon
                   Font.Height = -24
                   Font.Name = #23435#20307
                   Font.Style = []
@@ -322,7 +187,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Stretch = True
                 end
                 object Image4: TImage
-                  Left = 341
+                  Left = 401
                   Top = 0
                   Width = 5
                   Height = 56
@@ -363,6 +228,158 @@ inherited frmSaleOrder: TfrmSaleOrder
                     DE00C6C6C6B7B7B7C5C5C5DEDEDEDEDEDE00A6A6A6C8C8C8DEDEDEDEDEDEDEDE
                     DE00}
                   Stretch = True
+                end
+              end
+              inherited helpPanel: TRzPanel
+                Left = 430
+                Width = 430
+                TabOrder = 5
+                inherited lblModifyUnit: TRzLabel
+                  Left = 9
+                  Top = 2
+                end
+                inherited lblModifyAmt: TRzLabel
+                  Left = 9
+                  Top = 23
+                end
+                inherited lblModifyPrice: TRzLabel
+                  Left = 9
+                  Top = 44
+                end
+                object RzLabel7: TRzLabel
+                  Left = 127
+                  Top = 2
+                  Width = 90
+                  Height = 20
+                  Caption = #36192#36865'/'#20817#25442' [F5] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel8: TRzLabel
+                  Left = 127
+                  Top = 23
+                  Width = 88
+                  Height = 20
+                  Caption = #20250#21592#21345#21495'  [F6] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel9: TRzLabel
+                  Left = 127
+                  Top = 44
+                  Width = 83
+                  Height = 20
+                  Caption = #23548' '#36141' '#21592'  [F7] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel12: TRzLabel
+                  Left = 235
+                  Top = 44
+                  Width = 70
+                  Height = 20
+                  Caption = #21462#21333'  [F10] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel11: TRzLabel
+                  Left = 235
+                  Top = 23
+                  Width = 62
+                  Height = 20
+                  Caption = #25346#21333'  [F9] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel10: TRzLabel
+                  Left = 235
+                  Top = 2
+                  Width = 62
+                  Height = 20
+                  Caption = #28165#23631'  [F8] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel13: TRzLabel
+                  Left = 329
+                  Top = 2
+                  Width = 96
+                  Height = 20
+                  Caption = #25972#21333#35843#20215'  [F11] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel14: TRzLabel
+                  Left = 329
+                  Top = 23
+                  Width = 95
+                  Height = 20
+                  Caption = #25910#27454#26041#24335'  [ *   ] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 6570814
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel15: TRzLabel
+                  Left = 329
+                  Top = 44
+                  Width = 95
+                  Height = 20
+                  Caption = #25910#38134#32467#36134'  [ +  ] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 6572100
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
                 end
               end
             end
@@ -587,6 +604,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #24207#21495
                   Title.Color = 15787416
                   Width = 37
@@ -599,6 +617,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footer.Value = #21512#35745
                   Footer.ValueType = fvtStaticText
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #21830#21697#21517#31216
                   Title.Color = 15787416
                   Width = 195
@@ -612,6 +631,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #36135#21495
                   Title.Color = 15787416
                 end
@@ -622,17 +642,20 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #26465#30721
                   Title.Color = 15787416
                   Width = 104
                 end
                 item
+                  Alignment = taCenter
                   Color = clWhite
                   EditButtons = <>
                   FieldName = 'UNIT_ID'
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #21333#20301
                   Title.Color = 15787416
                   Width = 35
@@ -648,6 +671,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footer.DisplayFormat = '#0.###'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #25968#37327
                   Title.Color = 15787416
                   Width = 49
@@ -660,6 +684,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   FieldName = 'APRICE'
                   Footer.DisplayFormat = '#0.00#'
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #21333#20215
                   Title.Color = 15787416
                   Width = 60
@@ -676,6 +701,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #37329#39069
                   Title.Color = 15787416
                   Width = 68
@@ -686,6 +712,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   EditButtons = <>
                   FieldName = 'AGIO_RATE'
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #25240#25187
                   Title.Color = 15787416
                   Width = 46
@@ -702,6 +729,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #35753#21033
                   Title.Color = 15787416
                   Width = 69
@@ -711,6 +739,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #22791#27880
                   Title.Color = 15787416
                   Width = 111
@@ -3605,7 +3634,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Height = 26
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #32467#31639#37329#39069
+                  Caption = #24212#25910#37329#39069
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -3730,7 +3759,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Height = 30
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #29616#37329#25910#27454
+                  Caption = #26412#27425#25910#27454
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -3834,8 +3863,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3919,8 +3948,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -4474,7 +4503,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
-                  Title.Caption = #32467#31639#37329#39069
+                  Title.Caption = #24212#25910#37329#39069
                   Title.Color = 15787416
                 end
                 item
@@ -4835,7 +4864,7 @@ inherited frmSaleOrder: TfrmSaleOrder
     Top = 392
   end
   inherited Timer1: TTimer
-    Left = 176
+    Left = 32
     Top = 128
   end
 end

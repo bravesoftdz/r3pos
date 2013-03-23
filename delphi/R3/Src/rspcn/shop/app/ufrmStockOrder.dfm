@@ -37,141 +37,6 @@ inherited frmStockOrder: TfrmStockOrder
               inherited lblHint: TRzLabel
                 Anchors = [akLeft, akTop, akRight]
               end
-              object RzLabel1: TRzLabel [8]
-                Left = 151
-                Top = 54
-                Width = 88
-                Height = 20
-                Caption = #25913#20026#36192#21697'  [F5] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel2: TRzLabel [9]
-                Left = 151
-                Top = 76
-                Width = 83
-                Height = 20
-                Caption = #20379' '#24212' '#21830'  [F6] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel3: TRzLabel [10]
-                Left = 151
-                Top = 98
-                Width = 83
-                Height = 20
-                Caption = #25910' '#36135' '#21592'  [F7] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel4: TRzLabel [11]
-                Left = 275
-                Top = 54
-                Width = 62
-                Height = 20
-                Caption = #28165#23631'  [F8] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel5: TRzLabel [12]
-                Left = 275
-                Top = 76
-                Width = 62
-                Height = 20
-                Caption = #25346#21333'  [F9] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel12: TRzLabel [13]
-                Left = 275
-                Top = 98
-                Width = 70
-                Height = 20
-                Caption = #21462#21333'  [F10] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel15: TRzLabel [14]
-                Left = 386
-                Top = 98
-                Width = 95
-                Height = 20
-                Caption = #20445#23384#21333#25454'  [ +  ] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 6572100
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel14: TRzLabel [15]
-                Left = 386
-                Top = 76
-                Width = 95
-                Height = 20
-                Caption = #25910#27454#26041#24335'  [ *   ] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 6570814
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
-              object RzLabel13: TRzLabel [16]
-                Left = 386
-                Top = 54
-                Width = 96
-                Height = 20
-                Caption = #25972#21333#35843#20215'  [F11] '
-                Font.Charset = GB2312_CHARSET
-                Font.Color = 3092271
-                Font.Height = -13
-                Font.Name = #24494#36719#38597#40657
-                Font.Style = []
-                ParentFont = False
-                ShadowDepth = 1
-                TextStyle = tsShadow
-              end
               inherited help: TRzBmpButton
                 Left = 813
               end
@@ -197,7 +62,309 @@ inherited frmStockOrder: TfrmStockOrder
               inherited barcode: TRzPanel
                 inherited edtInput: TcxTextEdit
                   Tag = -1
-                  Hint = #25195#30721#25353' pause '#20581
+                end
+              end
+              inherited helpPanel: TRzPanel
+                Left = 414
+                Width = 417
+                inherited lblModifyUnit: TRzLabel
+                  Left = 5
+                  Top = 2
+                end
+                inherited lblModifyAmt: TRzLabel
+                  Left = 5
+                  Top = 23
+                end
+                inherited lblModifyPrice: TRzLabel
+                  Left = 5
+                  Top = 44
+                end
+                object RzLabel1: TRzLabel
+                  Left = 115
+                  Top = 2
+                  Width = 90
+                  Height = 20
+                  Caption = #36192#36865'/'#20817#25442' [F5] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel2: TRzLabel
+                  Left = 115
+                  Top = 23
+                  Width = 83
+                  Height = 20
+                  Caption = #20379' '#24212' '#21830'  [F6] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel3: TRzLabel
+                  Left = 115
+                  Top = 44
+                  Width = 83
+                  Height = 20
+                  Caption = #25910' '#36135' '#21592'  [F7] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel12: TRzLabel
+                  Left = 223
+                  Top = 44
+                  Width = 70
+                  Height = 20
+                  Caption = #21462#21333'  [F10] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel4: TRzLabel
+                  Left = 223
+                  Top = 23
+                  Width = 62
+                  Height = 20
+                  Caption = #25346#21333'  [F9] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel5: TRzLabel
+                  Left = 223
+                  Top = 2
+                  Width = 62
+                  Height = 20
+                  Caption = #28165#23631'  [F8] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel13: TRzLabel
+                  Left = 317
+                  Top = 2
+                  Width = 96
+                  Height = 20
+                  Caption = #25972#21333#35843#20215'  [F11] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 3092271
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel14: TRzLabel
+                  Left = 317
+                  Top = 23
+                  Width = 95
+                  Height = 20
+                  Caption = #20184#27454#26041#24335'  [ *   ] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 6570814
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+                object RzLabel15: TRzLabel
+                  Left = 316
+                  Top = 44
+                  Width = 95
+                  Height = 20
+                  Caption = #20445#23384#21333#25454'  [ +  ] '
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = 6572100
+                  Font.Height = -13
+                  Font.Name = #24494#36719#38597#40657
+                  Font.Style = []
+                  ParentFont = False
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object RzPanel19: TRzPanel
+                Left = 16
+                Top = 59
+                Width = 384
+                Height = 56
+                Anchors = [akLeft, akTop, akRight]
+                BorderOuter = fsNone
+                BorderColor = clGray
+                Caption = #23454#25910#65306'1000 '#25214#38646#65306'90'
+                Color = clBlack
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clRed
+                Font.Height = -24
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentFont = False
+                TabOrder = 5
+                DesignSize = (
+                  384
+                  56)
+                object Image5: TImage
+                  Left = 5
+                  Top = 0
+                  Width = 374
+                  Height = 56
+                  Align = alClient
+                  AutoSize = True
+                  Picture.Data = {
+                    07544269746D617016020000424D160200000000000036000000280000000200
+                    00003C0000000100180000000000E0010000120B0000120B0000000000000000
+                    0000FFFFFFFFFFFF0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC0000ECECECECECEC
+                    0000ECECECECECEC0000ECECECECECEC0000CDCDCDCDCDCD0000929292929292
+                    0000}
+                  Stretch = True
+                end
+                object MarqueeStatus: TRzMarqueeStatus
+                  Left = 5
+                  Top = 2
+                  Width = 373
+                  Height = 52
+                  FrameStyle = fsNone
+                  Anchors = [akLeft, akTop, akRight]
+                  Color = 15461355
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clMaroon
+                  Font.Height = -24
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentColor = False
+                  ParentFont = False
+                  ScrollType = stNone
+                end
+                object Image6: TImage
+                  Left = 0
+                  Top = 0
+                  Width = 5
+                  Height = 56
+                  Align = alLeft
+                  AutoSize = True
+                  Picture.Data = {
+                    07544269746D6170F6030000424DF60300000000000036000000280000000500
+                    00003C0000000100180000000000C0030000120B0000120B0000000000000000
+                    0000DEDEDEDEDEDEDEDEDEE6E6E6F5F5F500DEDEDEDEDEDEDDDDDDDDDDDDE4E4
+                    E400DEDEDEC5C5C5CFCFCFE7E7E7ECECEC00C9C9C9BBBBBBE2E2E2ECECECECEC
+                    EC00A2A2A2C9C9C9E9E9E9ECECECECECEC00969696CDCDCDEBEBEBECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00929292CDCDCDECECECECECECECEC
+                    EC00929292CDCDCDECECECECECECECECEC00919191CDCDCDEBEBEBECECECECEC
+                    EC008F8F8FC9C9C9E9E9E9ECECECECECEC008D8D8DBABABAE2E2E2ECECECECEC
+                    EC00949494A0A0A0CFCFCFE7E7E7ECECEC00C4C4C4878787ABABABCECECEE1E1
+                    E100DEDEDEAEAEAE8686869F9F9FB7B7B700DEDEDEDEDEDEC4C4C49B9B9B8F8F
+                    8F00}
+                  Stretch = True
+                end
+                object Image7: TImage
+                  Left = 379
+                  Top = 0
+                  Width = 5
+                  Height = 56
+                  Align = alRight
+                  AutoSize = True
+                  Picture.Data = {
+                    07544269746D6170F6030000424DF60300000000000036000000280000000500
+                    00003C0000000100180000000000C0030000120B0000120B0000000000000000
+                    0000FCFCFCF5F5F5E6E6E6DEDEDEDEDEDE00EFEFEFF8F8F8FFFFFFEEEEEEDEDE
+                    DE00ECECECECECECF4F4F4FFFFFFE6E6E600ECECECECECECECECECF8F8F8F7F7
+                    F700ECECECECECECECECECEEEEEEFDFDFD00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECECECECFFFF
+                    FF00ECECECECECECECECECECECECFFFFFF00ECECECECECECECECECEBEBEBFFFF
+                    FF00ECECECECECECECECECE9E9E9FDFDFD00ECECECECECECECECECE4E4E4F7F7
+                    F700ECECECECECECE7E7E7DADADAE6E6E600E8E8E8E1E1E1CFCFCFDEDEDEDEDE
+                    DE00C6C6C6B7B7B7C5C5C5DEDEDEDEDEDE00A6A6A6C8C8C8DEDEDEDEDEDEDEDE
+                    DE00}
+                  Stretch = True
                 end
               end
             end
@@ -433,6 +600,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #24207#21495
                   Title.Color = 15787416
                   Width = 37
@@ -444,6 +612,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footer.Value = #21512#35745
                   Footer.ValueType = fvtStaticText
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #21830#21697#21517#31216
                   Title.Color = 15787416
                   Width = 195
@@ -456,6 +625,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #36135#21495
                   Title.Color = 15787416
                 end
@@ -465,16 +635,19 @@ inherited frmStockOrder: TfrmStockOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #26465#30721
                   Title.Color = 15787416
                   Width = 104
                 end
                 item
+                  Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'UNIT_ID'
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #21333#20301
                   Title.Color = 15787416
                   Width = 35
@@ -489,6 +662,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footer.DisplayFormat = '#0.###'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #25968#37327
                   Title.Color = 15787416
                   Width = 49
@@ -499,6 +673,7 @@ inherited frmStockOrder: TfrmStockOrder
                   EditButtons = <>
                   FieldName = 'APRICE'
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #21333#20215
                   Title.Color = 15787416
                   Width = 60
@@ -514,6 +689,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #37329#39069
                   Title.Color = 15787416
                   Width = 68
@@ -523,6 +699,7 @@ inherited frmStockOrder: TfrmStockOrder
                   EditButtons = <>
                   FieldName = 'AGIO_RATE'
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #25240#25187
                   Title.Color = 15787416
                   Width = 46
@@ -538,6 +715,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footers = <>
                   ReadOnly = True
                   Tag = 1
+                  Title.Alignment = taCenter
                   Title.Caption = #35753#21033
                   Title.Color = 15787416
                   Width = 69
@@ -546,19 +724,21 @@ inherited frmStockOrder: TfrmStockOrder
                   EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
+                  Title.Alignment = taCenter
                   Title.Caption = #22791#27880
                   Title.Color = 15787416
                   Width = 111
                 end>
             end
             inherited fndGODS_ID: TzrComboBoxList
-              Left = 320
+              Left = 312
               Top = 107
               Style.BorderStyle = ebsFlat
               Style.ButtonStyle = btsUltraFlat
             end
             inherited fndUNIT_ID: TcxComboBox
-              Top = 112
+              Left = 248
+              Top = 104
               Style.BorderStyle = ebsFlat
               Style.ButtonStyle = btsUltraFlat
             end
@@ -1298,7 +1478,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Height = 26
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #32467#31639#37329#39069
+                  Caption = #24212#20184#37329#39069
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -1379,7 +1559,7 @@ inherited frmStockOrder: TfrmStockOrder
             end
             object edtBK_PAY_TOTAL: TRzPanel
               Left = 317
-              Top = 58
+              Top = 57
               Width = 318
               Height = 35
               Anchors = [akTop, akRight]
@@ -1423,7 +1603,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Height = 30
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #29616#37329#20184#27454
+                  Caption = #26412#27425#20184#27454
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -3658,8 +3838,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3743,8 +3923,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -4298,7 +4478,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
-                  Title.Caption = #32467#31639#37329#39069
+                  Title.Caption = #24212#20184#37329#39069
                   Title.Color = 15787416
                 end
                 item

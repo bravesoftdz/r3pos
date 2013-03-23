@@ -1,0 +1,30 @@
+oracle:
+那用lag
+create table t_oi
+(oper_date varchar2(10),
+  amt_in  number,
+  amt_out number);
+insert into t_oi('20070801',100,0);
+insert into t_oi('20070802',50,30);
+insert into t_oi('20070803',60,10);
+insert into t_oi('20070804',0,80);
+insert into t_oi('20070805',360,100);
+insert into t_oi('20070806',30,70);
+
+--希望得到每笔记录的初始和最后库存
+select oper_date,lag(amt_calc,1,0) over(order by oper_date) amt_begin,amt_in,amt_out,amt_calc from
+(select oper_date,amt_in,amt_out,sum(amt_in-amt_out) over (order by oper_date rows unbounded PRECEDING) amt_calc from t_oi a);
+OPER_DATE   AMT_BEGIN     AMT_IN    AMT_OUT   AMT_CALC
+---------- ---------- ---------- ---------- ----------
+20070801            0        100          0        100
+20070802          100         50         30        120
+20070803          120         60         10        170
+20070804          170          0         80         90
+20070805           90        360        100        350
+20070806          350         30         70        310
+
+参考一下
+
+
+select lastmount,productId from (
+select lastamount,productId,seqno,max(seqno) over( partition by productid ) max_no) where seqno = max_no

@@ -23,7 +23,8 @@ implementation
 procedure TfrmWebDialogForm.FormCreate(Sender: TObject);
 begin
   inherited;
-  bkgImage.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'\built-in\images\bkg.png'); 
+  if fileExists(ExtractFilePath(Application.ExeName)+'\images\bkg.png') then
+     bkgImage.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'\images\bkg.png');
 end;
 
 end.

@@ -38,6 +38,7 @@ type
     Fhandle: THandle;
     procedure Sethandle(const Value: THandle);
   public
+    function getDllClass(name:string):TPersistentClass;
     procedure dllException(Sender: TObject; E: Exception);
     property handle:THandle read Fhandle write Sethandle;
   end;
@@ -47,6 +48,7 @@ var
   dbHelp:IdbDllHelp;
   dllApplication:TdllApplication;
 implementation
+uses udllGlobal;
 var
   webForm:TStringList;
   oldHandle:THandle;
@@ -98,7 +100,7 @@ var
 begin
   try
     if token.tenantId='' then moduId:='TfrmSysDefine';
-    pClass := GetClass(strpas(moduId));
+    pClass := dllApplication.getDllClass(strpas(moduId));
     if pClass = nil then Raise Exception.Create(strPas(moduId)+'类名没找到.');
     Form := TFormClass(pClass).Create(application) as TfrmWebForm;
     webForm.AddObject(moduid,Form);
@@ -183,6 +185,20 @@ begin
   else
      wnd := Application.Handle;
   MessageBox(wnd,pchar(E.Message),'出错了',MB_OK+MB_ICONERROR);
+end;
+
+function TdllApplication.getDllClass(name: string): TPersistentClass;
+begin
+  if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+     begin
+       name := 'TfrmPosOutOrder';
+     end
+  else
+  if (lowercase(name)='tfrmstockorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+     begin
+       name := 'TfrmPosInOrder';
+     end;
+  result := getClass(name);
 end;
 
 procedure TdllApplication.Sethandle(const Value: THandle);

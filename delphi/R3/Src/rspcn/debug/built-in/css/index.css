@@ -2,7 +2,7 @@
 a { color:#505050; }
 a:hover { color:#0B67AC; text-decoration:none;}
 body {height:100%; color:#505050;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
-.main{ background:url(../images/main_bg.jpg) repeat-x; height:650px;}
+.main{ background:url(../images/main_bg.jpg) repeat; height:100%;}
 
 /*左边主页面样式*/
 .left_table{min-width:500px; margin-left:10px; width:95%;}
@@ -14,11 +14,12 @@ body {height:100%; color:#505050;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft
 .myapp_ico div a{  color:#505050; font-size:14px;font-weight: normal;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei";}
 .move{clear:both; margin:35px 0px 10px 0px; height:156px; width:100%;background:url(../images/main_bg.jpg) repeat-x;}
 .link_title{clear:both; margin-top:30px; margin-bottom:10px; margin-right:0px;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
-.link_box{background:url(../images/link_bg.png) repeat-x; width:100%;height:77px; margin-left:0px;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
-.link_left{width:5px; height:77px; margin:0px;}
-.link_right{height:77px; margin-right:0px;}
-.link_text{width:100%; float:left;text-align:center; margin:10px 15px 0px 15px;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
-.link_box a{color:#505050; margin:15px 5px 10px 5px; font-size:14px;line-height:30px; text-align:center; font-weight: normal;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
+.link_box{ position:relative;background:url(../images/link_bg.png) repeat-x; width:100%;height:77px;font-family:"\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
+.link_left{ position:static; float:left;width:5px; height:77px; margin:0px;}
+.link_center{width:100%; position:absolute; text-align:center;}
+.link_right{ position:static; float:right;height:77px; margin-right:0px; width:5px;}
+.link_text{ position:static; text-align:center; margin:10px 15px 0px 0px;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
+.link_text a{color:#505050; margin:15px 5px 10px 5px; font-size:14px;line-height:30px; text-align:center; font-weight: normal;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; }
 /*左边报表样式*/
 .right_table{min-width:273px; margin-left:0px; margin-right:10px;}
 .message{ width:273px; clear: both;}
@@ -36,11 +37,11 @@ body {height:100%; color:#505050;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft
 .col_value{ border:1px solid #95999B; height:18px; line-height:16px; text-align:right;}
 
 /*图片跑马灯效果*/
-#demo {overflow:hidden;border: 0px;height:155px;margin:0px 2px 0px 0px;}
+#demo {border: 0px;height:155px;margin:0px 2px 0px 0px; position:relative; overflow:hidden;}
 #demo img {border: 0px solid #F2F2F2;}
-#indemo {float: left;width: 800%;}
-#demo1 {float: left;}
-#demo2 {float: left;}
+#indemo {float: left;width: 800%; position:absolute;}
+#demo1 {float: left; position:relative;}
+#demo2 {float: left; position:relative;}
 
 /*无图片的圆角框*/
 .holder2 {color:#000;}
@@ -61,7 +62,7 @@ body {height:100%; color:#505050;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft
 .report_total_left{ float:left;}
 .report_total_text{ float:left; margin-left:10px;}
 .report_total_text .type{ padding-top:15px; color:#3C3C3C; font-weight:bold;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; line-height:30px;}
-.report_total_text .type a{ color:#3C3C3C;}
+.report_total_text .type a{ color:#3C3C3C; font-size:14px;color:#3C3C3C; font-weight:bold;font-family: "\5FAE\8F6F\96C5\9ED1", "Microsoft YaHei"; line-height:30px;}
 .report_total_text .detail{ margin-left:25px; line-height:25px;}
 .report_total_text .type img{ vertical-align:middle;}
 .report_total_right{ float:right;}

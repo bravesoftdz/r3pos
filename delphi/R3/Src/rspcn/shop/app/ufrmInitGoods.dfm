@@ -1,6 +1,6 @@
 inherited frmInitGoods: TfrmInitGoods
-  Left = 404
-  Top = 126
+  Left = 359
+  Top = 154
   Caption = #21830#21697#21021#22987#21270#21521#23548
   ClientHeight = 425
   ClientWidth = 613
@@ -219,8 +219,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel11: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 76
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#26465#24418#30721
@@ -294,8 +294,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel12: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 308
-                  Height = 26
+                  Width = 167
+                  Height = 16
                   Align = alClient
                   Caption = '  '#28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
                   Font.Charset = GB2312_CHARSET
@@ -430,8 +430,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel13: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26465' '#22411' '#30721
@@ -501,8 +501,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel14: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#36135#21495
@@ -572,8 +572,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel15: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#21517#31216
@@ -643,8 +643,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel16: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#31867#21035
@@ -723,8 +723,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel17: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #35745#37327#21333#20301
@@ -832,8 +832,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel18: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36827' '#36135' '#20215
@@ -902,8 +902,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel19: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #38646' '#21806' '#20215
@@ -972,8 +972,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel20: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #24215#20869#21806#20215

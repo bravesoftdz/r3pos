@@ -207,7 +207,7 @@ type
 implementation
 
 uses uRspFactory,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uAdvFactory,uSyncFactory,uRspSyncFactory;
+     uCacheFactory,uSyncFactory,uRspSyncFactory;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -265,7 +265,7 @@ end;
 procedure TfrmInitGoods.FormShow(Sender: TObject);
 begin
   inherited;
-  advFactory.getAdvPngImage(adv03.Name,adv03.Picture);
+  CacheFactory.getAdvPngImage(adv03.Name,adv03.Picture);
   if CanFocus(edtInput) then edtInput.SetFocus
   else if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
 end;

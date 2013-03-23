@@ -25,6 +25,7 @@ type
     edtSORT_NAME: TcxTextEdit;
     btnSave: TRzBmpButton;
     btnClose: TRzBmpButton;
+    RzLabel26: TRzLabel;
     procedure edtSUP_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure edtSUP_SORT_IDKeyPress(Sender: TObject; var Key: Char);

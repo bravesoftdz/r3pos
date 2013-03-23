@@ -2,7 +2,7 @@ inherited frmGoodsSort: TfrmGoodsSort
   Left = 521
   Top = 272
   Caption = #21830#21697#20998#31867
-  ClientHeight = 192
+  ClientHeight = 185
   ClientWidth = 339
   OldCreateOrder = True
   PixelsPerInch = 96
@@ -29,13 +29,26 @@ inherited frmGoodsSort: TfrmGoodsSort
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object RzLabel26: TRzLabel [5]
+      Left = 10
+      Top = 7
+      Width = 61
+      Height = 16
+      Alignment = taCenter
+      Caption = #21830#21697#20998#31867
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
     inherited RzBmpButton2: TRzBmpButton
       Left = 314
     end
   end
   inherited RzPanel1: TRzPanel
     Width = 339
-    Height = 162
+    Height = 155
     object RzPanel45: TRzPanel
       Left = 38
       Top = 14

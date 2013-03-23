@@ -63,7 +63,7 @@ inherited frmInitGoods: TfrmInitGoods
           Top = 1
           Width = 421
           Height = 338
-          ActivePage = TabSheet3
+          ActivePage = TabSheet2
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -178,7 +178,7 @@ inherited frmInitGoods: TfrmInitGoods
               TabOrder = 1
               OnClick = edtGOODS_OPTION2Click
             end
-            object edtBK_BARCODE: TRzPanel
+            object edtBK_Input: TRzPanel
               Left = 64
               Top = 108
               Width = 313
@@ -219,8 +219,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel11: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 76
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#26465#24418#30721
@@ -294,8 +294,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel12: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 167
-                  Height = 16
+                  Width = 308
+                  Height = 26
                   Align = alClient
                   Caption = '  '#28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
                   Font.Charset = GB2312_CHARSET
@@ -389,7 +389,7 @@ inherited frmInitGoods: TfrmInitGoods
               Visible = False
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
-            object RzPanel6: TRzPanel
+            object edtBK_BARCODE1: TRzPanel
               Left = 24
               Top = 68
               Width = 260
@@ -430,8 +430,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel13: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 62
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26465' '#22411' '#30721
@@ -460,7 +460,7 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtBARCODE1KeyPress
               end
             end
-            object RzPanel25: TRzPanel
+            object edtBK_GODS_CODE: TRzPanel
               Left = 24
               Top = 100
               Width = 260
@@ -501,8 +501,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel14: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#36135#21495
@@ -531,7 +531,7 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtGODS_CODEKeyPress
               end
             end
-            object RzPanel9: TRzPanel
+            object edtBK_GODS_NAME: TRzPanel
               Left = 24
               Top = 132
               Width = 260
@@ -572,8 +572,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel15: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#21517#31216
@@ -602,7 +602,7 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtGODS_NAMEKeyPress
               end
             end
-            object RzPanel10: TRzPanel
+            object edtBK_SORT_ID: TRzPanel
               Left = 24
               Top = 164
               Width = 260
@@ -643,8 +643,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel16: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#31867#21035
@@ -682,7 +682,7 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtSORT_IDKeyPress
               end
             end
-            object RzPanel12: TRzPanel
+            object edtBK_CALC_UNITS: TRzPanel
               Left = 24
               Top = 196
               Width = 167
@@ -723,8 +723,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel17: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #35745#37327#21333#20301
@@ -791,7 +791,7 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
             end
-            object RzPanel14: TRzPanel
+            object edtBK_NEW_INPRICE: TRzPanel
               Left = 24
               Top = 228
               Width = 260
@@ -832,8 +832,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel18: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 62
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36827' '#36135' '#20215
@@ -861,7 +861,7 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtNEW_INPRICEKeyPress
               end
             end
-            object RzPanel30: TRzPanel
+            object edtBK_NEW_OUTPRICE: TRzPanel
               Left = 24
               Top = 260
               Width = 260
@@ -902,8 +902,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel19: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 62
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #38646' '#21806' '#20215
@@ -931,7 +931,7 @@ inherited frmInitGoods: TfrmInitGoods
                 OnKeyPress = edtNEW_OUTPRICEKeyPress
               end
             end
-            object RzPanel17: TRzPanel
+            object edtBK_SHOP_NEW_OUTPRICE: TRzPanel
               Left = 24
               Top = 292
               Width = 260
@@ -972,8 +972,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel20: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #24215#20869#21806#20215
@@ -1105,7 +1105,7 @@ inherited frmInitGoods: TfrmInitGoods
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnClick = edtDefault2Click
             end
-            object RzPanel32: TRzPanel
+            object edtBK_SMALL_UNITS: TRzPanel
               Left = 32
               Top = 97
               Width = 178
@@ -1213,7 +1213,7 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
             end
-            object RzPanel11: TRzPanel
+            object edtBK_BARCODE2: TRzPanel
               Left = 32
               Top = 129
               Width = 260
@@ -1283,7 +1283,7 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
             end
-            object RzPanel20: TRzPanel
+            object edtBK_SMALLTO_CALC: TRzPanel
               Left = 32
               Top = 161
               Width = 148
@@ -1407,7 +1407,7 @@ inherited frmInitGoods: TfrmInitGoods
                 end
               end
             end
-            object RzPanel37: TRzPanel
+            object edtBK_BIG_UNITS: TRzPanel
               Left = 32
               Top = 225
               Width = 178
@@ -1511,7 +1511,7 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
             end
-            object RzPanel15: TRzPanel
+            object edtBK_BARCODE3: TRzPanel
               Left = 32
               Top = 257
               Width = 260
@@ -1631,7 +1631,7 @@ inherited frmInitGoods: TfrmInitGoods
                 end
               end
             end
-            object RzPanel41: TRzPanel
+            object edtBK_BIGTO_CALC: TRzPanel
               Left = 32
               Top = 289
               Width = 148

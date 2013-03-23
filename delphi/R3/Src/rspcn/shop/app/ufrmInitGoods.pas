@@ -46,7 +46,7 @@ type
     RzPanel4: TRzPanel;
     RzPanel7: TRzPanel;
     adv03: TImage;
-    edtBK_BARCODE: TRzPanel;
+    edtBK_Input: TRzPanel;
     RzPanel24: TRzPanel;
     RzBackground4: TRzBackground;
     RzLabel11: TRzLabel;
@@ -57,57 +57,57 @@ type
     RzLabel12: TRzLabel;
     btnNext: TRzBmpButton;
     btnPrev: TRzBmpButton;
-    RzPanel6: TRzPanel;
+    edtBK_BARCODE1: TRzPanel;
     RzPanel8: TRzPanel;
     RzBackground6: TRzBackground;
     RzLabel13: TRzLabel;
     edtBARCODE1: TcxTextEdit;
-    RzPanel25: TRzPanel;
+    edtBK_GODS_CODE: TRzPanel;
     RzPanel26: TRzPanel;
     RzBackground7: TRzBackground;
     RzLabel14: TRzLabel;
     edtGODS_CODE: TcxTextEdit;
-    RzPanel9: TRzPanel;
+    edtBK_GODS_NAME: TRzPanel;
     RzPanel27: TRzPanel;
     RzBackground8: TRzBackground;
     RzLabel15: TRzLabel;
     edtGODS_NAME: TcxTextEdit;
-    RzPanel10: TRzPanel;
+    edtBK_SORT_ID: TRzPanel;
     RzPanel28: TRzPanel;
     RzBackground9: TRzBackground;
     RzLabel16: TRzLabel;
     edtSORT_ID: TcxButtonEdit;
-    RzPanel12: TRzPanel;
+    edtBK_CALC_UNITS: TRzPanel;
     RzPanel29: TRzPanel;
     RzBackground10: TRzBackground;
     RzLabel17: TRzLabel;
     edtCALC_UNITS: TzrComboBoxList;
-    RzPanel14: TRzPanel;
+    edtBK_NEW_INPRICE: TRzPanel;
     RzPanel16: TRzPanel;
     RzBackground11: TRzBackground;
     RzLabel18: TRzLabel;
     edtNEW_INPRICE: TcxTextEdit;
-    RzPanel30: TRzPanel;
+    edtBK_NEW_OUTPRICE: TRzPanel;
     RzPanel31: TRzPanel;
     RzBackground12: TRzBackground;
     RzLabel19: TRzLabel;
     edtNEW_OUTPRICE: TcxTextEdit;
-    RzPanel17: TRzPanel;
+    edtBK_SHOP_NEW_OUTPRICE: TRzPanel;
     RzPanel18: TRzPanel;
     RzBackground13: TRzBackground;
     RzLabel20: TRzLabel;
     edtSHOP_NEW_OUTPRICE: TcxTextEdit;
-    RzPanel32: TRzPanel;
+    edtBK_SMALL_UNITS: TRzPanel;
     RzPanel33: TRzPanel;
     RzBackground14: TRzBackground;
     RzLabel21: TRzLabel;
     edtSMALL_UNITS: TzrComboBoxList;
-    RzPanel11: TRzPanel;
+    edtBK_BARCODE2: TRzPanel;
     RzPanel34: TRzPanel;
     RzBackground15: TRzBackground;
     RzLabel22: TRzLabel;
     edtBARCODE2: TcxTextEdit;
-    RzPanel20: TRzPanel;
+    edtBK_SMALLTO_CALC: TRzPanel;
     RzPanel35: TRzPanel;
     RzBackground16: TRzBackground;
     RzLabel23: TRzLabel;
@@ -115,12 +115,12 @@ type
     RzPanel13: TRzPanel;
     RzPanel36: TRzPanel;
     RzBackground17: TRzBackground;
-    RzPanel37: TRzPanel;
+    edtBK_BIG_UNITS: TRzPanel;
     RzPanel38: TRzPanel;
     RzBackground18: TRzBackground;
     RzLabel24: TRzLabel;
     edtBIG_UNITS: TzrComboBoxList;
-    RzPanel15: TRzPanel;
+    edtBK_BARCODE3: TRzPanel;
     RzPanel19: TRzPanel;
     RzBackground19: TRzBackground;
     RzLabel25: TRzLabel;
@@ -130,7 +130,7 @@ type
     RzPanel40: TRzPanel;
     RzBackground20: TRzBackground;
     RzPanel_BIG: TRzLabel;
-    RzPanel41: TRzPanel;
+    edtBK_BIGTO_CALC: TRzPanel;
     RzPanel42: TRzPanel;
     RzBackground21: TRzBackground;
     RzLabel27: TRzLabel;
@@ -294,6 +294,9 @@ begin
           SetEditStyle(dsInsert, edtBARCODE1.Style);
           SetEditStyle(dsInsert, edtBARCODE2.Style);
           SetEditStyle(dsInsert, edtBARCODE3.Style);
+          edtBK_BARCODE1.Color := edtBARCODE1.Style.Color;
+          edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
+          edtBK_BARCODE3.Color := edtBARCODE3.Style.Color;
         end
       else
         begin
@@ -307,6 +310,9 @@ begin
           SetEditStyle(dsBrowse, edtBARCODE1.Style);
           SetEditStyle(dsBrowse, edtBARCODE2.Style);
           SetEditStyle(dsBrowse, edtBARCODE3.Style);
+          edtBK_BARCODE1.Color := edtBARCODE1.Style.Color;
+          edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
+          edtBK_BARCODE3.Color := edtBARCODE3.Style.Color;
         end;
       ReadFromObject;
       rzPage.ActivePageIndex := 1;
@@ -838,11 +844,13 @@ begin
              edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
           edtSORT_ID1.Properties.ReadOnly := true;
           SetEditStyle(dsBrowse, edtSORT_ID.Style);
+          edtBK_SORT_ID.Color := edtSORT_ID.Style.Color;
         end
       else
         begin
           edtSORT_ID1.Properties.ReadOnly := false;
           SetEditStyle(dsInsert, edtSORT_ID.Style);
+          edtBK_SORT_ID.Color := edtSORT_ID.Style.Color;
           rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
           if Copy(cdsGoodsRelation.FieldByName('COMM').AsString,2,2) <> '2' then
             begin
@@ -901,6 +909,7 @@ begin
       edtSORT_ID.Text := '';
       edtSORT_ID1.Properties.ReadOnly := false;
       SetEditStyle(dsInsert, edtSORT_ID.Style);
+      edtBK_SORT_ID.Color := edtSORT_ID.Style.Color;
     end;
 
   if edtGOODS_OPTION1.Checked then
@@ -913,6 +922,9 @@ begin
           SetEditStyle(dsInsert, edtBARCODE1.Style);
           SetEditStyle(dsInsert, edtBARCODE2.Style);
           SetEditStyle(dsInsert, edtBARCODE3.Style);
+          edtBK_BARCODE1.Color := edtBARCODE1.Style.Color;
+          edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
+          edtBK_BARCODE3.Color := edtBARCODE3.Style.Color;
         end
       else
         begin
@@ -922,6 +934,9 @@ begin
           SetEditStyle(dsBrowse, edtBARCODE1.Style);
           SetEditStyle(dsBrowse, edtBARCODE2.Style);
           SetEditStyle(dsBrowse, edtBARCODE3.Style);
+          edtBK_BARCODE1.Color := edtBARCODE1.Style.Color;
+          edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
+          edtBK_BARCODE3.Color := edtBARCODE3.Style.Color;
         end
     end
   else
@@ -932,6 +947,9 @@ begin
       SetEditStyle(dsBrowse, edtBARCODE1.Style);
       SetEditStyle(dsBrowse, edtBARCODE2.Style);
       SetEditStyle(dsBrowse, edtBARCODE3.Style);
+      edtBK_BARCODE1.Color := edtBARCODE1.Style.Color;
+      edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
+      edtBK_BARCODE3.Color := edtBARCODE3.Style.Color;
     end;
 end;
 
@@ -1846,6 +1864,12 @@ begin
   SetEditStyle(dsBrowse, edtSMALLTO_CALC.Style);
   SetEditStyle(dsBrowse, edtBIG_UNITS.Style);
   SetEditStyle(dsBrowse, edtBIGTO_CALC.Style);
+
+  edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
+  edtBK_SMALL_UNITS.Color := edtSMALL_UNITS.Style.Color;
+  edtBK_SMALLTO_CALC.Color := edtSMALLTO_CALC.Style.Color;
+  edtBK_BIG_UNITS.Color := edtBIG_UNITS.Style.Color;
+  edtBK_BIGTO_CALC.Color := edtBIGTO_CALC.Style.Color;
 end;
 
 procedure TfrmInitGoods.CancelReadOnly;
@@ -1864,6 +1888,12 @@ begin
   SetEditStyle(dsInsert, edtSMALLTO_CALC.Style);
   SetEditStyle(dsInsert, edtBIG_UNITS.Style);
   SetEditStyle(dsInsert, edtBIGTO_CALC.Style);
+
+  edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
+  edtBK_SMALL_UNITS.Color := edtSMALL_UNITS.Style.Color;
+  edtBK_SMALLTO_CALC.Color := edtSMALLTO_CALC.Style.Color;
+  edtBK_BIG_UNITS.Color := edtBIG_UNITS.Style.Color;
+  edtBK_BIGTO_CALC.Color := edtBIGTO_CALC.Style.Color;
 end;
 
 function TfrmInitGoods.BarCodeSimpleInit(barcode: string): boolean;

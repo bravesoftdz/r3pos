@@ -57,10 +57,13 @@
 			}
 			
 			ds.createDataSet();	
-			ds.setSQL("select * from (select A.GODS_ID,B.GODS_NAME,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as PRF_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"' and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' and B.RELATION_ID"+typeValue+"'1000006' group by A.GODS_ID,B.GODS_NAME) order by PRF_MONEY desc limit 10");
+			var sql = "select A.GODS_ID,B.GODS_NAME,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as PRF_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"' and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' and B.RELATION_ID"+typeValue+"'1000006' group by A.GODS_ID,B.GODS_NAME";
+			//取前十条数据,根据不同数据库进行取数
+			sql = rsp.fechTopResults(sql,10,'PRF_MONEY desc');				
+			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
-			var data = "<chart caption='销售数量前五名' xAxisName='' yAxisName='' showValues='1' formatNumberScale='0' useRoundEdges='0' baseFont='宋体' baseFontSize='12' canvasBgAlpha='100' showCanvasBg='1'>";			
+			var data = "<chart caption='销售利润前五名' xAxisName='' yAxisName='' showValues='1' formatNumberScale='0' useRoundEdges='0' baseFont='宋体' baseFontSize='12' canvasBgAlpha='100' showCanvasBg='1'>";			
 			while(!ds.eof()){
 				var goods_id = ds.getAsString("GODS_ID");
 				var goods_name = ds.getAsString("GODS_NAME");
@@ -98,10 +101,12 @@
 			var d1 = d.format('yyyyMMdd');		//上个月今天日期
 			
 			ds.createDataSet();	
-			ds.setSQL("select j.SORT_ID,j.SORT_NAME,ifnull(c.CALC_MONEY,0) as CALC_MONEY from VIW_GOODSSORT j left outer join (select s.TENANT_ID,a.SORT_ID2,sum(s.CALC_MONEY) CALC_MONEY from VIW_SALESDATA s,VIW_GOODSINFO a where s.TENANT_ID=a.TENANT_ID and s.gods_id = a.gods_id and s.TENANT_ID="+tenant_id+" and s.SALES_DATE>="+d1+" and s.SALES_DATE<="+d2+" group by s.TENANT_ID,A.SORT_ID2) c on j.TENANT_ID=c.TENANT_ID and j.SORT_ID=c.SORT_ID2 where j.SORT_TYPE=2 and j.TENANT_ID="+tenant_id+" order by j.SEQ_NO");
+			var sql = "select j.SORT_ID,j.SORT_NAME,ifnull(c.CALC_MONEY,0) as CALC_MONEY from VIW_GOODSSORT j left outer join (select s.TENANT_ID,a.SORT_ID2,sum(s.CALC_MONEY) CALC_MONEY from VIW_SALESDATA s,VIW_GOODSINFO a where s.TENANT_ID=a.TENANT_ID and s.gods_id = a.gods_id and s.TENANT_ID="+tenant_id+" and s.SALES_DATE>="+d1+" and s.SALES_DATE<="+d2+" group by s.TENANT_ID,A.SORT_ID2) c on j.TENANT_ID=c.TENANT_ID and j.SORT_ID=c.SORT_ID2 where j.SORT_TYPE=2 and j.TENANT_ID="+tenant_id+" order by j.SEQ_NO";
+			sql = rsp.parseSQL(sql); 
+			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
-			var data = "<chart showValues='1' formatNumberScale='0' useRoundEdges='0' baseFont='宋体' baseFontSize='12' showBorder='0' bgColor='8d9da7' showCanvasBg='0' >";			
+			var data = "<chart showValues='1' formatNumberScale='0' useRoundEdges='0' baseFont='宋体' baseFontSize='12' showBorder='0' bgColor='' showCanvasBg='0' >";			
 			while(!ds.eof()){
 				var sort_id = ds.getAsString("SORT_ID");
 				var sort_name = ds.getAsString("SORT_NAME");
@@ -135,7 +140,9 @@
 			var d1 = d.format('yyyyMMdd');		//上个月今天日期
 			
 			ds.createDataSet();	
-			ds.setSQL("select j.TENANT_ID,d.SORT_ID,ifnull(d.SORT_NAME,'无分类') as SORT_NAME,j.CALC_MONEY from (select A.TENANT_ID,substr(C.LEVEL_ID,1,4) as LEVEL_ID,b.RELATION_ID,1 as SORT_TYPE,sum(A.CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID=C.TENANT_ID and B.SORT_ID1=C.SORT_ID  where A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.RELATION_ID<>1000006 group by A.TENANT_ID,substr(C.LEVEL_ID,1,4),b.RELATION_ID) j left outer join VIW_GOODSSORT d on j.TENANT_ID=d.TENANT_ID and j.LEVEL_ID=d.LEVEL_ID and j.RELATION_ID=d.RELATION_ID and j.SORT_TYPE=d.SORT_TYPE order by d.SEQ_NO");
+			var sql = "select j.TENANT_ID,d.SORT_ID,ifnull(d.SORT_NAME,'无分类') as SORT_NAME,j.CALC_MONEY from (select A.TENANT_ID,substr(C.LEVEL_ID,1,4) as LEVEL_ID,b.RELATION_ID,1 as SORT_TYPE,sum(A.CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID=C.TENANT_ID and B.SORT_ID1=C.SORT_ID  where A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.RELATION_ID<>1000006 group by A.TENANT_ID,substr(C.LEVEL_ID,1,4),b.RELATION_ID) j left outer join VIW_GOODSSORT d on j.TENANT_ID=d.TENANT_ID and j.LEVEL_ID=d.LEVEL_ID and j.RELATION_ID=d.RELATION_ID and j.SORT_TYPE=d.SORT_TYPE order by d.SEQ_NO";
+			sql = rsp.parseSQL(sql); 
+			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
 			var data = "<chart caption='' xAxisName='' yAxisName='' showValues='0' formatNumberScale='0' useRoundEdges='0' baseFont='宋体' baseFontSize='12' bgColor=''>";			

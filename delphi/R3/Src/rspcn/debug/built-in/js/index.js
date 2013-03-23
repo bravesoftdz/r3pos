@@ -82,7 +82,7 @@
 				by_sale_money = ds.getAsString("CALC_MONEY");
 				by_maoli = ds.getAsString("MAOLI");			
 			}
-			var data = "<chart palette='2' caption='' shownames='1' showvalues='0' decimals='0' numberPrefix='' useRoundEdges='1' legendBorderAlpha='0'><categories><category label='今天' /><category label='昨天' /></categories><dataset seriesName='金额' color='003399' showValues='0'><set value='"+jr_sale_money+"' /><set value='"+by_sale_money+"' /></dataset><dataset seriesName='毛利' color='660000' showValues='0'><set value='"+jr_maoli+"' /><set value='"+by_maoli+"' /></dataset></chart>";
+			var data = "<chart palette='2'  caption='' shownames='1' showvalues='1' decimals='0' numberPrefix='' useRoundEdges='1' legendBorderAlpha='0' formatNumberScale='0'><categories><category label='今天' /><category label='昨天' /></categories><dataset seriesName='金额' color='003399'><set value='"+jr_sale_money+"' /><set value='"+by_sale_money+"' /></dataset><dataset seriesName='毛利' color='660000' ><set value='"+jr_maoli+"' /><set value='"+by_maoli+"' /></dataset></chart>";
 			var chart = new FusionCharts("./flash/MSColumn2D.swf", "ChartId", "250", "150", "0", "0");
 		    chart.setDataXML(data);		   
 		    chart.render("jrtxdiv");
@@ -129,7 +129,7 @@
 				var by_maoli = ds.getAsString("MAOLI");
 			}			
 			ds.eraseDataSet();		//关闭数据连接
-			var data = "<chart palette='2' caption='' shownames='1' showvalues='0' decimals='0' numberPrefix='' useRoundEdges='1' legendBorderAlpha='0'><categories><category label='本月' /><category label='上月' /></categories><dataset seriesName='金额' color='003399' showValues='0'><set value='"+by_sale_money+"' /><set value='"+sy_sale_money+"' /></dataset><dataset seriesName='毛利' color='660000' showValues='0'><set value='"+by_maoli+"' /><set value='"+sy_maoli+"' /></dataset></chart>";
+			var data = "<chart palette='2'  caption='' shownames='1' showvalues='1' decimals='0' numberPrefix='' useRoundEdges='1' legendBorderAlpha='0' formatNumberScale='0'><categories><category label='本月' /><category label='上月' /></categories><dataset seriesName='金额' color='003399'><set value='"+by_sale_money+"' /><set value='"+sy_sale_money+"' /></dataset><dataset seriesName='毛利' color='660000'><set value='"+by_maoli+"' /><set value='"+sy_maoli+"' /></dataset></chart>";
 			var chart = new FusionCharts("./flash/MSColumn2D.swf", "ChartId", "250", "150", "0", "0");
 		    chart.setDataXML(data);		   
 		    chart.render("bytxdiv");
@@ -149,7 +149,11 @@
 			var d = new Date();
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
-			ds.setSQL("select * from (select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"' and A.SALES_DATE='"+d1+"' group by A.GODS_ID,B.GODS_NAME) order by CALC_MONEY desc limit 10");
+			var sql ="select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"' and A.SALES_DATE='"+d1+"' group by A.GODS_ID,B.GODS_NAME";
+			//取前十条数据,根据不同数据库进行取数
+			sql = rsp.fechTopResults(sql,10,'CALC_MONEY desc');			
+			ds.setSQL(sql);
+
 			var dataset = factor.open(ds);
 			ds.first();
 			var cnt = 1;
@@ -184,7 +188,11 @@
 			d = d.showMonthLastDay();		//本月第一天日期
 			var d2 = d.format('yyyyMMdd');		//本月最后一天日期
 			ds.createDataSet();	
-			ds.setSQL("select * from (select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and b.comm not in ('02','12') and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' group by A.GODS_ID,B.GODS_NAME) order by CALC_MONEY desc limit 10");
+			var sql = "select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and b.comm not in ('02','12') and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' group by A.GODS_ID,B.GODS_NAME ";
+			
+			//取前十条数据,根据不同数据库进行取数
+			sql = rsp.fechTopResults(sql,10,'CALC_MONEY desc');
+			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
 			var cnt = 1;

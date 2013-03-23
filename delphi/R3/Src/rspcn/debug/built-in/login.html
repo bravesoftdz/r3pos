@@ -45,7 +45,9 @@ function dologin() {
 	var check = document.getElementById("rmbUser").checked;
 	if(check){
 		rsp.setLocalJson('rmbUser',username);
-	}
+	}else{
+		rsp.setLocalJson('rmbUser','');
+	}	
 	//记住用户名 end
 	
 	var verify = rsp.getVerify();
@@ -105,7 +107,7 @@ function passwordBlur() {
 <!--滚动图片end-->
 <div class="left">
 	<input class="input1" id="username" type="text" onFocus="usernameFocus()" onBlur="usernameBlur()" value="用户名">
-	<input class="input1" id="password" type="text" onFocus="passwordFocus()" onBlur="passwordBlur()"value="密码">
+	<input class="input1" id="password" type="password" onFocus="passwordFocus()" onBlur="passwordBlur()"value="密码">
 	<input style="margin-left: 20px;" type="checkbox" id="offline">&nbsp;离线登录
 	<input id="rmbUser" style="margin-left: 70px;" type="checkbox">&nbsp;记住账号
 	<br />

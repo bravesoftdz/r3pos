@@ -3,7 +3,8 @@ unit udllGlobal;
 interface
 
 uses
-  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, RzTreeVw,ZBase,ObjCommon;
+  SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, RzTreeVw,
+  ZBase, ObjCommon;
 
 type
   TdllGlobal = class(TDataModule)
@@ -375,14 +376,6 @@ begin
       end;
       rs.Next;
     end;
-    
-    Aobj := TRecord_.Create;
-    Aobj.ReadField(rs);
-    Aobj.FieldByName('SORT_ID').AsString := '#';
-    Aobj.FieldByName('RELATION_ID').AsString := '0';
-    Aobj.FieldByName('LEVEL_ID').AsString := '';
-    Aobj.FieldByName('SORT_NAME').AsString := '无 分 类';
-    rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
 
     if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
        rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
@@ -394,6 +387,15 @@ begin
         rs.Filtered := True;
         CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
       end;
+
+    Aobj := TRecord_.Create;
+    Aobj.ReadField(rs);
+    Aobj.FieldByName('SORT_ID').AsString := '#';
+    Aobj.FieldByName('RELATION_ID').AsString := '0';
+    Aobj.FieldByName('LEVEL_ID').AsString := '';
+    Aobj.FieldByName('SORT_NAME').AsString := '无 分 类';
+    rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+
     if IsAll then AddRoot(rzTree,'所有分类');
   finally
     // rzTree.Items.EndUpdate;

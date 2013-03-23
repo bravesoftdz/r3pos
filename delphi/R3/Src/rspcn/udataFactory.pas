@@ -92,7 +92,7 @@ var
   dataFactory: TdataFactory;
 
 implementation
-
+uses uTokenFactory;
 {$R *.dfm}
 
 { TdbFactory }
@@ -290,10 +290,15 @@ procedure TdataFactory.MoveToDefault;
 var
   f:TIniFile;
 begin
-  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接'); 
+  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接');
+  if not token.online then
+     begin
+       dbFlag := 0;
+       Exit;
+     end;
   F := TIniFile.Create(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'r3.cfg');
   try
-    if F.ReadString('db','SFVersion','.LCL')='.LCL' then
+    if (F.ReadString('db','SFVersion','.LCL')='.LCL') then
        dbFlag := 0
     else
        dbFlag := 1;

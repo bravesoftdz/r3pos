@@ -175,6 +175,8 @@ type
     procedure StatusTextChangeEvent(Sender: TObject; const Text: WideString);
     procedure ProgressChangeEvent(ASender: TObject; Progress,
       ProgressMax: Integer);
+    procedure TitleChange(ASender: TObject;
+      const Text: WideString);
     procedure SetWindowState(const Value: TWindowState);
     procedure SetInitialized(const Value: boolean);
   protected
@@ -261,8 +263,8 @@ begin
      end;
   case TabEx.url.appFlag of
   0:begin
-      w := TabEx.EWB.LocationName;
-      Caption := TabEx.EWB.LocationName+' -- rspcn';
+      w := TabEx.LocationName;
+      Caption := w+' -- rspcn';
       TabEx.url.url := TabEx.EWB.LocationURL;
       TabEx.Caption := copy(w,1,10);
       TabEx.button.Caption := TabEx.Caption;
@@ -339,6 +341,7 @@ begin
           OnWindowSetTop := WindowSetTopEvent;
           OnWindowSetWidth := WindowSetWidthEvent;
           OnNavigateComplete2 := NavigateComplete2;
+          OnTitleChange := TitleChange;
           OnMove := MoveEvent;
           OnMoveBy := MoveByEvent;
           OnWindowSetResizable := WindowSetResizableEvent;
@@ -1019,10 +1022,13 @@ begin
   if token.logined then
      begin
        if token.tenantName<>'' then
-          lblUserName.Caption := token.tenantName+'('+token.username+')'
+          lblUserName.Caption := token.tenantName
        else
           lblUserName.Caption := token.username;
-
+       if token.online then
+          lblUserName.Caption := lblUserName.Caption+'(联机)'
+       else
+          lblUserName.Caption := lblUserName.Caption+'(脱机)';
      end
   else
      lblUserName.Caption := '现代卷烟零售终端';
@@ -1268,6 +1274,22 @@ end;
 procedure TfrmBrowerForm.RzBmpButton5Click(Sender: TObject);
 begin
   LoadUrl('rspcn://shop.dll/TfrmSysDefine','shop.dll');
+end;
+
+procedure TfrmBrowerForm.TitleChange(ASender: TObject;
+  const Text: WideString);
+var
+  i:integer;
+begin
+  for i:=0 to PageControl1.PageCount-1 do
+   begin
+     if TTabSheetEx(PageControl1.Pages[i]).EWB=ASender then
+        begin
+          TTabSheetEx(PageControl1.Pages[i]).LocationName := Text;
+          break;
+        end;
+   end;
+  UpdateControls;
 end;
 
 initialization

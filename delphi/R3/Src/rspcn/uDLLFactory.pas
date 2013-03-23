@@ -72,6 +72,7 @@ type
     function OpenBatch:OleVariant; stdcall;
     procedure CommitBatch; stdcall;
     procedure CancelBatch; stdcall;
+    procedure MoveToDefault; stdcall;
 
     //执行远程方式，返回结果
     function ExecProc(NS:String;Params:WideString):pchar;stdcall;
@@ -172,7 +173,6 @@ end;
 
 procedure TDLLFactory.CommitTrans;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.CommitTrans;
 end;
 
@@ -320,7 +320,6 @@ end;
 
 procedure TDLLFactory.RollbackTrans;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
   dataFactory.RollbackTrans;
 end;
 
@@ -428,6 +427,11 @@ begin
       end;
      end;
   result := true;
+end;
+
+procedure TDLLFactory.MoveToDefault;
+begin
+  dataFactory.MoveToDefault;
 end;
 
 { TDLLPlugin }

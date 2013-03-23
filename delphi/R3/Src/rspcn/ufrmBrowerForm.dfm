@@ -1,10 +1,10 @@
 object frmBrowerForm: TfrmBrowerForm
-  Left = 0
-  Top = 81
+  Left = 352
+  Top = 253
   BorderStyle = bsNone
   Caption = #23478#23478#26106'-'#21830#38138#24037#20855#31665
-  ClientHeight = 609
-  ClientWidth = 1008
+  ClientHeight = 524
+  ClientWidth = 848
   Color = clBtnFace
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -25,25 +25,25 @@ object frmBrowerForm: TfrmBrowerForm
   object pnlAddressBar: TPanel
     Left = 0
     Top = 0
-    Width = 1008
+    Width = 848
     Height = 60
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      1008
+      848
       60)
     object RzFormShape1: TRzFormShape
       Left = 72
       Top = 1
-      Width = 1016
+      Width = 856
       Height = 75
       Align = alNone
       Anchors = [akLeft, akTop, akRight, akBottom]
       OnDblClick = btnWindowClick
     end
     object Image1: TImage
-      Left = 625
+      Left = 465
       Top = 0
       Width = 383
       Height = 60
@@ -4240,7 +4240,7 @@ object frmBrowerForm: TfrmBrowerForm
     object Image3: TImage
       Left = 333
       Top = 0
-      Width = 292
+      Width = 132
       Height = 60
       Align = alClient
       Picture.Data = {
@@ -6297,7 +6297,7 @@ object frmBrowerForm: TfrmBrowerForm
       Transparent = True
     end
     object Image7: TImage
-      Left = 651
+      Left = 491
       Top = 27
       Width = 32
       Height = 23
@@ -6659,7 +6659,7 @@ object frmBrowerForm: TfrmBrowerForm
       OnClick = btnBackClick
     end
     object btnGo: TRzBmpButton
-      Left = 606
+      Left = 446
       Top = 27
       Width = 33
       Height = 23
@@ -6897,7 +6897,7 @@ object frmBrowerForm: TfrmBrowerForm
     object RzPanel1: TRzPanel
       Left = 312
       Top = 27
-      Width = 294
+      Width = 134
       Height = 23
       Anchors = [akLeft, akTop, akRight]
       BorderOuter = fsFlat
@@ -6906,12 +6906,12 @@ object frmBrowerForm: TfrmBrowerForm
       FlatColor = clWindowFrame
       TabOrder = 2
       DesignSize = (
-        294
+        134
         23)
       object TRzProgressBar
         Left = 1
         Top = 1
-        Width = 293
+        Width = 133
         Height = 21
         Align = alClient
         BorderOuter = fsNone
@@ -6925,7 +6925,7 @@ object frmBrowerForm: TfrmBrowerForm
       object RzProgressBar1: TRzProgressBar
         Left = 1
         Top = 1
-        Width = 293
+        Width = 133
         Height = 21
         Align = alClient
         BarColor = clBtnShadow
@@ -6947,7 +6947,7 @@ object frmBrowerForm: TfrmBrowerForm
       object IEAddress1: TIEAddress
         Left = 1
         Top = 2
-        Width = 317
+        Width = 157
         Height = 22
         Style = csSimple
         AutoNavigateOnEnterKey = False
@@ -6971,7 +6971,7 @@ object frmBrowerForm: TfrmBrowerForm
       end
     end
     object RzPanel2: TRzPanel
-      Left = 682
+      Left = 522
       Top = 27
       Width = 207
       Height = 23
@@ -7000,7 +7000,7 @@ object frmBrowerForm: TfrmBrowerForm
       end
     end
     object RzBmpButton2: TRzBmpButton
-      Left = 975
+      Left = 815
       Top = 3
       Width = 21
       Height = 18
@@ -7050,7 +7050,7 @@ object frmBrowerForm: TfrmBrowerForm
       OnClick = RzBmpButton2Click
     end
     object btnWindow: TRzBmpButton
-      Left = 949
+      Left = 789
       Top = 3
       Width = 21
       Height = 18
@@ -7100,7 +7100,7 @@ object frmBrowerForm: TfrmBrowerForm
       OnClick = btnWindowClick
     end
     object RzBmpButton4: TRzBmpButton
-      Left = 923
+      Left = 763
       Top = 3
       Width = 21
       Height = 18
@@ -7150,7 +7150,7 @@ object frmBrowerForm: TfrmBrowerForm
       OnClick = RzBmpButton4Click
     end
     object RzBmpButton5: TRzBmpButton
-      Left = 901
+      Left = 741
       Top = 26
       Width = 24
       Height = 24
@@ -7218,7 +7218,7 @@ object frmBrowerForm: TfrmBrowerForm
       OnClick = RzBmpButton5Click
     end
     object RzBmpButton1: TRzBmpButton
-      Left = 886
+      Left = 726
       Top = 27
       Width = 9
       Height = 23
@@ -7255,7 +7255,7 @@ object frmBrowerForm: TfrmBrowerForm
   object pageTab: TRzPanel
     Left = 0
     Top = 60
-    Width = 1008
+    Width = 848
     Height = 27
     Align = alTop
     BorderOuter = fsFlat
@@ -7265,7 +7265,7 @@ object frmBrowerForm: TfrmBrowerForm
     object Image4: TImage
       Left = 70
       Top = 0
-      Width = 401
+      Width = 241
       Height = 27
       Align = alClient
       Picture.Data = {
@@ -7773,7 +7773,7 @@ object frmBrowerForm: TfrmBrowerForm
         0B080D0A080E0B08100C0A0E0B080D0A0800}
     end
     object button_close: TImage
-      Left = 651
+      Left = 491
       Top = 0
       Width = 178
       Height = 27
@@ -8238,7 +8238,7 @@ object frmBrowerForm: TfrmBrowerForm
       Visible = False
     end
     object home_down: TImage
-      Left = 471
+      Left = 311
       Top = 0
       Width = 180
       Height = 27
@@ -8706,7 +8706,7 @@ object frmBrowerForm: TfrmBrowerForm
       Visible = False
     end
     object button_active: TImage
-      Left = 829
+      Left = 669
       Top = 0
       Width = 178
       Height = 27
@@ -9208,8 +9208,8 @@ object frmBrowerForm: TfrmBrowerForm
   object RzPanel3: TRzPanel
     Left = 0
     Top = 87
-    Width = 1008
-    Height = 522
+    Width = 848
+    Height = 437
     Align = alClient
     BorderOuter = fsFlat
     BorderSides = [sdLeft, sdRight, sdBottom]
@@ -9218,8 +9218,8 @@ object frmBrowerForm: TfrmBrowerForm
     object PageControl1: TRzPageControl
       Left = 71
       Top = 0
-      Width = 936
-      Height = 521
+      Width = 776
+      Height = 436
       Align = alClient
       Color = 16579836
       FlatColor = clWindowFrame
@@ -9243,7 +9243,7 @@ object frmBrowerForm: TfrmBrowerForm
       Left = 1
       Top = 0
       Width = 70
-      Height = 521
+      Height = 436
       Align = alLeft
       BorderOuter = fsNone
       Color = clSilver
@@ -9276,7 +9276,7 @@ object frmBrowerForm: TfrmBrowerForm
         Left = 0
         Top = 0
         Width = 70
-        Height = 508
+        Height = 423
         Align = alClient
         Picture.Data = {
           0A544A504547496D61676554E60000FFD8FFE101824578696600004D4D002A00
@@ -11127,7 +11127,7 @@ object frmBrowerForm: TfrmBrowerForm
       end
       object Image6: TImage
         Left = 0
-        Top = 508
+        Top = 423
         Width = 70
         Height = 13
         Align = alBottom
@@ -11639,7 +11639,6 @@ object frmBrowerForm: TfrmBrowerForm
           060E0A050F0B06110D08100C07100C07100C07100C07110D0800}
         Color = clBtnFace
         TabOrder = 0
-        OnClick = RzBmpButton3Click
       end
       object RzBmpButton6: TRzBmpButton
         Left = 0

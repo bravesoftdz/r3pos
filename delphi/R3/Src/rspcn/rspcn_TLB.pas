@@ -12,7 +12,7 @@ unit rspcn_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/3/20 11:18:14 from Type Library described below.
+// File generated on 2013/3/22 12:28:43 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\myWork\Delphi\R3\Src\rspcn\rspcn.tlb (1)
@@ -112,6 +112,8 @@ type
     function getUserInfo: WideString; safecall;
     function getLocalJson(const doMain: WideString): WideString; safecall;
     procedure setLocalJson(const doMain: WideString; const json: WideString); safecall;
+    procedure moveToDefault; safecall;
+    function parseSQL(const sql: WideString): WideString; safecall;
   end;
 
 // *********************************************************************//
@@ -163,6 +165,8 @@ type
     function getUserInfo: WideString; dispid 239;
     function getLocalJson(const doMain: WideString): WideString; dispid 240;
     procedure setLocalJson(const doMain: WideString; const json: WideString); dispid 241;
+    procedure moveToDefault; dispid 242;
+    function parseSQL(const sql: WideString): WideString; dispid 243;
   end;
 
 // *********************************************************************//

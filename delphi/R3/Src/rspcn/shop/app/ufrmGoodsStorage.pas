@@ -8,7 +8,7 @@ uses
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase,ObjCommon,
-  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd;
+  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd, Menus;
 
 type
   TfrmGoodsStorage = class(TfrmWebToolForm)
@@ -144,6 +144,10 @@ type
     RzLabel15: TRzLabel;
     edtUPPER_AMOUNT: TcxTextEdit;
     edtLOWER_AMOUNT: TcxTextEdit;
+    AddSortTree: TPopupMenu;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -171,6 +175,9 @@ type
     procedure btnSaveClick(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
     procedure edtGODS_NAMEPropertiesChange(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure N5Click(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -361,7 +368,7 @@ begin
   child := node.getFirstChild;
   while child<>nil do
     begin
-      result := getSortId(node);
+      result := getSortId(child);
       child := node.GetNextChild(child);
     end;
 end;
@@ -1034,14 +1041,17 @@ begin
 end;
 
 procedure TfrmGoodsStorage.btnNewSortClick(Sender: TObject);
-var
-  AObj:TRecord_;
+var AObj:TRecord_;
 begin
   inherited;
   AObj := TRecord_.Create;
   try
     if TfrmGoodsSort.ShowDialog(self,'',AObj) then
        begin
+         rzTree.OnChange := nil;
+         dllGlobal.CreateGoodsSortTree(rzTree,true);
+         rzTree.Items.Add(nil,'回收站');
+         rzTree.OnChange := rzTreeChange;
        end;
   finally
     AObj.Free;
@@ -1297,6 +1307,130 @@ begin
   finally
     Params.Free;
   end;
+end;
+
+procedure TfrmGoodsStorage.N3Click(Sender: TObject);
+var AObj,SObj:TRecord_;
+begin
+  inherited;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if (SObj = nil)
+     or
+     (SObj.FieldByName('RELATION_ID').AsInteger <> 0)
+     or
+     (SObj.FieldByName('SORT_ID').AsString = '#') then
+     Raise Exception.Create('不允许添加非自经营分类...');
+
+  AObj := TRecord_.Create;
+  try
+    if TfrmGoodsSort.ShowDialog(self,'',AObj,SObj) then
+       begin
+         rzTree.OnChange := nil;
+         dllGlobal.CreateGoodsSortTree(rzTree,true);
+         rzTree.Items.Add(nil,'回收站');
+         rzTree.OnChange := rzTreeChange;
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmGoodsStorage.N4Click(Sender: TObject);
+var AObj,SObj:TRecord_;
+begin
+  inherited;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if (SObj = nil)
+     or
+     (SObj.FieldByName('RELATION_ID').AsInteger <> 0)
+     or
+     (SObj.FieldByName('SORT_ID').AsString = '#')
+     or
+     (SObj.FieldByName('LEVEL_ID').AsString = '') then
+     Raise Exception.Create('非自经营分类不允许修改...');
+
+  AObj := TRecord_.Create;
+  try
+    if TfrmGoodsSort.ShowDialog(self,SObj.FieldbyName('SORT_ID').AsString,AObj) then
+       begin
+         rzTree.OnChange := nil;
+         dllGlobal.CreateGoodsSortTree(rzTree,true);
+         rzTree.Items.Add(nil,'回收站');
+         rzTree.OnChange := rzTreeChange;
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmGoodsStorage.N5Click(Sender: TObject);
+var
+  SObj:TRecord_;
+  cdsSort:TZQuery;
+  Params:TftParamList;
+begin
+  inherited;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if (SObj = nil)
+     or
+     (SObj.FieldByName('RELATION_ID').AsInteger <> 0)
+     or
+     (SObj.FieldByName('SORT_ID').AsString = '#')
+     or
+     (SObj.FieldByName('LEVEL_ID').AsString = '') then
+     Raise Exception.Create('非自经营分类不允许删除...');
+
+  if rzTree.Selected.HasChildren then Raise Exception.Create('当前分类存在下级，不允许删除...');
+
+  if MessageBox(Handle,Pchar('确定要删除"'+SObj.FieldByName('SORT_NAME').AsString+'"分类吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1) <> 6 then Exit;
+
+  cdsSort := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SORT_TYPE').AsInteger := 1;
+    Params.ParamByName('SORT_ID').AsString := SObj.FieldByName('SORT_ID').AsString; 
+    dataFactory.Open(cdsSort,'TGoodsSortV60',Params);
+    if not cdsSort.IsEmpty then cdsSort.Delete;
+    try
+      dataFactory.UpdateBatch(cdsSort,'TGoodsSortV60');
+    except
+      cdsSort.CancelUpdates;
+      Raise;
+    end
+  finally
+    cdsSort.Free;
+    Params.Free;
+  end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    cdsSort := TZQuery.Create(nil);
+    Params := TftParamList.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      Params.ParamByName('SORT_TYPE').AsInteger := 1;
+      Params.ParamByName('SORT_ID').AsString := SObj.FieldByName('SORT_ID').AsString;
+      dataFactory.Open(cdsSort,'TGoodsSortV60',Params);
+      if not cdsSort.IsEmpty then cdsSort.Delete;
+      try
+        dataFactory.UpdateBatch(cdsSort,'TGoodsSortV60');
+      except
+        cdsSort.CancelUpdates;
+        Raise;
+      end
+    finally
+      dataFactory.MoveToDefault;
+      cdsSort.Free;
+      Params.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
+  rzTree.OnChange := nil;
+  dllGlobal.CreateGoodsSortTree(rzTree,true);
+  rzTree.Items.Add(nil,'回收站');
+  rzTree.OnChange := rzTreeChange;
 end;
 
 initialization

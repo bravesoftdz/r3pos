@@ -13,7 +13,7 @@ type
   TfrmGoodsSort = class(TfrmWebDialog)
     Label1: TLabel;
     cdsSort: TZQuery;
-    RzPanel45: TRzPanel;
+    edtBK_SUP_SORT_ID: TRzPanel;
     RzPanel46: TRzPanel;
     RzBackground7: TRzBackground;
     RzLabel15: TRzLabel;
@@ -33,13 +33,14 @@ type
     procedure btnSaveClick(Sender: TObject);
     procedure edtSUP_SORT_IDKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
     SUP_SORT_ID:string;
     SUP_LEVEL_ID:string;
   public
     procedure Open(id:string);
     procedure Save;
-    class function ShowDialog(AOwner:TForm;sid:string;AObj:TRecord_):boolean;
+    class function ShowDialog(AOwner:TForm;sid:string;AObj:TRecord_;SupObj:TRecord_=nil):boolean;
   end;
 
 implementation
@@ -68,6 +69,7 @@ begin
      begin
        dbState := dsEdit;
        SetEditStyle(dsBrowse,edtSUP_SORT_ID.Style);
+       edtBK_SUP_SORT_ID.Color := edtSUP_SORT_ID.Style.Color;
        rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
        edtSORT_NAME.Text := cdsSort.FieldByName('SORT_NAME').AsString;
        levelId := cdsSort.FieldByName('LEVEL_ID').AsString;
@@ -161,12 +163,18 @@ begin
   ModalResult := MROK;
 end;
 
-class function TfrmGoodsSort.ShowDialog(AOwner: TForm;sid:string;AObj:TRecord_): boolean;
+class function TfrmGoodsSort.ShowDialog(AOwner: TForm;sid:string;AObj:TRecord_;SupObj:TRecord_=nil): boolean;
 begin
   with TfrmGoodsSort.Create(AOwner) do
     begin
       try
         Open(sid);
+        if SupObj <> nil then
+           begin
+             SUP_SORT_ID := SupObj.FieldByName('SORT_ID').AsString;
+             SUP_LEVEL_ID := SupObj.FieldByName('LEVEL_ID').AsString;
+             edtSUP_SORT_ID.Text := SupObj.FieldByName('SORT_NAME').AsString;
+           end;
         result := (ShowModal = MROK);
         if result then AObj.ReadFromDataSet(cdsSort);
       finally
@@ -183,8 +191,9 @@ begin
   if dbState <> dsInsert then Exit;
   Obj := TRecord_.Create;
   try
-    frmSortDropFrom.RelationId := '0'; // 自经营分类
+    frmSortDropFrom.RelationId := '0';
     frmSortDropFrom.SelectAll := true;
+    frmSortDropFrom.SelfRoot := true;
     if frmSortDropFrom.DropForm(edtSUP_SORT_ID, Obj) then
        begin
          if Obj.Count > 0 then
@@ -242,5 +251,20 @@ begin
   if Key = VK_DOWN then edtSUP_SORT_IDPropertiesButtonClick(nil, 0);
 end;
 
+procedure TfrmGoodsSort.FormShow(Sender: TObject);
+begin
+  inherited;
+  if dbState = dsInsert then
+    begin
+      if trim(edtSUP_SORT_ID.Text) = '' then
+         begin
+           if edtSUP_SORT_ID.CanFocus then edtSUP_SORT_ID.SetFocus;
+         end
+      else
+         if edtSORT_NAME.CanFocus then edtSORT_NAME.SetFocus;
+    end;
+  if dbState = dsEdit then
+    if edtSORT_NAME.CanFocus then edtSORT_NAME.SetFocus;
+end;
+
 end.
- 

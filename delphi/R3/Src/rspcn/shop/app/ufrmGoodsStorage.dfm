@@ -1364,7 +1364,9 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               BorderStyle = bsNone
               FramingPreference = fpCustomFraming
               Indent = 19
+              PopupMenu = AddSortTree
               ReadOnly = True
+              RightClickSelect = True
               TabOrder = 1
               OnChange = rzTreeChange
             end
@@ -4244,5 +4246,21 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     Params = <>
     Left = 480
     Top = 400
+  end
+  object AddSortTree: TPopupMenu
+    Left = 65
+    Top = 391
+    object N3: TMenuItem
+      Caption = #28155#21152#19979#32423#20998#31867
+      OnClick = N3Click
+    end
+    object N4: TMenuItem
+      Caption = #20462#25913#24403#21069#20998#31867
+      OnClick = N4Click
+    end
+    object N5: TMenuItem
+      Caption = #21024#38500#25152#36873#20998#31867
+      OnClick = N5Click
+    end
   end
 end

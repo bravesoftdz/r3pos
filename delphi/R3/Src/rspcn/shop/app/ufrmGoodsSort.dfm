@@ -5,6 +5,7 @@ inherited frmGoodsSort: TfrmGoodsSort
   ClientHeight = 185
   ClientWidth = 339
   OldCreateOrder = True
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
   inherited pnlAddressBar: TPanel
@@ -49,7 +50,7 @@ inherited frmGoodsSort: TfrmGoodsSort
   inherited RzPanel1: TRzPanel
     Width = 339
     Height = 155
-    object RzPanel45: TRzPanel
+    object edtBK_SUP_SORT_ID: TRzPanel
       Left = 38
       Top = 14
       Width = 260

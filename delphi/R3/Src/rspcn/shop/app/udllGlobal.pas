@@ -57,7 +57,7 @@ type
     function checkChangePrice(relationId:integer):boolean;
     //创建分类树
     function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean):boolean;overload;
-    function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string):boolean;overload;
+    function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false):boolean;overload;
   end;
 
 var
@@ -343,7 +343,7 @@ var IsRoot: Boolean;
     Rel_ID,Rel_IDS: string;
     Aobj,CurObj:TRecord_;
 begin
-//  rzTree.Items.BeginUpdate;
+  // rzTree.Items.BeginUpdate;
   try
     Rel_ID:='';
     Rel_IDS:='';
@@ -385,7 +385,7 @@ begin
     rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
 
     if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
-      rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+       rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
 
     for i:=rzTree.Items.Count-1 downto 0 do
       begin
@@ -396,18 +396,18 @@ begin
       end;
     if IsAll then AddRoot(rzTree,'所有分类');
   finally
-//    rzTree.Items.EndUpdate;
+    // rzTree.Items.EndUpdate;
   end;
 end;
 
-function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;RelationId:string): boolean;
+function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;RelationId:string;SelfRoot:boolean=false): boolean;
 var IsRoot: Boolean;
     rs:TZQuery;
     i:Integer;
     Rel_ID,Rel_IDS: string;
     Aobj,CurObj:TRecord_;
 begin
-//  rzTree.Items.BeginUpdate;
+  // rzTree.Items.BeginUpdate;
   try
     Rel_ID:='';
     Rel_IDS:='';
@@ -441,7 +441,16 @@ begin
     end;
 
     if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
-      rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+       rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj)
+    else if SelfRoot then
+       begin
+         CurObj := TRecord_.Create;
+         CurObj.AddField('SORT_ID','#',ftString);
+         CurObj.AddField('SORT_NAME','自主经营',ftString);
+         CurObj.AddField('LEVEL_ID','',ftString);
+         CurObj.AddField('RELATION_ID',0,ftInteger);
+         rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+       end;
 
     for i:=rzTree.Items.Count-1 downto 0 do
       begin
@@ -451,7 +460,7 @@ begin
         CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
       end;
   finally
-//    rzTree.Items.EndUpdate;
+    // rzTree.Items.EndUpdate;
   end;
 end;
 

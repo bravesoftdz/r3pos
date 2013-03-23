@@ -1,6 +1,7 @@
 inherited frmSortDropFrom: TfrmSortDropFrom
   Caption = 'frmSortDropFrom'
   OldCreateOrder = True
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel

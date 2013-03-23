@@ -16,16 +16,12 @@ type
     procedure rzTreeClick(Sender: TObject);
     procedure rzTreeKeyPress(Sender: TObject; var Key: Char);
     procedure RzLabel1Click(Sender: TObject);
-  private
-    FRelationId: string;
-    FSelectAll: boolean;
-    SAll:boolean;
-    procedure SetRelationId(const Value: string);
-    procedure SetSelectAll(const Value: boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   public
+    RelationId:string;
+    SelectAll:boolean;
+    SelfRoot:boolean;
     function showForm:boolean;override;
-    property RelationId:string read FRelationId write SetRelationId;
-    property SelectAll:boolean read FSelectAll write SetSelectAll;
   end;
 
 var frmSortDropFrom: TfrmSortDropFrom;
@@ -36,27 +32,13 @@ uses udllGlobal;
 
 {$R *.dfm}
 
-procedure TfrmSortDropFrom.SetRelationId(const Value: string);
-begin
-  FRelationId := Value;
-end;
-
-procedure TfrmSortDropFrom.SetSelectAll(const Value: boolean);
-begin
-  FSelectAll := Value;
-end;
-
 function TfrmSortDropFrom.showForm: boolean;
 begin
   result := inherited showForm;
   if RelationId = '' then
     dllGlobal.CreateGoodsSortTree(rzTree,false)
   else
-    dllGlobal.CreateGoodsSortTree(rzTree,RelationId);
-  RelationId := '';
-
-  SAll := SelectAll;
-  SelectAll := false;
+    dllGlobal.CreateGoodsSortTree(rzTree,RelationId,SelfRoot);
 end;
 
 procedure TfrmSortDropFrom.rzTreeClick(Sender: TObject);
@@ -64,7 +46,7 @@ begin
   inherited;
   if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data)
      and
-     ((not SAll and not rzTree.Selected.HasChildren) or SAll) then
+     ((not SelectAll and not rzTree.Selected.HasChildren) or SelectAll) then
      begin
        SaveObj.Clear;
        TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
@@ -84,6 +66,15 @@ begin
   inherited;
   SaveObj.Clear;
   ModalResult := MROK;
+end;
+
+procedure TfrmSortDropFrom.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  RelationId := '';
+  SelectAll := false;
+  SelfRoot := false;
 end;
 
 initialization

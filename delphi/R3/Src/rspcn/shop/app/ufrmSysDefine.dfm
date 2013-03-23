@@ -6075,7 +6075,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel4: TRzPanel
               Left = 45
-              Top = 87
+              Top = 90
               Width = 260
               Height = 31
               BorderOuter = fsStatus
@@ -6145,7 +6145,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel7: TRzPanel
               Left = 360
-              Top = 87
+              Top = 90
               Width = 260
               Height = 31
               BorderOuter = fsStatus
@@ -6215,14 +6215,14 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object RzPanel6: TRzPanel
               Left = 45
-              Top = 143
+              Top = 210
               Width = 575
               Height = 31
               BorderOuter = fsStatus
               BorderWidth = 1
               Color = clWhite
               FlatColor = 9145227
-              TabOrder = 4
+              TabOrder = 6
               DesignSize = (
                 575
                 31)
@@ -6389,7 +6389,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object btnSaveShopInfo: TRzBmpButton
               Left = 550
-              Top = 210
+              Top = 282
               Width = 72
               Bitmaps.TransparentColor = clFuchsia
               Bitmaps.Up.Data = {
@@ -6600,12 +6600,12 @@ inherited frmSysDefine: TfrmSysDefine
                 E9EBEBEBEBEBEBEBEBEB}
               Color = clBtnFace
               Caption = #20445#23384
-              TabOrder = 5
+              TabOrder = 7
               OnClick = btnSaveShopInfoClick
             end
             object btnSync: TRzBmpButton
               Left = 419
-              Top = 210
+              Top = 282
               Width = 106
               Height = 29
               Bitmaps.TransparentColor = clFuchsia
@@ -6904,8 +6904,145 @@ inherited frmSysDefine: TfrmSysDefine
                 E6E6E6E5E5E5E1E1E1DADADAD9D9D9E5E5E5EAEAEAEBEBEB0000}
               Color = clBtnFace
               Caption = #25968#25454#21516#27493
-              TabOrder = 6
+              TabOrder = 8
               OnClick = btnSyncClick
+            end
+            object RzPanel78: TRzPanel
+              Left = 45
+              Top = 150
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 4
+              object RzPanel79: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground38: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel49: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #36755#20837#27169#24335
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtINPUT_MODE: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #31616#26131#36755#20837#27169#24335
+                  #26631#20934#36755#20837#27169#24335)
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
+            end
+            object RzPanel80: TRzPanel
+              Left = 360
+              Top = 150
+              Width = 260
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 5
+              object RzPanel81: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 103
+                Height = 27
+                Align = alLeft
+                BorderOuter = fsFlat
+                BorderSides = [sdRight, sdBottom]
+                FlatColor = clGray
+                TabOrder = 0
+                object RzBackground39: TRzBackground
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Active = True
+                  Align = alClient
+                  FrameColor = 9145227
+                  GradientColorStart = clWhite
+                  GradientColorStop = 14277081
+                  ImageStyle = isStretch
+                  ShowGradient = True
+                  ShowImage = False
+                  ShowTexture = False
+                end
+                object RzLabel50: TRzLabel
+                  Left = 0
+                  Top = 0
+                  Width = 102
+                  Height = 26
+                  Align = alClient
+                  Alignment = taCenter
+                  Caption = #34892#19994#31867#22411
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                  Transparent = True
+                  Layout = tlCenter
+                  ShadowColor = 16250871
+                  ShadowDepth = 1
+                  TextStyle = tsShadow
+                end
+              end
+              object edtINDUSTRY_TYPE: TcxComboBox
+                Left = 105
+                Top = 4
+                Width = 153
+                Height = 23
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Style.ButtonTransparency = ebtInactive
+                TabOrder = 1
+              end
             end
           end
         end
@@ -7029,8 +7166,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel16: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21551#29992#26085#26399
@@ -7099,8 +7236,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel17: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 76
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #37329#39069#23567#25968#20301
@@ -7176,8 +7313,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel18: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 76
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21333#20215#23567#25968#20301
@@ -7248,8 +7385,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel19: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36827#20301#27861#21017
@@ -7325,8 +7462,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel20: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26631' '#35782' '#30721
@@ -7394,8 +7531,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel21: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#20195#30721
@@ -7469,8 +7606,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel22: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 54
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #25968#25454#27573'1'
@@ -7566,8 +7703,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel23: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 54
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #25968#25454#27573'2'
@@ -7662,8 +7799,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel24: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 67
-                  Height = 28
+                  Width = 54
+                  Height = 16
                   Align = alClient
                   Caption = ' '#20301#23567#25968
                   Font.Charset = GB2312_CHARSET
@@ -7717,8 +7854,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel25: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 67
-                  Height = 28
+                  Width = 54
+                  Height = 16
                   Align = alClient
                   Caption = ' '#20301#23567#25968
                   Font.Charset = GB2312_CHARSET
@@ -7776,8 +7913,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel26: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #25171#21360#31471#21475
@@ -7880,8 +8017,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel27: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #25171#21360#32440#23485
@@ -7954,8 +8091,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel28: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #25171#21360#26631#39064
@@ -8023,8 +8160,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel29: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #23567#31080#35828#26126
@@ -8094,8 +8231,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel30: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36208#32440#31354#34892
@@ -8164,8 +8301,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel31: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #22797#21046#25171#21360
@@ -8234,8 +8371,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel32: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #25171#21360#21697#21517
@@ -8312,8 +8449,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel33: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #38065#31665#24320#20851
@@ -8395,8 +8532,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel34: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #38065#31665#36895#29575

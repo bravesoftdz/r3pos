@@ -269,6 +269,16 @@ type
     edtNEW_PSWD2: TcxTextEdit;
     btnChange: TRzBmpButton;
     btnCancel: TRzBmpButton;
+    RzPanel78: TRzPanel;
+    RzPanel79: TRzPanel;
+    RzBackground38: TRzBackground;
+    RzLabel49: TRzLabel;
+    edtINPUT_MODE: TcxComboBox;
+    RzPanel80: TRzPanel;
+    RzPanel81: TRzPanel;
+    RzBackground39: TRzBackground;
+    RzLabel50: TRzLabel;
+    edtINDUSTRY_TYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -562,6 +572,16 @@ begin
   begin
     AObj.ReadFromDataSet(cdsShopInfo);
     udllShopUtil.ReadFromObject(AObj,self);
+    if FirstLogin then
+       begin
+         edtINPUT_MODE.ItemIndex := 0;
+         edtINDUSTRY_TYPE.ItemIndex := 0;
+       end
+    else
+       begin
+         edtINPUT_MODE.ItemIndex := strtointdef(dllGlobal.GetParameter('INPUT_MODE'),0);
+         edtINDUSTRY_TYPE.ItemIndex := TdsItems.FindItems(edtINDUSTRY_TYPE.Properties.Items,'CODE_ID',dllGlobal.GetParameter('INDUSTRY_TYPE'));
+       end;
   end;
   if PageIndex = 1 then
   begin
@@ -596,9 +616,21 @@ begin
 end;
 
 procedure TfrmSysDefine.SaveShopInfo;
+  procedure SetValue(rs:TZQuery;name,value: string);
+  begin
+    if rs.Locate('DEFINE', name, []) then
+      rs.Edit
+    else
+      rs.Append;
+    rs.FieldByName('DEFINE').AsString := name;
+    rs.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.FieldByName('VALUE').AsString := value;
+    rs.FieldByName('VALUE_TYPE').AsString := '0';
+    rs.Post;
+  end;
 var
   Params:TftParamList;
-  tmpTenant,tmpShopInfo:TZQuery;
+  tmpSysDefine,tmpTenant,tmpShopInfo:TZQuery;
   tmpObj:TRecord_;
 begin
   WriteToObject;
@@ -684,8 +716,40 @@ begin
     OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
   end;
 
+  Params := TftParamList.Create(nil);
+  tmpSysDefine := TZQuery.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
+    SetValue(tmpSysDefine,'INPUT_MODE',inttostr(edtINPUT_MODE.ItemIndex));
+    SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
+    dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60')
+  finally
+    Params.Free;
+    tmpSysDefine.Free;
+  end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    Params := TftParamList.Create(nil);
+    tmpSysDefine := TZQuery.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
+      SetValue(tmpSysDefine,'INPUT_MODE',inttostr(edtINPUT_MODE.ItemIndex));
+      SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
+      dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60')
+    finally
+      dataFactory.MoveToDefault;
+      tmpSysDefine.Free;
+      Params.Free;
+    end;
+  end;
+
   dllGlobal.GetZQueryFromName('CA_TENANT').Close;
   dllGlobal.GetZQueryFromName('CA_SHOP_INFO').Close;
+  dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
 
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;

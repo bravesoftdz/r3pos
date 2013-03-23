@@ -112,6 +112,7 @@ inherited frmGoodsSort: TfrmGoodsSort
         Style.ButtonStyle = btsUltraFlat
         Style.ButtonTransparency = ebtInactive
         TabOrder = 1
+        OnKeyDown = edtSUP_SORT_IDKeyDown
         OnKeyPress = edtSUP_SORT_IDKeyPress
       end
     end

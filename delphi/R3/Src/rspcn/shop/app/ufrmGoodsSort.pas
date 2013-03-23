@@ -30,6 +30,8 @@ type
     procedure edtSUP_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure btnCloseClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
+    procedure edtSUP_SORT_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     SUP_SORT_ID:string;
     SUP_LEVEL_ID:string;
@@ -177,7 +179,7 @@ procedure TfrmGoodsSort.edtSUP_SORT_IDPropertiesButtonClick(
 var Obj:TRecord_;
 begin
   inherited;
-  if not cdsSort.IsEmpty then Exit; // 修改分类时不允许修改上下级关系
+  if dbState <> dsInsert then Exit;
   Obj := TRecord_.Create;
   try
     frmSortDropFrom.RelationId := '0'; // 自经营分类
@@ -230,6 +232,13 @@ procedure TfrmGoodsSort.btnSaveClick(Sender: TObject);
 begin
   inherited;
   Save;
+end;
+
+procedure TfrmGoodsSort.edtSUP_SORT_IDKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_DOWN then edtSUP_SORT_IDPropertiesButtonClick(nil, 0);
 end;
 
 end.

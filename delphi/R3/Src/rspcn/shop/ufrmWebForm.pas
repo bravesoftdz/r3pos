@@ -19,6 +19,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    function checkCanClose:boolean;virtual;
     procedure ajustPostion;virtual;
     procedure showForm;virtual;
     property hWnd:THandle read FhWnd write SethWnd;
@@ -106,6 +107,11 @@ destructor TfrmWebForm.Destroy;
 begin
   Freeform(self);
   inherited;
+end;
+
+function TfrmWebForm.checkCanClose: boolean;
+begin
+  result := true;
 end;
 
 end.

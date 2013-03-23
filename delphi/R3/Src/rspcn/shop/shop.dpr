@@ -74,7 +74,8 @@ uses
   ufrmStockOrder in 'app\ufrmStockOrder.pas' {frmStockOrder},
   ObjGoodsSortV60 in 'obj\ObjGoodsSortV60.pas',
   ObjUserRightsV60 in 'obj\ObjUserRightsV60.pas',
-  ObjUsersV60 in 'obj\ObjUsersV60.pas';
+  ObjUsersV60 in 'obj\ObjUsersV60.pas',
+  ufrmDBGridPreview in 'app\ufrmDBGridPreview.pas' {frmDBGridPreview};
 
 {$R *.res}
 exports

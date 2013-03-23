@@ -39,6 +39,7 @@ type
     procedure Sethandle(const Value: THandle);
   public
     function getDllClass(name:string):TPersistentClass;
+    function getModuId(name:string):string;
     procedure dllException(Sender: TObject; E: Exception);
     property handle:THandle read Fhandle write Sethandle;
   end;
@@ -123,11 +124,14 @@ end;
 function closeApp(moduId:pchar):boolean;stdcall;
 var
   idx:integer;
+  mid:string;
 begin
   if token.tenantId='' then moduId:='TfrmSysDefine';
-  idx := webForm.IndexOf(moduId);
+  mid := dllApplication.getModuId(moduId);
+  idx := webForm.IndexOf(mid);
   if idx>=0 then
      begin
+       if not TfrmWebForm(webForm.Objects[idx]).checkCanClose then Raise Exception.Create('系统正在运行中，不能关闭。');   
        TObject(webForm.Objects[idx]).Free;
        webForm.Delete(idx); 
      end;
@@ -199,6 +203,20 @@ begin
        name := 'TfrmPosInOrder';
      end;
   result := getClass(name);
+end;
+
+function TdllApplication.getModuId(name: string): string;
+begin
+  if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+     begin
+       name := 'TfrmPosOutOrder';
+     end
+  else
+  if (lowercase(name)='tfrmstockorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+     begin
+       name := 'TfrmPosInOrder';
+     end;
+  result := name;
 end;
 
 procedure TdllApplication.Sethandle(const Value: THandle);

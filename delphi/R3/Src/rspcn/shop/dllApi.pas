@@ -126,15 +126,24 @@ var
   idx:integer;
   mid:string;
 begin
-  if token.tenantId='' then moduId:='TfrmSysDefine';
-  mid := dllApplication.getModuId(moduId);
-  idx := webForm.IndexOf(mid);
-  if idx>=0 then
-     begin
-       if not TfrmWebForm(webForm.Objects[idx]).checkCanClose then Raise Exception.Create('系统正在运行中，不能关闭。');   
-       TObject(webForm.Objects[idx]).Free;
-       webForm.Delete(idx); 
-     end;
+  try
+    if token.tenantId='' then moduId:='TfrmSysDefine';
+    mid := dllApplication.getModuId(moduId);
+    idx := webForm.IndexOf(mid);
+    if idx>=0 then
+       begin
+         if not TfrmWebForm(webForm.Objects[idx]).checkCanClose then Raise Exception.Create('系统正在运行中，不能关闭。');
+         TObject(webForm.Objects[idx]).Free;
+         webForm.Delete(idx);
+       end;
+    result := true;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         lastError := E.Message;
+       end;
+  end;
 end;
 
 //4.释放资源

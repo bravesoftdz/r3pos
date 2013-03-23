@@ -27,6 +27,8 @@ begin
   end;
 end;
 
+
+
 procedure TCacheFactory.getGodsPngImage(godsId: string; Picture: TPicture;flag:string='_middle_face');
 var
   rs,bs:TZQuery;

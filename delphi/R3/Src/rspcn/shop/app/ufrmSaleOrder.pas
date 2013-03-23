@@ -127,6 +127,7 @@ type
     procedure serachTextExit(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure serachTextChange(Sender: TObject);
+    procedure cdsListBeforeOpen(DataSet: TDataSet);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -1807,6 +1808,7 @@ begin
   if messageBox(handle,'是否删除当前销售单？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   open(cdsList.FieldbyName('SALES_ID').AsString);
   DeleteOrder;
+  cdsList.Delete;
 end;
 
 procedure TfrmSaleOrder.btnNewClick(Sender: TObject);
@@ -1973,6 +1975,13 @@ procedure TfrmSaleOrder.serachTextChange(Sender: TObject);
 begin
   inherited;
   if serachText.Focused then searchTxt := serachText.Text;
+
+end;
+
+procedure TfrmSaleOrder.cdsListBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  rowToolNav.Visible := false;
 
 end;
 

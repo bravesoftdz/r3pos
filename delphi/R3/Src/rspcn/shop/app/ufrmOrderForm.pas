@@ -653,7 +653,7 @@ begin
   pt := 0;
   if UNIT_ID='' then UNIT_ID := AObj.FieldbyName('UNIT_ID').AsString;
   r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt,null,null]),[]);
-  if r then Exit;
+  if not r then begin
   inc(RowID);
   if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
   edtTable.Edit else InitRecord;
@@ -669,6 +669,7 @@ begin
 
   edtTable.Edit;
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
+  end;
   InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
 end;
 

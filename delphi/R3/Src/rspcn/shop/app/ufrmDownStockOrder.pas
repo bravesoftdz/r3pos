@@ -6,24 +6,33 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzButton, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, StdCtrls,
-  RzLabel, Menus, RzBmpBtn;
+  RzLabel, Menus, RzBmpBtn, jpeg;
 
 type
   TfrmDownStockOrder = class(TfrmWebDialogForm)
     RzPanel1: TRzPanel;
     RzPanel2: TRzPanel;
-    RzPanel3: TRzPanel;
     RzPanel4: TRzPanel;
     cdsTable: TZQuery;
     OrderDataSource: TDataSource;
-    DBGridEh1: TDBGridEh;
     RzLabel1: TRzLabel;
     RzLabel2: TRzLabel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
+    Image2: TImage;
+    Image1: TImage;
+    Image3: TImage;
+    toolNav: TRzPanel;
+    lblCaption: TRzLabel;
+    RzPanel5: TRzPanel;
+    DBGridEh1: TDBGridEh;
     btnOK: TRzBmpButton;
+    RzPanel12: TRzPanel;
+    btnPrint: TRzBmpButton;
+    btnNav: TRzBmpButton;
+    btnPreview: TRzBmpButton;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnOKClick(Sender: TObject);
@@ -397,8 +406,7 @@ begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
   begin
-    DBGridEh1.Canvas.Font.Style :=[fsBold];
-    DBGridEh1.Canvas.Brush.Color := clAqua;
+    DBGridEh1.Canvas.Brush.Color := clWhite;
   end;
 
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);

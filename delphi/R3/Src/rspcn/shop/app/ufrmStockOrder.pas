@@ -126,6 +126,7 @@ type
     procedure serachTextExit(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure serachTextChange(Sender: TObject);
+    procedure cdsListBeforeOpen(DataSet: TDataSet);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -752,7 +753,7 @@ begin
     'from STK_STOCKORDER A '+
     'left outer join VIW_CLIENTINFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
-    'where A.TENANT_ID=:TENANT_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=4 ';
+    'where A.TENANT_ID=:TENANT_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE in (1,3) ';
   if trim(searchTxt)<>'' then
     cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(searchTxt)+'%'' or REMARK like ''%'+trim(searchTxt)+'%'' or GLIDE_NO like ''%'+trim(searchTxt)+'%''';
   cdsList.SQL.Text := cdsList.SQL.Text + ' order by STOCK_DATE,GLIDE_NO';
@@ -887,7 +888,7 @@ begin
   if messageBox(handle,'是否删除当前进货单？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   open(cdsList.FieldbyName('STOCK_ID').AsString);
   DeleteOrder;
-  
+  cdsList.Delete;
 end;
 
 procedure TfrmStockOrder.btnNewClick(Sender: TObject);
@@ -1422,6 +1423,13 @@ procedure TfrmStockOrder.serachTextChange(Sender: TObject);
 begin
   inherited;
   if serachText.Focused then searchTxt := serachText.Text;
+end;
+
+procedure TfrmStockOrder.cdsListBeforeOpen(DataSet: TDataSet);
+begin
+  inherited;
+  rowToolNav.Visible := false;
+
 end;
 
 initialization

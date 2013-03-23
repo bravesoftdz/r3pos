@@ -71,7 +71,10 @@ uses
   uRightsFactory in 'app\uRightsFactory.pas',
   ufrmUserRights in 'app\ufrmUserRights.pas' {frmUserRights},
   ufrmSaleOrder in 'app\ufrmSaleOrder.pas' {frmSaleOrder},
-  ufrmStockOrder in 'app\ufrmStockOrder.pas' {frmStockOrder};
+  ufrmStockOrder in 'app\ufrmStockOrder.pas' {frmStockOrder},
+  ObjGoodsSortV60 in 'obj\ObjGoodsSortV60.pas',
+  ObjUserRightsV60 in 'obj\ObjUserRightsV60.pas',
+  ObjUsersV60 in 'obj\ObjUsersV60.pas';
 
 {$R *.res}
 exports

@@ -1059,6 +1059,7 @@ inherited frmCustomer: TfrmCustomer
                 TextShadowDepth = 4
                 TabOrder = 0
                 TabStop = False
+                OnClick = btnNewSortClick
                 Layout = blGlyphTop
                 NumGlyphs = 2
                 Spacing = 5
@@ -1074,6 +1075,7 @@ inherited frmCustomer: TfrmCustomer
               BorderStyle = bsNone
               FramingPreference = fpCustomFraming
               Indent = 19
+              PopupMenu = PriceGradeMenu
               ReadOnly = True
               TabOrder = 1
               OnChange = rzTreeChange
@@ -3977,5 +3979,17 @@ inherited frmCustomer: TfrmCustomer
     Params = <>
     Left = 640
     Top = 368
+  end
+  object PriceGradeMenu: TPopupMenu
+    Left = 65
+    Top = 391
+    object N1: TMenuItem
+      Caption = #20462#25913
+      OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = #21024#38500
+      OnClick = N2Click
+    end
   end
 end

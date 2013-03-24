@@ -8,7 +8,7 @@ uses
   DBGridEh, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, StdCtrls,
   ComCtrls, RzTreeVw, RzBmpBtn,ZDataSet, DB, ZAbstractRODataset,ZBase,
-  ZAbstractDataset, RzBckgnd, RzBorder, cxRadioGroup;
+  ZAbstractDataset, RzBckgnd, RzBorder, cxRadioGroup, Menus;
 
 type
   TfrmCustomer = class(TfrmWebToolForm)
@@ -131,6 +131,9 @@ type
     edtSEX3: TcxRadioButton;
     edtSEX2: TcxRadioButton;
     edtCUST_SPELL: TcxTextEdit;
+    PriceGradeMenu: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure serachTextChange(Sender: TObject);
@@ -152,6 +155,9 @@ type
     procedure RzLabel12Click(Sender: TObject);
     procedure edtCUST_NAMEPropertiesChange(Sender: TObject);
     procedure toolDeleteClick(Sender: TObject);
+    procedure btnNewSortClick(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure N1Click(Sender: TObject);
   private
     { Private declarations }
     searchTxt:string;
@@ -180,7 +186,7 @@ var
   frmCustomer: TfrmCustomer;
 
 implementation
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,udllFnUtil;
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,udllFnUtil,ufrmPriceGrade;
 {$R *.dfm}
 
 { TfrmCustomer }
@@ -687,6 +693,89 @@ begin
        cdsList.Delete;
      end;
 
+end;
+
+procedure TfrmCustomer.btnNewSortClick(Sender: TObject);
+begin
+  inherited;
+  if TfrmPriceGrade.ShowDialog(self,'') then
+     begin
+       rzTree.OnChange := nil;
+       CreatePriceGrade;
+       rzTree.OnChange := rzTreeChange;
+     end;
+end;
+
+procedure TfrmCustomer.N1Click(Sender: TObject);
+var SObj:TRecord_;
+begin
+  inherited;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if (SObj = nil) then Raise Exception.Create('该等级不允许修改...');
+  if TfrmPriceGrade.ShowDialog(self,SObj.FieldByName('PRICE_ID').AsString) then
+     begin
+       rzTree.OnChange := nil;
+       CreatePriceGrade;
+       rzTree.OnChange := rzTreeChange;
+     end;
+end;
+
+procedure TfrmCustomer.N2Click(Sender: TObject);
+var
+  SObj:TRecord_;
+  cdsPriceGrade:TZQuery;
+  Params:TftParamList;
+begin
+  inherited;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if (SObj = nil) then Raise Exception.Create('该等级不允许删除...');
+
+  if MessageBox(Handle,Pchar('确定要删除"'+SObj.FieldByName('PRICE_NAME').AsString+'"等级吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1) <> 6 then Exit;
+
+  cdsPriceGrade := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('PRICE_ID').AsString := SObj.FieldByName('PRICE_ID').AsString;
+    dataFactory.Open(cdsPriceGrade,'TPriceGradeV60',Params);
+    if not cdsPriceGrade.IsEmpty then cdsPriceGrade.Delete;
+    try
+      dataFactory.UpdateBatch(cdsPriceGrade,'TPriceGradeV60');
+    except
+      cdsPriceGrade.CancelUpdates;
+      Raise;
+    end
+  finally
+    cdsPriceGrade.Free;
+    Params.Free;
+  end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    cdsPriceGrade := TZQuery.Create(nil);
+    Params := TftParamList.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      Params.ParamByName('PRICE_ID').AsString := SObj.FieldByName('PRICE_ID').AsString;
+      dataFactory.Open(cdsPriceGrade,'TPriceGradeV60',Params);
+      if not cdsPriceGrade.IsEmpty then cdsPriceGrade.Delete;
+      try
+        dataFactory.UpdateBatch(cdsPriceGrade,'TPriceGradeV60');
+      except
+        cdsPriceGrade.CancelUpdates;
+        Raise;
+      end
+    finally
+      dataFactory.MoveToDefault;
+      cdsPriceGrade.Free;
+      Params.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_PRICEGRADE').Close;
+  rzTree.OnChange := nil;
+  CreatePriceGrade;
+  rzTree.OnChange := rzTreeChange;
 end;
 
 initialization

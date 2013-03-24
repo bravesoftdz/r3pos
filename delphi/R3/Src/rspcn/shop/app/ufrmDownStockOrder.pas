@@ -361,7 +361,17 @@ begin
 
         cdsHeader.FieldbyName('STOCK_AMT').AsFloat := sumAmt;
         cdsHeader.FieldByName('STOCK_MNY').AsFloat := sumMny;
+        cdsHeader.FieldByName('PAY_ZERO').AsFloat := 0;
         cdsHeader.FieldByName('PAY_A').AsFloat := cdsHeader.FieldByName('STOCK_MNY').AsFloat;
+        cdsHeader.FieldByName('PAY_B').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_C').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_D').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_E').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_F').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_G').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_H').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_I').AsFloat := 0;
+        cdsHeader.FieldByName('PAY_J').AsFloat := 0;
 
         cdsHeader.Post;
         orderList.Next;

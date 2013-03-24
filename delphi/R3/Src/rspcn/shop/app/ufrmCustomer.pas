@@ -350,6 +350,7 @@ end;
 procedure TfrmCustomer.DeleteInfo(custId: string);
 var
   Params:TftParamList;
+  tmpCustomer:TZQuery;
 begin
   Params := TftParamList.Create;
   try
@@ -376,6 +377,39 @@ begin
   finally
     Params.Free;
   end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    tmpCustomer := TZQuery.Create(nil);
+    Params := TftParamList.Create;
+    dataFactory.MoveToSqlite;
+    try
+      dataFactory.BeginBatch;
+      try
+         Params.ParamByName('TENANT_ID').AsInteger := cdsCustomer.FieldByName('TENANT_ID').AsInteger;
+         Params.ParamByName('CUST_ID').AsString := cdsCustomer.FieldByName('CUST_ID').AsString;
+         dataFactory.AddBatch(tmpCustomer,'TCustomerV60',Params);
+         dataFactory.OpenBatch;
+      except
+         dataFactory.CancelBatch;
+         Raise;
+      end;
+      if not tmpCustomer.IsEmpty then tmpCustomer.Delete;
+      dataFactory.BeginBatch;
+      try
+        dataFactory.AddBatch(tmpCustomer,'TCustomerV60',nil);
+        dataFactory.CommitBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      tmpCustomer.Free;
+      Params.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
 end;
 
 procedure TfrmCustomer.OpenInfo(custId: string);
@@ -652,6 +686,7 @@ end;
 procedure TfrmCustomer.unDeleteInfo(custId: string);
 var
   Params:TftParamList;
+  tmpCustomer:TZQuery;
 begin
   Params := TftParamList.Create;
   try
@@ -684,6 +719,46 @@ begin
   finally
     Params.Free;
   end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    tmpCustomer := TZQuery.Create(nil);
+    Params := TftParamList.Create;
+    dataFactory.MoveToSqlite;
+    try
+      dataFactory.BeginBatch;
+      try
+         Params.ParamByName('TENANT_ID').AsInteger := cdsCustomer.FieldByName('TENANT_ID').AsInteger;
+         Params.ParamByName('CUST_ID').AsString := cdsCustomer.FieldByName('CUST_ID').AsString;
+         dataFactory.AddBatch(tmpCustomer,'TCustomerV60',Params);
+         dataFactory.OpenBatch;
+      except
+         dataFactory.CancelBatch;
+         Raise;
+      end;
+      tmpCustomer.First;
+      while not tmpCustomer.Eof do
+        begin
+          tmpCustomer.Edit;
+          tmpCustomer.FieldbyName('COMM').AsString := '10';
+          tmpCustomer.Post;
+          tmpCustomer.Next;
+        end;
+      dataFactory.BeginBatch;
+      try
+        dataFactory.AddBatch(tmpCustomer,'TCustomerV60',nil);
+        dataFactory.CommitBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      tmpCustomer.Free;
+      Params.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
 end;
 
 procedure TfrmCustomer.toolDeleteClick(Sender: TObject);

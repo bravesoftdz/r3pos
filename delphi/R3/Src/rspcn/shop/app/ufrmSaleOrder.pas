@@ -95,6 +95,7 @@ type
     RzLabel13: TRzLabel;
     RzLabel14: TRzLabel;
     RzLabel15: TRzLabel;
+    RzBackground9: TRzBackground;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;

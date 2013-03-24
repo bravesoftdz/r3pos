@@ -8,7 +8,7 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder, pngimage, RzBckgnd;
+  Menus, RzBorder, pngimage, RzBckgnd, IniFiles;
 
 const
 
@@ -222,6 +222,7 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
     function DecodeBarcode(BarCode: string):integer;
+
 
   public
     { Public declarations }

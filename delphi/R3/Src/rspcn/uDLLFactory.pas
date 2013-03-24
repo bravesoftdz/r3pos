@@ -156,7 +156,7 @@ begin
      end
   else
      app := TDLLPlugin(flist[idx]);
-  app.closeApp(Pchar(urlToken.moduname));
+  result := app.closeApp(Pchar(urlToken.moduname));
 end;
 
 procedure TDLLFactory.CommitBatch;

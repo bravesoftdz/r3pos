@@ -39,10 +39,10 @@ uses
   Classes, Windows, Controls, Forms, ComCtrls, ExtCtrls, StdCtrls, OleCtrls, SysUtils,
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
   RzPanel, Messages, MSHTML, IEConst, RzPrgres,rspcn_TLB,EncDec, msxml, ComObj, urlParser,
-  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus;
+  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles;
 const
   WM_BROWSER_INIT =WM_USER+1000;
-  
+  WM_SEND_BARCODE =WM_USER+9001;
 type
   TTabSheetEx = class(TRZTabSheet)
   private
@@ -72,7 +72,6 @@ type
     Image2: TImage;
     Image3: TImage;
     pageTab: TRzPanel;
-    Image4: TImage;
     RzFormShape1: TRzFormShape;
     RzBmpButton2: TRzBmpButton;
     btnWindow: TRzBmpButton;
@@ -90,7 +89,6 @@ type
     PageControl1: TRzPageControl;
     toolleft: TRzPanel;
     Image12: TImage;
-    Image5: TImage;
     RzBmpButton3: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
     RzBmpButton7: TRzBmpButton;
@@ -103,6 +101,8 @@ type
     button_active: TImage;
     Image7: TImage;
     RzBmpButton1: TRzBmpButton;
+    RzBackground1: TRzBackground;
+    RzBackground2: TRzBackground;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -184,6 +184,7 @@ type
     m_bCreatedManually: Boolean;
     m_bResizable: Boolean;
     m_bFullScreen: Boolean;
+    BufList:TStringList;
     procedure UpdateControls(_EWB:TEmbeddedWB=nil);
     procedure LoadXsm(_url:string;appId:string;TimeOut:integer=15000);
     procedure LoadUrl(_url:string;appId:string;TimeOut:integer=15000);
@@ -198,9 +199,16 @@ type
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure FullScreen;
     procedure OpenHome;
+    //扫描监控
+    procedure StartListener;
+    procedure StopListener;
+    procedure WMCopyData(var Message: TMessage); message WM_COPYDATA;
+    procedure WMSendBarcode(var Msg:TMessage); message WM_SEND_BARCODE;
+
   public
     { Public declarations }
     hotKeyid:integer;
+
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -214,7 +222,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -453,6 +461,7 @@ begin
   dllFactory := TDLLFactory.Create;
   hotKeyid:=GlobalAddAtom('rspcn');//'Hotkey'名字可以随便取
   RegisterHotKey(Handle,hotKeyid,0,VK_PAUSE);
+  StartListener;
   Initialized := true;
   Timer1.Enabled := true;
   case Message.LParam of
@@ -478,17 +487,18 @@ var
   tabEx:TTabSheetEx;
 begin
   if PageControl1.PageCount<=1 then Exit;
+  case tabEx.url.appFlag of
+  0:tabEx.EWB.Free;
+  1:begin
+      if not dllFactory.close(tabEx.url) then Exit;
+    end;
+  end;
+
   tabEx := (PageControl1.ActivePage as TTabSheetEx);
   if PageControl1.ActivePageIndex>0 then
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex -1 else
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex +1;
 
-  case tabEx.url.appFlag of
-  0:tabEx.EWB.Free;
-  1:begin
-      dllFactory.close(tabEx.url);
-    end;
-  end;
   tabEx.button.Free;
   tabEx.Free;
   pagebuttonSort;
@@ -596,12 +606,14 @@ end;
 constructor TfrmBrowerForm.Create(AOwner: TComponent);
 begin
   inherited;
+  BufList := TStringList.Create;
 end;
 
 destructor TfrmBrowerForm.Destroy;
 begin
   if Initialized then
      begin
+        StopListener;
         Timer1.Enabled := false;
         Initialized := false;
         UnRegisterHotKey(handle,hotKeyid);
@@ -610,6 +622,7 @@ begin
         if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
         dllFactory.Free;
      end;
+  BufList.Free;
   inherited;
 end;
 
@@ -938,6 +951,8 @@ end;
 procedure TfrmBrowerForm.RzTrayIcon1RestoreApp(Sender: TObject);
 begin
   SetWindowState(wsMaximized);
+  SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
+  SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
 end;
 
 procedure TfrmBrowerForm.pageButtonSort;
@@ -979,6 +994,7 @@ begin
          end;
     end;
   pageButtonSort;
+  UpdateControls;
 end;
 
 procedure TfrmBrowerForm.btnPageCloseClick(Sender: TObject);
@@ -1205,14 +1221,6 @@ begin
            begin
              Application.Restore;
              SetForegroundWindow(application.Handle);
-{           end
-        else
-           begin
-             if (Msg.HotKey<>Msg.Unused) and not Focused then
-                begin
-                  WinExec(pchar(Application.ExeName),0);
-                  Exit;
-                end;    }
            end;
         SetWindowState(wsMaximized);
         SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
@@ -1290,6 +1298,102 @@ begin
         end;
    end;
   UpdateControls;
+end;
+
+function StartService(AServName: string): Boolean;
+var
+  SCManager, hService: SC_HANDLE;
+  lpServiceArgVectors: PChar;
+begin
+  SCManager := OpenSCManager(nil, nil, SC_MANAGER_ALL_ACCESS);
+  Result := SCManager <> 0;
+  if Result then
+  try
+    hService := OpenService(SCManager, PChar(AServName), SERVICE_ALL_ACCESS);
+    Result := hService <> 0;
+    if (hService = 0) and (GetLastError = ERROR_SERVICE_DOES_NOT_EXIST) then
+      Exception.Create('The specified service does not exist');
+    if hService <> 0 then
+    try
+      lpServiceArgVectors := nil;
+      Result := WinSvc.StartService(hService, 0, PChar(lpServiceArgVectors));
+      if not Result and (GetLastError = ERROR_SERVICE_ALREADY_RUNNING) then
+        Result := True;
+    finally
+      CloseServiceHandle(hService);
+    end;
+  finally
+    CloseServiceHandle(SCManager);
+  end;
+end;
+
+function StopService(AServName: string): Boolean;
+var
+  SCManager, hService: SC_HANDLE;
+  SvcStatus: TServiceStatus;
+begin
+  SCManager := OpenSCManager(nil, nil, SC_MANAGER_ALL_ACCESS);
+  Result := SCManager <> 0;
+  if Result then
+  try
+    hService := OpenService(SCManager, PChar(AServName), SERVICE_ALL_ACCESS);
+    Result := hService <> 0;
+    if Result then
+    try  //停止并卸载服务;
+      Result := ControlService(hService, SERVICE_CONTROL_STOP, SvcStatus);
+      //删除服务，这一句可以不要;
+      //DeleteService(hService);
+    finally
+      CloseServiceHandle(hService);
+    end;
+  finally
+    CloseServiceHandle(SCManager);
+  end;
+end;
+
+procedure TfrmBrowerForm.StartListener;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'hook.cfg');
+  try
+    F.WriteInteger('rspcn','hWnd',handle);
+    F.WriteInteger('rspcn','flag',9001);
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmBrowerForm.WMCopyData(var Message: TMessage);
+var
+  buf:PCopyDataStruct;
+  s:string;
+begin
+  buf := PCopyDataStruct(Message.lParam);
+  case buf^.dwData of
+  9001:begin
+      setLength(s,buf^.cbData);
+      move(Pchar(buf.lpData)^,s[1],buf^.cbData);
+      BufList.Add(s);
+      PostMessage(handle,WM_SEND_BARCODE,0,0); 
+    end;
+  end;
+end;
+
+procedure TfrmBrowerForm.StopListener;
+begin
+end;
+
+procedure TfrmBrowerForm.WMSendBarcode(var Msg: TMessage);
+begin
+  if IsIconic(Application.Handle) then
+     begin
+       Application.Restore;
+       SetForegroundWindow(application.Handle);
+     end;
+  SetWindowState(wsMaximized);
+  SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
+  SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
 end;
 
 initialization

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzForms, ComCtrls,
-  StdCtrls, Buttons;
+  StdCtrls, Buttons, RzBckgnd, jpeg, RzLabel;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -17,9 +17,11 @@ type
   TfrmSyncData = class(TfrmWebDialogForm)
     RzPanel1: TRzPanel;
     Image1: TImage;
-    Label1: TLabel;
     ProgressBar1: TProgressBar;
     RzFormShape1: TRzFormShape;
+    RzBackground2: TRzBackground;
+    Image2: TImage;
+    label1: TRzLabel;
     procedure FormCreate(Sender: TObject);
   private
     FShowTitle: string;

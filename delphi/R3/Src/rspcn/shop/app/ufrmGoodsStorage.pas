@@ -892,6 +892,7 @@ begin
 end;
 var
   Params:TftParamList;
+  tmpGoodsInfo,tmpBarCode,tmpGoodsRelation,tmpGoodsPrice,tmpGoodsExt:TZQuery;
 begin
   EditPanel.Visible := false;
   Params := TftParamList.Create;
@@ -952,6 +953,78 @@ begin
   finally
     Params.Free;
   end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    Params := TftParamList.Create;
+    tmpGoodsInfo := TZQuery.Create(nil);
+    tmpBarCode := TZQuery.Create(nil);
+    tmpGoodsRelation := TZQuery.Create(nil);
+    tmpGoodsPrice := TZQuery.Create(nil);
+    tmpGoodsExt := TZQuery.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      Params.ParamByName('SHOP_ID').AsString := token.shopId;
+      Params.ParamByName('PRICE_ID').AsString := '#';
+      Params.ParamByName('GODS_ID').AsString := godsId;
+      Params.ParamByName('CHANGE_ID').AsString := getTodayId;
+      Params.ParamByName('RELATION_ID').AsInteger := Relation;
+      dataFactory.BeginBatch;
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',Params);
+        dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',Params);
+        Params.ParamByName('TENANT_ID').AsInteger := cdsGodsRelation.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
+        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
+        dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',Params);
+        dataFactory.OpenBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+      case RelationId of
+      0:begin
+          if not tmpGoodsInfo.IsEmpty then tmpGoodsInfo.Delete;
+          if not tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Delete;
+          tmpBarcode.First;
+          while not tmpBarcode.IsEmpty do tmpBarcode.Delete;
+          tmpGoodsPrice.First;
+          while not tmpGoodsPrice.IsEmpty do tmpGoodsPrice.Delete;
+          if not tmpGoodsExt.IsEmpty then tmpGoodsExt.Delete;
+        end
+      else
+        begin
+          if not tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Delete;
+          tmpGoodsPrice.First;
+          while not tmpGoodsPrice.IsEmpty do tmpGoodsPrice.Delete;
+          if not tmpGoodsExt.IsEmpty then tmpGoodsExt.Delete;
+        end;
+      end;
+      dataFactory.BeginBatch;
+      try
+        dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
+        dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',nil);
+        dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',nil);
+        dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',nil);
+        dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',nil);
+        dataFactory.CommitBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      Params.Free;
+      tmpGoodsInfo.Free;
+      tmpBarCode.Free;
+      tmpGoodsRelation.Free;
+      tmpGoodsPrice.Free;
+      tmpGoodsExt.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
 procedure TfrmGoodsStorage.toolDeleteClick(Sender: TObject);
@@ -1200,6 +1273,7 @@ begin
 end;
 var
   Params:TftParamList;
+  tmpGoodsInfo,tmpBarCode,tmpGoodsRelation,tmpGoodsPrice,tmpGoodsExt:TZQuery;
 begin
   EditPanel.Visible := false;
   Params := TftParamList.Create;
@@ -1307,6 +1381,125 @@ begin
   finally
     Params.Free;
   end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    Params := TftParamList.Create;
+    tmpGoodsInfo := TZQuery.Create(nil);
+    tmpBarCode := TZQuery.Create(nil);
+    tmpGoodsRelation := TZQuery.Create(nil);
+    tmpGoodsPrice := TZQuery.Create(nil);
+    tmpGoodsExt := TZQuery.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      Params.ParamByName('SHOP_ID').AsString := token.shopId;
+      Params.ParamByName('PRICE_ID').AsString := '#';
+      Params.ParamByName('GODS_ID').AsString := godsId;
+      Params.ParamByName('CHANGE_ID').AsString := getTodayId;
+      Params.ParamByName('RELATION_ID').AsInteger := Relation;
+      dataFactory.BeginBatch;
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',Params);
+        dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',Params);
+        Params.ParamByName('TENANT_ID').AsInteger := cdsGodsRelation.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
+        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+        dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
+        dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',Params);
+        dataFactory.OpenBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+      case RelationId of
+      0:begin
+          tmpGoodsInfo.Edit;
+          tmpGoodsInfo.FieldByName('COMM').AsString := '10';
+          tmpGoodsInfo.Post;
+          tmpGoodsRelation.First;
+          while not tmpGoodsRelation.Eof do
+            begin
+              tmpGoodsRelation.Edit;
+              tmpGoodsRelation.FieldByName('COMM').AsString := '10';
+              tmpGoodsRelation.Post;
+              tmpGoodsRelation.Next;
+            end;
+          tmpBarcode.First;
+          while not tmpBarcode.Eof do
+            begin
+              tmpBarcode.Edit;
+              tmpBarcode.FieldByName('COMM').AsString := '10';
+              tmpBarcode.Post;
+              tmpBarcode.Next;
+            end;
+          tmpGoodsPrice.First;
+          while not tmpGoodsPrice.Eof do
+            begin
+              tmpGoodsPrice.Edit;
+              tmpGoodsPrice.FieldByName('COMM').AsString := '10';
+              tmpGoodsPrice.Post;
+              tmpGoodsPrice.Next;
+            end;
+          tmpGoodsExt.First;
+          while not tmpGoodsExt.Eof do
+            begin
+              tmpGoodsExt.Edit;
+              tmpGoodsExt.FieldByName('COMM').AsString := '10';
+              tmpGoodsExt.Post;
+              tmpGoodsExt.Next;
+            end;
+        end
+      else
+        begin
+          tmpGoodsRelation.First;
+          while not tmpGoodsRelation.Eof do
+            begin
+              tmpGoodsRelation.Edit;
+              tmpGoodsRelation.FieldByName('COMM').AsString := '10';
+              tmpGoodsRelation.Post;
+              tmpGoodsRelation.Next;
+            end;
+          while not tmpGoodsPrice.Eof do
+            begin
+              tmpGoodsPrice.Edit;
+              tmpGoodsPrice.FieldByName('COMM').AsString := '10';
+              tmpGoodsPrice.Post;
+              tmpGoodsPrice.Next;
+            end;
+          tmpGoodsExt.First;
+          while not tmpGoodsExt.Eof do
+            begin
+              tmpGoodsExt.Edit;
+              tmpGoodsExt.FieldByName('COMM').AsString := '10';
+              tmpGoodsExt.Post;
+              tmpGoodsExt.Next;
+            end;
+        end;
+      end;
+      dataFactory.BeginBatch;
+      try
+        dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
+        dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',nil);
+        dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',nil);
+        dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',nil);
+        dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',nil);
+        dataFactory.CommitBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      Params.Free;
+      tmpGoodsInfo.Free;
+      tmpBarCode.Free;
+      tmpGoodsRelation.Free;
+      tmpGoodsPrice.Free;
+      tmpGoodsExt.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
 procedure TfrmGoodsStorage.N3Click(Sender: TObject);

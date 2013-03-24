@@ -32,6 +32,8 @@ function getModuleName(moduId:Pchar):Pchar;stdcall;
 
 function resize:boolean;stdcall;
 
+function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
+
 type
   TdllApplication=class
   private
@@ -127,7 +129,6 @@ var
   mid:string;
 begin
   try
-    if token.tenantId='' then moduId:='TfrmSysDefine';
     mid := dllApplication.getModuId(moduId);
     idx := webForm.IndexOf(mid);
     if idx>=0 then
@@ -169,7 +170,9 @@ end;
 function getModuleName(moduId:Pchar):Pchar;
 var
   idx:integer;
+  mid:string;
 begin
+  mid := dllApplication.getModuId(moduId);
   idx := webForm.IndexOf(moduId);
   if idx>=0 then
      begin
@@ -187,6 +190,22 @@ begin
      begin
        TfrmWebForm(webForm.Objects[i]).ajustPostion;
      end;
+end;
+function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
+var
+  idx:integer;
+  mid:string;
+begin
+  mid := dllApplication.getModuId(moduId);
+  idx := webForm.IndexOf(moduId);
+  if idx>=0 then
+     begin
+       TfrmWebForm(webForm.Objects[idx]).Buf := StrPas(buf);
+       PostMessage(TForm(webForm.Objects[idx]).Handle,WM_SEND_MSG,0,0);
+       result := true;
+     end
+  else
+     result := false;
 end;
 { TdllApplication }
 
@@ -216,6 +235,7 @@ end;
 
 function TdllApplication.getModuId(name: string): string;
 begin
+  if token.tenantId='' then name:='TfrmSysDefine';
   if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
      begin
        name := 'TfrmPosOutOrder';

@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, RzPanel,DbGridEh;
-
+const
+  WM_SEND_MSG=WM_USER+8099;
 type
   TfrmWebForm = class(TForm)
     ScrollBox: TScrollBox;
@@ -16,7 +17,12 @@ type
     FhWnd: THandle;
     procedure SethWnd(const Value: THandle);
     procedure OnEnterPress(CurrentForm: TForm; Key: Char);
+  protected
+    procedure WMSendMsg(var Message: TMessage); message WM_SEND_MSG;
+    procedure BarcodeInput(_Buf:string);virtual;
   public
+    //接收到的消息内容
+    Buf:string;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function checkCanClose:boolean;virtual;
@@ -112,6 +118,16 @@ end;
 function TfrmWebForm.checkCanClose: boolean;
 begin
   result := true;
+end;
+
+procedure TfrmWebForm.WMSendMsg(var Message: TMessage);
+begin
+  BarcodeInput(Buf);
+end;
+
+procedure TfrmWebForm.BarcodeInput(_Buf:string);
+begin
+
 end;
 
 end.

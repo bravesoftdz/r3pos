@@ -22,6 +22,7 @@ type
   TgetModuleName=function(moduId:pchar):Pchar;stdcall;
   //5.读取错误说明
   Tresize=function():boolean;stdcall;
+  TsendMsg=function(buf:Pchar;moduId:pchar):boolean;stdcall;
 
   TDLLPlugin=class
   private
@@ -33,6 +34,7 @@ type
     getLastError:TgetLastError;
     getModuleName:TgetModuleName;
     resize:Tresize;
+    sendMsg:TsendMsg;
     FappId: string;
     procedure SetDLLHandle(const Value: THandle);
     procedure SetappId(const Value: string);
@@ -86,6 +88,8 @@ type
     function open(urltoken:TurlToken;hWnd:THandle):boolean;
     function close(urltoken:TurlToken):boolean;
     function getTitle(urltoken:TurlToken):string;
+
+    procedure send(urltoken: TurlToken;msg:string);
 
     function erase(idx:integer):boolean;
     function find(appId:string):integer;
@@ -434,6 +438,22 @@ begin
   dataFactory.MoveToDefault;
 end;
 
+
+procedure TDLLFactory.send(urltoken: TurlToken;msg:string);
+var
+  idx:integer;
+  app:TDLLPlugin;
+begin
+  idx := find(urltoken.appId);
+  if idx<0 then
+     begin
+      exit;
+     end
+  else
+     app := TDLLPlugin(flist[idx]);
+  app.sendMsg(pchar(msg),Pchar(urlToken.moduname));
+end;
+
 { TDLLPlugin }
 
 constructor TDLLPlugin.Create(dllname:string);
@@ -455,6 +475,8 @@ begin
     if @getModuleName=nil then Raise Exception.Create('getModuleName方法没有实现');
     @resize := GetProcAddress(dllHandle, 'resize');
     if @resize=nil then Raise Exception.Create('resize方法没有实现');
+    @sendMsg := GetProcAddress(dllHandle, 'sendMsg');
+    if @sendMsg=nil then Raise Exception.Create('sendMsg方法没有实现');
     if not initApp(Application.Handle,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败');
   except
     freeLibrary(dllHandle);

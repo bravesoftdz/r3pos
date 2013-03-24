@@ -222,8 +222,7 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
     function DecodeBarcode(BarCode: string):integer;
-
-
+    procedure BarcodeInput(_Buf:string);override;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -671,6 +670,7 @@ begin
   edtTable.Edit;
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
   end;
+  if edtTable.State = dsBrowse then edtTable.Edit;
   InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
 end;
 
@@ -2495,6 +2495,18 @@ procedure TfrmOrderForm.FormResize(Sender: TObject);
 begin
   inherited;
   if width <= 1024 then photoPanel.Visible := false else photoPanel.Visible := true;
+end;
+
+procedure TfrmOrderForm.BarcodeInput(_Buf: string);
+begin
+  inherited;
+  try
+    DecodeBarcode(_Buf);
+  finally
+    edtInput.Text := '';
+    edtInput.SelectAll;
+    if edtInput.CanFocus then edtInput.SetFocus;
+  end;
 end;
 
 end.

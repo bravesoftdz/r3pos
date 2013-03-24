@@ -1,4 +1,4 @@
-unit ufrmStockOrder;
+unit ufrmPosInOrder;
 
 interface
 
@@ -11,7 +11,7 @@ uses
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg;
 
 type
-  TfrmStockOrder = class(TfrmOrderForm)
+  TfrmPosInOrder = class(TfrmOrderForm)
     TabSheet2: TRzTabSheet;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
@@ -38,30 +38,6 @@ type
     RzBackground2: TRzBackground;
     RzLabel7: TRzLabel;
     edtSTOCK_DATE: TcxDateEdit;
-    Image2: TImage;
-    edtBK_GUIDE_USER: TRzPanel;
-    RzPanel4: TRzPanel;
-    RzBackground3: TRzBackground;
-    RzLabel8: TRzLabel;
-    edtGUIDE_USER: TzrComboBoxList;
-    edtREMARK: TcxTextEdit;
-    edtBK_ACCT_MNY: TRzPanel;
-    RzLabel9: TRzLabel;
-    RzPanel7: TRzPanel;
-    RzBackground4: TRzBackground;
-    RzLabel10: TRzLabel;
-    edtACCT_MNY: TcxTextEdit;
-    edtAGIO_RATE: TcxTextEdit;
-    RzPanel8: TRzPanel;
-    RzBackground5: TRzBackground;
-    RzLabel11: TRzLabel;
-    edtBK_PAY_TOTAL: TRzPanel;
-    RzPanel10: TRzPanel;
-    RzBackground6: TRzBackground;
-    payment: TRzLabel;
-    edtPAY_TOTAL: TcxTextEdit;
-    btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
     RzPanel3: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel9: TRzPanel;
@@ -94,6 +70,42 @@ type
     MarqueeStatus: TRzMarqueeStatus;
     Image6: TImage;
     Image7: TImage;
+    edtBK_ACCT_MNY: TRzPanel;
+    RzLabel9: TRzLabel;
+    RzPanel7: TRzPanel;
+    RzBackground4: TRzBackground;
+    RzLabel10: TRzLabel;
+    edtACCT_MNY: TcxTextEdit;
+    edtAGIO_RATE: TcxTextEdit;
+    RzPanel8: TRzPanel;
+    RzBackground5: TRzBackground;
+    RzLabel11: TRzLabel;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
+    RzPanel4: TRzPanel;
+    Image8: TImage;
+    Image9: TImage;
+    RzPanel13: TRzPanel;
+    Image10: TImage;
+    Image11: TImage;
+    Image12: TImage;
+    RzPanel15: TRzPanel;
+    Image13: TImage;
+    Image14: TImage;
+    Image15: TImage;
+    RzPanel16: TRzPanel;
+    RzPanel24: TRzPanel;
+    godsName: TRzLabel;
+    godsPrice: TRzLabel;
+    godsAmount: TRzLabel;
+    RzPanel25: TRzPanel;
+    edtBK_PAY_TOTAL: TRzPanel;
+    RzPanel10: TRzPanel;
+    RzBackground6: TRzBackground;
+    payment: TRzLabel;
+    edtPAY_TOTAL: TcxTextEdit;
+    godsPhotoBk: TRzPanel;
+    godsPhoto: TImage;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -126,6 +138,7 @@ type
     procedure serachTextExit(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure serachTextChange(Sender: TObject);
+    procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
   private
     { Private declarations }
@@ -145,6 +158,7 @@ type
   protected
     procedure SetdbState(const Value: TDataSetState);override;
     procedure SetinputFlag(const Value: integer);override;
+    procedure getGodsInfo(godsId:string);
     function  checkPayment:boolean;
     function  payCashMny(s:string):boolean;
     procedure DoShowPayment;
@@ -181,15 +195,15 @@ type
   end;
 
 var
-  frmStockOrder: TfrmStockOrder;
+  frmPosInOrder: TfrmPosInOrder;
 
 implementation
-uses utokenFactory,udllDsUtil,udllShopUtil,udllFnUtil, udllGlobal, udataFactory;
+uses utokenFactory,udllDsUtil,udllShopUtil,udllFnUtil, udllGlobal, udataFactory, uCacheFactory;
 {$R *.dfm}
 
 { TfrmSaleOrder }
 
-procedure TfrmStockOrder.Calc;
+procedure TfrmPosInOrder.Calc;
 var
   r:integer;
   Controls:boolean;
@@ -218,7 +232,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.CancelOrder;
+procedure TfrmPosInOrder.CancelOrder;
 begin
   if dbState = dsBrowse then Exit;
   if dbState = dsInsert then
@@ -227,13 +241,13 @@ begin
      Open(AObj.FieldbyName('STOCK_ID').AsString);
 end;
 
-constructor TfrmStockOrder.Create(AOwner: TComponent);
+constructor TfrmPosInOrder.Create(AOwner: TComponent);
 begin
   inherited;
   AObj := TRecord_.Create;
 end;
 
-procedure TfrmStockOrder.DeleteOrder;
+procedure TfrmPosInOrder.DeleteOrder;
 begin
   if cdsHeader.IsEmpty then Raise Exception.Create('不能删除空单据');
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能删除');
@@ -258,13 +272,13 @@ begin
   dbState := dsBrowse;
 end;
 
-destructor TfrmStockOrder.Destroy;
+destructor TfrmPosInOrder.Destroy;
 begin
   AObj.Free;
   inherited;
 end;
 
-procedure TfrmStockOrder.EditOrder;
+procedure TfrmPosInOrder.EditOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
@@ -278,7 +292,7 @@ begin
      edtCLIENT_ID.SetFocus;
 end;
 
-procedure TfrmStockOrder.NewOrder;
+procedure TfrmPosInOrder.NewOrder;
 var
   rs:TZQuery;
 begin
@@ -299,8 +313,7 @@ begin
 
   edtSTOCK_DATE.Date := dllGlobal.SysDate;
 
-  edtGUIDE_USER.KeyValue := token.userId;
-  edtGUIDE_USER.Text := token.username;
+  AObj.FieldbyName('GUIDE_USER').AsString := token.userId;
 
   AObj.FieldbyName('INVOICE_FLAG').AsInteger := DefInvFlag;
   case DefInvFlag of
@@ -316,7 +329,7 @@ begin
      edtCLIENT_ID.SetFocus;
 end;
 
-procedure TfrmStockOrder.Open(id: string);
+procedure TfrmPosInOrder.Open(id: string);
 var
   Params:TftParamList;
 begin
@@ -345,7 +358,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.SaveOrder;
+procedure TfrmPosInOrder.SaveOrder;
 var
   Printed:boolean;
 begin
@@ -393,14 +406,14 @@ begin
   dbState := dsBrowse;
 end;
 
-procedure TfrmStockOrder.edtTableAfterPost(DataSet: TDataSet);
+procedure TfrmPosInOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
   if not edtTable.ControlsDisabled then Calc;
 
 end;
 
-procedure TfrmStockOrder.showForm;
+procedure TfrmPosInOrder.showForm;
 begin
   inherited;
   InRate2 := StrtoFloatDef(dllGlobal.GetParameter('IN_RATE2'),0.05);
@@ -408,11 +421,10 @@ begin
   DefInvFlag := StrtoIntDef(dllGlobal.GetParameter('IN_INV_FLAG'),1);
 
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
-  edtGUIDE_USER.DataSet := dllGlobal.GetZQueryFromName('CA_USERS');
   NewOrder;
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns1BeforeShowControl(
+procedure TfrmPosInOrder.DBGridEh1Columns1BeforeShowControl(
   Sender: TObject);
 begin
   inherited;
@@ -422,7 +434,7 @@ begin
 
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
+procedure TfrmPosInOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
@@ -456,7 +468,7 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
+procedure TfrmPosInOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
@@ -475,7 +487,7 @@ begin
   PriceToCalc(r);
 end;
 
-procedure TfrmStockOrder.btnSaveClick(Sender: TObject);
+procedure TfrmPosInOrder.btnSaveClick(Sender: TObject);
 begin
   inherited;
   case dbState of
@@ -485,22 +497,23 @@ begin
   else
     begin
       SaveOrder;
-      if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+//      if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
          NewOrder
-      else
-         Open(AObj.FieldbyName('SALES_ID').AsString);
+//      else
+//         Open(AObj.FieldbyName('SALES_ID').AsString);
     end;
   end;
 end;
 
-procedure TfrmStockOrder.InitPrice(GODS_ID, UNIT_ID: string);
+procedure TfrmPosInOrder.InitPrice(GODS_ID, UNIT_ID: string);
 begin
   if edtTable.State = dsBrowse then edtTable.Edit;
   edtTable.FieldbyName('APRICE').AsFloat :=dllGlobal.GetNewInPrice(GODS_ID,UNIT_ID);
   edtTable.FieldbyName('ORG_PRICE').AsFloat :=dllGlobal.GetNewOutPrice(GODS_ID,UNIT_ID);
+  getGodsInfo(edtTable.FieldbyName('GODS_ID').AsString);
 end;
 
-procedure TfrmStockOrder.SetinputFlag(const Value: integer);
+procedure TfrmPosInOrder.SetinputFlag(const Value: integer);
 function getPayment:string;
 var
   rs:TZQuery;
@@ -551,7 +564,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TfrmPosInOrder.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
@@ -591,7 +604,7 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.DoCustId(s:string);
+procedure TfrmPosInOrder.DoCustId(s:string);
 var
   rs:TZQuery;
 begin
@@ -609,19 +622,18 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.DoGuideUser(s:string);
+procedure TfrmPosInOrder.DoGuideUser(s:string);
 var
   rs:TZQuery;
 begin
   rs := dllGlobal.GetZQueryFromName('CA_USERS');
   if rs.Locate('ACCOUNT',s,[]) then
      begin
-       edtGUIDE_USER.KeyValue := rs.FieldbyName('USER_ID').AsString;
-       edtGUIDE_USER.Text := rs.FieldbyName('USER_NAME').AsString;
+       AObj.FieldbyName('GUIDE_USER').AsString := rs.FieldbyName('USER_ID').AsString;
      end;
 end;
 
-procedure TfrmStockOrder.DoIsPresent(s:string);
+procedure TfrmPosInOrder.DoIsPresent(s:string);
 begin
   if s='1' then
      PresentToCalc(0)
@@ -632,19 +644,19 @@ begin
      Raise Exception.Create('不支持的销售类型，请输入1-3之间的类型序号');
 end;
 
-procedure TfrmStockOrder.DoNewOrder;
+procedure TfrmPosInOrder.DoNewOrder;
 begin
   if MessageBox(Handle,'是否清除当前输入的所有商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
      NewOrder;
 end;
 
-procedure TfrmStockOrder.DoSaveOrder;
+procedure TfrmPosInOrder.DoSaveOrder;
 begin
   SaveOrder;
   NewOrder;
 end;
 
-function TfrmStockOrder.doShortCut(s: string): boolean;
+function TfrmPosInOrder.doShortCut(s: string): boolean;
 begin
   result := inherited doShortCut(s);
   if result then exit;
@@ -667,7 +679,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmPosInOrder.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if char(Key) = '*' then
      begin
@@ -723,7 +735,7 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.btnNavClick(Sender: TObject);
+procedure TfrmPosInOrder.btnNavClick(Sender: TObject);
 begin
   inherited;
   case PageControl.ActivePageIndex of
@@ -733,7 +745,7 @@ begin
   PageControlChange(nil);
 end;
 
-procedure TfrmStockOrder.SetdbState(const Value: TDataSetState);
+procedure TfrmPosInOrder.SetdbState(const Value: TDataSetState);
 begin
   inherited;
   case Value of
@@ -747,7 +759,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.OpenList;
+procedure TfrmPosInOrder.OpenList;
 begin
   cdsList.Close;
   cdsList.SQL.Text := 'select A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,B.CLIENT_NAME,A.STOCK_MNY,A.STOCK_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
@@ -764,7 +776,7 @@ begin
   dataFactory.Open(cdsList); 
 end;
 
-procedure TfrmStockOrder.dateFlagPropertiesChange(Sender: TObject);
+procedure TfrmPosInOrder.dateFlagPropertiesChange(Sender: TObject);
 begin
   inherited;
   case dateFlag.ItemIndex of
@@ -796,19 +808,19 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.FormCreate(Sender: TObject);
+procedure TfrmPosInOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   dateFlag.ItemIndex := 1;
 end;
 
-procedure TfrmStockOrder.btnFindClick(Sender: TObject);
+procedure TfrmPosInOrder.btnFindClick(Sender: TObject);
 begin
   inherited;
   OpenList;
 end;
 
-procedure TfrmStockOrder.DBGridEh2DblClick(Sender: TObject);
+procedure TfrmPosInOrder.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
@@ -817,7 +829,7 @@ begin
   PageControlChange(nil);
 end;
 
-procedure TfrmStockOrder.DBGridEh2DrawColumnCell(Sender: TObject;
+procedure TfrmPosInOrder.DBGridEh2DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var
@@ -863,7 +875,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.RzToolButton2Click(Sender: TObject);
+procedure TfrmPosInOrder.RzToolButton2Click(Sender: TObject);
 begin
   if cdsList.IsEmpty then Exit;
   open(cdsList.FieldbyName('STOCK_ID').AsString);
@@ -872,7 +884,7 @@ begin
   PageControlChange(nil);
 end;
 
-procedure TfrmStockOrder.RzToolButton3Click(Sender: TObject);
+procedure TfrmPosInOrder.RzToolButton3Click(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
@@ -882,7 +894,7 @@ begin
 
 end;
 
-procedure TfrmStockOrder.RzToolButton1Click(Sender: TObject);
+procedure TfrmPosInOrder.RzToolButton1Click(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
@@ -892,13 +904,13 @@ begin
   cdsList.Delete;
 end;
 
-procedure TfrmStockOrder.btnNewClick(Sender: TObject);
+procedure TfrmPosInOrder.btnNewClick(Sender: TObject);
 begin
   if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前销售单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   NewOrder;
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
+procedure TfrmPosInOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
@@ -917,7 +929,7 @@ begin
   AgioToCalc(r);
 end;
 
-function TfrmStockOrder.checkPayment: boolean;
+function TfrmPosInOrder.checkPayment: boolean;
 var
   fee,allFee,payZero,stockMny:currency;
 begin
@@ -957,7 +969,7 @@ begin
   result := true;
 end;
 
-procedure TfrmStockOrder.DoShowPayment;
+procedure TfrmPosInOrder.DoShowPayment;
 var
   fee,payZero,salMny:currency;
   s,payInfo:string;
@@ -977,7 +989,6 @@ begin
   salMny := AObj.FieldbyName('STOCK_MNY').AsFloat;
   case dbState of
   dsBrowse:begin
-      edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
       edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
       if TotalFee<>0 then
          edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
@@ -986,12 +997,6 @@ begin
     end;
   else
     begin
-      if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
-         begin
-           edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero)-AObj.FieldbyName('PAY_D').AsFloat);
-         end
-      else
-         edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
       edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
       if TotalFee<>0 then
          edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
@@ -1088,7 +1093,7 @@ begin
   end;
 end;
 
-function TfrmStockOrder.payCashMny(s: string): boolean;
+function TfrmPosInOrder.payCashMny(s: string): boolean;
 var
   r:currency;
 begin
@@ -1106,7 +1111,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.DoHangUp;
+procedure TfrmPosInOrder.DoHangUp;
 var
   s:string;
   mm:TMemoryStream;
@@ -1159,7 +1164,7 @@ begin
   NewOrder;
 end;
 
-procedure TfrmStockOrder.DoPayInput(s, flag: string);
+procedure TfrmPosInOrder.DoPayInput(s, flag: string);
 var
   r:currency;
   rs:TZQuery;
@@ -1176,7 +1181,7 @@ begin
   DoShowPayment; 
 end;
 
-procedure TfrmStockOrder.DoPayZero(s: string);
+procedure TfrmPosInOrder.DoPayZero(s: string);
 var
   mny:currency;
   IsAgio:boolean;
@@ -1211,7 +1216,7 @@ begin
   DoShowPayment;
 end;
 
-procedure TfrmStockOrder.DoPickUp;
+procedure TfrmPosInOrder.DoPickUp;
 var
   sr: TSearchRec;
   FileAttrs: Integer;
@@ -1261,7 +1266,7 @@ begin
   Calc;
 end;
 
-function TfrmStockOrder.getPaymentTitle(pay: string): string;
+function TfrmPosInOrder.getPaymentTitle(pay: string): string;
 var
   rs:TZQuery;
 begin
@@ -1272,7 +1277,7 @@ begin
      Raise Exception.Create('不支持的收款方式'); 
 end;
 
-procedure TfrmStockOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmPosInOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
 begin
   if (InputFlag = 14) and (Key=#13) then
   begin
@@ -1304,7 +1309,7 @@ begin
     end;
   end;
 end;
-procedure TfrmStockOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
+procedure TfrmPosInOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
 var
   r:currency;
 begin
@@ -1326,7 +1331,7 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.edtACCT_MNYPropertiesChange(Sender: TObject);
+procedure TfrmPosInOrder.edtACCT_MNYPropertiesChange(Sender: TObject);
 var
   r,fee:currency;
 begin
@@ -1356,7 +1361,7 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.edtAGIO_RATEPropertiesChange(Sender: TObject);
+procedure TfrmPosInOrder.edtAGIO_RATEPropertiesChange(Sender: TObject);
 var
   r,fee:currency;
 begin
@@ -1383,13 +1388,13 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.PageControlChange(Sender: TObject);
+procedure TfrmPosInOrder.PageControlChange(Sender: TObject);
 begin
   inherited;
   case PageControl.ActivePageIndex of
   0:begin
        btnNav.Caption := '历史单据';
-       lblCaption.Caption := '进货单';
+       lblCaption.Caption := '商品入库';
     end;
   1:begin
        btnNav.Caption := '返回';
@@ -1398,7 +1403,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.serachTextEnter(Sender: TObject);
+procedure TfrmPosInOrder.serachTextEnter(Sender: TObject);
 begin
   inherited;
   serachText.Text := searchTxt;
@@ -1406,27 +1411,77 @@ begin
 
 end;
 
-procedure TfrmStockOrder.serachTextExit(Sender: TObject);
+procedure TfrmPosInOrder.serachTextExit(Sender: TObject);
 begin
   inherited;
   if searchTxt='' then serachText.Text := serachText.Hint;
 
 end;
 
-procedure TfrmStockOrder.edtTableAfterDelete(DataSet: TDataSet);
+procedure TfrmPosInOrder.edtTableAfterDelete(DataSet: TDataSet);
 begin
   inherited;
   if not edtTable.ControlsDisabled then Calc;
 
 end;
 
-procedure TfrmStockOrder.serachTextChange(Sender: TObject);
+procedure TfrmPosInOrder.serachTextChange(Sender: TObject);
 begin
   inherited;
   if serachText.Focused then searchTxt := serachText.Text;
 end;
 
-procedure TfrmStockOrder.cdsListBeforeOpen(DataSet: TDataSet);
+procedure TfrmPosInOrder.getGodsInfo(godsId: string);
+var
+  rs:TZQuery;
+  SourceScale:real;
+begin
+  CacheFactory.getGodsPngImage(edtTable.FieldbyName('GODS_ID').AsString,godsPhoto.Picture);
+  godsPhoto.Top := 0;
+  godsPhoto.Left := (godsPhotoBk.Width-godsPhoto.Width) div 2-1;
+
+  godsName.Caption := '品名:'+edtTable.FieldbyName('GODS_NAME').AsString;
+  godsPrice.Caption := '价格:'+edtTable.FieldbyName('APRICE').AsString;
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Exit;
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+     begin
+      SourceScale := 1;
+     end
+  else
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+     begin
+      SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+     end
+  else
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+     begin
+      SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+     end
+  else
+     begin
+      SourceScale := 1;
+     end;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select sum(amount) from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
+    rs.ParamByName('GODS_ID').AsString := godsId;
+    dataFactory.Open(rs);
+    godsAmount.Caption := '库存:'+formatFloat('#0.###',edtTable.Fields[0].asFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmPosInOrder.DBGridEh1CellClick(Column: TColumnEh);
+begin
+  inherited;
+  getGodsInfo(edtTable.FieldbyName('GODS_ID').AsString);
+
+end;
+
+procedure TfrmPosInOrder.cdsListBeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav.Visible := false;
@@ -1434,7 +1489,7 @@ begin
 end;
 
 initialization
-  RegisterClass(TfrmStockOrder);
+  RegisterClass(TfrmPosInOrder);
 finalization
-  UnRegisterClass(TfrmStockOrder);
+  UnRegisterClass(TfrmPosInOrder);
 end.

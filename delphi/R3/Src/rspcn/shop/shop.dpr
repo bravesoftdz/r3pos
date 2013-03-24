@@ -75,10 +75,11 @@ uses
   ObjGoodsSortV60 in 'obj\ObjGoodsSortV60.pas',
   ObjUserRightsV60 in 'obj\ObjUserRightsV60.pas',
   ObjUsersV60 in 'obj\ObjUsersV60.pas',
-  ufrmDBGridPreview in 'app\ufrmDBGridPreview.pas' {frmDBGridPreview};
+  ufrmDBGridPreview in 'app\ufrmDBGridPreview.pas' {frmDBGridPreview},
+  ufrmPriceGrade in 'app\ufrmPriceGrade.pas' {frmPriceGrade};
 
 {$R *.res}
 exports
-  initApp,openApp,closeApp,eraseApp,getLastError,getModuleName,resize;
+  initApp,openApp,closeApp,eraseApp,getLastError,getModuleName,resize,sendMsg;
 begin
 end.

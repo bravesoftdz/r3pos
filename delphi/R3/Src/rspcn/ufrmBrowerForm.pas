@@ -42,8 +42,18 @@ uses
   Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles;
 const
   WM_BROWSER_INIT =WM_USER+1000;
-  WM_SEND_BARCODE =WM_USER+9001;
+  WM_SEND_INPUT =WM_USER+9001;
+  WH_KEYBOARD_LL = 13;
+
 type
+  PBDLLHOOKSTRUCT = ^TBDLLHOOKSTRUCT;
+  TBDLLHOOKSTRUCT = record
+    vkCode: DWORD;
+    scanCode: DWORD;
+    flags: DWORD;
+    time: DWORD;
+    dwExtraInfo: DWORD;
+  end;
   TTabSheetEx = class(TRZTabSheet)
   private
     EWB: TEmbeddedWB;
@@ -184,7 +194,11 @@ type
     m_bCreatedManually: Boolean;
     m_bResizable: Boolean;
     m_bFullScreen: Boolean;
-    BufList:TStringList;
+
+    //扫描枪监控
+    arr:array [1..13] of char;
+    time:array [1..13] of int64;
+    buf:TStringList;
     procedure UpdateControls(_EWB:TEmbeddedWB=nil);
     procedure LoadXsm(_url:string;appId:string;TimeOut:integer=15000);
     procedure LoadUrl(_url:string;appId:string;TimeOut:integer=15000);
@@ -199,12 +213,13 @@ type
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure FullScreen;
     procedure OpenHome;
-    //扫描监控
-    procedure StartListener;
-    procedure StopListener;
-    procedure WMCopyData(var Message: TMessage); message WM_COPYDATA;
-    procedure WMSendBarcode(var Msg:TMessage); message WM_SEND_BARCODE;
 
+    procedure WMSendInput(var Msg: TMessage); message WM_SEND_INPUT;
+    procedure KeyBoardHook(Code: integer; Msg: word;lParam: longint);
+    procedure AddKey(scanCode: DWORD);
+    function  checkBarcode:boolean;
+    procedure ClearKey;
+    procedure PushTo;
   public
     { Public declarations }
     hotKeyid:integer;
@@ -234,6 +249,20 @@ var
   iBorderThick,
   iBorderSize,
   iCaptSize: Integer;
+
+var
+  whKeyboard: HHook;
+
+function KeyboardHookCallBack(Code: integer; Msg: WPARAM;
+  KeyboardHook: LPARAM): LRESULT; stdcall;
+begin
+  Result := 0;
+  if Code>=0 then
+     begin
+       frmBrowerForm.KeyBoardHook(Code,msg,KeyboardHook);
+       Result := CallNextHookEx(whKeyboard, Code, Msg, KeyboardHook);
+     end;
+end;
 
 procedure TfrmBrowerForm.UpdateControls(_EWB:TEmbeddedWB=nil);
 var
@@ -461,8 +490,9 @@ begin
   dllFactory := TDLLFactory.Create;
   hotKeyid:=GlobalAddAtom('rspcn');//'Hotkey'名字可以随便取
   RegisterHotKey(Handle,hotKeyid,0,VK_PAUSE);
-  StartListener;
   Initialized := true;
+  whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
+    HInstance, 0);
   Timer1.Enabled := true;
   case Message.LParam of
   1:begin
@@ -606,14 +636,14 @@ end;
 constructor TfrmBrowerForm.Create(AOwner: TComponent);
 begin
   inherited;
-  BufList := TStringList.Create;
+  Buf := TStringList.Create;
 end;
 
 destructor TfrmBrowerForm.Destroy;
 begin
   if Initialized then
      begin
-        StopListener;
+        if whKeyboard<>0 then UnhookWindowsHookEx(whKeyboard);
         Timer1.Enabled := false;
         Initialized := false;
         UnRegisterHotKey(handle,hotKeyid);
@@ -622,7 +652,7 @@ begin
         if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
         dllFactory.Free;
      end;
-  BufList.Free;
+  Buf.Free;
   inherited;
 end;
 
@@ -1351,49 +1381,115 @@ begin
   end;
 end;
 
-procedure TfrmBrowerForm.StartListener;
+procedure TfrmBrowerForm.WMSendInput(var Msg: TMessage);
 var
-  F:TIniFile;
-begin
-  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'hook.cfg');
-  try
-    F.WriteInteger('rspcn','hWnd',handle);
-    F.WriteInteger('rspcn','flag',9001);
-  finally
-    F.Free;
-  end;
-end;
-
-procedure TfrmBrowerForm.WMCopyData(var Message: TMessage);
-var
-  buf:PCopyDataStruct;
-  s:string;
-begin
-  buf := PCopyDataStruct(Message.lParam);
-  case buf^.dwData of
-  9001:begin
-      setLength(s,buf^.cbData);
-      move(Pchar(buf.lpData)^,s[1],buf^.cbData);
-      BufList.Add(s);
-      PostMessage(handle,WM_SEND_BARCODE,0,0); 
-    end;
-  end;
-end;
-
-procedure TfrmBrowerForm.StopListener;
-begin
-end;
-
-procedure TfrmBrowerForm.WMSendBarcode(var Msg: TMessage);
+  tabEx:TTabSheetEx;
+  isIcon:boolean;
 begin
   if IsIconic(Application.Handle) then
      begin
        Application.Restore;
        SetForegroundWindow(application.Handle);
+       SetWindowState(wsMaximized);
+       SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
+       SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
+       isIcon := true;
      end;
-  SetWindowState(wsMaximized);
-  SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
-  SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE);
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  if (tabEx.url.appFlag<>1) or isIcon then //不是门店应用
+     begin
+       LoadUrl('rspcn://shop.dll/TfrmSaleOrder','shop.dll');
+       tabEx := PageControl1.ActivePage as TTabSheetEx;
+     end
+  else
+     begin
+       if lowercase(tabEx.url.moduname)<>'tfrmsaleorder' then
+          begin
+            Buf.Clear;
+          end;
+     end;
+  while Buf.Count>0 do
+    begin
+      dllFactory.Send(tabEx.url,Buf[0]);
+      Buf.Delete(0); 
+    end;
+end;
+
+procedure TfrmBrowerForm.AddKey(scanCode: DWORD);
+var
+  i:integer;
+begin
+  if scanCode<>13 then
+  begin
+    for i:=2 to 13 do
+      begin
+        arr[i-1] := arr[i];
+      end;
+    for i:=2 to 13 do
+      begin
+        time[i-1] := time[i];
+      end;
+  end;
+  time[13] := getTickCount;
+  case scanCode of
+  13:begin
+       if checkBarcode then PushTo;
+       ClearKey;
+     end;
+  48:arr[13] := '0';
+  49:arr[13] := '1';
+  50:arr[13] := '2';
+  51:arr[13] := '3';
+  52:arr[13] := '4';
+  53:arr[13] := '5';
+  54:arr[13] := '6';
+  55:arr[13] := '7';
+  56:arr[13] := '8';
+  57:arr[13] := '9';
+  end;
+end;
+
+function TfrmBrowerForm.checkBarcode: boolean;
+var
+  i:integer;
+begin
+  result := false;
+  for i:=1 to 13 do
+    begin
+      if arr[i] = #0 then Exit;
+    end;
+  if (time[13]-time[1])<2000 then
+    result := true;
+end;
+
+procedure TfrmBrowerForm.ClearKey;
+var
+  i:integer;
+begin
+  for i:=1 to 13 do arr[i] := #0;
+end;
+
+procedure TfrmBrowerForm.KeyBoardHook(Code: integer; Msg: word;
+  lParam: Integer);
+begin
+ if (Code = HC_ACTION) then
+  begin
+    if ((1 shl 31)and lParam=0) then
+       begin
+         if PBDLLHOOKSTRUCT(lParam)^.vkCode in [13,48..57] then
+            begin
+              if (PBDLLHOOKSTRUCT(lParam)^.flags in [0]) then addKey(PBDLLHOOKSTRUCT(lParam)^.vkCode);
+            end
+         else
+            ClearKey;
+       end;
+  end;
+end;
+
+procedure TfrmBrowerForm.PushTo;
+begin
+  Buf.Add(arr);
+  PostMessage(handle,WM_SEND_INPUT,0,0);
 end;
 
 initialization

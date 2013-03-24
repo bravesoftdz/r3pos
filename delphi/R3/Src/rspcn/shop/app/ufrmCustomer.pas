@@ -172,6 +172,7 @@ type
     procedure CreatePriceGrade;
     procedure OpenInfo(custId:string);
     procedure SaveInfo;
+    procedure SaveLocalInfo;
     procedure DeleteInfo(custId:string);
     procedure unDeleteInfo(custId:string);
     procedure UpdateGrade(custId:string);
@@ -416,6 +417,11 @@ begin
      dataFactory.CancelBatch;
      Raise;
   end;
+
+  SaveLocalInfo;
+
+  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+
   if cdsList.Locate('CUST_ID',AObj.FieldbyName('CUST_ID').AsString,[]) then
      begin
        cdsList.Edit;
@@ -429,8 +435,7 @@ begin
 end;
 
 procedure TfrmCustomer.UpdateGrade(custId: string);
-var
-  Params:TftParamList;
+var Params:TftParamList;
 begin
   Params := TftParamList.Create;
   try
@@ -457,6 +462,10 @@ begin
   finally
     Params.Free;
   end;
+
+  SaveLocalInfo;
+
+  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
 end;
 
 procedure TfrmCustomer.SetdbState(const Value: TDataSetState);
@@ -776,6 +785,49 @@ begin
   rzTree.OnChange := nil;
   CreatePriceGrade;
   rzTree.OnChange := rzTreeChange;
+end;
+
+procedure TfrmCustomer.SaveLocalInfo;
+var
+  Params:TftParamList;
+  tmpCustomer:TZQuery;
+  tmpObj:TRecord_;
+begin
+  if dataFactory.iDbType <> 5 then
+  begin
+    tmpObj := TRecord_.Create;
+    tmpCustomer := TZQuery.Create(nil);
+    Params := TftParamList.Create;
+    dataFactory.MoveToSqlite;
+    try
+      dataFactory.BeginBatch;
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := cdsCustomer.FieldByName('TENANT_ID').AsInteger;
+        Params.ParamByName('CUST_ID').AsString := cdsCustomer.FieldByName('CUST_ID').AsString;;
+        dataFactory.AddBatch(tmpCustomer,'TCustomerV60',Params);
+        dataFactory.OpenBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+      if tmpCustomer.IsEmpty then tmpCustomer.Append else tmpCustomer.Edit;
+      tmpObj.ReadFromDataSet(cdsCustomer);
+      tmpObj.WriteToDataSet(tmpCustomer);
+      dataFactory.BeginBatch;
+      try
+        dataFactory.AddBatch(tmpCustomer,'TCustomerV60',nil);
+        dataFactory.CommitBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      Params.Free;
+      tmpCustomer.Free;
+      tmpObj.Free;
+    end;
+  end;
 end;
 
 initialization

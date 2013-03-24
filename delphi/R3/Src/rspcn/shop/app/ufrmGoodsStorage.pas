@@ -200,6 +200,7 @@ type
     { Public declarations }
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
+    procedure SaveLocalInfo;
     procedure DeleteInfo(godsId:string;Relation:integer=0);
     procedure unDeleteInfo(godsId:string;Relation:integer=0);
     procedure UpdateSort(godsId:string;Relation:integer=0);
@@ -519,6 +520,10 @@ begin
      dataFactory.CancelBatch;
      Raise;
   end;
+
+  SaveLocalInfo;
+  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+
   if cdsList.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
      begin
        cdsList.Edit;
@@ -1084,6 +1089,7 @@ begin
 end;
 var
   Params:TftParamList;
+  tmpDataSet:TZQuery;
 begin
   EditPanel.Visible := false;
   Params := TftParamList.Create;
@@ -1111,6 +1117,42 @@ begin
   finally
     Params.Free;
   end;
+
+  if dataFactory.iDbType <> 5 then
+  begin
+    Params := TftParamList.Create;
+    tmpDataSet := TZQuery.Create(nil);
+    dataFactory.MoveToSqlite;
+    try
+      case relation of
+      0:begin
+          Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+          Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+          dataFactory.Open(tmpDataSet,'TGoodsInfoV60',Params);
+          tmpDataSet.Edit;
+          tmpDataSet.FieldByName('SORT_ID1').AsString := FSortId;
+          tmpDataSet.Post;
+          dataFactory.UpdateBatch(tmpDataSet,'TGoodsInfoV60');
+        end;
+      else
+        begin
+          Params.ParamByName('TENANT_ID').AsInteger := cdsGodsRelation.FieldByName('TENANT_ID').AsInteger;
+          Params.ParamByName('GODS_ID').AsString := cdsGodsRelation.FieldByName('GODS_ID').AsString;
+          Params.ParamByName('RELATION_ID').AsInteger := cdsGodsRelation.FieldByName('RELATION_ID').AsInteger;
+          dataFactory.Open(tmpDataSet,'TGoodsRelationV60',Params);
+          tmpDataSet.Edit;
+          tmpDataSet.FieldByName('SORT_ID1').AsString := FSortId;
+          tmpDataSet.Post;
+          dataFactory.UpdateBatch(tmpDataSet,'TGoodsRelationV60');
+        end;
+      end;
+    finally
+      dataFactory.MoveToDefault;
+      tmpDataSet.Free;
+      Params.Free;
+    end;
+  end;
+  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
 procedure TfrmGoodsStorage.btnNewSortClick(Sender: TObject);
@@ -1624,6 +1666,163 @@ begin
   dllGlobal.CreateGoodsSortTree(rzTree,true);
   rzTree.Items.Add(nil,'ªÿ ’’æ');
   rzTree.OnChange := rzTreeChange;
+end;
+
+procedure TfrmGoodsStorage.SaveLocalInfo;
+var
+  tmpObj:TRecord_;
+  Params:TftParamList;
+  tmpGoodsInfo,tmpBarCode,tmpGoodsRelation,tmpGoodsPrice,tmpGoodsExt:TZQuery;
+begin
+  if dataFactory.iDbType = 5 then Exit;
+  Params := TftParamList.Create(nil);
+  tmpGoodsInfo := TZQuery.Create(nil);
+  tmpBarCode := TZQuery.Create(nil);
+  tmpGoodsRelation := TZQuery.Create(nil);
+  tmpGoodsPrice := TZQuery.Create(nil);
+  tmpGoodsExt := TZQuery.Create(nil);
+  dataFactory.MoveToSqlite;
+  try
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('PRICE_ID').AsString := '#';
+    Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+    Params.ParamByName('RELATION_ID').AsInteger := cdsGodsRelation.FieldByName('RELATION_ID').AsInteger;
+    Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+
+    dataFactory.BeginBatch;
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+      dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',Params);
+      dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',Params);
+      Params.ParamByName('TENANT_ID').AsInteger := cdsGodsRelation.FieldByName('TENANT_ID').AsInteger;
+      dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
+      Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+      dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
+      dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',Params);
+      dataFactory.OpenBatch;
+    except
+      dataFactory.CancelBatch;
+      Raise;
+    end;
+
+    tmpObj := TRecord_.Create;
+    try
+      if tmpGoodsInfo.IsEmpty then tmpGoodsInfo.Append else tmpGoodsInfo.Edit;
+      tmpObj.ReadFromDataSet(cdsGoodsInfo);
+      tmpObj.WriteToDataSet(tmpGoodsInfo);
+    finally
+      tmpObj.Free;
+    end;
+
+    tmpObj := TRecord_.Create;
+    try
+      if tmpGoodsExt.IsEmpty then tmpGoodsExt.Append else tmpGoodsExt.Edit;
+      tmpObj.ReadFromDataSet(cdsGoodsExt);
+      tmpObj.WriteToDataSet(tmpGoodsExt);
+    finally
+      tmpObj.Free;
+    end;
+
+    tmpObj := TRecord_.Create;
+    try
+      if tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Append else tmpGoodsRelation.Edit;
+      tmpObj.ReadFromDataSet(cdsGodsRelation);
+      tmpObj.WriteToDataSet(tmpGoodsRelation);
+    finally
+      tmpObj.Free;
+    end;
+
+    tmpObj := TRecord_.Create;
+    try
+      if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+         begin
+           if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
+              tmpBarCode.Edit
+           else
+              tmpBarCode.Append;
+           tmpObj.ReadFromDataSet(cdsBarCode);
+           tmpObj.WriteToDataSet(tmpBarCode);
+         end
+      else
+         begin
+           if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
+              tmpBarCode.Delete;
+         end;
+
+      if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+         begin
+           if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
+              tmpBarCode.Edit
+           else
+              tmpBarCode.Append;
+           tmpObj.ReadFromDataSet(cdsBarCode);
+           tmpObj.WriteToDataSet(tmpBarCode);
+         end
+      else
+         begin
+           if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
+              tmpBarCode.Delete;
+         end;
+
+      if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+         begin
+           if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
+              tmpBarCode.Edit
+           else
+              tmpBarCode.Append;
+           tmpObj.ReadFromDataSet(cdsBarCode);
+           tmpObj.WriteToDataSet(tmpBarCode);
+         end
+      else
+         begin
+           if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
+              tmpBarCode.Delete;
+         end;
+    finally
+      tmpObj.Free;
+    end;
+
+    tmpObj := TRecord_.Create;
+    try
+      if cdsGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+         begin
+           if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+              tmpGoodsPrice.Edit
+           else
+              tmpGoodsPrice.Append;
+           tmpObj.ReadFromDataSet(cdsGoodsPrice);
+           tmpObj.WriteToDataSet(tmpGoodsPrice);
+         end
+      else
+         begin
+           if tmpGoodsPrice.Locate('SHOP_ID', token.shopId, []) then
+              tmpGoodsPrice.Delete;
+         end;
+    finally
+      tmpObj.Free;
+    end;
+    
+    dataFactory.BeginBatch;
+    try
+      dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
+      dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',nil);
+      dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',nil);
+      dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',nil);
+      dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',nil);
+      dataFactory.CommitBatch;
+    except
+      dataFactory.CancelBatch;
+      Raise;
+    end;
+  finally
+    dataFactory.MoveToDefault;
+    Params.Free;
+    tmpGoodsInfo.Free;
+    tmpBarCode.Free;
+    tmpGoodsRelation.Free;
+    tmpGoodsPrice.Free;
+    tmpGoodsExt.Free;
+  end;
 end;
 
 initialization

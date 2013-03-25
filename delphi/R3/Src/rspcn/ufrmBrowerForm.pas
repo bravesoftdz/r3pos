@@ -1054,7 +1054,14 @@ procedure TfrmBrowerForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
   try
-    if token.online and (Timer1.Tag=0) then  dllFactory.Init(mainPanel.Handle);
+    if token.logined and token.online and (Timer1.Tag=0) then
+       begin
+         try
+           dllFactory.Init(mainPanel.Handle);
+         finally
+           Timer1.Tag := 1;
+         end;
+       end;
 
     if token.logined and not toolleft.Visible and (pageControl1.PageCount>0) then
        begin
@@ -1082,7 +1089,6 @@ begin
     else
        lblUserName.Caption := 'ÏÖ´ú¾íÑÌÁãÊÛÖÕ¶Ë';
   finally
-    Timer1.Tag := 1;
     Timer1.Enabled := true;
   end;
 end;

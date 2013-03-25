@@ -79,10 +79,14 @@ begin
   0:result := sqlite.AddBatch(DataSet,AClassName,Params);
   else
     begin
-      if Params<>nil then
-         dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params) )
-      else
-         dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,'') ;
+      try
+        if Params<>nil then
+           dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params) )
+        else
+           dbHelp.AddBatch(TZQuery(DataSet).Delta,AClassName,'') ;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
       FDataSets.Add(DataSet);
     end;
   end;
@@ -95,7 +99,11 @@ begin
   else
     begin
       if FDataSets.Count>0 then Raise Exception.Create('已经在组包状态，不能重复操作。');
-      dbHelp.beginbatch;
+      try
+        dbHelp.beginbatch;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
     end;
   end;
 end;
@@ -105,7 +113,13 @@ begin
   case dbFlag of
   0:sqlite.BeginTrans(TimeOut);
   else
-    dbHelp.BeginTrans(TimeOut);
+    begin
+      try
+        dbHelp.BeginTrans(TimeOut);
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -115,7 +129,11 @@ begin
   0:sqlite.CancelBatch;
   else
     begin
-      dbHelp.CancelBatch;
+      try
+        dbHelp.CancelBatch;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
       FDataSets.Clear;
     end;
   end;
@@ -129,7 +147,11 @@ begin
   0:sqlite.CommitBatch;
   else
     begin
-      dbHelp.CommitBatch;
+      try
+        dbHelp.CommitBatch;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
       for i:=0 to FDataSets.Count-1 do
         begin
           TZQuery(FDataSets[i]).CommitUpdates;
@@ -144,7 +166,13 @@ begin
   case dbFlag of
   0:sqlite.CommitTrans;
   else
-    dbHelp.CommitTrans;  
+    begin
+      try
+        dbHelp.CommitTrans;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -171,7 +199,13 @@ begin
   case dbFlag of
   0:result := sqlite.ExecProc(AClassName,Params);
   else
-    result := StrPas(dbHelp.ExecProc(AClassName,TftParamList.Encode(Params)));
+    begin
+      try
+        result := StrPas(dbHelp.ExecProc(AClassName,TftParamList.Encode(Params)));
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -181,7 +215,13 @@ begin
   case dbFlag of
   0:result := sqlite.ExecSQL(SQL);
   else
-    result := dbHelp.ExecSQL(SQL);
+    begin
+      try
+        result := dbHelp.ExecSQL(SQL);
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -195,7 +235,13 @@ begin
   case dbFlag of
   0:result := sqlite.iDbType;
   else
-    result := dbHelp.iDbType;
+    begin
+      try
+        result := dbHelp.iDbType;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -204,7 +250,13 @@ begin
   case dbFlag of
   0:result := sqlite.InTransaction;
   else
-    result := dbHelp.InTransaction;
+    begin
+      try
+        result := dbHelp.InTransaction;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -213,7 +265,13 @@ begin
   case dbFlag of
   0:result := sqlite.Open(DataSet,AClassName);
   else
-    TZQuery(DataSet).Data := dbHelp.OpenNS(AClassName,'');
+    begin
+      try
+        TZQuery(DataSet).Data := dbHelp.OpenNS(AClassName,'');
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -224,10 +282,14 @@ begin
   0:result := sqlite.Open(DataSet,AClassName,Params);
   else
     begin
-      if Params<>nil then
-         TZQuery(DataSet).Data := dbHelp.OpenNS(AClassName,TftParamList.Encode(Params))
-      else
-         TZQuery(DataSet).Data := dbHelp.OpenNS(AClassName,'');
+      try
+        if Params<>nil then
+           TZQuery(DataSet).Data := dbHelp.OpenNS(AClassName,TftParamList.Encode(Params))
+        else
+           TZQuery(DataSet).Data := dbHelp.OpenNS(AClassName,'');
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
     end;
   end;
 end;
@@ -236,7 +298,12 @@ procedure TdataFactory.MoveToDefault;
 var
   f:TIniFile;
 begin
-  remote.MoveToDefault;
+  try
+    remote.MoveToDefault;
+  except
+    raise Exception.Create(StrPas(dbHelp.getLastError));
+  end;
+
   if not token.online then
      begin
        dbFlag := 0;
@@ -268,7 +335,13 @@ begin
   case dbFlag of
   0:result := sqlite.Open(DataSet);
   else
-    TZQuery(DataSet).Data := dbHelp.OpenSQL(TZQuery(DataSet).SQL.Text,TftParamList.Encode(TZQuery(DataSet).Params));
+    begin
+      try
+        TZQuery(DataSet).Data := dbHelp.OpenSQL(TZQuery(DataSet).SQL.Text,TftParamList.Encode(TZQuery(DataSet).Params));
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -281,7 +354,11 @@ begin
   0:result := sqlite.OpenBatch;
   else
     begin
-      V := dbHelp.OpenBatch;
+      try
+        V := dbHelp.OpenBatch;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
       for i:=0 to FDataSets.Count-1 do
         begin
           TZQuery(FDataSets[i]).Data := V[i];
@@ -296,7 +373,13 @@ begin
   case dbFlag of
   0:sqlite.RollbackTrans;
   else
-    dbHelp.RollbackTrans;
+    begin
+      try
+        dbHelp.RollbackTrans;
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
+    end;
   end;
 end;
 
@@ -317,7 +400,11 @@ begin
   0:result := sqlite.UpdateBatch(DataSet,AClassName);
   else
     begin
-      dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(TZQuery(DataSet).Params));
+      try
+        dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(TZQuery(DataSet).Params));
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
       TZQuery(DataSet).CommitUpdates;
     end;
   end;
@@ -330,10 +417,14 @@ begin
   0:result := sqlite.UpdateBatch(DataSet,AClassName,Params);
   else
     begin
-      if Params<>nil then
-         dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params))
-      else
-         dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,'');
+      try
+        if Params<>nil then
+           dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,TftParamList.Encode(Params))
+        else
+           dbHelp.UpdateBatch(TZQuery(DataSet).Delta,AClassName,'');
+      except
+        raise Exception.Create(StrPas(dbHelp.getLastError));
+      end;
       TZQuery(DataSet).CommitUpdates;
     end;
   end;

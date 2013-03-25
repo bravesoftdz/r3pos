@@ -50,6 +50,7 @@ type
     FList:TList;
     FDataSets:TList;
     FappWnd: THandle;
+    lastError:string;
     procedure SetappWnd(const Value: THandle);
   protected
     //开始事务  超时设置 单位秒
@@ -77,6 +78,7 @@ type
     procedure CommitBatch; stdcall;
     procedure CancelBatch; stdcall;
     procedure MoveToDefault; stdcall;
+    function getLastError:pchar; stdcall;
 
     //执行远程方式，返回结果
     function ExecProc(NS:String;Params:WideString):pchar;stdcall;
@@ -115,43 +117,75 @@ procedure TDLLFactory.AddBatch(ds: OleVariant; const ns,
 var
   rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  rs.Delta := ds;
-  if Params<>'' then
-     TftParamList.Decode(rs.Params,Params);
-  FDataSets.Add(rs);
-  dataFactory.AddBatch(rs,ns,TftParamList(rs.Params));
+  try
+    rs := TZQuery.Create(nil);
+    rs.Delta := ds;
+    if Params<>'' then
+       TftParamList.Decode(rs.Params,Params);
+    FDataSets.Add(rs);
+    dataFactory.AddBatch(rs,ns,TftParamList(rs.Params));
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 procedure TDLLFactory.BeginBatch;
 var
   i:integer;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  dataFactory.BeginBatch;
-  for i:=0 to FDataSets.Count-1 do
-    begin
-      TObject(FDataSets[i]).Free;
-    end;
-  FDataSets.Clear;
+  try
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    dataFactory.BeginBatch;
+    for i:=0 to FDataSets.Count-1 do
+      begin
+        TObject(FDataSets[i]).Free;
+      end;
+    FDataSets.Clear;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 procedure TDLLFactory.BeginTrans(TimeOut: integer);
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  dataFactory.BeginTrans(TimeOut);
+  try
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    dataFactory.BeginTrans(TimeOut);
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 procedure TDLLFactory.CancelBatch;
 var
   i:integer;
 begin
-  dataFactory.CancelBatch;
-  for i:=0 to FDataSets.Count-1 do
-    begin
-      TObject(FDataSets[i]).Free;
-    end;
-  FDataSets.Clear;
+  try
+    dataFactory.CancelBatch;
+    for i:=0 to FDataSets.Count-1 do
+      begin
+        TObject(FDataSets[i]).Free;
+      end;
+    FDataSets.Clear;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 function TDLLFactory.close(urltoken:TurlToken): boolean;
@@ -173,17 +207,33 @@ procedure TDLLFactory.CommitBatch;
 var
   i:integer;
 begin
-  dataFactory.CommitBatch;
-  for i:=0 to FDataSets.Count-1 do
-    begin
-      TObject(FDataSets[i]).Free;
-    end;
-  FDataSets.Clear;
+  try
+    dataFactory.CommitBatch;
+    for i:=0 to FDataSets.Count-1 do
+      begin
+        TObject(FDataSets[i]).Free;
+      end;
+    FDataSets.Clear;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 procedure TDLLFactory.CommitTrans;
 begin
-  dataFactory.CommitTrans;
+  try
+    dataFactory.CommitTrans;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 constructor TDLLFactory.Create;
@@ -216,8 +266,16 @@ end;
 
 function TDLLFactory.ExecSQL(const SQL: WideString): Integer;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  result := dataFactory.ExecSQL(SQL); 
+  try
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    result := dataFactory.ExecSQL(SQL);
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 function TDLLFactory.find(appId: string): integer;
@@ -254,14 +312,30 @@ end;
 
 function TDLLFactory.iDbType: Integer;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  result := dataFactory.iDbType;
+  try
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    result := dataFactory.iDbType;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 function TDLLFactory.InTransaction: boolean;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  result := dataFactory.InTransaction;
+  try
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    result := dataFactory.InTransaction;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 function TDLLFactory.open(urltoken:TurlToken;hWnd:THandle): boolean;
@@ -295,15 +369,23 @@ function TDLLFactory.OpenSQL(SQL, Params: WideString): OleVariant;
 var
   rs:TZQuery;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := SQL;
-    TftParamList.Decode(rs.Params,Params);
-    dataFactory.Open(rs);
-    result := rs.Data;
-  finally
-    rs.Free;
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := SQL;
+      TftParamList.Decode(rs.Params,Params);
+      dataFactory.Open(rs);
+      result := rs.Data;
+    finally
+      rs.Free;
+    end;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
   end;
 end;
 
@@ -311,34 +393,58 @@ function TDLLFactory.OpenBatch: OleVariant;
 var
   i:integer;
 begin
-  dataFactory.OpenBatch;
-  result:=VarArrayCreate([0,FDataSets.Count-1],varVariant);
-  for i:=0 to FDataSets.Count-1 do
-    begin
-      result[i] := TZQuery(FDataSets[i]).Data;
-      TObject(FDataSets[i]).Free;
-    end;
-  FDataSets.Clear;
+  try
+    dataFactory.OpenBatch;
+    result:=VarArrayCreate([0,FDataSets.Count-1],varVariant);
+    for i:=0 to FDataSets.Count-1 do
+      begin
+        result[i] := TZQuery(FDataSets[i]).Data;
+        TObject(FDataSets[i]).Free;
+      end;
+    FDataSets.Clear;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 function TDLLFactory.OpenNS(NS, Params: WideString): OleVariant;
 var
   rs:TZQuery;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  rs := TZQuery.Create(nil);
   try
-    TftParamList.Decode(rs.Params,Params);
-    dataFactory.Open(rs,ns,TftParamList(rs.Params));
-    result := rs.Data;
-  finally
-    rs.Free;
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    rs := TZQuery.Create(nil);
+    try
+      TftParamList.Decode(rs.Params,Params);
+      dataFactory.Open(rs,ns,TftParamList(rs.Params));
+      result := rs.Data;
+    finally
+      rs.Free;
+    end;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
   end;
 end;
 
 procedure TDLLFactory.RollbackTrans;
 begin
-  dataFactory.RollbackTrans;
+  try
+    dataFactory.RollbackTrans;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 function TDLLFactory.UpdateBatch(ds: OleVariant; NS,
@@ -346,14 +452,22 @@ function TDLLFactory.UpdateBatch(ds: OleVariant; NS,
 var
   rs:TZQuery;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  rs := TZQuery.Create(nil);
   try
-    rs.Delta := ds;
-    TftParamList.Decode(rs.Params,Params);
-    dataFactory.UpdateBatch(rs,ns,TftParamList(rs.Params));  
-  finally
-    rs.Free;
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    rs := TZQuery.Create(nil);
+    try
+      rs.Delta := ds;
+      TftParamList.Decode(rs.Params,Params);
+      dataFactory.UpdateBatch(rs,ns,TftParamList(rs.Params));
+    finally
+      rs.Free;
+    end;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
   end;
 end;
 
@@ -369,13 +483,21 @@ function TDLLFactory.ExecProc(NS: String; Params: WideString): pchar;
 var
   prms:TftParamList;
 begin
-  if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
-  prms := TftParamList.Create;
   try
-    TftParamList.Decode(prms,Params);
-    result := Pchar( dataFactory.ExecProc(NS,prms));
-  finally
-    prms.Free;
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    prms := TftParamList.Create;
+    try
+      TftParamList.Decode(prms,Params);
+      result := Pchar( dataFactory.ExecProc(NS,prms));
+    finally
+      prms.Free;
+    end;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
   end;
 end;
 
@@ -449,7 +571,15 @@ end;
 
 procedure TDLLFactory.MoveToDefault;
 begin
-  dataFactory.MoveToDefault;
+  try
+    dataFactory.MoveToDefault;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 
@@ -487,6 +617,11 @@ end;
 procedure TDLLFactory.SetappWnd(const Value: THandle);
 begin
   FappWnd := Value;
+end;
+
+function TDLLFactory.getLastError: pchar;
+begin
+  result := pchar(lastError);
 end;
 
 { TDLLPlugin }

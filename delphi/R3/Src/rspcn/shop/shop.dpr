@@ -77,7 +77,8 @@ uses
   ObjUsersV60 in 'obj\ObjUsersV60.pas',
   ufrmDBGridPreview in 'app\ufrmDBGridPreview.pas' {frmDBGridPreview},
   ufrmPriceGrade in 'app\ufrmPriceGrade.pas' {frmPriceGrade},
-  ObjPriceGradeV60 in 'obj\ObjPriceGradeV60.pas';
+  ObjPriceGradeV60 in 'obj\ObjPriceGradeV60.pas',
+  uDevFactory in 'app\uDevFactory.pas';
 
 {$R *.res}
 exports

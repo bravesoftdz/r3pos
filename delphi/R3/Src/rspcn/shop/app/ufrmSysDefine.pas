@@ -280,7 +280,6 @@ type
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
     RzLabel51: TRzLabel;
-    RzBmpButton5: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -1387,6 +1386,7 @@ end;
 procedure TfrmSysDefine.RzToolButton2Click(Sender: TObject);
 begin
   inherited;
+  if cdsUsers.IsEmpty then Exit;
   NewUser := false;
   CurUserId := cdsUsers.FieldByName('USER_ID').AsString;
   CurUserName := cdsUsers.FieldByName('USER_NAME').AsString;
@@ -1402,6 +1402,7 @@ end;
 procedure TfrmSysDefine.RzToolButton1Click(Sender: TObject);
 begin
   inherited;
+  if cdsUsers.IsEmpty then Exit;
   if MessageBox(Handle,Pchar('确定要删除'+cdsUsers.FieldByName('USER_NAME').AsString+'吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
   begin
     try
@@ -1539,6 +1540,7 @@ procedure TfrmSysDefine.RzToolButton3Click(Sender: TObject);
 var str:string;
 begin
   inherited;
+  if cdsUsers.IsEmpty then Exit;
   if MessageBox(Handle,Pchar('确定要重置'+cdsUsers.FieldByName('USER_NAME').AsString+'的密码为1234吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
   begin
     str := 'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where USER_ID='''+cdsUsers.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+token.tenantId;

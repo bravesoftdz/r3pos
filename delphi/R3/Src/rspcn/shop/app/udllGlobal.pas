@@ -65,7 +65,7 @@ var
   dllGlobal: TdllGlobal;
 
 implementation
-uses utokenFactory,udataFactory,iniFiles,uTreeUtil;
+uses utokenFactory,udataFactory,iniFiles,uTreeUtil,udllFnUtil;
 {$R *.dfm}
 
 { TdllGlobal }
@@ -334,7 +334,10 @@ end;
 
 function TdllGlobal.sysDate: TDatetime;
 begin
-  result := date();
+  if token.LDate=0 then
+     result := date()
+  else
+     result := fnTime.fnStrtoDate(inttostr(token.LDate));
 end;
 
 function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;IsAll:boolean): boolean;

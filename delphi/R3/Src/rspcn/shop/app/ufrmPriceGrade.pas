@@ -59,16 +59,15 @@ type
     RzLabel8: TRzLabel;
     edtAGIO_PERCENT: TcxSpinEdit;
     RzPanel18: TRzPanel;
-    RzPanel19: TRzPanel;
     RzPanel21: TRzPanel;
     Label17: TLabel;
     DBGridEh1: TDBGridEh;
-    btnAdd: TRzBmpButton;
-    btnDelete: TRzBmpButton;
     edtSORT_ID: TcxButtonEdit;
     DataSource1: TDataSource;
     cdsPriceGrade: TZQuery;
     cdsGoodsPercent: TZQuery;
+    rowToolNav: TRzToolbar;
+    RzToolButton1: TRzToolButton;
     procedure edtAGIO_TYPEPropertiesChange(Sender: TObject);
     procedure edtINTE_TYPEPropertiesChange(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -76,12 +75,16 @@ type
       AButtonIndex: Integer);
     procedure btnAddClick(Sender: TObject);
     procedure edtSORT_IDEnter(Sender: TObject);
-    procedure btnDeleteClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh1Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure RzToolButton1Click(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     AObj:TRecord_;
     procedure Open(id:string);
@@ -320,13 +323,6 @@ begin
   edtSORT_ID.Text := cdsGoodsPercent.FieldByName('SORT_NAME').AsString;
 end;
 
-procedure TfrmPriceGrade.btnDeleteClick(Sender: TObject);
-begin
-  inherited;
-  if (cdsGoodsPercent.IsEmpty) or (not cdsGoodsPercent.Active) then Exit;
-  cdsGoodsPercent.Delete;
-end;
-
 procedure TfrmPriceGrade.btnSaveClick(Sender: TObject);
 begin
   inherited;
@@ -473,6 +469,69 @@ begin
     else
        cdsGoodsPercent.Next;
   end;
+end;
+
+procedure TfrmPriceGrade.RzToolButton1Click(Sender: TObject);
+begin
+  inherited;
+  if (cdsGoodsPercent.IsEmpty) or (not cdsGoodsPercent.Active) then Exit;
+  cdsGoodsPercent.Delete;
+
+end;
+
+procedure TfrmPriceGrade.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+  br:TBrush;
+  pn:TPen;
+  b,s:string;
+begin
+  br := TBrush.Create;
+  br.Assign(DBGridEh1.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh1.Canvas.Pen);
+  try
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    if Column.FieldName = 'TOOL_NAV' then
+       begin
+         ARect := Rect;
+         rowToolNav.Visible := true;
+         rowToolNav.SetBounds(ARect.Left+11,ARect.Top+11,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
+       end
+    else
+       begin
+         DBGridEh1.Canvas.Font.Color := clBlack;
+         DBGridEh1.Canvas.Brush.Color := clWhite;
+       end;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DbGridEh1.canvas.Brush.Color := DBGridEh1.FixedColor;
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsGoodsPercent.RecNo)),length(Inttostr(cdsGoodsPercent.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  finally
+    DBGridEh1.Canvas.Brush.Assign(br);
+    DBGridEh1.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
+end;
+
+procedure TfrmPriceGrade.DBGridEh1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var Cell: TGridCoord;
+begin
+  inherited;
+  Cell := DBGridEh1.MouseCoord(X,Y);
+  if Cell.Y > DBGridEh1.VisibleRowCount -2 then
+     btnAddClick(nil);
 end;
 
 end.

@@ -1,21 +1,21 @@
 inherited frmPosInOrder: TfrmPosInOrder
-  Left = 193
-  Top = 183
+  Left = 185
+  Top = 173
   Caption = #21830#21697#20837#24211
-  ClientHeight = 603
+  ClientHeight = 560
   ClientWidth = 983
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     Width = 783
-    Height = 556
+    Height = 513
     inherited webForm: TRzPanel
       Width = 783
-      Height = 556
+      Height = 513
       inherited PageControl: TRzPageControl
         Width = 783
-        Height = 556
+        Height = 513
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -1163,10 +1163,8 @@ inherited frmPosInOrder: TfrmPosInOrder
           inherited order_grid: TRzPanel
             Top = 180
             Width = 507
-            Height = 267
             inherited DBGridEh1: TDBGridEh
               Width = 485
-              Height = 245
               FixedColor = 16448239
               FooterColor = 8643839
               FrozenCols = 1
@@ -1290,7 +1288,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             end
           end
           inherited order_footer: TRzPanel
-            Top = 447
+            Top = 404
             Width = 783
             Height = 109
             Visible = False
@@ -1402,7 +1400,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             Left = 507
             Top = 180
             Width = 276
-            Height = 267
+            Height = 224
             Align = alRight
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -1415,7 +1413,7 @@ inherited frmPosInOrder: TfrmPosInOrder
               Left = 11
               Top = 15
               Width = 4
-              Height = 237
+              Height = 194
               Align = alLeft
               AutoSize = True
               Picture.Data = {
@@ -1429,7 +1427,7 @@ inherited frmPosInOrder: TfrmPosInOrder
               Left = 261
               Top = 15
               Width = 4
-              Height = 237
+              Height = 194
               Align = alRight
               AutoSize = True
               Picture.Data = {
@@ -1491,7 +1489,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             end
             object RzPanel15: TRzPanel
               Left = 11
-              Top = 252
+              Top = 209
               Width = 254
               Height = 4
               Align = alBottom
@@ -1543,7 +1541,7 @@ inherited frmPosInOrder: TfrmPosInOrder
               Left = 15
               Top = 15
               Width = 246
-              Height = 237
+              Height = 194
               Align = alClient
               BorderOuter = fsNone
               BorderColor = 16316664
@@ -2174,7 +2172,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             Left = 0
             Top = 60
             Width = 783
-            Height = 496
+            Height = 453
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -2512,20 +2510,20 @@ inherited frmPosInOrder: TfrmPosInOrder
   end
   inherited photoPanel: TRzPanel
     Left = 783
-    Height = 556
+    Height = 513
     inherited adv_photo_left_line: TImage
-      Height = 536
+      Height = 493
     end
     inherited adv_photo_right_line: TImage
-      Height = 536
+      Height = 493
     end
     inherited adv_bottom: TRzPanel
-      Top = 546
+      Top = 503
     end
     inherited RzPanel1: TRzPanel
-      Height = 536
+      Height = 493
       inherited adv02: TImage
-        Height = 280
+        Height = 237
       end
     end
   end

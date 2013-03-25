@@ -65,15 +65,15 @@ type
     edtSORT_ID: TcxButtonEdit;
     DataSource1: TDataSource;
     cdsPriceGrade: TZQuery;
-    cdsGoodsPercent: TZQuery;
     rowToolNav: TRzToolbar;
     RzToolButton1: TRzToolButton;
+    cdsGoodsPercent: TZQuery;
     procedure edtAGIO_TYPEPropertiesChange(Sender: TObject);
     procedure edtINTE_TYPEPropertiesChange(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure edtSORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
-    procedure btnAddClick(Sender: TObject);
+    procedure AddSort;
     procedure edtSORT_IDEnter(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -297,7 +297,7 @@ begin
   end;
 end;
 
-procedure TfrmPriceGrade.btnAddClick(Sender: TObject);
+procedure TfrmPriceGrade.AddSort;
 begin
   inherited;
   if not cdsGoodsPercent.Active then Exit;
@@ -320,6 +320,7 @@ end;
 procedure TfrmPriceGrade.edtSORT_IDEnter(Sender: TObject);
 begin
   inherited;
+  if cdsGoodsPercent.FieldByName('SORT_ID').AsString = '' then Exit;
   edtSORT_ID.Text := cdsGoodsPercent.FieldByName('SORT_NAME').AsString;
 end;
 
@@ -476,7 +477,6 @@ begin
   inherited;
   if (cdsGoodsPercent.IsEmpty) or (not cdsGoodsPercent.Active) then Exit;
   cdsGoodsPercent.Delete;
-
 end;
 
 procedure TfrmPriceGrade.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -486,7 +486,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   br := TBrush.Create;
   br.Assign(DBGridEh1.Canvas.Brush);
@@ -494,13 +493,16 @@ begin
   pn.Assign(DBGridEh1.Canvas.Pen);
   try
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
+    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
   begin
     if Column.FieldName = 'TOOL_NAV' then
        begin
          ARect := Rect;
-         rowToolNav.Visible := true;
-         rowToolNav.SetBounds(ARect.Left+11,ARect.Top+11,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
+         if cdsGoodsPercent.FieldByName('SORT_ID').AsString <> '' then
+            rowToolNav.Visible := true
+         else
+            rowToolNav.Visible := false;
+         rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
        end
     else
        begin
@@ -530,8 +532,7 @@ var Cell: TGridCoord;
 begin
   inherited;
   Cell := DBGridEh1.MouseCoord(X,Y);
-  if Cell.Y > DBGridEh1.VisibleRowCount -2 then
-     btnAddClick(nil);
+  if Cell.Y > DBGridEh1.VisibleRowCount -2 then AddSort;
 end;
 
 end.

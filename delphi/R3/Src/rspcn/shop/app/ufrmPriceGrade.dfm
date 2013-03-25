@@ -405,11 +405,12 @@ inherited frmPriceGrade: TfrmPriceGrade
             Height = 186
             Align = alClient
             BorderOuter = fsNone
+            BorderColor = 14606046
             Color = 14606046
             TabOrder = 1
             object RzPanel12: TRzPanel
-              Left = 329
-              Top = 90
+              Left = 315
+              Top = 70
               Width = 30
               Height = 31
               BorderOuter = fsStatus
@@ -464,8 +465,8 @@ inherited frmPriceGrade: TfrmPriceGrade
               end
             end
             object RzPanel16: TRzPanel
-              Left = 172
-              Top = 90
+              Left = 158
+              Top = 70
               Width = 157
               Height = 31
               BorderOuter = fsStatus
@@ -539,14 +540,13 @@ inherited frmPriceGrade: TfrmPriceGrade
             Align = alClient
             BorderOuter = fsNone
             BorderColor = 14606046
-            BorderWidth = 10
             Color = 14606046
             TabOrder = 2
             object RzPanel18: TRzPanel
-              Left = 10
-              Top = 10
+              Left = 0
+              Top = 0
               Width = 64
-              Height = 166
+              Height = 186
               Align = alLeft
               BorderOuter = fsNone
               Color = 15461355
@@ -555,7 +555,7 @@ inherited frmPriceGrade: TfrmPriceGrade
                 Left = 0
                 Top = 0
                 Width = 64
-                Height = 166
+                Height = 186
                 Align = alClient
                 Caption = #13#12288#21487#25353'  '#13#12288#25351#19981'  '#13#12288#23450#21516'  '#13#12288#19981#30340'  '#13#12288#21516#25240'  '#13#12288#20998#25187'  '#13#12288#31867#29575'  '#13#12288#12288#35745'  '#13#12288#12288#20215
                 Color = 14606046
@@ -563,22 +563,22 @@ inherited frmPriceGrade: TfrmPriceGrade
               end
             end
             object RzPanel21: TRzPanel
-              Left = 74
-              Top = 10
-              Width = 416
-              Height = 166
+              Left = 64
+              Top = 0
+              Width = 436
+              Height = 186
               Align = alClient
               BorderOuter = fsStatus
               Color = 15461355
               TabOrder = 1
               DesignSize = (
-                416
-                166)
+                436
+                186)
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 414
-                Height = 164
+                Width = 434
+                Height = 184
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 AutoFitColWidths = True
@@ -627,7 +627,7 @@ inherited frmPriceGrade: TfrmPriceGrade
                     Title.Alignment = taCenter
                     Title.Caption = #21830#21697#31867#21035
                     Title.Color = clWhite
-                    Width = 267
+                    Width = 253
                     Control = edtSORT_ID
                   end
                   item
@@ -640,12 +640,13 @@ inherited frmPriceGrade: TfrmPriceGrade
                     Title.Alignment = taCenter
                     Title.Caption = #25240#25187#29575
                     Title.Color = clWhite
-                    Width = 58
+                    Width = 70
                     OnUpdateData = DBGridEh1Columns1UpdateData
                   end
                   item
                     Alignment = taCenter
                     EditButtons = <>
+                    FieldName = 'TOOL_NAV'
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #25805#20316
@@ -655,7 +656,7 @@ inherited frmPriceGrade: TfrmPriceGrade
               object edtSORT_ID: TcxButtonEdit
                 Left = 41
                 Top = 52
-                Width = 213
+                Width = 233
                 Height = 23
                 Anchors = [akLeft, akTop, akRight]
                 Properties.Buttons = <
@@ -675,7 +676,7 @@ inherited frmPriceGrade: TfrmPriceGrade
               object rowToolNav: TRzToolbar
                 Left = 210
                 Top = 73
-                Width = 55
+                Width = 35
                 Align = alNone
                 AutoStyle = False
                 Margin = 0
@@ -723,11 +724,11 @@ inherited frmPriceGrade: TfrmPriceGrade
             Height = 186
             Align = alClient
             BorderOuter = fsNone
-            Color = 15461355
+            Color = 14606046
             TabOrder = 3
             object RzLabel6: TRzLabel
-              Left = 140
-              Top = 90
+              Left = 130
+              Top = 80
               Width = 240
               Height = 15
               Caption = #25353#21830#21697#36164#26009#20013#35774#23450#30340#21508#32423#20195#29702#20215#35745#20215
@@ -740,11 +741,12 @@ inherited frmPriceGrade: TfrmPriceGrade
             Height = 186
             Align = alClient
             BorderOuter = fsNone
+            BorderColor = 14606046
             Color = 14606046
             TabOrder = 0
             object RzLabel5: TRzLabel
-              Left = 136
-              Top = 90
+              Left = 125
+              Top = 80
               Width = 255
               Height = 15
               Caption = #25152#26377#21830#21697#37117#19981#25171#25240#65292#25353#32479#19968#38646#21806#20215#35745#20215
@@ -1199,10 +1201,24 @@ inherited frmPriceGrade: TfrmPriceGrade
     Top = 331
   end
   object cdsGoodsPercent: TZQuery
-    FieldDefs = <>
+    FieldDefs = <
+      item
+        Name = 'SORT_ID'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'SORT_NAME'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'AGIO_SORTS'
+        DataType = ftFloat
+      end>
     CachedUpdates = True
     Params = <>
-    Left = 158
-    Top = 293
+    Left = 118
+    Top = 333
   end
 end

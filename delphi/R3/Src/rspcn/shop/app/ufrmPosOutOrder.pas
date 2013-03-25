@@ -647,12 +647,13 @@ begin
              r := 0
           else
              r := StrtoFloat(Text);
+          if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         except
+          if length(Text)<10 then MessageBox(handle,'您输入的数量无效，请重输','友情提示..',MB_OK+MB_ICONINFORMATION);
           Text := TColumnEh(Sender).Field.AsString;
           Value := TColumnEh(Sender).Field.asFloat;
-          Raise Exception.Create('输入无效数值型');
+          Exit;
         end;
-        if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
         AMountToCalc(r);
      end;
@@ -693,16 +694,16 @@ begin
          r := 0
       else
          r := StrtoFloat(Text);
+      if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
     except
       on E:Exception do
          begin
+           if lenght(Text)<10 then  MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
            Text := TColumnEh(Sender).Field.AsString;
            Value := TColumnEh(Sender).Field.asFloat;
-           MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
            Exit;
          end;
     end;
-    if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
     op := TColumnEh(Sender).Field.asFloat;
     TColumnEh(Sender).Field.asFloat := r;
     PriceToCalc(r);

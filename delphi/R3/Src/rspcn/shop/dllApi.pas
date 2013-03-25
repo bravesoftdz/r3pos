@@ -93,7 +93,7 @@ begin
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
     result := true;
-    SyncFactory.LoginSync(appWnd);
+    if token.online and (token.tenantId<>'') then SyncFactory.LoginSync(appWnd);
     result := true;
   except
     on E:Exception do

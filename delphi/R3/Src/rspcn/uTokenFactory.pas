@@ -23,6 +23,7 @@ type
     Fshoped: boolean;
     Flogined: boolean;
     Fusername: string;
+    FlDate: integer;
     procedure Setaccount(const Value: string);
     procedure Setaddress(const Value: string);
     procedure SetidCard(const Value: string);
@@ -41,6 +42,7 @@ type
     procedure Setshoped(const Value: boolean);
     procedure Setlogined(const Value: boolean);
     procedure Setusername(const Value: string);
+    procedure SetlDate(const Value: integer);
   public
     function encode:string;
     function encodeJson:string;
@@ -64,6 +66,7 @@ type
     property online:boolean read Fonline write Setonline;
     property shoped:boolean read Fshoped write Setshoped;
     property logined:boolean read Flogined write Setlogined;
+    property lDate:integer read FlDate write SetlDate;
   end;
 var
   token:TToken;
@@ -207,6 +210,11 @@ end;
 procedure TToken.SetidCard(const Value: string);
 begin
   FidCard := Value;
+end;
+
+procedure TToken.SetlDate(const Value: integer);
+begin
+  FlDate := Value;
 end;
 
 procedure TToken.Setlegal(const Value: string);

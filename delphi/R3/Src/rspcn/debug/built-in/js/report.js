@@ -176,6 +176,7 @@
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
 		var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1)||'%' as jyzb from (select A.SALES_DATE,b.RELATION_ID,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(A.CALC_AMOUNT) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+")";
+			
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			var flag = ds.locate('SALES_DATE',d1);
@@ -184,9 +185,9 @@
 				var jy_money = ds.getAsString("jy_money");
 				var fy_money = ds.getAsString("fy_money");
 				var jyzb = ds.getAsString("jyzb");
-				$("#tjqk").html("(今日销售卷烟"+amount+"条，"+jy_money+"元，非烟"+fy_money+"元，烟类占比"+jyzb+"。)");		
+				$("#tjqk").html("(今日销售卷烟"+amount+"盒，"+jy_money+"元，非烟"+fy_money+"元，烟类占比"+jyzb+"。)");		
 			}else{
-				$("#tjqk").html("今日销售卷烟0条，0元，非烟0元，善类占比0。");		
+				$("#tjqk").html("今日销售卷烟0盒，0元，非烟0元，善类占比0。");		
 			}
 			ds.eraseDataSet();
 		}catch(e){
@@ -209,7 +210,8 @@
 			d = d.getWeekStartDate();
 			var d1 = d.format('yyyyMMdd');		//本周第一天
 			ds.createDataSet();	
-		var sql = "select a.tenant_id, count(1) amount,sum(case when b.RELATION_ID=1000006 then a.CALC_AMOUNT else 0 end )/10 as jy_amount,sum(case when b.RELATION_ID=1000006 then a.calc_money else 0 end ) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2;
+		var sql = "select a.tenant_id,sum( a.amount) as amount,sum(case when b.RELATION_ID=1000006 then case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end else 0 end ) as jy_amount,sum(case when b.RELATION_ID=1000006 then a.calc_money*b.NEW_OUTPRICE else 0 end ) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2;
+			sql = rsp.parseSQL(sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			var flag = ds.locate('tenant_id',tenant_id);
@@ -236,13 +238,14 @@
 	function kc_tj(tenant_id){
 		try{
 			ds.createDataSet();	
-			ds.setSQL("select count(distinct A.GODS_ID) as GODS_AMT,sum(A.AMOUNT) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id);
+			ds.setSQL("select count(distinct b.GODS_ID) as GODS_AMT, count(distinct a.GODS_ID) as STO_AMT,sum(a.AMOUNT ) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from  VIW_GOODSINFO B left outer join STO_STORAGE A on A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id);
 			var dataset = factor.open(ds);
 			ds.first();
 			var goods_amt = ds.getAsString("GODS_AMT");
+			var sto_amt = ds.getAsString("STO_AMT");
 			var amount = ds.getAsString("AMOUNT");
 			var amoney = ds.getAsString("AMONEY");
-			$("#kcqk").html("(经营商品:"+goods_amt+"个,库存数量:"+amount+",库存金额:"+amoney+"元。)");
+			$("#kcqk").html("(经营商品:"+goods_amt+"种,有效商品"+sto_amt+"种,库存数量:"+amount+",库存金额:"+amoney+"元。)");
 			ds.eraseDataSet();
 		}catch(e){
 			alert(e.message);

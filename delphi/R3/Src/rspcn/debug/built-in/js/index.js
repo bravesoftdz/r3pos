@@ -223,13 +223,14 @@
 	function kc_tj(tenant_id){
 		try{
 			ds.createDataSet();	
-			ds.setSQL("select count(distinct A.GODS_ID) as GODS_AMT,sum(A.AMOUNT) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id);
+			ds.setSQL("select count(distinct b.GODS_ID) as GODS_AMT, count(distinct a.GODS_ID) as STO_AMT,sum(a.AMOUNT ) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from  VIW_GOODSINFO B left outer join STO_STORAGE A on A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id);
 			var dataset = factor.open(ds);
 			ds.first();
 			var goods_amt = ds.getAsString("GODS_AMT");
+			var sto_amt = ds.getAsString("STO_AMT");
 			var amount = ds.getAsString("AMOUNT");
 			var amoney = ds.getAsString("AMONEY");
-			$("#kctx").html("经营商品:"+goods_amt+"个<br/>库存数量:"+amount+"<br/>库存金额:"+amoney+"元。");
+			$("#kctx").html("经营商品:"+goods_amt+"种,有效商品:"+sto_amt+"种<br/>库存数量:"+amount+"<br/>库存金额:"+amoney+"元。");
 			ds.eraseDataSet();
 		}catch(e){
 			alert(e.message);

@@ -197,7 +197,7 @@ begin
    '"legal":"'+legal+'",'+
    '"idCard":"'+idCard+'",'+
    '"mobile":"'+mobile+'",'+
-   '"online":"'+booltoStr(online,true)+'"'+
+   '"online":"'+booltoStr(online,true)+'",'+
    '"lDate":"'+inttostr(lDate)+'"'+
    '}';
 end;

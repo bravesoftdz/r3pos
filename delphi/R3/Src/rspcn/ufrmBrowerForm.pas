@@ -1054,9 +1054,10 @@ procedure TfrmBrowerForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
   try
+    if token.online and (Timer1.Tag=0) then  dllFactory.Init(mainPanel.Handle);
+
     if token.logined and not toolleft.Visible and (pageControl1.PageCount>0) then
        begin
-         if token.online then  dllFactory.Init(mainPanel.Handle);
          TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
          pageButtonSort;
        end
@@ -1081,6 +1082,7 @@ begin
     else
        lblUserName.Caption := 'œ÷¥˙æÌ—Ã¡„ €÷’∂À';
   finally
+    Timer1.Tag := 1;
     Timer1.Enabled := true;
   end;
 end;

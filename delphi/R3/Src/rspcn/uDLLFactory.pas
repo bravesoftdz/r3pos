@@ -269,6 +269,7 @@ var
   idx:integer;
   app:TDLLPlugin;
 begin
+  try
   if not getTokenInfo then Exit;
   idx := find(urltoken.appId);
   if idx<0 then
@@ -281,6 +282,13 @@ begin
      app := TDLLPlugin(flist[idx]);
   result := app.openApp(hWnd,pchar(urlToken.moduname));
   if not result then MessageBox(application.MainForm.Handle,app.getLastError,'´íÎó..',MB_OK+MB_ICONERROR);
+  except
+    on E:Exception do
+       begin
+         result := false;
+         MessageBox(application.MainForm.Handle,pchar(E.Message),'´íÎó..',MB_OK+MB_ICONERROR);
+       end;
+  end;
 end;
 
 function TDLLFactory.OpenSQL(SQL, Params: WideString): OleVariant;

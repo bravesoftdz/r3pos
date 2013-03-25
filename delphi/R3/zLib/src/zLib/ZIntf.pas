@@ -77,6 +77,8 @@ IdbDllHelp = Interface(IUnknown)
     procedure CommitBatch; stdcall;
     procedure CancelBatch; stdcall;
     procedure MoveToDefault; stdcall;
+
+    function getLastError:pchar;stdcall;
    end;
 
 IZFactory= interface(IUnknown)

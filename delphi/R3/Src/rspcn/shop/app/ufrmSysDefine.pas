@@ -1516,7 +1516,7 @@ begin
   else
      btnSaveUsers.Visible := false;
 
-  if (CurUserId = '') or (not cdsUsers.Locate('USER_ID',CurUserId,[])) then
+  if (FCurUserId = '') or (not cdsUsers.Locate('USER_ID',FCurUserId,[])) then
      RzPanel13.Visible := false
   else
      RzPanel13.Visible := true;
@@ -1633,7 +1633,7 @@ procedure TfrmSysDefine.SyncData;
 begin
   SyncDataing := true;
   try
-    SyncFactory.LoginSync(self.Handle);
+    SyncFactory.RegisterSync(self.Handle);
   finally
     SyncDataing := false;
   end;

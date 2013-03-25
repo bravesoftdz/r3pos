@@ -251,7 +251,7 @@ begin
      wnd := Screen.ActiveForm.Handle
   else
      wnd := Application.Handle;
-  MessageBox(wnd,pchar(E.Message),'出错了',MB_OK+MB_ICONERROR);
+  MessageBox(wnd,pchar(E.Message),'友情提醒',MB_OK+MB_ICONINFORMATION);
 end;
 
 function TdllApplication.getDllClass(name: string): TPersistentClass;

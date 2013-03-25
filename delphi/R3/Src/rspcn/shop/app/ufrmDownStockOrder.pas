@@ -37,7 +37,6 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
-    procedure FormShow(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -46,6 +45,7 @@ type
   public
     procedure Open;
     procedure Save;
+    procedure showForm;override;
     procedure ajustPostion;override;
   end;
 
@@ -453,19 +453,6 @@ begin
     end;
 end;
 
-procedure TfrmDownStockOrder.FormShow(Sender: TObject);
-begin
-  inherited;
-  Open;
-  if cdsTable.Active and (not cdsTable.IsEmpty) then
-    begin
-      cdsTable.First;
-      cdsTable.Edit;
-      cdsTable.FieldByName('SELFLAG').AsInteger := 1;
-      cdsTable.Post;
-    end;
-end;
-
 procedure TfrmDownStockOrder.N1Click(Sender: TObject);
 begin
   inherited;
@@ -537,6 +524,19 @@ begin
   inherited;
   RzPanel1.Top := (self.ClientHeight - RzPanel1.Height) div 2 - 1;
   RzPanel1.Left := (self.ClientWidth - RzPanel1.Width) div 2 - 1;
+end;
+
+procedure TfrmDownStockOrder.showForm;
+begin
+  inherited;
+  Open;
+  if cdsTable.Active and (not cdsTable.IsEmpty) then
+    begin
+      cdsTable.First;
+      cdsTable.Edit;
+      cdsTable.FieldByName('SELFLAG').AsInteger := 1;
+      cdsTable.Post;
+    end;
 end;
 
 initialization

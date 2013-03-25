@@ -4,7 +4,6 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   Caption = #21367#28895#20837#24211
   ClientHeight = 570
   ClientWidth = 1015
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox

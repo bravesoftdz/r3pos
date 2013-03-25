@@ -2,7 +2,7 @@
 	$().ready( function() {	
 		var jsonObj = JSON.parse(rsp.getUserInfo());
 		var tenantId = jsonObj.tenantId;
-		if(tenantId==''){
+		if(tenantId=='' || tenantId == undefined){
 			return;	
 		}
 		$("#userInfo").html(jsonObj.shopName);

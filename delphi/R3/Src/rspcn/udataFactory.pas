@@ -290,7 +290,6 @@ procedure TdataFactory.MoveToDefault;
 var
   f:TIniFile;
 begin
-  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接');
   if not token.online then
      begin
        dbFlag := 0;
@@ -305,21 +304,19 @@ begin
   finally
     F.Free;
   end;
-  if not db.Connected then connect; 
+  if not db.Connected then connect;
 end;
 
 procedure TdataFactory.MoveToRemote;
 begin
-  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接');
   dbFlag := 1;
-  if not db.Connected then connect; 
+  if not db.Connected then connect;
 end;
 
 procedure TdataFactory.MoveToSqlite;
 begin
-  if db.InTransaction then Raise Exception.Create('在事务中，不能切换连接'); 
   dbFlag := 0;
-  if not db.Connected then connect; 
+  if not db.Connected then connect;
 end;
 
 function TdataFactory.Open(DataSet: TDataSet): Boolean;

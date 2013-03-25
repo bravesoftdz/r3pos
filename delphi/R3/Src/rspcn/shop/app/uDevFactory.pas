@@ -8,6 +8,8 @@ type
 
   TDevFactory=class
   private
+    FComm:TComm;
+
     CashBoxStart:Int64;
     FCashBox: integer;
     FCashComm: TComm;
@@ -33,7 +35,6 @@ type
     procedure SetCashBoxRate(const Value: integer);
 
     function  GetTitle: string;
-    function  GetWidth: integer;
   private
     procedure BeginPrint;
     procedure WritePrint(s:string);
@@ -41,6 +42,8 @@ type
     procedure EndPrint;
     function  EncodeDivStr:string;
     function  PrintSaleTicketSQL(tenantId,id:string):string;
+
+    procedure OpenCashBoxComm;
   public
     F:TextFile;
 
@@ -48,6 +51,7 @@ type
     destructor  Destroy; override;
     procedure   InitComm;
 
+    class procedure OpenCashBox;
     procedure PrintSaleTicket(tid, sid: string; iFlag: integer; cash, dibs: Currency);
 
     property Ticket_PrintComm:integer read FTicket_PrintComm write SetTicket_PrintComm;
@@ -61,6 +65,8 @@ type
     property CashComm:TComm read FCashComm;
     property CashBox:integer read FCashBox write SetCashBox;
     property CashBoxRate:integer read FCashBoxRate write SetCashBoxRate;
+
+    property Comm:TComm read FComm;
 end;
 
 var DevFactory:TDevFactory;
@@ -71,12 +77,14 @@ uses IniFiles,EncDec,Forms,uTokenFactory,udllGlobal,udataFactory;
 
 constructor TDevFactory.Create;
 begin
-
+  FComm := TComm.Create(nil);
 end;
 
 destructor TDevFactory.Destroy;
 begin
   inherited;
+  FComm.StopComm;
+  FComm.Free;
 end;
 
 procedure TDevFactory.InitComm;
@@ -155,11 +163,6 @@ begin
   s := StringReplace(DevFactory.FTicket_Title,'[企业简称]',token.shopName,[rfReplaceAll]);
   if s='' then s := token.tenantName;
   result := s;
-end;
-
-function TDevFactory.GetWidth: integer;
-begin
-  result := FTicket_Width;
 end;
 
 procedure TDevFactory.PrintSaleTicket(tid, sid: string; iFlag: integer; cash, dibs: Currency);
@@ -259,29 +262,27 @@ var PWidth:integer;
       else result := DataSet.FieldbyName('GODS_NAME').AsString;
     end;
   end;
-
 var
   allAmt:real;
-  i,PrintNull:Integer;
+  i:Integer;
   s:string;
   total:Currency;
   rs:TZQuery;
   ls:TStringList;
   printOrgPrice:boolean;
 begin
-  if DevFactory.Ticket_PrintComm <=0 then Exit;
+  if DevFactory.Ticket_PrintComm <= 0 then Exit;
 
   PWidth := DevFactory.Ticket_Width;
 
   allAmt:=0;
-  PrintNull := DevFactory.Ticket_NullRow;
   DevFactory.BeginPrint;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := PrintSaleTicketSql(tid,sid);
     dataFactory.Open(rs);
     if iFlag < 0 then WriteAndEnter(FormatTitle('--整单删除--'));
-    WriteAndEnter(FormatTitle(DevFactory.Ticket_Title));
+    WriteAndEnter(FormatTitle(DevFactory.GetTitle));
     WriteAndEnter('日期:'+FormatFloat('0000-00-00',rs.FieldbyName('SALES_DATE').AsFloat)+' '+Copy(rs.FieldbyName('CREA_DATE').AsString,12,5));
     WriteAndEnter('门店:'+rs.FieldbyName('SHOP_NAME').AsString);
     WriteAndEnter('单号:'+rs.FieldbyName('GLIDE_NO').AsString);
@@ -382,7 +383,7 @@ begin
      for i:=1 to Ticket_NullRow do
          WriteAndEnter('  ',PWidth);
   finally
-    CloseFile(DevFactory.F);
+    EndPrint;
     rs.Free;
   end;
 end;
@@ -463,7 +464,7 @@ begin
    'left outer join SAL_INDENTORDER e on je.TENANT_ID=e.TENANT_ID and je.FROM_ID=e.INDE_ID ) jf '+
    'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
    'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
-   'left outer join VIW_GOODSINFO h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
+   'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE')+') h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
    'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and  jj.PROPERTY_02=j.COLOR_ID ) jk '+
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
@@ -473,10 +474,46 @@ begin
    ' order by SEQNO ';
 end;
 
+class procedure TDevFactory.OpenCashBox;
+begin
+  if DevFactory.CashBox = 0 then Exit;
+  if (GetTickCount-DevFactory.CashBoxStart) < 5000 then Exit;
+  DevFactory.CashBoxStart := GetTickCount;
+  if DevFactory.CashBox=1 then
+     begin
+        DevFactory.BeginPrint;
+        try
+          if not (DevFactory.Ticket_PrintComm in [30]) then
+             DevFactory.WritePrintNoEnter(CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255))
+          else
+             DevFactory.WritePrintNoEnter(' ');
+        finally
+          DevFactory.EndPrint;
+        end;
+     end;
+  if DevFactory.CashBox>1 then
+     DevFactory.OpenCashBoxComm;
+end;
+
+procedure TDevFactory.OpenCashBoxComm;
+var s:string;
+begin
+  try
+    if CashBox <= 1 then Exit;
+    FComm.StopComm;
+    FComm.CommName := 'COM'+Inttostr(CashBox-1);
+    FComm.BaudRate := CashBoxRate;
+    FComm.StartComm;
+    s:=CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255);
+    FComm.WriteCommData(Pchar(s),Length(s)) ;
+  except
+    Raise Exception.Create('打开钱箱'+FComm.CommName+'端口出错,是否正确设置参数？');
+  end;
+end;
+
 initialization
   DevFactory := TDevFactory.Create;
   DevFactory.InitComm;
 finalization
   DevFactory.Free;
 end.
-

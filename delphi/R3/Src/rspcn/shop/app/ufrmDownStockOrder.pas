@@ -432,8 +432,9 @@ end;
 procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
 begin
   inherited;
+  if not cdsTable.Active then Exit;
   Save;
-  if not cdsTable.IsEmpty then
+  if cdsTable.Active and (not cdsTable.IsEmpty) then
      begin
        cdsTable.First;
        cdsTable.Edit;
@@ -456,13 +457,13 @@ procedure TfrmDownStockOrder.FormShow(Sender: TObject);
 begin
   inherited;
   Open;
-  if not cdsTable.IsEmpty then
-     begin
-       cdsTable.First;
-       cdsTable.Edit;
-       cdsTable.FieldByName('SELFLAG').AsInteger := 1;
-       cdsTable.Post;
-     end;
+  if cdsTable.Active and (not cdsTable.IsEmpty) then
+    begin
+      cdsTable.First;
+      cdsTable.Edit;
+      cdsTable.FieldByName('SELFLAG').AsInteger := 1;
+      cdsTable.Post;
+    end;
 end;
 
 procedure TfrmDownStockOrder.N1Click(Sender: TObject);

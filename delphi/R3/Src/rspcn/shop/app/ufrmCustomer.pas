@@ -484,7 +484,10 @@ begin
        Raise;
     end;
 
+    cdsCustomer.Edit;
     cdsCustomer.FieldbyName('PRICE_ID').asString := fndPRICE_ID.asString;
+    cdsCustomer.Post;
+
     dataFactory.BeginBatch;
     try
        dataFactory.AddBatch(cdsCustomer,'TCustomerV60',nil);

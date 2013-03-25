@@ -46,31 +46,32 @@ type
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetStoped(const Value: boolean);
     procedure SetProHandle(const Value: Hwnd);
-  public
-    Locked:integer;
-    constructor Create;
-    destructor  Destroy;override;
-
-    procedure ClearSyncList;
+  private
+    procedure InitTenant;
     procedure InitSyncList1;
     procedure InitSyncList;
-
+    procedure SyncList;
+    procedure SyncBasic;
+    procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
+    function  CheckInitSync:boolean;
+    function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
+  protected
+    procedure ClearSyncList;
     procedure ReadTimeStamp;
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
-    function  GetTableName(tableFlag:integer):string;
     function  GetFactoryName(node:PSynTableInfo):string;
     function  GetTableFields(tbName:string):string;
-    procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
-    function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
-    // 同步当前列表
-    procedure SyncList;
-    // 同步基础数据
-    procedure SyncBasic;
     // 进度条控制
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
     procedure SetProCaption(caption:integer);
+  public
+    constructor Create;
+    destructor  Destroy;override;
+    // 登录同步
+    procedure LoginSync(PHWnd:THandle);
+    function  GetTableName(tableFlag:integer):string;
     property  Params:TftParamList read FParams write SetParams;
     property  SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property  Stoped:boolean read FStoped write SetStoped;
@@ -81,11 +82,10 @@ var SyncFactory:TSyncFactory;
 
 implementation
 
-uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles;
+uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,uRightsFactory;
 
 constructor TSyncFactory.Create;
 begin
-  Locked := 0;
   SubmitRecordNum := 500;
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
@@ -927,6 +927,51 @@ end;
 procedure TSyncFactory.SetProPosition(position: integer);
 begin
   PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
+end;
+
+function TSyncFactory.CheckInitSync: boolean;
+var timestamp:int64;
+begin
+  result := true;
+  timestamp := GetSynTimeStamp(token.tenantId,'LOGIN_SYNC','#');
+  if timestamp = 0 then Exit;
+  if token.lDate > timestamp then
+     result := true
+  else
+     result := false; 
+end;
+
+procedure TSyncFactory.InitTenant;
+var Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.ExecProc('TTenantInitV60',Params);
+  finally
+    Params.Free;
+  end;
+  RightsFactory.InitialRights;
+end;
+
+procedure TSyncFactory.LoginSync(PHWnd: THandle);
+begin
+  if not CheckInitSync then Exit;
+  with TfrmSyncData.CreateParented(PHWnd) do
+  begin
+    try
+      hWnd := PHWnd;
+      ShowForm;
+      BringToFront;
+      RspSyncFactory.SyncAll;
+      RspSyncFactory.copyGoodsSort;
+      SyncFactory.InitTenant;
+      SyncFactory.SyncBasic;
+      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
+    finally
+      Free;
+    end;
+  end;
 end;
 
 initialization

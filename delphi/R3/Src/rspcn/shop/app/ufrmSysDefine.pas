@@ -85,7 +85,6 @@ type
     RzLabel15: TRzLabel;
     edtREGION_ID: TzrComboBoxList;
     btnSaveShopInfo: TRzBmpButton;
-    btnSync: TRzBmpButton;
     RzPanel5: TRzPanel;
     RzPanel9: TRzPanel;
     RzBackground8: TRzBackground;
@@ -321,7 +320,7 @@ type
     procedure GetShopInfo;
     procedure SaveShopInfo;
     procedure SaveRegisterParams;
-    procedure InitTenant;
+
     procedure SyncData;
     
     procedure OpenSysDefine;
@@ -400,9 +399,14 @@ begin
   end;
 
   dbState := dsInsert;
+
   edtROLE_NAMES.Properties.ReadOnly := true;
   edtSaveFolder.Properties.ReadOnly := true;
   edtBackUpFile.Properties.ReadOnly := true;
+
+  SaveFolderDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup';
+  OpenBackUpDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup';
+
   if (token.userId <> 'admin') and (token.userId <> 'system') and (token.account <> token.xsmCode) then
      RzToolButton3.Visible := false
   else
@@ -1140,28 +1144,13 @@ begin
   if Value then
   begin
     btnSaveShopInfo.Caption := '¿ªÍ¨';
-    btnSync.Visible := false;
     RzProgressBar1.Percent := 0;
   end
   else
   begin
     btnSaveShopInfo.Caption := '±£´æ';
-    btnSync.Visible := true;
     RzProgressBar1.Percent := 99;
   end;
-end;
-
-procedure TfrmSysDefine.InitTenant;
-var Params:TftParamList;
-begin
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
-    dataFactory.ExecProc('TTenantInitV60',Params);
-  finally
-    Params.Free;
-  end;
-  RightsFactory.InitialRights;
 end;
 
 procedure TfrmSysDefine.OpenUsers;
@@ -1341,6 +1330,7 @@ begin
   edtUSER_NAME.Text := '';
   edtMOBILE.Text := '';
   edtROLE_NAMES.Text := '';
+  if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
 end;
 
 procedure TfrmSysDefine.CheckUsersInfo;
@@ -1614,20 +1604,10 @@ end;
 procedure TfrmSysDefine.SyncData;
 begin
   SyncDataing := true;
-  with TfrmSyncData.Create(self) do
-  begin
-    try
-      hWnd := self.Handle;
-      ShowForm;
-      BringToFront;
-      RspSyncFactory.SyncAll;
-      RspSyncFactory.copyGoodsSort;
-      InitTenant;
-      SyncFactory.SyncBasic;
-    finally
-      Free;
-      SyncDataing := false;
-    end;
+  try
+    SyncFactory.LoginSync(self.Handle);
+  finally
+    SyncDataing := false;
   end;
 end;
 

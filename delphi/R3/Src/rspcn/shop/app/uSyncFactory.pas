@@ -973,7 +973,6 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
-      SyncFactory.InitTenant;
       SyncFactory.SyncBasic;
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');

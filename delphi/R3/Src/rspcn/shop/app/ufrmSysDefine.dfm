@@ -5813,12 +5813,12 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 0
         Width = 752
         Height = 487
-        ActivePage = TabSheet3
+        ActivePage = TabSheet1
         Align = alClient
         Color = 15461355
         UseColoredTabs = True
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 0
         TabOrder = 1
         FixedDimension = 21
         object TabSheet1: TRzTabSheet

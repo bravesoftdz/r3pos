@@ -826,6 +826,7 @@ begin
   inherited;
   if PageControl.ActivePageIndex <> 2 then
   begin
+    pnl_changepswd.Visible := false;
     OpenUsers;
     edtACCOUNT.Text := token.account;
     edtUSER_NAME.Text := token.username;
@@ -1363,6 +1364,7 @@ begin
     cdsUsers.FieldByName('ROLE_IDS').AsString:=roleIds;
     cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString:=roleNames;
     cdsUsers.Post;
+    CurUserRoleIds := roleIds;
     edtROLE_NAMES.Text := roleNames;
   end;
 end;
@@ -1495,21 +1497,24 @@ end;
 procedure TfrmSysDefine.SetCurUserAccount(const Value: string);
 begin
   FCurUserAccount := Value;
+  if (FCurUserId <> 'admin') and (FCurUserId <> 'system') and (FCurUserAccount <> token.xsmCode) then
+     btnSaveUsers.Visible := true
+  else
+     btnSaveUsers.Visible := false;
 end;
 
 procedure TfrmSysDefine.SetCurUserId(const Value: string);
 begin
   FCurUserId := Value;
   if (FCurUserId = token.userId) and (token.account <> token.xsmCode) and (token.account <> 'system') then
-     begin
-       RzPanel37.Visible := true;
-       btnSaveUsers.Visible := true;
-     end
+     RzPanel37.Visible := true
   else
-     begin
-       RzPanel37.Visible := false;
-       btnSaveUsers.Visible := false;
-     end;
+     RzPanel37.Visible := false;
+
+  if (FCurUserId <> 'admin') and (FCurUserId <> 'system') and (FCurUserAccount <> token.xsmCode) then
+     btnSaveUsers.Visible := true
+  else
+     btnSaveUsers.Visible := false;
 
   if (CurUserId = '') or (not cdsUsers.Locate('USER_ID',CurUserId,[])) then
      RzPanel13.Visible := false
@@ -1556,6 +1561,9 @@ end;
 procedure TfrmSysDefine.RzLabel37Click(Sender: TObject);
 begin
   inherited;
+  edtOLD_PSWD.Text := '';
+  edtNEW_PSWD1.Text := '';
+  edtNEW_PSWD2.Text := '';
   pnl_changepswd.Visible := true;
   if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
 end;

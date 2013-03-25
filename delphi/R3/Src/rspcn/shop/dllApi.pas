@@ -38,12 +38,18 @@ type
   TdllApplication=class
   private
     Fhandle: THandle;
+    Fmode: string;
     procedure Sethandle(const Value: THandle);
+    procedure Setmode(const Value: string);
   public
+    constructor Create;
+    destructor Destroy; override;
+
     function getDllClass(name:string):TPersistentClass;
     function getModuId(name:string):string;
     procedure dllException(Sender: TObject; E: Exception);
     property handle:THandle read Fhandle write Sethandle;
+    property mode:string read Fmode write Setmode;
   end;
 var
   lastError:string;
@@ -51,7 +57,7 @@ var
   dbHelp:IdbDllHelp;
   dllApplication:TdllApplication;
 implementation
-uses udllGlobal,uSyncFactory;
+uses udllGlobal,uSyncFactory,IniFiles;
 var
   webForm:TStringList;
   oldHandle:THandle;
@@ -220,6 +226,24 @@ begin
 end;
 { TdllApplication }
 
+constructor TdllApplication.Create;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
+  try
+    mode := F.ReadString('soft','mode','release'); 
+  finally
+    F.Free;
+  end;
+end;
+
+destructor TdllApplication.Destroy;
+begin
+
+  inherited;
+end;
+
 procedure TdllApplication.dllException(Sender: TObject; E: Exception);
 var wnd:THandle;
 begin
@@ -262,6 +286,11 @@ end;
 procedure TdllApplication.Sethandle(const Value: THandle);
 begin
   Fhandle := Value;
+end;
+
+procedure TdllApplication.Setmode(const Value: string);
+begin
+  Fmode := Value;
 end;
 
 initialization

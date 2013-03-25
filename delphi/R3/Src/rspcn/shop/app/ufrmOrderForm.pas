@@ -2200,11 +2200,11 @@ procedure TfrmOrderForm.DBGridEh1KeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-  if Key=VK_SHIFT then
+{  if Key=VK_SHIFT then
     begin
       if edtTable.IsEmpty then Exit;
       ConvertPresent;
-    end;
+    end;  }
 end;
 
 procedure TfrmOrderForm.ConvertPresent;

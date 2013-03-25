@@ -1,37 +1,37 @@
 inherited frmPosOutOrder: TfrmPosOutOrder
-  Left = -8
-  Top = -8
+  Left = 109
+  Top = 142
   Caption = #21830#21697#38144#21806
-  ClientHeight = 738
-  ClientWidth = 1280
+  ClientHeight = 558
+  ClientWidth = 997
   Color = 15461355
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 1080
-    Height = 691
+    Width = 797
+    Height = 511
     inherited webForm: TRzPanel
-      Width = 1080
-      Height = 691
+      Width = 797
+      Height = 511
       inherited PageControl: TRzPageControl
-        Width = 1080
-        Height = 691
+        Width = 797
+        Height = 511
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
           inherited order_input: TRzPanel
-            Width = 1080
+            Width = 797
             Height = 149
             inherited RzPanel2: TRzPanel
-              Width = 1060
+              Width = 777
               Height = 129
               DesignSize = (
-                1060
+                777
                 129)
               inherited RzBorder1: TRzBorder
                 Left = 16
-                Width = 1028
+                Width = 745
               end
               inherited lblInput: TRzLabel
                 Left = 17
@@ -47,35 +47,35 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 Height = 113
               end
               inherited barcode_panel_right_line: TImage
-                Left = 1058
+                Left = 775
                 Height = 113
               end
               inherited lblHint: TRzLabel
                 Left = 485
               end
               inherited help: TRzBmpButton
-                Left = 1028
+                Left = 745
                 Down = True
               end
               inherited barcode_top: TRzPanel
-                Width = 1060
+                Width = 777
                 TabOrder = 4
                 inherited barcode_panel_top_right: TImage
-                  Left = 1050
+                  Left = 767
                 end
                 inherited barcode_panel_top_line: TImage
-                  Width = 1031
+                  Width = 748
                 end
               end
               inherited barcode_botton: TRzPanel
                 Top = 121
-                Width = 1060
+                Width = 777
                 TabOrder = 3
                 inherited barcode_panel_bottom_line: TImage
-                  Width = 1056
+                  Width = 773
                 end
                 inherited barcodeb_panel_right_line: TImage
-                  Left = 1058
+                  Left = 775
                 end
               end
               inherited barcode: TRzPanel
@@ -91,7 +91,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               object RzPanel19: TRzPanel [9]
                 Left = 16
                 Top = 59
-                Width = 600
+                Width = 317
                 Height = 56
                 Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsNone
@@ -106,12 +106,12 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 ParentFont = False
                 TabOrder = 1
                 DesignSize = (
-                  600
+                  317
                   56)
                 object Image5: TImage
                   Left = 5
                   Top = 0
-                  Width = 590
+                  Width = 307
                   Height = 56
                   Align = alClient
                   AutoSize = True
@@ -139,7 +139,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 object MarqueeStatus: TRzMarqueeStatus
                   Left = 5
                   Top = 2
-                  Width = 592
+                  Width = 309
                   Height = 52
                   FrameStyle = fsNone
                   Anchors = [akLeft, akTop, akRight]
@@ -197,7 +197,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Stretch = True
                 end
                 object Image4: TImage
-                  Left = 595
+                  Left = 312
                   Top = 0
                   Width = 5
                   Height = 56
@@ -673,7 +673,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 OnClick = btnNewClick
               end
               inherited helpPanel: TRzPanel
-                Left = 644
+                Left = 361
                 Width = 400
                 TabOrder = 7
                 inherited lblModifyUnit: TRzLabel
@@ -831,7 +831,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
           end
           inherited order_header: TRzPanel
             Top = 149
-            Width = 1080
+            Width = 797
             object edtBK_CLIENT_ID: TRzPanel
               Left = 10
               Top = 1
@@ -965,7 +965,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               end
             end
             object edtVBK_SALES_DATE: TRzPanel
-              Left = 822
+              Left = 539
               Top = 1
               Width = 248
               Height = 31
@@ -1177,11 +1177,11 @@ inherited frmPosOutOrder: TfrmPosOutOrder
           inherited order_grid: TRzPanel
             Left = 236
             Top = 181
-            Width = 844
-            Height = 474
+            Width = 561
+            Height = 294
             inherited DBGridEh1: TDBGridEh
-              Width = 822
-              Height = 452
+              Width = 539
+              Height = 272
               FixedColor = 16448239
               FooterColor = 15787416
               FrozenCols = 1
@@ -1316,38 +1316,38 @@ inherited frmPosOutOrder: TfrmPosOutOrder
             end
           end
           inherited order_footer: TRzPanel
-            Top = 655
-            Width = 1080
+            Top = 475
+            Width = 797
             Height = 36
             Visible = False
             inherited footerb_panel_left_line: TImage
               Height = 0
             end
             inherited footerb_panel_right_line: TImage
-              Left = 1068
+              Left = 785
               Height = 0
             end
             inherited footer_bottom: TRzPanel
               Top = 18
-              Width = 1060
+              Width = 777
               inherited footer_panel_bottom_right: TImage
-                Left = 1053
+                Left = 770
               end
               inherited footer_panel_bottom_line: TImage
-                Width = 1040
+                Width = 757
               end
             end
             inherited footer_top: TRzPanel
-              Width = 1060
+              Width = 777
               inherited footer_panel_top_line: TImage
-                Width = 1056
+                Width = 773
               end
               inherited footer_panel_right_line: TImage
-                Left = 1058
+                Left = 775
               end
             end
             object edtBK_PAY_TOTAL: TRzPanel
-              Left = 736
+              Left = 453
               Top = 18
               Width = 318
               Height = 31
@@ -1430,7 +1430,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
             Left = 0
             Top = 181
             Width = 236
-            Height = 474
+            Height = 294
             Align = alLeft
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -1444,7 +1444,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               Left = 11
               Top = 15
               Width = 4
-              Height = 444
+              Height = 264
               Align = alLeft
               AutoSize = True
               Picture.Data = {
@@ -1458,7 +1458,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               Left = 221
               Top = 15
               Width = 4
-              Height = 444
+              Height = 264
               Align = alRight
               AutoSize = True
               Picture.Data = {
@@ -1520,7 +1520,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
             end
             object RzPanel15: TRzPanel
               Left = 11
-              Top = 459
+              Top = 279
               Width = 214
               Height = 4
               Align = alBottom
@@ -1572,7 +1572,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               Left = 15
               Top = 15
               Width = 206
-              Height = 444
+              Height = 264
               Align = alClient
               BorderOuter = fsNone
               BorderColor = 16316664
@@ -1583,7 +1583,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 Left = 5
                 Top = 260
                 Width = 196
-                Height = 179
+                Height = 9
                 Align = alClient
                 BorderOuter = fsNone
                 BorderColor = clWhite
@@ -2677,7 +2677,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
           object RzPanel11: TRzPanel
             Left = 0
             Top = 0
-            Width = 1080
+            Width = 797
             Height = 57
             Align = alTop
             BorderOuter = fsNone
@@ -2688,7 +2688,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
             object RzPanel3: TRzPanel
               Left = 10
               Top = 10
-              Width = 1060
+              Width = 777
               Height = 37
               Align = alClient
               BorderOuter = fsNone
@@ -2699,10 +2699,10 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               GridColor = clBackground
               TabOrder = 0
               DesignSize = (
-                1060
+                777
                 37)
               object RzPanel6: TRzPanel
-                Left = 581
+                Left = 298
                 Top = 7
                 Width = 387
                 Height = 31
@@ -2740,8 +2740,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -2825,8 +2825,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -2857,7 +2857,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 end
               end
               object btnFind: TRzBmpButton
-                Left = 988
+                Left = 705
                 Top = 7
                 Width = 72
                 Bitmaps.TransparentColor = clFuchsia
@@ -3076,13 +3076,13 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               object RzPanel5: TRzPanel
                 Left = 1
                 Top = 8
-                Width = 562
+                Width = 279
                 Height = 29
                 Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsNone
                 TabOrder = 2
                 DesignSize = (
-                  562
+                  279
                   29)
                 object Image1: TImage
                   Left = 0
@@ -3116,7 +3116,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Transparent = True
                 end
                 object Image6: TImage
-                  Left = 557
+                  Left = 274
                   Top = 0
                   Width = 5
                   Height = 29
@@ -3145,7 +3145,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 object Image7: TImage
                   Left = 6
                   Top = 0
-                  Width = 551
+                  Width = 268
                   Height = 29
                   Align = alClient
                   AutoSize = True
@@ -3177,7 +3177,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Tag = -1
                   Left = 6
                   Top = 6
-                  Width = 551
+                  Width = 268
                   Height = 18
                   Hint = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#22791#27880#35828#26126
                   Anchors = [akLeft, akTop, akRight]
@@ -3196,8 +3196,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
           object RzPanel14: TRzPanel
             Left = 0
             Top = 57
-            Width = 1080
-            Height = 634
+            Width = 797
+            Height = 454
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -3510,13 +3510,13 @@ inherited frmPosOutOrder: TfrmPosOutOrder
     end
   end
   inherited toolNav: TRzPanel
-    Width = 1280
+    Width = 997
     inherited lblCaption: TRzLabel
-      Width = 984
+      Width = 701
       Caption = #21830#21697#38144#21806
     end
     inherited RzPanel12: TRzPanel
-      Left = 984
+      Left = 701
       Width = 288
       inherited btnPrint: TRzBmpButton
         Left = 5
@@ -3530,26 +3530,26 @@ inherited frmPosOutOrder: TfrmPosOutOrder
       end
     end
     inherited RzPanel18: TRzPanel
-      Left = 1272
+      Left = 989
       Width = 8
     end
   end
   inherited photoPanel: TRzPanel
-    Left = 1080
-    Height = 691
+    Left = 797
+    Height = 511
     inherited adv_photo_left_line: TImage
-      Height = 671
+      Height = 491
     end
     inherited adv_photo_right_line: TImage
-      Height = 671
+      Height = 491
     end
     inherited adv_bottom: TRzPanel
-      Top = 681
+      Top = 501
     end
     inherited RzPanel1: TRzPanel
-      Height = 671
+      Height = 491
       inherited adv02: TImage
-        Height = 415
+        Height = 235
       end
     end
   end

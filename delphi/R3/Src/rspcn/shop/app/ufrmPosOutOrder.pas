@@ -628,6 +628,12 @@ procedure TfrmPosOutOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Currency;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -666,6 +672,12 @@ var
   allow :boolean;
   bs:TZQuery;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
@@ -678,13 +690,7 @@ begin
   //调价权限(调价权限)
   if not dllGlobal.GetChkRight('12400001',5) then
      begin
-{       if TfrmLogin.doLogin(Params) then
-          begin
-            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
-          end
-       else                  }
-          allow := false;
+       allow := false;
      end else allow := true;
 
   if allow then
@@ -698,7 +704,7 @@ begin
     except
       on E:Exception do
          begin
-           if lenght(Text)<10 then  MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           if length(Text)<10 then  MessageBox(Handle,pchar('您输入的单价无效，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
            Text := TColumnEh(Sender).Field.AsString;
            Value := TColumnEh(Sender).Field.asFloat;
            Exit;

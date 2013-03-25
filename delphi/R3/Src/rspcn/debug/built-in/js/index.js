@@ -64,6 +64,7 @@
 			var d2 = d.format('yyyyMMdd');		//昨天日期	
 			ds.createDataSet();	
 			var sql = "select A.SALES_DATE,sum(CALC_MONEY) CALC_MONEY,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as MAOLI from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE in("+d1+","+d2+") group by A.SALES_DATE";
+			rsp.setLocalJson('jrtx_tj',"今日提醒sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			var flag = ds.locate('SALES_DATE',d1);
@@ -109,7 +110,8 @@
 			d = d.showMonthFirstDay();
 			var d1 = d.format('yyyyMMdd');	//上个月第一天
 			ds.createDataSet();
-			var sql = "select A.SALES_DATE/100 as SALES_DATE,sum(CALC_MONEY) as CALC_MONEY,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as MAOLI from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+"  and A.SALES_DATE>"+d1+" and A.SALES_DATE<"+d2+" group by  SALES_DATE";
+			var sql = "select A.SALES_DATE/100 as SALES_DATE,sum(CALC_MONEY) as CALC_MONEY,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as MAOLI from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+"  and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" group by  SALES_DATE";
+			rsp.setLocalJson('bytx_tj',"本月提醒sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);		//查询数据
 			var by_out_amount = "0";
@@ -149,9 +151,10 @@
 			var d = new Date();
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
-			var sql ="select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='"+tenant_id+"' and A.SALES_DATE='"+d1+"' group by A.GODS_ID,B.GODS_NAME";
+			var sql ="select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.GODS_ID,B.GODS_NAME";
 			//取前十条数据,根据不同数据库进行取数
-			sql = rsp.fechTopResults(sql,10,'CALC_MONEY desc');			
+			sql = rsp.fechTopResults(sql,10,'CALC_MONEY desc');	
+			rsp.setLocalJson('jrpm_tj',"今日排名sql:"+sql);
 			ds.setSQL(sql);
 
 			var dataset = factor.open(ds);
@@ -188,10 +191,11 @@
 			d = d.showMonthLastDay();		//本月第一天日期
 			var d2 = d.format('yyyyMMdd');		//本月最后一天日期
 			ds.createDataSet();	
-			var sql = "select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and b.comm not in ('02','12') and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>='"+d1+"' and A.SALES_DATE<='"+d2+"' group by A.GODS_ID,B.GODS_NAME ";
+			var sql = "select A.GODS_ID,B.GODS_NAME,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and b.comm not in ('02','12') and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" group by A.GODS_ID,B.GODS_NAME ";
 			
 			//取前十条数据,根据不同数据库进行取数
 			sql = rsp.fechTopResults(sql,10,'CALC_MONEY desc');
+			rsp.setLocalJson('bypm_tj',"本月排名sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();

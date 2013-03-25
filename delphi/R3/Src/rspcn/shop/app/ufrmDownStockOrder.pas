@@ -433,6 +433,13 @@ procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
 begin
   inherited;
   Save;
+  if not cdsTable.IsEmpty then
+     begin
+       cdsTable.First;
+       cdsTable.Edit;
+       cdsTable.FieldByName('SELFLAG').AsInteger := 1;
+       cdsTable.Post;
+     end;
   MessageBox(Handle,'卷烟入库成功...','友情提示..',MB_OK);
 end;
 
@@ -449,6 +456,13 @@ procedure TfrmDownStockOrder.FormShow(Sender: TObject);
 begin
   inherited;
   Open;
+  if not cdsTable.IsEmpty then
+     begin
+       cdsTable.First;
+       cdsTable.Edit;
+       cdsTable.FieldByName('SELFLAG').AsInteger := 1;
+       cdsTable.Post;
+     end;
 end;
 
 procedure TfrmDownStockOrder.N1Click(Sender: TObject);

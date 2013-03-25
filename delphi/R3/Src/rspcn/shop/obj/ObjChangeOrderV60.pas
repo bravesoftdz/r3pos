@@ -195,7 +195,7 @@ begin
      Temp.close;
      Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and DEFINE=''ZERO_OUT''';
      AGlobal.Open(Temp);
-     IsZeroOut := (Temp.Fields[0].AsString = '1');
+     IsZeroOut := (Temp.Fields[0].AsString = '') or (Temp.Fields[0].AsString = '1');
   finally
      Temp.free;
   end;

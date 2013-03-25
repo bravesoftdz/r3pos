@@ -925,7 +925,7 @@ begin
        dataFactory.CancelBatch;
        Raise;
     end;
-    case RelationId of
+    case Relation of
     0:begin
         if not cdsGoodsInfo.IsEmpty then cdsGoodsInfo.Delete;
         if not cdsGodsRelation.IsEmpty then cdsGodsRelation.Delete;
@@ -989,7 +989,7 @@ begin
         dataFactory.CancelBatch;
         Raise;
       end;
-      case RelationId of
+      case Relation of
       0:begin
           if not tmpGoodsInfo.IsEmpty then tmpGoodsInfo.Delete;
           if not tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Delete;
@@ -1343,7 +1343,7 @@ begin
        dataFactory.CancelBatch;
        Raise;
     end;
-    case RelationId of
+    case Relation of
     0:begin
         cdsGoodsInfo.Edit;
         cdsGoodsInfo.FieldByName('COMM').AsString := '10';
@@ -1454,7 +1454,7 @@ begin
         dataFactory.CancelBatch;
         Raise;
       end;
-      case RelationId of
+      case Relation of
       0:begin
           tmpGoodsInfo.Edit;
           tmpGoodsInfo.FieldByName('COMM').AsString := '10';
@@ -1723,13 +1723,16 @@ begin
       tmpObj.Free;
     end;
 
-    tmpObj := TRecord_.Create;
-    try
-      if tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Append else tmpGoodsRelation.Edit;
-      tmpObj.ReadFromDataSet(cdsGodsRelation);
-      tmpObj.WriteToDataSet(tmpGoodsRelation);
-    finally
-      tmpObj.Free;
+    if not cdsGodsRelation.IsEmpty then
+    begin
+      tmpObj := TRecord_.Create;
+      try
+        if tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Append else tmpGoodsRelation.Edit;
+        tmpObj.ReadFromDataSet(cdsGodsRelation);
+        tmpObj.WriteToDataSet(tmpGoodsRelation);
+      finally
+        tmpObj.Free;
+      end;
     end;
 
     tmpObj := TRecord_.Create;

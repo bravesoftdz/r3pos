@@ -614,7 +614,7 @@ procedure TjavaScriptExt.SaveTimeStamp;
 var
   LDate:TDatetime;
 begin
-  LDate := trunc(rspFactory.timestamp/86400.0+40542.0)-2;
+  LDate := trunc(rspFactory.timestamp/86400.0+40542.0)+2;
   token.lDate := strtoint(formatDatetime('YYYYMMDD',LDate));
   dataFactory.MoveToSqlite;
   try

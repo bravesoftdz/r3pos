@@ -8,7 +8,7 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi;
 
 type
   TfrmPosOutOrder = class(TfrmOrderForm)
@@ -1233,19 +1233,29 @@ begin
     rs.SQL.Text :=
       'select UNION_ID,CLIENT_ID,TENANT_ID from PUB_IC_INFO where TENANT_ID in ('+dllGlobal.GetUnionTenantInWhere+') and IC_CARDNO=:IC_CARDNO and IC_STATUS in (''0'',''1'') and COMM not in (''02'',''12'')';
     rs.ParamByName('IC_CARDNO').AsString := s;
-    if token.online then
-       dllGlobal.OpenRemote(rs)
-    else
-       dllGlobal.OpenSqlite(rs);
+    dllGlobal.OpenSqlite(rs);
+    if rs.IsEmpty then
+       begin
+         if token.online and (dllApplication.mode<>'demo') then
+            begin
+              rs.Close;
+              dllGlobal.OpenRemote(rs);
+            end;
+       end;
     if rs.IsEmpty then
        begin
          rs.Close;
          rs.SQL.Text :=
            'select ''#'' as UNION_ID,CLIENT_ID,TENANT_ID from PUB_CUSTOMER where TENANT_ID='+token.tenantId+' and (MOVE_TELE='''+s+''' or ID_NUMBER='''+s+''') and COMM not in (''02'',''12'')';
-         if token.online then
-            dllGlobal.OpenRemote(rs)
-         else
-            dllGlobal.OpenSqlite(rs);
+         dllGlobal.OpenSqlite(rs);
+         if rs.IsEmpty then
+            begin
+              if token.online and (dllApplication.mode<>'demo') then
+                 begin
+                   rs.Close;
+                   dllGlobal.OpenRemote(rs);
+                 end;
+            end;
        end;
     if rs.IsEmpty then Raise Exception.Create('你输入的会员卡号无效.');
     if rs.RecordCount > 1 then

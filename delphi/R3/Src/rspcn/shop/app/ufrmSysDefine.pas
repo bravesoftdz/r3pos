@@ -730,7 +730,8 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
     SetValue(tmpSysDefine,'INPUT_MODE',inttostr(edtINPUT_MODE.ItemIndex));
-    SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
+    if edtINDUSTRY_TYPE.ItemIndex>=0 then
+       SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
     dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60')
   finally
     Params.Free;

@@ -9083,7 +9083,7 @@ inherited frmSysDefine: TfrmSysDefine
               object pnl_top_line: TImage
                 Left = 19
                 Top = 0
-                Width = 699
+                Width = 6
                 Height = 8
                 Align = alClient
                 AutoSize = True
@@ -9111,7 +9111,7 @@ inherited frmSysDefine: TfrmSysDefine
               object barcode_panel_bottom_line: TImage
                 Left = 2
                 Top = 0
-                Width = 724
+                Width = 4
                 Height = 8
                 Align = alClient
                 AutoSize = True
@@ -9128,7 +9128,7 @@ inherited frmSysDefine: TfrmSysDefine
                 Left = 726
                 Top = 0
                 Width = 2
-                Height = 8
+                Height = 6
                 Align = alRight
                 AutoSize = True
                 Picture.Data = {
@@ -9190,8 +9190,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel38: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #31227#21160#30005#35805
@@ -9255,8 +9255,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel39: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 63
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #35282'    '#33394
@@ -9323,8 +9323,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel35: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #29992#25143#36134#21495
@@ -9392,8 +9392,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel36: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #29992#25143#22995#21517
@@ -9886,8 +9886,8 @@ inherited frmSysDefine: TfrmSysDefine
               object btnGrantRights: TRzLabel
                 Left = 1
                 Top = 1
-                Width = 73
-                Height = 20
+                Width = 34
+                Height = 14
                 Align = alClient
                 Alignment = taCenter
                 Caption = #25480' '#26435
@@ -9937,8 +9937,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel37: TRzLabel
                 Left = 1
                 Top = 1
-                Width = 73
-                Height = 20
+                Width = 53
+                Height = 14
                 Align = alClient
                 Alignment = taCenter
                 Caption = #20462#25913#23494#30721
@@ -10010,8 +10010,8 @@ inherited frmSysDefine: TfrmSysDefine
                   object RzLabel46: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 102
-                    Height = 26
+                    Width = 46
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26087#23494#30721
@@ -10080,8 +10080,8 @@ inherited frmSysDefine: TfrmSysDefine
                   object RzLabel47: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 102
-                    Height = 26
+                    Width = 46
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26032#23494#30721
@@ -10150,8 +10150,8 @@ inherited frmSysDefine: TfrmSysDefine
                   object RzLabel48: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 102
-                    Height = 26
+                    Width = 61
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #37325#26032#36755#20837

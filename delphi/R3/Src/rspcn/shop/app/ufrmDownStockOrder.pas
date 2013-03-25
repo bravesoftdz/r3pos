@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzButton, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, StdCtrls,
-  RzLabel, Menus, RzBmpBtn, jpeg;
+  RzLabel, Menus, RzBmpBtn, jpeg, RzBckgnd;
 
 type
   TfrmDownStockOrder = class(TfrmWebDialogForm)

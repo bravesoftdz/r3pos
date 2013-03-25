@@ -358,7 +358,8 @@ type
 implementation
 
 uses udllGlobal,udataFactory,uTokenFactory,uRspFactory,udllShopUtil,EncDec,ufrmSyncData,
-     uSyncFactory,udllFnUtil,uRspSyncFactory,uRightsFactory,udllDsUtil,ufrmUserRights;
+     uSyncFactory,udllFnUtil,uRspSyncFactory,uRightsFactory,udllDsUtil,ufrmUserRights,
+     uDevFactory;
 
 {$R *.dfm}
 
@@ -979,6 +980,7 @@ begin
   end;
 
   dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
+  DevFactory.InitComm;
 
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;

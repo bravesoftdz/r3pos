@@ -14,7 +14,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       Width = 1015
       Height = 570
       Color = 15461355
-      inherited bkgImage: TImage
+      inherited RzBackground1: TRzBackground
         Top = 47
         Width = 1015
         Height = 523

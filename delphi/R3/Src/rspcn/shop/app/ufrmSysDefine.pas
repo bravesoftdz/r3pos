@@ -279,6 +279,8 @@ type
     RzBackground39: TRzBackground;
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
+    RzLabel51: TRzLabel;
+    RzBmpButton5: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

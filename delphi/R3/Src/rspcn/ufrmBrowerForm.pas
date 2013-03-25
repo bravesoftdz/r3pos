@@ -86,7 +86,6 @@ type
     RzBmpButton2: TRzBmpButton;
     btnWindow: TRzBmpButton;
     RzBmpButton4: TRzBmpButton;
-    RzBmpButton5: TRzBmpButton;
     RzTrayIcon1: TRzTrayIcon;
     lblUserName: TRzLabel;
     Image9: TImage;
@@ -216,7 +215,7 @@ type
 
     procedure WMSendInput(var Msg: TMessage); message WM_SEND_INPUT;
     procedure KeyBoardHook(Code: integer; Msg: word;lParam: longint);
-    procedure AddKey(scanCode: DWORD);
+    function AddKey(scanCode: DWORD):boolean;
     function  checkBarcode:boolean;
     procedure ClearKey;
     procedure PushTo;
@@ -517,6 +516,7 @@ var
   tabEx:TTabSheetEx;
 begin
   if PageControl1.PageCount<=1 then Exit;
+  tabEx := (PageControl1.ActivePage as TTabSheetEx);
   case tabEx.url.appFlag of
   0:tabEx.EWB.Free;
   1:begin
@@ -524,7 +524,6 @@ begin
     end;
   end;
 
-  tabEx := (PageControl1.ActivePage as TTabSheetEx);
   if PageControl1.ActivePageIndex>0 then
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex -1 else
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex +1;
@@ -1128,7 +1127,7 @@ begin
                  begin
                    UcFactory.xsmLogined := false;
                    Raise Exception.Create('新商盟认证失败，请点击重试！');
-                 end;
+                 end;  
            end;
         EWB.Go(_url,TimeOut);
         if EWB.CanFocus then EWB.SetFocusToDoc;
@@ -1266,7 +1265,7 @@ begin
         childWnd := GetWindow(tabEx.Handle,GW_CHILD);
         while childWnd>0 do
           begin
-            windows.SetFocus(childWnd); 
+            windows.SetFocus(childWnd);
             Message.Msg := WM_KEYDOWN;
             Message.KeyData := 0;
             Message.CharCode := VK_PAUSE;
@@ -1385,6 +1384,8 @@ procedure TfrmBrowerForm.WMSendInput(var Msg: TMessage);
 var
   tabEx:TTabSheetEx;
   isIcon:boolean;
+  childWnd:THandle;
+  Message: TWMKeyDown;
 begin
   if IsIconic(Application.Handle) then
      begin
@@ -1408,6 +1409,17 @@ begin
             Buf.Clear;
           end;
      end;
+  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+  while childWnd>0 do
+    begin
+      windows.SetFocus(childWnd);
+      Message.Msg := WM_KEYDOWN;
+      Message.KeyData := 0;
+      Message.CharCode := VK_PAUSE;
+      Message.Unused := 0;
+      SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
+      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+    end;
   while Buf.Count>0 do
     begin
       dllFactory.Send(tabEx.url,Buf[0]);
@@ -1415,10 +1427,11 @@ begin
     end;
 end;
 
-procedure TfrmBrowerForm.AddKey(scanCode: DWORD);
+function TfrmBrowerForm.AddKey(scanCode: DWORD):boolean;
 var
   i:integer;
 begin
+  result := false;
   if scanCode<>13 then
   begin
     for i:=2 to 13 do
@@ -1433,7 +1446,11 @@ begin
   time[13] := getTickCount;
   case scanCode of
   13:begin
-       if checkBarcode then PushTo;
+       if checkBarcode then
+          begin
+            PushTo;
+            result := true;
+          end;
        ClearKey;
      end;
   48:arr[13] := '0';
@@ -1478,7 +1495,12 @@ begin
        begin
          if PBDLLHOOKSTRUCT(lParam)^.vkCode in [13,48..57] then
             begin
-              if (PBDLLHOOKSTRUCT(lParam)^.flags in [0]) then addKey(PBDLLHOOKSTRUCT(lParam)^.vkCode);
+              if (PBDLLHOOKSTRUCT(lParam)^.flags in [0]) then
+                 begin
+                   if addKey(PBDLLHOOKSTRUCT(lParam)^.vkCode) then
+                      begin
+                      end;
+                 end;
             end
          else
             ClearKey;

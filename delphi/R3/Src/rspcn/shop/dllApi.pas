@@ -100,13 +100,14 @@ function openApp(hWnd:Thandle;moduId:pchar):boolean;stdcall;
 var
   pClass:TPersistentClass;
   Form:TfrmWebForm;
+  mid:string;
 begin
   try
-    if token.tenantId='' then moduId:='TfrmSysDefine';
-    pClass := dllApplication.getDllClass(strpas(moduId));
-    if pClass = nil then Raise Exception.Create(strPas(moduId)+'类名没找到.');
+    mid := dllApplication.getModuId(moduId);
+    pClass := dllApplication.getDllClass(mid);
+    if pClass = nil then Raise Exception.Create(mid+'类名没找到.');
     Form := TFormClass(pClass).Create(application) as TfrmWebForm;
-    webForm.AddObject(moduid,Form);
+    webForm.AddObject(mid,Form);
 
     Form.hWnd := hWnd;
     Form.showForm;
@@ -173,7 +174,7 @@ var
   mid:string;
 begin
   mid := dllApplication.getModuId(moduId);
-  idx := webForm.IndexOf(moduId);
+  idx := webForm.IndexOf(mid);
   if idx>=0 then
      begin
        buf:= TForm(webForm.Objects[idx]).caption;
@@ -197,7 +198,7 @@ var
   mid:string;
 begin
   mid := dllApplication.getModuId(moduId);
-  idx := webForm.IndexOf(moduId);
+  idx := webForm.IndexOf(mid);
   if idx>=0 then
      begin
        TfrmWebForm(webForm.Objects[idx]).Buf := StrPas(buf);

@@ -2501,6 +2501,7 @@ procedure TfrmOrderForm.BarcodeInput(_Buf: string);
 begin
   inherited;
   try
+    if edtInput.CanFocus then edtInput.SetFocus;
     DecodeBarcode(_Buf);
   finally
     edtInput.Text := '';

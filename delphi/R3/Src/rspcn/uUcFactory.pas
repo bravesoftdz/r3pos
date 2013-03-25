@@ -255,8 +255,8 @@ end;
 procedure TUcFactory.IdCookieManager1NewCookie(ASender: TObject;
   ACookie: TIdCookieRFC2109; var VAccept: Boolean);
 begin
-//  messagebox(0,pchar(ACookie.CookieText),'',mb_ok);
-//  InternetSetCookie(pchar('test.xinshangmeng.com'),pchar(ACookie.CookieName),pchar(ACookie.Value+ ';expires=Sun,22-Feb-2099 00:00:00 GMT'));
+  messagebox(0,pchar(ACookie.CookieText),'',mb_ok);
+  InternetSetCookie(pchar('xinshangmeng.com'),pchar(ACookie.CookieName),pchar(ACookie.Value+ ';expires=Sun,22-Feb-2099 00:00:00 GMT'));
 end;
 
 function TUcFactory.chkLogin(EWB: TEmbeddedWB): boolean;

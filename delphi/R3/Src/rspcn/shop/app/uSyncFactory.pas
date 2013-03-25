@@ -47,6 +47,7 @@ type
     procedure SetStoped(const Value: boolean);
     procedure SetProHandle(const Value: Hwnd);
   private
+    LoginSyncDate:integer;
     procedure InitTenant;
     procedure InitSyncList1;
     procedure InitSyncList;
@@ -933,8 +934,13 @@ function TSyncFactory.CheckInitSync: boolean;
 var timestamp:int64;
 begin
   result := true;
-  timestamp := GetSynTimeStamp(token.tenantId,'LOGIN_SYNC','#');
+  if LoginSyncDate = 0 then
+     timestamp := GetSynTimeStamp(token.tenantId,'LOGIN_SYNC','#')
+  else
+     timestamp := LoginSyncDate;
+
   if timestamp = 0 then Exit;
+
   if token.lDate > timestamp then
      result := true
   else
@@ -967,6 +973,7 @@ begin
       RspSyncFactory.copyGoodsSort;
       SyncFactory.InitTenant;
       SyncFactory.SyncBasic;
+      SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
       Free;

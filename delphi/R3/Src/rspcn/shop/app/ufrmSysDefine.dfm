@@ -1,5 +1,5 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 199
+  Left = 117
   Top = 131
   Caption = #31995#32479#35774#32622
   ClientHeight = 534
@@ -5813,12 +5813,12 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 0
         Width = 752
         Height = 487
-        ActivePage = TabSheet1
+        ActivePage = TabSheet3
         Align = alClient
         Color = 15461355
         UseColoredTabs = True
         ParentColor = False
-        TabIndex = 0
+        TabIndex = 2
         TabOrder = 1
         FixedDimension = 21
         object TabSheet1: TRzTabSheet
@@ -10716,8 +10716,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel40: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 51
-                Height = 26
+                Width = 31
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #27983#35272
@@ -11091,8 +11091,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel41: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 52
-                Height = 26
+                Width = 31
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #27983#35272

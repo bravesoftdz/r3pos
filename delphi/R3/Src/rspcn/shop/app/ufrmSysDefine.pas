@@ -1501,9 +1501,15 @@ procedure TfrmSysDefine.SetCurUserId(const Value: string);
 begin
   FCurUserId := Value;
   if (FCurUserId = token.userId) and (token.account <> token.xsmCode) and (token.account <> 'system') then
-     RzPanel37.Visible := true
+     begin
+       RzPanel37.Visible := true;
+       btnSaveUsers.Visible := true;
+     end
   else
-     RzPanel37.Visible := false;
+     begin
+       RzPanel37.Visible := false;
+       btnSaveUsers.Visible := false;
+     end;
 
   if (CurUserId = '') or (not cdsUsers.Locate('USER_ID',CurUserId,[])) then
      RzPanel13.Visible := false
@@ -1555,7 +1561,9 @@ begin
 end;
 
 procedure TfrmSysDefine.btnChangeClick(Sender: TObject);
-var str,newPswd:string;
+var
+  str,newPswd:string;
+  rs:TZQuery;
 begin
   inherited;
   if edtOLD_PSWD.Text = '' then
@@ -1578,11 +1586,23 @@ begin
     if edtNEW_PSWD2.CanFocus then edtNEW_PSWD2.SetFocus;
     Raise Exception.Create('¡Ω¥Œ√‹¬Î ‰»Î≤ª“ª÷¬...');
   end;
+  if (lowercase(CurUserId)='admin') then
+  begin
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+token.tenantId+' and DEFINE=''PASSWRD'' ';
+      dataFactory.Open(rs);
+      CurUserPswd := rs.Fields[0].AsString;
+    finally
+      rs.Free;
+    end;
+  end;
   if edtOLD_PSWD.Text <> DecStr(CurUserPswd,ENC_KEY) then
   begin
     if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
     Raise Exception.Create('æ…√‹¬Î√‹¬Î ‰»Î¥ÌŒÛ...');
   end;
+
   newPswd := UpperCase(edtNEW_PSWD1.Text);
   if (lowercase(CurUserId)<>'admin') then
     str := 'update CA_USERS set PASS_WRD=''' + EncStr(newPswd,ENC_KEY) + ''',COMM=' + GetCommStr(dataFactory.iDbType) +

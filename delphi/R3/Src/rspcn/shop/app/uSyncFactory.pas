@@ -70,8 +70,10 @@ type
   public
     constructor Create;
     destructor  Destroy;override;
-    // 登录同步
+    // 登录时同步
     procedure LoginSync(PHWnd:THandle);
+    // 注册时同步
+    procedure RegisterSync(PHWnd:THandle);
     function  GetTableName(tableFlag:integer):string;
     property  Params:TftParamList read FParams write SetParams;
     property  SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
@@ -83,7 +85,8 @@ var SyncFactory:TSyncFactory;
 
 implementation
 
-uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,uRightsFactory;
+uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,
+     uRightsFactory,dllApi;
 
 constructor TSyncFactory.Create;
 begin
@@ -962,6 +965,27 @@ end;
 
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
+  if dllApplication.mode = 'demo' then Exit;
+  if not CheckInitSync then Exit;
+  with TfrmSyncData.CreateParented(PHWnd) do
+  begin
+    try
+      hWnd := PHWnd;
+      ShowForm;
+      BringToFront;
+      SyncFactory.InitTenant;
+      SyncFactory.SyncBasic;
+      SyncFactory.LoginSyncDate := token.lDate;
+      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TSyncFactory.RegisterSync(PHWnd: THandle);
+begin
+  if dllApplication.mode = 'demo' then Exit;
   if not CheckInitSync then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin

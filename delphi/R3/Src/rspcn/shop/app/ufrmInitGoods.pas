@@ -207,7 +207,7 @@ type
 implementation
 
 uses uRspFactory,udllDsUtil,udllFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -284,6 +284,7 @@ begin
       edtDefault2.Checked := false;
       if edtGOODS_OPTION1.Checked then
         begin
+          if dllApplication.mode = 'demo' then Raise Exception.Create('演示模式下不允许新增供应链商品...');
           GetGoodsInfo;
           edtBARCODE1.Text := '';
           edtBARCODE2.Text := '';

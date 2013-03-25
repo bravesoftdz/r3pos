@@ -11,7 +11,7 @@ uses
   ufrmWebForm,
   uRspFactory,
   udataFactory;
-  
+
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
 function initApp(appWnd:Thandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
@@ -51,7 +51,7 @@ var
   dbHelp:IdbDllHelp;
   dllApplication:TdllApplication;
 implementation
-uses udllGlobal;
+uses udllGlobal,uSyncFactory;
 var
   webForm:TStringList;
   oldHandle:THandle;
@@ -81,17 +81,27 @@ end;
 //说明：传入appId与令牌，初始化成功后返回true
 function initApp(appWnd:Thandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
 begin
-  DllProc := @DLLEntryPoint;
-  DllProcEX := @DLLEntryPoint;
-  webForm := TStringList.Create;
-  oldHandle := Application.Handle;
-  dllApplication.handle := appWnd;
-  Application.OnException := dllApplication.dllException;
-  Application.Handle := appWnd;
-  token.decode(strpas(_token));
-  dbHelp:= _dbHelp;
-  rspFactory := TrspFactory.Create(nil);
-  result := true;
+  try
+    DllProc := @DLLEntryPoint;
+    DllProcEX := @DLLEntryPoint;
+    webForm := TStringList.Create;
+    oldHandle := Application.Handle;
+    dllApplication.handle := appWnd;
+    Application.OnException := dllApplication.dllException;
+    //Application.Handle := appWnd;
+    token.decode(strpas(_token));
+    dbHelp:= _dbHelp;
+    rspFactory := TrspFactory.Create(nil);
+    result := true;
+    SyncFactory.LoginSync(appWnd);
+    result := true;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         lastError := E.Message;
+       end;
+  end;
 end;
 
 //2.打开应用

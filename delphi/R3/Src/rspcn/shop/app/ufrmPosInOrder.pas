@@ -1468,7 +1468,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
     rs.ParamByName('GODS_ID').AsString := godsId;
     dataFactory.Open(rs);
-    godsAmount.Caption := '¿â´æ:'+formatFloat('#0.###',edtTable.Fields[0].asFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
+    godsAmount.Caption := '¿â´æ:'+formatFloat('#0.###',rs.Fields[0].asFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
   finally
     rs.Free;
   end;

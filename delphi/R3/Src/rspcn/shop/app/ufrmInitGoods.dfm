@@ -12,14 +12,14 @@ inherited frmInitGoods: TfrmInitGoods
   TextHeight = 15
   inherited pnlAddressBar: TPanel
     Width = 613
-    inherited RzFormShape1: TRzFormShape
-      Width = 613
-    end
     inherited Image3: TImage
       Width = 195
     end
     inherited Image1: TImage
       Left = 403
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 613
     end
     object RzLabel26: TRzLabel [4]
       Left = 10
@@ -430,8 +430,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel13: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 62
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26465' '#22411' '#30721
@@ -501,8 +501,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel14: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#36135#21495
@@ -572,8 +572,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel15: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#21517#31216
@@ -643,8 +643,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel16: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#31867#21035
@@ -723,8 +723,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel17: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #35745#37327#21333#20301
@@ -832,8 +832,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel18: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 62
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36827' '#36135' '#20215
@@ -902,8 +902,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel19: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 62
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #38646' '#21806' '#20215
@@ -972,8 +972,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel20: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #24215#20869#21806#20215
@@ -1146,8 +1146,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel21: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#21333#20301
@@ -1254,8 +1254,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel22: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#26465#30721
@@ -1324,8 +1324,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel23: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#31995#25968
@@ -1390,8 +1390,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzPanel_SMALL: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 111
-                  Height = 28
+                  Width = 9
+                  Height = 16
                   Align = alClient
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
@@ -1445,8 +1445,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel24: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#21333#20301
@@ -1549,8 +1549,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel25: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#26465#30721
@@ -1614,8 +1614,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzPanel_BIG: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 111
-                  Height = 28
+                  Width = 9
+                  Height = 16
                   Align = alClient
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
@@ -1669,8 +1669,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel27: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 26
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#31995#25968

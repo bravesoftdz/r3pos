@@ -94,7 +94,7 @@ type
     N1: TMenuItem;
     Timer1: TTimer;
     tool_left: TImage;
-    RzPanel3: TRzPanel;
+    mainPanel: TRzPanel;
     PageControl1: TRzPageControl;
     toolleft: TRzPanel;
     Image12: TImage;
@@ -1052,31 +1052,37 @@ end;
 
 procedure TfrmBrowerForm.Timer1Timer(Sender: TObject);
 begin
-  if token.logined and not toolleft.Visible and (pageControl1.PageCount>0) then
-     begin
-       TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
-       pageButtonSort;
-     end
-  else
-  if not token.logined and toolleft.Visible and (pageControl1.PageCount>0) then
-     begin
-       TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
-       pageButtonSort;
-     end;
-  toolleft.Visible := token.logined;
-  if token.logined then
-     begin
-       if token.tenantName<>'' then
-          lblUserName.Caption := token.tenantName
-       else
-          lblUserName.Caption := token.username;
-       if token.online then
-          lblUserName.Caption := lblUserName.Caption+'(联机)'
-       else
-          lblUserName.Caption := lblUserName.Caption+'(脱机)';
-     end
-  else
-     lblUserName.Caption := '现代卷烟零售终端';
+  Timer1.Enabled := false;
+  try
+    if token.logined and not toolleft.Visible and (pageControl1.PageCount>0) then
+       begin
+         if token.online then  dllFactory.Init(mainPanel.Handle);
+         TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
+         pageButtonSort;
+       end
+    else
+    if not token.logined and toolleft.Visible and (pageControl1.PageCount>0) then
+       begin
+         TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
+         pageButtonSort;
+       end;
+    toolleft.Visible := token.logined;
+    if token.logined then
+       begin
+         if token.tenantName<>'' then
+            lblUserName.Caption := token.tenantName
+         else
+            lblUserName.Caption := token.username;
+         if token.online then
+            lblUserName.Caption := lblUserName.Caption+'(联机)'
+         else
+            lblUserName.Caption := lblUserName.Caption+'(脱机)';
+       end
+    else
+       lblUserName.Caption := '现代卷烟零售终端';
+  finally
+    Timer1.Enabled := true;
+  end;
 end;
 
 procedure TfrmBrowerForm.LoadXsm(_url: string;appId:string; TimeOut: integer);
@@ -1475,7 +1481,7 @@ begin
     begin
       if arr[i] = #0 then Exit;
     end;
-  if (time[13]-time[1])<2000 then
+  if (getTickCount-time[1])<2000 then
     result := true;
 end;
 

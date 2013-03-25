@@ -99,7 +99,8 @@ begin
     legal := rspcn.selectSingleNode('/rspcn/userInfo/legal').text;
     idCard := rspcn.selectSingleNode('/rspcn/userInfo/idCard').text;
     mobile := rspcn.selectSingleNode('/rspcn/userInfo/mobile').text;
-    online := (rspcn.selectSingleNode('/rspcn/userInfo/mobile').text='1');
+    online := (rspcn.selectSingleNode('/rspcn/userInfo/online').text='1');
+    LDate := strtoIntDef(rspcn.selectSingleNode('/rspcn/userInfo/lDate').text,0);
     shoped := true;
     logined := true;
   except
@@ -169,6 +170,9 @@ begin
        node.text := '0';
     userinfo.appendChild(node);
     rspcn.appendChild(userinfo);
+    node := doc.createElement('lDate');
+    node.text := inttostr(lDate);
+    userinfo.appendChild(node);
     result := doc.xml;
   except
     Raise;
@@ -194,6 +198,7 @@ begin
    '"idCard":"'+idCard+'",'+
    '"mobile":"'+mobile+'",'+
    '"online":"'+booltoStr(online,true)+'"'+
+   '"lDate":"'+inttostr(lDate)+'"'+
    '}';
 end;
 

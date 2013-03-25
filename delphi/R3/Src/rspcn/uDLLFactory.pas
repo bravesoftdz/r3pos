@@ -49,6 +49,8 @@ type
   private
     FList:TList;
     FDataSets:TList;
+    FappWnd: THandle;
+    procedure SetappWnd(const Value: THandle);
   protected
     //开始事务  超时设置 单位秒
     procedure BeginTrans(TimeOut:integer=-1);stdcall;
@@ -82,6 +84,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
+    procedure Init(hWnd:THandle);
+
     //读取令牌信息
     function getTokenInfo:boolean;
     //url 命名规则 rspcn://appid/moduid
@@ -96,6 +101,7 @@ type
 
     procedure resize;
     function getDBHelp:IdbDLLHelp;
+    property appWnd:THandle read FappWnd write SetappWnd;
   end;
 var
   dllFactory:TDLLFactory;
@@ -454,6 +460,27 @@ begin
   app.sendMsg(pchar(msg),Pchar(urlToken.moduname));
 end;
 
+procedure TDLLFactory.Init(hWnd:THandle);
+var
+  idx:integer;
+  app:TDLLPlugin;
+begin
+  appWnd := hWnd;
+  if not getTokenInfo then Exit;
+  idx := find('shop.dll');
+  if idx<0 then
+     begin
+       app := TDLLPlugin.Create('shop.dll');
+       app.appId := 'shop.dll';
+       flist.Add(app);
+     end;
+end;
+
+procedure TDLLFactory.SetappWnd(const Value: THandle);
+begin
+  FappWnd := Value;
+end;
+
 { TDLLPlugin }
 
 constructor TDLLPlugin.Create(dllname:string);
@@ -477,7 +504,7 @@ begin
     if @resize=nil then Raise Exception.Create('resize方法没有实现');
     @sendMsg := GetProcAddress(dllHandle, 'sendMsg');
     if @sendMsg=nil then Raise Exception.Create('sendMsg方法没有实现');
-    if not initApp(Application.Handle,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败');
+    if not initApp(dllFactory.appWnd,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败');
   except
     freeLibrary(dllHandle);
     dllHandle := 0;

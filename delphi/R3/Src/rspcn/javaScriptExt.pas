@@ -14,6 +14,8 @@ type
     lastError:string;
     _verify: WideString;
   protected
+    procedure SaveTimeStamp;
+    procedure CheckTimeStamp;
     function signIn(const username, password, verify: WideString; online: WordBool): WordBool;
       safecall;
     procedure signOut; safecall;
@@ -84,20 +86,6 @@ begin
   end;
 end;
 
-procedure WriteRegister;
-//var
-//  rs:TZQuery;
-begin
-//  rs := TZQuery.Create(nil);
-//  try
-//    dataFactory.MoveToSqlite;
-//    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+inttostr(rspFactory.tenantId)+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''')=0 then
-//       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+inttostr(rspFactory.tenantId)+''',0,''00'',5497000)');
-//    tenantId := rspFactory.tenantId;
-//  finally
-//    rs.Free;
-//  end;
-end;
 var
   rs,us:TZQuery;
   isXsm:boolean;
@@ -216,6 +204,7 @@ begin
     token.licenseCode := rs.FieldbyName('LICENSE_CODE').AsString;
     token.legal := rs.FieldbyName('LINKMAN').AsString;
     token.mobile := rs.FieldbyName('TELEPHONE').AsString;
+    if online then SaveTimeStamp else checkTimeStamp;
     token.Logined := true;
     token.online := online;
     dataFactory.signined := true;
@@ -619,6 +608,64 @@ begin
       result := stringreplace(result,'CHAR_LENGTH(','length(',[rfReplaceAll]);
     end;
   end;    
+end;
+
+procedure TjavaScriptExt.SaveTimeStamp;
+var
+  LDate:TDatetime;
+begin
+  LDate := trunc(rspFactory.timestamp/86400.0+40542.0)-2;
+  token.lDate := strtoint(formatDatetime('YYYYMMDD',LDate));
+  dataFactory.MoveToSqlite;
+  try
+    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+formatDatetime('YYYYMMDD',LDate)+''' where TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''')=0 then
+       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''NEAR_LOGIN_DATE'','''+formatDatetime('YYYYMMDD',LDate)+''',0,''00'',5497000)');
+  finally
+    dataFactory.MoveToDefault;
+  end;
+end;
+
+procedure TjavaScriptExt.CheckTimeStamp;
+function fnStrtoDate(Str: string): TDatetime;
+var Y,M,D:Word;
+begin
+  try
+  if Length(Str)=8 then
+     begin
+      Y := StrtoInt(Copy(Str,1,4));
+      M := StrtoInt(Copy(Str,5,2));
+      D := StrtoInt(Copy(Str,7,2));
+     end
+  else
+     begin
+      Y := StrtoInt(Copy(Str,1,4));
+      M := StrtoInt(Copy(Str,6,2));
+      D := StrtoInt(Copy(Str,9,2));
+     end;
+  Result := EnCodeDate(Y,M,D);
+  except
+     Raise Exception.CreateFmt('%s无效日期型字符串。',[Str]); 
+  end;
+end;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''';
+    dataFactory.Open(rs);
+    if rs.Fields[0].AsString='' then  Raise Exception.Create('首次登录不允许使用离线操作'); 
+    if rs.Fields[0].AsString<>'' then
+       begin
+         if (date()-fnStrtoDate(rs.Fields[0].asString))>7 then
+            Raise Exception.Create('您已经超过7天没上网了，不能再使用离线了')
+         else
+         if fnStrtoDate(rs.Fields[0].asString)>date() then
+            Raise Exception.Create('你的计算机时间与服务器时间不符，请校准后再登录软件。');
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 initialization

@@ -9141,7 +9141,7 @@ object frmBrowerForm: TfrmBrowerForm
       OnClick = btnPageCloseClick
     end
   end
-  object RzPanel3: TRzPanel
+  object mainPanel: TRzPanel
     Left = 0
     Top = 87
     Width = 848

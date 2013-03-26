@@ -104,8 +104,8 @@ begin
         rs.FieldByName('COMM').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'comm');
         TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(caTenantDownloadResp,'timeStamp'));
         rs.Post;
-        if rs.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-           maxtimestamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+           maxtimestamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         caTenantDownloadResp := caTenantDownloadResp.nextSibling;
       end;
 
@@ -192,8 +192,8 @@ begin
         rs.FieldByName('COMM').AsString := rspFactory.GetNodeValue(caServiceLineDownloadResp,'comm');
         TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(caServiceLineDownloadResp,'timeStamp'));
         rs.Post;
-        if rs.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-           maxtimestamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+           maxtimestamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         caServiceLineDownloadResp := caServiceLineDownloadResp.nextSibling;
       end;
 
@@ -285,8 +285,8 @@ begin
         rs.FieldByName('COMM').AsString := rspFactory.GetNodeValue(caRelationDownloadResp,'comm');
         TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(caRelationDownloadResp,'timeStamp'));
         rs.Post;
-        if rs.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-           maxtimestamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+           maxtimestamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         caRelationDownloadResp := caRelationDownloadResp.nextSibling;
       end;
 
@@ -416,8 +416,8 @@ begin
         rs.FieldByName('COMM').AsString := rspFactory.GetNodeValue(pubUnionQueryResp,'comm');
         TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(pubUnionQueryResp,'timeStamp'));
         rs.Post;
-        if rs.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-           maxtimestamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+           maxtimestamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         IndexResp :=  pubUnionQueryResp.firstChild;
         while IndexResp<>nil do
           begin
@@ -438,8 +438,8 @@ begin
                     idx.FieldByName('COMM').AsString := rspFactory.GetNodeValue(UnionIndex,'comm');
                     TLargeintField(idx.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(UnionIndex,'timeStamp'));
                     idx.Post;
-                    if idx.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-                       maxtimestamp := idx.FieldByName('TIME_STAMP').AsInteger;
+                    if StrtoInt64(idx.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+                       maxtimestamp := StrtoInt64(idx.FieldByName('TIME_STAMP').AsString);
                     UnionIndex := UnionIndex.nextSibling;
                   end;
               end
@@ -463,8 +463,8 @@ begin
                   prc.FieldByName('COMM').AsString := rspFactory.GetNodeValue(indexResp,'comm');
                   TLargeintField(prc.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(indexResp,'timeStamp'));
                   prc.Post;
-                  if prc.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-                     maxtimestamp := prc.FieldByName('TIME_STAMP').AsInteger;
+                  if StrtoInt64(prc.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+                     maxtimestamp := StrtoInt64(prc.FieldByName('TIME_STAMP').AsString);
                 end;
             IndexResp := IndexResp.nextSibling;
           end;
@@ -594,8 +594,8 @@ begin
         rs.FieldByName('COMM').AsString := rspFactory.GetNodeValue(listModulesResp,'comm');
         TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(listModulesResp,'timeStamp'));
         rs.Post;
-        if rs.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-           maxtimestamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+           maxtimestamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         listModulesResp := listModulesResp.nextSibling;
       end;
 
@@ -688,8 +688,8 @@ begin
         rs.FieldByName('COMM').AsString := rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'comm');
         TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'timeStamp'));
         rs.Post;
-        if rs.FieldByName('TIME_STAMP').AsInteger > maxtimestamp then
-           maxtimestamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxtimestamp then
+           maxtimestamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         pubGoodsSortDownloadResp := pubGoodsSortDownloadResp.nextSibling;
       end;
 

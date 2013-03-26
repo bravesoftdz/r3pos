@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase, ObjCommon, ZLogFile,
-  Dialogs;
+  Dialogs, DB;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -238,11 +238,13 @@ var
   ZClassName:string;
   tmpObj:TRecord_;
   i,j:integer;
-  maxTimeStamp:int64;
+  delBeginTimeStamp,delEndTimeStamp,maxTimeStamp:int64;
 begin
   LogFile.AddLogFile(0,'开始<'+n^.tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
 
+  delBeginTimeStamp := 0;
   maxTimeStamp := 0;
+
   ZClassName := GetFactoryName(n);
 
   //单机版上传、连锁版下载
@@ -285,10 +287,11 @@ begin
         cs.Append;
         tmpObj.ReadFromDataSet(rs);
         tmpObj.WriteToDataSet(cs);
-        maxTimeStamp := rs.FieldByName('TIME_STAMP').AsInteger;
+        maxTimeStamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
+        if i = 1 then delBeginTimeStamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
         inc(i);
         rs.Next;
-        if ((i > SubmitRecordNum) and (rs.FieldByName('TIME_STAMP').AsInteger > maxTimeStamp)) or (rs.Eof) then
+        if ((i > SubmitRecordNum) and (StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxTimeStamp)) or (rs.Eof) then
           begin
             //提交
             if not cs.IsEmpty then
@@ -301,6 +304,22 @@ begin
               finally
                 dataFactory.MoveToDefault;
               end;
+            //上传时修改本地通讯标志位
+            if SyncFlag = 0 then
+               begin
+                 try
+                   rs.Prior;
+                   rs.Delete;
+                   delEndTimeStamp := maxTimeStamp;
+                   Params.ParamByName('DEL_BEGIN_TIME_STAMP').Value := delBeginTimeStamp;
+                   Params.ParamByName('DEL_END_TIME_STAMP').Value := delEndTimeStamp;
+                   dataFactory.UpdateBatch(rs,ZClassName,Params);
+                   rs.CommitUpdates;
+                 except
+                   rs.CancelUpdates;
+                   Raise;
+                 end;
+               end;
             if maxTimeStamp > maxTime then
                SetSynTimeStamp(n^.syncTenantId,n^.tbName,maxTimeStamp,n^.syncShopId);
             cs.Close;
@@ -351,8 +370,16 @@ begin
 
   if n^.syncUpAndDown = '1' then
      begin
-       maxTimeStamp := SyncData(n,Params,1); //下载
-       SyncData(n,Params,0,maxTimeStamp); //上传
+       if LCLVersion then //单机版先上传后下载
+          begin
+            maxTimeStamp := SyncData(n,Params,0); //上传
+            SyncData(n,Params,1,maxTimeStamp); //下载
+          end
+       else //连锁版先下载后上传
+          begin
+            maxTimeStamp := SyncData(n,Params,1); //下载
+            SyncData(n,Params,0,maxTimeStamp); //上传
+          end;
      end
   else
      begin

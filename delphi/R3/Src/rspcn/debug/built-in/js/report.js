@@ -227,9 +227,9 @@
 				var amount = ds.getAsString("amount");
 				var jy_amount = ds.getAsString("jy_amount");
 				var jy_money = ds.getAsString("yj_money");
-				$("#jhtjqk").html("(本周进货"+amount+"个规格，卷烟"+jy_amount+"条，"+jy_money+"元。)");		
+				$("#jhtjqk").html("(本周进货"+amount+"种商品，卷烟"+jy_amount+"条，总计"+jy_money+"元。)");		
 			}else{
-				$("#jhtjqk").html("(本周进货0个规格，卷烟0条，0元。)");		
+				$("#jhtjqk").html("(本周进货0种商品，卷烟0条，总计0元。)");		
 			}
 			ds.eraseDataSet();
 		}catch(e){

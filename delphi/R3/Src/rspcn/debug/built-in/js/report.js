@@ -181,7 +181,8 @@
 			var d = new Date();
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
-		var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1)||'%' as jyzb from (select A.SALES_DATE,b.RELATION_ID,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(A.CALC_AMOUNT) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE,b.RELATION_ID)";
+			
+			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(A.CALC_AMOUNT) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE)";
 			rsp.setLocalJson('xstjqk',"销售统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
@@ -191,9 +192,9 @@
 				var jy_money = ds.getAsString("jy_money");
 				var fy_money = ds.getAsString("fy_money");
 				var jyzb = ds.getAsString("jyzb");
-				$("#tjqk").html("(今日销售卷烟"+amount+"盒，"+jy_money+"元，非烟"+fy_money+"元，烟类占比"+jyzb+"。)");		
+				$("#tjqk").html("(今日销售卷烟"+amount+"盒，"+jy_money+"元，非烟"+fy_money+"元，烟类占比"+jyzb+"%。)");		
 			}else{
-				$("#tjqk").html("今日销售卷烟0盒，0元，非烟0元，善类占比0。");		
+				$("#tjqk").html("今日销售卷烟0盒，0元，非烟0元，善类占比0%。");		
 			}
 			ds.eraseDataSet();
 		}catch(e){

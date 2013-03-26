@@ -2,6 +2,9 @@
 	$().ready( function() {	
 		var jsonObj = JSON.parse(rsp.getUserInfo());
 		var tenantId = jsonObj.tenantId;
+                if(tenantId=='' || tenantId == undefined){
+			return;	
+		}
 		jypm_tj(tenantId,0);	//卷烟排名
 		jypm_tj(tenantId,1);	//非烟排名
 		jyfl_tj(tenantId);		//卷烟分类

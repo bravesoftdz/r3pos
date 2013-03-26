@@ -12,6 +12,7 @@ inherited frmSaleOrder: TfrmSaleOrder
       Width = 894
       inherited PageControl: TRzPageControl
         Width = 894
+        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -44,36 +45,6 @@ inherited frmSaleOrder: TfrmSaleOrder
               inherited barcode_panel_right_line: TImage
                 Left = 872
                 Height = 113
-              end
-              object RzBackground9: TRzBackground [5]
-                Left = 496
-                Top = 8
-                Width = 6
-                Height = 30
-                Active = True
-                Align = alNone
-                Image.Data = {
-                  07544269746D617006020000424D060200000000000036000000280000000500
-                  00001D0000000100180000000000D0010000120B0000120B0000000000000000
-                  0000FCFCFCF5F5F5FF00FFFF00FFFF00FF00FCFCFCFCFCFCFFFFFFFF00FFFF00
-                  FF00FFFFFFFFFFFFFDFDFDFFFFFFFF00FF00FFFFFFFFFFFFFFFFFFFCFCFCF7F7
-                  F700FFFFFFFFFFFFFFFFFFFDFDFDFDFDFD00FFFFFFFFFFFFFFFFFFFEFEFEFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                  FF00FFFFFFFFFFFFFFFFFFFEFEFEFFFFFF00FFFFFFFFFFFFFFFFFFFCFCFCFDFD
-                  FD00FFFFFFFFFFFFFFFFFFF5F5F5F7F7F700FFFFFFFFFFFFFAFAFAE7E7E7E6E6
-                  E600FBFBFBF3F3F3DFDFDFE2E2E2FF00FF00D6D6D6C6C6C6CBCBCBFF00FFFF00
-                  FF00AEAEAECBCBCBFF00FFFF00FFFF00FF00}
-                ImageStyle = isClip
-                ShowGradient = False
-                ShowImage = True
-                ShowTexture = True
               end
               inherited help: TRzBmpButton
                 Left = 842
@@ -108,7 +79,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Tag = -1
                 end
               end
-              object RzPanel19: TRzPanel [10]
+              object RzPanel19: TRzPanel [9]
                 Left = 16
                 Top = 59
                 Width = 406
@@ -542,7 +513,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 DropHeight = 281
                 ShowTitle = True
                 AutoFitColWidth = False
-                ShowButton = True
+                ShowButton = False
                 LocateStyle = lsDark
                 Buttons = [zbNew, zbFind]
                 DropListStyle = lsFixed
@@ -3594,7 +3565,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = True
+                ShowButton = False
                 LocateStyle = lsDark
                 Buttons = [zbNew]
                 DropListStyle = lsFixed
@@ -3893,8 +3864,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 31
-                    Height = 16
+                    Width = 62
+                    Height = 26
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3978,8 +3949,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 16
-                    Height = 16
+                    Width = 22
+                    Height = 27
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -4342,6 +4313,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   OnChange = serachTextChange
                   OnEnter = serachTextEnter
                   OnExit = serachTextExit
+                  OnKeyPress = serachTextKeyPress
                 end
               end
             end

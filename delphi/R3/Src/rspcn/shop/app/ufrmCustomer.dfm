@@ -3957,6 +3957,7 @@ inherited frmCustomer: TfrmCustomer
           OnChange = serachTextChange
           OnEnter = serachTextEnter
           OnExit = serachTextExit
+          OnKeyPress = serachTextKeyPress
         end
       end
     end

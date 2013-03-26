@@ -233,9 +233,9 @@ inherited frmStockReport: TfrmStockReport
         Caption = 'TabSheet2'
         object RzPanel1: TRzPanel
           Left = 0
-          Top = 0
+          Top = 37
           Width = 991
-          Height = 329
+          Height = 292
           Align = alClient
           BorderOuter = fsNone
           BorderColor = 15461355
@@ -246,7 +246,7 @@ inherited frmStockReport: TfrmStockReport
             Left = 10
             Top = 10
             Width = 971
-            Height = 309
+            Height = 272
             Align = alClient
             BorderOuter = fsStatus
             TabOrder = 0
@@ -254,7 +254,7 @@ inherited frmStockReport: TfrmStockReport
               Left = 1
               Top = 1
               Width = 969
-              Height = 307
+              Height = 270
               Align = alClient
               BorderOuter = fsNone
               BorderSides = [sdLeft, sdTop]
@@ -356,7 +356,7 @@ inherited frmStockReport: TfrmStockReport
                 Left = 0
                 Top = 0
                 Width = 969
-                Height = 307
+                Height = 270
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 AutoFitColWidths = True
@@ -428,7 +428,6 @@ inherited frmStockReport: TfrmStockReport
                     EditButtons = <>
                     FieldName = 'GODS_NAME'
                     Footer.Value = #21512#35745
-                    Footer.ValueType = fvtStaticText
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21830#21697#21517#31216
@@ -586,6 +585,40 @@ inherited frmStockReport: TfrmStockReport
                 end
               end
             end
+          end
+        end
+        object RzPanel5: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 991
+          Height = 37
+          Align = alTop
+          BorderOuter = fsNone
+          Color = 12040119
+          TabOrder = 1
+          object RzLabel1: TRzLabel
+            Left = 0
+            Top = 0
+            Width = 991
+            Height = 37
+            Align = alClient
+            Alignment = taCenter
+            AutoSize = False
+            Caption = #38144#21806#32479#35745#25253#34920
+            Color = 15461355
+            Font.Charset = GB2312_CHARSET
+            Font.Color = 2889728
+            Font.Height = -24
+            Font.Name = #24494#36719#38597#40657
+            Font.Style = []
+            ParentColor = False
+            ParentFont = False
+            Transparent = False
+            Layout = tlCenter
+            LightTextStyle = True
+            ShadowColor = 16382457
+            ShadowDepth = 1
+            TextStyle = tsShadow
           end
         end
       end

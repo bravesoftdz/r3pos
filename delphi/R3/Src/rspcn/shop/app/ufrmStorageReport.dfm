@@ -11,6 +11,8 @@ inherited frmStorageReport: TfrmStorageReport
     Width = 979
     inherited PageControl: TRzPageControl
       Width = 979
+      ActivePage = TabSheet2
+      TabIndex = 1
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet
@@ -285,9 +287,9 @@ inherited frmStorageReport: TfrmStorageReport
         Caption = 'TabSheet2'
         object RzPanel1: TRzPanel
           Left = 0
-          Top = 0
+          Top = 37
           Width = 979
-          Height = 329
+          Height = 292
           Align = alClient
           BorderOuter = fsNone
           BorderColor = 15461355
@@ -298,7 +300,7 @@ inherited frmStorageReport: TfrmStorageReport
             Left = 10
             Top = 10
             Width = 959
-            Height = 309
+            Height = 272
             Align = alClient
             BorderOuter = fsStatus
             TabOrder = 0
@@ -306,7 +308,7 @@ inherited frmStorageReport: TfrmStorageReport
               Left = 1
               Top = 1
               Width = 957
-              Height = 307
+              Height = 270
               Align = alClient
               BorderOuter = fsNone
               BorderSides = [sdLeft, sdTop]
@@ -315,7 +317,7 @@ inherited frmStorageReport: TfrmStorageReport
                 Left = 0
                 Top = 0
                 Width = 957
-                Height = 307
+                Height = 270
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 AutoFitColWidths = True
@@ -514,6 +516,8 @@ inherited frmStorageReport: TfrmStorageReport
                 ParentFont = False
                 TabOrder = 0
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -532,6 +536,40 @@ inherited frmStorageReport: TfrmStorageReport
                 end
               end
             end
+          end
+        end
+        object RzPanel10: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 979
+          Height = 37
+          Align = alTop
+          BorderOuter = fsNone
+          Color = 12040119
+          TabOrder = 1
+          object RzLabel1: TRzLabel
+            Left = 0
+            Top = 0
+            Width = 979
+            Height = 37
+            Align = alClient
+            Alignment = taCenter
+            AutoSize = False
+            Caption = #38144#21806#32479#35745#25253#34920
+            Color = 15461355
+            Font.Charset = GB2312_CHARSET
+            Font.Color = 2889728
+            Font.Height = -24
+            Font.Name = #24494#36719#38597#40657
+            Font.Style = []
+            ParentColor = False
+            ParentFont = False
+            Transparent = False
+            Layout = tlCenter
+            LightTextStyle = True
+            ShadowColor = 16382457
+            ShadowDepth = 1
+            TextStyle = tsShadow
           end
         end
       end
@@ -691,7 +729,7 @@ inherited frmStorageReport: TfrmStorageReport
             AutoFitColWidth = True
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = [zbNew, zbFind]
+            Buttons = [zbClear]
             DropListStyle = lsFixed
             OnClearValue = edtGODS_IDClearValue
             MultiSelect = False

@@ -12,6 +12,7 @@ inherited frmStockOrder: TfrmStockOrder
       Width = 865
       inherited PageControl: TRzPageControl
         Width = 865
+        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -506,7 +507,7 @@ inherited frmStockOrder: TfrmStockOrder
                 DropHeight = 281
                 ShowTitle = True
                 AutoFitColWidth = False
-                ShowButton = True
+                ShowButton = False
                 LocateStyle = lsDark
                 Buttons = [zbNew, zbFind]
                 DropListStyle = lsFixed
@@ -1397,9 +1398,9 @@ inherited frmStockOrder: TfrmStockOrder
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = True
+                ShowButton = False
                 LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = []
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -3835,8 +3836,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 31
-                    Height = 16
+                    Width = 62
+                    Height = 26
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3920,8 +3921,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 16
-                    Height = 16
+                    Width = 22
+                    Height = 27
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -4067,6 +4068,7 @@ inherited frmStockOrder: TfrmStockOrder
                   OnChange = serachTextChange
                   OnEnter = serachTextEnter
                   OnExit = serachTextExit
+                  OnKeyPress = serachTextKeyPress
                 end
               end
               object btnFind: TRzBmpButton

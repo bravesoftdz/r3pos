@@ -54,6 +54,8 @@ type
     edtCLIENT_ID: TzrComboBoxList;
     btnPrior: TRzBmpButton;
     linkToStock: TRzToolButton;
+    RzPanel5: TRzPanel;
+    RzLabel1: TRzLabel;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -139,6 +141,8 @@ begin
      begin
        cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
      end;
+  if not all then
+     cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
      'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,c.CLIENT_NAME from ('+cdsReport2.SQL.Text+') j '+
@@ -149,7 +153,17 @@ begin
   cdsReport2.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
   if cdsReport2.Params.FindParam('SHOP_ID')<>nil then cdsReport2.ParamByName('SHOP_ID').AsString := token.shopId;
   if cdsReport2.Params.FindParam('CLIENT_ID')<>nil then cdsReport2.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+  if cdsReport2.Params.FindParam('GODS_ID')<>nil then cdsReport2.ParamByName('GODS_ID').AsString := cdsReport1.FieldbyName('GODS_ID').AsString;
   dataFactory.Open(cdsReport2);
+
+  RzPanel5.Visible := not all;
+  RzLabel1.Caption := '"'+cdsReport1.FieldbyName('GODS_NAME').AsString+'" 商品的进货流水';
+  edtCLIENT_ID.Properties.ReadOnly := not all;
+  dateFlag.Properties.ReadOnly := not all;
+  D1.Properties.ReadOnly := not all;
+  D2.Properties.ReadOnly := not all;
+  RzBmpButton4.Caption := '展开明细';
+  
 end;
 
 procedure TfrmStockReport.dateFlagPropertiesChange(Sender: TObject);
@@ -349,11 +363,19 @@ begin
   inherited;
   if PageControl.ActivePageIndex>0 then PageControl.ActivePageIndex := PageControl.ActivePageIndex - 1;
   PageControlChange(nil);
+
+  edtCLIENT_ID.Properties.ReadOnly := false;
+  dateFlag.Properties.ReadOnly := false;
+  D1.Properties.ReadOnly := false;
+  D2.Properties.ReadOnly := false;
+  RzBmpButton4.Caption := '统计';
+  
 end;
 
 procedure TfrmStockReport.edtCLIENT_IDClearValue(Sender: TObject);
 begin
   inherited;
+  edtCLIENT_ID.KeyValue := null;
   edtCLIENT_ID.Text := '全部供应商';
 end;
 

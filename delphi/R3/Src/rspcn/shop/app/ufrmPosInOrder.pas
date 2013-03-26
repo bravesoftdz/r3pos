@@ -140,6 +140,7 @@ type
     procedure serachTextChange(Sender: TObject);
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
+    procedure serachTextKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -1485,6 +1486,15 @@ procedure TfrmPosInOrder.cdsListBeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav.Visible := false;
+
+end;
+
+procedure TfrmPosInOrder.serachTextKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     OpenList;
 
 end;
 

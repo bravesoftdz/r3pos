@@ -55,7 +55,7 @@ begin
   inherited;
   for i:=0 to PageControl.PageCount - 1 do PageControl.Pages[i].TabVisible := false;
   PageControl.ActivePageIndex := 0;
-
+  if assigned(PageControl.OnChange) then PageControl.OnChange(PageControl);
   TDbGridEhSort.InitForm(self);
 end;
 
@@ -164,7 +164,7 @@ procedure TfrmReportForm.RzBmpButton1Click(Sender: TObject);
 begin
   inherited;
   DBGridPrint;
-  PrintDBGridEh1.Print;
+  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
 
 end;
 

@@ -8,7 +8,7 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi, objCommon;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -95,7 +95,6 @@ type
     RzLabel13: TRzLabel;
     RzLabel14: TRzLabel;
     RzLabel15: TRzLabel;
-    RzBackground9: TRzBackground;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -129,6 +128,7 @@ type
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure serachTextChange(Sender: TObject);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
+    procedure serachTextKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -476,7 +476,7 @@ begin
   AObj.FieldbyName('UNION_ID').asString := '#';
   AObj.FieldbyName('PRICE_ID').asString := '#';
   edtCLIENT_ID.KeyValue := '';
-  edtCLIENT_ID.Text := '零售客户';
+  edtCLIENT_ID.Text := '普通客户';
   AObj.FieldByName('SALE_AMT').AsFloat := 0;
   AObj.FieldByName('SALE_MNY').AsFloat := 0;
   AObj.FieldByName('CASH_MNY').AsFloat := 0;
@@ -1669,11 +1669,14 @@ end;
 procedure TfrmSaleOrder.OpenList;
 begin
   cdsList.Close;
-  cdsList.SQL.Text := 'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,B.CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
+  cdsList.SQL.Text :=
+    ParseSQL(dataFactory.iDbType,
+    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户'') as CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
     'from SAL_SALESORDER A '+
     'left outer join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
-    'where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and A.SALES_TYPE=4 ';
+    'where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and A.SALES_TYPE=4 '
+    );
   if trim(searchTxt)<>'' then
     cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(searchTxt)+'%'' or REMARK like ''%'+trim(searchTxt)+'%'' or GLIDE_NO like ''%'+trim(searchTxt)+'%''';
   cdsList.SQL.Text := cdsList.SQL.Text + ' order by SALES_DATE,GLIDE_NO';
@@ -1994,6 +1997,13 @@ begin
   inherited;
   rowToolNav.Visible := false;
 
+end;
+
+procedure TfrmSaleOrder.serachTextKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     OpenList;
 end;
 
 initialization

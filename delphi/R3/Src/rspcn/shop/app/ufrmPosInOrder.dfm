@@ -1,6 +1,6 @@
 inherited frmPosInOrder: TfrmPosInOrder
-  Left = -8
-  Top = -8
+  Left = -219
+  Top = 89
   Caption = #21830#21697#20837#24211
   ClientHeight = 738
   ClientWidth = 1280
@@ -16,6 +16,7 @@ inherited frmPosInOrder: TfrmPosInOrder
       inherited PageControl: TRzPageControl
         Width = 1080
         Height = 691
+        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -228,7 +229,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 BorderOuter = fsNone
                 BorderColor = clGray
                 Caption = #23454#25910#65306'1000 '#25214#38646#65306'90'
-                Color = clBlack
+                Color = 14606046
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clRed
                 Font.Height = -24
@@ -945,7 +946,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 DropHeight = 281
                 ShowTitle = True
                 AutoFitColWidth = False
-                ShowButton = True
+                ShowButton = False
                 LocateStyle = lsDark
                 Buttons = [zbNew, zbFind]
                 DropListStyle = lsFixed
@@ -2711,8 +2712,8 @@ inherited frmPosInOrder: TfrmPosInOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 31
-                    Height = 16
+                    Width = 62
+                    Height = 26
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -2796,8 +2797,8 @@ inherited frmPosInOrder: TfrmPosInOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 16
-                    Height = 16
+                    Width = 22
+                    Height = 27
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -2943,6 +2944,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   OnChange = serachTextChange
                   OnEnter = serachTextEnter
                   OnExit = serachTextExit
+                  OnKeyPress = serachTextKeyPress
                 end
               end
               object btnFind: TRzBmpButton
@@ -3257,8 +3259,8 @@ inherited frmPosInOrder: TfrmPosInOrder
             object DBGridEh2: TDBGridEh
               Left = 11
               Top = 11
-              Width = 761
-              Height = 474
+              Width = 1058
+              Height = 609
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True

@@ -50,6 +50,8 @@ type
     Image2: TImage;
     Image3: TImage;
     sortDrop: TcxButtonEdit;
+    RzPanel10: TRzPanel;
+    RzLabel1: TRzLabel;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -191,7 +193,7 @@ begin
      'case when BILL_TYPE in (11,12,13) then null else OUT_PRICE end as OUT_PRICE,'+
      'case when BILL_TYPE in (11,12,13) then null else OUT_MONEY end as OUT_MONEY,'+
      'BAL_AMOUNT,BAL_PRICE,BAL_MONEY '+
-     'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 ';
+     'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE not in (1) ';
      
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and SHOP_ID=:SHOP_ID';
@@ -211,6 +213,9 @@ begin
   cdsReport2.ParamByName('GODS_ID').AsString := gid;
   cdsReport2.ParamByName('BATCH_NO').AsString := bno;
   dataFactory.Open(cdsReport2);
+  RzPanel5.Visible := true;
+  RzLabel1.Caption := '"'+cdsReport1.FieldbyName('GODS_NAME').AsString+'" 商品的进出存流水';
+  RzPanel11.Visible := false;
 end;
 
 procedure TfrmStorageReport.dateFlagPropertiesChange(Sender: TObject);
@@ -385,6 +390,7 @@ end;
 procedure TfrmStorageReport.edtGODS_IDClearValue(Sender: TObject);
 begin
   inherited;
+  edtGODS_ID.KeyValue := null;
   edtGODS_ID.Text := '全部商品';
 
 end;
@@ -432,6 +438,8 @@ begin
   if PageControl.ActivePageIndex>0 then PageControl.ActivePageIndex := PageControl.ActivePageIndex - 1;
   PageControlChange(nil);
 
+  RzPanel11.Visible := true;
+  
 end;
 
 procedure TfrmStorageReport.PageControlChange(Sender: TObject);

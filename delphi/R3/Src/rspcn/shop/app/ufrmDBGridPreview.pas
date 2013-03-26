@@ -29,6 +29,7 @@ type
   public
     { Public declarations }
     class procedure Preview(AOwner:TForm;PrintGrid:TPrintDBGridEh);
+    class procedure Print(AOwner:TForm;PrintGrid:TPrintDBGridEh);
     property PrintDBGridEh:TPrintDBGridEh read FPrintDBGridEh write SetPrintDBGridEh;
   end;
 
@@ -133,6 +134,18 @@ begin
       PreviewBox1.Printer.PrinterSetupOwner := PrintGrid.DBGridEh;
 //      PreviewBox1.Printer.OnPrinterSetupDialog := actPrintSetupExecute;
       PrintDBGridEh.PrintTo(PreviewBox1.Printer);
+    end;
+end;
+
+class procedure TfrmDBGridPreview.Print(AOwner: TForm;
+  PrintGrid: TPrintDBGridEh);
+begin
+  with TfrmDBGridPreview.Create(AOwner) do
+    begin
+      PrintDBGridEh :=  PrintGrid;
+      PreviewBox1.Printer.PrinterSetupOwner := PrintGrid.DBGridEh;
+      PrintDBGridEh.PrintTo(PreviewBox1.Printer);
+      PreviewBox1.PrintDialog;
     end;
 end;
 

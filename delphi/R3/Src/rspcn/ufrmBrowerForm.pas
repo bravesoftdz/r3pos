@@ -957,6 +957,7 @@ begin
   else
      inherited WindowState := wsMinimized;
   end;
+  dllFactory.resize;
 end;
 
 procedure TfrmBrowerForm.RzBmpButton2Click(Sender: TObject);

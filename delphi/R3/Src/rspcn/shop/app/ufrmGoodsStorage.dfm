@@ -4182,6 +4182,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           OnChange = serachTextChange
           OnEnter = serachTextEnter
           OnExit = serachTextExit
+          OnKeyPress = serachTextKeyPress
         end
       end
     end

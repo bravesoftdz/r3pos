@@ -29,10 +29,6 @@ type
     RzPanel5: TRzPanel;
     DBGridEh1: TDBGridEh;
     btnOK: TRzBmpButton;
-    RzPanel12: TRzPanel;
-    btnPrint: TRzBmpButton;
-    btnNav: TRzBmpButton;
-    btnPreview: TRzBmpButton;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnOKClick(Sender: TObject);

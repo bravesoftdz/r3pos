@@ -169,14 +169,23 @@ function eraseApp:boolean;stdcall;
 var
   i:integer;
 begin
-  for i:=webForm.Count -1 downto 0 do
-     begin
-       TfrmWebForm(webForm.Objects[i]).Free;
-     end;
-  webForm.Free;
-  dbHelp := nil;
-  Application.OnException := nil;
-  Application.Handle := oldHandle;
+  try
+    for i:=webForm.Count -1 downto 0 do
+       begin
+         TfrmWebForm(webForm.Objects[i]).Free;
+       end;
+    webForm.Free;
+    dbHelp := nil;
+    Application.OnException := nil;
+    Application.Handle := oldHandle;
+    result := true;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         lastError := E.Message;
+       end;
+  end;
 end;
 //5.读取错误说明
 function getLastError:pchar;stdcall;
@@ -189,40 +198,63 @@ var
   idx:integer;
   mid:string;
 begin
-  mid := dllApplication.getModuId(moduId);
-  idx := webForm.IndexOf(mid);
-  if idx>=0 then
-     begin
-       buf:= TForm(webForm.Objects[idx]).caption;
-       result := Pchar(buf);
-     end
-  else
-     result := '无';
+  try
+    mid := dllApplication.getModuId(moduId);
+    idx := webForm.IndexOf(mid);
+    if idx>=0 then
+       begin
+         buf:= TForm(webForm.Objects[idx]).caption;
+         result := Pchar(buf);
+       end
+    else
+       result := '无';
+  except
+    on E:Exception do
+       begin
+         result := nil;
+         lastError := E.Message;
+       end;
+  end;
 end;
 function resize:boolean;stdcall;
 var
   i:integer;
 begin
-  for i:=webForm.Count -1 downto 0 do
-     begin
-       TfrmWebForm(webForm.Objects[i]).ajustPostion;
-     end;
+  try
+    for i:=webForm.Count -1 downto 0 do
+       begin
+         TfrmWebForm(webForm.Objects[i]).ajustPostion;
+       end;
+    result := true;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         lastError := E.Message;
+       end;
+  end;
 end;
 function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
 var
   idx:integer;
   mid:string;
 begin
-  mid := dllApplication.getModuId(moduId);
-  idx := webForm.IndexOf(mid);
-  if idx>=0 then
-     begin
-       TfrmWebForm(webForm.Objects[idx]).Buf := StrPas(buf);
-       PostMessage(TForm(webForm.Objects[idx]).Handle,WM_SEND_MSG,0,0);
-       result := true;
-     end
-  else
-     result := false;
+  try
+    mid := dllApplication.getModuId(moduId);
+    idx := webForm.IndexOf(mid);
+    if idx>=0 then
+       begin
+         TfrmWebForm(webForm.Objects[idx]).Buf := StrPas(buf);
+         PostMessage(TForm(webForm.Objects[idx]).Handle,WM_SEND_MSG,0,0);
+       end;
+     result := true;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         lastError := E.Message;
+       end;
+  end;
 end;
 { TdllApplication }
 
@@ -256,12 +288,12 @@ end;
 
 function TdllApplication.getDllClass(name: string): TPersistentClass;
 begin
-  if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+  if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'1') then
      begin
        name := 'TfrmPosOutOrder';
      end
   else
-  if (lowercase(name)='tfrmstockorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+  if (lowercase(name)='tfrmstockorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'1') then
      begin
        name := 'TfrmPosInOrder';
      end;
@@ -271,12 +303,12 @@ end;
 function TdllApplication.getModuId(name: string): string;
 begin
   if token.tenantId='' then name:='TfrmSysDefine';
-  if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+  if (lowercase(name)='tfrmsaleorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'1') then
      begin
        name := 'TfrmPosOutOrder';
      end
   else
-  if (lowercase(name)='tfrmstockorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'2') then
+  if (lowercase(name)='tfrmstockorder') and (dllGlobal.GetParameter('INPUT_MODE')<>'1') then
      begin
        name := 'TfrmPosInOrder';
      end;

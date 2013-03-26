@@ -200,7 +200,12 @@ begin
      end
   else
      app := TDLLPlugin(flist[idx]);
-  result := app.closeApp(Pchar(urlToken.moduname));
+  try
+    result := app.closeApp(Pchar(urlToken.moduname));
+    if not result then Raise Exception.Create(StrPas(app.getLastError)); 
+  except
+    Raise Exception.Create(StrPas(app.getLastError));
+  end;
 end;
 
 procedure TDLLFactory.CommitBatch;
@@ -307,7 +312,9 @@ begin
      app := TDLLPlugin(flist[idx]);
   buf := app.getModuleName(pchar(urlToken.moduname));
   if buf<>nil then
-     result := strPas(buf) else result := '未知...';
+     result := strPas(buf) 
+  else
+     Raise Exception.Create(StrPas(app.getLastError)); 
 end;
 
 function TDLLFactory.iDbType: Integer;
@@ -344,18 +351,18 @@ var
   app:TDLLPlugin;
 begin
   try
-  if not getTokenInfo then Exit;
-  idx := find(urltoken.appId);
-  if idx<0 then
-     begin
-       app := TDLLPlugin.Create(urltoken.path);
-       app.appId := urltoken.appId;
-       flist.Add(app);
-     end
-  else
-     app := TDLLPlugin(flist[idx]);
-  result := app.openApp(hWnd,pchar(urlToken.moduname));
-  if not result then MessageBox(application.MainForm.Handle,app.getLastError,'错误..',MB_OK+MB_ICONERROR);
+    if not getTokenInfo then Exit;
+    idx := find(urltoken.appId);
+    if idx<0 then
+       begin
+         app := TDLLPlugin.Create(urltoken.path);
+         app.appId := urltoken.appId;
+         flist.Add(app);
+       end
+    else
+       app := TDLLPlugin(flist[idx]);
+    result := app.openApp(hWnd,pchar(urlToken.moduname));
+    if not result then MessageBox(application.MainForm.Handle,app.getLastError,'错误..',MB_OK+MB_ICONERROR);
   except
     on E:Exception do
        begin
@@ -647,7 +654,7 @@ begin
     if @resize=nil then Raise Exception.Create('resize方法没有实现');
     @sendMsg := GetProcAddress(dllHandle, 'sendMsg');
     if @sendMsg=nil then Raise Exception.Create('sendMsg方法没有实现');
-    if not initApp(dllFactory.appWnd,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败');
+    if not initApp(dllFactory.appWnd,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败,错误：'+strPas(getLastError));
   except
     freeLibrary(dllHandle);
     dllHandle := 0;
@@ -659,7 +666,7 @@ destructor TDLLPlugin.Destroy;
 begin
   if dllHandle>0 then
      begin
-       eraseApp;
+       if not eraseApp then Raise Exception.Create(getLastError); 
        FreeLibrary(dllHandle);
      end;
   inherited;

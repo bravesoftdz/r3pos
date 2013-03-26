@@ -127,6 +127,7 @@ type
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure serachTextChange(Sender: TObject);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
+    procedure serachTextKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -1431,6 +1432,15 @@ procedure TfrmStockOrder.cdsListBeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav.Visible := false;
+
+end;
+
+procedure TfrmStockOrder.serachTextKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     OpenList;
 
 end;
 

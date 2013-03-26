@@ -158,6 +158,7 @@ type
     procedure btnNewSortClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N1Click(Sender: TObject);
+    procedure serachTextKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     searchTxt:string;
@@ -906,6 +907,14 @@ begin
       tmpObj.Free;
     end;
   end;
+end;
+
+procedure TfrmCustomer.serachTextKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     Open;
+
 end;
 
 initialization

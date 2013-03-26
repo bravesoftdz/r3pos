@@ -17,6 +17,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
       inherited PageControl: TRzPageControl
         Width = 797
         Height = 511
+        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -97,7 +98,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 BorderOuter = fsNone
                 BorderColor = clGray
                 Caption = #23454#25910#65306'1000 '#25214#38646#65306'90'
-                Color = clBlack
+                Color = 14606046
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clRed
                 Font.Height = -24
@@ -957,7 +958,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 DropHeight = 281
                 ShowTitle = True
                 AutoFitColWidth = False
-                ShowButton = True
+                ShowButton = False
                 LocateStyle = lsDark
                 Buttons = [zbNew, zbFind]
                 DropListStyle = lsFixed
@@ -2740,8 +2741,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 31
-                    Height = 16
+                    Width = 62
+                    Height = 26
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -2825,8 +2826,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 16
-                    Height = 16
+                    Width = 22
+                    Height = 27
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -3189,6 +3190,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   OnChange = serachTextChange
                   OnEnter = serachTextEnter
                   OnExit = serachTextExit
+                  OnKeyPress = serachTextKeyPress
                 end
               end
             end
@@ -3286,8 +3288,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
             object DBGridEh2: TDBGridEh
               Left = 11
               Top = 11
-              Width = 1058
-              Height = 612
+              Width = 775
+              Height = 432
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True

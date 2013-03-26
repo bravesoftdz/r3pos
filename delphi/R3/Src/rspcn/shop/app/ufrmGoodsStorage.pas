@@ -178,6 +178,7 @@ type
     procedure N4Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
+    procedure serachTextKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     ESortId:string;
@@ -1826,6 +1827,14 @@ begin
     tmpGoodsPrice.Free;
     tmpGoodsExt.Free;
   end;
+end;
+
+procedure TfrmGoodsStorage.serachTextKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     Open;
 end;
 
 initialization

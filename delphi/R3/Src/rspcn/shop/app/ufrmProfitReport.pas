@@ -73,6 +73,10 @@ type
     RzBackground2: TRzBackground;
     RzLabel2: TRzLabel;
     barcode_input_line: TImage;
+    RzPanel20: TRzPanel;
+    RzLabel3: TRzLabel;
+    list: TRzBmpButton;
+    chart: TRzBmpButton;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -89,6 +93,10 @@ type
     procedure cdsReport2BeforeOpen(DataSet: TDataSet);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure edtGODS_IDClearValue(Sender: TObject);
+    procedure edtCLIENT_IDClearValue(Sender: TObject);
+    procedure listClick(Sender: TObject);
+    procedure chartClick(Sender: TObject);
   private
     { Private declarations }
     WTitle1:TStringList;
@@ -132,12 +140,12 @@ begin
        if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
      end;
   cdsReport1.close;
-  WTitle1.Clear;
-  WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
-  WTitle1.add(edtReportType.Text+'：'+edtGODS_ID.Text);
   CreateGrid1;
   case edtReportType.ItemIndex of
   0:begin
+      WTitle1.Clear;
+      WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
+      WTitle1.add(edtReportType.Text+'：'+edtCLIENT_ID.Text);
       cdsReport1.SQL.Text :=
          'select TENANT_ID,CLIENT_ID,sum(SALE_MONEY) as SALE_MONEY,sum(SALE_TAX) as SALE_TAX,sum(OUT_MONEY) as OUT_MONEY,sum(SALE_MONEY-OUT_MONEY) as SALE_PRF '+
          'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE in (21,23,24)';
@@ -161,6 +169,9 @@ begin
       if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
     end;
   1:begin
+      WTitle1.Clear;
+      WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
+      WTitle1.add(edtReportType.Text+'：'+edtGODS_ID.Text);
       cdsReport1.SQL.Text :=
          'select TENANT_ID,GODS_ID,sum(OUT_AMOUNT) as SALE_AMOUNT,sum(SALE_MONEY) as SALE_MONEY,sum(SALE_TAX) as SALE_TAX,sum(OUT_MONEY) as OUT_MONEY,sum(SALE_MONEY-OUT_MONEY) as SALE_PRF '+
          'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE in (21,23,24)';
@@ -195,6 +206,9 @@ begin
   CreateGrid2;
   case edtReportType.ItemIndex of
   0:begin
+      WTitle2.Clear;
+      WTitle2.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
+      WTitle2.add(edtReportType.Text+'：'+edtCLIENT_ID.Text);
       cdsReport2.SQL.Text :=
          'select TENANT_ID,CLIENT_ID,GODS_ID,sum(OUT_AMOUNT) as SALE_AMOUNT,sum(SALE_MONEY) as SALE_MONEY,sum(SALE_TAX) as SALE_TAX,sum(OUT_MONEY) as OUT_MONEY,sum(SALE_MONEY-OUT_MONEY) as SALE_PRF '+
          'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE in (21,23,24)';
@@ -216,6 +230,9 @@ begin
       if cdsReport2.Params.FindParam('CLIENT_ID')<>nil then cdsReport2.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
     end;
   1:begin
+      WTitle2.Clear;
+      WTitle2.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
+      WTitle2.add(edtReportType.Text+'：'+edtGODS_ID.Text);
       cdsReport2.SQL.Text :=
          'select TENANT_ID,GODS_ID,CLIENT_ID,sum(OUT_AMOUNT) as SALE_AMOUNT,sum(SALE_MONEY) as SALE_MONEY,sum(SALE_TAX) as SALE_TAX,sum(OUT_MONEY) as OUT_MONEY,sum(SALE_MONEY-OUT_MONEY) as SALE_PRF '+
          'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE in (21,23,24)';
@@ -238,6 +255,19 @@ begin
     end;
   end;
   dataFactory.Open(cdsReport2);
+  RzPanel20.Visible := not all;
+  case edtReportType.ItemIndex of
+  0:RzLabel3.Caption := '"'+cdsReport1.FieldbyName('CLIENT_NAME').AsString+'" 客户的各商品利润明细';
+  1:RzLabel3.Caption := '"'+cdsReport1.FieldbyName('GODS_NAME').AsString+'" 商品的各客户利润明细';
+  end;
+  RzPanel11.Visible := false;
+  edtCLIENT_ID.Properties.ReadOnly := not all;
+  edtGODS_ID.Properties.ReadOnly := not all;
+  dateFlag.Properties.ReadOnly := not all;
+  edtReportType.Properties.ReadOnly := not all;
+  D1.Properties.ReadOnly := not all;
+  D2.Properties.ReadOnly := not all;
+  RzBmpButton4.Caption := '展开明细';
 end;
 
 procedure TfrmProfitReport.dateFlagPropertiesChange(Sender: TObject);
@@ -391,6 +421,10 @@ begin
   inherited;
   edtCLIENT_ID.Visible := (edtReportType.ItemIndex=0);
   edtGODS_ID.Visible := (edtReportType.ItemIndex>0);
+  if edtReportType.ItemIndex=0 then
+     RzLabel2.Caption := '的客户'
+  else
+     RzLabel2.Caption := '的商品';
 end;
 
 procedure TfrmProfitReport.CreateGrid1;
@@ -647,7 +681,7 @@ end;
 
 procedure TfrmProfitReport.OpenChart;
 begin
-  if not cdsReport1.Active then openReport1;
+  openReport1;
   PageControl.ActivePageIndex := 2;
   PageControlChange(nil);
   CreateChart
@@ -656,19 +690,22 @@ end;
 procedure TfrmProfitReport.CreateChart;
 var
   rs:TZQuery;
+  recNo:integer;
 begin
   rs := TZQuery.Create(nil);
   try
     rs.Data := cdsReport1.Data;
     if not edtChar1Type.Checked then
-       rs.SortedFields := 'SALE_MONEY'
+       rs.SortedFields := 'SALE_MONEY desc'
     else
-       rs.SortedFields := 'SALE_PRF';
+       rs.SortedFields := 'SALE_PRF desc';
+    recNo := 0;
+    Chart1.Series[0].Clear;
     rs.First;
     while not rs.Eof do
       begin
-        if rs.RecNo > (edtTopNum.ItemIndex+1) then break;
-        Chart1.Series[0].Clear;
+        inc(recNo);
+        if recNo > (edtTopNum.ItemIndex+5) then break;
         case edtReportType.ItemIndex of
         0:begin
             if not edtChar1Type.Checked then
@@ -696,10 +733,12 @@ begin
   if edtChar1Type.Checked then
      begin
        Chart1.Title.Text.Text := '利润排行榜';
+       RzLabel1.Caption := '利润前';
      end
   else
      begin
        Chart1.Title.Text.Text := '销售排行榜';
+       RzLabel1.Caption := '销售前';
      end;
 end;
 
@@ -717,8 +756,17 @@ end;
 procedure TfrmProfitReport.btnPriorClick(Sender: TObject);
 begin
   inherited;
-  if PageControl.ActivePageIndex>0 then PageControl.ActivePageIndex := 0;
+  PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
+  list.Down := (PageControl.ActivePageIndex<>1);
+  RzPanel11.Visible := true;
+  edtCLIENT_ID.Properties.ReadOnly := false;
+  edtGODS_ID.Properties.ReadOnly := false;
+  dateFlag.Properties.ReadOnly := false;
+  edtReportType.Properties.ReadOnly := false;
+  D1.Properties.ReadOnly := false;
+  D2.Properties.ReadOnly := false;
+  RzBmpButton4.Caption := '统计';
 
 end;
 
@@ -764,7 +812,7 @@ var
   ReStr:string;
 begin
   case PageControl.ActivePageIndex of
-  0:begin
+  0,2:begin
       PrintDBGridEh1.DBGridEh := DBGridEh1;
       PrintDBGridEh1.PageHeader.CenterText.Text := '利润分析报表';
       ReStr:=FormatReportHead(WTitle1,4);
@@ -783,6 +831,34 @@ begin
   end;
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
+end;
+
+procedure TfrmProfitReport.edtGODS_IDClearValue(Sender: TObject);
+begin
+  inherited;
+  edtGODS_ID.KeyValue := null;
+  edtGODS_ID.Text := '所有商品';
+end;
+
+procedure TfrmProfitReport.edtCLIENT_IDClearValue(Sender: TObject);
+begin
+  inherited;
+  edtCLIENT_ID.KeyValue := null;
+  edtCLIENT_ID.Text := '所有客户';
+end;
+
+procedure TfrmProfitReport.listClick(Sender: TObject);
+begin
+  inherited;
+  PageControl.ActivePageIndex := 0;
+  OpenReport1;
+end;
+
+procedure TfrmProfitReport.chartClick(Sender: TObject);
+begin
+  inherited;
+  PageControl.ActivePageIndex := 2;
+  OpenChart;
 end;
 
 initialization

@@ -43,7 +43,7 @@ begin
       rs.Close;
       rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE';
       rs.parambyName('TENANT_ID').asInteger := FieldbyName('TENANT_ID').asInteger;
-      rs.parambyName('CREA_DATE').asInteger := StrtoInt(formatDatetime('YYYYMMDD',udllFnUtil.FnTime.fnStrtoDate(FieldbyName('VALUE').AsString)));
+      rs.parambyName('CREA_DATE').asInteger := StrtoInt(formatDatetime('YYYYMMDD',FnTime.fnStrtoDate(FieldbyName('VALUE').AsString)));
       AGlobal.Open(rs);
       if rs.Fields[0].AsString <> '' then
          Raise Exception.Create('系统参数的启用日期不能大于['+rs.Fields[0].AsString+']日');

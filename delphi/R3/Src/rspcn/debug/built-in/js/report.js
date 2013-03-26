@@ -2,7 +2,7 @@
 	$().ready( function() {	
 		var jsonObj = JSON.parse(rsp.getUserInfo());
 		var tenantId = jsonObj.tenantId;
-                if(tenantId=='' || tenantId == undefined){
+        if(tenantId=='' || tenantId == undefined){
 			return;	
 		}
 		jypm_tj(tenantId,0);	//卷烟排名

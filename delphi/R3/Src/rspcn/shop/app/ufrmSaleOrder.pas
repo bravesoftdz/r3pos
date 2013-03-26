@@ -215,6 +215,7 @@ var
   amt:Currency;
   integral:integer;
   ps:TZQuery;
+  orgFee:Currency;
 begin
   ps := dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
   if ps.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
@@ -230,6 +231,7 @@ begin
   edtTable.DisableControls;
   try
     r := edtTable.FieldbyName('SEQNO').AsInteger;
+    orgFee := TotalFee;
     TotalFee := 0;
     TotalAmt := 0;
     TotalBarter := 0;
@@ -268,9 +270,12 @@ begin
        
     AObj.FieldbyName('SALE_AMT').asFloat := TotalAmt;
     AObj.FieldbyName('SALE_MNY').asFloat := TotalFee;
-    AObj.FieldbyName('PAY_ZERO').asFloat := 0;
-    AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
-    AObj.FieldbyName('PAY_DIBS').asFloat := 0;
+    if orgFee<>TotalFee then
+    begin
+      AObj.FieldbyName('PAY_ZERO').asFloat := 0;
+      AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
+      AObj.FieldbyName('PAY_DIBS').asFloat := 0;
+    end;
 {
     AObj.FieldByName('PAY_A').AsFloat := 0;
     AObj.FieldByName('PAY_B').AsFloat := 0;
@@ -495,7 +500,7 @@ begin
   
   edtSALES_DATE.Date := dllGlobal.SysDate;
 
-  AObj.FieldbyName('PLAN_DATE').AsString := formatdatetime('YYYYMMDD',date());
+  AObj.FieldbyName('PLAN_DATE').AsString := formatdatetime('YYYYMMDD',dllGlobal.SysDate);
 
   edtGUIDE_USER.KeyValue := token.userId;
   edtGUIDE_USER.Text := token.username;
@@ -568,7 +573,7 @@ begin
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.userId;
-  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   if not checkPayment then Exit;
@@ -1320,7 +1325,7 @@ begin
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.UserID;
-  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   edtTable.DisableControls;
@@ -1691,29 +1696,29 @@ begin
   inherited;
   case dateFlag.ItemIndex of
   0:begin
-      D1.Date := date();
-      D2.Date := date();
-      D1.Properties.ReadOnly := true;
-      D2.Properties.ReadOnly := true;
+      D1.Date := dllGlobal.SysDate;
+      D2.Date := dllGlobal.SysDate;
+      //D1.Properties.ReadOnly := false;
+      //D2.Properties.ReadOnly := false;
     end;
   1:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',date));
-      D2.Date := date();
-      D1.Properties.ReadOnly := true;
-      D2.Properties.ReadOnly := true;
+      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',dllGlobal.SysDate));
+      D2.Date := dllGlobal.SysDate;
+      //D1.Properties.ReadOnly := false;
+      //D2.Properties.ReadOnly := false;
     end;
   2:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',date));
-      D2.Date := date();
-      D1.Properties.ReadOnly := true;
-      D2.Properties.ReadOnly := true;
+      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',dllGlobal.SysDate));
+      D2.Date := dllGlobal.SysDate;
+      //D1.Properties.ReadOnly := false;
+      //D2.Properties.ReadOnly := false;
     end;
   else
     begin
-      D1.Date := date();
-      D2.Date := date();
-      D1.Properties.ReadOnly := false;
-      D2.Properties.ReadOnly := false;
+      D1.Date := dllGlobal.SysDate;
+      D2.Date := dllGlobal.SysDate;
+      //D1.Properties.ReadOnly := false;
+      //D2.Properties.ReadOnly := false;
     end;
   end;
 end;

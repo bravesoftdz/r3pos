@@ -287,7 +287,7 @@ begin
      begin
        case TabEx.url.appFlag of
        0:begin
-           if isRspcn(TabEx.url.url) then
+           if isRspcn(TabEx.url.showUrl) then
               IEAddress1.Text := TabEx.url.showUrl
            else
               IEAddress1.Text := TabEx.EWB.LocationURL;
@@ -1402,6 +1402,7 @@ var
   childWnd:THandle;
   Message: TWMKeyDown;
 begin
+  isIcon := false;
   if IsIconic(Application.Handle) then
      begin
        Application.Restore;
@@ -1422,6 +1423,7 @@ begin
        if lowercase(tabEx.url.moduname)<>'tfrmsaleorder' then
           begin
             Buf.Clear;
+            Exit;
           end;
      end;
   childWnd := GetWindow(tabEx.Handle,GW_CHILD);

@@ -2502,6 +2502,7 @@ begin
   inherited;
   try
     if edtInput.CanFocus then edtInput.SetFocus;
+    if (dbState = dsBrowse) then NewOrder;
     DecodeBarcode(_Buf);
   finally
     edtInput.Text := '';

@@ -151,10 +151,10 @@ type
     procedure DoShowPayment;
     procedure Calc; //2011.06.09判断是否限量
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
-    function getPaymentTitle(pay:string):string;
+    function  getPaymentTitle(pay:string):string;
 
     //快捷健
-    function doShortCut(s:string):boolean;override;
+    function  doShortCut(s:string):boolean;override;
     procedure DoIsPresent(s:string);
     procedure DoCustId(s:string);
     procedure DoGuideUser(s:string);
@@ -194,11 +194,13 @@ procedure TfrmStockOrder.Calc;
 var
   r:integer;
   Controls:boolean;
+  orgFee:Currency;
 begin
   Controls := edtTable.ControlsDisabled;
   edtTable.DisableControls;
   try
     r := edtTable.FieldbyName('SEQNO').AsInteger;
+    orgFee := TotalFee;
     TotalFee := 0;
     edtTable.First;
     while not edtTable.Eof do
@@ -213,6 +215,11 @@ begin
   end;
   if (dbState<>dsBrowse) then
   begin
+    AObj.FieldbyName('STOCK_AMT').asFloat := TotalAmt;
+    AObj.FieldbyName('STOCK_MNY').asFloat := TotalFee;
+    if orgFee<>TotalFee then
+       AObj.FieldbyName('PAY_ZERO').asFloat := 0;
+
     edtACCT_MNY.Text := formatFloat('#0.00',TotalFee);
     edtAGIO_RATE.Text := '100.0';
     DoShowPayment;
@@ -297,6 +304,17 @@ begin
 
   AObj.FieldByName('STOCK_AMT').AsFloat := 0;
   AObj.FieldByName('STOCK_MNY').AsFloat := 0;
+  AObj.FieldByName('PAY_ZERO').AsFloat := 0;
+  AObj.FieldByName('PAY_A').AsFloat := 0;
+  AObj.FieldByName('PAY_B').AsFloat := 0;
+  AObj.FieldByName('PAY_C').AsFloat := 0;
+  AObj.FieldByName('PAY_D').AsFloat := 0;
+  AObj.FieldByName('PAY_E').AsFloat := 0;
+  AObj.FieldByName('PAY_F').AsFloat := 0;
+  AObj.FieldByName('PAY_G').AsFloat := 0;
+  AObj.FieldByName('PAY_H').AsFloat := 0;
+  AObj.FieldByName('PAY_I').AsFloat := 0;
+  AObj.FieldByName('PAY_J').AsFloat := 0;
 
   edtSTOCK_DATE.Date := dllGlobal.SysDate;
 
@@ -363,7 +381,7 @@ begin
   AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.userId;
-  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   if not checkPayment then Exit;
@@ -490,7 +508,7 @@ begin
       if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
          NewOrder
       else
-         Open(AObj.FieldbyName('SALES_ID').AsString);
+         Open(AObj.FieldbyName('STOCK_ID').AsString);
     end;
   end;
 end;
@@ -683,45 +701,15 @@ begin
      end;
   if char(Key) = '+' then
      begin
-       key := #0;
-       if InputFlag=14 then
-          begin
-            try
-              payCashMny(trim(edtInput.Text));
-              DoSaveOrder;
-              InputFlag := 1;
-              edtInput.Text := '';
-            finally
-              edtInput.selectAll;
-              edtInput.SetFocus;
-            end;
-          end
-       else
-          begin
-            if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then
-               begin
-                  try
-                    inputMode := 1;
-                    inputFlag := 14;
-                    checkPayment;
-                    payCashMny(trim(edtInput.Text));
-                    DoSaveOrder;
-                    edtInput.Text := '';
-                  finally
-                    InputFlag := 1;
-                    edtInput.selectAll;
-                    edtInput.SetFocus;
-                  end;
-               end
-            else
-               begin
-                  inputMode := 1;
-                  inputFlag := 14;
-                  checkPayment;
-                  edtInput.selectAll;
-                  edtInput.SetFocus;
-               end;
-          end;
+        key := #0;
+        try
+          DoSaveOrder;
+          edtInput.Text := '';
+        finally
+          InputFlag := 1;
+          edtInput.selectAll;
+          edtInput.SetFocus;
+        end;
      end;
 end;
 
@@ -771,27 +759,27 @@ begin
   inherited;
   case dateFlag.ItemIndex of
   0:begin
-      D1.Date := date();
-      D2.Date := date();
+      D1.Date := dllGlobal.SysDate;
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := true;
 //      D2.Properties.ReadOnly := true;
     end;
   1:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',date));
-      D2.Date := date();
+      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',dllGlobal.SysDate));
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := true;
 //      D2.Properties.ReadOnly := true;
     end;
   2:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',date));
-      D2.Date := date();
+      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',dllGlobal.SysDate));
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := true;
 //      D2.Properties.ReadOnly := true;
     end;
   else
     begin
-      D1.Date := date();
-      D2.Date := date();
+      D1.Date := dllGlobal.SysDate;
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := false;
 //      D2.Properties.ReadOnly := false;
     end;
@@ -1122,7 +1110,7 @@ begin
   AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.UserID;
-  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   edtTable.DisableControls;
@@ -1276,21 +1264,7 @@ end;
 
 procedure TfrmStockOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
 begin
-  if (InputFlag = 14) and (Key=#13) then
-  begin
-    try
-      payCashMny(trim(edtInput.Text));
-      DoSaveOrder;
-      InputFlag := 1;
-      edtInput.Text := '';
-    finally
-      Key := #0;
-      edtInput.selectAll;
-      edtInput.SetFocus;
-    end;
-  end
-  else
-    inherited;
+  inherited;
   if InputFlag = 13 then
   begin
     case Key of

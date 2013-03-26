@@ -66,7 +66,7 @@ begin
           useDate := FormatDateTime('YYYYMMDD', fnTime.fnStrtoDate(useDate));
         end
       else
-        useDate := FormatDateTime('YYYYMMDD', Date());
+        useDate := FormatDateTime('YYYYMMDD', dllGlobal.SysDate);
     end;
 
   vParam:=TftParamList.Create(nil);

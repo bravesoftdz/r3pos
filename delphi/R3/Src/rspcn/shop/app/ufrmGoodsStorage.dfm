@@ -38,6 +38,9 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           BorderColor = 15461355
           Color = 15461355
           TabOrder = 0
+          DesignSize = (
+            942
+            42)
           object btnFind: TRzBmpButton
             Left = 10
             Top = 12
@@ -1283,6 +1286,40 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               OnKeyPress = sortDropKeyPress
             end
           end
+          object lower: TRzPanel
+            Left = 770
+            Top = 16
+            Width = 73
+            Height = 25
+            Anchors = [akTop, akRight]
+            BorderOuter = fsFlatRounded
+            Caption = #23433#20840#24211#23384
+            Color = 11337727
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 5
+          end
+          object upper: TRzPanel
+            Left = 858
+            Top = 16
+            Width = 73
+            Height = 25
+            Anchors = [akTop, akRight]
+            BorderOuter = fsFlatRounded
+            Caption = #19978#38480#24211#23384
+            Color = 11908607
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 6
+          end
         end
       end
       object RzPanel2: TRzPanel
@@ -1431,6 +1468,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               DigitalNumber = 12
               OnDblClick = DBGridEh1DblClick
               OnDrawColumnCell = DBGridEh1DrawColumnCell
+              OnGetCellParams = DBGridEh1GetCellParams
               Columns = <
                 item
                   EditButtons = <>
@@ -4087,8 +4125,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Picture.Data = {
             07544269746D61707A020000424D7A0200000000000036000000280000000600
             00001D000000010018000000000044020000C30E0000C30E0000000000000000
-            0000FF00FFFF00FFFF00FFE6E6E6F5F5F5FCFCFC0000FF00FFFF00FFE1E1E1E9
-            E9E9F4F4F4FBFBFB0000FF00FFCBCBCBE0E0E0FAFAFAFFFFFFFFFFFF0000CBCB
+            0000B7B7B7B7B7B7B7B7B7E6E6E6F5F5F5FCFCFC0000B7B7B7B7B7B7E1E1E1E9
+            E9E9F4F4F4FBFBFB0000B7B7B7CBCBCBE0E0E0FAFAFAFFFFFFFFFFFF0000CBCB
             CBCACACAF4F4F4FFFFFFFFFFFFFFFFFF0000ABABABD9D9D9FCFCFCFFFFFFFFFF
             FFFFFFFF0000A1A1A1DDDDDDFEFEFEFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDE
             FFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
@@ -4103,10 +4141,9 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             FFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009D9D9DDDDDDD
             FEFEFEFFFFFFFFFFFFFFFFFF00009B9B9BD9D9D9FCFCFCFFFFFFFFFFFFFFFFFF
             0000979797C9C9C9F4F4F4FFFFFFFFFFFFFFFFFF00009B9B9BADADADE0E0E0FA
-            FAFAFFFFFFFFFFFF0000FF00FF929292B9B9B9DFDFDFF3F3F3FBFBFB0000FF00
-            FFFF00FF919191ACACACC6C6C6D6D6D60000FF00FFFF00FFFF00FFA2A2A29999
+            FAFAFFFFFFFFFFFF0000B7B7B7929292B9B9B9DFDFDFF3F3F3FBFBFB0000B7B7
+            B7B7B7B7919191ACACACC6C6C6D6D6D60000B7B7B7B7B7B7B7B7B7A2A2A29999
             999999990000}
-          Transparent = True
         end
         object Image3: TImage
           Left = 255
@@ -4118,8 +4155,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Picture.Data = {
             07544269746D617006020000424D060200000000000036000000280000000500
             00001D0000000100180000000000D0010000120B0000120B0000000000000000
-            0000FCFCFCF5F5F5FF00FFFF00FFFF00FF00FCFCFCFCFCFCFFFFFFFF00FFFF00
-            FF00FFFFFFFFFFFFFDFDFDFFFFFFFF00FF00FFFFFFFFFFFFFFFFFFFCFCFCF7F7
+            0000FCFCFCF5F5F5B7B7B7B7B7B7B7B7B700FCFCFCFCFCFCFFFFFFB7B7B7B7B7
+            B700FFFFFFFFFFFFFDFDFDFFFFFFB7B7B700FFFFFFFFFFFFFFFFFFFCFCFCF7F7
             F700FFFFFFFFFFFFFFFFFFFDFDFDFDFDFD00FFFFFFFFFFFFFFFFFFFEFEFEFFFF
             FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -4131,9 +4168,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FF00FFFFFFFFFFFFFFFFFFFEFEFEFFFFFF00FFFFFFFFFFFFFFFFFFFCFCFCFDFD
             FD00FFFFFFFFFFFFFFFFFFF5F5F5F7F7F700FFFFFFFFFFFFFAFAFAE7E7E7E6E6
-            E600FBFBFBF3F3F3DFDFDFE2E2E2FF00FF00D6D6D6C6C6C6CBCBCBFF00FFFF00
-            FF00AEAEAECBCBCBFF00FFFF00FFFF00FF00}
-          Transparent = True
+            E600FBFBFBF3F3F3DFDFDFE2E2E2B7B7B700D6D6D6C6C6C6CBCBCBB7B7B7B7B7
+            B700AEAEAECBCBCBB7B7B7B7B7B7B7B7B700}
         end
         object Image4: TImage
           Left = 6

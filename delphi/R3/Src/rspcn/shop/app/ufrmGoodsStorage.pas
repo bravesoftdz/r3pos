@@ -148,6 +148,8 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     N5: TMenuItem;
+    lower: TRzPanel;
+    upper: TRzPanel;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -179,6 +181,8 @@ type
     procedure N3Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
     ESortId:string;
@@ -218,7 +222,7 @@ uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil
 
 function getTodayId:string;
 begin                                                    
-  result := token.shopId+formatDatetime('YYYYMMDD',date())+'000000000000000';
+  result := token.shopId+formatDatetime('YYYYMMDD',dllGlobal.SysDate)+'000000000000000';
 end;
 procedure TfrmGoodsStorage.sortDropPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
@@ -335,7 +339,7 @@ begin
    'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
    'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.PRICE_ID,j.COMM,c.AMOUNT,'+
    'isnull(ext.NEW_INPRICE,j.NEW_INPRICE) as NEW_INPRICE,'+
-   'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P '+
+   'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P,ext.LOWER_AMOUNT,ext.UPPER_AMOUNT '+
    'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID,COMM',true)+') j '+
    'left outer join (select TENANT_ID,GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+''' group by TENANT_ID,GODS_ID) c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
    'left outer join  PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID '+
@@ -536,6 +540,8 @@ begin
        cdsList.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
        cdsList.FieldByName('BARCODE').AsString := edtBARCODE.Text;
        cdsList.FieldByName('AMOUNT').AsString := edtAMOUNT.Text;
+       cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
+       cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
        cdsList.Post;
      end;
 end;
@@ -789,11 +795,11 @@ begin
   cdsHeader.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
   cdsHeader.FieldByName('CHANGE_ID').AsString := getTodayId;
   cdsHeader.FieldByName('SHOP_ID').AsString := token.shopId;
-  cdsHeader.FieldByName('CHANGE_DATE').AsString := formatDatetime('YYYYMMDD',date());
+  cdsHeader.FieldByName('CHANGE_DATE').AsString := formatDatetime('YYYYMMDD',dllGlobal.SysDate);
   cdsHeader.FieldByName('CHANGE_TYPE').AsString := '2';
   cdsHeader.FieldByName('CHANGE_CODE').AsString := '1';
   cdsHeader.FieldByName('DUTY_USER').AsString := token.userId;
-  cdsHeader.FieldByName('CHK_DATE').AsString := formatDatetime('YYYY-MM-DD',date());
+  cdsHeader.FieldByName('CHK_DATE').AsString := formatDatetime('YYYY-MM-DD',dllGlobal.SysDate);
   cdsHeader.FieldByName('CHK_USER').AsString := token.userId;
   cdsHeader.FieldByName('CREA_USER').AsString := token.userId;
   cdsHeader.FieldByName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
@@ -1835,6 +1841,17 @@ begin
   inherited;
   if Key=#13 then
      Open;
+end;
+
+procedure TfrmGoodsStorage.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (cdsList.FieldByName('LOWER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat<cdsList.FieldByName('LOWER_AMOUNT').AsFloat) then
+     Background := lower.Color;
+  if (cdsList.FieldByName('UPPER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat>cdsList.FieldByName('UPPER_AMOUNT').AsFloat) then
+     Background := upper.Color;
 end;
 
 initialization

@@ -223,27 +223,27 @@ begin
   inherited;
   case dateFlag.ItemIndex of
   0:begin
-      D1.Date := date();
-      D2.Date := date();
+      D1.Date := dllGlobal.SysDate;
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := true;
 //      D2.Properties.ReadOnly := true;
     end;
   1:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',date));
-      D2.Date := date();
+      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',dllGlobal.SysDate));
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := true;
 //      D2.Properties.ReadOnly := true;
     end;
   2:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',date));
-      D2.Date := date();
+      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',dllGlobal.SysDate));
+      D2.Date := dllGlobal.SysDate();
 //      D1.Properties.ReadOnly := true;
 //      D2.Properties.ReadOnly := true;
     end;
   else
     begin
-      D1.Date := date();
-      D2.Date := date();
+      D1.Date := dllGlobal.SysDate;
+      D2.Date := dllGlobal.SysDate;
 //      D1.Properties.ReadOnly := false;
 //      D2.Properties.ReadOnly := false;
     end;

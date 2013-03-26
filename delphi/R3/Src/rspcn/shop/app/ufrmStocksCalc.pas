@@ -74,7 +74,7 @@ begin
     begin
       try
         if endDate=0 then
-           eDate := date()
+           eDate := dllGlobal.SysDate
         else
            eDate := endDate;
         postMessage(handle,WM_START,0,0);
@@ -107,7 +107,7 @@ procedure TfrmStocksCalc.calcLast;
 var
   sql:string;
 begin
-  if formatDatetime('DD',_beginDate)='01' then
+  if formatDatetime('DD',_beginDate)<>'01' then
     sql:=
       'insert into TMP_STOCKS_DATA '+
       '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+

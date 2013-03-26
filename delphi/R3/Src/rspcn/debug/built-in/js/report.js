@@ -182,7 +182,7 @@
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
 			
-			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(A.CALC_AMOUNT) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE)";
+			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(case when (b.RELATION_ID=1000006) then A.CALC_AMOUNT else 0 end) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE)";
 			rsp.setLocalJson('xstjqk',"销售统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
@@ -192,9 +192,9 @@
 				var jy_money = ds.getAsString("jy_money");
 				var fy_money = ds.getAsString("fy_money");
 				var jyzb = ds.getAsString("jyzb");
-				$("#tjqk").html("(今日销售卷烟"+amount+"盒，"+jy_money+"元，非烟"+fy_money+"元，烟类占比"+jyzb+"%。)");		
+				$("#tjqk").html("(今日销售卷烟"+amount+"盒，总计"+jy_money+"元，非烟"+fy_money+"元，其中烟类占比"+jyzb+"%。)");		
 			}else{
-				$("#tjqk").html("今日销售卷烟0盒，0元，非烟0元，善类占比0%。");		
+				$("#tjqk").html("今日销售卷烟0盒，总计0元，非烟0元，其中烟类占比0%。");		
 			}
 			ds.eraseDataSet();
 		}catch(e){
@@ -217,7 +217,7 @@
 			d = d.getWeekStartDate();
 			var d1 = d.format('yyyyMMdd');		//本周第一天
 			ds.createDataSet();	
-		var sql = "select a.tenant_id,sum( a.amount) as amount,sum(case when b.RELATION_ID=1000006 then case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end else 0 end ) as jy_amount,sum(case when b.RELATION_ID=1000006 then a.calc_money*b.NEW_OUTPRICE else 0 end ) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2+" group by a.tenant_id";
+		var sql = "select a.tenant_id,count(distinct a.GODS_ID) as amount,sum(case when b.RELATION_ID=1000006 then case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end else 0 end ) as jy_amount,sum(case when b.RELATION_ID=1000006 then a.CALC_AMOUNT*b.NEW_OUTPRICE else 0 end ) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2+" group by a.tenant_id";
 			sql = rsp.parseSQL(sql);
 			rsp.setLocalJson('jhtjqk',"进货统计sql:"+sql);
 			ds.setSQL(sql);

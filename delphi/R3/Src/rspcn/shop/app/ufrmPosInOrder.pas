@@ -538,13 +538,13 @@ begin
     end;
   6:begin
       FInputFlag := value;
-      lblInput.Caption := '会员卡号';
-      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按 enter 健';
+      lblInput.Caption := '供 应 商';
+      lblHint.Caption := '请输入完整的"供应商编码或手机号"后按 enter 健';
     end;
   7:begin
       FInputFlag := value;
-      lblInput.Caption := '导 购 员';
-      lblHint.Caption := '请输入导购员员工编号后按 enter 健';
+      lblInput.Caption := '收 货 员';
+      lblHint.Caption := '请输入收货员员工编号后按 enter 健';
     end;
   11:begin
       FInputFlag := value;

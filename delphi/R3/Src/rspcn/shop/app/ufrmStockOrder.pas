@@ -352,6 +352,7 @@ begin
   if dbState = dsBrowse then Exit;
 
   if edtSTOCK_DATE.EditValue = null then Raise Exception.Create('进货日期不能为空');
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
 
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
@@ -525,13 +526,13 @@ begin
     end;
   6:begin
       FInputFlag := value;
-      lblInput.Caption := '会员卡号';
-      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按 enter 健';
+      lblInput.Caption := '供 应 商';
+      lblHint.Caption := '请输入完整的"供应商编码或手机号"后按 enter 健';
     end;
   7:begin
       FInputFlag := value;
-      lblInput.Caption := '导 购 员';
-      lblHint.Caption := '请输入导购员员工编号后按 enter 健';
+      lblInput.Caption := '收 货 员';
+      lblHint.Caption := '请输入收货员员工编号后按 enter 健';
     end;
   11:begin
       FInputFlag := value;

@@ -51,7 +51,7 @@ type
   end;
 
 implementation
-uses udllFnUtil, DateUtils;
+uses uFnUtil, DateUtils;
 { TStockData }
 
 function TSalesDataV60.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
@@ -338,7 +338,7 @@ begin
    if isSync then
       begin
         AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and (CREA_DATE>='+FieldbyName('SALES_DATE').AsOldString+' or CREA_DATE>='+FieldbyName('SALES_DATE').AsString+')',self);
-        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('SALES_DATE').AsString))+' or END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('SALES_DATE').AsString))+')',self);
+        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('SALES_DATE').AsOldString))+''' or END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('SALES_DATE').AsString))+''')',self);
       end
    else
       begin

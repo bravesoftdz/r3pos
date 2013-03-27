@@ -1,7 +1,7 @@
 unit ObjChangeOrderV60;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes, ZDataSet,ZIntf,ObjCommon,DB,math,udllFnUtil;
+uses Dialogs,SysUtils,ZBase,Classes, ZDataSet,ZIntf,ObjCommon,DB,math,uFnUtil;
 type
   TChangeOrderV60=class(TZFactory)
   private
@@ -279,7 +279,7 @@ begin
    if isSync then
       begin
         AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and (CREA_DATE>='+FieldbyName('CHANGE_DATE').AsOldString+' or CREA_DATE>='+FieldbyName('CHANGE_DATE').AsString+')',self);
-        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsString))+' or END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsString))+')',self);
+        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsOldString))+''' or END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsString))+''')',self);
       end
    else
       begin

@@ -1,7 +1,7 @@
 unit ObjStockOrderV60;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet,math,udllFnUtil;
+uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet,math,uFnUtil;
 type
   TStockOrderV60=class(TZFactory)
   private
@@ -275,7 +275,7 @@ begin
    if isSync then
       begin
         AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and (CREA_DATE>='+FieldbyName('STOCK_DATE').AsOldString+' or CREA_DATE>='+FieldbyName('STOCK_DATE').AsString+')',self);
-        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('STOCK_DATE').AsString))+' or END_DATE>='+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('STOCK_DATE').AsString))+')',self);
+        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('STOCK_DATE').AsOldString))+''' or END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('STOCK_DATE').AsString))+''')',self);
       end
    else
       begin

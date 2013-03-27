@@ -8,7 +8,7 @@ uses
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase,ObjCommon,
-  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd, Menus;
+  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd, Menus, PrnDbgeh;
 
 type
   TfrmGoodsStorage = class(TfrmWebToolForm)
@@ -150,6 +150,7 @@ type
     N5: TMenuItem;
     lower: TRzPanel;
     upper: TRzPanel;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -183,6 +184,8 @@ type
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -201,6 +204,7 @@ type
     procedure WriteOweOrder;
     procedure SetdbState(const Value: TDataSetState);virtual;
     procedure SetstorFlag(const Value: integer);
+    procedure DBGridPrint;
   public
     { Public declarations }
     procedure OpenInfo(godsId:string;Relation:integer=0);
@@ -217,7 +221,7 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods;
+uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmDBGridPreview;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -1852,6 +1856,34 @@ begin
      Background := lower.Color;
   if (cdsList.FieldByName('UPPER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat>cdsList.FieldByName('UPPER_AMOUNT').AsFloat) then
      Background := upper.Color;
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmGoodsStorage.DBGridPrint;
+begin
+  inherited;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintDBGridEh1.PageHeader.CenterText.Text := '商品库存报表';
+  DBGridEh1.DBGridTitle := '商品库存报表';
+  DBGridEh1.DBGridHeader.Text := '';
+  DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', '']);
 end;
 
 initialization

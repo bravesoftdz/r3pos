@@ -8,7 +8,7 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, PrnDbgeh,ufrmDBGridPreview;
 
 type
   TfrmStockOrder = class(TfrmOrderForm)
@@ -94,6 +94,7 @@ type
     MarqueeStatus: TRzMarqueeStatus;
     Image6: TImage;
     Image7: TImage;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -128,6 +129,8 @@ type
     procedure serachTextChange(Sender: TObject);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
+    procedure btnPrintClick(Sender: TObject);
+    procedure btnPreviewClick(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -143,6 +146,7 @@ type
     TotalAmt:Currency;
 
     searchTxt:string;
+    procedure DBGridPrint;
   protected
     procedure SetdbState(const Value: TDataSetState);override;
     procedure SetinputFlag(const Value: integer);override;
@@ -1418,6 +1422,33 @@ begin
 
 end;
 
+procedure TfrmStockOrder.btnPrintClick(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmStockOrder.btnPreviewClick(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmStockOrder.DBGridPrint;
+begin
+  inherited;
+  PrintDBGridEh1.DBGridEh := DBGridEh2;
+  PrintDBGridEh1.PageHeader.CenterText.Text := '进货单列表';
+  DBGridEh1.DBGridTitle := '进货单列表';
+  DBGridEh1.DBGridHeader.Text := '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date);
+  DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date)]);
+end;
 initialization
   RegisterClass(TfrmStockOrder);
 finalization

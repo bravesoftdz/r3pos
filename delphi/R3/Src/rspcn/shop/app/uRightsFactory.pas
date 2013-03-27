@@ -215,5 +215,5 @@ end;
 initialization
   RightsFactory := TRightsFactory.Create;
 finalization
-  RightsFactory.Free;
+  if assigned(RightsFactory) then FreeAndNil(RightsFactory);
 end.

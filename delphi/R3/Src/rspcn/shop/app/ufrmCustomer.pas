@@ -8,7 +8,7 @@ uses
   DBGridEh, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, StdCtrls,
   ComCtrls, RzTreeVw, RzBmpBtn,ZDataSet, DB, ZAbstractRODataset,ZBase,
-  ZAbstractDataset, RzBckgnd, RzBorder, cxRadioGroup, Menus;
+  ZAbstractDataset, RzBckgnd, RzBorder, cxRadioGroup, Menus, PrnDbgeh;
 
 type
   TfrmCustomer = class(TfrmWebToolForm)
@@ -134,6 +134,7 @@ type
     PriceGradeMenu: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure serachTextChange(Sender: TObject);
@@ -159,6 +160,8 @@ type
     procedure N2Click(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     { Private declarations }
     searchTxt:string;
@@ -168,6 +171,7 @@ type
     procedure SetdbState(const Value: TDataSetState);
     procedure ReadInfo;
     procedure WriteInfo;
+    procedure DBGridPrint;
   public
     { Public declarations }
     procedure CreatePriceGrade;
@@ -188,7 +192,7 @@ var
   frmCustomer: TfrmCustomer;
 
 implementation
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,udllFnUtil,ufrmPriceGrade;
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,udllFnUtil,ufrmPriceGrade,ufrmDBGridPreview;
 {$R *.dfm}
 
 { TfrmCustomer }
@@ -914,6 +918,35 @@ begin
   inherited;
   if Key=#13 then
      Open;
+
+end;
+
+procedure TfrmCustomer.DBGridPrint;
+begin
+  inherited;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintDBGridEh1.PageHeader.CenterText.Text := '商品库存报表';
+  DBGridEh1.DBGridTitle := '商品库存报表';
+  DBGridEh1.DBGridHeader.Text := '';
+  DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', '']);
+end;
+
+procedure TfrmCustomer.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmCustomer.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+
 
 end;
 

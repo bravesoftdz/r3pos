@@ -8,7 +8,8 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi,objCommon;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi,objCommon,
+  PrnDbgeh,ufrmDBGridPreview;
 
 type
   TfrmPosOutOrder = class(TfrmOrderForm)
@@ -106,6 +107,7 @@ type
     RzLabel5: TRzLabel;
     godsPhotoBk: TRzPanel;
     godsPhoto: TImage;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -142,6 +144,9 @@ type
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCLIENT_IDSaveValue(Sender: TObject);
+    procedure btnPreviewClick(Sender: TObject);
+    procedure btnPrintClick(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -165,6 +170,7 @@ type
     Deci:integer;
     
     searchTxt:string;
+    procedure DBGridPrint;
   protected
     procedure getGodsInfo(godsId:string);
     procedure SetdbState(const Value: TDataSetState);override;
@@ -1675,7 +1681,7 @@ begin
   cdsList.Close;
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,
-    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户''),A.SALE_MNY,A.SALE_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
+    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户'') as CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
     'from SAL_SALESORDER A '+
     'left outer join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
@@ -2065,6 +2071,47 @@ begin
   inherited;
   if Key=#13 then
      OpenList;
+
+end;
+
+procedure TfrmPosOutOrder.edtCLIENT_IDSaveValue(Sender: TObject);
+var
+  bs:TZQuery;
+begin
+  inherited;
+  bs := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
+  if bs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then
+     begin
+        AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
+        AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
+        AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+     end;
+end;
+
+procedure TfrmPosOutOrder.DBGridPrint;
+begin
+  PrintDBGridEh1.DBGridEh := DBGridEh2;
+  PrintDBGridEh1.PageHeader.CenterText.Text := '销售单列表';
+  DBGridEh1.DBGridTitle := '销售单列表';
+  DBGridEh1.DBGridHeader.Text := '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date);
+  DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date)]);
+end;
+
+procedure TfrmPosOutOrder.btnPreviewClick(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmPosOutOrder.btnPrintClick(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
 
 end;
 

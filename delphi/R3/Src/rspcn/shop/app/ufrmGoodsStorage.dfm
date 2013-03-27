@@ -1,27 +1,27 @@
 inherited frmGoodsStorage: TfrmGoodsStorage
-  Left = 198
-  Top = 143
+  Left = -8
+  Top = -8
   Caption = #21830#21697#24211#23384
-  ClientHeight = 520
-  ClientWidth = 942
+  ClientHeight = 738
+  ClientWidth = 1280
   Color = 12040119
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 942
-    Height = 473
+    Width = 1280
+    Height = 691
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 942
-      Height = 473
+      Width = 1280
+      Height = 691
       Align = alClient
       object RzPanel11: TRzPanel
         Left = 0
         Top = 0
-        Width = 942
+        Width = 1280
         Height = 42
         Align = alTop
         BorderOuter = fsNone
@@ -31,7 +31,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object RzPanel13: TRzPanel
           Left = 0
           Top = 0
-          Width = 942
+          Width = 1280
           Height = 42
           Align = alClient
           BorderOuter = fsNone
@@ -39,7 +39,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Color = 15461355
           TabOrder = 0
           DesignSize = (
-            942
+            1280
             42)
           object btnFind: TRzBmpButton
             Left = 10
@@ -1287,7 +1287,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             end
           end
           object lower: TRzPanel
-            Left = 770
+            Left = 1108
             Top = 16
             Width = 73
             Height = 25
@@ -1304,7 +1304,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TabOrder = 5
           end
           object upper: TRzPanel
-            Left = 858
+            Left = 1196
             Top = 16
             Width = 73
             Height = 25
@@ -1325,8 +1325,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       object RzPanel2: TRzPanel
         Left = 0
         Top = 353
-        Width = 942
-        Height = 120
+        Width = 1280
+        Height = 338
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1336,8 +1336,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object RzPanel3: TRzPanel
           Left = 10
           Top = 10
-          Width = 922
-          Height = 100
+          Width = 1260
+          Height = 318
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1345,7 +1345,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 1
             Top = 1
             Width = 172
-            Height = 98
+            Height = 316
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1353,7 +1353,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = 70
+              Top = 288
               Width = 171
               Height = 27
               Align = alBottom
@@ -1395,7 +1395,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Left = 0
               Top = 0
               Width = 171
-              Height = 70
+              Height = 288
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1412,7 +1412,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 173
             Top = 1
             Width = 10
-            Height = 98
+            Height = 316
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1422,8 +1422,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           object RzPanel7: TRzPanel
             Left = 183
             Top = 1
-            Width = 738
-            Height = 98
+            Width = 1076
+            Height = 316
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1432,8 +1432,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Tag = -1
               Left = 1
               Top = 0
-              Width = 737
-              Height = 98
+              Width = 1075
+              Height = 316
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -1648,7 +1648,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       object EditPanel: TRzPanel
         Left = 0
         Top = 42
-        Width = 942
+        Width = 1280
         Height = 311
         Align = alTop
         BorderOuter = fsNone
@@ -1658,12 +1658,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         TabOrder = 2
         Visible = False
         DesignSize = (
-          942
+          1280
           311)
         object RzBorder1: TRzBorder
           Left = 25
           Top = 172
-          Width = 893
+          Width = 1231
           Height = 2
           Anchors = [akLeft, akTop, akRight]
         end
@@ -1683,7 +1683,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Stretch = True
         end
         object barcode_panel_right_line: TImage
-          Left = 930
+          Left = 1268
           Top = 18
           Width = 2
           Height = 275
@@ -1697,7 +1697,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Stretch = True
         end
         object btnSave: TRzBmpButton
-          Left = 754
+          Left = 1092
           Top = 258
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1914,7 +1914,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           OnClick = btnSaveClick
         end
         object RzBmpButton5: TRzBmpButton
-          Left = 840
+          Left = 1178
           Top = 258
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -2133,7 +2133,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object barcode_top: TRzPanel
           Left = 10
           Top = 10
-          Width = 922
+          Width = 1260
           Height = 8
           Align = alTop
           BorderOuter = fsNone
@@ -2167,7 +2167,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               0000}
           end
           object barcode_panel_top_right: TImage
-            Left = 912
+            Left = 1250
             Top = 0
             Width = 10
             Height = 8
@@ -2189,7 +2189,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           object barcode_panel_top_line: TImage
             Left = 19
             Top = 0
-            Width = 893
+            Width = 1231
             Height = 8
             Align = alClient
             AutoSize = True
@@ -2208,7 +2208,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object barcode_botton: TRzPanel
           Left = 10
           Top = 293
-          Width = 922
+          Width = 1260
           Height = 8
           Align = alBottom
           BorderOuter = fsNone
@@ -2217,7 +2217,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           object barcode_panel_bottom_line: TImage
             Left = 2
             Top = 0
-            Width = 918
+            Width = 1256
             Height = 8
             Align = alClient
             AutoSize = True
@@ -2231,7 +2231,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Stretch = True
           end
           object barcodeb_panel_right_line: TImage
-            Left = 920
+            Left = 1258
             Top = 0
             Width = 2
             Height = 8
@@ -3399,11 +3399,11 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     end
   end
   inherited toolNav: TRzPanel
-    Width = 942
+    Width = 1280
     object lblCaption: TRzLabel
       Left = 0
       Top = 0
-      Width = 390
+      Width = 728
       Height = 47
       Align = alClient
       Alignment = taCenter
@@ -3423,7 +3423,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       TextStyle = tsShadow
     end
     object RzPanel8: TRzPanel
-      Left = 390
+      Left = 728
       Top = 0
       Width = 552
       Height = 47
@@ -3656,6 +3656,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         Color = clBtnFace
         Caption = #25171#21360
         TabOrder = 0
+        OnClick = RzBmpButton1Click
       end
       object RzBmpButton3: TRzBmpButton
         Left = 459
@@ -3879,6 +3880,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         Color = clBtnFace
         Caption = #39044#35272
         TabOrder = 1
+        OnClick = RzBmpButton3Click
       end
       object RzBmpButton2: TRzBmpButton
         Left = 291
@@ -4299,5 +4301,45 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       Caption = #21024#38500#25152#36873#20998#31867
       OnClick = N5Click
     end
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    DBGridEh = DBGridEh1
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 112
+    Top = 208
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

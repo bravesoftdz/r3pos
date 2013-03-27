@@ -66,5 +66,5 @@ end;
 initialization
   XDictFactory := TXDictFactory.Create;
 finalization
-  XDictFactory.Free;
+  if assigned(XDictFactory) then FreeAndNil(XDictFactory);
 end.

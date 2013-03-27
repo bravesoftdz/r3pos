@@ -16,6 +16,7 @@ inherited frmPosInOrder: TfrmPosInOrder
       inherited PageControl: TRzPageControl
         Width = 702
         Height = 449
+        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -40,6 +41,7 @@ inherited frmPosInOrder: TfrmPosInOrder
               end
               inherited lblHint: TRzLabel
                 Left = 489
+                ShadowColor = 16185078
               end
               inherited help: TRzBmpButton
                 Left = 650
@@ -74,14 +76,17 @@ inherited frmPosInOrder: TfrmPosInOrder
                 inherited lblModifyUnit: TRzLabel
                   Left = 5
                   Top = 2
+                  ShadowColor = 15921906
                 end
                 inherited lblModifyAmt: TRzLabel
                   Left = 5
                   Top = 23
+                  ShadowColor = 15921906
                 end
                 inherited lblModifyPrice: TRzLabel
                   Left = 5
                   Top = 44
+                  ShadowColor = 15921906
                 end
                 object RzLabel1: TRzLabel
                   Left = 115
@@ -95,6 +100,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -110,6 +116,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -125,6 +132,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -140,6 +148,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -155,6 +164,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -170,6 +180,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -185,6 +196,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -200,6 +212,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -215,6 +228,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  ShadowColor = 15921906
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -3307,6 +3321,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'GLIDE_NO'
+                  Footer.Alignment = taCenter
                   Footer.Value = #21512#35745
                   Footer.ValueType = fvtStaticText
                   Footers = <>
@@ -3336,6 +3351,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'STOCK_MNY'
+                  Footer.Alignment = taRightJustify
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
@@ -3347,6 +3363,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'ACCT_MNY'
+                  Footer.Alignment = taRightJustify
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
@@ -3358,6 +3375,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'RECV_MNY'
+                  Footer.Alignment = taRightJustify
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
@@ -3490,6 +3508,7 @@ inherited frmPosInOrder: TfrmPosInOrder
       Width = 278
       inherited btnPrint: TRzBmpButton
         Left = 11
+        OnClick = btnPrintClick
       end
       inherited btnNav: TRzBmpButton
         Left = 165
@@ -3497,6 +3516,7 @@ inherited frmPosInOrder: TfrmPosInOrder
       end
       inherited btnPreview: TRzBmpButton
         Left = 88
+        OnClick = btnPreviewClick
       end
     end
     inherited RzPanel18: TRzPanel
@@ -3709,5 +3729,45 @@ inherited frmPosInOrder: TfrmPosInOrder
   end
   inherited Timer1: TTimer
     Left = 440
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    DBGridEh = DBGridEh1
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 112
+    Top = 208
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

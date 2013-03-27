@@ -60,5 +60,5 @@ end;
 initialization
   CacheFactory := TCacheFactory.create;
 finalization
-  CacheFactory.Free;
+  if assigned(CacheFactory) then FreeAndNil(CacheFactory);
 end.

@@ -8,7 +8,8 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi, objCommon;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi, objCommon,
+  PrnDbgeh,ufrmDBGridPreview;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -95,6 +96,7 @@ type
     RzLabel13: TRzLabel;
     RzLabel14: TRzLabel;
     RzLabel15: TRzLabel;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -129,6 +131,9 @@ type
     procedure serachTextChange(Sender: TObject);
     procedure cdsListBeforeOpen(DataSet: TDataSet);
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCLIENT_IDSaveValue(Sender: TObject);
+    procedure btnPreviewClick(Sender: TObject);
+    procedure btnPrintClick(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -179,6 +184,7 @@ type
     procedure DoPayZero(s:string);
     procedure DoPayInput(s:string;flag:string);
     procedure DoSaveOrder;
+    procedure DBGridPrint;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -2009,6 +2015,48 @@ begin
   inherited;
   if Key=#13 then
      OpenList;
+end;
+
+procedure TfrmSaleOrder.edtCLIENT_IDSaveValue(Sender: TObject);
+var
+  bs:TZQuery;
+begin
+  inherited;
+  bs := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
+  if bs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then
+     begin
+        AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
+        AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
+        AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+     end;
+
+end;
+
+procedure TfrmSaleOrder.btnPreviewClick(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmSaleOrder.btnPrintClick(Sender: TObject);
+begin
+  inherited;
+  DBGridPrint;
+  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+
+end;
+
+procedure TfrmSaleOrder.DBGridPrint;
+begin
+  PrintDBGridEh1.DBGridEh := DBGridEh2;
+  PrintDBGridEh1.PageHeader.CenterText.Text := '销售单列表';
+  DBGridEh1.DBGridTitle := '销售单列表';
+  DBGridEh1.DBGridHeader.Text := '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date);
+  DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date)]);
 end;
 
 initialization

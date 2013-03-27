@@ -34,6 +34,7 @@ function resize:boolean;stdcall;
 
 function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
 
+procedure freeApp(mid:string);
 type
   TdllApplication=class
   private
@@ -57,7 +58,7 @@ var
   dbHelp:IdbDllHelp;
   dllApplication:TdllApplication;
 implementation
-uses udllGlobal,uSyncFactory,IniFiles;
+uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,uCacheFactory,udllXDictFactory;
 var
   webForm:TStringList;
   oldHandle:THandle;
@@ -69,6 +70,7 @@ procedure DLLEntryPoint(dwReason: DWord);
 begin
   if (dwReason = DLL_PROCESS_DETACH) Then
   Begin
+    eraseApp;
     asm
       xor edx, edx
       push ebp
@@ -136,7 +138,17 @@ begin
        end;
   end;
 end;
-
+procedure freeApp(mid:string);
+var
+  idx:integer;
+begin
+  if not assigned(webForm) then Exit;
+  idx := webForm.IndexOf(mid);
+  if idx>=0 then
+     begin
+       webForm.Delete(idx);
+     end;
+end;
 //3.关闭应用
 //说明：关闭应用中打开的模块
 //返回值:false代表不允许关闭，true关闭成功
@@ -144,6 +156,7 @@ function closeApp(moduId:pchar):boolean;stdcall;
 var
   idx:integer;
   mid:string;
+  Form:TForm;
 begin
   try
     mid := dllApplication.getModuId(moduId);
@@ -151,8 +164,9 @@ begin
     if idx>=0 then
        begin
          if not TfrmWebForm(webForm.Objects[idx]).checkCanClose then Raise Exception.Create('系统正在运行中，不能关闭。');
-         TObject(webForm.Objects[idx]).Free;
+         Form := TForm(webForm.Objects[idx]);
          webForm.Delete(idx);
+         Form.Free;
        end;
     result := true;
   except
@@ -170,11 +184,21 @@ var
   i:integer;
 begin
   try
+    if not Assigned(webForm) then Exit;
     for i:=webForm.Count -1 downto 0 do
        begin
          TfrmWebForm(webForm.Objects[i]).Free;
        end;
-    webForm.Free;
+    if assigned(DevFactory) then FreeAndNil(DevFactory);
+    if assigned(RightsFactory) then FreeAndNil(RightsFactory);
+    if assigned(RspSyncFactory) then FreeAndNil(RspSyncFactory);
+    if assigned(SyncFactory) then FreeAndNil(SyncFactory);
+    if assigned(CacheFactory) then FreeAndNil(CacheFactory);
+    if assigned(XDictFactory) then FreeAndNil(XDictFactory);
+    if assigned(dllGlobal) then FreeAndNil(dllGlobal);
+    if assigned(dataFactory) then FreeAndNil(dataFactory);
+    if assigned(token) then FreeAndNil(token);
+    FreeAndNil(webForm);
     dbHelp := nil;
     Application.OnException := nil;
     Application.Handle := oldHandle;
@@ -328,5 +352,5 @@ end;
 initialization
   dllApplication := TdllApplication.create;
 finalization
-  dllApplication.Free;
+  if assigned(dllApplication) then FreeAndNil(dllApplication);
 end.

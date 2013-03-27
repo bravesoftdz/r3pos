@@ -1,26 +1,26 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 163
-  Top = 142
+  Left = -8
+  Top = -8
   Caption = #20250#21592#31649#29702
-  ClientHeight = 543
-  ClientWidth = 887
+  ClientHeight = 738
+  ClientWidth = 1280
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 887
-    Height = 496
+    Width = 1280
+    Height = 691
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 887
-      Height = 496
+      Width = 1280
+      Height = 691
       Align = alClient
       object RzPanel11: TRzPanel
         Left = 0
         Top = 0
-        Width = 887
+        Width = 1280
         Height = 44
         Align = alTop
         BorderOuter = fsNone
@@ -30,7 +30,7 @@ inherited frmCustomer: TfrmCustomer
         object RzPanel13: TRzPanel
           Left = 0
           Top = 0
-          Width = 887
+          Width = 1280
           Height = 44
           Align = alClient
           BorderOuter = fsNone
@@ -1000,8 +1000,8 @@ inherited frmCustomer: TfrmCustomer
       object RzPanel2: TRzPanel
         Left = 0
         Top = 390
-        Width = 887
-        Height = 106
+        Width = 1280
+        Height = 301
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1011,8 +1011,8 @@ inherited frmCustomer: TfrmCustomer
         object RzPanel3: TRzPanel
           Left = 10
           Top = 10
-          Width = 867
-          Height = 86
+          Width = 1260
+          Height = 281
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1020,7 +1020,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 1
             Top = 1
             Width = 172
-            Height = 84
+            Height = 279
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1028,7 +1028,7 @@ inherited frmCustomer: TfrmCustomer
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = 56
+              Top = 251
               Width = 171
               Height = 27
               Align = alBottom
@@ -1069,7 +1069,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 0
               Top = 0
               Width = 171
-              Height = 56
+              Height = 251
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1085,7 +1085,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 173
             Top = 1
             Width = 10
-            Height = 84
+            Height = 279
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1095,8 +1095,8 @@ inherited frmCustomer: TfrmCustomer
           object RzPanel7: TRzPanel
             Left = 183
             Top = 1
-            Width = 683
-            Height = 84
+            Width = 1076
+            Height = 279
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1105,8 +1105,8 @@ inherited frmCustomer: TfrmCustomer
               Tag = -1
               Left = 1
               Top = 0
-              Width = 682
-              Height = 84
+              Width = 1075
+              Height = 279
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -1221,6 +1221,7 @@ inherited frmCustomer: TfrmCustomer
                   EditButtons = <>
                   FieldName = 'INTEGRAL'
                   Footer.DisplayFormat = '#0.###'
+                  Footer.ValueType = fvtSum
                   Footers = <>
                   ReadOnly = True
                   Title.Caption = #31215#20998
@@ -1307,7 +1308,7 @@ inherited frmCustomer: TfrmCustomer
       object EditPanel: TRzPanel
         Left = 0
         Top = 44
-        Width = 887
+        Width = 1280
         Height = 346
         Align = alTop
         BorderOuter = fsNone
@@ -1317,7 +1318,7 @@ inherited frmCustomer: TfrmCustomer
         TabOrder = 2
         Visible = False
         DesignSize = (
-          887
+          1280
           346)
         object barcode_panel_left_line: TImage
           Left = 10
@@ -1335,7 +1336,7 @@ inherited frmCustomer: TfrmCustomer
           Stretch = True
         end
         object barcode_panel_right_line: TImage
-          Left = 875
+          Left = 1268
           Top = 18
           Width = 2
           Height = 310
@@ -1351,12 +1352,12 @@ inherited frmCustomer: TfrmCustomer
         object RzBorder1: TRzBorder
           Left = 139
           Top = 173
-          Width = 719
+          Width = 1112
           Height = 2
           Anchors = [akLeft, akTop, akRight]
         end
         object btnSave: TRzBmpButton
-          Left = 699
+          Left = 1092
           Top = 291
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1573,7 +1574,7 @@ inherited frmCustomer: TfrmCustomer
           OnClick = btnSaveClick
         end
         object RzBmpButton5: TRzBmpButton
-          Left = 785
+          Left = 1178
           Top = 291
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1792,7 +1793,7 @@ inherited frmCustomer: TfrmCustomer
         object barcode_top: TRzPanel
           Left = 10
           Top = 10
-          Width = 867
+          Width = 1260
           Height = 8
           Align = alTop
           BorderOuter = fsNone
@@ -1826,7 +1827,7 @@ inherited frmCustomer: TfrmCustomer
               0000}
           end
           object barcode_panel_top_right: TImage
-            Left = 857
+            Left = 1250
             Top = 0
             Width = 10
             Height = 8
@@ -1848,7 +1849,7 @@ inherited frmCustomer: TfrmCustomer
           object barcode_panel_top_line: TImage
             Left = 19
             Top = 0
-            Width = 838
+            Width = 1231
             Height = 8
             Align = alClient
             AutoSize = True
@@ -1867,7 +1868,7 @@ inherited frmCustomer: TfrmCustomer
         object barcode_botton: TRzPanel
           Left = 10
           Top = 328
-          Width = 867
+          Width = 1260
           Height = 8
           Align = alBottom
           BorderOuter = fsNone
@@ -1876,7 +1877,7 @@ inherited frmCustomer: TfrmCustomer
           object barcode_panel_bottom_line: TImage
             Left = 2
             Top = 0
-            Width = 863
+            Width = 1256
             Height = 8
             Align = alClient
             AutoSize = True
@@ -1890,7 +1891,7 @@ inherited frmCustomer: TfrmCustomer
             Stretch = True
           end
           object barcodeb_panel_right_line: TImage
-            Left = 865
+            Left = 1258
             Top = 0
             Width = 2
             Height = 8
@@ -3136,11 +3137,11 @@ inherited frmCustomer: TfrmCustomer
     end
   end
   inherited toolNav: TRzPanel
-    Width = 887
+    Width = 1280
     object lblCaption: TRzLabel
       Left = 0
       Top = 0
-      Width = 335
+      Width = 728
       Height = 47
       Align = alClient
       Alignment = taCenter
@@ -3160,7 +3161,7 @@ inherited frmCustomer: TfrmCustomer
       TextStyle = tsShadow
     end
     object RzPanel8: TRzPanel
-      Left = 335
+      Left = 728
       Top = 0
       Width = 552
       Height = 47
@@ -3393,6 +3394,7 @@ inherited frmCustomer: TfrmCustomer
         Color = clBtnFace
         Caption = #25171#21360
         TabOrder = 0
+        OnClick = RzBmpButton1Click
       end
       object RzBmpButton3: TRzBmpButton
         Left = 459
@@ -3616,6 +3618,7 @@ inherited frmCustomer: TfrmCustomer
         Color = clBtnFace
         Caption = #39044#35272
         TabOrder = 1
+        OnClick = RzBmpButton3Click
       end
       object RzBmpButton2: TRzBmpButton
         Left = 291
@@ -3990,5 +3993,45 @@ inherited frmCustomer: TfrmCustomer
       Caption = #21024#38500
       OnClick = N2Click
     end
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    DBGridEh = DBGridEh1
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 112
+    Top = 208
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

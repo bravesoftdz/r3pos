@@ -29,6 +29,7 @@ type
   public
     { Public declarations }
     function GetZQueryFromName(Name:string):TZQuery;
+    function Refresh(Name:string):boolean;
     function OpenSqlite(DataSet:TZQuery):boolean;
     function OpenRemote(DataSet:TZQuery):boolean;
     //按条码检索商品
@@ -487,16 +488,16 @@ begin
       case rs.FieldByName('RELATION_TYPE').AsInteger of
       1:begin
           if not all then
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) '
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' and B.COMM not in (''02'',''12'')) '
           else
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' ) ';
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' ) ';
         end
       else
         begin
           if not all then
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' and B.COMM not in (''02'',''12'')) '
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' and B.COMM not in (''02'',''12'')) '
           else
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='''+rs.FieldbyName('RELATION_ID').AsString+''' ) ';
+             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' ) ';
         end;
       end;
       rs.next;
@@ -564,8 +565,23 @@ begin
 
 end;
 
+function TdllGlobal.Refresh(Name: string): boolean;
+var
+  i:Integer;
+begin
+  for i:=0 to ComponentCount -1 do
+    begin
+       if UpperCase(TComponent(Components[i]).Name) = UpperCase(Name) then
+          begin
+            TZQuery(Components[i]).Close;
+            break;
+          end;
+    end;
+  GetZQueryFromName(Name); 
+end;
+
 initialization
   dllGlobal := TdllGlobal.Create(nil);
 finalization
-  dllGlobal.Free;
+  if assigned(dllGlobal) then FreeAndNil(dllGlobal);
 end.

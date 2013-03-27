@@ -112,6 +112,7 @@ end;
 destructor TfrmWebForm.Destroy;
 begin
   Freeform(self);
+  freeApp(self.ClassName);
   inherited;
 end;
 

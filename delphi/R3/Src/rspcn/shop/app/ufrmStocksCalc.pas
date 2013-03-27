@@ -107,6 +107,15 @@ procedure TfrmStocksCalc.calcLast;
 var
   sql:string;
 begin
+  sql :=
+      'insert into TMP_STOCKS_DATA '+
+      '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+      ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
+      ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
+      'select TENANT_ID,SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''ÆÚ³õ'',19700101,1,'+
+      ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
+      ' 0,BAL_PRICE,0 from '+
+      '';
   if formatDatetime('DD',_beginDate)<>'01' then
     sql:=
       'insert into TMP_STOCKS_DATA '+

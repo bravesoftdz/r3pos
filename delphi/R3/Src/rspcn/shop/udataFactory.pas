@@ -438,5 +438,5 @@ end;
 initialization
   dataFactory := TdataFactory.create(nil);
 finalization
-  dataFactory.Free;
+  if assigned(dataFactory) then FreeAndNil(dataFactory);
 end.

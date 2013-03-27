@@ -515,5 +515,5 @@ initialization
   DevFactory := TDevFactory.Create;
   DevFactory.InitComm;
 finalization
-  DevFactory.Free;
+  if assigned(DevFactory) then FreeAndNil(DevFactory);
 end.

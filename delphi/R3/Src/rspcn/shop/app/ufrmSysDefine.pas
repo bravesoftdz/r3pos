@@ -1656,7 +1656,12 @@ end;
 
 class function TfrmSysDefine.AutoRegister: boolean;
 begin
-  if token.tenantId <> '' then Exit;
+  result := false;
+  if token.tenantId <> '' then
+     begin
+       result := true;
+       Exit;
+     end;
   with TfrmSysDefine.Create(nil) do
   begin
     try

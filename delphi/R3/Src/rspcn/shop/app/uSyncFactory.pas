@@ -62,7 +62,7 @@ type
     procedure SyncChangeOrder;
     procedure SyncRckDays;
     function  CheckInitSync:boolean;
-    function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
+    function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0;postion:integer=0):int64;//0:上传 1:下载  返回最大时间戳
   protected
     procedure ClearSyncList;
     procedure ReadTimeStamp;
@@ -245,7 +245,7 @@ begin
   end;
 end;
 
-function TSyncFactory.SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载
+function TSyncFactory.SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0;postion:integer=0):int64;//0:上传 1:下载
 var
   cs,rs:TZQuery;
   ZClassName:string;
@@ -340,7 +340,10 @@ begin
             cs.CreateDataSet;
             i := 1;
             inc(j);
-            SetProPosition(FinishIndex * 100 + (100 div (rs.RecordCount div SubmitRecordNum + 1) * j) );
+            if n^.syncUpAndDown = '1' then
+               SetProPosition(FinishIndex * 100 + postion + (50 div (rs.RecordCount div SubmitRecordNum + 1) * j))
+            else
+               SetProPosition(FinishIndex * 100 + (100 div (rs.RecordCount div SubmitRecordNum + 1) * j));
           end;
       end;
     LogFile.AddLogFile(0,'保存<'+n^.tbName+'>保存时长:'+inttostr(GetTicket));
@@ -383,13 +386,13 @@ begin
      begin
        if LCLVersion then //单机版先上传后下载
           begin
-            maxTimeStamp := SyncData(n,Params,0); //上传
-            SyncData(n,Params,1,maxTimeStamp); //下载
+            maxTimeStamp := SyncData(n,Params,0,0,0); //上传
+            SyncData(n,Params,1,maxTimeStamp,50); //下载
           end
        else //连锁版先下载后上传
           begin
-            maxTimeStamp := SyncData(n,Params,1); //下载
-            SyncData(n,Params,0,maxTimeStamp); //上传
+            maxTimeStamp := SyncData(n,Params,1,0,0); //下载
+            SyncData(n,Params,0,maxTimeStamp,50); //上传
           end;
      end
   else
@@ -411,6 +414,7 @@ var i:integer;
 begin
   SetProMax(FList.Count * 100);
   FinishIndex := 0;
+  SetProPosition(0);
   for i:=0 to FList.Count -1 do
   begin
     case PSynTableInfo(FList[i])^.synFlag of
@@ -418,7 +422,7 @@ begin
       begin
         SetProCaption(PSynTableInfo(FList[i])^.tableFlag);
         SyncSingleTable(FList[i]);
-        FinishIndex := (i+1);
+        inc(FinishIndex);
         SetProPosition(FinishIndex * 100);
       end;
     end;
@@ -1013,17 +1017,29 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
-  if not token.online then Exit;
-  if not TfrmSysDefine.AutoRegister then Exit;
-  if token.tenantId = '' then Exit;
-  if not CheckInitSync then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin
     try
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
-      SyncFactory.SyncBasic;
+      Application.ProcessMessages;
+      if not token.online then Exit;
+      if token.tenantId = '' then
+         begin
+           TfrmSysDefine.AutoRegister;
+           if token.tenantId = '' then Exit;
+           if not CheckInitSync then Exit;           
+           RspSyncFactory.SyncAll;
+           RspSyncFactory.copyGoodsSort;
+           SyncFactory.InitTenant;
+           SyncFactory.SyncBasic;
+         end
+      else
+         begin
+           if not CheckInitSync then Exit;
+           SyncFactory.SyncBasic;
+         end;
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally

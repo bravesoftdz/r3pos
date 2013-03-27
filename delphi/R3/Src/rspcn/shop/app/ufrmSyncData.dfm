@@ -1943,7 +1943,7 @@ inherited frmSyncData: TfrmSyncData
           Height = 26
           Alignment = taCenter
           AutoSize = False
-          Caption = #25968#25454#21516#27493
+          Caption = #31995#32479#21021#22987#21270#65292#35831#31245#21518'...'
           Font.Charset = GB2312_CHARSET
           Font.Color = clBlack
           Font.Height = -15

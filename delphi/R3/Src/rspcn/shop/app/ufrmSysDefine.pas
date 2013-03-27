@@ -343,7 +343,7 @@ type
   public
     AObj:TRecord_;
     procedure GetShopInfo;
-    procedure SaveShopInfo;
+    procedure SaveShopInfo(Auto:boolean=false);
     procedure showForm;override;
     function checkCanClose:boolean;override;
     class function AutoRegister:boolean;
@@ -612,7 +612,7 @@ begin
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
 
-procedure TfrmSysDefine.SaveShopInfo;
+procedure TfrmSysDefine.SaveShopInfo(Auto:boolean=false);
   procedure SetValue(rs:TZQuery;name,value: string);
   begin
     if rs.Locate('DEFINE', name, []) then
@@ -703,12 +703,15 @@ begin
   if FirstLogin then
   begin
     SaveRegisterParams;
-    SyncData;
+    if not Auto then SyncData;
     FirstLogin := false;
-    RzBmpButton2.Visible := true;
-    RzBmpButton3.Visible := true;
-    RzBmpButton4.Visible := true;
-    OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
+    if not Auto then
+       begin
+         RzBmpButton2.Visible := true;
+         RzBmpButton3.Visible := true;
+         RzBmpButton4.Visible := true;
+         OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
+       end;
   end;
 
   if edtINPUT_MODE.ItemIndex < 0 then edtINPUT_MODE.ItemIndex := 0;
@@ -751,6 +754,7 @@ begin
 end;
 
 procedure TfrmSysDefine.SaveRegisterParams;
+var LDate:TDatetime;
 begin
   dataFactory.MoveToSqlite;
   try
@@ -777,6 +781,16 @@ begin
   token.mobile := cdsShopInfo.FieldbyName('TELEPHONE').AsString;
   token.Logined := true;
   token.online := true;
+
+  LDate := trunc(rspFactory.timestamp/86400.0+40542.0)+2;
+  token.lDate := strtoint(formatDatetime('YYYYMMDD',LDate));
+  dataFactory.MoveToSqlite;
+  try
+    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+formatDatetime('YYYYMMDD',LDate)+''' where TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''')=0 then
+       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''NEAR_LOGIN_DATE'','''+formatDatetime('YYYYMMDD',LDate)+''',0,''00'',5497000)');
+  finally
+    dataFactory.MoveToDefault;
+  end;
 end;
 
 procedure TfrmSysDefine.RzBmpButton1Click(Sender: TObject);
@@ -1670,7 +1684,7 @@ begin
       except
         MessageBox(Handle,'尚未开通门店管理功能，请联系客户经理...','友情提示..',MB_OK);
       end;
-      SaveShopInfo;
+      SaveShopInfo(true);
       result := true;
     finally
       Free;

@@ -66,7 +66,7 @@ var
   dllGlobal: TdllGlobal;
 
 implementation
-uses utokenFactory,udataFactory,iniFiles,uTreeUtil,udllFnUtil;
+uses utokenFactory,udataFactory,iniFiles,uTreeUtil,uFnUtil;
 {$R *.dfm}
 
 { TdllGlobal }

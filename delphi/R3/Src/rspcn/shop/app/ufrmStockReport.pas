@@ -89,7 +89,7 @@ var
   frmStockReport: TfrmStockReport;
 
 implementation
-uses udataFactory,utokenFactory,udllFnUtil, udllGlobal;
+uses udataFactory,utokenFactory,uFnUtil, udllGlobal;
 {$R *.dfm}
 
 { TfrmSaleReport }

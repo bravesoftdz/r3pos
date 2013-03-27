@@ -221,7 +221,7 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmDBGridPreview;
+uses ufrmSortDropFrom,udllDsUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmDBGridPreview;
 {$R *.dfm}
 
 function getTodayId:string;

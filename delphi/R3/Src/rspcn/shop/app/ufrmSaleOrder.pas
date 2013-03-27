@@ -206,7 +206,7 @@ var
   frmSaleOrder: TfrmSaleOrder;
 
 implementation
-uses utokenFactory,udllDsUtil,udllShopUtil,udllFnUtil, udllGlobal, udataFactory;
+uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory;
 {$R *.dfm}
 
 { TfrmSaleOrder }

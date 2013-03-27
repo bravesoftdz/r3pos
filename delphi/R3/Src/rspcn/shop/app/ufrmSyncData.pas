@@ -11,7 +11,8 @@ const
   MSC_SET_MAX=WM_USER+1;
   MSC_SET_POSITION=WM_USER+2;
   MSC_SET_CAPTION=WM_USER+3;
-  MSC_SET_CLOSE=WM_USER+4;
+  MSC_SET_ORDER_COUNT=WM_USER+4;
+  MSC_SET_CLOSE=WM_USER+5;
 
 type
   TfrmSyncData = class(TfrmWebDialogForm)
@@ -30,6 +31,7 @@ type
     procedure SetPosition(const Value: integer);
     procedure WM_SetMax(var Message: TMessage); message MSC_SET_MAX;
     procedure WM_SetCaption(var Message: TMessage); message MSC_SET_CAPTION;
+    procedure WM_SetOrderCount(var Message: TMessage); message MSC_SET_ORDER_COUNT;
     procedure WM_SetPosition(var Message: TMessage); message MSC_SET_POSITION;
     procedure WM_SetClose(var Message: TMessage); message MSC_SET_CLOSE;
   public
@@ -93,6 +95,11 @@ begin
     SetShowTitle('正在同步<'+SyncFactory.GetTableName(Message.WParam)+'>...')
   else
     SetShowTitle('正在同步<'+RspSyncFactory.GetTableName(Message.WParam)+'>...');
+end;
+
+procedure TfrmSyncData.WM_SetOrderCount(var Message: TMessage);
+begin
+  SetShowTitle(FShowTitle+'共'+inttostr(Message.WParam)+'笔，当前第'+inttostr(Message.LParam)+'笔');
 end;
 
 procedure TfrmSyncData.WM_SetMax(var Message: TMessage);

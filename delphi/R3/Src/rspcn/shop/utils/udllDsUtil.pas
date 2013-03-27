@@ -1,7 +1,7 @@
 unit udllDsUtil;
 
 interface
-uses Classes,SysUtils,Db,ZBase,ZdbFactory,udllFnUtil,ZDataSet;
+uses Classes,SysUtils,Db,ZBase,ZdbFactory,uFnUtil,ZDataSet;
 type
 
  TdsFind=class

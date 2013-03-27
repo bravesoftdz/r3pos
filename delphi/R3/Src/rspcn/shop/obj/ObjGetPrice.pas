@@ -10,7 +10,7 @@ type
     procedure InitClass; override;
   end;
 implementation
-uses udllFnUtil;
+uses uFnUtil;
 { TGetSalesPrice }
 function TGetSalesPrice.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var

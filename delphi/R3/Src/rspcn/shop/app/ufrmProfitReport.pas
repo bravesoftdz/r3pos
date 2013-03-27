@@ -117,7 +117,7 @@ var
   frmProfitReport: TfrmProfitReport;
 
 implementation
-uses udataFactory,utokenFactory,udllFnUtil,udllGlobal,ufrmStocksCalc,objCommon;
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon;
 {$R *.dfm}
 
 { TfrmSaleReport }

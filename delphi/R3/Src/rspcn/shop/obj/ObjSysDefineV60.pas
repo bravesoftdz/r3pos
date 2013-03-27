@@ -2,7 +2,7 @@ unit ObjSysDefineV60;
 
 interface
 
-uses SysUtils, ZBase, Classes, zIntf,ObjCommon, zDataSet;
+uses SysUtils, ZBase, Classes, zIntf,ObjCommon, ZDataSet;
 
 type
 
@@ -21,7 +21,7 @@ type
 
 implementation
 
-uses udllFnUtil;
+uses uFnUtil;
 
 function TSysDefineV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin

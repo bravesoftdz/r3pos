@@ -430,6 +430,8 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 0
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -793,8 +795,6 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

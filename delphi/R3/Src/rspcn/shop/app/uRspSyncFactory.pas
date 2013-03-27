@@ -886,5 +886,5 @@ end;
 initialization
   RspSyncFactory := TRspSyncFactory.Create;
 finalization
-  RspSyncFactory.Free;
+  if Assigned(RspSyncFactory) then FreeAndNil(RspSyncFactory);
 end.

@@ -1,4 +1,4 @@
-unit udllFnUtil;
+unit uFnUtil;
 
 interface
 uses Classes,SysUtils,Controls,Windows,Math;

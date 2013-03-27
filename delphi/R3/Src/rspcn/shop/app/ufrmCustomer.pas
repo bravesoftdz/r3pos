@@ -192,7 +192,7 @@ var
   frmCustomer: TfrmCustomer;
 
 implementation
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,udllFnUtil,ufrmPriceGrade,ufrmDBGridPreview;
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,ufrmDBGridPreview;
 {$R *.dfm}
 
 { TfrmCustomer }

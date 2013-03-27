@@ -100,7 +100,7 @@ type
 implementation
 
 uses udllShopUtil,ufrmSortDropFrom,udllGlobal,uTokenFactory,udataFactory,udllDsUtil,
-     udllFnUtil;
+     uFnUtil;
 
 {$R *.dfm}
 

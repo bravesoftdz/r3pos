@@ -1,7 +1,7 @@
 unit ObjCommon;
 
 interface
-uses Windows,SysUtils,ZBase,Classes,DB,udllFnUtil,ZIntf,Variants,ZDataSet;
+uses Windows,SysUtils,ZBase,Classes,DB,uFnUtil,ZIntf,Variants,ZDataSet;
 //COMM控制SQL
 function GetCommStr(iDbType:integer;alias:string=''):string;
 //处理简单SQL

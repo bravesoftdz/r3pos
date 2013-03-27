@@ -52,7 +52,7 @@ function GetTrimStr(const srcStr: string; vLen: integer): string;
 
 
 implementation
-uses udllFnUtil,udllDsUtil,udllGlobal,udllXDictFactory;
+uses uFnUtil,udllDsUtil,udllGlobal,udllXDictFactory;
 function GetRegionId(id:string):string;
 begin
   result := id;

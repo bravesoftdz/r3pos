@@ -220,7 +220,7 @@ var
   frmPosOutOrder: TfrmPosOutOrder;
 
 implementation
-uses utokenFactory,udllDsUtil,udllShopUtil,udllFnUtil, udllGlobal, udataFactory, uCacheFactory;
+uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory, uCacheFactory;
 {$R *.dfm}
 
 { TfrmSaleOrder }

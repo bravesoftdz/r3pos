@@ -45,7 +45,7 @@ type
 
 implementation
 
-uses ufrmSortDropFrom,udataFactory,uTokenFactory,udllDsUtil,udllFnUtil,udllGlobal,udllShopUtil;
+uses ufrmSortDropFrom,udataFactory,uTokenFactory,udllDsUtil,uFnUtil,udllGlobal,udllShopUtil;
 
 {$R *.dfm}
 

@@ -250,8 +250,8 @@ var
 
 implementation
 
-uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,udllFnUtil,udllDsUtil,udllShopUtil,
-  udataFactory,uAdvFactory,ufrmInitGoods;
+uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,uFnUtil,udllDsUtil,udllShopUtil,
+  udataFactory,uCacheFactory,ufrmInitGoods;
 
 {$R *.dfm}
 
@@ -342,8 +342,8 @@ begin
     DBGridEh1.Columns.EndUpdate;
   end;
   InputFlag := 0;
-  advFactory.getAdvPngImage(adv01.Name,adv01.Picture);
-  advFactory.getAdvPngImage(adv02.Name,adv02.Picture);
+  CacheFactory.getAdvPngImage(adv01.Name,adv01.Picture);
+  CacheFactory.getAdvPngImage(adv02.Name,adv02.Picture);
   help.down := false;
   if Assigned(help.OnClick) then help.OnClick(help);
 end;

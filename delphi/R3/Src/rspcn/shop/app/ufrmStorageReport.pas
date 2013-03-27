@@ -88,7 +88,7 @@ var
   frmStorageReport: TfrmStorageReport;
 
 implementation
-uses udataFactory,utokenFactory,udllFnUtil,udllGlobal,ufrmStocksCalc,objCommon,
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,
   ufrmSortDropFrom;
 {$R *.dfm}
 

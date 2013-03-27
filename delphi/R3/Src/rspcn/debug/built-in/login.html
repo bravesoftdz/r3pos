@@ -71,9 +71,12 @@ function usernameFocus() {
 	}
 }
 function passwordFocus() {
-	var password = document.getElementById('password').value;
-	if (password == '密码') {
-		document.getElementById('password').value = '';
+	var tmpPwd = document.getElementById("tmpPwd");
+	var password = document.getElementById("password");	
+	if (tmpPwd.value == '密码') {
+		password.style.display="block";
+		tmpPwd.style.display="none";
+		password.focus();
 	}
 }
 function usernameBlur() {
@@ -83,9 +86,11 @@ function usernameBlur() {
 	}
 }
 function passwordBlur() {
-	var password = document.getElementById('password').value;
-	if (password == '') {
-		document.getElementById('password').value = '密码';
+	var tmpPwd = document.getElementById('tmpPwd');
+	var password = document.getElementById('password');
+	if (password.value == '') {	
+		password.style.display="none";
+		tmpPwd.style.display="block";
 	}
 }
 
@@ -107,7 +112,8 @@ function passwordBlur() {
 <!--滚动图片end-->
 <div class="left">
 	<input class="input1" id="username" type="text" onFocus="usernameFocus()" onBlur="usernameBlur()" value="用户名">
-	<input class="input1" id="password" type="password" onFocus="passwordFocus()" onBlur="passwordBlur()"value="密码">
+	<input class="input1" id="tmpPwd" type="text" onFocus="passwordFocus();" value="密码">
+	<input class="input1" id="password" type="password"  onBlur="passwordBlur()"  style="display:none;">
 	<input style="margin-left: 20px;" type="checkbox" id="offline">&nbsp;离线登录
 	<input id="rmbUser" style="margin-left: 70px;" type="checkbox">&nbsp;记住账号
 	<br />

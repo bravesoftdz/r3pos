@@ -22,6 +22,8 @@ type
   private
     { Private declarations }
     procedure CreateSQLTable(sql:string;tb:string);
+    //本月负库存销售清理结账记录
+    procedure ClearDays;
     //清除数据
     procedure ClearRck;
     //准备临时表
@@ -63,7 +65,7 @@ var
   frmStocksCalc: TfrmStocksCalc;
 
 implementation
-uses udataFactory,utokenFactory,udllFnUtil,objCommon,udllGlobal;
+uses udataFactory,utokenFactory,uFnUtil,objCommon,udllGlobal;
 {$R *.dfm}
 
 { TfrmStocksCalc }
@@ -112,10 +114,11 @@ begin
       '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
       ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
       ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
-      'select TENANT_ID,SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''期初'',19700101,1,'+
-      ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
-      ' 0,BAL_PRICE,0 from '+
-      '';
+      'select j.TENANT_ID,''#'' as SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''期初'',19700101,1,'+
+      ' j.GODS_ID,''#'' as CLIENT_ID,''#'' as UNIT_ID,1 as CONV_RATE,''#'' as BATCH_NO,''#'' as PROPERTY_01,''#'' as PROPERTY_02, '+
+      ' 0,j.NEW_INPRICE,0 from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,NEW_INPRICE',true)+') j '+
+      'left outer join PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID ';
+  dataFactory.ExecSQL(sql);
   if formatDatetime('DD',_beginDate)<>'01' then
     sql:=
       'insert into TMP_STOCKS_DATA '+
@@ -163,7 +166,7 @@ procedure TfrmStocksCalc.calcMoney;
 var
   sql:string;
 begin
-  sql:= 'update TMP_STOCKS_DATA set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where (SEQNO % 2)<>0';
+  sql:= 'update TMP_STOCKS_DATA set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where (SEQNO % 2)<>0 and BILL_TYPE>1';
   dataFactory.ExecSQL(sql);
 end;
 
@@ -173,13 +176,14 @@ var
 begin
   sql:=
     'update TMP_STOCKS_DATA set BAL_PRICE=( '+
-    'select ifnull(case when sum(A.BAL_AMOUNT)<>0 then round(sum(A.BAL_AMOUNT*A.BAL_PRICE)/sum(A.BAL_AMOUNT),6) else max(A.BAL_PRICE) end,0) '+
+    'select ifnull(case when sum(A.BAL_AMOUNT)<>0 then round(sum(A.BAL_AMOUNT*A.BAL_PRICE)/sum(A.BAL_AMOUNT),6) else max(BAL_PRICE) end,0) '+
     'from TMP_STOCKS_DATA A '+
     'where '+
-    '  A.SHOP_ID=TMP_STOCKS_DATA.SHOP_ID and '+
+    ' (A.SHOP_ID=TMP_STOCKS_DATA.SHOP_ID and '+
     '  A.GODS_ID=TMP_STOCKS_DATA.GODS_ID and '+
     '  A.BATCH_NO=TMP_STOCKS_DATA.BATCH_NO and '+
-    '  A.SEQNO in (TMP_STOCKS_DATA.SEQNO-2,TMP_STOCKS_DATA.SEQNO-1) '+
+    '  A.SEQNO in (TMP_STOCKS_DATA.SEQNO-2,TMP_STOCKS_DATA.SEQNO-1)'+
+    ' ) or (A.SHOP_ID=''#'' and A.GODS_ID=TMP_STOCKS_DATA.GODS_ID and A.BATCH_NO=''#'' and A.SEQNO=1 and A.BILL_DATE=19700101) '+
     ') where (SEQNO % 2)<>0 and BILL_TYPE>1';
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
@@ -435,7 +439,7 @@ begin
   case dataFactory.iDbType of
   5:begin
       createSQLTable(sql,'TMP_STOCKS_DATA');
-      dataFactory.ExecSQL('create index IX_TMP_STOCKS_DATA on TMP_STOCKS_DATA(SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,SEQNO)');
+      dataFactory.ExecSQL('create index IX_TMP_STOCKS_DATA on TMP_STOCKS_DATA(SHOP_ID,GODS_ID,BATCH_NO,SEQNO)');
     end;
   end;
   sql :=
@@ -577,6 +581,7 @@ end;
 procedure TfrmStocksCalc.btnCalcClick(Sender: TObject);
 begin
   inherited;
+  ClearDays;
   _endDate := 0;
   while _endDate<eDate do creaStocks;
   ModalResult := MROK;
@@ -586,6 +591,26 @@ end;
 procedure TfrmStocksCalc.WMStart(var Message: TMessage);
 begin
   btnCalc.OnClick(nil);
+end;
+
+procedure TfrmStocksCalc.ClearDays;
+var
+  rs:TZQuery;
+begin
+  lastDate := getLastDate;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select min(BILL_DATE) from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:LAST_DATE and BAL_AMOUNT<0 and BILL_TYPE>1';
+    rs.ParamByName('D1').AsInteger := lastDate div 100 *100 +1; 
+    rs.ParamByName('LAST_DATE').AsInteger := lastDate;
+    dataFactory.Open(rs);
+    if rs.Fields[0].AsInteger>0 then
+       begin
+         dataFactory.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+token.tenantId+' and CREA_DATE>='+rs.Fields[0].asString);
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

@@ -457,10 +457,12 @@ inherited frmOrderForm: TfrmOrderForm
                 Color = 14606046
                 TabOrder = 4
                 object lblModifyUnit: TRzLabel
+                  Tag = 2
                   Left = 17
                   Top = 0
                   Width = 88
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #20462#25913#21333#20301'  [F2] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -468,14 +470,17 @@ inherited frmOrderForm: TfrmOrderForm
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
                 object lblModifyAmt: TRzLabel
+                  Tag = 3
                   Left = 17
                   Top = 24
                   Width = 88
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #20462#25913#25968#37327'  [F3] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -483,14 +488,17 @@ inherited frmOrderForm: TfrmOrderForm
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
                 object lblModifyPrice: TRzLabel
+                  Tag = 4
                   Left = 17
                   Top = 48
                   Width = 88
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #20462#25913#21333#20215'  [F4] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -498,6 +506,7 @@ inherited frmOrderForm: TfrmOrderForm
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end

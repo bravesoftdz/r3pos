@@ -249,6 +249,7 @@ begin
         navDate := 19700101;
       end;
    _endDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',incMonth(_beginDate,1)))-1;
+   if _endDate>eDate then _endDate := edate;
    lblInfo.Caption := '计算区间:'+formatDatetime('YYYY-MM-DD',_beginDate)+'至'+formatDatetime('YYYY-MM-DD',_endDate);
    //创建临时表
    Init;
@@ -598,9 +599,11 @@ var
   rs:TZQuery;
 begin
   lastDate := getLastDate;
+  if lastDate=0 then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select min(BILL_DATE) from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:LAST_DATE and BAL_AMOUNT<0 and BILL_TYPE>1';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId); 
     rs.ParamByName('D1').AsInteger := lastDate div 100 *100 +1; 
     rs.ParamByName('LAST_DATE').AsInteger := lastDate;
     dataFactory.Open(rs);

@@ -178,6 +178,8 @@ type
     procedure InitRecord;
     function EnCodeBarcode: string;
 
+    procedure DoKeyClick(sender:TObject);
+
     function  FindColumn(FieldName:string):TColumnEh;
     procedure FocusColumn(FieldName: string);
     procedure FocusNextColumn;
@@ -2509,6 +2511,30 @@ begin
     edtInput.SelectAll;
     if edtInput.CanFocus then edtInput.SetFocus;
   end;
+end;
+
+procedure TfrmOrderForm.DoKeyClick(sender: TObject);
+var
+  flag:integer;
+  Key:Word;
+  KeyChr:char;
+begin
+  flag := TrzLabel(sender).tag;
+  if flag in [2..11] then
+     begin
+       Key := VK_F1+flag-1;
+       if assigned(OnKeyDown) then
+          OnKeyDown(Sender,Key,[]);
+     end
+  else
+     begin
+       case flag of
+       12:KeyChr := '*';
+       13:KeyChr := '+';
+       end;
+       if assigned(OnKeyPress) then
+          OnKeyPress(Sender,KeyChr);
+     end;
 end;
 
 end.

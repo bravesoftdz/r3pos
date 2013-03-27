@@ -17,7 +17,6 @@ inherited frmPosOutOrder: TfrmPosOutOrder
       inherited PageControl: TRzPageControl
         Width = 797
         Height = 511
-        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -695,10 +694,12 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   ShadowColor = 15658734
                 end
                 object RzLabel7: TRzLabel
+                  Tag = 5
                   Left = 148
                   Top = 2
                   Width = 90
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #36192#36865'/'#20817#25442' [F5] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -706,15 +707,18 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
                 object RzLabel8: TRzLabel
+                  Tag = 6
                   Left = 12
                   Top = 43
                   Width = 88
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #20250#21592#21345#21495'  [F6] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -722,6 +726,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow
@@ -744,10 +749,12 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   TextStyle = tsShadow
                 end
                 object RzLabel12: TRzLabel
+                  Tag = 10
                   Left = 147
                   Top = 44
                   Width = 70
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #21462#21333'  [F10] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -755,15 +762,18 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
                 object RzLabel11: TRzLabel
+                  Tag = 9
                   Left = 147
                   Top = 23
                   Width = 62
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #25346#21333'  [F9] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -771,6 +781,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow
@@ -793,10 +804,12 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   TextStyle = tsShadow
                 end
                 object RzLabel13: TRzLabel
+                  Tag = 11
                   Left = 285
                   Top = 2
                   Width = 96
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #25972#21333#35843#20215'  [F11] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
@@ -804,15 +817,18 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
                 object RzLabel14: TRzLabel
+                  Tag = 12
                   Left = 285
                   Top = 23
                   Width = 95
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #25910#27454#26041#24335'  [ *   ] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 6570814
@@ -820,15 +836,18 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
                 object RzLabel15: TRzLabel
+                  Tag = 13
                   Left = 285
                   Top = 44
                   Width = 95
                   Height = 20
+                  Cursor = crHandPoint
                   Caption = #25910#38134#32467#36134'  [ +  ] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 6572100
@@ -836,6 +855,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Font.Name = #24494#36719#38597#40657
                   Font.Style = []
                   ParentFont = False
+                  OnClick = DoKeyClick
                   ShadowColor = 15658734
                   ShadowDepth = 1
                   TextStyle = tsShadow

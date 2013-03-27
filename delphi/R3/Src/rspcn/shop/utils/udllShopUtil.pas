@@ -138,7 +138,10 @@ var i:integer;
 begin
   Cbx.ItemIndex := -1;
   for i:=0 to Cbx.Properties.Items.Count -1 do
-    Cbx.Properties.Items.Objects[i].Free;
+     begin
+       if assigned(Cbx.Properties.Items.Objects[i]) and (integer(Cbx.Properties.Items.Objects[i])>10000) then
+          Cbx.Properties.Items.Objects[i].Free;
+     end;
   Cbx.Properties.Items.Clear;
 end;
 

@@ -106,7 +106,7 @@ begin
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
 
-  if RckMaxDate < vEndDate then
+//  if RckMaxDate < vEndDate then
      begin
        //没有计算，需重计算流水
        if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
@@ -161,10 +161,10 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-  if RckMaxDate < vEndDate then
+//  if RckMaxDate < vEndDate then
      begin
        //没有计算，需重计算流水
-       if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
+//       if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
      end;
 
   cdsReport2.close;

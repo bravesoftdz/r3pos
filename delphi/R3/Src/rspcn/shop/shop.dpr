@@ -32,7 +32,7 @@ uses
   ufrmWebDialog in '..\common\ufrmWebDialog.pas' {frmWebDialog},
   ufrmFindDialog in 'ufrmFindDialog.pas' {frmFindDialog},
   udllDsUtil in 'utils\udllDsUtil.pas',
-  udllFnUtil in 'utils\udllFnUtil.pas',
+  uFnUtil in 'utils\uFnUtil.pas',
   udllShopUtil in 'utils\udllShopUtil.pas',
   udllXDictFactory in 'utils\udllXDictFactory.pas',
   ObjSalesOrderV60 in 'obj\ObjSalesOrderV60.pas',

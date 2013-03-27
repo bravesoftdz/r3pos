@@ -1013,7 +1013,8 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
-  TfrmSysDefine.AutoRegister;
+  if not token.online then Exit;
+  if not TfrmSysDefine.AutoRegister then Exit;
   if not CheckInitSync then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin
@@ -1033,6 +1034,7 @@ end;
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
+  if not token.online then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin
     try

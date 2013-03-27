@@ -7,14 +7,14 @@ uses Dialogs,SysUtils,zBase,Variants,Classes,DB,ZIntf,ZDataset,ObjCommon,ZDbcCac
 type
   TSyncSingleTableV60=class(TZFactory)
   private
-    InsertQuery:TZQuery;
-    UpdateQuery:TZQuery;
-    COMMIdx:integer;
-    TIME_STAMPIdx:integer;
-    Init:boolean;
     FMaxCol: integer;
     procedure SetMaxCol(const Value: integer);
   protected
+    Init:boolean;
+    COMMIdx:integer;
+    TIME_STAMPIdx:integer;
+    InsertQuery:TZQuery;
+    UpdateQuery:TZQuery;
     procedure InitSQL(AGlobal: IdbHelp;TimeStamp:boolean=true);virtual;
     function  GetRowAccessor: TZRowAccessor;
     procedure FillParams(ZQuery: TZQuery);virtual;
@@ -56,6 +56,12 @@ type
     function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  // 删除台账
+  TSyncDeleteRckCloseV60=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
 
   // 销售单同步
@@ -151,13 +157,11 @@ begin
          begin
            if ZQuery.Params[i].Value>2808566734 then
               ZQuery.Params[i].Value := 5497000;
-           if (Params.FindParam('TIME_STAMP_NOCHG')<>nil) and (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('SYN_TIME_STAMP').Value) then
-              ZQuery.Params[i].Value := Params.ParamByName('SYN_TIME_STAMP').Value;
+           if (Params.FindParam('TIME_STAMP_NOCHG')<>nil) and (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('TIME_STAMP').Value) then
+              ZQuery.Params[i].Value := Params.ParamByName('TIME_STAMP').Value;
          end;
       if WasNull then ZQuery.Params[i].Value := null;
     end;
-  if ZQuery.Params.FindParam('LAST_TIME_STAMP')<>nil then
-     ZQuery.Params.FindParam('LAST_TIME_STAMP').Value := Params.ParamByName('TIME_STAMP').Value;
 end;
 
 function TSyncSingleTableV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -182,7 +186,7 @@ begin
                 if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
                    FieldbyName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
                 if rs.FieldByName('VALUE').AsString<>FieldbyName('VALUE').AsString then
-                   FieldbyName('TIME_STAMP').AsInt64 := StrtoInt64(Params.ParambyName('SYN_TIME_STAMP').AsString);
+                   FieldbyName('TIME_STAMP').AsInt64 := StrtoInt64(Params.ParambyName('TIME_STAMP').AsString);
               end;
          finally
            rs.Free;
@@ -521,26 +525,51 @@ begin
   SelectSQL.Text := str + ' order by TIME_STAMP asc';
 end;
 
+{ TSyncDeleteRckCloseV60 }
+
+function TSyncDeleteRckCloseV60.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    AGlobal.BeginTrans;
+    try
+      AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE  where TENANT_ID=:TENANT_ID and CREA_DATE>=:CLSE_DATE',Params);
+      AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and END_DATE>=:MOTH_DATE',Params);
+      AGlobal.CommitTrans;
+      result := true;
+    except
+      on E:Exception do
+         begin
+           AGlobal.RollbackTrans;
+           Msg := E.Message;
+           result := false;
+           Raise;
+         end;
+    end;
+  finally
+    rs.Free;
+  end;
+end;
+
 initialization
   RegisterClass(TSyncSingleTableV60);
   RegisterClass(TSyncCaModuleV60);
-
   RegisterClass(TSyncRckDaysCloseListV60);
   RegisterClass(TSyncRckDaysCloseV60);
   RegisterClass(TSyncRckStocksDataV60);
-
   RegisterClass(TSyncSalesOrderListV60);
   RegisterClass(TSyncStockOrderListV60);
   RegisterClass(TSyncChangeOrderListV60);
+  RegisterClass(TSyncDeleteRckCloseV60);
 finalization
   UnRegisterClass(TSyncSingleTableV60);
   UnRegisterClass(TSyncCaModuleV60);
-
   UnRegisterClass(TSyncRckDaysCloseListV60);
   UnRegisterClass(TSyncRckDaysCloseV60);
   UnRegisterClass(TSyncRckStocksDataV60);
-
   UnRegisterClass(TSyncSalesOrderListV60);
   UnRegisterClass(TSyncStockOrderListV60);
   UnRegisterClass(TSyncChangeOrderListV60);
+  UnRegisterClass(TSyncDeleteRckCloseV60);
 end.

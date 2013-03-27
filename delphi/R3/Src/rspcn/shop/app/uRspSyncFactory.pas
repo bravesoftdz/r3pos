@@ -118,7 +118,6 @@ begin
           Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := timestamp;
-          Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           SetSynTimeStamp(token.tenantId,'RSP_CA_TENANT',maxtimestamp);
@@ -136,7 +135,6 @@ begin
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
-            Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           finally
@@ -206,7 +204,6 @@ begin
           Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := timestamp;
-          Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           SetSynTimeStamp(token.tenantId,'RSP_CA_RELATION',maxtimestamp);
@@ -224,7 +221,6 @@ begin
             Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
-            Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           finally
@@ -300,7 +296,6 @@ begin
           Params.ParamByName('KEY_FLAG').AsInteger := 1;
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := timeStamp;
-          Params.ParamByName('SYN_TIME_STAMP').Value := timeStamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           SetSynTimeStamp(token.tenantId,'RSP_CA_RELATIONS',maxtimestamp);
@@ -319,7 +314,6 @@ begin
             Params.ParamByName('KEY_FLAG').AsInteger := 1;
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timeStamp;
-            Params.ParamByName('SYN_TIME_STAMP').Value := timeStamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           finally
@@ -482,7 +476,6 @@ begin
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
-            Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             Params.ParamByName('KEY_FLAG').AsString := '1';
             dataFactory.AddBatch(rs,'TSyncSingleTableV60',Params);
@@ -515,7 +508,6 @@ begin
               Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID';
               Params.ParamByName('COMM_LOCK').AsString := '1';
               Params.ParamByName('TIME_STAMP').Value := timestamp;
-              Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
               Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
               Params.ParamByName('KEY_FLAG').AsString := '1';
               dataFactory.AddBatch(rs,'TSyncSingleTableV60',Params);
@@ -609,7 +601,6 @@ begin
           Params.ParamByName('PROD_ID').AsString := rs.FieldByName('PROD_ID').AsString;
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := timestamp;
-          Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
           dataFactory.UpdateBatch(rs,'TSyncCaModuleV60',Params);
           SetSynTimeStamp(token.tenantId,'RSP_CA_MODULE',maxtimeStamp,ProductId);
@@ -628,7 +619,6 @@ begin
             Params.ParamByName('PROD_ID').AsString := rs.FieldByName('PROD_ID').AsString;
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
-            Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
             dataFactory.UpdateBatch(rs,'TSyncCaModuleV60',Params);
           finally
@@ -702,7 +692,6 @@ begin
           Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := timestamp;
-          Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           SetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT',maxtimestamp);
@@ -720,7 +709,6 @@ begin
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
-            Params.ParamByName('SYN_TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
           finally
@@ -850,7 +838,6 @@ begin
           Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := 0;
-          Params.ParamByName('SYN_TIME_STAMP').Value := 0;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(ss,'TSyncSingleTableV60',Params);
         finally
@@ -867,7 +854,6 @@ begin
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := 0;
-            Params.ParamByName('SYN_TIME_STAMP').Value := 0;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(ss,'TSyncSingleTableV60',Params);
           finally

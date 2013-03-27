@@ -279,9 +279,7 @@ type
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
     RzLabel51: TRzLabel;
-    RzBmpButton5: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
@@ -307,7 +305,6 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure RzLabel37Click(Sender: TObject);
     procedure btnChangeClick(Sender: TObject);
-    procedure RzBmpButton5Click(Sender: TObject);
   private
     SyncDataing:boolean;
     FCurUserId:string;
@@ -347,6 +344,7 @@ type
     procedure SetCurUserRoleIds(const Value: string);
   public
     AObj:TRecord_;
+    procedure showForm;override;
     function checkCanClose:boolean;override;
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
     property NewUser:boolean read FNewUser write SetNewUser;
@@ -416,20 +414,6 @@ begin
   PageControl.ActivePageIndex := 0;
 end;
 
-procedure TfrmSysDefine.FormShow(Sender: TObject);
-begin
-  inherited;
-  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
-     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
-
-  if FirstLogin then
-    GetShopInfo
-  else
-    OpenShopInfo;
-
-  ReadFromObject(0);
-end;
-
 procedure TfrmSysDefine.GetShopInfo;
 var
   Params:TftParamList;
@@ -437,7 +421,7 @@ var
   tenantdoc,shopdoc:IXMLDomDocument;
   caTenant,caShopInfo:IXMLDOMNode;
 begin
-  if not rspFactory.xsmLogin(token.xsmCode,3) then Exit;
+  if not rspFactory.xsmLogin(token.xsmCode,3) then Close;
 
   Params := TftParamList.Create(nil);
   try
@@ -1655,10 +1639,18 @@ begin
      result := true;
 end;
 
-procedure TfrmSysDefine.RzBmpButton5Click(Sender: TObject);
+procedure TfrmSysDefine.showForm;
 begin
   inherited;
-  SyncFactory.LogoutSync(self.Handle);
+  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
+     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
+
+  if FirstLogin then
+    GetShopInfo
+  else
+    OpenShopInfo;
+
+  ReadFromObject(0);
 end;
 
 initialization

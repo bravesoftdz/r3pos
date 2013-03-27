@@ -27,8 +27,10 @@ type
   private
     FShowTitle: string;
     FPosition: integer;
+    FSyncTableName:string;
     procedure SetShowTitle(const Value: string);
     procedure SetPosition(const Value: integer);
+    procedure SetSyncTableName(const Value: string);
     procedure WM_SetMax(var Message: TMessage); message MSC_SET_MAX;
     procedure WM_SetCaption(var Message: TMessage); message MSC_SET_CAPTION;
     procedure WM_SetOrderCount(var Message: TMessage); message MSC_SET_ORDER_COUNT;
@@ -39,6 +41,7 @@ type
     procedure ShowPostion(Postion:Integer;Caption:String);
     property ShowTitle:string read FShowTitle write SetShowTitle;
     property Position:integer read FPosition write SetPosition;
+    property SyncTableName:string read FSyncTableName write SetSyncTableName;
   end;
 
 implementation
@@ -61,6 +64,11 @@ begin
   ProgressBar1.Visible := True;
   ProgressBar1.Position := Value;
   Update;
+end;
+
+procedure TfrmSyncData.SetSyncTableName(const Value: string);
+begin
+  FSyncTableName := Value;
 end;
 
 procedure TfrmSyncData.SetShowTitle(const Value: string);
@@ -92,14 +100,16 @@ end;
 procedure TfrmSyncData.WM_SetCaption(var Message: TMessage);
 begin
   if Message.LParam = 0 then
-    SetShowTitle('正在同步<'+SyncFactory.GetTableName(Message.WParam)+'>...')
+    SyncTableName := SyncFactory.GetTableName(Message.WParam)
   else
-    SetShowTitle('正在同步<'+RspSyncFactory.GetTableName(Message.WParam)+'>...');
+    SyncTableName := RspSyncFactory.GetTableName(Message.WParam);
+
+  SetShowTitle('正在同步<'+SyncTableName+'>...')
 end;
 
 procedure TfrmSyncData.WM_SetOrderCount(var Message: TMessage);
 begin
-  SetShowTitle(FShowTitle+'共'+inttostr(Message.WParam)+'笔，当前第'+inttostr(Message.LParam)+'笔');
+  SetShowTitle('正在同步<'+SyncTableName+'>...'+'共'+inttostr(Message.WParam)+'笔，当前第'+inttostr(Message.LParam)+'笔');
 end;
 
 procedure TfrmSyncData.WM_SetMax(var Message: TMessage);

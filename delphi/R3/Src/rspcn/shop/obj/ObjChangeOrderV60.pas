@@ -1,8 +1,12 @@
 unit ObjChangeOrderV60;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes, ZDataSet,ZIntf,ObjCommon,DB,math,uFnUtil;
+
+uses Dialogs,SysUtils,ZBase,Classes, ZDataSet,ZIntf,ObjCommon,DB,math,uFnUtil,
+     ObjSyncFactoryV60;
+
 type
+
   TChangeOrderV60=class(TZFactory)
   private
     lock:boolean;
@@ -10,15 +14,13 @@ type
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+
   TChangeDataV60=class(TZFactory)
   public
     IsZeroOut:Boolean;
@@ -26,15 +28,27 @@ type
     isSync:boolean;
   public
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+
+  TSyncChangeOrderV60=class(TSyncSingleTableV60)
+  public
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  TSyncChangeDataV60=class(TSyncSingleTableV60)
+  public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
 implementation
 
 { TChangeDataV60 }
@@ -99,7 +113,7 @@ function TChangeDataV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:string;
 begin
   try
-  if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
+  if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
   if FieldbyName('CHANGE_TYPE').AsOldString = '1' then
   DecStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
              FieldbyName('GODS_ID').asOldString,
@@ -119,9 +133,9 @@ begin
 //  if not lock then
 //  begin
 //  if Parant.FieldbyName('CHANGE_CODE').AsString='1' then
-//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600027','删除【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usDeleted))
+//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600027','删除【单号'+Parant.FieldbyName('GLIDE_NO').AsString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usDeleted))
 //  else
-//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600020','删除【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usDeleted));
+//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600020','删除【单号'+Parant.FieldbyName('GLIDE_NO').AsString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usDeleted));
 //  end;
   Result := True;
   except
@@ -137,21 +151,21 @@ function TChangeDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var Str:string;
 begin
   try
-  if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
+  if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
   if FieldbyName('CHANGE_TYPE').AsString = '1' then
-  IncStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
-             FieldbyName('GODS_ID').asString,
-             FieldbyName('PROPERTY_01').asString,
-             FieldbyName('PROPERTY_02').asString,
-             FieldbyName('BATCH_NO').asString,
+  IncStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+             FieldbyName('GODS_ID').AsString,
+             FieldbyName('PROPERTY_01').AsString,
+             FieldbyName('PROPERTY_02').AsString,
+             FieldbyName('BATCH_NO').AsString,
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1)
   else
-  DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
-             FieldbyName('GODS_ID').asString,
-             FieldbyName('PROPERTY_01').asString,
-             FieldbyName('PROPERTY_02').asString,
-             FieldbyName('BATCH_NO').asString,
+  DecStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+             FieldbyName('GODS_ID').AsString,
+             FieldbyName('PROPERTY_01').AsString,
+             FieldbyName('PROPERTY_02').AsString,
+             FieldbyName('BATCH_NO').AsString,
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1);
   Result := True;
@@ -174,9 +188,9 @@ begin
     lock := false;
   end;
 //  if Parant.FieldbyName('CHANGE_CODE').AsString='1' then
-//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600027','修改【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usModified))
+//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600027','修改【单号'+Parant.FieldbyName('GLIDE_NO').AsString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usModified))
 //  else
-//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600020','修改【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usModified));
+//     WriteLogInfo(AGlobal,Parant.FieldbyName('OPER_USER').AsString,2,'600020','修改【单号'+Parant.FieldbyName('GLIDE_NO').AsString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STO_CHANGEDATA',usModified));
 end;
 
 function TChangeDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -238,9 +252,9 @@ begin
 //  if not lock then
 //  begin
 //  if FieldbyName('CHANGE_CODE').AsString='1' then
-//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600020','删除【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usDeleted))
+//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600020','删除【单号'+FieldbyName('GLIDE_NO').AsString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usDeleted))
 //  else
-//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600027','删除【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usDeleted));
+//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600027','删除【单号'+FieldbyName('GLIDE_NO').AsString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usDeleted));
 //  end;
   result := true;
 end;
@@ -249,7 +263,7 @@ function TChangeOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
   if (FieldbyName('GLIDE_NO').AsString='') then
     begin
-      FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_3_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
+      FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_3_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,FormatDatetime('YYMMDD',now()),5);
     end;
   result := true;
 end;
@@ -265,9 +279,9 @@ begin
     lock := false;
   end;
 //  if FieldbyName('CHANGE_CODE').AsString='1' then
-//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600020','修改【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usModified))
+//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600020','修改【单号'+FieldbyName('GLIDE_NO').AsString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usModified))
 //  else
-//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600027','修改【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usModified));
+//     WriteLogInfo(AGlobal,FieldbyName('OPER_USER').AsString,2,'600027','修改【单号'+FieldbyName('GLIDE_NO').AsString+'】',EncodeLogInfo(self,'STO_CHANGEORDER',usModified));
 
 end;
 
@@ -279,11 +293,11 @@ begin
    if isSync then
       begin
         AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and (CREA_DATE>='+FieldbyName('CHANGE_DATE').AsOldString+' or CREA_DATE>='+FieldbyName('CHANGE_DATE').AsString+')',self);
-        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsOldString))+''' or END_DATE>='''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsString))+''')',self);
+        AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and (END_DATE>='''+FormatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsOldString))+''' or END_DATE>='''+FormatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(FieldbyName('CHANGE_DATE').AsString))+''')',self);
       end
    else
       begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('CHANGE_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
+        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,FieldbyName('CHANGE_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
         if FieldbyName('CHANGE_DATE').AsOldString <> '' then
            Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('CHANGE_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
         result := true;
@@ -295,6 +309,7 @@ function TChangeOrderV60.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean
 var
   rs:TZQuery;
 begin
+  result := true;
   if isSync then Exit;
   rs := TZQuery.Create(nil);
   try
@@ -303,9 +318,9 @@ begin
     result := (rs.Fields[0].AsString = s);
     if comm and result and
     (
-       (copy(rs.Fields[1].asString,1,1)='1')
+       (copy(rs.Fields[1].AsString,1,1)='1')
        or
-       (copy(rs.Fields[1].asString,2,1)<>'0')
+       (copy(rs.Fields[1].AsString,2,1)<>'0')
     )
     then Raise Exception.Create('已经同步的数据不能删除..');
   finally
@@ -346,10 +361,158 @@ begin
 end;
 
 
+{ TSyncChangeOrderV60 }
+
+function TSyncChangeOrderV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
+end;
+
+function TSyncChangeOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STO_CHANGEORDER';
+     end;
+  InitSQL(AGlobal,false);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger=0) then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+            except
+              on E:Exception do
+                 begin
+                   if not CheckUnique(E.Message) then
+                      Raise;
+                 end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncChangeOrderV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update STO_CHANGEORDER set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID'),self);
+end;
+
+{ TSyncChangeDataV60 }
+
+function TSyncChangeDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+end;
+
+function TSyncChangeDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+  procedure InsertStorageInfo;
+  begin
+    if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
+    if FieldbyName('CHANGE_TYPE').AsString = '1' then
+    IncStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+               FieldbyName('GODS_ID').AsString,
+               FieldbyName('PROPERTY_01').AsString,
+               FieldbyName('PROPERTY_02').AsString,
+               FieldbyName('BATCH_NO').AsString,
+               FieldbyName('CALC_AMOUNT').asFloat,
+               roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1)
+    else
+    DecStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+               FieldbyName('GODS_ID').AsString,
+               FieldbyName('PROPERTY_01').AsString,
+               FieldbyName('PROPERTY_02').AsString,
+               FieldbyName('BATCH_NO').AsString,
+               FieldbyName('CALC_AMOUNT').asFloat,
+               roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1);
+  end;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STO_CHANGEDATA';
+       MaxCol := RowAccessor.ColumnCount-1;
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+  InsertStorageInfo;
+end;
+
+function TSyncChangeDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
+       'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+    rs.Params.AssignValues(Params); 
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if FieldbyName('CHANGE_TYPE').AsString = '1' then
+        DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+                   rs.FieldbyName('GODS_ID').AsString,
+                   rs.FieldbyName('PROPERTY_01').AsString,
+                   rs.FieldbyName('PROPERTY_02').AsString,
+                   rs.FieldbyName('BATCH_NO').AsString,
+                   rs.FieldbyName('CALC_AMOUNT').asFloat,
+                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3)
+        else
+        IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+                   rs.FieldbyName('GODS_ID').AsString,
+                   rs.FieldbyName('PROPERTY_01').AsString,
+                   rs.FieldbyName('PROPERTY_02').AsString,
+                   rs.FieldbyName('BATCH_NO').AsString,
+                   rs.FieldbyName('CALC_AMOUNT').AsFloat,
+                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3);
+        rs.Next;
+      end;
+    AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
+  finally
+    rs.Free;
+  end;
+end;
+
 initialization
   RegisterClass(TChangeOrderV60);
   RegisterClass(TChangeDataV60);
+  RegisterClass(TSyncChangeOrderV60);
+  RegisterClass(TSyncChangeDataV60);
 finalization
   UnRegisterClass(TChangeOrderV60);
   UnRegisterClass(TChangeDataV60);
+  UnRegisterClass(TSyncChangeOrderV60);
+  UnRegisterClass(TSyncChangeDataV60);
 end.

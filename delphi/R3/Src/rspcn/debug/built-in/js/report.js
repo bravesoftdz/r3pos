@@ -217,20 +217,28 @@
 			d = d.getWeekStartDate();
 			var d1 = d.format('yyyyMMdd');		//本周第一天
 			ds.createDataSet();	
-		var sql = "select a.tenant_id,count(distinct a.GODS_ID) as amount,sum(case when b.RELATION_ID=1000006 then case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end else 0 end ) as jy_amount,sum(case when b.RELATION_ID=1000006 then a.CALC_AMOUNT*b.NEW_OUTPRICE else 0 end ) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2+" group by a.tenant_id";
+		var sql = "select case when b.RELATION_ID=1000006 then relation_id else 0 end as relation_id,count(distinct a.gods_id) as amount,sum(case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end ) as jy_amount,sum(a.CALC_AMOUNT*b.NEW_OUTPRICE) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2+" group by case when b.RELATION_ID=1000006 then relation_id else 0 end";
 			sql = rsp.parseSQL(sql);
 			rsp.setLocalJson('jhtjqk',"进货统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
-			var flag = ds.locate('tenant_id',tenant_id);
+			var amount = 0;
+			var jy_amount = 0;
+			var jy_money = 0;
+			var fy_amount = 0;
+			var fy_money = 0;
+			var flag = ds.locate('relation_id',1000006);		//定位卷烟商品
 			if(flag){
-				var amount = ds.getAsString("amount");
-				var jy_amount = ds.getAsString("jy_amount");
-				var jy_money = ds.getAsString("yj_money");
-				$("#jhtjqk").html("(本周进货"+amount+"种商品，卷烟"+jy_amount+"条，总计"+jy_money+"元。)");		
-			}else{
-				$("#jhtjqk").html("(本周进货0种商品，卷烟0条，总计0元。)");		
+				amount = ds.getAsString("amount");
+				jy_amount = ds.getAsString("jy_amount");
+				jy_money = ds.getAsString("yj_money");
 			}
+			flag = ds.locate('relation_id',0);		//定位非烟商品
+			if(flag){
+				fy_amount = ds.getAsString("amount");
+				fy_money = ds.getAsString("yj_money");
+			}			
+			$("#jhtjqk").html("(本周进货"+amount+"种卷烟，共计"+jy_amount+"条，金额"+jy_money+"元；进货非烟"+fy_amount+"种，共计"+fy_money+"元。)");		
 			ds.eraseDataSet();
 		}catch(e){
 			alert(e.message);
@@ -255,7 +263,7 @@
 			var sto_amt = ds.getAsString("STO_AMT");
 			var amount = ds.getAsString("AMOUNT");
 			var amoney = ds.getAsString("AMONEY");
-			$("#kcqk").html("(经营商品:"+goods_amt+"种,有效商品"+sto_amt+"种,库存数量:"+amount+",库存金额:"+amoney+"元。)");
+			$("#kcqk").html("(当前经营商品:"+goods_amt+"种,其中有效商品"+sto_amt+"种,总库存数量:"+amount+",库存金额:"+amoney+"元。)");
 			ds.eraseDataSet();
 		}catch(e){
 			alert(e.message);

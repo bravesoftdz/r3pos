@@ -316,8 +316,6 @@ type
     FFirstLogin:boolean;
     function  CheckRegister:boolean;
     procedure OpenShopInfo(tenantId:string='';shopId:string='');
-    procedure GetShopInfo;
-    procedure SaveShopInfo;
     procedure SaveRegisterParams;
 
     procedure SyncData;
@@ -344,8 +342,11 @@ type
     procedure SetCurUserRoleIds(const Value: string);
   public
     AObj:TRecord_;
+    procedure GetShopInfo;
+    procedure SaveShopInfo;
     procedure showForm;override;
     function checkCanClose:boolean;override;
+    class function AutoRegister:boolean;
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
     property NewUser:boolean read FNewUser write SetNewUser;
     property CurUserId:string read FCurUserId write SetCurUserId;
@@ -421,7 +422,7 @@ var
   tenantdoc,shopdoc:IXMLDomDocument;
   caTenant,caShopInfo:IXMLDOMNode;
 begin
-  if not rspFactory.xsmLogin(token.xsmCode,3) then Close;
+  if not rspFactory.xsmLogin(token.xsmCode,3) then Exit;
 
   Params := TftParamList.Create(nil);
   try
@@ -606,7 +607,9 @@ end;
 procedure TfrmSysDefine.btnSaveShopInfoClick(Sender: TObject);
 begin
   inherited;
+  WriteToObject;
   SaveShopInfo;
+  MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
 
 procedure TfrmSysDefine.SaveShopInfo;
@@ -627,8 +630,6 @@ var
   tmpSysDefine,tmpTenant,tmpShopInfo:TZQuery;
   tmpObj:TRecord_;
 begin
-  WriteToObject;
-
   dataFactory.BeginBatch;
   try
     dataFactory.AddBatch(cdsTenant,'TTenantV60',nil);
@@ -710,14 +711,16 @@ begin
     OpenShopInfo(cdsShopInfo.FieldByName('TENANT_ID').AsString,cdsShopInfo.FieldByName('SHOP_ID').AsString);
   end;
 
+  if edtINPUT_MODE.ItemIndex < 0 then edtINPUT_MODE.ItemIndex := 0;
+  if edtINDUSTRY_TYPE.ItemIndex < 0 then edtINDUSTRY_TYPE.ItemIndex := 0;
+
   Params := TftParamList.Create(nil);
   tmpSysDefine := TZQuery.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
     SetValue(tmpSysDefine,'INPUT_MODE',inttostr(edtINPUT_MODE.ItemIndex));
-    if edtINDUSTRY_TYPE.ItemIndex>=0 then
-       SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
+    SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
     dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60')
   finally
     Params.Free;
@@ -745,8 +748,6 @@ begin
   dllGlobal.GetZQueryFromName('CA_TENANT').Close;
   dllGlobal.GetZQueryFromName('CA_SHOP_INFO').Close;
   dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
-
-  MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
 
 procedure TfrmSysDefine.SaveRegisterParams;
@@ -1651,6 +1652,25 @@ begin
     OpenShopInfo;
 
   ReadFromObject(0);
+end;
+
+class function TfrmSysDefine.AutoRegister: boolean;
+begin
+  if token.tenantId <> '' then Exit;
+  with TfrmSysDefine.Create(nil) do
+  begin
+    try
+      try
+        GetShopInfo;
+      except
+        MessageBox(Handle,'尚未开通门店管理功能，请联系客户经理...','友情提示..',MB_OK);
+      end;
+      SaveShopInfo;
+      result := true;
+    finally
+      Free;
+    end;
+  end;
 end;
 
 initialization

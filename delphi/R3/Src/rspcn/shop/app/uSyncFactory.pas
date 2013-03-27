@@ -96,7 +96,7 @@ var SyncFactory:TSyncFactory;
 implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,
-     uRightsFactory,dllApi;
+     uRightsFactory,dllApi,ufrmSysDefine;
 
 constructor TSyncFactory.Create;
 begin
@@ -1013,6 +1013,7 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
+  TfrmSysDefine.AutoRegister;
   if not CheckInitSync then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin

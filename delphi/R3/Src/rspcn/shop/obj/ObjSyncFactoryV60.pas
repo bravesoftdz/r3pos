@@ -29,12 +29,51 @@ type
     property MaxCol:integer read FMaxCol write SetMaxCol;
   end;
 
+  // 功能模块同步
   TSyncCaModuleV60=class(TSyncSingleTableV60)
   public
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  // 台账同步
+  TSyncRckDaysCloseListV60=class(TZFactory)
+  public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  TSyncRckDaysCloseV60=class(TSyncSingleTableV60)
+  public
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  TSyncRckStocksDataV60=class(TSyncSingleTableV60)
+  public
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  // 销售单同步
+  TSyncSalesOrderListV60=class(TZFactory)
+  public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  // 进货单同步
+  TSyncStockOrderListV60=class(TZFactory)
+  public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  // 调整单同步
+  TSyncChangeOrderListV60=class(TZFactory)
+  public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
 implementation
@@ -327,6 +366,8 @@ begin
   inherited;
 end;
 
+{ TSyncCaModuleV60 }
+
 function TSyncCaModuleV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var js:string;
 begin
@@ -385,10 +426,121 @@ begin
   result := true;
 end;
 
+{ TSyncRckDaysCloseListV60 }
+
+function TSyncRckDaysCloseListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var str:string;
+begin
+  str :=
+    'select TENANT_ID,SHOP_ID,CREA_DATE from '+Params.ParambyName('TABLE_NAME').AsString+' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     str := str + ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := str + ' order by TIME_STAMP asc';
+end;
+
+{ TSyncRckDaysCloseV60 }
+
+function TSyncRckDaysCloseV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE';
+end;
+
+function TSyncRckDaysCloseV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
+  inherited BeforeInsertRecord(AGlobal);
+end;
+
+function TSyncRckDaysCloseV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update RCK_DAYS_CLOSE set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE'),self);
+end;
+
+{ TSyncRckStocksDataV60 }
+
+function TSyncRckStocksDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE=:CREA_DATE';
+end;
+
+function TSyncRckStocksDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var str:string;
+begin
+  str := 'delete from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE=:CREA_DATE';
+  AGlobal.ExecSQL(str,Params);
+end;
+
+function TSyncRckStocksDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  Params.ParamByName('TABLE_NAME').AsString := 'RCK_STOCKS_DATA';
+  inherited BeforeInsertRecord(AGlobal);
+end;
+
+{ TSyncSalesOrderListV60 }
+
+function TSyncSalesOrderListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var str:string;
+begin
+  str :=
+    'select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE from SAL_SALESORDER where TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or CLIENT_ID=:SHOP_ID) and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := str + ' order by TIME_STAMP asc';
+end;
+
+{ TSyncStockOrderListV60 }
+
+function TSyncStockOrderListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var str:string;
+begin
+  str :=
+    'select TENANT_ID,SHOP_ID,STOCK_ID,STOCK_DATE from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := str + ' order by TIME_STAMP asc';
+end;
+
+{ TSyncChangeOrderListV60 }
+
+function TSyncChangeOrderListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var str:string;
+begin
+  str :=
+    'select TENANT_ID,SHOP_ID,CHANGE_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := str + ' order by TIME_STAMP asc';
+end;
+
 initialization
   RegisterClass(TSyncSingleTableV60);
   RegisterClass(TSyncCaModuleV60);
+
+  RegisterClass(TSyncRckDaysCloseListV60);
+  RegisterClass(TSyncRckDaysCloseV60);
+  RegisterClass(TSyncRckStocksDataV60);
+
+  RegisterClass(TSyncSalesOrderListV60);
+  RegisterClass(TSyncStockOrderListV60);
+  RegisterClass(TSyncChangeOrderListV60);
 finalization
   UnRegisterClass(TSyncSingleTableV60);
   UnRegisterClass(TSyncCaModuleV60);
+
+  UnRegisterClass(TSyncRckDaysCloseListV60);
+  UnRegisterClass(TSyncRckDaysCloseV60);
+  UnRegisterClass(TSyncRckStocksDataV60);
+
+  UnRegisterClass(TSyncSalesOrderListV60);
+  UnRegisterClass(TSyncStockOrderListV60);
+  UnRegisterClass(TSyncChangeOrderListV60);
 end.

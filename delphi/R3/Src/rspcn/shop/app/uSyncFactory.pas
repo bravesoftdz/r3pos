@@ -10,7 +10,8 @@ const
   MSC_SET_MAX=WM_USER+1;
   MSC_SET_POSITION=WM_USER+2;
   MSC_SET_CAPTION=WM_USER+3;
-  MSC_SET_CLOSE=WM_USER+4;
+  MSC_SET_ORDER_COUNT=WM_USER+4;
+  MSC_SET_CLOSE=WM_USER+5;
 
 type
   PSynTableInfo=^TSynTableInfo;
@@ -53,7 +54,12 @@ type
     procedure InitSyncList;
     procedure SyncList;
     procedure SyncBasic;
+    procedure SyncBizData;
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
+    procedure SyncStockOrder;
+    procedure SyncSalesOrder;
+    procedure SyncChangeOrder;
+    procedure SyncRckDays;
     function  CheckInitSync:boolean;
     function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
   protected
@@ -67,11 +73,14 @@ type
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
     procedure SetProCaption(caption:integer);
+    procedure SetProOrderCount(all,now:integer);
   public
     constructor Create;
     destructor  Destroy;override;
     // 登录时同步
     procedure LoginSync(PHWnd:THandle);
+    // 退出时同步
+    procedure LogoutSync(PHWnd:THandle);
     // 注册时同步
     procedure RegisterSync(PHWnd:THandle);
     function  GetTableName(tableFlag:integer):string;
@@ -950,6 +959,11 @@ begin
   PostMessage(ProHandle, MSC_SET_CAPTION, caption, 0);
 end;
 
+procedure TSyncFactory.SetProOrderCount(all,now:integer);
+begin
+  PostMessage(ProHandle, MSC_SET_ORDER_COUNT, all, now);
+end;
+
 procedure TSyncFactory.SetProMax(max: integer);
 begin
   PostMessage(ProHandle, MSC_SET_MAX, max, 0);
@@ -1009,6 +1023,22 @@ begin
   end;
 end;
 
+procedure TSyncFactory.LogoutSync(PHWnd: THandle);
+begin
+  if dllApplication.mode = 'demo' then Exit;
+  with TfrmSyncData.CreateParented(PHWnd) do
+  begin
+    try
+      hWnd := PHWnd;
+      ShowForm;
+      BringToFront;
+      SyncFactory.SyncBizData;
+    finally
+      Free;
+    end;
+  end;
+end;
+
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
@@ -1031,8 +1061,544 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SyncRckDays;
+var
+  tbName:string;
+  maxTimeStamp:int64;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'RCK_DAYS_CLOSE';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId); 
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('SYNC_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  try
+    SetTicket;
+    dataFactory.Open(ls,'TSyncRckDaysCloseListV60',Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
+    ls.First;
+    while not ls.Eof do
+    begin
+      SetProOrderCount(ls.RecordCount,ls.RecNo);
+      SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
+
+      rs_h.Close;
+      rs_d.Close;
+      Params.ParamByName('CREA_DATE').AsInteger := ls.FieldbyName('CREA_DATE').AsInteger;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('RCK_DAYS_CLOSE');
+          dataFactory.AddBatch(rs_h,'TSyncRckDaysCloseV60',Params);
+          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('RCK_STOCKS_DATA');
+          dataFactory.AddBatch(rs_d,'TSyncRckStocksDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SHOP_ID;CREA_DATE';
+          dataFactory.AddBatch(cs_h,'TSyncRckDaysCloseV60',Params);
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SHOP_ID;BILL_DATE';
+          dataFactory.AddBatch(cs_d,'TSyncRckStocksDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+      rs_h.Delete;
+      dataFactory.UpdateBatch(rs_h,'TSyncRckDaysCloseV60',Params);
+      SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
+
+      ls.Next;
+    end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncSalesOrder;
+var
+  tbName:string;
+  tmpObj:TRecord_;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'SAL_SALESORDER';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('SYNC_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SyncFlag').AsString := '1';
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  try
+    SetTicket;
+    dataFactory.Open(ls,'TSyncSalesOrderListV60',Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
+    ls.First;
+    while not ls.Eof do
+    begin
+      SetProOrderCount(ls.RecordCount,ls.RecNo);
+      SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+      Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+          dataFactory.AddBatch(rs_h,'TSalesOrderV60',Params);
+          dataFactory.AddBatch(rs_d,'TSalesDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+          dataFactory.AddBatch(cs_h,'TSalesOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TSalesDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      if cs_h.IsEmpty then cs_h.Append else cs_h.Edit;
+      tmpObj := TRecord_.Create;
+      try
+        tmpObj.ReadFromDataSet(rs_h);
+        tmpObj.WriteToDataSet(cs_h);
+      finally
+        tmpObj.Free;
+      end;
+
+      cs_d.First;
+      while not cs_d.Eof do cs_d.Delete;
+
+      rs_d.First;
+      tmpObj := TRecord_.Create;
+      try
+        while not rs_d.Eof do
+        begin
+          cs_d.Append;
+          tmpObj.ReadFromDataSet(rs_d);
+          tmpObj.WriteToDataSet(cs_d);
+          rs_d.Next;
+        end;
+      finally
+        tmpObj.Free;
+      end;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          dataFactory.AddBatch(cs_h,'TSalesOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TSalesDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+ 
+      dataFactory.ExecSQL('update SAL_SALESORDER set COMM = ''10'' where TENANT_ID='+rs_h.FieldByName('TENANT_ID').AsString+' and SHOP_ID='''+rs_h.FieldByName('SHOP_ID').AsString+''' and SALES_ID='''+rs_h.FieldByName('SALES_ID').AsString+'''');
+      SetSynTimeStamp(token.tenantId,tbName,StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString),token.shopId);
+
+      ls.Next;
+    end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncStockOrder;
+var
+  tbName:string;
+  tmpObj:TRecord_;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'STK_STOCKORDER';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId); 
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('SYNC_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SyncFlag').AsString := '1';
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  try
+    SetTicket;
+    dataFactory.Open(ls,'TSyncStockOrderListV60',Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
+    ls.First;
+    while not ls.Eof do
+    begin
+      SetProOrderCount(ls.RecordCount,ls.RecNo);
+      SetProPosition(100 div ls.RecordCount * ls.RecNo);
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+      Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+          dataFactory.AddBatch(rs_h,'TStockOrderV60',Params);
+          dataFactory.AddBatch(rs_d,'TStockDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+          dataFactory.AddBatch(cs_h,'TStockOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TStockDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      if cs_h.IsEmpty then cs_h.Append else cs_h.Edit;
+      tmpObj := TRecord_.Create;
+      try
+        tmpObj.ReadFromDataSet(rs_h);
+        tmpObj.WriteToDataSet(cs_h);
+      finally
+        tmpObj.Free;
+      end;
+
+      cs_d.First;
+      while not cs_d.Eof do cs_d.Delete;
+
+      rs_d.First;
+      tmpObj := TRecord_.Create;
+      try
+        while not rs_d.Eof do
+        begin
+          cs_d.Append;
+          tmpObj.ReadFromDataSet(rs_d);
+          tmpObj.WriteToDataSet(cs_d);
+          rs_d.Next;
+        end;
+      finally
+        tmpObj.Free;
+      end;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          dataFactory.AddBatch(cs_h,'TStockOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TStockDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      dataFactory.ExecSQL('update STK_STOCKORDER set COMM = ''10'' where TENANT_ID='+rs_h.FieldByName('TENANT_ID').AsString+' and SHOP_ID='''+rs_h.FieldByName('SHOP_ID').AsString+''' and STOCK_ID='''+rs_h.FieldByName('STOCK_ID').AsString+'''');
+      SetSynTimeStamp(token.tenantId,tbName,StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString),token.shopId);
+
+      ls.Next;
+    end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncChangeOrder;
+var
+  tbName:string;
+  tmpObj:TRecord_;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'STO_CHANGEORDER';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId); 
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('SYNC_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SyncFlag').AsString := '1';
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  try
+    SetTicket;
+    dataFactory.Open(ls,'TSyncChangeOrderListV60',Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
+    ls.First;
+    while not ls.Eof do
+    begin
+      SetProOrderCount(ls.RecordCount,ls.RecNo);
+      SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+      Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+          dataFactory.AddBatch(rs_h,'TChangeOrderV60',Params);
+          dataFactory.AddBatch(rs_d,'TChangeDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+          dataFactory.AddBatch(cs_h,'TChangeOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TChangeDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      if cs_h.IsEmpty then cs_h.Append else cs_h.Edit;
+      tmpObj := TRecord_.Create;
+      try
+        tmpObj.ReadFromDataSet(rs_h);
+        tmpObj.WriteToDataSet(cs_h);
+      finally
+        tmpObj.Free;
+      end;
+
+      cs_d.First;
+      while not cs_d.Eof do cs_d.Delete;
+
+      rs_d.First;
+      tmpObj := TRecord_.Create;
+      try
+        while not rs_d.Eof do
+        begin
+          cs_d.Append;
+          tmpObj.ReadFromDataSet(rs_d);
+          tmpObj.WriteToDataSet(cs_d);
+          rs_d.Next;
+        end;
+      finally
+        tmpObj.Free;
+      end;
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          dataFactory.AddBatch(cs_h,'TChangeOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TChangeDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      dataFactory.ExecSQL('update STO_CHANGEORDER set COMM = ''10'' where TENANT_ID='+rs_h.FieldByName('TENANT_ID').AsString+' and SHOP_ID='''+rs_h.FieldByName('SHOP_ID').AsString+''' and CHANGE_ID='''+rs_h.FieldByName('CHANGE_ID').AsString+'''');
+      SetSynTimeStamp(token.tenantId,tbName,StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString),token.shopId);
+
+      ls.Next;
+    end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncBizData;
+var n:PSynTableInfo;
+begin
+  try
+    ClearSyncList;
+    new(n);
+    n^.tbname := 'STK_STOCKORDER';
+    n^.tableFlag := 0;
+    n^.tbtitle := '进货单';
+    FList.Add(n);
+    new(n);
+    n^.tbname := 'SAL_SALESORDER';
+    n^.tableFlag := 1;
+    n^.tbtitle := '销售单';
+    FList.Add(n);
+    new(n);
+    n^.tbname := 'STO_CHANGEORDER';
+    n^.tableFlag := 2;
+    n^.tbtitle := '损益单';
+    FList.Add(n);
+    new(n);
+    n^.tbname := 'RCK_DAYS_CLOSE';
+    n^.tableFlag := 3;
+    n^.tbtitle := '日台账';
+    FList.Add(n);
+
+    SetProMax(400);
+    SetProCaption(0);
+    SyncStockOrder;
+    SetProPosition(100);
+    SetProCaption(1);
+    SyncSalesOrder;
+    SetProPosition(200);
+    SetProCaption(2);
+    SyncChangeOrder;
+    SetProPosition(300);
+    SetProCaption(3);
+    SyncRckDays;
+    SetProPosition(400);
+  finally
+    ReadTimeStamp;
+  end
+end;
+
 initialization
   SyncFactory := TSyncFactory.Create;
 finalization
-  SyncFactory.Free;
+  if Assigned(SyncFactory) then FreeAndNil(SyncFactory);
 end.

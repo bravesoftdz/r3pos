@@ -279,6 +279,7 @@ type
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
     RzLabel51: TRzLabel;
+    RzBmpButton5: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -306,6 +307,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure RzLabel37Click(Sender: TObject);
     procedure btnChangeClick(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     SyncDataing:boolean;
     FCurUserId:string;
@@ -358,7 +360,7 @@ type
 implementation
 
 uses udllGlobal,udataFactory,uTokenFactory,uRspFactory,udllShopUtil,EncDec,ufrmSyncData,
-     uSyncFactory,udllFnUtil,uRspSyncFactory,uRightsFactory,udllDsUtil,ufrmUserRights,
+     uSyncFactory,uFnUtil,uRspSyncFactory,uRightsFactory,udllDsUtil,ufrmUserRights,
      uDevFactory;
 
 {$R *.dfm}
@@ -1016,9 +1018,9 @@ begin
   ReadBarCodeRule;
 
   if cdsSysDefine.Locate('DEFINE','USING_DATE',[]) then
-     edtUSING_DATE.Date := udllFnUtil.FnTime.fnStrtoDate(cdsSysDefine.FieldByName('VALUE').AsString)
+     edtUSING_DATE.Date := FnTime.fnStrtoDate(cdsSysDefine.FieldByName('VALUE').AsString)
   else
-     edtUSING_DATE.Date := udllFnUtil.FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD',now()));
+     edtUSING_DATE.Date := FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD',now()));
 
   if cdsSysDefine.Locate('DEFINE','ZERO_OUT',[]) then
   begin
@@ -1651,6 +1653,12 @@ begin
      result := false
   else
      result := true;
+end;
+
+procedure TfrmSysDefine.RzBmpButton5Click(Sender: TObject);
+begin
+  inherited;
+  SyncFactory.LogoutSync(self.Handle);
 end;
 
 initialization

@@ -83,7 +83,7 @@ type
     Image3: TImage;
     pageTab: TRzPanel;
     RzFormShape1: TRzFormShape;
-    RzBmpButton2: TRzBmpButton;
+    btnClose: TRzBmpButton;
     btnWindow: TRzBmpButton;
     RzBmpButton4: TRzBmpButton;
     RzTrayIcon1: TRzTrayIcon;
@@ -125,7 +125,7 @@ type
       var Cancel: Boolean);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure RzBmpButton2Click(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
     procedure btnWindowClick(Sender: TObject);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure btnPageCloseClick(Sender: TObject);
@@ -141,6 +141,7 @@ type
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure RzBmpButton5Click(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     FWindowState: TWindowState;
     FInitialized: boolean;
@@ -518,7 +519,10 @@ begin
   if PageControl1.PageCount<=1 then Exit;
   tabEx := (PageControl1.ActivePage as TTabSheetEx);
   case tabEx.url.appFlag of
-  0:tabEx.EWB.Free;
+  0:begin
+      tabEx.EWB.Stop;
+      tabEx.EWB.Free;
+    end;
   1:begin
       if not dllFactory.close(tabEx.url) then Exit;
     end;
@@ -548,6 +552,8 @@ begin
   RzProgressBar1.Percent := 1;
   RzProgressBar1.Visible := true;
   IEAddress1.Visible := false;
+  btnPageClose.Enabled := false;
+  btnClose.Enabled := false;
   try
     if isRspcn(_url) then
        begin
@@ -594,6 +600,8 @@ begin
      RzProgressBar1.Percent := 100;
      RzProgressBar1.Visible := false;
      IEAddress1.Visible := true;
+     btnPageClose.Enabled := true;
+     btnClose.Enabled := true;
   end;
 end;
 
@@ -636,12 +644,15 @@ constructor TfrmBrowerForm.Create(AOwner: TComponent);
 begin
   inherited;
   Buf := TStringList.Create;
+  dllFactory := nil;
 end;
 
 destructor TfrmBrowerForm.Destroy;
 begin
   if Initialized then
      begin
+        dllFactory.Clear;
+        dllFactory.Free;
         if whKeyboard<>0 then UnhookWindowsHookEx(whKeyboard);
         Timer1.Enabled := false;
         Initialized := false;
@@ -649,7 +660,6 @@ begin
         GlobalDeleteAtom(hotKeyid);
         jsExt := nil;
         if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
-        dllFactory.Free;
      end;
   Buf.Free;
   inherited;
@@ -960,7 +970,7 @@ begin
   dllFactory.resize;
 end;
 
-procedure TfrmBrowerForm.RzBmpButton2Click(Sender: TObject);
+procedure TfrmBrowerForm.btnCloseClick(Sender: TObject);
 begin
   close;
 end;
@@ -1104,6 +1114,8 @@ begin
   RzProgressBar1.Percent := 1;
   RzProgressBar1.Visible := true;
   IEAddress1.Visible := false;
+  btnPageClose.Enabled := false;
+  btnClose.Enabled := false;
   try
     urlToken.appFlag := 0;
     urlToken.url := _url;
@@ -1153,6 +1165,8 @@ begin
      RzProgressBar1.Percent := 100;
      RzProgressBar1.Visible := false;
      IEAddress1.Visible := true;
+     btnPageClose.Enabled := true;
+     btnClose.Enabled := true;
   end;
 end;
 
@@ -1308,13 +1322,21 @@ end;
 
 function TfrmBrowerForm.Install: boolean;
 begin
-  jsExt :=  TjavaScriptExt.Create;
-  CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
-  CoInternetGetSession(0, InternetSession, 0);
-  InternetSession.RegisterNameSpace(Factory, Class_NSHandler, 'rspcn', 0, nil, 0);
+  application.ShowMainForm := false;
+  try
+    jsExt :=  TjavaScriptExt.Create;
+    CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
+    CoInternetGetSession(0, InternetSession, 0);
+    InternetSession.RegisterNameSpace(Factory, Class_NSHandler, 'rspcn', 0, nil, 0);
 
-  jsExt := nil;
-  if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
+    jsExt := nil;
+    if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
+
+    messageBox(handle,'您已经安装成功了，感谢你的使用','友情提示..',MB_OK+MB_ICONINFORMATION);
+  except
+    messageBox(handle,'安装失败了，请关闭360等相关防护服务再重新','友情提示..',MB_OK+MB_ICONINFORMATION);
+  end;
+  application.Terminate;
 end;
 
 procedure TfrmBrowerForm.NavigateComplete2(ASender: TObject;
@@ -1420,7 +1442,7 @@ begin
      end
   else
      begin
-       if lowercase(tabEx.url.moduname)<>'tfrmsaleorder' then
+       if (lowercase(tabEx.url.moduname)<>'tfrmsaleorder') and (lowercase(tabEx.url.moduname)<>'tfrmstockorder') then
           begin
             Buf.Clear;
             Exit;
@@ -1436,7 +1458,7 @@ begin
       Message.Unused := 0;
       SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
       childWnd := GetWindow(childWnd,GW_HWNDNEXT);
-    end;
+    end; 
   while Buf.Count>0 do
     begin
       dllFactory.Send(tabEx.url,Buf[0]);
@@ -1529,6 +1551,19 @@ procedure TfrmBrowerForm.PushTo;
 begin
   Buf.Add(arr);
   PostMessage(handle,WM_SEND_INPUT,0,0);
+end;
+
+procedure TfrmBrowerForm.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  try
+    dllFactory.Clear;
+  except
+    on E:Exception do
+      begin
+         CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+      end;
+  end;
 end;
 
 initialization

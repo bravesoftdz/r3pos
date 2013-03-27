@@ -191,7 +191,7 @@ type
     //¿ì½Ý½¡
     function  doShortCut(s:string):boolean;override;
     procedure DoIsPresent(s:string);
-    procedure DoCustId(s:string);
+    procedure DoCustId(s:string);override;
     procedure DoGuideUser(s:string);
     procedure DoNewOrder;
     procedure DoHangUp;
@@ -1258,7 +1258,7 @@ begin
        begin
          rs.Close;
          rs.SQL.Text :=
-           'select ''#'' as UNION_ID,CLIENT_ID,TENANT_ID from PUB_CUSTOMER where TENANT_ID='+token.tenantId+' and (MOVE_TELE='''+s+''' or ID_NUMBER='''+s+''') and COMM not in (''02'',''12'')';
+           'select ''#'' as UNION_ID,CUST_ID as CLIENT_ID,TENANT_ID from PUB_CUSTOMER where TENANT_ID='+token.tenantId+' and (MOVE_TELE='''+s+''' or ID_NUMBER='''+s+''') and COMM not in (''02'',''12'')';
          dllGlobal.OpenSqlite(rs);
          if rs.IsEmpty then
             begin
@@ -2085,6 +2085,9 @@ begin
         AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
         AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+     end
+  else
+     begin
      end;
 end;
 

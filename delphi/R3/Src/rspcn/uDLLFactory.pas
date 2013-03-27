@@ -88,6 +88,7 @@ type
     destructor Destroy; override;
 
     procedure Init(hWnd:THandle);
+    procedure Clear;
 
     //¶ÁÈ¡ÁîÅÆÐÅÏ¢
     function getTokenInfo:boolean;
@@ -255,10 +256,7 @@ begin
       TObject(FDataSets[i]).Free;
     end;
   FDataSets.Free;
-  for i:=0 to FList.Count-1 do
-    begin
-      TObject(FList[i]).Free;
-    end;
+  Clear;
   FList.Free;
   inherited;
 end;
@@ -631,6 +629,18 @@ begin
   result := pchar(lastError);
 end;
 
+procedure TDLLFactory.Clear;
+var i:integer;
+begin
+  for i:=FList.Count-1 downto 0 do
+    begin
+      if not TDLLPlugin(FList[i]).eraseApp then Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
+      TObject(FList[i]).Free;
+      FList.Delete(i); 
+    end;
+  FList.Clear;
+end;
+
 { TDLLPlugin }
 
 constructor TDLLPlugin.Create(dllname:string);
@@ -666,7 +676,6 @@ destructor TDLLPlugin.Destroy;
 begin
   if dllHandle>0 then
      begin
-       if not eraseApp then Raise Exception.Create(getLastError); 
        FreeLibrary(dllHandle);
      end;
   inherited;

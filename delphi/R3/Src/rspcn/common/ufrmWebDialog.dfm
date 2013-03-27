@@ -16,6 +16,7 @@ object frmWebDialog: TfrmWebDialog
   KeyPreview = True
   OldCreateOrder = False
   Position = poOwnerFormCenter
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 15

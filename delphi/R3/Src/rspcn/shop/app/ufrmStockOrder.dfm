@@ -86,10 +86,10 @@ inherited frmStockOrder: TfrmStockOrder
                   Tag = 5
                   Left = 115
                   Top = 2
-                  Width = 90
+                  Width = 58
                   Height = 20
                   Cursor = crHandPoint
-                  Caption = #36192#36865'/'#20817#25442' [F5] '
+                  Caption = #36192#36865' [F5] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
                   Font.Height = -13
@@ -468,7 +468,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Height = 26
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #23458#25143#21517#31216
+                  Caption = #20379' '#24212' '#21830
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -601,7 +601,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Height = 26
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #38144#21806#26085#26399
+                  Caption = #36827#36135#26085#26399
                   Transparent = True
                   Layout = tlCenter
                   ShadowColor = 16250871
@@ -3877,8 +3877,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3962,8 +3962,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267

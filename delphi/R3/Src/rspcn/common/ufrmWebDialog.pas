@@ -17,6 +17,8 @@ type
     RzBmpButton2: TRzBmpButton;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FdbState: TDataSetState;
     procedure OnEnterPress(CurrentForm: TForm; Key: Char);
@@ -81,6 +83,12 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TfrmWebDialog.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key=27 then Close;
 end;
 
 end.

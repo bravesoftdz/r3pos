@@ -147,6 +147,7 @@ type
     procedure N5Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormResize(Sender: TObject);
+    procedure DoKeyClick(sender:TObject);
   private
 
     // 散装条码参数
@@ -178,7 +179,6 @@ type
     procedure InitRecord;
     function EnCodeBarcode: string;
 
-    procedure DoKeyClick(sender:TObject);
 
     function  FindColumn(FieldName:string):TColumnEh;
     procedure FocusColumn(FieldName: string);
@@ -224,6 +224,7 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
     function DecodeBarcode(BarCode: string):integer;
+    procedure DoCustId(s:string);virtual;
     procedure BarcodeInput(_Buf:string);override;
   public
     { Public declarations }
@@ -302,19 +303,6 @@ end;
 procedure TfrmOrderForm.SetinputMode(const Value: integer);
 begin
   FinputMode := Value;
-  case Value of
-  0:begin //传统输入
-      edtInput.Visible := false;
-      lblHint.Visible := false;
-      lblInput.Caption := '请按【F2】进入快捷输入模式...';
-      lblInput.Font.Color := clRed ;
-    end;
-  1:begin //快捷输入
-      edtInput.Visible := true;
-      lblHint.Visible := true;
-      lblInput.Font.Color := clNavy ;
-    end;
-  end;
 end;
 
 constructor TfrmOrderForm.Create(AOwner: TComponent);
@@ -400,7 +388,8 @@ begin
   if Key = VK_PAUSE then
      begin
        inputMode := 1;
-       inputFlag := 0;
+       if inputFlag<>6 then
+          inputFlag := 0;
        edtInput.SetFocus;
      end;
 end;
@@ -1800,7 +1789,7 @@ var
   AObj:TRecord_;
 begin
   try
-  if Key=#13 then
+  if (Key=#13) and (edtInput.Focused) then
     begin
       s := trim(edtInput.Text);
       if (dbState = dsBrowse) then NewOrder;
@@ -2502,10 +2491,19 @@ end;
 procedure TfrmOrderForm.BarcodeInput(_Buf: string);
 begin
   inherited;
+  edtInput.Text := '';
   try
-    if edtInput.CanFocus then edtInput.SetFocus;
-    if (dbState = dsBrowse) then NewOrder;
-    DecodeBarcode(_Buf);
+    case inputFlag of
+    6:begin
+        if (dbState = dsBrowse) then NewOrder;
+        doCustId(_Buf);
+      end
+    else
+      begin
+        if (dbState = dsBrowse) then NewOrder;
+        DecodeBarcode(_Buf);
+      end;
+    end;
   finally
     edtInput.Text := '';
     edtInput.SelectAll;
@@ -2535,6 +2533,11 @@ begin
        if assigned(OnKeyPress) then
           OnKeyPress(Sender,KeyChr);
      end;
+end;
+
+procedure TfrmOrderForm.DoCustId(s: string);
+begin
+
 end;
 
 end.

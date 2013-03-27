@@ -22,7 +22,7 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TfrmBrowerForm, frmBrowerForm);
-  if paramStr(2)='-install' then
+  if paramStr(1)='-install' then
      frmBrowerForm.Install
   else
      begin

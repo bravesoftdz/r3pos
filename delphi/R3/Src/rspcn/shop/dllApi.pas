@@ -101,7 +101,10 @@ begin
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
     result := true;
-    if token.online and (token.tenantId<>'') then SyncFactory.LoginSync(appWnd);
+    if token.online then
+       begin
+         SyncFactory.LoginSync(appWnd);
+       end;
     result := true;
   except
     on E:Exception do
@@ -185,6 +188,7 @@ var
 begin
   try
     if not Assigned(webForm) then Exit;
+    if assigned(SyncFactory) then SyncFactory.LogoutSync(dllApplication.handle);
     for i:=webForm.Count -1 downto 0 do
        begin
          TfrmWebForm(webForm.Objects[i]).Free;

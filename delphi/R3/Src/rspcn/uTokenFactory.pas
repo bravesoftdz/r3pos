@@ -300,5 +300,5 @@ end;
 initialization
   token := TToken.create;
 finalization
-  token.Free;
+  if assigned(token) then FreeAndNil(token);
 end.

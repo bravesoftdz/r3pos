@@ -173,7 +173,7 @@ type
     //¿ì½Ý½¡
     function doShortCut(s:string):boolean;override;
     procedure DoIsPresent(s:string);
-    procedure DoCustId(s:string);
+    procedure DoCustId(s:string);override;
     procedure DoGuideUser(s:string);
     procedure DoNewOrder;
     procedure DoSaveOrder;
@@ -460,6 +460,12 @@ procedure TfrmPosInOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -494,6 +500,12 @@ procedure TfrmPosInOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   try
     if Text='' then
        r := 0

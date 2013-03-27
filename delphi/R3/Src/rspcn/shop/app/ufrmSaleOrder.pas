@@ -176,7 +176,7 @@ type
     //快捷健
     function  doShortCut(s:string):boolean;override;
     procedure DoIsPresent(s:string);
-    procedure DoCustId(s:string);
+    procedure DoCustId(s:string);override;
     procedure DoGuideUser(s:string);
     procedure DoNewOrder;
     procedure DoHangUp;
@@ -648,6 +648,12 @@ procedure TfrmSaleOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Currency;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -685,6 +691,12 @@ var
   allow :boolean;
   bs:TZQuery;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
@@ -770,6 +782,12 @@ var
   allow :boolean;
   bs:TZQuery;
 begin
+   if length(Text)>10 then
+      begin
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         Exit;
+      end;
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
@@ -1258,7 +1276,7 @@ begin
        begin
          rs.Close;
          rs.SQL.Text :=
-           'select ''#'' as UNION_ID,CLIENT_ID,TENANT_ID from PUB_CUSTOMER where TENANT_ID='+token.tenantId+' and (MOVE_TELE='''+s+''' or ID_NUMBER='''+s+''') and COMM not in (''02'',''12'')';
+           'select ''#'' as UNION_ID,CUST_ID as CLIENT_ID,TENANT_ID from PUB_CUSTOMER where TENANT_ID='+token.tenantId+' and (MOVE_TELE='''+s+''' or ID_NUMBER='''+s+''') and COMM not in (''02'',''12'')';
          dllGlobal.OpenSqlite(rs);
          if rs.IsEmpty then
             begin

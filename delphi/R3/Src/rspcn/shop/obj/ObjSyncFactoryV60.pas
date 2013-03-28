@@ -173,7 +173,7 @@ var
 begin
   if Params.ParamByName('TABLE_NAME').AsString = 'SYS_DEFINE' then
   begin
-    if FieldbyName('DEFINE').asString='USING_DATE' then
+    if (FindField('DEFINE') <> nil) and (FieldbyName('DEFINE').AsString='USING_DATE') then
        begin
          rs := TZQuery.Create(nil);
          try
@@ -409,15 +409,15 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    Str := 'select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').asString+''' and TIME_STAMP>'+Params.ParambyName('TIME_STAMP').asString;
+    Str := 'select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').AsString+''' and TIME_STAMP>'+Params.ParambyName('TIME_STAMP').AsString;
     if Params.ParamByName('SYN_COMM').AsBoolean then
        Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
     rs.SQL.Text := Str;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP=0 and PROD_ID='''+Params.ParambyName('PROD_ID').asString+''''
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP=0 and PROD_ID='''+Params.ParambyName('PROD_ID').AsString+''''
     else
-       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').asString+'''';
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').AsString+'''';
     SelectSQL.Text := Str;
   finally
     rs.Free;

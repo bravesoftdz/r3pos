@@ -18,7 +18,7 @@ type
     procedure downloadGoodsSort;
     procedure copyGoodsSort;
     procedure SyncAll;
-    procedure SetProCaption(caption:integer);
+    procedure SetProCaption;override;
   end;
 
 var RspSyncFactory:TRspSyncFactory;
@@ -724,71 +724,39 @@ begin
 end;
 
 procedure TRspSyncFactory.SyncAll;
-var n:PSynTableInfo;
 begin
-  ClearSyncList;
-  new(n);
-  n^.tbname := 'CA_TENANT';
-  n^.tableFlag := 0;
-  n^.tbtitle := '企业信息';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'CA_RELATION';
-  n^.tableFlag := 1;
-  n^.tbtitle := '供应链信息';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'CA_RELATIONS';
-  n^.tableFlag := 2;
-  n^.tbtitle := '供应关系';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_UNION_INFO';
-  n^.tableFlag := 3;
-  n^.tbtitle := '商盟信息';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_GOODSSORT';
-  n^.tableFlag := 4;
-  n^.tbtitle := '商品分类';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'CA_MODULE';
-  n^.tableFlag := 5;
-  n^.tbtitle := '功能模块';
-  FList.Add(n);
-
   SetProMax(6);
   SetProPosition(0);
-  SetProCaption(0);
+  ProTitle := '正在下载<企业信息>...';
   Application.ProcessMessages;
   downloadTenants;
   SetProPosition(1);
-  SetProCaption(1);
+  ProTitle := '正在下载<供应链信息>...';
   Application.ProcessMessages;
   downloadServiceLines;
   SetProPosition(2);
-  SetProCaption(2);
+  ProTitle := '正在下载<供应关系>...';
   Application.ProcessMessages;
   downloadRelations;
   SetProPosition(3);
-  SetProCaption(3);
+  ProTitle := '正在下载<计量单位>...';
   Application.ProcessMessages;
   downloadUnion;
   SetProPosition(4);
-  SetProCaption(4);
+  ProTitle := '正在下载<商品分类>...';
   Application.ProcessMessages;
   downloadGoodsSort;
   SetProPosition(5);
-  SetProCaption(5);
+  ProTitle := '正在下载<功能模块>...';
   Application.ProcessMessages;
   downloadModules;
   SetProPosition(6);
 end;
 
-procedure TRspSyncFactory.SetProCaption(caption: integer);
+procedure TRspSyncFactory.SetProCaption;
 begin
-  PostMessage(ProHandle, MSC_SET_CAPTION, caption, 1);
+  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 1);
+  Application.ProcessMessages;
 end;
 
 procedure TRspSyncFactory.copyGoodsSort;

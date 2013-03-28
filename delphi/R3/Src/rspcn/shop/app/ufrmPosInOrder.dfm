@@ -92,10 +92,10 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Tag = 5
                   Left = 173
                   Top = 2
-                  Width = 58
+                  Width = 90
                   Height = 20
                   Cursor = crHandPoint
-                  Caption = #36192#36865' [F5] '
+                  Caption = #20080#20837'/'#36192#21697' [F5] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
                   Font.Height = -13

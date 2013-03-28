@@ -1218,9 +1218,13 @@ begin
   inherited;
   if Key = VK_F5 then
      begin
-       inputMode := 1;
-       inputFlag := 5;
-       edtInput.SetFocus;
+       if edtTable.FieldbyName('IS_PRESENT').AsString = '1' then
+          DoIsPresent('1')
+       else
+          DoIsPresent('2');
+       //inputMode := 1;
+       //inputFlag := 5;
+       //edtInput.SetFocus;
      end;
   if Key = VK_F6 then
      begin
@@ -1550,13 +1554,24 @@ begin
   inherited;
   if char(Key) = '*' then
      begin
+       if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
+          begin
+            inputFlag := 13;
+            try
+              DoShowPayment;
+            finally
+              edtInput.Text := '';
+              if edtInput.CanFocus then edtInput.SetFocus;
+              inputFlag := 0;
+            end;
+          end;
        key := #0;
 //       if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then Raise Exception.Create('没有启用收款方式，不能操作此功能'); 
-       inputMode := 1;
+{       inputMode := 1;
        inputFlag := 13;
        DoShowPayment;
        edtInput.selectAll;
-       edtInput.SetFocus;
+       edtInput.SetFocus;    }
      end;
   if char(Key) = '+' then
      begin

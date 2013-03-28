@@ -1,9 +1,10 @@
 inherited frmPayment: TfrmPayment
   Left = 359
-  ActiveControl = barcode
+  ActiveControl = edtInput
   Caption = #25903#20184#26041#24335' '
   ClientHeight = 315
   ClientWidth = 397
+  OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
   inherited pnlAddressBar: TPanel
@@ -82,6 +83,7 @@ inherited frmPayment: TfrmPayment
       CurrencySymbol = #65509
       DecimalNumber = 2
       DigitalNumber = 12
+      OnDrawColumnCell = DBGridEh1DrawColumnCell
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
       Columns = <
@@ -486,7 +488,7 @@ inherited frmPayment: TfrmPayment
         Style.Shadow = False
         TabOrder = 0
         ImeMode = imClose
-        OnKeyDown = edtInputKeyDown
+        OnEnter = edtInputEnter
         OnKeyPress = edtInputKeyPress
       end
     end

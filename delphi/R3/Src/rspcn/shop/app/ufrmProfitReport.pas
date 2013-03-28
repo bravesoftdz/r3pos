@@ -309,7 +309,7 @@ begin
   dateFlag.ItemIndex := 1;
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
   edtGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-  edtReportType.ItemIndex := 0;
+  edtReportType.ItemIndex := 1;
 
 end;
 

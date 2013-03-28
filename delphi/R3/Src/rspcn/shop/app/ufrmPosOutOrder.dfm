@@ -700,7 +700,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Width = 90
                   Height = 20
                   Cursor = crHandPoint
-                  Caption = #36192#36865'/'#20817#25442' [F5] '
+                  Caption = #38144#21806'/'#36192#36865' [F5] '
                   Font.Charset = GB2312_CHARSET
                   Font.Color = 3092271
                   Font.Height = -13

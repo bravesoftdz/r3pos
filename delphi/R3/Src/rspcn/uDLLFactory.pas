@@ -620,6 +620,11 @@ begin
        app.appId := 'shop.dll';
        flist.Add(app);
        app.Init;
+     end
+  else
+     begin
+       app := TDLLPlugin(flist[idx]);
+       app.Init;
      end;
 end;
 
@@ -638,7 +643,8 @@ var i:integer;
 begin
   for i:=FList.Count-1 downto 0 do
     begin
-      if not TDLLPlugin(FList[i]).eraseApp then Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
+      if not TDLLPlugin(FList[i]).eraseApp then
+         Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
       TObject(FList[i]).Free;
       FList.Delete(i); 
     end;

@@ -346,7 +346,7 @@ end;
 procedure TfrmOrderForm.edtInputExit(Sender: TObject);
 begin
   inherited;
-  edtInput.Text := edtInput.Hint;
+//  edtInput.Text := edtInput.Hint;
 //  inputMode := 0;
 
 end;
@@ -355,7 +355,7 @@ procedure TfrmOrderForm.edtInputEnter(Sender: TObject);
 begin
   inherited;
   inputMode := 1;
-  edtInput.Text := '';
+//  edtInput.Text := '';
   edtInput.selectAll;
 end;
 
@@ -809,6 +809,13 @@ begin
         inc(RowID);
         edtTable.FieldbyName('SEQNO').AsInteger := RowID;
         edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+        if (edtTable.FindField('IS_PRESENT')<>nil) then
+           begin
+             case edtTable.FindField('IS_PRESENT').AsInteger of
+             1:edtTable.FieldbyName('GODS_NAME').AsString := '¡¾ÔùËÍ¡¿'+edtTable.FieldbyName('GODS_NAME').AsString;
+             2:edtTable.FieldbyName('GODS_NAME').AsString := '¡¾¶Ò»»¡¿'+edtTable.FieldbyName('GODS_NAME').AsString;
+             end;
+           end;
         edtTable.Post;
       end;
       edtProperty.Append;
@@ -1346,7 +1353,7 @@ begin
   if Present=1 then
      begin
        Field.AsFloat := 0;
-       edtTable.FieldByName('GODS_NAME').AsString := '¡¾ÔùËÍ¡¿'+rs.FieldbyName('GODS_NAME').AsString; 
+       edtTable.FieldByName('GODS_NAME').AsString := '¡¾ÔùËÍ¡¿'+rs.FieldbyName('GODS_NAME').AsString;
        PriceToCalc(0);
      end
   else
@@ -2269,14 +2276,6 @@ begin
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(edtTable.RecNo)),length(Inttostr(edtTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
-  {if ((gdSelected in State) or (gdFocused in State)) then
-    begin
-      ARect := Rect;
-      DBGridEh1.Canvas.Pen.Color := clRed;
-      DBGridEh1.Canvas.Pen.Width := 1;
-      DBGridEh1.Canvas.Brush.Style := bsClear;
-      DbGridEh1.canvas.Rectangle(ARect);
-    end; }
   finally
     DBGridEh1.Canvas.Brush.Assign(br);
     DBGridEh1.Canvas.Pen.Assign(pn);

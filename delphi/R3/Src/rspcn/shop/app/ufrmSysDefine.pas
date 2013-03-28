@@ -316,6 +316,7 @@ type
     FFirstLogin:boolean;
     function  CheckRegister:boolean;
     procedure OpenShopInfo(tenantId:string='';shopId:string='');
+    procedure InitToken;
     procedure SaveRegisterParams;
 
     procedure SyncData;
@@ -346,7 +347,8 @@ type
     procedure SaveShopInfo(Auto:boolean=false);
     procedure showForm;override;
     function checkCanClose:boolean;override;
-    class function AutoRegister:boolean;
+    class function  AutoRegister:boolean;
+    class procedure SaveRegister;
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
     property NewUser:boolean read FNewUser write SetNewUser;
     property CurUserId:string read FCurUserId write SetCurUserId;
@@ -702,11 +704,12 @@ begin
 
   if FirstLogin then
   begin
-    SaveRegisterParams;
-    if not Auto then SyncData;
+    InitToken;
     FirstLogin := false;
     if not Auto then
        begin
+         SyncData;
+         SaveRegisterParams;
          RzBmpButton2.Visible := true;
          RzBmpButton3.Visible := true;
          RzBmpButton4.Visible := true;
@@ -754,19 +757,9 @@ begin
   dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
 end;
 
-procedure TfrmSysDefine.SaveRegisterParams;
+procedure TfrmSysDefine.InitToken;
 var LDate:TDatetime;
 begin
-  dataFactory.MoveToSqlite;
-  try
-    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+cdsTenant.FieldByName('TENANT_ID').AsString+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''')=0 then
-       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+cdsTenant.FieldByName('TENANT_ID').AsString+''',0,''00'',5497000)');
-    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+cdsTenant.FieldByName('TENANT_ID').AsString+''' where TENANT_ID='+cdsTenant.FieldByName('TENANT_ID').AsString+' and DEFINE=''TENANT_ID''')=0 then
-       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+cdsTenant.FieldByName('TENANT_ID').AsString+',''TENANT_ID'','''+cdsTenant.FieldByName('TENANT_ID').AsString+''',0,''00'',5497000)');
-  finally
-    dataFactory.MoveToDefault;
-  end;
-
   token.userId := cdsShopInfo.FieldbyName('SHOP_ID').AsString;
   token.account := token.xsmCode;
   token.tenantId := cdsTenant.FieldbyName('TENANT_ID').AsString;
@@ -784,11 +777,24 @@ begin
   token.online := true;
 
   LDate := trunc(rspFactory.timestamp/86400.0+40542.0)+2;
-  token.lDate := strtoint(formatDatetime('YYYYMMDD',LDate));
+  token.lDate := strtoint(FormatDatetime('YYYYMMDD',LDate));
   dataFactory.MoveToSqlite;
   try
-    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+formatDatetime('YYYYMMDD',LDate)+''' where TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''')=0 then
-       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''NEAR_LOGIN_DATE'','''+formatDatetime('YYYYMMDD',LDate)+''',0,''00'',5497000)');
+    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+FormatDatetime('YYYYMMDD',LDate)+''' where TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''')=0 then
+       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''NEAR_LOGIN_DATE'','''+FormatDatetime('YYYYMMDD',LDate)+''',0,''00'',5497000)');
+  finally
+    dataFactory.MoveToDefault;
+  end;
+end;
+
+procedure TfrmSysDefine.SaveRegisterParams;
+begin
+  dataFactory.MoveToSqlite;
+  try
+    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+token.tenantId+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''')=0 then
+       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+token.tenantId+''',0,''00'',5497000)');
+    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+token.tenantId+''' where TENANT_ID='+token.tenantId+' and DEFINE=''TENANT_ID''')=0 then
+       dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+token.tenantId+',''TENANT_ID'','''+token.tenantId+''',0,''00'',5497000)');
   finally
     dataFactory.MoveToDefault;
   end;
@@ -1687,6 +1693,18 @@ begin
       end;
       SaveShopInfo(true);
       result := true;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+class procedure TfrmSysDefine.SaveRegister;
+begin
+  with TfrmSysDefine.Create(nil) do
+  begin
+    try
+      SaveRegisterParams;
     finally
       Free;
     end;

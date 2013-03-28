@@ -61,7 +61,7 @@ type
     procedure SyncSalesOrder;
     procedure SyncChangeOrder;
     procedure SyncRckDays;
-    function  CheckInitSync:boolean;
+    function  CheckNeedSync:boolean;
     function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
   protected
     procedure ClearSyncList;
@@ -955,7 +955,7 @@ begin
   Application.ProcessMessages;
 end;
 
-function TSyncFactory.CheckInitSync: boolean;
+function TSyncFactory.CheckNeedSync: boolean;
 var timestamp:int64;
 begin
   result := true;
@@ -963,8 +963,6 @@ begin
      timestamp := GetSynTimeStamp(token.tenantId,'LOGIN_SYNC','#')
   else
      timestamp := LoginSyncDate;
-
-  if timestamp = 0 then Exit;
 
   if token.lDate > timestamp then
      result := true
@@ -1000,15 +998,16 @@ begin
          begin
            TfrmSysDefine.AutoRegister;
            if token.tenantId = '' then Exit;
-           if not CheckInitSync then Exit;
+           if not CheckNeedSync then Exit;
            RspSyncFactory.SyncAll;
            RspSyncFactory.copyGoodsSort;
            SyncFactory.InitTenant;
            SyncFactory.SyncBasic;
+           TfrmSysDefine.SaveRegister;
          end
       else
          begin
-           if not CheckInitSync then Exit;
+           if not CheckNeedSync then Exit;
            SyncFactory.SyncBasic;
          end;
       SyncFactory.LoginSyncDate := token.lDate;
@@ -1041,7 +1040,7 @@ procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
-  if not CheckInitSync then Exit;
+  if not CheckNeedSync then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin
     try

@@ -3800,18 +3800,20 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Top = 0
                   Width = 102
                   Height = 30
+                  Cursor = crHandPoint
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26412#27425#25910#27454
                   Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
+                  Font.Color = 3418913
                   Font.Height = -15
                   Font.Name = #23435#20307
-                  Font.Style = []
+                  Font.Style = [fsUnderline]
                   ParentFont = False
                   Transparent = True
                   Layout = tlCenter
-                  ShadowColor = 16250871
+                  OnClick = paymentClick
+                  ShadowColor = 13750737
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
@@ -3906,8 +3908,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 31
-                    Height = 16
+                    Width = 62
+                    Height = 26
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3991,8 +3993,8 @@ inherited frmSaleOrder: TfrmSaleOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 16
-                    Height = 16
+                    Width = 22
+                    Height = 27
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267

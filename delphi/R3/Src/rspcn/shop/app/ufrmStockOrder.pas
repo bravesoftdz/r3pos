@@ -131,6 +131,7 @@ type
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
     procedure btnPrintClick(Sender: TObject);
     procedure btnPreviewClick(Sender: TObject);
+    procedure paymentClick(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -189,7 +190,7 @@ var
   frmStockOrder: TfrmStockOrder;
 
 implementation
-uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory;
+uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory, ufrmPayment;
 {$R *.dfm}
 
 { TfrmSaleOrder }
@@ -1467,6 +1468,14 @@ begin
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.SetSubstitutes(['%[whr]', '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date)]);
 end;
+procedure TfrmStockOrder.paymentClick(Sender: TObject);
+begin
+  inherited;
+  if TfrmPayment.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
+     DoShowPayment;
+
+end;
+
 initialization
   RegisterClass(TfrmStockOrder);
 finalization

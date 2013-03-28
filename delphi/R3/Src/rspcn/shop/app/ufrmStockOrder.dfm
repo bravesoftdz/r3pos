@@ -1640,18 +1640,20 @@ inherited frmStockOrder: TfrmStockOrder
                   Top = 0
                   Width = 102
                   Height = 30
+                  Cursor = crHandPoint
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26412#27425#20184#27454
                   Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
+                  Font.Color = 4341559
                   Font.Height = -15
                   Font.Name = #23435#20307
-                  Font.Style = []
+                  Font.Style = [fsUnderline]
                   ParentFont = False
                   Transparent = True
                   Layout = tlCenter
-                  ShadowColor = 16250871
+                  OnClick = paymentClick
+                  ShadowColor = 14145495
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end

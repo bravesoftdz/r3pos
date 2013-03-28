@@ -138,6 +138,7 @@ Comments=
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
-Count=2
+Count=3
 Item0=debug
-Item1=D:\myWork\Delphi\R3\Src\rspcn\debug
+Item1=D:\r6
+Item2=D:\myWork\Delphi\R3\Src\rspcn\debug

@@ -6,7 +6,6 @@ object frmWebDialog: TfrmWebDialog
   ClientHeight = 349
   ClientWidth = 379
   Color = clBtnFace
-  TransparentColor = True
   TransparentColorValue = clFuchsia
   Font.Charset = GB2312_CHARSET
   Font.Color = clBlack
@@ -3070,6 +3069,7 @@ object frmWebDialog: TfrmWebDialog
         5150535150535150535150535150535150535150535150535150535150535150
         5351505452515452515452515351505452515452515351505452515652515652
         515754504A4D4B494B4BFF00FFFF00FF0000}
+      Transparent = True
     end
     object RzFormShape1: TRzFormShape
       Left = 0

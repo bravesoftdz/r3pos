@@ -42,6 +42,8 @@ type
     constructor Create(dllname:string);
     destructor Destroy; override;
 
+    procedure Init;
+
     property DLLHandle:THandle read FDLLHandle write SetDLLHandle;
     property appId:string read FappId write SetappId;
   end;
@@ -356,6 +358,7 @@ begin
          app := TDLLPlugin.Create(urltoken.path);
          app.appId := urltoken.appId;
          flist.Add(app);
+         app.Init;
        end
     else
        app := TDLLPlugin(flist[idx]);
@@ -616,6 +619,7 @@ begin
        app := TDLLPlugin.Create('shop.dll');
        app.appId := 'shop.dll';
        flist.Add(app);
+       app.Init;
      end;
 end;
 
@@ -664,7 +668,6 @@ begin
     if @resize=nil then Raise Exception.Create('resize方法没有实现');
     @sendMsg := GetProcAddress(dllHandle, 'sendMsg');
     if @sendMsg=nil then Raise Exception.Create('sendMsg方法没有实现');
-    if not initApp(dllFactory.appWnd,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+dllname+'应用失败,错误：'+strPas(getLastError));
   except
     freeLibrary(dllHandle);
     dllHandle := 0;
@@ -679,6 +682,11 @@ begin
        FreeLibrary(dllHandle);
      end;
   inherited;
+end;
+
+procedure TDLLPlugin.Init;
+begin
+  if not initApp(dllFactory.appWnd,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+appId+'应用失败,错误：'+strPas(getLastError));
 end;
 
 procedure TDLLPlugin.SetappId(const Value: string);

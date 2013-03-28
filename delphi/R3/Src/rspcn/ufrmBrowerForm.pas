@@ -1065,27 +1065,33 @@ procedure TfrmBrowerForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
   try
-    if token.logined and token.online and (Timer1.Tag=0) then
+    if token.logined and (Timer1.Tag=0) then
        begin
          try
-           dllFactory.Init(mainPanel.Handle);
-         finally
+           if token.online then dllFactory.Init(mainPanel.Handle);
+           TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
+           pageButtonSort;
+           toolleft.Visible := true;
+           OpenHome;
            Timer1.Tag := 1;
+         except
+           token.logined := false;
+           Timer1.Tag := 0;
+           OpenHome;
+           Raise;
          end;
-       end;
-
-    if token.logined and not toolleft.Visible and (pageControl1.PageCount>0) then
-       begin
-         TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
-         pageButtonSort;
        end
     else
-    if not token.logined and toolleft.Visible and (pageControl1.PageCount>0) then
+    if not token.logined and (Timer1.Tag=1) then
        begin
-         TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
-         pageButtonSort;
+         try
+           TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
+           pageButtonSort;
+           toolleft.Visible := false;
+         finally
+           Timer1.Tag :=0;
+         end;
        end;
-    toolleft.Visible := token.logined;
     if token.logined then
        begin
          if token.tenantName<>'' then
@@ -1561,7 +1567,7 @@ begin
   except
     on E:Exception do
       begin
-         CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+        CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
       end;
   end;
 end;

@@ -134,6 +134,7 @@ type
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnPreviewClick(Sender: TObject);
     procedure btnPrintClick(Sender: TObject);
+    procedure paymentClick(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -206,7 +207,7 @@ var
   frmSaleOrder: TfrmSaleOrder;
 
 implementation
-uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory;
+uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory, ufrmPayMent;
 {$R *.dfm}
 
 { TfrmSaleOrder }
@@ -2075,6 +2076,13 @@ begin
   DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.SetSubstitutes(['%[whr]', '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date)]);
+end;
+
+procedure TfrmSaleOrder.paymentClick(Sender: TObject);
+begin
+  inherited;
+  if TfrmPayment.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
+     DoShowPayment;
 end;
 
 initialization

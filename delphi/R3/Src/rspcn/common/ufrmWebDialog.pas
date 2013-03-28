@@ -32,13 +32,14 @@ type
 
 implementation
 
-uses udllShopUtil;
+uses udllShopUtil,dllApi;
 
 {$R *.dfm}
 
 constructor TfrmWebDialog.Create(AOwner: TComponent);
 begin
   inherited;
+  setWindowLong(handle,GWL_EXSTYLE,WS_EX_TOOLWINDOW);
   Initform(self);
 end;
 

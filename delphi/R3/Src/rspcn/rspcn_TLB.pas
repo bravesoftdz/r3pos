@@ -12,7 +12,7 @@ unit rspcn_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/3/27 20:32:16 from Type Library described below.
+// File generated on 2013/3/28 14:25:30 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\myWork\Delphi\R3\Src\rspcn\rspcn.tlb (1)

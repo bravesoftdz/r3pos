@@ -137,6 +137,7 @@ class function TfrmUserRights.ShowUserRight(userId, userName, account: string; v
 var FormObj: TfrmUserRights;
 begin
   try
+    result := false;
     FormObj := TfrmUserRights.Create(nil);
     FormObj.Init(userId, userName, account, roleIds);
     FormObj.ShowModal;

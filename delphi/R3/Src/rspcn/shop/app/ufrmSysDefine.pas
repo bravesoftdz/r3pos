@@ -187,8 +187,8 @@ type
     Bevel2: TBevel;
     Bevel3: TBevel;
     rowToolNav: TRzToolbar;
-    RzToolButton1: TRzToolButton;
-    RzToolButton2: TRzToolButton;
+    Tool_Del: TRzToolButton;
+    Tool_Edit: TRzToolButton;
     RzSpacer1: TRzSpacer;
     RzPanel35: TRzPanel;
     RzPanel69: TRzPanel;
@@ -242,11 +242,7 @@ type
     edtUSER_NAME: TcxTextEdit;
     btnSaveUsers: TRzBmpButton;
     btnNewUsers: TRzBmpButton;
-    RzPanel13: TRzPanel;
-    RzBackground34: TRzBackground;
-    btnGrantRights: TRzLabel;
     RzSpacer2: TRzSpacer;
-    RzToolButton3: TRzToolButton;
     RzPanel37: TRzPanel;
     RzBackground29: TRzBackground;
     RzLabel37: TRzLabel;
@@ -279,6 +275,8 @@ type
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
     RzLabel51: TRzLabel;
+    Tool_Right: TRzToolButton;
+    Tool_Reset: TRzToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
@@ -293,18 +291,18 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnSaveUsersClick(Sender: TObject);
     procedure btnNewUsersClick(Sender: TObject);
-    procedure btnGrantRightsClick(Sender: TObject);
-    procedure RzToolButton2Click(Sender: TObject);
-    procedure RzToolButton1Click(Sender: TObject);
+    procedure Tool_EditClick(Sender: TObject);
+    procedure Tool_DelClick(Sender: TObject);
     procedure RzLabel40Click(Sender: TObject);
     procedure btnBackUpClick(Sender: TObject);
     procedure RzLabel41Click(Sender: TObject);
     procedure btnRecoveryClick(Sender: TObject);
     procedure RzLabel9Click(Sender: TObject);
-    procedure RzToolButton3Click(Sender: TObject);
+    procedure Tool_ResetClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure RzLabel37Click(Sender: TObject);
     procedure btnChangeClick(Sender: TObject);
+    procedure Tool_RightClick(Sender: TObject);
   private
     SyncDataing:boolean;
     FCurUserId:string;
@@ -312,7 +310,7 @@ type
     FCurUserPswd:string;
     FCurUserAccount:string;
     FCurUserRoleIds:string;
-    FNewUser:boolean;
+    FUserState:TDataSetState;
     FFirstLogin:boolean;
     function  CheckRegister:boolean;
     procedure OpenShopInfo(tenantId:string='';shopId:string='');
@@ -330,17 +328,18 @@ type
     procedure SaveUsers;
     procedure GrantRights;
     procedure CheckUsersInfo;
+    procedure InitCurrentUser;
 
     procedure ReadFromObject(PageIndex:integer);
     procedure WriteToObject;
 
     procedure SetFirstLogin(const Value: boolean);
-    procedure SetNewUser(const Value: boolean);
     procedure SetCurUserId(const Value: string);
     procedure SetCurUserName(const Value: string);
     procedure SetCurUserPswd(const Value: string);
     procedure SetCurUserAccount(const Value: string);
     procedure SetCurUserRoleIds(const Value: string);
+    procedure SetUserState(const Value: TDataSetState);
   public
     AObj:TRecord_;
     procedure GetShopInfo;
@@ -350,12 +349,12 @@ type
     class function  AutoRegister:boolean;
     class procedure SaveRegister;
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
-    property NewUser:boolean read FNewUser write SetNewUser;
     property CurUserId:string read FCurUserId write SetCurUserId;
     property CurUserName:string read FCurUserName write SetCurUserName;
     property CurUserPswd:string read FCurUserPswd write SetCurUserPswd;
     property CurUserAccount:string read FCurUserAccount write SetCurUserAccount;
     property CurUserRoleIds:string read FCurUserRoleIds write SetCurUserRoleIds;
+    property UserState:TDataSetState read FUserState write SetUserState;
   end;
 
 implementation
@@ -411,9 +410,9 @@ begin
   OpenBackUpDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup';
 
   if (token.userId <> 'admin') and (token.userId <> 'system') and (token.account <> token.xsmCode) then
-     RzToolButton3.Visible := false
+     Tool_Reset.Visible := false
   else
-     RzToolButton3.Visible := true;
+     Tool_Reset.Visible := true;
   PageControl.ActivePageIndex := 0;
 end;
 
@@ -829,6 +828,34 @@ begin
   PageControl.ActivePageIndex := 1;
 end;
 
+procedure TfrmSysDefine.InitCurrentUser;
+begin
+  UserState := dsBrowse;
+  edtACCOUNT.Text := token.account;
+  edtUSER_NAME.Text := token.username;
+  edtMOBILE.Text := token.mobile;
+  cdsUsers.DisableControls;
+  try
+    CurUserId := token.userId;
+    CurUserName := token.username;
+    CurUserAccount := token.account;
+    if cdsUsers.Locate('USER_ID',token.userId,[]) then
+       begin
+         edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
+         CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
+         CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
+       end
+    else
+       begin
+         edtROLE_NAMES.Text := '管理员';
+         CurUserPswd := '';
+         CurUserRoleIds := '';
+       end;
+  finally
+    cdsUsers.EnableControls;
+  end;
+end;
+
 procedure TfrmSysDefine.RzBmpButton3Click(Sender: TObject);
 var i:integer;
 begin
@@ -837,29 +864,7 @@ begin
   begin
     pnl_changepswd.Visible := false;
     OpenUsers;
-    edtACCOUNT.Text := token.account;
-    edtUSER_NAME.Text := token.username;
-    edtMOBILE.Text := token.mobile;
-    cdsUsers.DisableControls;
-    try
-      CurUserId := token.userId;
-      CurUserName := token.username;
-      CurUserAccount := token.account;
-      if cdsUsers.Locate('USER_ID',token.userId,[]) then
-         begin
-           edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
-           CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
-           CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
-         end
-      else
-         begin
-           edtROLE_NAMES.Text := '管理员';
-           CurUserPswd := '';
-           CurUserRoleIds := '';
-         end;
-    finally
-      cdsUsers.EnableControls;
-    end;
+    InitCurrentUser;
   end;
   for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
   PageControl.ActivePageIndex := 2;
@@ -1225,7 +1230,7 @@ var
 begin
   CheckUsersInfo;
 
-  if NewUser then CurUserId := TSequence.NewId;
+  if UserState = dsInsert then CurUserId := TSequence.NewId;
 
   tmpUsers := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
@@ -1307,16 +1312,14 @@ begin
     end;
   end;
 
-  NewUser := false;
+  if CurUserId = token.userId then
+     begin
+       token.account := trim(edtACCOUNT.Text);
+       token.username := trim(edtUSER_NAME.Text);
+       token.mobile := trim(edtMOBILE.Text);
+     end;
   OpenUsers;
-  if cdsUsers.Locate('USER_ID',CurUserId,[]) then
-  begin
-    CurUserId := cdsUsers.FieldByName('USER_ID').AsString;
-    CurUserName := cdsUsers.FieldByName('USER_NAME').AsString;
-    CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
-    CurUserAccount := cdsUsers.FieldByName('ACCOUNT').AsString;
-    CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
-  end;
+  InitCurrentUser;
   dllGlobal.GetZQueryFromName('CA_USERS').Close;
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
@@ -1330,17 +1333,24 @@ end;
 procedure TfrmSysDefine.btnNewUsersClick(Sender: TObject);
 begin
   inherited;
-  NewUser := true;
-  CurUserId := '';
-  CurUserName := '';
-  CurUserPswd := '';
-  CurUserAccount := '';
-  CurUserRoleIds := '';
-  edtACCOUNT.Text := '';
-  edtUSER_NAME.Text := '';
-  edtMOBILE.Text := '';
-  edtROLE_NAMES.Text := '';
-  if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+  if (FUserState = dsInsert) or (FUserState = dsEdit) then
+     begin
+       InitCurrentUser;
+     end
+  else
+     begin
+       UserState := dsInsert;
+       CurUserId := '';
+       CurUserName := '';
+       CurUserPswd := '';
+       CurUserAccount := '';
+       CurUserRoleIds := '';
+       edtACCOUNT.Text := '';
+       edtUSER_NAME.Text := '';
+       edtMOBILE.Text := '';
+       edtROLE_NAMES.Text := '';
+       if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+     end;
 end;
 
 procedure TfrmSysDefine.CheckUsersInfo;
@@ -1360,12 +1370,11 @@ end;
 procedure TfrmSysDefine.GrantRights;
 var roleIds,roleNames:string;
 begin
-  if CurUserId = '' then Exit;
-  if not cdsUsers.Locate('USER_ID',CurUserId,[]) then Raise Exception.Create('管理员权限不允许修改...');
-  roleIds := CurUserRoleIds;
-  if TfrmUserRights.ShowUserRight(CurUserId,
-                                  CurUserName,
-                                  CurUserAccount,
+  if cdsUsers.FieldByName('USER_ID').AsString = '' then Exit;
+  roleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
+  if TfrmUserRights.ShowUserRight(cdsUsers.FieldByName('USER_ID').AsString,
+                                  cdsUsers.FieldByName('USER_NAME').AsString,
+                                  cdsUsers.FieldByName('ACCOUNT').AsString,
                                   roleIds,roleNames) then
   begin
     if not (cdsUsers.State in [dsInsert,dsEdit]) then cdsUsers.Edit;
@@ -1373,22 +1382,16 @@ begin
     cdsUsers.FieldByName('ROLE_IDS').AsString:=roleIds;
     cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString:=roleNames;
     cdsUsers.Post;
-    CurUserRoleIds := roleIds;
-    edtROLE_NAMES.Text := roleNames;
+    if CurUserId = cdsUsers.FieldByName('USER_ID').AsString then
+       edtROLE_NAMES.Text := roleNames;
   end;
 end;
 
-procedure TfrmSysDefine.btnGrantRightsClick(Sender: TObject);
-begin
-  inherited;
-  GrantRights;
-end;
-
-procedure TfrmSysDefine.RzToolButton2Click(Sender: TObject);
+procedure TfrmSysDefine.Tool_EditClick(Sender: TObject);
 begin
   inherited;
   if cdsUsers.IsEmpty then Exit;
-  NewUser := false;
+  UserState := dsEdit;
   CurUserId := cdsUsers.FieldByName('USER_ID').AsString;
   CurUserName := cdsUsers.FieldByName('USER_NAME').AsString;
   CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
@@ -1400,7 +1403,7 @@ begin
   edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
 end;
 
-procedure TfrmSysDefine.RzToolButton1Click(Sender: TObject);
+procedure TfrmSysDefine.Tool_DelClick(Sender: TObject);
 begin
   inherited;
   if cdsUsers.IsEmpty then Exit;
@@ -1507,9 +1510,19 @@ procedure TfrmSysDefine.SetCurUserAccount(const Value: string);
 begin
   FCurUserAccount := Value;
   if (FCurUserId <> 'admin') and (FCurUserId <> 'system') and (FCurUserAccount <> token.xsmCode) then
-     btnSaveUsers.Visible := true
+     begin
+       edtACCOUNT.Properties.ReadOnly := false;
+       edtUSER_NAME.Properties.ReadOnly := false;
+       edtMOBILE.Properties.ReadOnly := false;
+       btnSaveUsers.Visible := true
+     end
   else
-     btnSaveUsers.Visible := false;
+     begin
+       edtACCOUNT.Properties.ReadOnly := true;
+       edtUSER_NAME.Properties.ReadOnly := true;
+       edtMOBILE.Properties.ReadOnly := true;
+       btnSaveUsers.Visible := false;
+     end;
 end;
 
 procedure TfrmSysDefine.SetCurUserId(const Value: string);
@@ -1521,14 +1534,19 @@ begin
      RzPanel37.Visible := false;
 
   if (FCurUserId <> 'admin') and (FCurUserId <> 'system') and (FCurUserAccount <> token.xsmCode) then
-     btnSaveUsers.Visible := true
+     begin
+       edtACCOUNT.Properties.ReadOnly := false;
+       edtUSER_NAME.Properties.ReadOnly := false;
+       edtMOBILE.Properties.ReadOnly := false;
+       btnSaveUsers.Visible := true
+     end
   else
-     btnSaveUsers.Visible := false;
-
-  if (FCurUserId = '') or (not cdsUsers.Locate('USER_ID',FCurUserId,[])) then
-     RzPanel13.Visible := false
-  else
-     RzPanel13.Visible := true;
+     begin
+       edtACCOUNT.Properties.ReadOnly := true;
+       edtUSER_NAME.Properties.ReadOnly := true;
+       edtMOBILE.Properties.ReadOnly := true;
+       btnSaveUsers.Visible := false;
+     end;
 end;
 
 procedure TfrmSysDefine.SetCurUserName(const Value: string);
@@ -1546,7 +1564,16 @@ begin
   FCurUserRoleIds := Value;
 end;
 
-procedure TfrmSysDefine.RzToolButton3Click(Sender: TObject);
+procedure TfrmSysDefine.SetUserState(const Value: TDataSetState);
+begin
+  FUserState := Value;
+  if (FUserState = dsInsert) or (FUserState = dsEdit) then
+     btnNewUsers.Caption := '取消'
+  else
+     btnNewUsers.Caption := '新增';
+end;
+
+procedure TfrmSysDefine.Tool_ResetClick(Sender: TObject);
 var str:string;
 begin
   inherited;
@@ -1648,11 +1675,6 @@ begin
   end;
 end;
 
-procedure TfrmSysDefine.SetNewUser(const Value: boolean);
-begin
-  FNewUser := Value;
-end;
-
 function TfrmSysDefine.checkCanClose: boolean;
 begin
   if SyncDataing then
@@ -1709,6 +1731,12 @@ begin
       Free;
     end;
   end;
+end;
+
+procedure TfrmSysDefine.Tool_RightClick(Sender: TObject);
+begin
+  inherited;
+  GrantRights;
 end;
 
 initialization

@@ -52,7 +52,7 @@ type
     procedure   InitComm;
 
     class procedure OpenCashBox;
-    procedure PrintSaleTicket(tid, sid: string; iFlag: integer; cash, dibs: Currency);
+    procedure PrintSaleTicket(tid, sid: string);
 
     property Ticket_PrintComm:integer read FTicket_PrintComm write SetTicket_PrintComm;
     property Ticket_Width:integer read FTicket_Width write SetTicket_Width;
@@ -165,7 +165,7 @@ begin
   result := s;
 end;
 
-procedure TDevFactory.PrintSaleTicket(tid, sid: string; iFlag: integer; cash, dibs: Currency);
+procedure TDevFactory.PrintSaleTicket(tid, sid: string);
 var PWidth:integer;
   procedure WriteAndEnter(s:string;Len:Integer=0);
   begin
@@ -281,7 +281,6 @@ begin
   try
     rs.SQL.Text := PrintSaleTicketSql(tid,sid);
     dataFactory.Open(rs);
-    if iFlag < 0 then WriteAndEnter(FormatTitle('--整单删除--'));
     WriteAndEnter(FormatTitle(DevFactory.GetTitle));
     WriteAndEnter('日期:'+FormatFloat('0000-00-00',rs.FieldbyName('SALES_DATE').AsFloat)+' '+Copy(rs.FieldbyName('CREA_DATE').AsString,12,5));
     WriteAndEnter('门店:'+rs.FieldbyName('SHOP_NAME').AsString);

@@ -26,7 +26,7 @@ var
   frmGoodsInfoDropForm: TfrmGoodsInfoDropForm;
 
 implementation
-uses udllGlobal;
+uses udllGlobal, ufrmSortDropFrom;
 {$R *.dfm}
 
 { TfrmGoodsInfoDropForm }

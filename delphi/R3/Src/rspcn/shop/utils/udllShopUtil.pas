@@ -5,7 +5,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, RzPanel, 
   Dialogs, ExtCtrls, StdCtrls, cxMaskEdit, cxDropDownEdit, cxControls, cxContainer,
   cxEdit, cxTextEdit,ZDataSet,ZBase,Grids,DBGrids,DB,DBGridEh,cxButtonEdit, cxCalendar,cxMemo,zrComboBoxList,
-  cxRadioGroup,cxSpinEdit,cxCheckBox;
+  cxRadioGroup,cxSpinEdit,cxCheckBox,RzTreeVw;
 const
   ColumnTitleColor=$00F0E598;
 //添加下拉选择框
@@ -52,7 +52,7 @@ function GetTrimStr(const srcStr: string; vLen: integer): string;
 
 
 implementation
-uses uFnUtil,udllDsUtil,udllGlobal,udllXDictFactory;
+uses uFnUtil,udllDsUtil,udllGlobal,udllXDictFactory,uTreeUtil;
 function GetRegionId(id:string):string;
 begin
   result := id;
@@ -226,7 +226,15 @@ begin
   for i:=0 to form.ComponentCount -1 do
     begin
       if form.Components[i] is TcxComboBox then
-         ClearCbxPickList(TcxComboBox(form.Components[i]));
+         begin
+           TcxComboBox(form.Components[i]).properties.onChange := nil;
+           ClearCbxPickList(TcxComboBox(form.Components[i]));
+         end;
+      if form.Components[i] is TRzTreeView then
+         begin
+           TRzTreeView(form.Components[i]).onChange := nil;
+           ClearTree(TRzTreeView(form.Components[i]));
+         end;
     end;
 end;
 procedure SetEditStyle(dbState:TDataSetState;AStyle:TcxCustomEditStyle);

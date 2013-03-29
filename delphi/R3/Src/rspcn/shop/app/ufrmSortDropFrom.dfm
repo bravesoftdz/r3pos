@@ -9,7 +9,7 @@ inherited frmSortDropFrom: TfrmSortDropFrom
       Left = 1
       Top = 1
       Width = 261
-      Height = 237
+      Height = 213
       SelectionPen.Color = clBtnShadow
       Align = alClient
       BorderStyle = bsNone
@@ -22,7 +22,7 @@ inherited frmSortDropFrom: TfrmSortDropFrom
     end
     object RzPanel2: TRzPanel
       Left = 1
-      Top = 238
+      Top = 214
       Width = 261
       Height = 24
       Align = alBottom

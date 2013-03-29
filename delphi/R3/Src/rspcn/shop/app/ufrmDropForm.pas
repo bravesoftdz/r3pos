@@ -12,18 +12,18 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
-    { Private declarations }
+    Fdroped: boolean;
+    procedure Setdroped(const Value: boolean);
   protected
     SaveObj:TRecord_;
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     function showForm:boolean;virtual;
     function DropForm(control:TWinControl;var AObj:TRecord_):boolean;virtual;
     function Filter(s:string):boolean;virtual;
     function Find(keyValue:string):boolean;virtual;
+    property droped:boolean read Fdroped write Setdroped;
   end;
 
 implementation
@@ -77,18 +77,33 @@ begin                          //设置下拉窗口位置。
         AControl.Height := WorkArea.Bottom - AControl.Top;
    end;
 end;
+var Msg:TMsg;
 begin
   AdjustDropDownForm(self,control);
   SaveObj := AObj;
   ModalResult := mrNone;
   showForm;
-  while (ModalResult=mrNone) and Visible and not Application.Terminated  do
-     begin
-       Application.ProcessMessages;
-     end;
-  result := (ModalResult=mrok);
-  Close;
-  if Control.CanFocus then Control.SetFocus; 
+  Fdroped := true;
+  try
+    while (ModalResult = mrNone) and Visible do
+      begin
+        if Application.Terminated then Exit;
+        if PeekMessage(Msg, 0, 0, 0, PM_REMOVE) then
+          begin
+            if Msg.Message <> WM_QUIT then
+              begin
+                TranslateMessage(Msg);
+                DispatchMessage(Msg);
+                sleep(1);
+              end;
+          end;
+      end;
+    result := (ModalResult = mrOk);
+    Close;
+    if Control.CanFocus then Control.SetFocus;
+  finally
+    droped := false;
+  end;
 end;
 
 function TfrmDropForm.Filter(s: string): boolean;
@@ -127,6 +142,11 @@ destructor TfrmDropForm.Destroy;
 begin
 
   inherited;
+end;
+
+procedure TfrmDropForm.Setdroped(const Value: boolean);
+begin
+  Fdroped := Value;
 end;
 
 end.

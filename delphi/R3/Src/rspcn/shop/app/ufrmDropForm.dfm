@@ -1,9 +1,9 @@
 object frmDropForm: TfrmDropForm
-  Left = 423
-  Top = 297
+  Left = 487
+  Top = 269
   BorderStyle = bsNone
   Caption = 'frmDropForm'
-  ClientHeight = 263
+  ClientHeight = 239
   ClientWidth = 263
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
@@ -21,7 +21,7 @@ object frmDropForm: TfrmDropForm
     Left = 0
     Top = 0
     Width = 263
-    Height = 263
+    Height = 239
     Align = alClient
     BorderOuter = fsFlat
     Color = clWhite

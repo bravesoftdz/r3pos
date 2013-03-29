@@ -102,5 +102,5 @@ end;
 initialization
   frmGoodsInfoDropForm := TfrmGoodsInfoDropForm.Create(nil);
 finalization
-  frmGoodsInfoDropForm.Free;
+  if Assigned(frmSortDropFrom) then frmGoodsInfoDropForm.Free;
 end.

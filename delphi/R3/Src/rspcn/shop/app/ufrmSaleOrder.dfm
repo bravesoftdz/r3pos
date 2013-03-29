@@ -786,6 +786,13 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Title.Caption = #22791#27880
                   Title.Color = 15787416
                   Width = 111
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'TOOL_NAV'
+                  Footers = <>
+                  Title.Caption = #25805#20316
+                  Width = 55
                 end>
             end
             inherited fndGODS_ID: TzrComboBoxList
@@ -4631,7 +4638,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Color = clNavy
                 Font.Height = -12
                 Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
+                Font.Style = [fsUnderline]
                 ParentFont = False
                 OnClick = RzToolButton1Click
               end
@@ -4648,7 +4655,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Color = clNavy
                 Font.Height = -12
                 Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
+                Font.Style = [fsUnderline]
                 ParentFont = False
                 OnClick = RzToolButton2Click
               end
@@ -4665,7 +4672,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Font.Color = clNavy
                 Font.Height = -12
                 Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
+                Font.Style = [fsUnderline]
                 ParentFont = False
                 OnClick = RzToolButton3Click
               end
@@ -4814,7 +4821,6 @@ inherited frmSaleOrder: TfrmSaleOrder
         Size = 100
       end>
     AfterPost = edtTableAfterPost
-    AfterDelete = edtTableAfterDelete
   end
   inherited edtProperty: TZQuery
     FieldDefs = <
@@ -4918,7 +4924,7 @@ inherited frmSaleOrder: TfrmSaleOrder
     Left = 32
     Top = 128
   end
-  object PrintDBGridEh1: TPrintDBGridEh
+  object PrintDBGridEh1: TPrintDBGridEh [13]
     DBGridEh = DBGridEh1
     Options = [pghFitGridToPageWidth]
     Page.BottomMargin = 2.000000000000000000

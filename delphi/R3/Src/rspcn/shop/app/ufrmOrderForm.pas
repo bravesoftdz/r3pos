@@ -8,7 +8,7 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder, pngimage, RzBckgnd, IniFiles;
+  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList;
 
 const
 
@@ -109,6 +109,11 @@ type
     lblModifyAmt: TRzLabel;
     lblModifyPrice: TRzLabel;
     lblHint: TRzLabel;
+    row_order_nav: TToolBar;
+    toolDelete: TToolButton;
+    toolReturn: TToolButton;
+    mnuReturn: TMenuItem;
+    Images: TImageList;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -148,6 +153,11 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormResize(Sender: TObject);
     procedure DoKeyClick(sender:TObject);
+    procedure toolDeleteClick(Sender: TObject);
+    procedure toolReturnClick(Sender: TObject);
+    procedure mnuReturnClick(Sender: TObject);
+    procedure edtTableAfterDelete(DataSet: TDataSet);
+    procedure edtTableAfterOpen(DataSet: TDataSet);
   private
 
     // 散装条码参数
@@ -165,6 +175,8 @@ type
     Locked:boolean;
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
+    FdefUnit: integer;
+    procedure SetdefUnit(const Value: integer);
 
     { Private declarations }
   protected
@@ -245,7 +257,7 @@ type
     property inputMode:integer read FinputMode write SetinputMode;
     //单据状态
     property dbState:TDataSetState read FdbState write SetdbState;
-
+    property defUnit:integer read FdefUnit write SetdefUnit;
   end;
 
 var
@@ -313,6 +325,7 @@ var
 begin
   inherited;
   inputMode := 1;
+  defUnit := 0;
   dbState := dsBrowse;
   for i:=0 to PageControl.PageCount - 1 do PageControl.Pages[i].TabVisible := false;
   PageControl.ActivePageIndex := 0;
@@ -552,6 +565,9 @@ begin
   SetFormEditStatus(self,Value);
   DBGridEh1.ReadOnly := (Value=dsBrowse);
   Timer1.Enabled := (Value<>dsBrowse);
+  toolDelete.Visible := (Value<>dsBrowse);
+  if FindColumn('TOOL_NAV')<>nil then FindColumn('TOOL_NAV').Width := 58;
+
 end;
 
 procedure TfrmOrderForm.CheckInvaid;
@@ -842,7 +858,10 @@ begin
   edtTable.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
   edtTable.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
   edtTable.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-  edtTable.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+  if UNIT_ID='' then
+     edtTable.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
+  else
+     edtTable.FieldByName('UNIT_ID').AsString := UNIT_ID;
   edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
   edtTable.FieldbyName('BATCH_NO').AsString := '#';
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
@@ -1992,7 +2011,10 @@ begin
 
         if CheckRepeat(AObj) then Exit;
 
-        UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString);
+        if defUnit=0 then
+           UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString)
+        else
+           UpdateRecord(AObj,rs.FieldByName('CALC_UNITS').AsString);
       end
       else
         Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
@@ -2261,12 +2283,21 @@ begin
   pn := TPen.Create;
   pn.Assign(DBGridEh1.Canvas.Pen);
   try
-  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and ((not
+    (gdFocused in State) or not DBGridEh1.Focused) or (Column.FieldName = 'TOOL_NAV')) then
   begin
-    DBGridEh1.Canvas.Brush.Color := clWhite;
-    DbGridEh1.Canvas.Font.Size := DbGridEh1.Canvas.Font.Size+2;
-    DbGridEh1.Canvas.Font.Style := [fsBold];
+    if Column.FieldName = 'TOOL_NAV' then
+       begin
+         ARect := Rect;
+         row_order_nav.Visible := true;
+         row_order_nav.SetBounds(ARect.Left+11,ARect.Top+11,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
+       end
+    else
+       begin
+         DBGridEh1.Canvas.Brush.Color := clWhite;
+         DbGridEh1.Canvas.Font.Size := DbGridEh1.Canvas.Font.Size+2;
+         DbGridEh1.Canvas.Font.Style := [fsBold];
+       end;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
   if Column.FieldName = 'SEQNO' then
@@ -2537,6 +2568,107 @@ end;
 procedure TfrmOrderForm.DoCustId(s: string);
 begin
 
+end;
+
+procedure TfrmOrderForm.toolDeleteClick(Sender: TObject);
+begin
+  inherited;
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认删除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       fndGODS_ID.Visible := false;
+       edtTable.Delete;
+       DBGridEh1.SetFocus;
+     end;
+
+end;
+
+procedure TfrmOrderForm.toolReturnClick(Sender: TObject);
+var
+  _obj:TRecord_;
+  rs:TZQuery;
+begin
+  inherited;
+  if dbState = dsBrowse then
+     begin
+       if edtTable.FieldbyName('AMOUNT').asFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
+       if (MessageBox(Handle,pchar('确认对"'+edtTable.FieldbyName('GODS_NAME').AsString+'"退货或换货商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+       _obj := TRecord_.Create;
+       rs := TZQuery.Create(nil);
+       try
+         _obj.ReadFromDataSet(edtTable);
+         rs.Data := edtProperty.Data;
+         NewOrder;
+         InitRecord;
+         edtTable.Edit;
+         _obj.WriteToDataSet(edtTable,false);
+         inc(ROWID);
+         edtTable.FieldByName('SEQNO').AsInteger := ROWID;
+         edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
+         AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+         edtTable.Post;
+         rs.Filtered := false;
+         rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
+         rs.Filtered := true;
+         _obj.Clear;
+         rs.First;
+         while not rs.Eof do
+           begin
+             edtProperty.Append;
+             _obj.ReadFromDataSet(rs);
+             _obj.WriteToDataSet(edtProperty,false);
+             edtProperty.FieldbyName('AMOUNT').asFloat := - edtProperty.FieldbyName('AMOUNT').asFloat;
+             edtProperty.FieldbyName('CALC_AMOUNT').asFloat := - edtProperty.FieldbyName('CALC_AMOUNT').asFloat;
+             edtProperty.Post;
+             rs.Next;
+           end;
+       finally
+         rs.Free;
+         _obj.Free;
+       end;
+       Exit;
+     end;
+  if DBGridEh1.ReadOnly then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对"'+edtTable.FieldbyName('GODS_NAME').AsString+'"退货或换货商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       edtTable.Edit;
+       edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
+       AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+       edtTable.Post;
+     end;
+
+end;
+
+procedure TfrmOrderForm.mnuReturnClick(Sender: TObject);
+begin
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对"'+edtTable.FieldbyName('GODS_NAME').AsString+'"退货或换货商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       edtTable.Edit;
+       edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
+       AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+       edtTable.Post;
+     end;
+end;
+
+procedure TfrmOrderForm.edtTableAfterDelete(DataSet: TDataSet);
+begin
+  inherited;
+  row_order_nav.Visible := not DataSet.IsEmpty;
+end;
+
+procedure TfrmOrderForm.edtTableAfterOpen(DataSet: TDataSet);
+begin
+  inherited;
+  row_order_nav.Visible := not DataSet.IsEmpty;
+
+end;
+
+procedure TfrmOrderForm.SetdefUnit(const Value: integer);
+begin
+  FdefUnit := Value;
 end;
 
 end.

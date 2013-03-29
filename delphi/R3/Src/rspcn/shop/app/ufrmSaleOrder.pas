@@ -9,7 +9,7 @@ uses
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi, objCommon,
-  PrnDbgeh,ufrmDBGridPreview;
+  PrnDbgeh,ufrmDBGridPreview, ComCtrls, ToolWin, ImgList;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -418,6 +418,7 @@ end;
 constructor TfrmSaleOrder.Create(AOwner: TComponent);
 begin
   inherited;
+  defUnit := 1;
   AObj := TRecord_.Create;
   //进位法则
   CarryRule := StrtoIntDef(dllGlobal.GetParameter('CARRYRULE'),0);

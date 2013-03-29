@@ -8,7 +8,8 @@ uses
   cxCalendar, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, PrnDbgeh,ufrmDBGridPreview;
+  ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, PrnDbgeh,ufrmDBGridPreview,
+  ComCtrls, ToolWin, ImgList;
 
 type
   TfrmStockOrder = class(TfrmOrderForm)

@@ -131,7 +131,6 @@ begin
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('«Î«Û–£—È¬Î ß∞‹,¥ÌŒÛ:'+Root.attributes.getNamedItem('msg').text);
     xsmChallenge := Root.selectSingleNode('challenge').text;
     result := true;
-//    IdCookieManager1.CookieCollection.
   except
     on E:Exception do
     begin

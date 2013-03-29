@@ -1332,6 +1332,14 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Title.Caption = #37329#39069
                   Title.Color = 15787416
                   Width = 68
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'TOOL_NAV'
+                  Footers = <>
+                  Title.Alignment = taCenter
+                  Title.Caption = #25805#20316
+                  Width = 55
                 end>
             end
             inherited fndGODS_ID: TzrComboBoxList
@@ -1348,6 +1356,15 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               Style.Edges = []
               Style.ButtonStyle = btsUltraFlat
               Style.ButtonTransparency = ebtInactive
+            end
+            inherited row_order_nav: TToolBar
+              Width = 539
+              inherited toolDelete: TToolButton
+                Caption = #21024
+              end
+              inherited toolReturn: TToolButton
+                Caption = #36864
+              end
             end
           end
           inherited order_footer: TRzPanel
@@ -3473,10 +3490,10 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               BorderWidth = 0
               Color = clWhite
               Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
+              Font.Color = clNavy
               Font.Height = -12
               Font.Name = #23435#20307
-              Font.Style = []
+              Font.Style = [fsUnderline]
               ParentFont = False
               TabOrder = 3
               Visible = False
@@ -3498,7 +3515,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 Font.Color = clNavy
                 Font.Height = -12
                 Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
+                Font.Style = [fsUnderline]
                 ParentFont = False
                 OnClick = RzToolButton1Click
               end
@@ -3515,7 +3532,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 Font.Color = clNavy
                 Font.Height = -12
                 Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
+                Font.Style = [fsUnderline]
                 ParentFont = False
                 OnClick = RzToolButton2Click
               end
@@ -3532,7 +3549,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 Font.Color = clNavy
                 Font.Height = -12
                 Font.Name = #23435#20307
-                Font.Style = [fsBold, fsUnderline]
+                Font.Style = [fsUnderline]
                 ParentFont = False
                 OnClick = RzToolButton3Click
               end
@@ -3697,7 +3714,6 @@ inherited frmPosOutOrder: TfrmPosOutOrder
         Size = 100
       end>
     AfterPost = edtTableAfterPost
-    AfterDelete = edtTableAfterDelete
   end
   inherited edtProperty: TZQuery
     FieldDefs = <
@@ -3801,7 +3817,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
     Left = 400
     Top = 272
   end
-  object PrintDBGridEh1: TPrintDBGridEh
+  object PrintDBGridEh1: TPrintDBGridEh [13]
     DBGridEh = DBGridEh1
     Options = [pghFitGridToPageWidth]
     Page.BottomMargin = 2.000000000000000000

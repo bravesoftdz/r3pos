@@ -188,8 +188,8 @@ end;
 
 destructor TdataFactory.Destroy;
 begin
-  sqlite.Free;
   FDataSets.Free;
+  sqlite.Free;
   inherited;
 end;
 

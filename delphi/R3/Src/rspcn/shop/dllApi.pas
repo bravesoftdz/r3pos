@@ -185,19 +185,23 @@ end;
 function eraseApp:boolean;stdcall;
 var
   i:integer;
+  Form:TForm;
 begin
   try
     if not Assigned(webForm) then Exit;
     if assigned(SyncFactory) then SyncFactory.LogoutSync(dllApplication.handle);
-    for i:=webForm.Count -1 downto 0 do
+    while webForm.Count>0 do
        begin
-         TfrmWebForm(webForm.Objects[i]).Free;
+          Form := TfrmWebForm(webForm.Objects[0]);
+          webForm.Delete(0);
+          Form.Free; 
        end;
     if assigned(DevFactory) then FreeAndNil(DevFactory);
     if assigned(RightsFactory) then FreeAndNil(RightsFactory);
     if assigned(RspSyncFactory) then FreeAndNil(RspSyncFactory);
     if assigned(SyncFactory) then FreeAndNil(SyncFactory);
     if assigned(CacheFactory) then FreeAndNil(CacheFactory);
+    if assigned(RspFactory) then FreeAndNil(RspFactory);
     if assigned(XDictFactory) then FreeAndNil(XDictFactory);
     if assigned(dllGlobal) then FreeAndNil(dllGlobal);
     if assigned(dataFactory) then FreeAndNil(dataFactory);

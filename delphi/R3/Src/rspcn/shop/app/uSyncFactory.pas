@@ -1143,7 +1143,7 @@ begin
       dataFactory.UpdateBatch(rs_h,'TSyncRckDaysCloseV60',Params);
       ls.Next;
     end;
-    SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;

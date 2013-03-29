@@ -1023,8 +1023,8 @@ begin
   barcode := trim(edtBARCODE1.Text);
   if edtGOODS_OPTION1.Checked and (trim(edtGODS_CODE.Text) = '') then
      begin
-       if trim(Copy(barcode,Length(barcode)-5,Length(barcode))) <> '' then
-          edtGODS_CODE.Text := trim(Copy(barcode,Length(barcode)-5,Length(barcode)))
+       if trim(Copy(barcode,Length(barcode)-5,6)) <> '' then
+          edtGODS_CODE.Text := trim(Copy(barcode,Length(barcode)-5,6))
        else
           edtGODS_CODE.Text := trim(barcode);
      end;
@@ -1162,6 +1162,7 @@ begin
 end;
 
 procedure TfrmInitGoods.WriteToObject;
+var rs:TZQuery;
 begin
   if not edtMoreUnits.Checked then
     begin
@@ -1198,10 +1199,11 @@ begin
           cdsGoodsInfo.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
           if trim(edtGODS_CODE.Text) = '' then
              begin
-               if trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,7)) = '' then
-                  edtGODS_CODE.Text := trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,7))
+               if trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,6)) <> '' then
+                  edtGODS_CODE.Text := trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,6))
                else
                   edtGODS_CODE.Text := cdsGoodsInfo.FieldByName('BARCODE').AsString;
+               cdsGoodsInfo.FieldByName('GODS_CODE').AsString := trim(edtGODS_CODE.Text);
              end;
         end;
       cdsGoodsInfo.FieldByName('GODS_ID').AsString := TSequence.NewId;
@@ -1299,7 +1301,18 @@ begin
       if Finded then
          cdsGoodsRelation.FieldByName('SORT_ID1').AsString := cdsGoodsInfo.FieldByName('SORT_ID1').AsString
       else
-         cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#';
+         begin
+           rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+           if rs.Locate('RELATION_ID,SORT_ID',VarArrayOf([FY_RELATION_ID,cdsGoodsInfo.FieldByName('SORT_ID1').AsString]),[]) then
+              begin
+                if rs.Locate('RELATION_ID,SORT_NAME',VarArrayOf([0,rs.FieldByName('SORT_NAME').AsString]),[]) then
+                   cdsGoodsRelation.FieldByName('SORT_ID1').AsString := rs.FieldByName('SORT_ID').AsString
+                else
+                   cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#';
+              end
+           else
+              cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#';
+         end;
       cdsGoodsRelation.FieldByName('NEW_INPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat;
       cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat;
     end;

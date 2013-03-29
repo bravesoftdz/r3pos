@@ -367,8 +367,78 @@ inherited frmInitGoods: TfrmInitGoods
               ParentFont = False
               Transparent = True
             end
+            object red2: TLabel
+              Left = 290
+              Top = 141
+              Width = 6
+              Height = 12
+              Alignment = taRightJustify
+              Caption = '*'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object red1: TLabel
+              Left = 290
+              Top = 77
+              Width = 6
+              Height = 12
+              Alignment = taRightJustify
+              Caption = '*'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object red3: TLabel
+              Left = 290
+              Top = 173
+              Width = 6
+              Height = 12
+              Alignment = taRightJustify
+              Caption = '*'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object red4: TLabel
+              Left = 197
+              Top = 205
+              Width = 6
+              Height = 12
+              Alignment = taRightJustify
+              Caption = '*'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object red5: TLabel
+              Left = 290
+              Top = 269
+              Width = 6
+              Height = 12
+              Alignment = taRightJustify
+              Caption = '*'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
             object edtMoreUnits: TcxCheckBox
-              Left = 196
+              Left = 212
               Top = 200
               Width = 136
               Height = 23
@@ -379,8 +449,8 @@ inherited frmInitGoods: TfrmInitGoods
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtSORT_ID1: TcxTextEdit
-              Left = 286
-              Top = 72
+              Left = 238
+              Top = 28
               Width = 116
               Height = 23
               TabStop = False
@@ -647,7 +717,7 @@ inherited frmInitGoods: TfrmInitGoods
                   Height = 26
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #21830#21697#31867#21035
+                  Caption = #21830#21697#20998#31867
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15

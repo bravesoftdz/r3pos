@@ -141,6 +141,11 @@ type
     cdsBarCode: TZQuery;
     edtTable: TZQuery;
     RzLabel26: TRzLabel;
+    red1: TLabel;
+    red2: TLabel;
+    red3: TLabel;
+    red4: TLabel;
+    red5: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -182,11 +187,16 @@ type
     procedure DownloadUnits;overload;
     procedure DownloadUnits(pubGoodsinfoResp:IXMLDOMNode);overload;
     procedure RefreshUnits;
+    procedure SetLocalFinded(const Value: boolean);
+    procedure SetRemoteFinded(const Value: boolean);
+    procedure SetRspFinded(const Value: boolean);
+    procedure HideGodsCode;
+    procedure ShowGodsCode;
   public
     AObj:TRecord_;
-    LocalFinded:boolean;
-    RemoteFinded:boolean;
-    RspFinded:boolean;
+    FLocalFinded:boolean;
+    FRemoteFinded:boolean;
+    FRspFinded:boolean;
     Simple:boolean;
     FY_RELATION_ID:string;
     FY_TENANT_ID:string;
@@ -201,6 +211,9 @@ type
     procedure CancelReadOnly;
     function  BarCodeSimpleInit(barcode:string):boolean;
     class function ShowDialog(Owner:TForm;barcode:string;var GodsId:string):boolean;
+    property  LocalFinded:boolean read FLocalFinded write SetLocalFinded;
+    property  RemoteFinded:boolean read FRemoteFinded write SetRemoteFinded;
+    property  RspFinded:boolean read FRspFinded write SetRspFinded;
     property  Finded:boolean read GetFinded;
   end;
 
@@ -750,12 +763,14 @@ begin
       DownloadUnits(pubGoodsinfoResp);
     end;
 
+  if Finded and (cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID) then
+     Raise Exception.Create('卷烟商品不允许新增...'); 
+
   edtTable.Data := cdsGoodsInfo.Data;
 end;
 
 procedure TfrmInitGoods.OpenDataSet(tenantId, godsId: string);
-var
-  Params: TftParamList;
+var Params: TftParamList;
 begin
   Params := TftParamList.Create(nil);
   cdsGoodsInfo.Close;
@@ -802,8 +817,41 @@ begin
 end;
 
 procedure TfrmInitGoods.ReadFromObject;
-var rs: TZQuery;
+ procedure InitSort(sortId:string);
+ var rs:TZQuery;
+ begin
+   rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+   if rs.Locate('RELATION_ID,SORT_ID',VarArrayOf([0,sortId]),[]) then
+      begin
+        edtSORT_ID1.Text := rs.FieldByName('SORT_ID').AsString;
+        edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
+      end
+   else if rs.Locate('RELATION_ID,SORT_ID',VarArrayOf([FY_RELATION_ID,sortId]),[]) then
+      begin
+        if rs.Locate('RELATION_ID,SORT_NAME',VarArrayOf([0,rs.FieldByName('SORT_NAME').AsString]),[]) then
+           begin
+             edtSORT_ID1.Text := rs.FieldByName('SORT_ID').AsString;
+             edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString;
+           end
+        else
+           begin
+             edtSORT_ID1.Text := '#';
+             edtSORT_ID.Text := '无 分 类';
+           end;
+      end
+   else
+      begin
+        edtSORT_ID1.Text := '#';
+        edtSORT_ID.Text := '无 分 类';
+      end;
+ end;
+var rs:TZQuery;
 begin
+  if edtGOODS_OPTION1.Checked then
+     HideGodsCode
+  else
+     ShowGodsCode;
+
   AObj.ReadFromDataSet(cdsGoodsInfo);
   udllShopUtil.ReadFromObject(AObj,self);
 
@@ -852,7 +900,6 @@ begin
           edtSORT_ID1.Properties.ReadOnly := false;
           SetEditStyle(dsInsert, edtSORT_ID.Style);
           edtBK_SORT_ID.Color := edtSORT_ID.Style.Color;
-          rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
           if Copy(cdsGoodsRelation.FieldByName('COMM').AsString,2,2) <> '2' then
             begin
               if cdsGoodsRelation.FieldByName('GODS_CODE').AsString <> '' then
@@ -866,18 +913,17 @@ begin
               if cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsString <> '' then
                  edtNEW_OUTPRICE.Text := cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsString;
 
-              if rs.Locate('SORT_ID',cdsGoodsRelation.FieldByName('SORT_ID1').AsString,[]) then
-                 edtSORT_ID.Text := rs.FieldByName('SORT_NAME').AsString
+              if (cdsGoodsRelation.FieldByName('SORT_ID1').AsString = '')
+                 or
+                 (cdsGoodsRelation.FieldByName('SORT_ID1').AsString = '#')
+                 then
+                 InitSort(cdsGoodsInfo.FieldByName('SORT_ID1').AsString)
               else
-                 begin
-                   edtSORT_ID1.Text := '#';
-                   edtSORT_ID.Text := '无 分 类';
-                 end;
+                 InitSort(cdsGoodsRelation.FieldByName('SORT_ID1').AsString);
             end
           else
             begin
-              edtSORT_ID1.Text := '#';
-              edtSORT_ID.Text := '无 分 类';
+              InitSort(cdsGoodsInfo.FieldByName('SORT_ID1').AsString);
             end;
         end;
 
@@ -963,6 +1009,7 @@ procedure TfrmInitGoods.CheckInput1;
           Raise Exception.Create('输入的〖'+MsgInfo+'〗数值过大，无效...');
         end;
     end;
+var barcode:string;
 begin
   if edtGOODS_OPTION1.Checked then //无条码商品不检测条形码
     begin
@@ -973,13 +1020,16 @@ begin
         end;
     end;
 
-  if trim(edtGODS_CODE.Text)='' then
-    begin
-      if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
-      Raise Exception.Create('货号不能为空，请输入！');
-    end;
+  barcode := trim(edtBARCODE1.Text);
+  if edtGOODS_OPTION1.Checked and (trim(edtGODS_CODE.Text) = '') then
+     begin
+       if trim(Copy(barcode,Length(barcode)-5,Length(barcode))) <> '' then
+          edtGODS_CODE.Text := trim(Copy(barcode,Length(barcode)-5,Length(barcode)))
+       else
+          edtGODS_CODE.Text := trim(barcode);
+     end;
 
-  if Length(edtGODS_CODE.Text)>20 then edtGODS_CODE.Text:=Copy(edtGODS_CODE.Text,1,20);
+  if Length(edtGODS_CODE.Text) > 20 then edtGODS_CODE.Text := Copy(edtGODS_CODE.Text,1,20);
 
   if trim(edtGODS_NAME.Text)='' then
     begin
@@ -1003,8 +1053,7 @@ begin
 
   if trim(edtNEW_INPRICE.Text)='' then
     begin
-      if CanFocus(edtNEW_INPRICE) then edtNEW_INPRICE.SetFocus;
-      Raise Exception.Create('标准进价不能为空！');
+      edtNEW_INPRICE.Text := '0';
     end;
   if trim(edtNEW_OUTPRICE.Text)='' then
     begin
@@ -1147,6 +1196,13 @@ begin
         begin
           cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
           cdsGoodsInfo.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
+          if trim(edtGODS_CODE.Text) = '' then
+             begin
+               if trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,7)) = '' then
+                  edtGODS_CODE.Text := trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,7))
+               else
+                  edtGODS_CODE.Text := cdsGoodsInfo.FieldByName('BARCODE').AsString;
+             end;
         end;
       cdsGoodsInfo.FieldByName('GODS_ID').AsString := TSequence.NewId;
       cdsGoodsInfo.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(edtGODS_NAME.Text,3);
@@ -2213,6 +2269,53 @@ end;
 procedure TfrmInitGoods.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if not btnNext.Focused then inherited;
+end;
+
+procedure TfrmInitGoods.SetLocalFinded(const Value: boolean);
+begin
+  FLocalFinded := Value;
+end;
+
+procedure TfrmInitGoods.SetRemoteFinded(const Value: boolean);
+begin
+  FRemoteFinded := Value;
+end;
+
+procedure TfrmInitGoods.SetRspFinded(const Value: boolean);
+begin
+  FRspFinded := Value;
+end;
+
+procedure TfrmInitGoods.HideGodsCode;
+begin
+  edtBK_GODS_CODE.Visible := false;
+  edtBK_GODS_NAME.Top := 105;
+  edtBK_SORT_ID.Top := 142;
+  edtBK_CALC_UNITS.Top := 179;
+  edtMoreUnits.Top := 183;
+  edtBK_NEW_INPRICE.Top := 216;
+  edtBK_NEW_OUTPRICE.Top := 253;
+  edtBK_SHOP_NEW_OUTPRICE.Top := 290;
+  red2.Top := 114;
+  red3.Top := 151;
+  red4.Top := 188;
+  red5.Top := 262;
+end;
+
+procedure TfrmInitGoods.ShowGodsCode;
+begin
+  edtBK_GODS_CODE.Visible := true;
+  edtBK_GODS_NAME.Top := 132;
+  edtBK_SORT_ID.Top := 164;
+  edtBK_CALC_UNITS.Top := 196;
+  edtMoreUnits.Top := 200;
+  edtBK_NEW_INPRICE.Top := 228;
+  edtBK_NEW_OUTPRICE.Top := 260;
+  edtBK_SHOP_NEW_OUTPRICE.Top := 292;
+  red2.Top := 141;
+  red3.Top := 173;
+  red4.Top := 205;
+  red5.Top := 269;
 end;
 
 end.

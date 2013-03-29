@@ -402,12 +402,20 @@ begin
             begin
               if TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString='#' then
               result := result +' jp.SORT_ID1=''#'' ' else
-              result := result +' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+'';
+              begin
+                if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsInteger=0 then
+                   result := result +' jp.RELATION_ID in ('+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+',1000008)'
+                else
+                   result := result +' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+'';
+              end;
             end;
           end
        else
           begin
-            result := result +' jp.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
+            if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsInteger=0 then
+               result := result +' jp.RELATION_ID in ('+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+',1000008) and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')'
+            else
+               result := result +' jp.RELATION_ID = '+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString+' and jp.SORT_ID1 in ('+getSortId(rzTree.Selected)+')';
           end;
      end;
   if trim(searchTxt) <> '' then

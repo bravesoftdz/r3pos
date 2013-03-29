@@ -65,6 +65,9 @@ type
     LocationName:string;        {应用显示名称模块名}
     button:TrzBmpButton;
     xsmLogined:boolean;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   end;
 
 type
@@ -216,7 +219,7 @@ type
 
     procedure WMSendInput(var Msg: TMessage); message WM_SEND_INPUT;
     procedure KeyBoardHook(Code: integer; Msg: word;lParam: longint);
-    function AddKey(scanCode: DWORD):boolean;
+    function  AddKey(scanCode: DWORD):boolean;
     function  checkBarcode:boolean;
     procedure ClearKey;
     procedure PushTo;
@@ -519,10 +522,6 @@ begin
   if PageControl1.PageCount<=1 then Exit;
   tabEx := (PageControl1.ActivePage as TTabSheetEx);
   case tabEx.url.appFlag of
-  0:begin
-      tabEx.EWB.Stop;
-      tabEx.EWB.Free;
-    end;
   1:begin
       if not dllFactory.close(tabEx.url) then Exit;
     end;
@@ -532,7 +531,6 @@ begin
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex -1 else
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex +1;
 
-  tabEx.button.Free;
   tabEx.Free;
   pagebuttonSort;
   UpdateControls;
@@ -1570,6 +1568,25 @@ begin
         CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
       end;
   end;
+end;
+
+{ TTabSheetEx }
+
+constructor TTabSheetEx.Create(AOwner: TComponent);
+begin
+  inherited;
+  EWB := nil;
+  button := nil;
+end;
+
+destructor TTabSheetEx.Destroy;
+begin
+  if Assigned(button) then freeAndNil(button);
+  if Assigned(EWB) then
+     begin
+       freeAndNil(EWB);
+     end;
+  inherited;
 end;
 
 initialization

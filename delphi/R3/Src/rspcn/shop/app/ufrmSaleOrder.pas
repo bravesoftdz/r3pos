@@ -9,7 +9,7 @@ uses
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi, objCommon,
-  PrnDbgeh,ufrmDBGridPreview, ComCtrls, ToolWin, ImgList;
+  PrnDbgeh,ufrmDBGridPreview, ComCtrls, ToolWin, ImgList, FR_Class;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -97,6 +97,7 @@ type
     RzLabel14: TRzLabel;
     RzLabel15: TRzLabel;
     PrintDBGridEh1: TPrintDBGridEh;
+    frfSalesOrder: TfrReport;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -135,8 +136,11 @@ type
     procedure btnPreviewClick(Sender: TObject);
     procedure btnPrintClick(Sender: TObject);
     procedure paymentClick(Sender: TObject);
+    procedure frfSalesOrderGetValue(const ParName: String;
+      var ParValue: Variant);
+    procedure frfSalesOrderUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
   private
-    { Private declarations }
     AObj:TRecord_;
     //默认发票类型
     DefInvFlag:integer;
@@ -187,7 +191,6 @@ type
     procedure DoSaveOrder;
     procedure DBGridPrint;
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -200,14 +203,18 @@ type
     procedure CancelOrder;override;
     procedure Open(id:string);override;
 
+    procedure PreviewOrder;override;
+
     procedure OpenList;
   end;
 
-var
-  frmSaleOrder: TfrmSaleOrder;
+var frmSaleOrder: TfrmSaleOrder;
 
 implementation
-uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil, udllGlobal, udataFactory, ufrmPayMent;
+
+uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,uCacheFactory,
+     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview;
+
 {$R *.dfm}
 
 { TfrmSaleOrder }
@@ -474,8 +481,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.NewOrder;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   inherited;
   Open('');
@@ -528,8 +534,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.Open(id: string);
-var
-  Params:TftParamList;
+var Params:TftParamList;
 begin
   inherited;
   Params := TftParamList.Create(nil);
@@ -559,8 +564,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.SaveOrder;
-var
-  Printed:boolean;
+var Printed:boolean;
 begin
   if dbState = dsBrowse then Exit;
   if dllGlobal.GetParameter('GUIDE_USER')='0' then
@@ -622,7 +626,6 @@ procedure TfrmSaleOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
   if not edtTable.ControlsDisabled then Calc;
-
 end;
 
 procedure TfrmSaleOrder.showForm;
@@ -643,7 +646,6 @@ begin
   fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
   fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
   fndGODS_ID.SaveStatus;
-
 end;
 
 procedure TfrmSaleOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -859,7 +861,6 @@ begin
        end;
     edtTable.Edit;
     edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
-
   end
   else
   begin
@@ -980,8 +981,7 @@ begin
 end;
 
 function TfrmSaleOrder.checkPayment:boolean;
-var
-  fee,allFee,payZero,salMny:currency;
+var fee,allFee,payZero,salMny:currency;
 begin
   fee :=
     AObj.FieldbyName('PAY_B').AsFloat+
@@ -1037,7 +1037,7 @@ begin
   fee :=
     AObj.FieldbyName('PAY_B').AsFloat+
     AObj.FieldbyName('PAY_C').AsFloat+
-//    AObj.FieldbyName('PAY_D').AsFloat+
+    // AObj.FieldbyName('PAY_D').AsFloat+
     AObj.FieldbyName('PAY_E').AsFloat+
     AObj.FieldbyName('PAY_F').AsFloat+
     AObj.FieldbyName('PAY_G').AsFloat+
@@ -1164,8 +1164,7 @@ end;
 
 procedure TfrmSaleOrder.SetinputFlag(const Value: integer);
 function getPayment:string;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   result := '';
   rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
@@ -1260,8 +1259,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.DoCustId(s:string);
-var
-  rs,bs:TZQuery;
+var rs,bs:TZQuery;
 begin
   inherited;
   rs := TZQuery.Create(nil);
@@ -1330,8 +1328,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.DoGuideUser(s:string);
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := dllGlobal.GetZQueryFromName('CA_USERS');
   if rs.Locate('ACCOUNT',s,[]) then
@@ -1832,8 +1829,7 @@ begin
 end;
 
 function TfrmSaleOrder.getPaymentTitle(pay: string): string;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
   if rs.Locate('CODE_ID',pay,[]) then
@@ -1878,8 +1874,7 @@ begin
 end;
 
 function TfrmSaleOrder.payCashMny(s:string): boolean;
-var
-  r:currency;
+var r:currency;
 begin
   try
     r := strtoFloat(s);
@@ -1926,12 +1921,10 @@ begin
          end;
     end;
   end;
-
 end;
 
 procedure TfrmSaleOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
-var
-  r:currency;
+var r:currency;
 begin
   inherited;
   if edtPAY_TOTAL.Focused then
@@ -1952,8 +1945,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.edtACCT_MNYPropertiesChange(Sender: TObject);
-var
-  r,fee:currency;
+var r,fee:currency;
 begin
   inherited;
   if edtACCT_MNY.Focused then
@@ -1982,8 +1974,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.edtAGIO_RATEPropertiesChange(Sender: TObject);
-var
-  r,fee:currency;
+var r,fee:currency;
 begin
   inherited;
   if edtAGIO_RATE.Focused then
@@ -2013,36 +2004,30 @@ begin
   inherited;
   serachText.Text := searchTxt;
   serachText.SelectAll;
-
-
 end;
 
 procedure TfrmSaleOrder.serachTextExit(Sender: TObject);
 begin
   inherited;
   if searchTxt='' then serachText.Text := serachText.Hint;
-
 end;
 
 procedure TfrmSaleOrder.edtTableAfterDelete(DataSet: TDataSet);
 begin
   inherited;
   if not edtTable.ControlsDisabled then Calc;
-
 end;
 
 procedure TfrmSaleOrder.serachTextChange(Sender: TObject);
 begin
   inherited;
   if serachText.Focused then searchTxt := serachText.Text;
-
 end;
 
 procedure TfrmSaleOrder.cdsListBeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav.Visible := false;
-
 end;
 
 procedure TfrmSaleOrder.serachTextKeyPress(Sender: TObject; var Key: Char);
@@ -2053,8 +2038,7 @@ begin
 end;
 
 procedure TfrmSaleOrder.edtCLIENT_IDSaveValue(Sender: TObject);
-var
-  bs:TZQuery;
+var bs:TZQuery;
 begin
   inherited;
   bs := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
@@ -2064,15 +2048,22 @@ begin
         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
         AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
      end;
-
 end;
 
 procedure TfrmSaleOrder.btnPreviewClick(Sender: TObject);
 begin
   inherited;
-  DBGridPrint;
-  TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
-
+  case PageControl.ActivePageIndex of
+    0:
+      begin
+        PreviewOrder;
+      end;
+    1:
+      begin
+        DBGridPrint;
+        TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
+      end;
+  end;
 end;
 
 procedure TfrmSaleOrder.btnPrintClick(Sender: TObject);
@@ -2080,7 +2071,6 @@ begin
   inherited;
   DBGridPrint;
   TfrmDBGridPreview.Print(self,PrintDBGridEh1);
-
 end;
 
 procedure TfrmSaleOrder.DBGridPrint;
@@ -2099,6 +2089,42 @@ begin
   inherited;
   if TfrmPayment.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
      DoShowPayment;
+end;
+
+procedure TfrmSaleOrder.PreviewOrder;
+var
+  r:integer;
+  tid,oid:string;
+begin
+  inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
+  r := TfrmSaveDesigner.ShowDialog(self,'frfSalesOrder',nil);
+  if r < 0 then Exit;
+  GlobalIndex := r;
+  tid := token.tenantId;
+  oid := AObj.FieldbyName('SALES_ID').AsString;
+  TfrmOrderPreview.ShowReport(self,1,frfSalesOrder,tid,oid,'销售单');
+end;
+
+procedure TfrmSaleOrder.frfSalesOrderGetValue(const ParName: String;
+  var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := token.tenantName;
+  if ParName='打印人' then ParValue := token.username;
+end;
+
+procedure TfrmSaleOrder.frfSalesOrderUserFunction(const Name: String; p1,
+  p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
 end;
 
 initialization

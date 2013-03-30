@@ -277,6 +277,12 @@ type
     RzLabel51: TRzLabel;
     Tool_Right: TRzToolButton;
     Tool_Reset: TRzToolButton;
+    RzPanel13: TRzPanel;
+    RzPanel82: TRzPanel;
+    RzBackground34: TRzBackground;
+    RzLabel52: TRzLabel;
+    cxPrintFormat: TcxComboBox;
+    cxSavePrint: TcxCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
@@ -912,6 +918,11 @@ begin
        F.WriteString('SYS_DEFINE','PRINTERWIDTH','38')
     else
        F.WriteString('SYS_DEFINE','PRINTERWIDTH','33');
+    if cxSavePrint.Checked then
+       F.WriteString('SYS_DEFINE','SAVEPRINT','1')
+    else
+       F.WriteString('SYS_DEFINE','SAVEPRINT','0');
+    F.WriteString('SYS_DEFINE','PRINTFORMAT',Inttostr(cxPrintFormat.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOX',Inttostr(cxCashBox.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOXRATE',cxCashBoxRate.Text);
   finally
@@ -1071,6 +1082,8 @@ begin
        edtPRINTERWIDTH.ItemIndex := 1
     else
        edtPRINTERWIDTH.ItemIndex := 0;
+    cxSavePrint.Checked := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
+    cxPrintFormat.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTFORMAT','0'),0);
     cxCashBox.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','CASHBOX','0'),0);
     cxCashBoxRate.ItemIndex := cxCashBoxRate.Properties.Items.IndexOf(F.ReadString('SYS_DEFINE','CASHBOXRATE','0'));
   finally
@@ -1142,6 +1155,8 @@ begin
   edtTICKET_PRINT_NAME.ItemIndex := 0;
   edtTITLE.Text := '[企业简称]';
   edtFOOTER.Text := '敬请保留小票,以作售后依据';
+  cxSavePrint.checked := true;
+  cxPrintFormat.ItemIndex := 0;
 
   cxCashBox.ItemIndex := 0;
   cxCashBoxRate.ItemIndex := -1;

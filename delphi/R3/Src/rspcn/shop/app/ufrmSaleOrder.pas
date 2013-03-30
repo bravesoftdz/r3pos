@@ -203,6 +203,7 @@ type
     procedure CancelOrder;override;
     procedure Open(id:string);override;
 
+    procedure PrintTicket;
     procedure PrintOrder;override;
     procedure PreviewOrder;override;
 
@@ -214,7 +215,7 @@ var frmSaleOrder: TfrmSaleOrder;
 implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,uCacheFactory,
-     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview;
+     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory;
 
 {$R *.dfm}
 
@@ -621,6 +622,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
+  if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString);
 end;
 
 procedure TfrmSaleOrder.edtTableAfterPost(DataSet: TDataSet);
@@ -2073,7 +2075,10 @@ begin
   case PageControl.ActivePageIndex of
     0:
       begin
-        PrintOrder;
+        if DevFactory.PrintFormat = 0 then
+           PrintTicket
+        else
+           PrintOrder;
       end;
     1:
       begin
@@ -2099,6 +2104,17 @@ begin
   inherited;
   if TfrmPayment.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
      DoShowPayment;
+end;
+
+procedure TfrmSaleOrder.PrintTicket;
+var tid,oid:string;
+begin
+  inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
+  tid := token.tenantId;
+  oid := AObj.FieldbyName('SALES_ID').AsString;
+  DevFactory.PrintSaleTicket(tid,oid);
 end;
 
 procedure TfrmSaleOrder.PrintOrder;

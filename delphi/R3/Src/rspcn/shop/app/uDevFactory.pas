@@ -20,8 +20,10 @@ type
     FTicket_Title: string;
     FTicket_Footer: string;
     FTicket_NullRow: integer;
-    FTicket_Copy: integer;    
+    FTicket_Copy: integer;
     FTicket_PrintName: integer;
+    FSavePrint: boolean;
+    FPrintFormat: integer;
 
     procedure SetTicket_PrintComm(const Value: integer);
     procedure SetTicket_Width(const Value: integer);
@@ -35,6 +37,8 @@ type
     procedure SetCashBoxRate(const Value: integer);
 
     function  GetTitle: string;
+    procedure SetPrintFormat(const Value: integer);
+    procedure SetSavePrint(const Value: boolean);
   private
     procedure BeginPrint;
     procedure WritePrint(s:string);
@@ -61,6 +65,9 @@ type
     property Ticket_NullRow:integer read FTicket_NullRow write SetTicket_NullRow;
     property Ticket_Copy:integer read FTicket_Copy write SetTicket_Copy;
     property Ticket_PrintName:integer read FTicket_PrintName write SetTicket_PrintName;
+
+    property SavePrint:boolean read FSavePrint write SetSavePrint;
+    property PrintFormat:integer read FPrintFormat write SetPrintFormat;
 
     property CashComm:TComm read FCashComm;
     property CashBox:integer read FCashBox write SetCashBox;
@@ -102,6 +109,9 @@ begin
      Ticket_Title := DecStr(F.ReadString('SYS_DEFINE','TITLE',EncStr('[门店名称]',ENC_KEY)),ENC_KEY);
      Ticket_NullRow :=  F.ReadInteger('SYS_DEFINE','PRINTNULL',0);
      Ticket_Copy := F.ReadInteger('SYS_DEFINE','TICKETCOPY',1);
+
+     SavePrint := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
+     PrintFormat := F.ReadInteger('SYS_DEFINE','PRINTFORMAT',0);
   finally
     try
       F.Free;
@@ -508,6 +518,16 @@ begin
   except
     Raise Exception.Create('打开钱箱'+FComm.CommName+'端口出错,是否正确设置参数？');
   end;
+end;
+
+procedure TDevFactory.SetPrintFormat(const Value: integer);
+begin
+  FPrintFormat := Value;
+end;
+
+procedure TDevFactory.SetSavePrint(const Value: boolean);
+begin
+  FSavePrint := Value;
 end;
 
 initialization

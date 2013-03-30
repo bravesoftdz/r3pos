@@ -17,6 +17,7 @@ type
     btnCancel: TRzBmpButton;
     procedure btnOKClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure frfGridDblClick(Sender: TObject);
   public
     procedure Load(filename:string);
     class function SelectFormer(Owner:TForm;fname:string):string;
@@ -106,6 +107,12 @@ procedure TfrmSelectFormer.btnCancelClick(Sender: TObject);
 begin
   inherited;
   Close;
+end;
+
+procedure TfrmSelectFormer.frfGridDblClick(Sender: TObject);
+begin
+  inherited;
+  btnOK.Click;
 end;
 
 end.

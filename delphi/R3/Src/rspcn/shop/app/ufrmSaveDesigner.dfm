@@ -54,6 +54,7 @@ inherited frmSaveDesigner: TfrmSaveDesigner
         FixedRows = 0
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goRowSelect]
         TabOrder = 0
+        OnDblClick = frfGridDblClick
         FrameStyle = fsNone
       end
     end

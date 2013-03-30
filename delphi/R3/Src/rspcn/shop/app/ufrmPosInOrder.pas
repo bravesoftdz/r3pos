@@ -199,6 +199,7 @@ type
     procedure CancelOrder;override;
     procedure Open(id:string);override;
 
+    procedure PrintOrder;override;
     procedure PreviewOrder;override;
 
     procedure OpenList;
@@ -1497,8 +1498,17 @@ end;
 procedure TfrmPosInOrder.btnPrintClick(Sender: TObject);
 begin
   inherited;
-  DBGridPrint;
-  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+  case PageControl.ActivePageIndex of
+    0:
+      begin
+        PrintOrder;
+      end;
+    1:
+      begin
+        DBGridPrint;
+        TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+      end;
+  end;
 end;
 
 procedure TfrmPosInOrder.DBGridPrint;
@@ -1513,13 +1523,24 @@ begin
   PrintDBGridEh1.SetSubstitutes(['%[whr]', '日期:'+formatDatetime('YYYY-MM-DD',D1.Date)+'至'+formatDatetime('YYYY-MM-DD',D2.Date)]);
 end;
 
+procedure TfrmPosInOrder.PrintOrder;
+var tid,oid:string;
+begin
+  inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if AObj.FieldbyName('STOCK_ID').AsString = '' then Exit;
+  tid := token.tenantId;
+  oid := AObj.FieldbyName('STOCK_ID').AsString;
+  TfrmOrderPreview.PrintReport(self,0,frfStockOrder,tid,oid);
+end;
+
 procedure TfrmPosInOrder.PreviewOrder;
 var
   r:integer;
   tid,oid:string;
 begin
   inherited;
-  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if dbState <> dsBrowse then Raise Exception.Create('请保存后再预览...');
   if AObj.FieldbyName('STOCK_ID').AsString = '' then Exit;
   r := TfrmSaveDesigner.ShowDialog(self,'frfStockOrder',nil);
   if r < 0 then Exit;

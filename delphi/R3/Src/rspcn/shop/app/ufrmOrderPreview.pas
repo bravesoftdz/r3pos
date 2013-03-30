@@ -51,11 +51,10 @@ type
     function GetStockOrderPrintSQL(tid,oid:string):string;
     function GetSalesOrderPrintSQL(tid,oid:string):string;
     class procedure ShowReport(AOwner:TForm;ReportType:integer;AfrReport:TfrReport;tid,oid:string;Title:string);
+    class procedure PrintReport(AOwner:TForm;ReportType:integer;AfrReport:TfrReport;tid,oid:string);
   end;
 
-var
-  GlobalIndex: integer = -1;
-  Language: integer = 0;
+var GlobalIndex: integer = -1;
 
 implementation
 
@@ -151,7 +150,7 @@ begin
            dataFactory.Open(rs);
            if not rs.IsEmpty then
               begin
-                if SaveIndex<=0 then
+                if SaveIndex <= 0 then
                    TBlobField(rs.FieldByName('frfBlob')).SaveToStream(sm)
                 else
                    TBlobField(rs.FieldByName('frfBlob'+inttostr(SaveIndex))).SaveToStream(sm);
@@ -266,18 +265,18 @@ begin
   if not Desgn then Exit;
   if SaveAs then
      begin
-      SaveDialog.DefaultExt := '*.frf';
-      SaveDialog.Filter := '报表格式|*.frf';
-      if SaveDialog.Execute then
-         begin
-           if FileExists(SaveDialog.FileName) then
-              begin
-                if MessageBox(Handle,Pchar(SaveDialog.FileName+'文件已经存在，是否覆盖它？'),PChar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-                if not DeleteFile(SaveDialog.FileName) then
-                   Raise Exception.CreateFmt('%s文件可能被其他用使用，无法覆盖。',[SaveDialog.FileName]);
-              end;
-           frReport.SaveToFile(SaveDialog.FileName);
-         end;
+       SaveDialog.DefaultExt := '*.frf';
+       SaveDialog.Filter := '报表格式|*.frf';
+       if SaveDialog.Execute then
+          begin
+            if FileExists(SaveDialog.FileName) then
+               begin
+                 if MessageBox(Handle,Pchar(SaveDialog.FileName+'文件已经存在，是否覆盖它？'),PChar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+                 if not DeleteFile(SaveDialog.FileName) then
+                    Raise Exception.CreateFmt('%s文件可能被其他用使用，无法覆盖。',[SaveDialog.FileName]);
+               end;
+            frReport.SaveToFile(SaveDialog.FileName);
+          end;
        Exit;
      end;
   r := TfrmSaveDesigner.SaveDialog(self,frReport.Name,frReport);
@@ -413,6 +412,61 @@ begin
      'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
      'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
      'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j order by SEQNO';
+end;
+
+class procedure TfrmOrderPreview.PrintReport(AOwner:TForm; ReportType: integer; AfrReport: TfrReport; tid, oid: string);
+var Pages,CommandText:string;
+begin
+  with TfrmOrderPreview.Create(AOwner) do
+    begin
+      try
+        if AfrReport=nil then Raise Exception.Create('AfrReport参数没有Create');
+        try
+          FfrReport := AfrReport;
+          OpenFile(AfrReport,GlobalIndex);
+          frReport.Dataset := frTable;
+          frReport.Preview := frPreview;
+          case ReportType of
+            0:CommandText := GetStockOrderPrintSQL(tid,oid);
+            1:CommandText := GetSalesOrderPrintSQL(tid,oid);
+          end;
+          SelectSQL := CommandText;
+          adoTable.Close;
+          adoTable.SQL.Text := CommandText;
+          dataFactory.Open(adoTable);
+          if frReport.PrepareReport then
+             begin
+               if (frReport.EMFPages = nil) then Exit;
+               with TfrPrintForm.Create(Application) do
+               begin
+                 try
+                   E1.Text := IntToStr(frReport.DefaultCopies);
+                   CollateCB.Checked := frReport.DefaultCollate;
+                   if not frReport.ShowPrintDialog or (ShowModal = mrOk) then
+                      begin
+                        if RB1.Checked then
+                           Pages := ''
+                        else if RB2.Checked then
+                           Pages := IntToStr(1)
+                        else
+                           Pages := E2.Text;
+                        frReport.PrintPreparedReport(Pages, StrToInt(E1.Text),CollateCB.Checked,TfrPrintPages(CB2.ItemIndex));
+                      end;
+                 finally
+                   Free;
+                 end;
+               end;
+             end;
+        except
+          on E:Exception do
+            begin
+               Raise Exception.Create('生成报表出错:'+E.Message);
+            end;
+        end;
+      finally
+        Free;
+      end;
+    end;
 end;
 
 end.

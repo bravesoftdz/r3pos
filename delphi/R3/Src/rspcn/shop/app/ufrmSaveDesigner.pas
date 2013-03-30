@@ -19,6 +19,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
+    procedure frfGridDblClick(Sender: TObject);
   private
     Flag:integer;
     FfrfFileName: string;
@@ -47,7 +48,6 @@ begin
         RzLabel26.Caption := '样式选择';
         frfFileName := fname;
         MyfrReport := frReport;
-        btnSave.Visible := (frReport<>nil);
         Load;
         if ShowModal=MROK then
            result := frfGrid.Selection.Top
@@ -65,11 +65,10 @@ begin
     begin
       try
         Flag := 1;
-        btnSave.Visible := true;
         RzLabel26.Caption := '保存表样至';
         frfFileName := fname;
         MyfrReport := frReport;
-        btnSave.Visible := (frReport<>nil);
+        btnSave.Visible := (frReport <> nil);
         Load;
         if ShowModal=MROK then
            result := frfGrid.Selection.Top
@@ -202,6 +201,12 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmSaveDesigner.frfGridDblClick(Sender: TObject);
+begin
+  inherited;
+  btnOK.Click;
 end;
 
 end.

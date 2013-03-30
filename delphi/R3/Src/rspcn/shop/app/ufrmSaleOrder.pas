@@ -203,6 +203,7 @@ type
     procedure CancelOrder;override;
     procedure Open(id:string);override;
 
+    procedure PrintOrder;override;
     procedure PreviewOrder;override;
 
     procedure OpenList;
@@ -2069,8 +2070,17 @@ end;
 procedure TfrmSaleOrder.btnPrintClick(Sender: TObject);
 begin
   inherited;
-  DBGridPrint;
-  TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+  case PageControl.ActivePageIndex of
+    0:
+      begin
+        PrintOrder;
+      end;
+    1:
+      begin
+        DBGridPrint;
+        TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+      end;
+  end;
 end;
 
 procedure TfrmSaleOrder.DBGridPrint;
@@ -2091,13 +2101,24 @@ begin
      DoShowPayment;
 end;
 
+procedure TfrmSaleOrder.PrintOrder;
+var tid,oid:string;
+begin
+  inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
+  tid := token.tenantId;
+  oid := AObj.FieldbyName('SALES_ID').AsString;
+  TfrmOrderPreview.PrintReport(self,1,frfSalesOrder,tid,oid);
+end;
+
 procedure TfrmSaleOrder.PreviewOrder;
 var
   r:integer;
   tid,oid:string;
 begin
   inherited;
-  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if dbState <> dsBrowse then Raise Exception.Create('请保存后再预览...');
   if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
   r := TfrmSaveDesigner.ShowDialog(self,'frfSalesOrder',nil);
   if r < 0 then Exit;

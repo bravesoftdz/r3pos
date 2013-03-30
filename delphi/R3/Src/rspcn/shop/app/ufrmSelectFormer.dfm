@@ -62,6 +62,7 @@ inherited frmSelectFormer: TfrmSelectFormer
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
         ParentBiDiMode = False
         TabOrder = 0
+        OnDblClick = frfGridDblClick
         FrameHotStyle = fsNone
         FrameStyle = fsNone
         FrameVisible = True

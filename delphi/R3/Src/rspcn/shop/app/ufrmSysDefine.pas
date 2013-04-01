@@ -569,6 +569,7 @@ begin
 end;
 
 procedure TfrmSysDefine.ReadFromObject(PageIndex:integer);
+var i:integer;
 begin
   if PageIndex = 0 then
   begin
@@ -582,7 +583,9 @@ begin
     else
        begin
          edtINPUT_MODE.ItemIndex := strtointdef(dllGlobal.GetParameter('INPUT_MODE'),0);
-         edtINDUSTRY_TYPE.ItemIndex := TdsItems.FindItems(edtINDUSTRY_TYPE.Properties.Items,'CODE_ID',dllGlobal.GetParameter('INDUSTRY_TYPE'));
+         i := TdsItems.FindItems(edtINDUSTRY_TYPE.Properties.Items,'CODE_ID',dllGlobal.GetParameter('INDUSTRY_TYPE'));
+         if i < 0 then i := 0;
+         edtINDUSTRY_TYPE.ItemIndex := i;
        end;
   end;
   if PageIndex = 1 then
@@ -1479,6 +1482,7 @@ begin
               try
                 rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
                 dataFactory.Open(rs);
+                SyncFactory.RecoverySync(self.Handle);
                 MessageBox(Handle,'数据恢复成功...','友情提示..',MB_OK);
                 if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
                    DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');

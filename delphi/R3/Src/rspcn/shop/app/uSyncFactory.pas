@@ -54,7 +54,7 @@ type
     procedure InitSyncList;
     procedure SyncList;
     procedure SyncBasic;
-    procedure SyncBizData;
+    procedure SyncBizData(SyncFlag:integer=0);
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
     procedure BeforeSyncBiz(DataSet:TZQuery;FieldName:string;SyncFlag:integer);
     procedure SyncStockOrder(SyncFlag:integer=0);// 0:上传 1:下载
@@ -81,6 +81,8 @@ type
     procedure LoginSync(PHWnd:THandle);
     // 退出时同步
     procedure LogoutSync(PHWnd:THandle);
+    // 数据恢复时同步
+    procedure RecoverySync(PHWnd:THandle);
     // 注册时同步
     procedure RegisterSync(PHWnd:THandle);
     property  Params:TftParamList read FParams write SetParams;
@@ -1042,6 +1044,24 @@ begin
   end;
 end;
 
+procedure TSyncFactory.RecoverySync(PHWnd:THandle);
+begin
+  if dllApplication.mode = 'demo' then Exit;
+  if token.tenantId = '' then Exit;
+  if not token.online then Exit;
+  with TfrmSyncData.CreateParented(PHWnd) do
+  begin
+    try
+      hWnd := PHWnd;
+      ShowForm;
+      BringToFront;
+      SyncFactory.SyncBizData(1);
+    finally
+      Free;
+    end;
+  end;
+end;
+
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
@@ -1067,7 +1087,7 @@ end;
 
 procedure TSyncFactory.SyncRckDays(SyncFlag:integer=0);
 var
-  tbName:string;
+  tbName,orderFields,dataFields:string;
   maxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
@@ -1082,8 +1102,11 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  if SyncFlag = 0 then
+     Params.ParamByName('SYN_COMM').AsBoolean := true
+  else
+     Params.ParamByName('SYN_COMM').AsBoolean := false;
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
 
@@ -1113,7 +1136,11 @@ begin
 
       rs_h.Close;
       rs_d.Close;
+
       Params.ParamByName('CREA_DATE').AsInteger := ls.FieldbyName('CREA_DATE').AsInteger;
+
+      if orderFields = '' then orderFields := GetTableFields('RCK_DAYS_CLOSE');
+      if dataFields = ''  then dataFields  := GetTableFields('RCK_STOCKS_DATA');
 
       if SyncFlag = 0 then
          dataFactory.MoveToSqlite
@@ -1122,9 +1149,9 @@ begin
       try
         dataFactory.BeginBatch;
         try
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('RCK_DAYS_CLOSE');
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
           dataFactory.AddBatch(rs_h,'TSyncRckDaysCloseV60',Params);
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('RCK_STOCKS_DATA');
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
           dataFactory.AddBatch(rs_d,'TSyncRckStocksDataV60',Params);
           dataFactory.OpenBatch;
         except
@@ -1186,7 +1213,7 @@ end;
 
 procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0);
 var
-  tbName:string;
+  tbName,orderFields,dataFields:string;
   maxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
@@ -1199,7 +1226,10 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  if SyncFlag = 0 then
+     Params.ParamByName('SYN_COMM').AsBoolean := true
+  else
+     Params.ParamByName('SYN_COMM').AsBoolean := false;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   Params.ParamByName('SyncFlag').AsString := '1';
 
@@ -1238,6 +1268,9 @@ begin
       Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;STOCK_ID';
       Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
 
+      if orderFields = '' then orderFields := GetTableFields('STK_STOCKORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('STK_STOCKDATA','a');
+
       if SyncFlag = 0 then
          dataFactory.MoveToSqlite
       else
@@ -1245,9 +1278,9 @@ begin
       try
         dataFactory.BeginBatch;
         try
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('STK_STOCKORDER');
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
           dataFactory.AddBatch(rs_h,'TSyncStockOrderV60',Params);
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('STK_STOCKDATA','a');
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
           dataFactory.AddBatch(rs_d,'TSyncStockDataV60',Params);
           dataFactory.OpenBatch;
         except
@@ -1308,7 +1341,7 @@ end;
 
 procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0);
 var
-  tbName:string;
+  tbName,orderFields,dataFields,glideFields:string;
   maxTimeStamp:int64;
   ls,rs_h,rs_d,rs_s,cs_h,cs_d,cs_s:TZQuery;
 begin
@@ -1321,7 +1354,10 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  if SyncFlag = 0 then
+     Params.ParamByName('SYN_COMM').AsBoolean := true
+  else
+     Params.ParamByName('SYN_COMM').AsBoolean := false;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   Params.ParamByName('SyncFlag').AsString := '1';
 
@@ -1364,6 +1400,10 @@ begin
       Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SALES_ID';
       Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
 
+      if orderFields = '' then orderFields := GetTableFields('SAL_SALESORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('SAL_SALESDATA');
+      if glideFields = '' then glideFields := GetTableFields('SAL_IC_GLIDE');
+
       if SyncFlag = 0 then
          dataFactory.MoveToSqlite
       else
@@ -1371,11 +1411,11 @@ begin
       try
         dataFactory.BeginBatch;
         try
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('SAL_SALESORDER');
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
           dataFactory.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('SAL_SALESDATA');
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
           dataFactory.AddBatch(rs_d,'TSyncSalesDataV60',Params);
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('SAL_IC_GLIDE');
+          Params.ParamByName('TABLE_FIELDS').AsString := glideFields;
           dataFactory.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
           dataFactory.OpenBatch;
         except
@@ -1452,7 +1492,7 @@ end;
 
 procedure TSyncFactory.SyncChangeOrder(SyncFlag:integer=0);
 var
-  tbName:string;
+  tbName,orderFields,dataFields:string;
   maxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
@@ -1465,7 +1505,10 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
+  if SyncFlag = 0 then
+     Params.ParamByName('SYN_COMM').AsBoolean := true
+  else
+     Params.ParamByName('SYN_COMM').AsBoolean := false;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   Params.ParamByName('SyncFlag').AsString := '1';
 
@@ -1504,6 +1547,9 @@ begin
       Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;CHANGE_ID';
       Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
 
+      if orderFields = '' then orderFields := GetTableFields('STO_CHANGEORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('STO_CHANGEDATA','a');
+
       if SyncFlag = 0 then
          dataFactory.MoveToSqlite
       else
@@ -1511,9 +1557,9 @@ begin
       try
         dataFactory.BeginBatch;
         try
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('STO_CHANGEORDER');
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
           dataFactory.AddBatch(rs_h,'TSyncChangeOrderV60',Params);
-          Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('STO_CHANGEDATA','a');
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
           dataFactory.AddBatch(rs_d,'TSyncChangeDataV60',Params);
           dataFactory.OpenBatch;
         except
@@ -1572,21 +1618,21 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncBizData;
+procedure TSyncFactory.SyncBizData(SyncFlag:integer=0);
 begin
   try
     SetProMax(400);
     ProTitle := '正在同步<进货单>...';
-    SyncStockOrder;
+    SyncStockOrder(SyncFlag);
     SetProPosition(100);
     ProTitle := '正在同步<销售单>...';
-    SyncSalesOrder;
+    SyncSalesOrder(SyncFlag);
     SetProPosition(200);
     ProTitle := '正在同步<损益单>...';
-    SyncChangeOrder;
+    SyncChangeOrder(SyncFlag);
     SetProPosition(300);
     ProTitle := '正在同步<日台账>...';
-    SyncRckDays;
+    SyncRckDays(SyncFlag);
     SetProPosition(400);
   finally
     ReadTimeStamp;

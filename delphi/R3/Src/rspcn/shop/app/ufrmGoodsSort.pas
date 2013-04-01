@@ -98,6 +98,7 @@ procedure TfrmGoodsSort.Save;
       else
          result := rs.Fields[0].AsInteger + 1;
     finally
+      rs.Free;
     end;
   end;
 var

@@ -146,6 +146,7 @@ type
     red3: TLabel;
     red4: TLabel;
     red5: TLabel;
+    cdsUnits: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -187,6 +188,8 @@ type
     procedure DownloadUnits;overload;
     procedure DownloadUnits(pubGoodsinfoResp:IXMLDOMNode);overload;
     procedure RefreshUnits;
+    procedure RefreshUnitsList;
+    procedure AddUnits(Sender: TObject);
     procedure SetLocalFinded(const Value: boolean);
     procedure SetRemoteFinded(const Value: boolean);
     procedure SetRspFinded(const Value: boolean);
@@ -220,7 +223,7 @@ type
 implementation
 
 uses uRspFactory,udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -252,10 +255,6 @@ begin
         end;
       rs.Next;
     end;
-
-  edtCALC_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-  edtSMALL_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-  edtBIG_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
 
   for i := 0 to rzPage.PageCount - 1 do
     begin
@@ -295,6 +294,7 @@ begin
       edtSHOP_NEW_OUTPRICE.Text := '';
       edtDefault1.Checked := false;
       edtDefault2.Checked := false;
+      RefreshUnitsList;
       if edtGOODS_OPTION1.Checked then
         begin
           if dllApplication.mode = 'demo' then Raise Exception.Create('演示模式下不允许新增供应链商品...');
@@ -1068,17 +1068,6 @@ begin
   CheckGodsMaxPrice(edtNEW_INPRICE,'标准进价');
   CheckGodsMaxPrice(edtNEW_OUTPRICE,'标准售价');
   CheckGodsMaxPrice(edtSHOP_NEW_OUTPRICE,'店内售价');
-
-  if StrToFloatDef(trim(edtNEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
-    begin
-      if CanFocus(edtNEW_OUTPRICE) then edtNEW_OUTPRICE.SetFocus;
-      Raise Exception.Create('标准售价不能小于标准进价！');
-    end;
-  if StrToFloatDef(trim(edtSHOP_NEW_OUTPRICE.Text),0) < StrToFloatDef(trim(edtNEW_INPRICE.Text),0) then
-    begin
-      if CanFocus(edtSHOP_NEW_OUTPRICE) then edtSHOP_NEW_OUTPRICE.SetFocus;
-      Raise Exception.Create('店内售价不能小于标准进价！');
-    end;
 end;
 
 procedure TfrmInitGoods.CheckInput2;
@@ -1913,9 +1902,75 @@ end;
 procedure TfrmInitGoods.RefreshUnits;
 begin
   dllGlobal.GetZQueryFromName('PUB_MEAUNITS').Close;
-  edtCALC_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-  edtSMALL_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-  edtBIG_UNITS.DataSet := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  RefreshUnitsList;
+end;
+
+procedure TfrmInitGoods.AddUnits(Sender: TObject);
+var AObj:TRecord_;
+begin
+  AObj := TRecord_.Create;
+  try
+    if TfrmMeaUnits.ShowDialog(self,'',AObj) then
+       begin
+         RefreshUnitsList;
+         TzrComboBoxList(Sender).KeyValue := AObj.FieldByName('UNIT_ID').AsString;
+         TzrComboBoxList(Sender).Text := AObj.FieldByName('UNIT_NAME').AsString;
+         TzrComboBoxList(Sender).OnSaveValue(nil);
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmInitGoods.RefreshUnitsList;
+var
+  tmpObj:TRecord_;
+  rs:TZQuery;
+begin
+  rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  if edtGOODS_OPTION1.Checked then
+     begin
+       edtCALC_UNITS.Buttons := [];
+       edtSMALL_UNITS.Buttons := [];
+       edtBIG_UNITS.Buttons := [];
+       edtCALC_UNITS.OnAddClick := nil;
+       edtSMALL_UNITS.OnAddClick := nil;
+       edtBIG_UNITS.OnAddClick := nil;
+       rs.Filtered := false;
+       rs.Filter := 'RELATION_FLAG=1';
+       rs.Filtered := true;
+     end
+  else
+     begin
+       edtCALC_UNITS.Buttons := [zbNew];
+       edtSMALL_UNITS.Buttons := [zbNew];
+       edtBIG_UNITS.Buttons := [zbNew];
+       edtCALC_UNITS.OnAddClick := AddUnits;
+       edtSMALL_UNITS.OnAddClick := AddUnits;
+       edtBIG_UNITS.OnAddClick := AddUnits;
+     end;
+
+  cdsUnits.Close;
+  cdsUnits.FieldDefs := rs.FieldDefs;
+  cdsUnits.CreateDataSet;
+
+  tmpObj := TRecord_.Create;
+  try
+    rs.First;
+    while not rs.Eof do
+    begin
+      cdsUnits.Append;
+      tmpObj.ReadFromDataSet(rs);
+      tmpObj.WriteToDataSet(cdsUnits);
+      rs.Next;
+    end;
+  finally
+    tmpObj.Free;
+  end;
+
+  edtCALC_UNITS.DataSet := cdsUnits;
+  edtSMALL_UNITS.DataSet := cdsUnits;
+  edtBIG_UNITS.DataSet := cdsUnits;
 end;
 
 procedure TfrmInitGoods.SetReadOnly;

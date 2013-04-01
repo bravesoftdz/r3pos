@@ -2266,4 +2266,11 @@ inherited frmInitGoods: TfrmInitGoods
     Left = 238
     Top = 440
   end
+  object cdsUnits: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 45
+    Top = 383
+  end
 end

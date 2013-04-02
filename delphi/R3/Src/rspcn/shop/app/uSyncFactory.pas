@@ -54,13 +54,13 @@ type
     procedure InitSyncList;
     procedure SyncList;
     procedure SyncBasic;
-    procedure SyncBizData(SyncFlag:integer=0);
+    procedure SyncBizData(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
     procedure BeforeSyncBiz(DataSet:TZQuery;FieldName:string;SyncFlag:integer);
-    procedure SyncStockOrder(SyncFlag:integer=0);// 0:上传 1:下载
-    procedure SyncSalesOrder(SyncFlag:integer=0);
-    procedure SyncChangeOrder(SyncFlag:integer=0);
-    procedure SyncRckDays(SyncFlag:integer=0);
+    procedure SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');// 0:上传 1:下载
+    procedure SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
+    procedure SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
+    procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
     function  CheckNeedSync:boolean;
     function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
   protected
@@ -82,7 +82,7 @@ type
     // 退出时同步
     procedure LogoutSync(PHWnd:THandle);
     // 数据恢复时同步
-    procedure RecoverySync(PHWnd:THandle);
+    procedure RecoverySync(PHWnd:THandle;BeginDate:string='');
     // 注册时同步
     procedure RegisterSync(PHWnd:THandle);
     property  Params:TftParamList read FParams write SetParams;
@@ -1044,7 +1044,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.RecoverySync(PHWnd:THandle);
+procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
@@ -1055,7 +1055,7 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
-      SyncFactory.SyncBizData(1);
+      SyncFactory.SyncBizData(1,BeginDate);
     finally
       Free;
     end;
@@ -1085,7 +1085,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncRckDays(SyncFlag:integer=0);
+procedure TSyncFactory.SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields:string;
   maxTimeStamp:int64;
@@ -1096,6 +1096,9 @@ begin
   tbName := 'RCK_DAYS_CLOSE';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   maxTimeStamp := SyncTimeStamp; 
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -1185,7 +1188,8 @@ begin
         dataFactory.MoveToDefault;
       end;
 
-      maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > maxTimeStamp then
+         maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
       if SyncFlag = 0 then
       begin
@@ -1211,7 +1215,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0);
+procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields:string;
   maxTimeStamp:int64;
@@ -1220,6 +1224,9 @@ begin
   tbName := 'STK_STOCKORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   maxTimeStamp := SyncTimeStamp;
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -1339,7 +1346,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0);
+procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields,glideFields:string;
   maxTimeStamp:int64;
@@ -1348,6 +1355,9 @@ begin
   tbName := 'SAL_SALESORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   maxTimeStamp := SyncTimeStamp;
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -1490,15 +1500,18 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncChangeOrder(SyncFlag:integer=0);
+procedure TSyncFactory.SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields:string;
   maxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
   tbName := 'STO_CHANGEORDER';
-  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId); 
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   maxTimeStamp := SyncTimeStamp;
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -1618,21 +1631,21 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncBizData(SyncFlag:integer=0);
+procedure TSyncFactory.SyncBizData(SyncFlag:integer=0;BeginDate:string='');
 begin
   try
     SetProMax(400);
     ProTitle := '正在同步<进货单>...';
-    SyncStockOrder(SyncFlag);
+    SyncStockOrder(SyncFlag,BeginDate);
     SetProPosition(100);
     ProTitle := '正在同步<销售单>...';
-    SyncSalesOrder(SyncFlag);
+    SyncSalesOrder(SyncFlag,BeginDate);
     SetProPosition(200);
     ProTitle := '正在同步<损益单>...';
-    SyncChangeOrder(SyncFlag);
+    SyncChangeOrder(SyncFlag,BeginDate);
     SetProPosition(300);
     ProTitle := '正在同步<日台账>...';
-    SyncRckDays(SyncFlag);
+    SyncRckDays(SyncFlag,BeginDate);
     SetProPosition(400);
   finally
     ReadTimeStamp;

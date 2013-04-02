@@ -435,8 +435,13 @@ end;
 function TSyncRckDaysCloseListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var str:string;
 begin
-  str :=
-    'select TENANT_ID,SHOP_ID,CREA_DATE from '+Params.ParambyName('TABLE_NAME').AsString+' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  str := 'select TENANT_ID,SHOP_ID,CREA_DATE from '+Params.ParambyName('TABLE_NAME').AsString+' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+
+  if Params.FindParam('BEGIN_DATE') = nil then
+     str := str + ' and TIME_STAMP>:TIME_STAMP'
+  else
+     str := str + ' and CREA_DATE>=:BEGIN_DATE';
+
   if Params.ParamByName('SYN_COMM').AsBoolean then
      str := str + ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -491,8 +496,13 @@ end;
 function TSyncSalesOrderListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var str:string;
 begin
-  str :=
-    'select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE from SAL_SALESORDER where TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or CLIENT_ID=:SHOP_ID) and TIME_STAMP>:TIME_STAMP';
+  str := 'select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE from SAL_SALESORDER where TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or CLIENT_ID=:SHOP_ID)';
+
+  if Params.FindParam('BEGIN_DATE') = nil then
+     str := str + ' and TIME_STAMP>:TIME_STAMP'
+  else
+     str := str + ' and SALES_DATE>=:BEGIN_DATE';
+
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -504,8 +514,13 @@ end;
 function TSyncStockOrderListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var str:string;
 begin
-  str :=
-    'select TENANT_ID,SHOP_ID,STOCK_ID,STOCK_DATE from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  str := 'select TENANT_ID,SHOP_ID,STOCK_ID,STOCK_DATE from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+
+  if Params.FindParam('BEGIN_DATE') = nil then
+     str := str + ' and TIME_STAMP>:TIME_STAMP'
+  else
+     str := str + ' and STOCK_DATE>=:BEGIN_DATE';
+
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -517,8 +532,13 @@ end;
 function TSyncChangeOrderListV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var str:string;
 begin
-  str :=
-    'select TENANT_ID,SHOP_ID,CHANGE_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  str := 'select TENANT_ID,SHOP_ID,CHANGE_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+
+  if Params.FindParam('BEGIN_DATE') = nil then
+     str := str + ' and TIME_STAMP>:TIME_STAMP'
+  else
+     str := str + ' and CHANGE_DATE>=:BEGIN_DATE';
+
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 

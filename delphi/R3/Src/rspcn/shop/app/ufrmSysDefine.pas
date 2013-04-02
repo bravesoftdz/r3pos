@@ -9,7 +9,7 @@ uses
   ComCtrls, RzPrgres, cxMaskEdit, cxButtonEdit, zrComboBoxList, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, msxml,
   cxDropDownEdit, cxCalendar, cxCheckBox, cxMemo, cxSpinEdit, IniFiles,
-  Grids, DBGridEh, RzBckgnd, RzBorder, ObjCommon;
+  Grids, DBGridEh, RzBckgnd, RzBorder, ObjCommon, cxRadioGroup;
 
 type
   TfrmSysDefine = class(TfrmWebToolForm)
@@ -283,6 +283,14 @@ type
     RzLabel52: TRzLabel;
     cxPrintFormat: TcxComboBox;
     cxSavePrint: TcxCheckBox;
+    RzLabel53: TRzLabel;
+    Bevel8: TBevel;
+    RzLabel54: TRzLabel;
+    btnRecoveryRemote: TRzBmpButton;
+    Recovery_Group: TRzGroupBox;
+    Recovery_1: TcxRadioButton;
+    Recovery_2: TcxRadioButton;
+    Recovery_3: TcxRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
@@ -309,6 +317,7 @@ type
     procedure RzLabel37Click(Sender: TObject);
     procedure btnChangeClick(Sender: TObject);
     procedure Tool_RightClick(Sender: TObject);
+    procedure btnRecoveryRemoteClick(Sender: TObject);
   private
     SyncDataing:boolean;
     FCurUserId:string;
@@ -346,6 +355,8 @@ type
     procedure SetCurUserAccount(const Value: string);
     procedure SetCurUserRoleIds(const Value: string);
     procedure SetUserState(const Value: TDataSetState);
+
+    procedure RemoteRecovery;
   public
     AObj:TRecord_;
     procedure GetShopInfo;
@@ -1756,6 +1767,35 @@ procedure TfrmSysDefine.Tool_RightClick(Sender: TObject);
 begin
   inherited;
   GrantRights;
+end;
+
+procedure TfrmSysDefine.btnRecoveryRemoteClick(Sender: TObject);
+begin
+  inherited;
+  RemoteRecovery;
+end;
+
+procedure TfrmSysDefine.RemoteRecovery;
+var
+  rs:TZQuery;
+  BeginDate:string;
+  StockOrderTimeStamp,SalesOrderTimeStamp,ChangeOrderTimeStamp,RckDaysTimeStamp:int64;
+begin
+  if Recovery_1.Checked then
+     begin
+       BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-1));
+     end
+  else if Recovery_2.Checked then
+     begin
+       BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-2));
+     end
+  else if Recovery_3.Checked then
+     begin
+       BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-3));
+     end;
+  BeginDate := BeginDate + '01';
+
+  SyncFactory.RecoverySync(self.Handle,BeginDate);
 end;
 
 initialization

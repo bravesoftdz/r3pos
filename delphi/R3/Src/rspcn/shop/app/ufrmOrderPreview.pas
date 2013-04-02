@@ -213,20 +213,19 @@ var
 begin
   s := TfrmSelectFormer.SelectFormer(self,frReport.Name);
   if s = '' then Exit;
-  r := TfrmSaveDesigner.SaveDialog(self,frReport.Name,nil);
+  //r := TfrmSaveDesigner.SaveDialog(self,frReport.Name,nil);
   if pos('(自定义)',s)=0 then
      begin
        sm := TFileStream.Create(ExtractFilePath(ParamStr(0))+'frf\'+s+'.frf',fmOpenRead);
        try
          sm.Position := 0;
          frReport.LoadFromStream(sm);
-         if r <= 0 then
-            frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
-         else
-            frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
-         SaveIndex := r;
-         GlobalIndex := r;
-         delete(s,1,length(frReport.Name)+1);
+         //if r <= 0 then
+         //   frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
+         //else
+         //   frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
+         //SaveIndex := r;
+         //GlobalIndex := r;
        finally
          sm.Free;
        end;
@@ -243,13 +242,14 @@ begin
          finally
            dataFactory.MoveToDefault;
          end;
-         if rs.IsEmpty then Raise Exception.Create('没找到模版文件'); 
-         if r <= 0 then
-            TBlobField(rs.Fields[0]).SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
-         else
-            TBlobField(rs.Fields[0]).SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
-         SaveIndex := r;
-         GlobalIndex := r;
+         if rs.IsEmpty then Raise Exception.Create('没找到模版文件');
+         frReport.LoadFromBlobField(TBlobField(rs.Fields[0]));
+         //if r <= 0 then
+         //   TBlobField(rs.Fields[0]).SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
+         //else
+         //   TBlobField(rs.Fields[0]).SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
+         //SaveIndex := r;
+         //GlobalIndex := r;
        finally
          rs.Free;
        end;

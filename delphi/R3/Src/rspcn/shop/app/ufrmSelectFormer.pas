@@ -74,6 +74,7 @@ begin
       begin
         if w >= frfGrid.RowCount then frfGrid.RowCount := frfGrid.RowCount + 1;
         frfGrid.Cells[0,w] := rs.Fields[0].AsString+'(×Ô¶¨Òå)';
+        w := w + 1;
         rs.Next;
       end;
   finally

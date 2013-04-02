@@ -22,6 +22,7 @@ type
     procedure frfGridDblClick(Sender: TObject);
   private
     Flag:integer;
+    SaveType:integer; //0:存为模板 1:存为样式
     FfrfFileName: string;
     MyfrReport:TfrReport;
     procedure SetfrfFileName(const Value: string);
@@ -38,7 +39,7 @@ uses uTokenFactory,udataFactory,udllDsUtil;
 
 {$R *.dfm}
 
-class function TfrmSaveDesigner.ShowDialog(Owner: TForm; fname: string;frReport:TfrReport): integer;
+class function TfrmSaveDesigner.ShowDialog(Owner:TForm;fname:string;frReport:TfrReport): integer;
 begin
   with TfrmSaveDesigner.Create(Owner) do
     begin
@@ -59,7 +60,7 @@ begin
     end;
 end;
 
-class function TfrmSaveDesigner.SaveDialog(Owner: TForm; fname: string;frReport:TfrReport): integer;
+class function TfrmSaveDesigner.SaveDialog(Owner:TForm;fname:string;frReport:TfrReport): integer;
 begin
   with TfrmSaveDesigner.Create(Owner) do
     begin
@@ -70,8 +71,11 @@ begin
         MyfrReport := frReport;
         btnSave.Visible := (frReport <> nil);
         Load;
-        if ShowModal=MROK then
-           result := frfGrid.Selection.Top
+        if ShowModal = MROK then
+           if SaveType = 0 then
+              result := -1
+           else
+              result := frfGrid.Selection.Top
         else
            result := -1;
       finally
@@ -153,6 +157,7 @@ begin
       F.Free;
     end;
   end;
+  SaveType := 1;
   ModalResult := MROK;
 end;
 
@@ -192,7 +197,7 @@ begin
        rs.Post;
        dataFactory.MoveToRemote;
        try
-         dataFactory.UpdateBatch(rs,'TSysFastFile');
+         dataFactory.UpdateBatch(rs,'TSysFastFileV60');
        finally
          dataFactory.MoveToDefault;
        end;
@@ -201,6 +206,8 @@ begin
   finally
     rs.Free;
   end;
+  SaveType := 0;
+  ModalResult := MROK;
 end;
 
 procedure TfrmSaveDesigner.frfGridDblClick(Sender: TObject);

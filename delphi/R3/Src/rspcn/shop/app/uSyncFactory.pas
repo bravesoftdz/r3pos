@@ -972,7 +972,7 @@ begin
   else
      timestamp := LoginSyncDate;
 
-  if token.lDate > timestamp then
+  if token.lDate <> timestamp then
      result := true
   else
      result := false; 

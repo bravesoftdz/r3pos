@@ -11905,7 +11905,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 351
   end
   object OpenImageDialog: TOpenDialog
-    Filter = #22270#29255#25991#20214'|*.bmp'
+    Filter = #22270#29255#25991#20214'|*.png'
     Left = 103
     Top = 416
   end

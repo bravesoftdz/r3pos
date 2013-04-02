@@ -1528,10 +1528,10 @@ begin
   if OpenImageDialog.Execute then
      begin
        img := OpenImageDialog.FileName;
-       if CopyFile(pchar(img),pchar(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp'),false) then
+       if CopyFile(pchar(img),pchar(ExtractFilePath(Application.ExeName)+'built-in\images\user.png'),false) then
           begin
-            if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
-               Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
+            if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
+               Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
           end;
      end;
 end;
@@ -1716,8 +1716,8 @@ end;
 procedure TfrmSysDefine.showForm;
 begin
   inherited;
-  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
-     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
+  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
+     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
 
   if FirstLogin then
     GetShopInfo

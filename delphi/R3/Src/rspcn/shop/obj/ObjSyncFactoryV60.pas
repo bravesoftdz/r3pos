@@ -457,8 +457,11 @@ end;
 
 function TSyncRckDaysCloseV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
+  AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE',Params);
   if not Init then Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
-  inherited BeforeInsertRecord(AGlobal);
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
 end;
 
 function TSyncRckDaysCloseV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;

@@ -118,8 +118,8 @@ begin
   WTitle1.add('…Ã∆∑£∫'+edtGODS_ID.Text);
   cdsReport1.SQL.Text :=
      'select TENANT_ID,GODS_ID,BATCH_NO,'+
-     'sum(case when BILL_DATE<'+formatDatetime('YYYYMMDD',D1.Date)+' and BILL_TYPE in (0,1) then BAL_AMOUNT when BILL_DATE<'+formatDatetime('YYYYMMDD',D1.Date)+' then IN_AMOUNT-OUT_AMOUNT else 0 end) as BEG_AMOUNT,'+
-     'sum(case when BILL_DATE<'+formatDatetime('YYYYMMDD',D1.Date)+' and BILL_TYPE in (0,1) then BAL_MONEY when BILL_DATE<'+formatDatetime('YYYYMMDD',D1.Date)+' then IN_MONEY-OUT_MONEY else 0 end) as BEG_MONEY,'+
+     'sum(case when BILL_DATE<='+formatDatetime('YYYYMMDD',D1.Date)+' and BILL_TYPE in (0,1) then BAL_AMOUNT when BILL_DATE<'+formatDatetime('YYYYMMDD',D1.Date)+' then IN_AMOUNT-OUT_AMOUNT else 0 end) as BEG_AMOUNT,'+
+     'sum(case when BILL_DATE<='+formatDatetime('YYYYMMDD',D1.Date)+' and BILL_TYPE in (0,1) then BAL_MONEY when BILL_DATE<'+formatDatetime('YYYYMMDD',D1.Date)+' then IN_MONEY-OUT_MONEY else 0 end) as BEG_MONEY,'+
      'sum(case when BILL_DATE>='+formatDatetime('YYYYMMDD',D1.Date)+' then IN_AMOUNT else 0 end) as IN_AMOUNT,'+
      'sum(case when BILL_DATE>='+formatDatetime('YYYYMMDD',D1.Date)+' then IN_MONEY else 0 end) as IN_MONEY,'+
      'sum(case when BILL_DATE>='+formatDatetime('YYYYMMDD',D1.Date)+' then OUT_AMOUNT else 0 end) as OUT_AMOUNT,'+

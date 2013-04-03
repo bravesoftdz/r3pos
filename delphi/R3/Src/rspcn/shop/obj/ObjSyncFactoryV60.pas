@@ -457,7 +457,7 @@ end;
 
 function TSyncRckDaysCloseV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-  Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
+  if not Init then Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
   inherited BeforeInsertRecord(AGlobal);
 end;
 
@@ -487,8 +487,10 @@ end;
 
 function TSyncRckStocksDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-  Params.ParamByName('TABLE_NAME').AsString := 'RCK_STOCKS_DATA';
-  inherited BeforeInsertRecord(AGlobal);
+  if not Init then Params.ParamByName('TABLE_NAME').AsString := 'RCK_STOCKS_DATA';
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
 end;
 
 { TSyncSalesOrderListV60 }

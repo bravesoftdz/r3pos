@@ -24,10 +24,10 @@ type
     PUB_GOODSSORT: TZQuery;
     PUB_REGION_INFO: TZQuery;
   private
-    { Private declarations }
+    SFVersion: string;
+    ProductId: string;
     procedure OpenPubGoodsInfo;
   public
-    { Public declarations }
     function GetZQueryFromName(Name:string):TZQuery;
     function Refresh(Name:string):boolean;
     function OpenSqlite(DataSet:TZQuery):boolean;
@@ -62,23 +62,22 @@ type
     function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false):boolean;overload;
   end;
 
-var
-  dllGlobal: TdllGlobal;
+var dllGlobal: TdllGlobal;
 
 implementation
+
 uses utokenFactory,udataFactory,iniFiles,uTreeUtil,uFnUtil;
+
 {$R *.dfm}
 
 { TdllGlobal }
 
-function TdllGlobal.GetChkRight(MID: string; SequNo: integer;
-  userid: string): boolean;
+function TdllGlobal.GetChkRight(MID: string; SequNo: integer; userid: string): boolean;
 begin
   result := true;
 end;
 
-function TdllGlobal.GetGodsFromBarcode(ds: TZQuery;
-  barcode: string): boolean;
+function TdllGlobal.GetGodsFromBarcode(ds: TZQuery; barcode: string): boolean;
 var
   bs:TZQuery;
 begin
@@ -98,8 +97,7 @@ begin
   result := not ds.IsEmpty;
 end;
 
-function TdllGlobal.GetGodsFromGodsCode(ds: TZQuery;
-  godsCode: string): boolean;
+function TdllGlobal.GetGodsFromGodsCode(ds: TZQuery; godsCode: string): boolean;
 begin
   ds.Close;
   ds.SQL.Text := 'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE and COMM not in (''02'',''12'')';
@@ -110,8 +108,7 @@ begin
 end;
 
 function TdllGlobal.getMyDeptId: string;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := GetZQueryFromName('CA_USERS');
   if rs.Locate('USER_ID',token.userId,[]) then
@@ -121,8 +118,7 @@ begin
 end;
 
 function TdllGlobal.GetParameter(paramname: string): string;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := GetZQueryFromName('SYS_DEFINE');
   if rs.Locate('DEFINE',paramname,[]) then
@@ -133,8 +129,7 @@ begin
 end;
 
 function TdllGlobal.GetRelatTenantInWhere: string;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := GetZQueryFromName('CA_RELATIONS');
   result := ''+token.tenantId+'';
@@ -147,8 +142,7 @@ begin
 end;
 
 function TdllGlobal.GetUnionTenantInWhere: string;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := GetZQueryFromName('PUB_UNION_INFO');
   result := ''+token.tenantId+'';
@@ -219,33 +213,41 @@ end;
 function TdllGlobal.GetProductId: string;
 var F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
-  try
-    result := F.ReadString('soft','ProductID','R3_RYC');
-  finally
-    F.Free;
-  end;
+  if ProductId = '' then
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+       try
+         ProductId := F.ReadString('soft','ProductID','R3_RYC');
+       finally
+         F.Free;
+       end;
+     end;
+  result := ProductId;
 end;
 
 function TdllGlobal.GetSFVersion:string;
 var F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
-  try
-    result := F.ReadString('soft','SFVersion','.LCL');
-  finally
-    F.Free;
-  end;
+  if SFVersion = '' then
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+       try
+         SFVersion := F.ReadString('soft','SFVersion','.LCL');
+       finally
+         F.Free;
+       end;
+     end;
+  result := SFVersion;
 end;
 
 function TdllGlobal.GetVersionFlag: integer;
 var
-  f:TIniFile;
+  F:TIniFile;
   CLVersion:string;
 begin
-  f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    CLVersion := f.ReadString('soft','CLVersion','.MKT');
+    CLVersion := F.ReadString('soft','CLVersion','.MKT');
   finally
     F.Free;
   end;
@@ -265,48 +267,46 @@ begin
 end;
 
 function TdllGlobal.GetZQueryFromName(Name: string): TZQuery;
-var
-  i:Integer;
+var i:Integer;
 begin
-  Result := nil;
+  result := nil;
   for i:=0 to ComponentCount -1 do
     begin
        if UpperCase(TComponent(Components[i]).Name) = UpperCase(Name) then
           begin
-            Result := TZQuery(Components[i]);
+            result := TZQuery(Components[i]);
             break;
           end;
     end;
-  if Result = nil then Raise Exception.CreateFmt('%s数据表没找到。',[Name]);
-  if not Result.Active then
+  if result = nil then Raise Exception.CreateFmt('%s数据表没找到。',[Name]);
+  if not result.Active then
      begin
-       if TZQuery(Result).Params.FindParam('SHOP_ID')<>nil then
-          TZQuery(Result).Params.FindParam('SHOP_ID').AsString := token.shopId;
-       if TZQuery(Result).Params.FindParam('SHOP_ID_ROOT')<>nil then
-          TZQuery(Result).Params.FindParam('SHOP_ID_ROOT').AsString := token.tenantId+'0001';
-       if TZQuery(Result).Params.FindParam('TENANT_ID')<>nil then
-          TZQuery(Result).Params.FindParam('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-       if TZQuery(Result).Params.FindParam('USER_ID')<>nil then
-          TZQuery(Result).Params.FindParam('USER_ID').AsString := token.userId;
-       if Trim(TZQuery(Result).SQL.Text) = '' then Exit;
+       if TZQuery(result).Params.FindParam('SHOP_ID')<>nil then
+          TZQuery(result).Params.FindParam('SHOP_ID').AsString := token.shopId;
+       if TZQuery(result).Params.FindParam('SHOP_ID_ROOT')<>nil then
+          TZQuery(result).Params.FindParam('SHOP_ID_ROOT').AsString := token.tenantId+'0001';
+       if TZQuery(result).Params.FindParam('TENANT_ID')<>nil then
+          TZQuery(result).Params.FindParam('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+       if TZQuery(result).Params.FindParam('USER_ID')<>nil then
+          TZQuery(result).Params.FindParam('USER_ID').AsString := token.userId;
+       if Trim(TZQuery(result).SQL.Text) = '' then Exit;
        dataFactory.MoveToSqlite;
        try
-         dataFactory.Open(Result);
+         dataFactory.Open(result);
        finally
          dataFactory.MoveToDefault;
        end;
      end;
-  if Result.Filtered then Result.Filtered := false;
-  Result.OnFilterRecord := nil;
-  Result.CommitUpdates;
+  if result.Filtered then result.Filtered := false;
+  result.OnFilterRecord := nil;
+  result.CommitUpdates;
 end;
 
 procedure TdllGlobal.OpenPubGoodsInfo;
 begin
   dataFactory.MoveToSqlite;
   try
-    PUB_GOODSINFO.SQL.Text :=
-      '';
+    PUB_GOODSINFO.SQL.Text := '';
     dataFactory.Open(PUB_GOODSINFO);
   finally
     dataFactory.MoveToDefault;
@@ -548,8 +548,7 @@ begin
 end;
 
 function TdllGlobal.checkChangePrice(relationId: integer): boolean;
-var
-  rs: TZQuery;
+var rs: TZQuery;
 begin
   result:=true;
   if relationId=0 then Exit;
@@ -566,8 +565,7 @@ begin
 end;
 
 function TdllGlobal.Refresh(Name: string): boolean;
-var
-  i:Integer;
+var i:Integer;
 begin
   for i:=0 to ComponentCount -1 do
     begin
@@ -583,5 +581,5 @@ end;
 initialization
   dllGlobal := TdllGlobal.Create(nil);
 finalization
-  if assigned(dllGlobal) then FreeAndNil(dllGlobal);
+  if Assigned(dllGlobal) then FreeAndNil(dllGlobal);
 end.

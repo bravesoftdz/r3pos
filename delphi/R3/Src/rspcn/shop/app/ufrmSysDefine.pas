@@ -1795,7 +1795,11 @@ begin
      end;
   BeginDate := BeginDate + '01';
 
+  //同步数据
   SyncFactory.RecoverySync(self.Handle,BeginDate);
+  //矫正库存
+  //关账
+  SyncFactory.RecoveryClose(BeginDate);
 end;
 
 initialization

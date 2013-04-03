@@ -527,6 +527,19 @@ begin
           Result := (pDate>B);
           if not Result then Raise Exception.Create('系统'+b+'号已经盘点，不能对此之前的单据进行操作');
         end;
+     // 单机版，开单日期不能小于灾难恢复时关账日期
+     if AGlobal.iDbType = 5 then
+        begin
+          Temp.Close;
+          Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE=''CLOSE_IMP_ACCDATE''';
+          AGlobal.Open(Temp);
+          B := Temp.Fields[0].AsString;
+          if B <> '' then
+             begin
+               Result := (pDate>=B);
+               if not Result then Raise Exception.Create('系统'+b+'号已经关账，不能对此之前的单据进行操作');
+             end;
+        end;
      AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);
   finally
      Temp.Free;

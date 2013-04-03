@@ -48,6 +48,7 @@ type
     procedure SetProHandle(const Value: Hwnd);
     procedure SetProTitle(const Value: string);
   private
+    CloseAccDate:integer;
     LoginSyncDate:integer;
     procedure InitTenant;
     procedure InitSyncList1;
@@ -61,6 +62,7 @@ type
     procedure SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
+    procedure GetCloseAccDate;
     function  CheckNeedSync:boolean;
     function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
   protected
@@ -85,6 +87,8 @@ type
     procedure RecoverySync(PHWnd:THandle;BeginDate:string='');
     // 注册时同步
     procedure RegisterSync(PHWnd:THandle);
+    // 灾难恢复时关账
+    procedure RecoveryClose(CloseDate:string);
     property  Params:TftParamList read FParams write SetParams;
     property  SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property  Stoped:boolean read FStoped write SetStoped;
@@ -101,6 +105,8 @@ uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRsp
 
 constructor TSyncFactory.Create;
 begin
+  CloseAccDate := -1;
+  LoginSyncDate := 0;
   SubmitRecordNum := 500;
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
@@ -1139,6 +1145,13 @@ begin
       ProTitle := '正在同步<进货单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100 div ls.RecordCount * ls.RecNo);
 
+      // 小于关账日期的单据不下载
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('STOCK_DATE').AsInteger < CloseAccDate) then
+         begin
+           ls.Next;
+           Continue;
+         end;
+
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -1273,6 +1286,13 @@ begin
     begin
       ProTitle := '正在同步<销售单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
+
+      // 小于关账日期的单据不下载
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('SALES_DATE').AsInteger < CloseAccDate) then
+         begin
+           ls.Next;
+           Continue;
+         end;
 
       rs_h.Close;
       rs_d.Close;
@@ -1428,6 +1448,13 @@ begin
       ProTitle := '正在同步<损益单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
 
+      // 小于关账日期的单据不下载
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CHANGE_DATE').AsInteger < CloseAccDate) then
+         begin
+           ls.Next;
+           Continue;
+         end;
+
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -1559,6 +1586,13 @@ begin
       ProTitle := '正在同步<日台账>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
 
+      // 小于关账日期的数据不下载
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger < CloseAccDate) then
+         begin
+           ls.Next;
+           Continue;
+         end;
+
       rs_h.Close;
       rs_d.Close;
 
@@ -1641,6 +1675,8 @@ procedure TSyncFactory.SyncBizData(SyncFlag:integer=0;BeginDate:string='');
 begin
   try
     SetProMax(400);
+    ProTitle := '正在准备数据...';
+    GetCloseAccDate;
     ProTitle := '正在同步<进货单>...';
     SyncStockOrder(SyncFlag,BeginDate);
     SetProPosition(100);
@@ -1695,6 +1731,44 @@ procedure TSyncFactory.SetProTitle(const Value: string);
 begin
   FProTitle := Value;
   SetProCaption;
+end;
+
+procedure TSyncFactory.RecoveryClose(CloseDate: string);
+var str:string;
+begin
+  dataFactory.MoveToSqlite;
+  try
+    str := 'update SYS_DEFINE set VALUE = '''+CloseDate+''' where TENANT_ID='+token.tenantId+' and DEFINE=''CLOSE_IMP_ACCDATE''';
+    if dataFactory.ExecSQL(str) < 1 then
+       begin
+         str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values '+
+                ' ('+token.tenantId+',''CLOSE_IMP_ACCDATE'','''+CloseDate+''',0,''00'',0)';
+         dataFactory.ExecSQL(str);
+       end;
+  finally
+    dataFactory.MoveToDefault;
+  end;
+  CloseAccDate := strtoint(CloseDate);
+end;
+
+procedure TSyncFactory.GetCloseAccDate;
+var rs:TZQuery;
+begin
+  if CloseAccDate >= 0 then Exit;
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToSqlite;
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('DEFINE').AsString := 'CLOSE_IMP_ACCDATE';
+    dataFactory.Open(rs);
+    if rs.IsEmpty then
+       CloseAccDate := 0
+    else
+       CloseAccDate := rs.Fields[0].AsInteger;
+  finally
+    dataFactory.MoveToDefault;
+  end;
 end;
 
 initialization

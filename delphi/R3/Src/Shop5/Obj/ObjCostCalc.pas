@@ -1510,7 +1510,7 @@ var
 begin
   SQL:=
     'insert into RCK_MONTH_CLOSE(TENANT_ID,SHOP_ID,MONTH,BEGIN_DATE,END_DATE,CREA_USER,COMM,TIME_STAMP) '+
-    'select TENANT_ID,SHOP_ID,'+FormatDatetime('YYYYMM',RCK_BEG_DATE)+','''+FormatDatetime('YYYY-MM-DD',RCK_BEG_DATE)+''','''+formatDatetime('YYYY-MM-DD',RCK_END_DATE)+''','+
+    'select TENANT_ID,SHOP_ID,'+FormatDatetime('YYYYMM',RCK_END_DATE)+','''+FormatDatetime('YYYY-MM-DD',RCK_BEG_DATE)+''','''+formatDatetime('YYYY-MM-DD',RCK_END_DATE)+''','+
     ''''+USER_ID+''',''00'','+GetTimeStamp(iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(TENANT_ID);
 
   if iDbType<>5 then FdbHelp.BeginTrans;

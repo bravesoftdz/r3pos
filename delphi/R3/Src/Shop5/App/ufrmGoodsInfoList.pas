@@ -302,7 +302,7 @@ begin
       if QryType=1 then
       begin
         result :=
-          ' select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          ' select Count(distinct j.GODS_ID) as ReSum from VIW_GOODSPRICEEXT j '+
           '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
           ' where b.SORT_TYPE=1 '+w+' ';
@@ -327,7 +327,7 @@ begin
       if QryType=1 then
       begin
         result :=
-          'select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          'select Count(distinct j.GODS_ID) as ReSum from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
           ' where b.SORT_TYPE=1 '+w+' ';
@@ -352,7 +352,7 @@ begin
       if QryType=1 then
       begin
         result :=
-          ' select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          ' select Count(distinct j.GODS_ID) as ReSum from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
           ' where b.SORT_TYPE=1 '+w+' ';
@@ -376,7 +376,7 @@ begin
       if QryType=1 then
       begin
         result :=
-          ' select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          ' select Count(distinct j.GODS_ID) as ReSum from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
           ' where b.SORT_TYPE=1 '+w+' ';

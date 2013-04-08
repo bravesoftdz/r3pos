@@ -1781,6 +1781,18 @@ var
   str,BeginDate,MaxDate:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select 1 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    if not rs.IsEmpty then Raise Exception.Create('本地存在业务数据，无法进行灾难恢复...');
+  finally
+    rs.Free;
+  end;
+
   if Recovery_1.Checked then
      begin
        BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-1));

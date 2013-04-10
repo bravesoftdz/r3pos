@@ -412,7 +412,7 @@ end;
 procedure TjavaScriptExt.commitBatch;
 begin
   if not dataFactory.signined then Raise Exception.Create('没有登录认证，您不能使用此功能');
-  dataFactory.CommitTrans
+  dataFactory.CommitBatch;
 end;
 
 function TjavaScriptExt.execSQL(const SQL: WideString): Integer;

@@ -1036,7 +1036,13 @@ end;
 
 procedure TZFactory.AddSQLTo(target: string; SQL: TSQLCache);
 begin
-  FSQLTable.AddObject(target,SQL); 
+  if target='insert' then
+     InsertSQL.Text := SQL.Text;
+  if target='update' then
+     UpdateSQL.Text := SQL.Text;
+  if target='delete' then
+     DeleteSQL.Text := SQL.Text;
+  FSQLTable.AddObject(target,SQL);
 end;
 
 function TZFactory.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;

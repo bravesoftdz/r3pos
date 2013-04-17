@@ -319,7 +319,7 @@ begin
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(A.STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(SALE_AMT*1.000/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
@@ -481,7 +481,7 @@ begin
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(A.STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(SALE_AMT*1.000/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
@@ -589,7 +589,7 @@ begin
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(A.STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(SALE_AMT*1.000/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
@@ -853,7 +853,7 @@ begin
     ',sum(STOCK_AMT*1.000/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
-    ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',sum(round(A.STOCK_AMT*C.NEW_OUTPRICE,2)) as STOCK_RTL '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(SALE_AMT*1.000/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+

@@ -996,7 +996,7 @@ begin
       ',A.GUIDE_USER '+     //导购员
       ',A.AMOUNT as DB_AMT '+      //数量
       ',A.APRICE as DB_PRC '+      //单价
-      ',A.RTL_MONEY as DB_RTL '+   //零售金额
+      ',round(A.CALC_AMOUNT*C.NEW_OUTPRICE,2) as DB_RTL '+   //零售金额   
       ',A.COST_MONEY as DB_CST '+  //成本
       ',B.SHOP_NAME  '+             //调入门店
       ',A.STOCK_DATE as PLAN_DATE '+   //到货日期
@@ -1008,22 +1008,22 @@ begin
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
       ' '+ strWhere + ' ';
 
-  strSql :=
-    'select j.* '+
-    ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
-    ',u.UNIT_NAME as UNIT_NAME '+
-    ',c.SHOP_NAME as OUTSHOP_NAME '+
-    ',d.USER_NAME as GUIDE_USER_TEXT '+
-    ',e.USER_NAME as CREA_USER_TEXT '+
-    ',f.USER_NAME as SEND_USER_TEXT '+
-    'from ('+strSql+') j '+           //2011.04.02 Add 过滤条码的类型
-    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
-    'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
-    'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
-    'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
-    ' order by j.MOVE_DATE,j.GODS_CODE';
+    strSql :=
+      'select j.* '+
+      ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
+      ',u.UNIT_NAME as UNIT_NAME '+
+      ',c.SHOP_NAME as OUTSHOP_NAME '+
+      ',d.USER_NAME as GUIDE_USER_TEXT '+
+      ',e.USER_NAME as CREA_USER_TEXT '+
+      ',f.USER_NAME as SEND_USER_TEXT '+
+      'from ('+strSql+') j '+           //2011.04.02 Add 过滤条码的类型
+      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+      'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+      'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
+      'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
+      'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+      'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
+      ' order by j.MOVE_DATE,j.GODS_CODE';
   end else
   if fndP6_DBOUT.Checked then //调出单
   begin
@@ -1383,11 +1383,16 @@ var
   ColName: string;
 begin
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
-  if SumRecord.Count<=0 then Exit;
+  if AllRecord.Count<=0 then Exit;
   ColName:=trim(UpperCase(Column.FieldName));
+
   if ColName = 'GODS_NAME' then
-    Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
-  else
+  begin
+    if AllRecord.FindField('GODS_NAME')<>nil then
+      Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
+    else
+      Text := '合计:0笔'
+  end else
   begin
     if AllRecord.FindField(ColName)<>nil then
     begin

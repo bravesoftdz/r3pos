@@ -305,7 +305,7 @@ begin
        '(SELECT '+
        ' A.TENANT_ID,B.REGION_ID,AMOUNT*1.000/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
-       ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
+       ',round(AMOUNT*C.NEW_OUTPRICE,2) as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,REGION_ID ';
@@ -331,7 +331,7 @@ begin
       ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3))<>0 then cast(sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as decimal(18,3))*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,B.REGION_ID';
@@ -456,7 +456,7 @@ begin
        '(SELECT '+
        ' A.TENANT_ID,B.SHOP_ID,AMOUNT*1.000/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
-       ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
+       ',round(AMOUNT*C.NEW_OUTPRICE,2) as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,SHOP_ID ';
@@ -481,7 +481,7 @@ begin
       ',sum(BAL_AMT*1.000/'+UnitCalc+') as BAL_AMT '+
       ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_CST)*1.000/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(BAL_RTL*1.000)/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3))<>0 then sum(round(BAL_AMT*C.NEW_OUTPRICE,2)*1.000)/cast(sum(BAL_AMT*1.000/'+UnitCalc+')as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(round(BAL_AMT*C.NEW_OUTPRICE,2)) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';
@@ -571,7 +571,7 @@ begin
        ' A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lvField+',C.RELATION_ID '+
        ',AMOUNT*1.000/'+UnitCalc+' as BAL_AMT '+    //库存数量
        ',AMONEY as BAL_CST '+                 //库存金额
-       ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
+       ',round(AMOUNT*C.NEW_OUTPRICE,2) as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       'group by TENANT_ID,GODS_ID,SORT_ID'+InttoStr(GodsStateIdx)+lv1+',RELATION_ID';
@@ -756,7 +756,7 @@ begin
        ' A.PROPERTY_01,A.BATCH_NO,A.PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID '+
        ',AMOUNT*1.000/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
-       ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
+       ',round(AMOUNT*C.NEW_OUTPRICE,2) as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,SORT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';

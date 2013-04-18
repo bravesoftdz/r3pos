@@ -78,7 +78,7 @@ type
       Params: OleVariant;
       Data: OleVariant;
   end;
-  
+
 
   //设置环境变量
   //tuxputenv("WSNADDR=//10.110.1.4:3200");
@@ -166,7 +166,10 @@ type
   	sendbuf, recvbuf:pchar;
     sendlen, recvlen:integer;
     FList:TList;
-
+    Fpath:string;
+    FTickCount:integer;  //开始时间点
+    FLogMsg:string; //日志内容
+    procedure WriteToFile(LogStr:string);
   protected
     procedure RaiseError;
     function  CheckRaiseError: Boolean; //检查是否网络断开，若是返回True,否则抛异常
@@ -770,6 +773,9 @@ var
   i:integer;
   coList:TList;
 begin
+  FLogMsg:='';
+  FTickCount:=GetTickCount;
+
   result := false;
   coList := TList.Create;
   try
@@ -787,6 +793,8 @@ begin
         else
            coPacket.Params := null;
         coPacket.Data := TZQuery(TZFactory(fList[i]).DataSet).Delta;
+
+      FLogMsg:=FLogMsg+','+TZFactory(fList[i]).ZClassName;
       end;
     BSend(coList,'BCommit');
     ClearList(coList);
@@ -800,6 +808,9 @@ begin
   finally
     ClearList(coList);
     coList.Free;
+
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.OpenBatch('+FLogMsg+')');
   end;
 end;
 
@@ -811,11 +822,17 @@ end;
 
 function TZTuXeDo.Connect: boolean;
 begin
-  fConnected := false;
-	if (tpinit(nil) = -1) then
-      RaiseError;
-  fConnected := true;
-  fiDbType := -1;
+  FTickCount:=GetTickCount;
+  try
+    fConnected := false;
+    if (tpinit(nil) = -1) then
+        RaiseError;
+    fConnected := true;
+    fiDbType := -1;
+  finally
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.Connect');
+  end;
 end;
 
 function TZTuXeDo.Connected: boolean;
@@ -825,6 +842,7 @@ end;
 
 constructor TZTuXeDo.Create;
 begin
+  Fpath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
   loadTuxedo;
   sendbuf := nil;
   recvbuf := nil;
@@ -858,20 +876,26 @@ function TZTuXeDo.ExecProc(AClassName: String;
 var
   coPacket:TftPacked;
 begin
-  coPacket.Sign := 1;
-  coPacket.PackedCount := 1;
-  coPacket.PackedSeqNo := 1;
-  coPacket.SQL := AClassName;
-  coPacket.HasResult := true;
-  if Params=nil then
-    coPacket.Params := null
-  else
-    coPacket.Params := TcoParamList.coGetData(Params);
-  coPacket.Data := null;
-  Send(@coPacket,'ExecProc');
-  Recv(@coPacket);
-  CheckPackedError(@coPacket);
-  result := coPacket.Data;
+  FTickCount:=GetTickCount;
+  try
+    coPacket.Sign := 1;
+    coPacket.PackedCount := 1;
+    coPacket.PackedSeqNo := 1;
+    coPacket.SQL := AClassName;
+    coPacket.HasResult := true;
+    if Params=nil then
+      coPacket.Params := null
+    else
+      coPacket.Params := TcoParamList.coGetData(Params);
+    coPacket.Data := null;
+    Send(@coPacket,'ExecProc');
+    Recv(@coPacket);
+    CheckPackedError(@coPacket);
+    result := coPacket.Data;
+  finally
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.ExecProc(RuleName='+AClassName+')');
+  end;
 end;
 
 function TZTuXeDo.ExecSQL(const SQL: WideString;
@@ -880,20 +904,27 @@ var
   coPacket:TftPacked;
   SQLList:TstringList;
 begin
-  coPacket.Sign := 1;
-  coPacket.PackedCount := 1;
-  coPacket.PackedSeqNo := 1;
-  coPacket.SQL := SQL;
-  coPacket.HasResult := true;
-  if ObjectFactory is TParams then
-     coPacket.Params := TcoParamList.coGetData(TParams(ObjectFactory))
-  else
-     coPacket.Params := null;
-  coPacket.Data := null;
-  Send(@coPacket,'ExecSQL');
-  Recv(@coPacket);
-  CheckPackedError(@coPacket);
-  result := coPacket.Data;
+  FTickCount:=GetTickCount;
+  try
+    coPacket.Sign := 1;
+    coPacket.PackedCount := 1;
+    coPacket.PackedSeqNo := 1;
+    coPacket.SQL := SQL;
+    coPacket.HasResult := true;
+    if ObjectFactory is TParams then
+       coPacket.Params := TcoParamList.coGetData(TParams(ObjectFactory))
+    else
+       coPacket.Params := null;
+    coPacket.Data := null;
+    Send(@coPacket,'ExecSQL');
+    Recv(@coPacket);
+    CheckPackedError(@coPacket);
+    result := coPacket.Data;
+
+  finally
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.ExecSQL(SQL='+SQL+')');
+  end;
 end;
 
 function TZTuXeDo.GetConnectionString: WideString;
@@ -959,28 +990,34 @@ function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String;
 var
   coPacket:TftPacked;
 begin
-  result:=False;
-  coPacket.Sign := 1;
-  coPacket.PackedCount := 1;
-  coPacket.PackedSeqNo := 1;
-  coPacket.SQL := AClassName;
-  coPacket.HasResult := true;
-  if Params<>nil then
-     coPacket.Params := TcoParamList.coGetData(Params)
-  else
-     coPacket.Params := null;
-  coPacket.Data := null;
-  Send(@coPacket,'GOpen');
-  Recv(@coPacket);
-  CheckPackedError(@coPacket);
-  TZQuery(DataSet).Data := coPacket.Data;
-  //2012.08.29Add判断
-  if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
-  begin
-    TZQuery(DataSet).Close;
-    Raise Exception.Create('执行[GOpen('+AClassName+')]返回无效空数据包...'); 
+  FTickCount:=GetTickCount;
+  try
+    result:=False;
+    coPacket.Sign := 1;
+    coPacket.PackedCount := 1;
+    coPacket.PackedSeqNo := 1;
+    coPacket.SQL := AClassName;
+    coPacket.HasResult := true;
+    if Params<>nil then
+       coPacket.Params := TcoParamList.coGetData(Params)
+    else
+       coPacket.Params := null;
+    coPacket.Data := null;
+    Send(@coPacket,'GOpen');
+    Recv(@coPacket);
+    CheckPackedError(@coPacket);
+    TZQuery(DataSet).Data := coPacket.Data;
+    //2012.08.29Add判断
+    if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
+    begin
+      TZQuery(DataSet).Close;
+      Raise Exception.Create('执行[GOpen('+AClassName+')]返回无效空数据包...');
+    end;
+    result:=TZQuery(DataSet).Active;
+  finally
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.GOpen(RuleName='+AClassName+')');
   end;
-  result:=TZQuery(DataSet).Active;
 end;
 
 function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String): Boolean;
@@ -992,25 +1029,32 @@ function TZTuXeDo.Open(DataSet: TDataSet): Boolean;
 var
   coPacket:TftPacked;
 begin
-  result:=False;
-  coPacket.Sign := 1;
-  coPacket.PackedCount := 1;
-  coPacket.PackedSeqNo := 1;
-  coPacket.SQL := TZQuery(DataSet).SQL.Text;
-  coPacket.HasResult := true;
-  coPacket.Params := TcoParamList.coGetData(TZQuery(DataSet).Params);
-  coPacket.Data := null;
-  Send(@coPacket,'Open');
-  Recv(@coPacket);
-  CheckPackedError(@coPacket);
-  TZQuery(DataSet).Data := coPacket.Data;
-  //2012.08.29Add判断
-  if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
-  begin
-    TZQuery(DataSet).Close;
-    Raise Exception.Create('执行[Open()]返回无效空数据包...'); 
+  FTickCount:=GetTickCount;
+  try
+    result:=False;
+    coPacket.Sign := 1;
+    coPacket.PackedCount := 1;
+    coPacket.PackedSeqNo := 1;
+    coPacket.SQL := TZQuery(DataSet).SQL.Text;
+    coPacket.HasResult := true;
+    coPacket.Params := TcoParamList.coGetData(TZQuery(DataSet).Params);
+    coPacket.Data := null;
+    Send(@coPacket,'Open');
+    Recv(@coPacket);
+    CheckPackedError(@coPacket);
+    TZQuery(DataSet).Data := coPacket.Data;
+    //2012.08.29Add判断
+    if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
+    begin
+      TZQuery(DataSet).Close;
+      Raise Exception.Create('执行[Open()]返回无效空数据包...');
+    end;
+    result:=TZQuery(DataSet).Active;
+
+  finally
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.Open(SQL='+TZQuery(DataSet).SQL.Text+')');
   end;
-  result:=TZQuery(DataSet).Active;
 end;
 
 function TZTuXeDo.OpenBatch: Boolean;
@@ -1020,6 +1064,8 @@ var
   coList:TList;
   Qry: TZQuery;
 begin
+  FLogMsg:='';
+  FTickCount:=GetTickCount;
   result := false;
   coList := TList.Create;
   try
@@ -1037,6 +1083,8 @@ begin
       else
          coPacket.Params := null;
       coPacket.Data := null;
+      
+      FLogMsg:=FLogMsg+','+TZFactory(fList[i]).ZClassName;
     end;
     BSend(coList,'BOpen');
     ClearList(coList);
@@ -1058,6 +1106,9 @@ begin
     CancelBatch;
     ClearList(coList);
     coList.Free;
+    
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.OpenBatch('+FLogMsg+')');
   end;
 end;
 
@@ -1113,21 +1164,28 @@ function TZTuXeDo.UpdateBatch(DataSet: TDataSet; AClassName: String;
 var
   coPacket:TftPacked;
 begin
-  result := false;
-  coPacket.Sign := 1;
-  coPacket.PackedCount := 1;
-  coPacket.PackedSeqNo := 1;
-  coPacket.SQL := AClassName;
-  coPacket.HasResult := true;
-  if Params<>nil then
-     coPacket.Params := TcoParamList.coGetData(Params)
-  else
-     coPacket.Params := null;
-  coPacket.Data := TZQuery(DataSet).Delta;
-  Send(@coPacket,'GCommit');
-  Recv(@coPacket);
-  CheckPackedError(@coPacket);
-  result := true;
+  FTickCount:=GetTickCount;
+  try
+    result := false;
+    coPacket.Sign := 1;
+    coPacket.PackedCount := 1;
+    coPacket.PackedSeqNo := 1;
+    coPacket.SQL := AClassName;
+    coPacket.HasResult := true;
+    if Params<>nil then
+       coPacket.Params := TcoParamList.coGetData(Params)
+    else
+       coPacket.Params := null;
+    coPacket.Data := TZQuery(DataSet).Delta;
+    Send(@coPacket,'GCommit');
+    Recv(@coPacket);
+    CheckPackedError(@coPacket);
+    result := true;
+
+  finally
+    FTickCount:=GetTickCount-FTickCount;
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.UpdateBatch(RuleName='+AClassName+')');
+  end;
 end;
 
 function TZTuXeDo.UpdateBatch(DataSet: TDataSet;
@@ -1138,6 +1196,7 @@ end;
 
 procedure TZTuXeDo.Send(coPacket: PftPacked;SvcName:string);
 var
+  LTickCount:integer;
   ms : TMemoryStream;
 begin
   ClearBuf;
@@ -1153,9 +1212,11 @@ begin
     recvbuf := tpalloc('CARRAY', nil, recvlen+1);
 
     //2012-07-04 xhh第一次执行若是返回连接错误，则重新连接在执行
+    LTickCount:=GetTickCount;
     if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
     begin
-      if CheckRaiseError then  
+      LTickCount:=GetTickCount-LTickCount;
+      if (LTickCount<500) and CheckRaiseError then  
       begin
         if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
           RaiseError;
@@ -1271,8 +1332,28 @@ begin
   if coPacket^.Sign=3 then Raise Exception.Create(coPacket^.Data); 
 end;
 
+procedure TZTuXeDo.WriteToFile(LogStr:string);
+var
+  myFile:string;
+  F:TextFile;
+begin
+  if not FileExists(Fpath+'log\TLOG_'+formatDatetime('YYYYMMDD',date)+'.log') then Exit;
+  try
+     myFile := Fpath+'log\TLOG_'+formatDatetime('YYYYMMDD',date)+'.log';
+     AssignFile(F,myFile);
+     if FileExists(myFile) then Append(F) else rewrite(F);
+     try
+       Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+LogStr);
+     finally
+       CloseFile(F);
+     end;
+  except
+  end;
+end;
+
 initialization
   dllHandle := 0;
 finalization
+
 end.
                                                                                             .

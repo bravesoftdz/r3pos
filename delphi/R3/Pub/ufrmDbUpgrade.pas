@@ -101,6 +101,7 @@ begin
              Factor := LocalFactor;
              if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
                 CreateDbFactroy.Run;
+             deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)); //升级成功，删除备份文件
            except
              on E:Exception do
                 begin

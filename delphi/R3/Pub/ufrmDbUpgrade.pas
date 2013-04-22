@@ -81,7 +81,7 @@ end;
 
 procedure TfrmDbUpgrade.RzBitBtn4Click(Sender: TObject);
 var
-  fname:string;
+  fname,ext:string;
   sFactor:TdbFactory;
 begin
   RzBitBtn4.Enabled := false;
@@ -92,9 +92,11 @@ begin
        begin
          sFactor := Factor;
          try
+           ext := CreateDbFactroy.dbVersion;
+           if ext='' then ext := '1.0.0.0';
            //备份数据库
-           if fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak')) and not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak')) then Raise Exception.Create('r3.bak文件被其他程序占用，不能完成升级备份');
-           Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak'),false);
+           if not fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then // and not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then Raise Exception.Create('r3.'+ext+'文件被其他程序占用，不能完成升级备份');
+              Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),false);
            try
              Factor := LocalFactor;
              if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
@@ -104,7 +106,7 @@ begin
                 begin
                    LocalFactor.DisConnect;
                    if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
-                   Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false);
+                   Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false);
                    LocalFactor.Connect;
                    Raise Exception.Create('升级出错了,错误:'+E.Message);
                 end;

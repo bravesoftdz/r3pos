@@ -350,11 +350,11 @@ begin
         Exit;
       end;
       inKeepAlive.onoff:=1;
-      inKeepAlive.keepalivetime:=3000;
-      inKeepAlive.keepaliveinterval:=3000;
+      inKeepAlive.keepalivetime:=5000;
+      inKeepAlive.keepaliveinterval:=1;
       insize:=sizeof(TTCP_KEEPALIVE);
       outsize:=sizeof(TTCP_KEEPALIVE);
-      if WSAIoctl(ClientWinSocket,SIO_KEEPALIVE_VALS,@inKeepAlive,insize,@outKeepAlive,outsize,@opt,nil,nil)=SOCKET_ERROR then
+      if WSAIoctl(ClientWinSocket,SIO_KEEPALIVE_VALS,@inKeepAlive,insize,@inKeepAlive,outsize,@OutKeepAlive,nil,nil)=SOCKET_ERROR then
       begin
         Closesocket(ClientWinSocket);
         Exit;

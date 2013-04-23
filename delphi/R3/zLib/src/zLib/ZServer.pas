@@ -232,7 +232,14 @@ end;
 destructor TDoInvokeDispatch.Destroy;
 begin
   if Assigned(Session) and Assigned(Session.dbResolver) then
-     ConnCache.Push(Session.dbResolver);
+     begin
+       try
+         ConnCache.Push(Session.dbResolver);
+       finally
+         Session.dbResolver := nil;
+         dbLock := false;
+       end;
+     end;
   inherited;
 end;
 
@@ -519,11 +526,11 @@ begin
             Raise;
           end;
        finally
-         PushCache;
          for i:=0 to FList.Count-1 do TObject(FList[i]).Free;
          FList.Free;
          for i:=0 to FParams.Count-1 do TObject(FParams[i]).Free;
          FParams.Free;
+         PushCache;
        end;
      end;
   except
@@ -684,11 +691,11 @@ begin
             Raise;
           end;
        finally
-         PushCache;
          for i:=0 to FList.Count-1 do TObject(FList[i]).Free;
          FList.Free;
          for i:=0 to FParams.Count-1 do TObject(FParams[i]).Free;
          FParams.Free;
+         PushCache;
        end;
      end;
   except
@@ -1113,6 +1120,7 @@ begin
        begin
          FList.Add(Conn);
          if Conn.InTransaction then Conn.RollbackTrans;
+         Conn.CancelBatch;
          Conn.ThreadId := 0;
        end;
   finally

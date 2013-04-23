@@ -1010,7 +1010,7 @@ begin
       Data.Clear;
       WriteVariant(E.Message, Data);
       Data.Signature := ResultSig or asError;
-      if FSendDataBlock<>nil then
+      if (FSendDataBlock<>nil) then
          FSendDataBlock.Send(Data, False);
       LogFile.AddLogFile(2,E.Message,'TZDataBlockInterpreter.InterpretData');
     end;

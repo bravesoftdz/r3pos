@@ -280,6 +280,7 @@ end;
 function TdbHelp.Connect: boolean;
 begin
   LogFile.AddLogFile(0,'ZConn.Connect to '+ZConn.Database);
+  ZConn.Disconnect;
   ZConn.Connect;
   Killed := false;
   LogFile.AddLogFile(0,'ZConn.Connect finish');
@@ -423,13 +424,13 @@ end;
 
 function TdbHelp.InTransaction: boolean;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+//  if Killed then Raise Exception.Create('客户端已断开连接'); 
   try
     result := zConn.InTransaction;
   except
     on E:Exception do
       begin
-        if CheckError(E.Message) then ZConn.Disconnect;
+//        if CheckError(E.Message) then ZConn.Disconnect;
         Raise;
       end;
   end;
@@ -494,11 +495,11 @@ begin
 //    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback');
     ZConn.Rollback;
     ZConn.TransactIsolationLevel := tiNone;
-    if Killed then Raise Exception.Create('客户端已断开连接'); 
+//    if Killed then Raise Exception.Create('客户端已断开连接'); 
   except
     on E:Exception do
       begin
-        if CheckError(E.Message) then ZConn.Disconnect;
+//        if CheckError(E.Message) then ZConn.Disconnect;
         Raise;
       end;
   end;
@@ -592,23 +593,28 @@ begin
   Root :=  doc.DocumentElement;
   if not Assigned(Root) then Raise Exception.Create('无效的'+AClassName+'包名');
   result := TZFactory.Create;
-  node := Root.selectSingleNode('/mapper[@namespace="'+ns+'"]');
-  if not Assigned(node) then Raise Exception.Create('无效的'+AClassName+'包名');
-  node := node.firstChild;
-  while assigned(node) do
-    begin
-       if lowercase(node.nodeName)='select' then
-          begin
-             result.SelectSQL.Text := node.text;
-          end
-       else
-          begin
-             SQL := TSQLCache.Create;
-             SQL.Text := node.text;
-             result.AddSQLTo(node.nodeName,SQL);
-          end;
-       node := node.nextSibling;
-    end;
+  try
+    node := Root.selectSingleNode('/mapper[@namespace="'+ns+'"]');
+    if not Assigned(node) then Raise Exception.Create('无效的'+AClassName+'包名');
+    node := node.firstChild;
+    while assigned(node) do
+      begin
+         if lowercase(node.nodeName)='select' then
+            begin
+               result.SelectSQL.Text := node.text;
+            end
+         else
+            begin
+               SQL := TSQLCache.Create;
+               SQL.Text := node.text;
+               result.AddSQLTo(node.nodeName,SQL);
+            end;
+         node := node.nextSibling;
+      end;
+  except
+    freeAndNil(result);
+    raise;
+  end;
 end;
 var
   FactoryClass:TPersistentClass;
@@ -746,7 +752,7 @@ begin
       //改由SQLUpdate完成
       //Factory.ReadFromDataSet(DataSet);
       //Factory.BeforeUpdateRecord(dbHelp);
-      if Factory.Count = 0 then Factory.ReadField(DataSet); 
+      if Factory.Count = 0 then Factory.ReadField(DataSet);
       UpdateSQL.DataSet := DataSet;
       UpdateSQL.DeleteSQL.Text := Factory.DeleteSQL.Text;
       UpdateSQL.ModifySQL.Text := Factory.UpdateSQL.Text;
@@ -970,7 +976,7 @@ end;
 
 procedure TdbResolver.KillDBConnect;
 begin
-  dbHelp.KillDBConnect;
+  if Assigned(dbHelp) then dbHelp.KillDBConnect;
 end;
 
 { TZdbUpdate }

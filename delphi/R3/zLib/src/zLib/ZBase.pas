@@ -1042,7 +1042,7 @@ begin
      UpdateSQL.Text := SQL.Text;
   if target='delete' then
      DeleteSQL.Text := SQL.Text;
-  FSQLTable.AddObject(target,SQL);
+//  FSQLTable.AddObject(target,SQL);
 end;
 
 function TZFactory.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
@@ -1079,7 +1079,7 @@ procedure TZFactory.Clear;
 var
   i:integer;
 begin
-  inherited;
+  inherited Clear;
   for i:=0 to FSQLTable.Count-1 do
     begin
       FSQLTable.Objects[i].Free;

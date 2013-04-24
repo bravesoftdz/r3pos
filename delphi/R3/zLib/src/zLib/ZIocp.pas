@@ -1367,12 +1367,12 @@ begin
             end
         else
           begin
+            DataCache.Delete(SessionId);
             if TServerClientSocket(SessionId).LockThread and (TServerClientSocket(SessionId).WorkThread<>WorkThread) then
                begin
                  AddBlock(nil,TServerClientSocket(SessionId),false);
                  Exit;
                end;
-            DataCache.Delete(SessionId);
             try
                TServerClientSocket(SessionId).Free;
             finally

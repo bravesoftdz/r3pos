@@ -910,6 +910,8 @@ var
 begin
   SocktLock.Enter;
   try
+    LockThread := false;
+    WorkThread := nil;
     if (FSocket <> INVALID_SOCKET) then
     begin
       skt := FSocket;

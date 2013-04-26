@@ -45,6 +45,7 @@ type
     procedure SetuDate(const Value: TDate);
     procedure SetPrgPercent(const Value: integer);
     procedure SetBegTickCount(const Value: integer);
+    function GetDayCloseFlag(flag:integer):Boolean;
   protected
     procedure CheckCalcReckStatus; //在线版判断是否多人同时在核算
     procedure ClearCalcReckStatus; //在线版清除核算标记
@@ -278,6 +279,7 @@ end;
 procedure TfrmCostCalc.btnStartClick(Sender: TObject);
 var
   i:integer;
+  DayClsFlag:Boolean;
   ReMsg,Rck_Date:string;
   CalcParams:TftParamList;
   StrList:TStringlist;
@@ -332,7 +334,9 @@ begin
         FOldPrgPercent:=PrgPercent; //循环前的进度
         FAllPrgCount:=MthCount;      //当前循环总个数据
         FSubPrgPercent:=0.90;  //子过程中占整个过程%;
-        DoCalcDayReckByMth(CalcParams,False);
+
+        DayClsFlag:=GetDayCloseFlag(flag);
+        DoCalcDayReckByMth(CalcParams,DayClsFlag);
         //2、成本核算成功更新最后一天业务库存(平时试算不更新库存)
         //DoCalcUpdateStorage(CalcParams);
       end;
@@ -679,6 +683,7 @@ end;
 function TfrmCostCalc.CalcForMonthData(InParams:TftParamList;CalcFlag:string): Boolean;
 var
   i:integer;
+  DayClsFlag:Boolean;  
   ReMsg,Rck_Date:string;
 begin
   Label11.Caption := '核算前检测数据...';
@@ -835,7 +840,7 @@ begin
     if ReckBegDate = e then
       ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)
     else
-      ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)+'-'+FormatDatetime('YYYY-MM-DD',e); //核算区间
+      ReckMonth:=FormatDatetime('YYYY-MM-DD',ReckBegDate)+' 至 '+FormatDatetime('YYYY-MM-DD',e); //核算区间
 
     //设置最新结账日期
     InParams.ParamByName('CDATE').AsString:=FormatDatetime('YYYYMMDD',cDate); //最后日结日期
@@ -880,6 +885,7 @@ begin
     begin
       Label11.Caption := '正在生成['+ReckMonth+']日结账';
       Update;
+      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=4;
       InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDateTime('YYYYMMDD',ReckBegDate);  //区间开始日期
       //2013.03.17只对当前业务日期之前的进行日结关账(日结关账小于当前业务日期)
       if (e>=Global.sysDate) then
@@ -888,7 +894,6 @@ begin
         InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',e); //区间结束日期
         IS_CLS_FLAG:=true;
       end;
-      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=4;
       ReMsg:=Factor.ExecProc('TCostCalcForDayReck',InParams);
       if ReMsg<>'RCK_OK' then Raise Exception.Create('日结账['+ReckMonth+']出错<'+ReMsg+'>');
       cDate:=e;
@@ -1046,6 +1051,17 @@ begin
   CurValue:=(GetTickCount-FBegTickCount) div 1000;
   LblTime.Caption:='['+IntToStr(CurValue)+'s]';
   LblTime.Left:=self.Width-LblTime.Width-6;
+end;
+
+function TfrmCostCalc.GetDayCloseFlag(flag: integer): Boolean;
+begin
+  result:=False;
+  if not (flag in [1,2]) then
+  begin
+    if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
+    if not (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and not LockCompanyCheck then Exit;
+  end;
+  result:=true;
 end;
 
 end.

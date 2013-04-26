@@ -1558,16 +1558,12 @@ begin
     '	SHOP_ID varchar (13) NOT NULL ,'+
     '	GODS_ID varchar (36)  NOT NULL ,'+
     '	BATCH_NO varchar (36) NOT NULL ,'+
-    '	NEW_INPRICE decimal(18, 3) NULL ,'+
-    '	NEW_OUTPRICE decimal(18, 3) NULL ,'+
     '	ORG_AMT decimal(18, 3) NULL ,'+
     '	ORG_MNY decimal(18, 3) NULL ,'+
-    '	ORG_RTL decimal(18, 3) NULL ,'+
     '	ORG_CST decimal(18, 3) NULL ,'+
     '	STOCK_AMT decimal(18, 3) NULL ,'+
     '	STOCK_MNY decimal(18, 3) NULL ,'+
     '	STOCK_TAX decimal(18, 3) NULL ,'+
-    '	STOCK_RTL decimal(18, 3) NULL ,'+
     '	STOCK_AGO decimal(18, 3) NULL ,'+
     '	STKRT_AMT decimal(18, 3) NULL ,'+
     '	STKRT_MNY decimal(18, 3) NULL ,'+
@@ -1585,36 +1581,20 @@ begin
     '	SALRT_TAX decimal(18, 3) NULL ,'+
     '	SALRT_CST decimal(18, 3) NULL ,'+
     '	DBIN_AMT decimal(18, 3) NULL ,'+
-    '	DBIN_MNY decimal(18, 3) NULL ,'+
-    '	DBIN_RTL decimal(18, 3) NULL ,'+
     '	DBIN_CST decimal(18, 3) NULL ,'+
     '	DBOUT_AMT decimal(18, 3) NULL ,'+
-    '	DBOUT_MNY decimal(18, 3) NULL ,'+
-    '	DBOUT_RTL decimal(18, 3) NULL ,'+
     '	DBOUT_CST decimal(18, 3) NULL ,'+
     '	CHANGE1_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE1_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE1_RTL decimal(18, 3) NULL ,'+
     '	CHANGE1_CST decimal(18, 3) NULL ,'+
     '	CHANGE2_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE2_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE2_RTL decimal(18, 3) NULL ,'+
     '	CHANGE2_CST decimal(18, 3) NULL ,'+
     '	CHANGE3_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE3_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE3_RTL decimal(18, 3) NULL ,'+
     '	CHANGE3_CST decimal(18, 3) NULL ,'+
     '	CHANGE4_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE4_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE4_RTL decimal(18, 3) NULL ,'+
     '	CHANGE4_CST decimal(18, 3) NULL ,'+
     '	CHANGE5_AMT decimal(18, 3) NULL ,'+
-    '	CHANGE5_MNY decimal(18, 3) NULL ,'+
-    '	CHANGE5_RTL decimal(18, 3) NULL ,'+
     '	CHANGE5_CST decimal(18, 3) NULL ,'+
     '	BAL_AMT decimal(18, 3) NULL ,'+
-    '	BAL_MNY decimal(18, 3) NULL ,'+
-    '	BAL_RTL decimal(18, 3) NULL ,'+
     '	BAL_CST decimal(18, 3) NULL ,'+
     '	PRIOR_YEAR_AMT decimal(18, 3) NULL ,'+
     '	PRIOR_YEAR_MNY decimal(18, 3) NULL ,'+
@@ -1631,16 +1611,11 @@ begin
     ' SHOP_ID varchar2(13) NOT NULL ,'+
     ' GODS_ID varchar2(36)  NOT NULL ,'+
     ' BATCH_NO varchar2(36) NOT NULL ,'+
-    ' NEW_INPRICE decimal(18, 3) ,'+
-    ' NEW_OUTPRICE decimal(18, 3) ,'+
     ' ORG_AMT decimal(18, 3) ,'+
-    ' ORG_MNY decimal(18, 3) ,'+
-    ' ORG_RTL decimal(18, 3) ,'+
     ' ORG_CST decimal(18, 3) ,'+
     ' STOCK_AMT decimal(18, 3) ,'+
     ' STOCK_MNY decimal(18, 3) ,'+
     ' STOCK_TAX decimal(18, 3) ,'+
-    ' STOCK_RTL decimal(18, 3) ,'+
     ' STOCK_AGO decimal(18, 3) ,'+
     ' STKRT_AMT decimal(18, 3) ,'+
     ' STKRT_MNY decimal(18, 3) ,'+
@@ -1658,36 +1633,20 @@ begin
     ' SALRT_TAX decimal(18, 3) ,'+
     ' SALRT_CST decimal(18, 3) ,'+
     ' DBIN_AMT decimal(18, 3) ,'+
-    ' DBIN_MNY decimal(18, 3) ,'+
-    ' DBIN_RTL decimal(18, 3) ,'+
     ' DBIN_CST decimal(18, 3) ,'+
     ' DBOUT_AMT decimal(18, 3) ,'+
-    ' DBOUT_MNY decimal(18, 3) ,'+
-    ' DBOUT_RTL decimal(18, 3) ,'+
     ' DBOUT_CST decimal(18, 3) ,'+
     ' CHANGE1_AMT decimal(18, 3) ,'+
-    ' CHANGE1_MNY decimal(18, 3) ,'+
-    ' CHANGE1_RTL decimal(18, 3) ,'+
     ' CHANGE1_CST decimal(18, 3) ,'+
     ' CHANGE2_AMT decimal(18, 3) ,'+
-    ' CHANGE2_MNY decimal(18, 3) ,'+
-    ' CHANGE2_RTL decimal(18, 3) ,'+
     ' CHANGE2_CST decimal(18, 3) ,'+
     ' CHANGE3_AMT decimal(18, 3) ,'+
-    ' CHANGE3_MNY decimal(18, 3) ,'+
-    ' CHANGE3_RTL decimal(18, 3) ,'+
     ' CHANGE3_CST decimal(18, 3) ,'+
     ' CHANGE4_AMT decimal(18, 3) ,'+
-    ' CHANGE4_MNY decimal(18, 3) ,'+
-    ' CHANGE4_RTL decimal(18, 3) ,'+
     ' CHANGE4_CST decimal(18, 3) ,'+
     ' CHANGE5_AMT decimal(18, 3) ,'+
-    ' CHANGE5_MNY decimal(18, 3) ,'+
-    ' CHANGE5_RTL decimal(18, 3) ,'+
     ' CHANGE5_CST decimal(18, 3) ,'+
     '	BAL_AMT decimal(18, 3) ,'+
-    '	BAL_MNY decimal(18, 3) ,'+
-    '	BAL_RTL decimal(18, 3) ,'+
     '	BAL_CST decimal(18, 3) ,'+
     '	PRIOR_YEAR_AMT decimal(18, 3) ,'+
     '	PRIOR_YEAR_MNY decimal(18, 3) ,'+
@@ -1704,16 +1663,11 @@ begin
     '	SHOP_ID varchar (13) NOT NULL ,'+
     '	GODS_ID varchar (36)  NOT NULL ,'+
     '	BATCH_NO varchar (36) NOT NULL ,'+
-    '	NEW_INPRICE decimal(18, 3) ,'+
-    '	NEW_OUTPRICE decimal(18, 3) ,'+
     '	ORG_AMT decimal(18, 3) ,'+
-    '	ORG_MNY decimal(18, 3) ,'+
-    '	ORG_RTL decimal(18, 3) ,'+
     '	ORG_CST decimal(18, 3) ,'+
     '	STOCK_AMT decimal(18, 3) ,'+
     '	STOCK_MNY decimal(18, 3) ,'+
     '	STOCK_TAX decimal(18, 3) ,'+
-    '	STOCK_RTL decimal(18, 3) ,'+
     '	STOCK_AGO decimal(18, 3) ,'+
     '	STKRT_AMT decimal(18, 3) ,'+
     '	STKRT_MNY decimal(18, 3) ,'+
@@ -1731,36 +1685,20 @@ begin
     '	SALRT_TAX decimal(18, 3) ,'+
     '	SALRT_CST decimal(18, 3) ,'+
     '	DBIN_AMT decimal(18, 3) ,'+
-    '	DBIN_MNY decimal(18, 3) ,'+
-    '	DBIN_RTL decimal(18, 3) ,'+
     '	DBIN_CST decimal(18, 3) ,'+
     '	DBOUT_AMT decimal(18, 3) ,'+
-    '	DBOUT_MNY decimal(18, 3) ,'+
-    '	DBOUT_RTL decimal(18, 3) ,'+
     '	DBOUT_CST decimal(18, 3) ,'+
     '	CHANGE1_AMT decimal(18, 3) ,'+
-    '	CHANGE1_MNY decimal(18, 3) ,'+
-    '	CHANGE1_RTL decimal(18, 3) ,'+
     '	CHANGE1_CST decimal(18, 3) ,'+
     '	CHANGE2_AMT decimal(18, 3) ,'+
-    '	CHANGE2_MNY decimal(18, 3) ,'+
-    '	CHANGE2_RTL decimal(18, 3) ,'+
     '	CHANGE2_CST decimal(18, 3) ,'+
     '	CHANGE3_AMT decimal(18, 3) ,'+
-    '	CHANGE3_MNY decimal(18, 3) ,'+
-    '	CHANGE3_RTL decimal(18, 3) ,'+
     '	CHANGE3_CST decimal(18, 3) ,'+
     '	CHANGE4_AMT decimal(18, 3) ,'+
-    '	CHANGE4_MNY decimal(18, 3) ,'+
-    '	CHANGE4_RTL decimal(18, 3) ,'+
     '	CHANGE4_CST decimal(18, 3) ,'+
     '	CHANGE5_AMT decimal(18, 3) ,'+
-    '	CHANGE5_MNY decimal(18, 3) ,'+
-    '	CHANGE5_RTL decimal(18, 3) ,'+
     '	CHANGE5_CST decimal(18, 3) ,'+
     '	BAL_AMT decimal(18, 3) ,'+
-    '	BAL_MNY decimal(18, 3) ,'+
-    '	BAL_RTL decimal(18, 3) ,'+
     '	BAL_CST decimal(18, 3) ,'+
     '	PRIOR_YEAR_AMT decimal(18, 3) ,'+
     '	PRIOR_YEAR_MNY decimal(18, 3) ,'+
@@ -1770,7 +1708,7 @@ begin
     '	PRIOR_MONTH_MNY decimal(18, 3) ,'+
     '	PRIOR_MONTH_TAX decimal(18, 3) ,'+
     '	PRIOR_MONTH_CST decimal(18, 3)  '+
-    ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
+    ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE';
   end;
 end;
 
@@ -1789,40 +1727,34 @@ begin
   SQL :=
     'insert into '+tempTableUpMonth+'('+
         'TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
+        'ORG_AMT,ORG_CST,'+
+        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
         'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
         'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST) '+
+        'DBIN_AMT,DBIN_CST,'+
+        'DBOUT_AMT,DBOUT_CST,'+
+        'CHANGE1_AMT,CHANGE1_CST,'+
+        'CHANGE2_AMT,CHANGE2_CST,'+
+        'CHANGE3_AMT,CHANGE3_CST,'+
+        'CHANGE4_AMT,CHANGE4_CST,'+
+        'CHANGE5_AMT,CHANGE5_CST,'+
+        'BAL_AMT,BAL_CST) '+
     'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-        'max(NEW_INPRICE)as NEW_INPRICE,max(NEW_OUTPRICE)as NEW_OUTPRICE,'+
         'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',BegReckDate)+' then ORG_AMT else 0 end)as ORG_AMT,'+
-        'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',BegReckDate)+' then round(ORG_AMT*NEW_INPRICE,2) else 0 end)as ORG_MNY,'+
-        'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',BegReckDate)+' then round(ORG_AMT*NEW_OUTPRICE,2) else 0 end)as ORG_RTL,'+
         'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',BegReckDate)+' then ORG_CST else 0 end)as ORG_CST,'+
-        'sum(STOCK_AMT)as STOCK_AMT,sum(STOCK_MNY)as STOCK_MNY,sum(STOCK_TAX)as STOCK_TAX,sum(STOCK_RTL)as STOCK_RTL,sum(STOCK_AGO)as STOCK_AGO,'+
+        'sum(STOCK_AMT)as STOCK_AMT,sum(STOCK_MNY)as STOCK_MNY,sum(STOCK_TAX)as STOCK_TAX,sum(STOCK_AGO)as STOCK_AGO,'+
         'sum(STKRT_AMT)as STKRT_AMT,sum(STKRT_MNY)as STKRT_MNY,sum(STKRT_TAX)as STKRT_TAX,'+
         'sum(SALE_AMT)as SALE_AMT,sum(SALE_RTL)as SALE_RTL,sum(SALE_AGO)as SALE_AGO,sum(SALE_MNY)as SALE_MNY,sum(SALE_TAX)as SALE_TAX,sum(SALE_CST)as SALE_CST,'+
         'sum(SALE_PRF)as SALE_PRF,sum(SALRT_AMT)as SALRT_AMT,sum(SALRT_MNY)as SALRT_MNY,sum(SALRT_TAX)as SALRT_TAX,sum(SALRT_CST)as SALRT_CST,'+
         '0 as PRIOR_YEAR_AMT,0 as PRIOR_YEAR_MNY,0 as PRIOR_YEAR_TAX,0 as PRIOR_YEAR_CST,0 as PRIOR_MONTH_AMT,0 as PRIOR_MONTH_MNY,0 as PRIOR_MONTH_TAX,0 as PRIOR_MONTH_CST,'+
-        'sum(DBIN_AMT)as DBIN_AMT,sum(DBIN_MNY)as DBIN_MNY,sum(DBIN_RTL)as DBIN_RTL,sum(DBIN_CST)as DBIN_CST,'+
-        'sum(DBOUT_AMT)as DBOUT_AMT,sum(DBOUT_MNY)as DBOUT_MNY,sum(DBOUT_RTL)as DBOUT_RTL,sum(DBOUT_CST)as DBOUT_CST,'+
-        'sum(CHANGE1_AMT)as CHANGE1_AMT,sum(CHANGE1_MNY)as CHANGE1_MNY,sum(CHANGE1_RTL)as CHANGE1_RTL,sum(CHANGE1_CST)as CHANGE1_CST,'+
-        'sum(CHANGE2_AMT)as CHANGE2_AMT,sum(CHANGE2_MNY)as CHANGE2_MNY,sum(CHANGE2_RTL)as CHANGE2_RTL,sum(CHANGE2_CST)as CHANGE2_CST,'+
-        'sum(CHANGE3_AMT)as CHANGE3_AMT,sum(CHANGE3_MNY)as CHANGE3_MNY,sum(CHANGE3_RTL)as CHANGE3_RTL,sum(CHANGE3_CST)as CHANGE3_CST,'+
-        'sum(CHANGE4_AMT)as CHANGE4_AMT,sum(CHANGE4_MNY)as CHANGE4_MNY,sum(CHANGE4_RTL)as CHANGE4_RTL,sum(CHANGE4_CST)as CHANGE4_CST,'+
-        'sum(CHANGE5_AMT)as CHANGE5_AMT,sum(CHANGE5_MNY)as CHANGE5_MNY,sum(CHANGE5_RTL)as CHANGE5_RTL,sum(CHANGE5_CST)as CHANGE5_CST,'+
+        'sum(DBIN_AMT)as DBIN_AMT,sum(DBIN_CST)as DBIN_CST,'+
+        'sum(DBOUT_AMT)as DBOUT_AMT,sum(DBOUT_CST)as DBOUT_CST,'+
+        'sum(CHANGE1_AMT)as CHANGE1_AMT,sum(CHANGE1_CST)as CHANGE1_CST,'+
+        'sum(CHANGE2_AMT)as CHANGE2_AMT,sum(CHANGE2_CST)as CHANGE2_CST,'+
+        'sum(CHANGE3_AMT)as CHANGE3_AMT,sum(CHANGE3_CST)as CHANGE3_CST,'+
+        'sum(CHANGE4_AMT)as CHANGE4_AMT,sum(CHANGE4_CST)as CHANGE4_CST,'+
+        'sum(CHANGE5_AMT)as CHANGE5_AMT,sum(CHANGE5_CST)as CHANGE5_CST,'+
         'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',EndReckDate)+' then BAL_AMT else 0 end)as BAL_AMT,'+
-        'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',EndReckDate)+' then round(BAL_AMT*NEW_INPRICE,2) else 0 end)as BAL_MNY,'+
-        'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',EndReckDate)+' then round(BAL_AMT*NEW_OUTPRICE,2) else 0 end)as BAL_RTL,'+
         'sum(case when CREA_DATE='+formatDatetime('YYYYMMDD',EndReckDate)+' then BAL_CST else 0 end)as BAL_CST '+
     'from RCK_GOODS_DAYS '+
     ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+formatDatetime('YYYYMMDD',BegReckDate)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',EndReckDate)+
@@ -1832,34 +1764,32 @@ begin
   SQL :=
     'insert into '+tempTableUpMonth+'('+
         'TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
+        'ORG_AMT,ORG_CST,'+
+        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
         'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
         'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST) '+
+        'DBIN_AMT,DBIN_CST,'+
+        'DBOUT_AMT,DBOUT_CST,'+
+        'CHANGE1_AMT,CHANGE1_CST,'+
+        'CHANGE2_AMT,CHANGE2_CST,'+
+        'CHANGE3_AMT,CHANGE3_CST,'+
+        'CHANGE4_AMT,CHANGE4_CST,'+
+        'CHANGE5_AMT,CHANGE5_CST,'+
+        'BAL_AMT,BAL_CST) '+
     'select '+
        'TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-       '0 as NEW_INPRICE,0 as NEW_OUTPRICE,'+
-       '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
-       '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+       '0 as ORG_AMT,0 as ORG_CST,'+
+       '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
        'sum(SALE_AMT)as PRIOR_YEAR_AMT,sum(SALE_MNY)as PRIOR_YEAR_MNY,sum(SALE_TAX)as PRIOR_YEAR_TAX,sum(SALE_CST)as PRIOR_YEAR_CST,0 as PRIOR_MONTH_AMT,0 as PRIOR_MONTH_MNY,0 as PRIOR_MONTH_TAX,0 as PRIOR_MONTH_CST,'+
-       '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
-       '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
-       '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
-       '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
-       '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
-       '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
-       '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST,'+
-       '0 as BAL_AMT,0 as BAL_MNY,0 as BAL_RTL,0 as BAL_CST '+
+       '0 as DBIN_AMT,0 as DBIN_CST,'+
+       '0 as DBOUT_AMT,0 as DBOUT_CST,'+
+       '0 as CHANGE1_AMT,0 as CHANGE1_CST,'+
+       '0 as CHANGE2_AMT,0 as CHANGE2_CST,'+
+       '0 as CHANGE3_AMT,0 as CHANGE3_CST,'+
+       '0 as CHANGE4_AMT,0 as CHANGE4_CST,'+
+       '0 as CHANGE5_AMT,0 as CHANGE5_CST,'+
+       '0 as BAL_AMT,0 as BAL_CST '+
      'from RCK_GOODS_DAYS where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',IncMonth(BegReckDate,-12))+' and CREA_DATE<='+formatDatetime('YYYYMMDD',IncMonth(EndReckDate,-12))+
      ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
   FdbHelp.ExecSQL(SQL);
@@ -1868,34 +1798,32 @@ begin
   SQL :=
     'insert into '+tempTableUpMonth+'('+
         'TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-        'NEW_INPRICE,NEW_OUTPRICE,'+
-        'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
+        'ORG_AMT,ORG_CST,'+
+        'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
         'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
         'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
-        'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-        'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-        'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-        'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-        'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-        'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-        'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-        'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST) '+
+        'DBIN_AMT,DBIN_CST,'+
+        'DBOUT_AMT,DBOUT_CST,'+
+        'CHANGE1_AMT,CHANGE1_CST,'+
+        'CHANGE2_AMT,CHANGE2_CST,'+
+        'CHANGE3_AMT,CHANGE3_CST,'+
+        'CHANGE4_AMT,CHANGE4_CST,'+
+        'CHANGE5_AMT,CHANGE5_CST,'+
+        'BAL_AMT,BAL_CST) '+
     'select '+
         'TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-        '0 as NEW_INPRICE,0 as NEW_OUTPRICE,'+
-        '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
-        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+        '0 as ORG_AMT,0 as ORG_CST,'+
+        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
         '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
         '0 as PRIOR_YEAR_AMT,0 as PRIOR_YEAR_MNY,0 as PRIOR_YEAR_TAX,0 as PRIOR_YEAR_CST,sum(SALE_AMT)as PRIOR_MONTH_AMT,sum(SALE_MNY)as PRIOR_MONTH_MNY,sum(SALE_TAX)as PRIOR_MONTH_TAX,sum(SALE_CST)as PRIOR_MONTH_CST,'+
-        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
-        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
-        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
-        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
-        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
-        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
-        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST,'+
-        '0 as BAL_AMT,0 as BAL_MNY,0 as BAL_RTL,0 as BAL_CST '+
+        '0 as DBIN_AMT,0 as DBIN_CST,'+
+        '0 as DBOUT_AMT,0 as DBOUT_CST,'+
+        '0 as CHANGE1_AMT,0 as CHANGE1_CST,'+
+        '0 as CHANGE2_AMT,0 as CHANGE2_CST,'+
+        '0 as CHANGE3_AMT,0 as CHANGE3_CST,'+
+        '0 as CHANGE4_AMT,0 as CHANGE4_CST,'+
+        '0 as CHANGE5_AMT,0 as CHANGE5_CST,'+
+        '0 as BAL_AMT,0 as BAL_CST '+
     'from RCK_GOODS_DAYS where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',IncMonth(BegReckDate,-1))+' and CREA_DATE<='+FormatDatetime('YYYYMMDD',IncMonth(EndReckDate,-1))+
     ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO ';
   FdbHelp.ExecSQL(SQL);    
@@ -1907,47 +1835,41 @@ begin
     SQL :=
       'insert into RCK_GOODS_MONTH('+
          'TENANT_ID,SHOP_ID,MONTH,GODS_ID,BATCH_NO,'+
-         'NEW_INPRICE,NEW_OUTPRICE,'+
-         'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
-         'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
+         'ORG_AMT,ORG_CST,'+
+         'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
          'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,'+
          'SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
          'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
-         'DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,'+
-         'DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,'+
-         'CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,'+
-         'CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,'+
-         'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
-         'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
-         'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
-         'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,ADJ_CST,COMM,TIME_STAMP '+
+         'DBIN_AMT,DBIN_CST,'+
+         'DBOUT_AMT,DBOUT_CST,'+
+         'CHANGE1_AMT,CHANGE1_CST,'+
+         'CHANGE2_AMT,CHANGE2_CST,'+
+         'CHANGE3_AMT,CHANGE3_CST,'+
+         'CHANGE4_AMT,CHANGE4_CST,'+
+         'CHANGE5_AMT,CHANGE5_CST,'+
+         'BAL_AMT,BAL_CST,ADJ_CST,COMM,TIME_STAMP '+
       ') '+
       'select '+
          'TENANT_ID,SHOP_ID,'+FormatDatetime('YYYYMM',EndReckDate)+' as MONTH,GODS_ID,BATCH_NO,'+
-         'max(NEW_INPRICE),max(NEW_OUTPRICE),'+
          'round(sum(ORG_AMT),3)as ORG_AMT,'+
-         'round(sum(ORG_MNY),2)as ORG_MNY,'+
-         'round(sum(ORG_RTL),2)as ORG_RTL,'+
          'round(sum(ORG_CST),2)as ORG_CST,'+
-         'round(sum(STOCK_AMT),3),round(sum(STOCK_MNY),2),round(sum(STOCK_TAX),2),round(sum(STOCK_RTL),2),round(sum(STOCK_AGO),2),round(sum(STKRT_AMT),3),round(sum(STKRT_MNY),2),round(sum(STKRT_TAX),2),'+
+         'round(sum(STOCK_AMT),3),round(sum(STOCK_MNY),2),round(sum(STOCK_TAX),2),round(sum(STOCK_AGO),2),round(sum(STKRT_AMT),3),round(sum(STKRT_MNY),2),round(sum(STKRT_TAX),2),'+
          'round(sum(SALE_AMT),3),round(sum(SALE_RTL),2),round(sum(SALE_AGO),2),round(sum(SALE_MNY),2),round(sum(SALE_TAX),2),round(sum(SALE_CST),2),round(sum(SALE_PRF),2),'+
          'round(sum(SALRT_AMT),3),round(sum(SALRT_MNY),2),round(sum(SALRT_TAX),2),round(sum(SALRT_CST),2),'+
          'round(sum(PRIOR_YEAR_AMT),2),round(sum(PRIOR_YEAR_MNY),2),round(sum(PRIOR_YEAR_TAX),2),round(sum(PRIOR_YEAR_CST),2),round(sum(PRIOR_MONTH_AMT),2),round(sum(PRIOR_MONTH_MNY),2),round(sum(PRIOR_MONTH_TAX),2),round(sum(PRIOR_MONTH_CST),2),'+
-         'round(sum(DBIN_AMT),3),round(sum(DBIN_MNY),2),round(sum(DBIN_RTL),2),round(sum(DBIN_CST),2),'+
-         'round(sum(DBOUT_AMT),3),round(sum(DBOUT_MNY),2),round(sum(DBOUT_RTL),2),round(sum(DBOUT_CST),2),'+
-         'round(sum(CHANGE1_AMT),3),round(sum(CHANGE1_MNY),2),round(sum(CHANGE1_RTL),2),round(sum(CHANGE1_CST),2),'+
-         'round(sum(CHANGE2_AMT),3),round(sum(CHANGE2_MNY),2),round(sum(CHANGE2_RTL),2),round(sum(CHANGE2_CST),2),'+
-         'round(sum(CHANGE3_AMT),3),round(sum(CHANGE3_MNY),2),round(sum(CHANGE3_RTL),2),round(sum(CHANGE3_CST),2),'+
-         'round(sum(CHANGE4_AMT),3),round(sum(CHANGE4_MNY),2),round(sum(CHANGE4_RTL),2),round(sum(CHANGE4_CST),2),'+
-         'round(sum(CHANGE5_AMT),3),round(sum(CHANGE5_MNY),2),round(sum(CHANGE5_RTL),2),round(sum(CHANGE5_CST),2),'+
+         'round(sum(DBIN_AMT),3),round(sum(DBIN_CST),2),'+
+         'round(sum(DBOUT_AMT),3),round(sum(DBOUT_CST),2),'+
+         'round(sum(CHANGE1_AMT),3),round(sum(CHANGE1_CST),2),'+
+         'round(sum(CHANGE2_AMT),3),round(sum(CHANGE2_CST),2),'+
+         'round(sum(CHANGE3_AMT),3),round(sum(CHANGE3_CST),2),'+
+         'round(sum(CHANGE4_AMT),3),round(sum(CHANGE4_CST),2),'+
+         'round(sum(CHANGE5_AMT),3),round(sum(CHANGE5_CST),2),'+
          'round(sum(BAL_AMT),3)as BAL_AMT,'+
-         'round(sum(BAL_MNY),2)as BAL_MNY,'+
-         'round(sum(BAL_RTL),2)as BAL_RTL,'+
          'round(sum(BAL_CST),2)as BAL_CST,'+
          '0,''00'' as COMM,'+GetTimeStamp(iDbType)+' '+
       'from '+tempTableUpMonth+' '+
     ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
-    FdbHelp.ExecSQL(SQL); 
+    FdbHelp.ExecSQL(SQL);
 
     //if iDbType <> 5 then FdbHelp.CommitTrans;
   except

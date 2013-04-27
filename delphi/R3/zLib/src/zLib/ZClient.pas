@@ -49,7 +49,6 @@ type
     function GetInterpreter: TZCustomDataBlockInterpreter;
     procedure SetEnabledBanlace(const Value: Boolean);
     procedure SetSupportCallbacks(const Value: Boolean);
-    procedure TransportTerminated(Sender: TObject);
     function GetInWorking: Boolean;
   protected
     FList:TList;
@@ -204,7 +203,6 @@ begin
      FInterpreter.DoInvokeDispatch := nil;
      FInterpreter.Free;
      if FHandle <> 0 then DeallocateHWnd(FHandle);
-     if Assigned(FTransport) then FTransport.OnTerminate := nil;
      FTransIntf := nil;
      inherited Destroy;
      FDisp := nil;
@@ -250,12 +248,15 @@ begin
   KeepAlv := false;
   if Assigned(FTransport) then
   begin
-    FTransport.OnTerminate := nil;
-    FTransport.Terminate;
-    PostThreadMessage(FTransport.ThreadID, WM_USER, 0, 0);
-    if Assigned(FTransport.ParentTransport) then
-       WaitForSingleObject(FTransport.Handle, 180000);
-    FTransport := nil;
+    try
+      FTransport.OnTerminate := nil;
+      FTransport.Terminate;
+      PostThreadMessage(FTransport.ThreadID, WM_USER, 0, 0);
+      PostThreadMessage(FTransport.ThreadID, WM_USER, 0, 0);
+      FTransport.WaitFor;
+    finally
+      FreeAndNil(FTransport);
+    end;
   end else
   if Assigned(FTransIntf) then
   begin
@@ -272,7 +273,6 @@ begin
   if FSupportCallbacks then
   begin
     FTransport := TZTransportThread.Create(Handle, CreateTransport);
-    FTransport.OnTerminate := TransportTerminated;
     WaitForSingleObject(FTransport.Semaphore, INFINITE);
     if FTransport.hEventMsg=THREAD_EXCEPTION then
        DoError(Exception(FTransport.GetEventData));
@@ -309,7 +309,7 @@ begin
     if (Data.Signature and ResultSig) = ResultSig then exit;
     if WaitForResult then
       begin
-        while True do
+        while FTransport.Transport.Connected  do
           begin
            WaitForSingleObject(FTransport.hEvent, INFINITE);
            FTransport.ResetThreadEvent;
@@ -337,7 +337,7 @@ begin
       end
     else
       begin
-        while True do
+        while FTransport.Transport.Connected do
           begin
             WaitForSingleObject(FTransport.hEvent, INFINITE);
             FTransport.ResetThreadEvent;
@@ -422,11 +422,6 @@ begin
          Interpreter.InterpretData(Data);
        end;
   end;
-end;
-
-procedure TZClient.TransportTerminated(Sender: TObject);
-begin
-  FTransport := nil;
 end;
 
 procedure TZClient.WndProc(var Message: TMessage);

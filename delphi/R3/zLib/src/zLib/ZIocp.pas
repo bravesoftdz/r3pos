@@ -1307,7 +1307,8 @@ begin
               end
               else //客户端忙，等待处理
               begin
-                 SocketDispatcher.AddBlock(sdb.Data,TServerClientSocket(sdb.SessionId),false);
+                 if Assigned(SocketDispatcher.FindClient(sdb.SessionId) ) then
+                    SocketDispatcher.AddBlock(sdb.Data,TServerClientSocket(sdb.SessionId),false);
               end;
             finally
                InterlockedDecrement(ExecThreadCount);
@@ -1359,7 +1360,11 @@ begin
   Lock;
   try
      try
-        if SocketCache.IndexOf(Pointer(SessionId))<0 then exit;
+        if SocketCache.IndexOf(Pointer(SessionId))<0 then
+           begin
+             DataCache.Delete(SessionId);
+             exit;
+           end;
         if (TServerClientSocket(SessionId).Connected) then
             begin
               TServerClientSocket(SessionId).LockThread := false;

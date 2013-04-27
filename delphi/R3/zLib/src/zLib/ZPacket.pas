@@ -471,7 +471,7 @@ begin
   SetReadEvent;
   FParentHandle := AHandle;
   FTransport := Transport;
-  FreeOnTerminate := True;
+  FreeOnTerminate := false;
   FSemaphore := CreateSemaphore(nil, 0, 1, nil);
   FData := nil;
   FMsg  := 0;

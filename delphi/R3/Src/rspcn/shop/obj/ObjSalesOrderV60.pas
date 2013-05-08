@@ -498,15 +498,14 @@ begin
   Str :=
     'update SAL_IC_GLIDE set GLIDE_ID=:GLIDE_ID,TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,IC_CARDNO=:IC_CARDNO,SALES_ID=:SALES_ID,CREA_USER=:CREA_USER,CREA_DATE=:CREA_DATE,GLIDE_INFO=:GLIDE_INFO,IC_GLIDE_TYPE=:IC_GLIDE_TYPE,'+
     'PAY_A=0,PAY_B=0,PAY_C=:PAY_C,PAY_D=0,PAY_E=0,PAY_F=0,PAY_G=0,PAY_H=0,PAY_I=0,PAY_J=0,GLIDE_MNY=:GLIDE_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
-    'COMM=' + GetCommStr(iDbType) + ','
-  + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
-  + 'where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
+    'COMM=' + GetCommStr(iDbType) + ','+
+    'TIME_STAMP='+GetTimeStamp(iDbType)+' '+
+    'where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
   UpdateSQL.Text := Str;
   
   Str :=
     'update SAL_IC_GLIDE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
   DeleteSQL.Text := Str;
-
 end;
 
 { TSyncSalesOrderV60 }
@@ -514,8 +513,10 @@ end;
 function TSyncSalesOrderV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
   SelectSQL.Text :=
-     'select j.*,a.ABLE_ID from ( '+
-     'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) j left outer join ACC_RECVABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.SALES_ID=a.SALES_ID';
+     'select j.*,a.ABLE_ID,b.NEAR_BUY_DATE,b.FREQUENCY from '+
+     '(select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) j '+
+     'left outer join ACC_RECVABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.SALES_ID=a.SALES_ID '+
+     'left outer join PUB_IC_INFO b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID and b.UNION_ID=''#'' ';
 end;
 
 function TSyncSalesOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -558,23 +559,23 @@ function TSyncSalesOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
     //更新积分
     if length(FieldbyName('CLIENT_ID').AsString)>0 then
     begin
-      if (FieldbyName('BARTER_INTEGRAL').AsInteger<>0) or (FieldbyName('INTEGRAL').AsInteger<>0) then //扣减换购积分
-      begin
-        rs := TZQuery.Create(nil);
-        try
-          rs.SQL.Text :=
-          ParseSQL(idbType,
-          'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)- :INTEGRAL,RULE_INTEGRAL=IsNull(RULE_INTEGRAL,0) + :RULE_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + :ACCU_INTEGRAL  '+
-          ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID');
-          rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-          rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsString;
-          rs.ParamByName('INTEGRAL').AsInteger := FieldbyName('BARTER_INTEGRAL').AsInteger-FieldbyName('INTEGRAL').AsInteger;
-          rs.ParamByName('ACCU_INTEGRAL').AsInteger := FieldbyName('INTEGRAL').AsInteger;
-          rs.ParamByName('RULE_INTEGRAL').AsInteger := FieldbyName('BARTER_INTEGRAL').AsInteger;
-          AGlobal.ExecQuery(rs);
-        finally
-          rs.Free;
-        end;
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text :=
+        ParseSQL(idbType,
+        ' update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)- :INTEGRAL,RULE_INTEGRAL=IsNull(RULE_INTEGRAL,0) + :RULE_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + :ACCU_INTEGRAL,'+
+        ' NEAR_BUY_DATE=:NEAR_BUY_DATE,FREQUENCY=:FREQUENCY '+
+        ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID');
+        rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+        rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsString;
+        rs.ParamByName('INTEGRAL').AsInteger := FieldbyName('BARTER_INTEGRAL').AsInteger-FieldbyName('INTEGRAL').AsInteger;
+        rs.ParamByName('ACCU_INTEGRAL').AsInteger := FieldbyName('INTEGRAL').AsInteger;
+        rs.ParamByName('RULE_INTEGRAL').AsInteger := FieldbyName('BARTER_INTEGRAL').AsInteger;
+        rs.ParamByName('NEAR_BUY_DATE').AsInteger := FieldbyName('NEAR_BUY_DATE').AsInteger;
+        rs.ParamByName('FREQUENCY').AsInteger := FieldbyName('FREQUENCY').AsInteger;
+        AGlobal.ExecQuery(rs);
+      finally
+        rs.Free;
       end;
     end;
   end;
@@ -652,7 +653,7 @@ begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'SAL_SALESORDER';
-       MaxCol := RowAccessor.ColumnCount - 1;
+       MaxCol := RowAccessor.ColumnCount - 3;
      end;
   InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
@@ -784,6 +785,7 @@ function TSyncSalesICDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var str:string;
 begin
   str := 'select '+Params.ParambyName('TABLE_FIELDS').AsString+' from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_ID=:SALES_ID';
+
   if Params.ParamByName('SYN_COMM').AsBoolean then
      str := str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 

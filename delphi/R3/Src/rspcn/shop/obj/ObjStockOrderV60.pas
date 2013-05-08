@@ -355,13 +355,11 @@ end;
 { TSyncStockOrderV60 }
 
 function TSyncStockOrderV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
-var str:string;
 begin
-  str :=
-    'select j.*,a.ABLE_ID from ('+
-    'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID ) j '+
-    'left outer join ACC_PAYABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.STOCK_ID=a.STOCK_ID';
-  SelectSQL.Text := Str;
+  SelectSQL.Text :=
+    ' select j.*,a.ABLE_ID from ('+
+    ' select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID ) j '+
+    ' left outer join ACC_PAYABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.STOCK_ID=a.STOCK_ID';
 end;
 
 function TSyncStockOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -375,8 +373,8 @@ function TSyncStockOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
         rs := TZQuery.Create(nil);
         try
           rs.SQL.Text :=
-            'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-            'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:ACCT_INFO,:ABLE_TYPE,:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+            ' insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+            ' values (:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:ACCT_INFO,:ABLE_TYPE,:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
           CopyToParams(rs.Params);
           if FieldbyName('STOCK_TYPE').AsString='1' then
              begin
@@ -407,18 +405,18 @@ function TSyncStockOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
         rs := TZQuery.Create(nil);
         try
           rs.SQL.Text :=
-            'update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '+
-            'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and ABLE_TYPE=:ABLE_TYPE';
+            ' update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '+
+            ' where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and ABLE_TYPE=:ABLE_TYPE';
           CopyToParams(rs.Params);
           rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
           if FieldbyName('STOCK_TYPE').AsString='1' then
-            begin
-              rs.ParambyName('ABLE_TYPE').AsString := '4';
-            end
-          else if FieldbyName('STOCK_TYPE').AsString = '3' then
-            begin
-              rs.ParambyName('ABLE_TYPE').AsString := '5';
-            end;
+             begin
+               rs.ParambyName('ABLE_TYPE').AsString := '4';
+             end
+          else if FieldbyName('STOCK_TYPE').AsString='3' then
+             begin
+               rs.ParambyName('ABLE_TYPE').AsString := '5';
+             end;
           AGlobal.ExecQuery(rs);
         finally
           rs.Free;
@@ -494,20 +492,22 @@ end;
 
 function TSyncStockDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.TAX_RATE as TAX_RATE from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
+  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.INVOICE_FLAG from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
 end;
 
 function TSyncStockDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
   procedure InsertStorageInfo;
+  var taxRate:real;
   begin
     if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
+    if FieldByName('INVOICE_FLAG').AsString = '3' then taxRate := FieldbyName('TAX_RATE').AsFloat else taxRate := 0;
     IncStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
                FieldbyName('GODS_ID').AsString,
                FieldbyName('PROPERTY_01').AsString,
                FieldbyName('PROPERTY_02').AsString,
                FieldbyName('BATCH_NO').AsString,
                FieldbyName('CALC_AMOUNT').AsFloat,
-               FieldbyName('CALC_MONEY').AsFloat-roundto(FieldbyName('CALC_MONEY').AsFloat/(1+FieldbyName('TAX_RATE').AsFloat)*FieldbyName('TAX_RATE').AsFloat,-2),1);
+               FieldbyName('CALC_MONEY').AsFloat-roundto(FieldbyName('CALC_MONEY').AsFloat/(1+taxRate)*taxRate,-2),1);
   end;
 begin
   if not Init then
@@ -527,8 +527,9 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,b.TAX_RATE as TAX_RATE '+
-       'from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
+       ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
+       ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+
+       ' from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
     rs.Params.AssignValues(Params); 
     AGlobal.Open(rs);
     rs.First;

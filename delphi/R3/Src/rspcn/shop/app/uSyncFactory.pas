@@ -20,13 +20,16 @@ type
     tbTitle:string;//说明
     keyFields:string;//关健字段
     tableFields:string;//同步字段
-    selectSQL:string;
+    selectLocalSQL:string;//本地openSQL，用于上传下载SQL不一致的情况
+    selectRemoteSQL:string;//服务端openSQL，用于上传下载SQL不一致的情况
+    selectSQL:string;//默认openSQL
     whereStr:string;//where条件
     synFlag:integer;
     keyFlag:integer; //0是按表结构关健字 1是按业务关健字
     syncTenantId:string;//时间戳控制TENANT_ID
     syncShopId:string;//时间戳控制SHOP_ID
-    syncUpAndDown:string;//是否双向同步 1:是
+    isSyncUp:string;//是否上传
+    isSyncDown:string;//是否下载
   end;
 
   TSyncFactory=class
@@ -38,7 +41,6 @@ type
     FProTitle:string;
     FSyncTimeStamp: int64;
     FParams: TftParamList;
-    SubmitRecordNum:integer;
     FinishIndex:integer;
     procedure SetTicket;
     function  GetTicket:Int64;
@@ -64,7 +66,6 @@ type
     procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
     procedure GetCloseAccDate;
     function  CheckNeedSync:boolean;
-    function  SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载  返回最大时间戳
   protected
     procedure ClearSyncList;
     procedure ReadTimeStamp;
@@ -107,7 +108,6 @@ constructor TSyncFactory.Create;
 begin
   CloseAccDate := -1;
   LoginSyncDate := 0;
-  SubmitRecordNum := 500;
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
 end;
@@ -252,147 +252,74 @@ begin
   end;
 end;
 
-function TSyncFactory.SyncData(n:PSynTableInfo;Params:TftParamList;SyncFlag:integer;maxTime:int64=0):int64;//0:上传 1:下载
-var
-  note:string;
-  PackageCount:integer;
-  isEnd:boolean;
-  cs,rs:TZQuery;
-  ZClassName:string;
-  tmpObj:TRecord_;
-  i,j:integer;
-  delBeginTimeStamp,delEndTimeStamp,maxTimeStamp:int64;
-begin
-  if SyncFlag = 0 then note := '上传' else note := '下载';
-
-  LogFile.AddLogFile(0,'开始'+note+'<'+n^.tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
-
-  delBeginTimeStamp := StrtoInt64(Params.ParamByName('TIME_STAMP').AsString);
-  maxTimeStamp := StrtoInt64(Params.ParamByName('TIME_STAMP').AsString);
-
-  ZClassName := GetFactoryName(n);
-
-  //单机版上传、连锁版下载
-  cs := TZQuery.Create(nil);
-  rs := TZQuery.Create(nil);
-  tmpObj := TRecord_.Create;
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := false;
-    cs.Close;
-    rs.Close;
-    SetTicket;
-    if SyncFlag = 0 then
-       dataFactory.MoveToSqlite
-    else
-       dataFactory.MoveToRemote;
+procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
+  procedure UploadSingleTable(rs_l:TZQuery;ZClassName:string;n:PSynTableInfo);
+  var ss:TZQuery;
+  begin
+    ss := TZQuery.Create(nil);
     try
-      if trim(n^.selectSQL) = '' then // OBJ Open
-         dataFactory.Open(rs,ZClassName,Params)
-      else // SQL Open
+      ss.Close;
+      if not rs_l.IsEmpty then
          begin
-           rs.SQL.Text := n^.selectSQL;
-           rs.Params := Params;
-           dataFactory.Open(rs);
-         end;
-    finally
-      dataFactory.MoveToDefault;
-    end;
-
-    LogFile.AddLogFile(0,note+'<'+n^.tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
-
-    SetTicket;
-
-    cs.FieldDefs := rs.FieldDefs;
-    cs.CreateDataSet;
-    //分包同步
-    i := 1;
-    j := 0;
-    // 总共数据包个数
-    PackageCount := ceil(rs.RecordCount/SubmitRecordNum);
-    rs.First;
-    isEnd := rs.Eof;
-    while (not isEnd) and (not Stoped) do
-      begin
-        cs.Append;
-        tmpObj.ReadFromDataSet(rs);
-        tmpObj.WriteToDataSet(cs);
-
-        if i = 1 then
-           delBeginTimeStamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString); //数据包开始时间
-        if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxTimeStamp then
-           maxTimeStamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString); //当前最大时间戳
-
-        inc(i);
-        rs.Next;
-        isEnd := rs.Eof;
-        if ((i > SubmitRecordNum) and (StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > maxTimeStamp)) or (rs.Eof) then
-          begin
-            //提交
-            if not cs.IsEmpty then
-            begin
-              if SyncFlag = 0 then
-                 dataFactory.MoveToRemote
-              else
-                 dataFactory.MoveToSqlite;
-              try
-                dataFactory.UpdateBatch(cs,ZClassName,Params);
-              finally
-                dataFactory.MoveToDefault;
-              end;
-
-              if SyncFlag = 0 then //上传时修改本地通讯标志位
+           SetTicket;
+           ss.SyncDelta := rs_l.SyncDelta;
+           if not ss.IsEmpty then
               begin
+                dataFactory.MoveToRemote;
                 try
-                  rs.Prior;
-                  rs.Delete;
-                  delEndTimeStamp := maxTimeStamp;
-                  Params.ParamByName('DEL_BEGIN_TIME_STAMP').Value := delBeginTimeStamp;
-                  Params.ParamByName('DEL_END_TIME_STAMP').Value := delEndTimeStamp;
-                  dataFactory.MoveToSqlite;
-                  try
-                    dataFactory.UpdateBatch(rs,ZClassName,Params);
-                    rs.CommitUpdates;
-                  finally
-                    dataFactory.MoveToDefault;
-                  end;
-                except
-                  rs.CancelUpdates;
-                  Raise;
+                  dataFactory.UpdateBatch(ss,ZClassName,Params);
+                finally
+                  dataFactory.MoveToDefault;
                 end;
               end;
 
-              if maxTimeStamp > maxTime then SetSynTimeStamp(n^.syncTenantId,n^.tbName,maxTimeStamp,n^.syncShopId);
-            end;
-            cs.Close;
-            cs.FieldDefs := rs.FieldDefs;
-            cs.CreateDataSet;
-            i := 1;
-            inc(j);
-            if n^.syncUpAndDown = '1' then
-               begin
-                 if maxTime > 0 then
-                    SetProPosition(FinishIndex * 100 + 50 + (50 div PackageCount * j))
-                 else
-                    SetProPosition(FinishIndex * 100 +  0 + (50 div PackageCount * j));
-               end
-            else
-               SetProPosition(FinishIndex * 100 + (100 div PackageCount * j));
-          end;
-      end;
-    LogFile.AddLogFile(0,note+'<'+n^.tbName+'>保存时长:'+inttostr(GetTicket));
-  finally
-    rs.Free;
-    cs.Free;
-    tmpObj.Free;
-  end;
-  result := maxTimeStamp;
-end;
+           rs_l.Delete;
+           dataFactory.MoveToSqlite;
+           try
+             dataFactory.UpdateBatch(rs_l,ZClassName,Params);
+           finally
+             dataFactory.MoveToDefault;
+           end;
 
-procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
+           LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
+         end;
+    finally
+      ss.Free;
+    end;
+  end;
+
+  procedure DownloadSingleTable(rs_r:TZQuery;ZClassName:string;n:PSynTableInfo);
+  var ss:TZQuery;
+  begin
+    ss := TZQuery.Create(nil);
+    try
+      ss.Close;
+      if not rs_r.IsEmpty then
+         begin
+           SetTicket;
+           ss.SyncDelta := rs_r.SyncDelta;
+           if not ss.IsEmpty then
+              begin
+                dataFactory.MoveToSqlite;
+                try
+                  dataFactory.UpdateBatch(ss,ZClassName,Params);
+                finally
+                  dataFactory.MoveToDefault;
+                end;
+              end;
+           LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
+         end;
+    finally
+      ss.Free;
+    end;
+  end;
 var
   SFVersion:string;
+  rs_l,rs_r:TZQuery;
   LCLVersion:boolean;
-  maxTimeStamp:int64;
+  MaxTimeStamp:int64;
+  ZClassName:string;
+  openSQL:string;
 begin
   SFVersion := dllGlobal.GetSFVersion;
   LCLVersion := (SFVersion = '.LCL');
@@ -400,7 +327,9 @@ begin
   if trim(n^.syncTenantId) = '' then n^.syncTenantId := token.tenantId;
   if trim(n^.syncShopId) = '' then n^.syncShopId := '#';
 
+  ZClassName := GetFactoryName(n);
   SyncTimeStamp := GetSynTimeStamp(n^.syncTenantId,n^.tbName,n^.syncShopId);
+  MaxTimeStamp := SyncTimeStamp;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -415,26 +344,111 @@ begin
   else
      Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
 
-  if n^.syncUpAndDown = '1' then
-     begin
-       if LCLVersion then //单机版先上传后下载
-          begin
-            maxTimeStamp := SyncData(n,Params,0,0); //上传
-            SyncData(n,Params,1,maxTimeStamp); //下载
-          end
-       else //连锁版先下载后上传
-          begin
-            maxTimeStamp := SyncData(n,Params,1,0); //下载
-            SyncData(n,Params,0,maxTimeStamp); //上传
-          end;
-     end
-  else
-     begin
-       if LCLVersion then
-          SyncData(n,Params,0)  //上传
-       else
-          SyncData(n,Params,1); //下载
-     end;
+  rs_l := TZQuery.Create(nil);
+  rs_r := TZQuery.Create(nil);
+  try
+    rs_l.Close;
+    rs_r.Close;
+
+    if n^.isSyncUp = '1' then
+       begin
+         LogFile.AddLogFile(0,'开始上传<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+         Params.ParamByName('SYN_COMM').AsBoolean := false;
+         SetTicket;
+         dataFactory.MoveToSqlite;
+         try
+           if (trim(n^.selectSQL) = '') and (trim(n^.selectLocalSQL) = '') then
+              dataFactory.Open(rs_l,ZClassName,Params)
+           else
+             begin
+               if trim(n^.selectLocalSQL) <> '' then
+                  openSQL := n^.selectLocalSQL
+               else
+                  openSQL := n^.selectSQL;
+               LogFile.AddLogFile(0,'上传SQL='+openSQL);
+               rs_l.SQL.Text := openSQL;
+               rs_l.Params := Params;
+               dataFactory.Open(rs_l);
+             end;
+         finally
+           dataFactory.MoveToDefault;
+         end;
+         LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs_l.RecordCount));
+
+         if not rs_l.IsEmpty then
+            begin
+              rs_l.Last;
+              if StrtoInt64(rs_l.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+                 MaxTimeStamp := StrtoInt64(rs_l.FieldByName('TIME_STAMP').AsString);
+            end;
+       end;
+
+    if n^.isSyncDown = '1' then
+       begin
+         LogFile.AddLogFile(0,'开始下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+         Params.ParamByName('SYN_COMM').AsBoolean := false;
+         SetTicket;
+         dataFactory.MoveToRemote;
+         try
+           if (trim(n^.selectSQL) = '') and (trim(n^.selectRemoteSQL) = '') then
+              dataFactory.Open(rs_r,ZClassName,Params)
+           else
+             begin
+               if trim(n^.selectRemoteSQL) <> '' then
+                  openSQL := n^.selectRemoteSQL
+               else
+                  openSQL := n^.selectSQL;
+               LogFile.AddLogFile(0,'下载SQL='+openSQL);
+               rs_r.SQL.Text := openSQL;
+               rs_r.Params := Params;
+               dataFactory.Open(rs_r);
+             end;
+         finally
+           dataFactory.MoveToDefault;
+         end;
+         LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs_r.RecordCount));
+
+         if not rs_r.IsEmpty then
+            begin
+              rs_r.Last;
+              if StrtoInt64(rs_r.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+                 MaxTimeStamp := StrtoInt64(rs_r.FieldByName('TIME_STAMP').AsString);
+            end;
+       end;
+
+     if LCLVersion then
+        begin
+          if n^.isSyncUp = '1' then
+             begin
+               UploadSingleTable(rs_l,ZClassName,n);
+               SetProPosition(FinishIndex * 100 + 50);
+             end;
+          if n^.isSyncDown = '1' then
+             begin
+               DownloadSingleTable(rs_r,ZClassName,n);
+               SetProPosition(FinishIndex * 100 + 100);
+             end;
+        end
+     else
+        begin
+          if n^.isSyncDown = '1' then
+             begin
+               DownloadSingleTable(rs_r,ZClassName,n);
+               SetProPosition(FinishIndex * 100 + 50);
+             end;
+          if n^.isSyncUp = '1' then
+             begin
+               UploadSingleTable(rs_l,ZClassName,n);
+               SetProPosition(FinishIndex * 100 + 100);
+             end;
+        end;
+
+    if MaxTimeStamp > SyncTimeStamp then
+       SetSynTimeStamp(n^.syncTenantId,n^.tbName,MaxTimeStamp,n^.syncShopId);
+  finally
+    rs_l.Free;
+    rs_r.Free;
+  end;
 end;
 
 procedure TSyncFactory.SetStoped(const Value: boolean);
@@ -495,7 +509,8 @@ begin
   n^.synFlag := 1;
   n^.keyFlag := 1;
   n^.tbtitle := '供应关系';
-  n^.syncUpAndDown := '1';
+  n^.isSyncUp := '1';
+  n^.isSyncDown := '1';
   FList.Add(n);
 end;
 
@@ -509,7 +524,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '门店资料';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -518,7 +534,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '部门资料';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -527,7 +544,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '职务资料';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -536,7 +554,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '角色资料';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -545,7 +564,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '用户资料';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -554,7 +574,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 1;
     n^.tbtitle := '操作权限';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -563,7 +584,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '客户等级';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -572,7 +594,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '商盟档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -581,7 +604,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.synFlag := 0;
     n^.tbtitle := '商盟指标';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -590,7 +614,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '客户档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -599,7 +624,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '会员档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -608,7 +634,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 1;
     n^.tbtitle := '会员档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -617,7 +644,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '最新进价';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
@@ -632,7 +660,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncShopId := token.shopId;
     n^.tbtitle := '最新售价';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
@@ -647,7 +676,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '供应链';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -658,7 +688,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '其他编码';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -669,7 +700,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '货品分类';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -680,7 +712,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '颜色档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -691,7 +724,8 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '尺码档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
 
     new(n);
@@ -702,15 +736,21 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '计量单位';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
   procedure InitList3;
   var n:PSynTableInfo;
-      str:string;
+      str_l,str_r:string;
   begin
-    str :=
+    str_l :=
+      'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM,b.TIME_STAMP '+
+      'from   PUB_BARCODE b '+
+      'where  TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+
+    str_r :=
       'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM,b.TIME_STAMP '+
       'from   PUB_BARCODE b '+
       'where  TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
@@ -739,11 +779,13 @@ procedure TSyncFactory.InitSyncList;
     new(n);
     n^.tbname := 'PUB_BARCODE';
     n^.keyFields := 'ROWS_ID';
-    n^.selectSQL := str;
+    n^.selectLocalSQL := str_l;
+    n^.selectRemoteSQL := str_r;
     n^.synFlag := 3;
     n^.keyFlag := 0;
     n^.tbtitle := '条码表';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
@@ -753,11 +795,12 @@ procedure TSyncFactory.InitSyncList;
     new(n);
     n^.tbname := 'PUB_IC_INFO';
     n^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
-    n^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,NEAR_BUY_DATE,FREQUENCY,COMM,TIME_STAMP';
+    n^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,COMM,TIME_STAMP';
     n^.synFlag := 4;
     n^.keyFlag := 1;
     n^.tbtitle := 'IC档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
@@ -769,17 +812,25 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFields := 'TENANT_ID;ACCOUNT_ID';
     n^.tableFields := 'TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,COMM,TIME_STAMP';
     n^.synFlag := 10;
-    n^.tbtitle := '账户资料';
-    n^.syncUpAndDown := '1';
     n^.keyFlag := 0;
+    n^.tbtitle := '账户资料';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
   procedure InitList20;
   var n:PSynTableInfo;
-      str:string;
+      str_l,str_r:string;
   begin
-    str :=
+    str_l :=
+      'select  i.TENANT_ID,i.LOGIN_NAME,i.LICENSE_CODE,i.TENANT_NAME,i.TENANT_TYPE,i.SHORT_TENANT_NAME,i.TENANT_SPELL,i.LEGAL_REPR, '+
+      '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
+      '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM,i.TIME_STAMP '+
+      'from    CA_TENANT i '+
+      'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+
+    str_r :=
       'select  i.TENANT_ID,i.LOGIN_NAME,i.LICENSE_CODE,i.TENANT_NAME,i.TENANT_TYPE,i.SHORT_TENANT_NAME,i.TENANT_SPELL,i.LEGAL_REPR, '+
       '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
       '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM, '+
@@ -802,15 +853,17 @@ procedure TSyncFactory.InitSyncList;
     new(n);
     n^.tbname := 'CA_TENANT';
     n^.keyFields := 'TENANT_ID';
-    n^.selectSQL := str;
+    n^.selectLocalSQL := str_l;
+    n^.selectRemoteSQL := str_r;
     n^.synFlag := 20;
     n^.keyFlag := 0;
     n^.tbtitle := '企业资料';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
-  procedure InitList21(whereStr:string;syncTenantId:string);
+  procedure InitList21(whereStr:string;syncTenantId,SyncUp,SyncDown:string);
   var n:PSynTableInfo;
   begin
     new(n);
@@ -821,15 +874,26 @@ procedure TSyncFactory.InitSyncList;
     n^.keyFlag := 1;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '供应链商品';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := SyncUp;
+    n^.isSyncDown := SyncDown;
     FList.Add(n);
   end;
 
   procedure InitList22;
   var n:PSynTableInfo;
-      str:string;
+      str_l,str_r:string;
   begin
-     str :=
+     str_l :=
+      'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
+      '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
+      '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
+      '       b.SORT_ID18,b.SORT_ID19,b.SORT_ID20,b.BARCODE,b.UNIT_ID,b.CALC_UNITS,b.SMALL_UNITS,b.BIG_UNITS, '+
+      '       b.SMALLTO_CALC,b.BIGTO_CALC,b.NEW_INPRICE,b.NEW_OUTPRICE,b.NEW_LOWPRICE,b.USING_PRICE,b.HAS_INTEGRAL, '+
+      '       b.USING_BATCH_NO,b.USING_BARTER,b.USING_LOCUS_NO,b.BARTER_INTEGRAL,b.REMARK,b.COMM,b.TIME_STAMP, '+
+      '       b.SHORT_GODS_NAME,b.CREA_DATE '+
+      'from   PUB_GOODSINFO b where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+
+     str_r :=
       'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
       '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
       '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
@@ -869,11 +933,13 @@ procedure TSyncFactory.InitSyncList;
     new(n);
     n^.tbname := 'PUB_GOODSINFO';
     n^.keyFields := 'TENANT_ID;GODS_ID';
-    n^.selectSQL := str;
+    n^.selectLocalSQL := str_l;
+    n^.selectRemoteSQL := str_r;
     n^.synFlag := 22;
     n^.keyFlag := 0;
     n^.tbtitle := '商品档案';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
@@ -886,7 +952,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 23;
     n^.keyFlag := 0;
     n^.tbtitle := '序列号控制表';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 
@@ -899,7 +966,8 @@ procedure TSyncFactory.InitSyncList;
     n^.synFlag := 29;
     n^.keyFlag := 0;
     n^.tbtitle := '参数定义表';
-    n^.syncUpAndDown := '1';
+    n^.isSyncUp := '1';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 var
@@ -929,13 +997,13 @@ begin
 
   InitList20;
 
-  InitList21('TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP',token.tenantId);
+  InitList21('TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP',token.tenantId,'1','1');
   rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
   rs.First;
   while not rs.Eof do
   begin
     str := 'TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+' and TIME_STAMP>:TIME_STAMP';
-    InitList21(str,rs.FieldByName('P_TENANT_ID').AsString);
+    InitList21(str,rs.FieldByName('P_TENANT_ID').AsString,'0','1');
     rs.Next;
   end;
 

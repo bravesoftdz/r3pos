@@ -91,7 +91,7 @@ begin
   0:js := '+';
   1,4,5:js := '||';
   end;
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and TIME_STAMP>=:DEL_BEGIN_TIME_STAMP and TIME_STAMP<=:DEL_END_TIME_STAMP'),Params);
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP'),Params);
 end;
 
 procedure TSyncSingleTableV60.FillParams(ZQuery:TZQuery);

@@ -4777,6 +4777,10 @@ inherited frmStockOrder: TfrmStockOrder
         Name = 'REMARK'
         DataType = ftString
         Size = 100
+      end
+      item
+        Name = 'TAX_RATE'
+        DataType = ftFloat
       end>
     AfterPost = edtTableAfterPost
     Left = 928

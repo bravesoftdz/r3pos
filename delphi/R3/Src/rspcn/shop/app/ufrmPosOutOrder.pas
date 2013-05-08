@@ -958,6 +958,11 @@ begin
          edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
          edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
        end;
+    case DefInvFlag of
+    1: edtTable.FieldbyName('TAX_RATE').AsFloat := 0;
+    2: edtTable.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
+    3: edtTable.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
+    end;
     getGodsInfo(edtTable.FieldbyName('GODS_ID').AsString);
   finally
     Params.Free;

@@ -541,7 +541,7 @@ begin
       // if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
          NewOrder
       // else
-      //    Open(AObj.FieldbyName('SALES_ID').AsString);
+      // Open(AObj.FieldbyName('SALES_ID').AsString);
     end;
   end;
 end;
@@ -551,6 +551,11 @@ begin
   if edtTable.State = dsBrowse then edtTable.Edit;
   edtTable.FieldbyName('APRICE').AsFloat :=dllGlobal.GetNewInPrice(GODS_ID,UNIT_ID);
   edtTable.FieldbyName('ORG_PRICE').AsFloat :=dllGlobal.GetNewOutPrice(GODS_ID,UNIT_ID);
+  case DefInvFlag of
+  1: edtTable.FieldbyName('TAX_RATE').AsFloat := 0;
+  2: edtTable.FieldbyName('TAX_RATE').AsFloat := InRate2;
+  3: edtTable.FieldbyName('TAX_RATE').AsFloat := InRate3;
+  end;
   getGodsInfo(edtTable.FieldbyName('GODS_ID').AsString);
 end;
 

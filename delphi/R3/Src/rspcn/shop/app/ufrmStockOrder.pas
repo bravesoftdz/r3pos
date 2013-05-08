@@ -539,6 +539,11 @@ begin
   if edtTable.State = dsBrowse then edtTable.Edit;
   edtTable.FieldbyName('APRICE').AsFloat :=dllGlobal.GetNewInPrice(GODS_ID,UNIT_ID);
   edtTable.FieldbyName('ORG_PRICE').AsFloat :=dllGlobal.GetNewOutPrice(GODS_ID,UNIT_ID);
+  case DefInvFlag of
+  1: edtTable.FieldbyName('TAX_RATE').AsFloat := 0;
+  2: edtTable.FieldbyName('TAX_RATE').AsFloat := InRate2;
+  3: edtTable.FieldbyName('TAX_RATE').AsFloat := InRate3;
+  end;
 end;
 
 procedure TfrmStockOrder.SetinputFlag(const Value: integer);

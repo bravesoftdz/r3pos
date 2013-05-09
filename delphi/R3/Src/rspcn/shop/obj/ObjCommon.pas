@@ -36,7 +36,7 @@ procedure DecStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, 
 //flag 1 进货单，2 销售单 3 其他单
 procedure IncLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO: String;amt: Real);
 procedure DecLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO:String; amt: Real);
-function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
+function  GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
 
 function NewId(id:string): string;
 function TrimRight(s:string;w:integer):string;
@@ -65,13 +65,30 @@ TGetComVersion=class(TZProcFactory)
 public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
+TGetSequence=class(TZProcFactory)
+public
+  function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+end;
+TDoLockDBKey=class(TZProcFactory)
+public
+  function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+end;
+TDoBatchExecSQL = class(TZFactory)
+private
+  function GetFieldValue(FieldName: string): string;
+public
+  function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+end;
+
 const
   ComVersion='3.0.2.55';
 var
   FldXdict:TZReadonlyQuery;
   NearSyncDate:TDatetime;
   SyncTimeStamp,LastUpdateTimeStamp:Int64;
+
 implementation
+
 function NewId(id:string): string;
 var
   g:TGuid;
@@ -83,11 +100,13 @@ begin
   end else
      result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
+
 function TrimRight(s:string;w:integer):string;
 begin
   result := trim(s);
   result := copy(result,length(result)-w+1,w);
 end;
+
 function ParseSQL(iDbType:integer;SQL:string):string;
 begin
   {==判断null函数替换处理==}
@@ -204,6 +223,7 @@ begin  //SYSBASE数据库的字符连接符号: + 和 ||均可
    else result:='+';
   end; 
 end;
+
 function GetDayDiff(iDbType:Integer;B,E:string):string;
 begin
   case iDbType of
@@ -213,6 +233,7 @@ begin
   5:result := '(ifnull(julianday(substr('+E+',1,4)||''-''||substr('+E+',5,2)||''-''||substr('+E+',7,2) ) - julianday( substr('+B+',1,4)||''-''||substr('+B+',5,2)||''-''||substr('+B+',7,2) ),0)+1)';
   end;
 end;
+
 {====== 2011.02.25 Add 单个字段模糊查询  ======}
 //FieldName: 关键字段;   KeyValue: 关键值（参数或实际值） ；IsParam: 是否是传递参数或实际值
 //JoinCnd 返回查询条件时：是否加条件关系: 如: and | or
@@ -283,8 +304,6 @@ begin
     result:=' '+JoinCnd+ReStr;
 end;
 
- 
-
 {=== 2011.02.26 生成分段取数据SQL语句[默认: 600笔] ===}
 function GetBatchSQL(iDbType:Integer; ViewSQL, SortField: string; SortType: string; RCount: string='600'): string;
 begin
@@ -296,7 +315,6 @@ begin
    5: result:='select * from ('+ViewSQL+') as tmp order by '+SortField+' '+SortType+' limit '+RCount;
   end; 
 end;
-
 
 //读取系列号
 function GetSequence(AGlobal:IdbHelp;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;
@@ -355,6 +373,7 @@ begin
      Temp.Free;
   end;
 end;
+
 //COMM控制SQL
 function GetCommStr(iDbType:integer;alias:string=''):string;
 begin
@@ -367,6 +386,7 @@ begin
     result := '''00''';
   end;
 end;
+
 function GetSysDateFormat(iDbType:integer):string;
 begin
   case iDbType of
@@ -378,6 +398,7 @@ begin
    else Result := 'convert(varchar(19),getdate(),120)';
   end;
 end;
+
 function  GetTimeStamp(iDbType:Integer):string;
 begin
   case iDbType of
@@ -391,6 +412,7 @@ begin
 
   LastUpdateTimeStamp := SyncTimeStamp + 60;
 end;
+
 //读取合法日期
 function GetReckDate(AGlobal:IdbHelp;TENANT_ID,SHOP_ID:string):string;
 var Temp:TZQuery;
@@ -421,6 +443,7 @@ begin
      Temp.Free;
   end;
 end;
+
 //检查date 是否在结账区间内
 function GetAccountRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
 var Temp:TZQuery;
@@ -454,6 +477,7 @@ begin
      Temp.Free;
   end;
 end;
+
 //检查date 是否在月结账区间内,库存无关的
 function GetMthRckRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
 var Temp:TZQuery;
@@ -487,10 +511,11 @@ begin
      Temp.Free;
   end;
 end;
+
 function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate,timestamp:string):Boolean;
 var
   Temp:TZQuery;
-  B:string;
+  B,DefValue:string;
 begin
   Result := False;
   if pDate>formatDatetime('YYYYMMDD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
@@ -527,24 +552,27 @@ begin
           Result := (pDate>B);
           if not Result then Raise Exception.Create('系统'+b+'号已经盘点，不能对此之前的单据进行操作');
         end;
-     // 单机版，开单日期不能小于灾难恢复时关账日期
-     if AGlobal.iDbType = 5 then
-        begin
-          Temp.Close;
-          Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE=''CLOSE_IMP_ACCDATE''';
-          AGlobal.Open(Temp);
-          B := Temp.Fields[0].AsString;
-          if B <> '' then
-             begin
-               Result := (pDate>=B);
-               if not Result then Raise Exception.Create('系统'+b+'号已经关账，不能对此之前的单据进行操作');
-             end;
-        end;
+     //2012.12.08增加判断导入财务账的结束日期
+     Temp.Close;
+     Temp.SQL.Text:='select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE in (''USED_IMP_ACCDATE'',''CLOSE_IMP_ACCDATE'')';
+     AGlobal.Open(Temp);
+     if Temp.Locate('DEFINE','USED_IMP_ACCDATE',[]) then
+        DefValue:=Trim(Temp.FieldByName('VALUE').AsString);
+     if DefValue='1' then
+     begin
+       if Temp.Locate('DEFINE','CLOSE_IMP_ACCDATE',[]) then
+       begin
+         B := FormatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.FieldByName('VALUE').AsString));
+         Result := (pDate>B);
+         if not Result then Raise Exception.Create('系统'+DefValue+'号已经关账，不能对此之前的单据进行操作');
+       end;
+     end;
      AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);
   finally
      Temp.Free;
   end;
 end;
+
 procedure IncStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO: String; amt,mny: Real;flag:integer);
 var Str:string;
     n:Integer;
@@ -614,6 +642,7 @@ begin
            AGlobal.ExecSQL(Str);
         end;
 end;
+
 procedure DecStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:String; amt,mny:Real;flag:integer);
 var Str:string;
     n:Integer;
@@ -679,6 +708,7 @@ begin
            AGlobal.ExecSQL(Str);
         end;
 end;
+
 procedure IncLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO: String; amt: Real);
 var Str:string;
     n:Integer;
@@ -700,6 +730,7 @@ begin
            AGlobal.ExecSQL(Str);
         end;
 end;
+
 procedure DecLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,BATCH_NO:String; amt:Real);
 var Str:string;
     n:Integer;
@@ -721,10 +752,12 @@ begin
            AGlobal.ExecSQL(Str);
         end;
 end;
+
 function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
 var
   rs:TZQuery;
   bs:TZQuery;
+  tx:TZQuery;
 begin
   rs:=TZQuery.Create(nil);
   try
@@ -744,7 +777,30 @@ begin
          rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
          rs.ParamByName('GODS_ID').AsString := GODS_ID;
          AGlobal.Open(rs);
-         result := rs.Fields[0].AsFloat; 
+         // 税率
+         tx := TZQuery.Create(nil);
+         try
+            tx.SQL.Text := ParseSQL(AGlobal.iDbType,
+                             ' select '+
+                             ' ifnull( '+
+                             '  case '+
+                             '    when VALUE = ''1'' then ''0'' '+
+                             '    when VALUE = ''2'' then ifnull((select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE = ''IN_RATE2'' and COMM not in (''02'',''12'')),''0.05'') '+
+                             '    when VALUE = ''3'' then ifnull((select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE = ''IN_RATE3'' and COMM not in (''02'',''12'')),''0.17'') '+
+                             '    else ''0'' '+
+                             '  end,''0'') '+
+                             ' as TAX_RATE '+
+                             ' from  SYS_DEFINE '+
+                             ' where TENANT_ID=:TENANT_ID and DEFINE = ''IN_INV_FLAG'' and COMM not in (''02'',''12'') ');
+            tx.ParamByName('TENANT_ID').AsInteger := strtoint(TENANT_ID);
+            AGlobal.Open(tx);
+            if tx.IsEmpty or ((1+StrtoFloatDef(tx.FieldByName('TAX_RATE').AsString,0))=0) then
+              result := rs.Fields[0].AsFloat
+            else
+              result := rs.Fields[0].AsFloat/(1+StrtoFloatDef(tx.FieldByName('TAX_RATE').AsString,0));
+         finally
+            tx.Free;
+         end;
        end
     else
        result := rs.Fields[0].AsFloat/rs.Fields[1].AsFloat;
@@ -760,6 +816,7 @@ begin
     'insert into SYS_LOG_INFO(LOG_ID,USER_ID,LOG_TYPE,MODU_ID,LOG_NAME,LOG_INFO,CREA_DATE,CREA_TIME,COMM,TIME_STAMP) '+
     'values(newid(),'''+UserId+''','''+inttostr(LogType)+''','''+ModId+''','+QuotedStr(LogName)+','+QuotedStr(LogInfo)+','''+formatDatetime('YYYY-MM-DD',date())+''','''+formatDatetime('HH:NN:SS',now())+''',''00'','+GetTimeStamp(AGlobal.iDbType)+')');
 end;
+
 function EncodeLogInfo(Record_:TRecord_;TblName:string;dbState:TUpdateStatus):string;
 var
   i:integer;
@@ -869,21 +926,167 @@ begin
   result := true;
 end;
 
+{ TSequence }
+
+function TGetSequence.Execute(AGlobal: IdbHelp;Params: TftParamList): Boolean;
+ function GetFormat(nLen: integer): string;
+ var
+   i:Integer;
+ begin
+   Result := '';
+   for i:=1 to nLen do
+     Result := Result +'0';
+ end;
+var
+  Temp:TZQuery;
+  Str,flag:string;
+  n:integer;
+  SEQU_ID: string;
+  TENANT_ID: string;
+  FLAG_TEXT: string;
+  nLen: integer;
+  Number: integer;
+begin
+  result:=False;
+  //初始化参数
+  Number:=1;
+  SEQU_ID:=Params.ParamByName('SEQU_ID').AsString;
+  TENANT_ID:=Params.ParamByName('TENANT_ID').AsString;
+  FLAG_TEXT:=Params.ParamByName('FLAG_TEXT').AsString;
+  nLen:=Params.ParamByName('nLen').AsInteger;
+  if Params.FindParam('Number')<>nil then
+    Number:=Params.ParamByName('Number').AsInteger;
+
+  Temp := TZQuery.Create(nil);
+  try
+     AGlobal.BeginTrans(10);
+     try
+       case AGlobal.iDbType of
+        0: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+        1: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+        4: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+        3,5:
+         begin
+           AGlobal.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
+           Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+         end;
+       end;
+       AGlobal.Open(Temp);
+       if Temp.IsEmpty then
+       begin
+         Msg := FLAG_TEXT+FormatFloat(GetFormat(nLen),1);
+         Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('+TENANT_ID+','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+       end else
+       if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then
+       begin
+         Msg := FLAG_TEXT+FormatFloat(GetFormat(nLen),1);
+         Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
+       end else
+       begin
+         if Temp.FieldbyName('FLAG_TEXT').AsString=FLAG_TEXT then
+           flag := FLAG_TEXT
+         else
+           flag := Temp.FieldbyName('FLAG_TEXT').AsString;
+         n := 1;
+         if (AGlobal.iDbType = 3) or (AGlobal.iDbType = 5) then
+         begin
+           Msg := flag+FormatFloat(GetFormat(nLen),Temp.FieldbyName('SEQU_NO').AsInteger);
+           n := 0;
+         end else
+           Msg := flag+FormatFloat(GetFormat(nLen),Temp.FieldbyName('SEQU_NO').AsInteger+1);
+           Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
+       end;
+       AGlobal.ExecSQL(Str);
+       AGlobal.CommitTrans;
+       result:=true;
+    except
+       AGlobal.RollbackTrans;
+       Raise;
+    end;
+  finally
+     Temp.Free;
+  end;
+end;
+
+{ TDoLockDBKey }
+
+function TDoLockDBKey.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
+var
+  SQL1,SQl2:string;
+begin
+  result:=False;
+  SQL1:='delete from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DBKEY';
+  SQl2:='insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)values(:TENANT_ID,:DBKEY,:NEWID,0,''00'',0)';
+  try
+    AGlobal.BeginTrans();
+    AGlobal.ExecSQL(SQL1,Params);
+    AGlobal.ExecSQL(SQl2,Params);
+    AGlobal.CommitTrans;
+    result:=true;
+  except
+    on E:Exception do
+    begin
+      AGlobal.RollbackTrans;
+      Msg:=E.Message;
+    end;                    
+  end;
+end;
+
+{ TDoBatchExecSQL }
+
+function TDoBatchExecSQL.GetFieldValue(FieldName: string): string;
+begin
+  result:='';
+  if DataSet.FindField(FieldName)<> nil then
+  begin
+    if DataSet.FieldByName(FieldName).AsString<>'' then
+      result:=trim(DataSet.FieldByName(FieldName).AsString);
+  end;
+end;
+
+function TDoBatchExecSQL.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  i: integer;
+  FieldName: string;
+  SqlStr: wideString;
+begin
+  SqlStr:='';
+  //根据字段组合SQL
+  for i:=0 to self.Count-1 do
+  begin
+    FieldName:=trim(self.Fields[i].FieldName);
+    if Copy(FieldName,1,3)='SQL' then
+    begin
+      SqlStr:=SqlStr+self.Fields[i].AsString;
+    end;
+  end;
+  if trim(SqlStr)<>'' then
+  begin
+    AGlobal.ExecSQL(SqlStr);
+    result:=true;
+  end;
+end;
+
 initialization
   RegisterClass(TGetXDictInfo);
   RegisterClass(TGetSyncTimeStamp);
   RegisterClass(TGetLastUpdateStatus);
   RegisterClass(TSyncSystemTimeStamp);
   RegisterClass(TGetComVersion);
+  RegisterClass(TGetSequence);
+  RegisterClass(TDoLockDBKey);
+  RegisterClass(TDoBatchExecSQL);
   FldXdict := nil;
   LastUpdateTimeStamp := 0;
   NearSyncDate := 0;
 finalization
-
   if FldXdict<>nil then FldXdict.Free;
   UnRegisterClass(TGetXDictInfo);
   UnRegisterClass(TGetSyncTimeStamp);
   UnRegisterClass(TGetLastUpdateStatus);
   UnRegisterClass(TSyncSystemTimeStamp);
   UnRegisterClass(TGetComVersion);
+  UnRegisterClass(TGetSequence);
+  UnRegisterClass(TDoLockDBKey);
+  UnRegisterClass(TDoBatchExecSQL);
 end.

@@ -564,7 +564,7 @@ begin
        begin
          B := FormatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.FieldByName('VALUE').AsString));
          Result := (pDate>B);
-         if not Result then Raise Exception.Create('系统'+DefValue+'号已经关账，不能对此之前的单据进行操作');
+         if not Result then Raise Exception.Create('系统'+B+'号已经关账，不能对此之前的单据进行操作');
        end;
      end;
      AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);

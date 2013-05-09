@@ -1169,7 +1169,7 @@ begin
   edtTICKET_PRINT_NAME.ItemIndex := 0;
   edtTITLE.Text := '[企业简称]';
   edtFOOTER.Text := '敬请保留小票,以作售后依据';
-  cxSavePrint.checked := true;
+  cxSavePrint.checked := false;
   cxPrintFormat.ItemIndex := 0;
 
   cxCashBox.ItemIndex := 0;
@@ -1509,15 +1509,18 @@ begin
        end
     else
        begin
-         MessageBox(Handle,'数据恢复失败...','友情提示..',MB_OK);
+         MessageBox(Handle,'数据恢复失败，原因：文件备份发生错误...','友情提示..',MB_OK);
        end;
   except
-    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+    on E:Exception do
        begin
-         if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
-            DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
+         if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+         begin
+           if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
+              DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
+         end;
+         Raise Exception.Create('数据恢复失败，原因：'+E.Message);
        end;
-    Raise Exception.Create('数据恢复失败...');
   end;
 end;
 

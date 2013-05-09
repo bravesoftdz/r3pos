@@ -1807,81 +1807,88 @@ begin
      end;
   BeginDate := BeginDate + '01';
 
-  //同步数据
-  SyncFactory.RecoverySync(self.Handle,BeginDate);
-
-  //矫正库存
-  TfrmStocksCalc.Calc(self);
-
-  rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(BILL_DATE) from '+
-                   '('+
-                   '  select max(STOCK_DATE)  BILL_DATE from STK_STOCKORDER  where TENANT_ID='+token.tenantId+' and STOCK_DATE >='+BeginDate+' '+
-                   '  union all '+
-                   '  select max(SALES_DATE)  BILL_DATE from SAL_SALESORDER  where TENANT_ID='+token.tenantId+' and SALES_DATE >='+BeginDate+' '+
-                   '  union all '+
-                   '  select max(CHANGE_DATE) BILL_DATE from STO_CHANGEORDER where TENANT_ID='+token.tenantId+' and CHANGE_DATE>='+BeginDate+' '+
-                   ') T';
-    dataFactory.Open(rs);
-    if rs.IsEmpty then
-       MaxDate := FormatDateTime('YYYYMMDD',now())
-    else
-       MaxDate := rs.Fields[0].AsString;
-  finally
-    rs.Free;
-  end;
+    // 同步数据
+    SyncFactory.RecoverySync(self.Handle,BeginDate);
 
-  str :=
-     'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-     'sum(case when BILL_DATE<='+BeginDate+' and BILL_TYPE in (0,1) then BAL_AMOUNT when BILL_DATE<'+BeginDate+' then IN_AMOUNT-OUT_AMOUNT else 0 end) as BEG_AMOUNT,'+
-     'sum(case when BILL_DATE<='+BeginDate+' and BILL_TYPE in (0,1) then BAL_MONEY  when BILL_DATE<'+BeginDate+' then IN_MONEY-OUT_MONEY else 0 end) as BEG_MONEY,'+
-     'sum(case when BILL_DATE>='+BeginDate+' then IN_AMOUNT else 0 end) as IN_AMOUNT,'+
-     'sum(case when BILL_DATE>='+BeginDate+' then IN_MONEY else 0 end) as IN_MONEY,'+
-     'sum(case when BILL_DATE>='+BeginDate+' then OUT_AMOUNT else 0 end) as OUT_AMOUNT,'+
-     'sum(case when BILL_DATE>='+BeginDate+' then OUT_MONEY else 0 end) as OUT_MONEY '+
-     'from RCK_STOCKS_DATA where TENANT_ID='+token.tenantId+' and BILL_DATE>='+BeginDate+' and BILL_DATE<='+MaxDate;
-  str := str + ' and SHOP_ID='''+token.shopId+'''';
-  str := str + ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
-  str :=
-    ParseSQL(dataFactory.iDbType,
-    ' select j.TENANT_ID,j.SHOP_ID,j.GODS_ID,j.BATCH_NO,''#'' PROPERTY_01,''#'' PROPERTY_02,'+
-    '        j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
-    '        j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT as BAL_AMOUNT,'+
-    '        case '+
-    '          when j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT = 0 then 0'+
-    '          else cast((j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY) / (j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT) as decimal(18,6)) '+
-    '        end COST_PRICE, '+
-    '        ''00'','+GetTimeStamp(dataFactory.iDbType)+
-    ' from   ('+str+') j ');
+    // 试算台账、矫正库存
+    TfrmStocksCalc.Calc(self);
 
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := str;
-    dataFactory.Open(rs);
-    rs.First;
-    dataFactory.BeginTrans;
+    rs := TZQuery.Create(nil);
     try
-      while not rs.Eof do
-        begin
-          str := ' insert into STO_STORAGE '+
-                 ' (ROWS_ID,TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
-                 ' values '+
-                 ' ('+
-                 ' '''+TSequence.NewId+''','+rs.FieldByName('TENANT_ID').AsString+','''+rs.FieldByName('SHOP_ID').AsString+''','''+
-                   rs.FieldByName('GODS_ID').AsString+''','''+rs.FieldByName('BATCH_NO').AsString+''',''#'',''#'','+
-                   rs.FieldByName('BAL_MONEY').AsString+','+rs.FieldByName('BAL_AMOUNT').AsString+','+rs.FieldByName('COST_PRICE').AsString+
-                   ',''00'','+GetTimeStamp(dataFactory.iDbType)+
-                 ' )';
-          dataFactory.ExecSQL(str);
-          rs.Next;
-        end;
-      dataFactory.CommitTrans;
-    except
-      dataFactory.RollbackTrans;
+      rs.SQL.Text := 'select max(BILL_DATE) from '+
+                     '('+
+                     '  select max(STOCK_DATE)  BILL_DATE from STK_STOCKORDER  where TENANT_ID='+token.tenantId+' and STOCK_DATE >='+BeginDate+' '+
+                     '  union all '+
+                     '  select max(SALES_DATE)  BILL_DATE from SAL_SALESORDER  where TENANT_ID='+token.tenantId+' and SALES_DATE >='+BeginDate+' '+
+                     '  union all '+
+                     '  select max(CHANGE_DATE) BILL_DATE from STO_CHANGEORDER where TENANT_ID='+token.tenantId+' and CHANGE_DATE>='+BeginDate+' '+
+                     ') T';
+      dataFactory.Open(rs);
+      if rs.IsEmpty then
+         MaxDate := FormatDateTime('YYYYMMDD',now())
+      else
+         MaxDate := rs.Fields[0].AsString;
+    finally
+      rs.Free;
     end;
-  finally
-    rs.Free;
+
+    str :=
+       'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
+       'sum(case when BILL_DATE<='+BeginDate+' and BILL_TYPE in (0,1) then BAL_AMOUNT when BILL_DATE<'+BeginDate+' then IN_AMOUNT-OUT_AMOUNT else 0 end) as BEG_AMOUNT,'+
+       'sum(case when BILL_DATE<='+BeginDate+' and BILL_TYPE in (0,1) then BAL_MONEY  when BILL_DATE<'+BeginDate+' then IN_MONEY-OUT_MONEY else 0 end) as BEG_MONEY,'+
+       'sum(case when BILL_DATE>='+BeginDate+' then IN_AMOUNT else 0 end) as IN_AMOUNT,'+
+       'sum(case when BILL_DATE>='+BeginDate+' then IN_MONEY else 0 end) as IN_MONEY,'+
+       'sum(case when BILL_DATE>='+BeginDate+' then OUT_AMOUNT else 0 end) as OUT_AMOUNT,'+
+       'sum(case when BILL_DATE>='+BeginDate+' then OUT_MONEY else 0 end) as OUT_MONEY '+
+       'from RCK_STOCKS_DATA where TENANT_ID='+token.tenantId+' and BILL_DATE>='+BeginDate+' and BILL_DATE<='+MaxDate;
+    str := str + ' and SHOP_ID='''+token.shopId+'''';
+    str := str + ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
+    str :=
+      ParseSQL(dataFactory.iDbType,
+      ' select j.TENANT_ID,j.SHOP_ID,j.GODS_ID,j.BATCH_NO,''#'' PROPERTY_01,''#'' PROPERTY_02,'+
+      '        j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
+      '        j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT as BAL_AMOUNT,'+
+      '        case '+
+      '          when j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT = 0 then 0'+
+      '          else cast((j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY) / (j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT) as decimal(18,6)) '+
+      '        end COST_PRICE, '+
+      '        ''00'','+GetTimeStamp(dataFactory.iDbType)+
+      ' from   ('+str+') j ');
+
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := str;
+      dataFactory.Open(rs);
+      rs.First;
+      dataFactory.BeginTrans;
+      try
+        dataFactory.ExecSQL('delete from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
+        while not rs.Eof do
+          begin
+            str := ' insert into STO_STORAGE '+
+                   ' (ROWS_ID,TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
+                   ' values '+
+                   ' ('+
+                   ' '''+TSequence.NewId+''','+rs.FieldByName('TENANT_ID').AsString+','''+rs.FieldByName('SHOP_ID').AsString+''','''+
+                     rs.FieldByName('GODS_ID').AsString+''','''+rs.FieldByName('BATCH_NO').AsString+''',''#'',''#'','+
+                     rs.FieldByName('BAL_MONEY').AsString+','+rs.FieldByName('BAL_AMOUNT').AsString+','+rs.FieldByName('COST_PRICE').AsString+
+                     ',''00'','+GetTimeStamp(dataFactory.iDbType)+
+                   ' )';
+            dataFactory.ExecSQL(str);
+            rs.Next;
+          end;
+        dataFactory.CommitTrans;
+      except
+        dataFactory.RollbackTrans;
+        Raise;
+      end;
+    finally
+      rs.Free;
+    end;
+  except
+    dataFactory.ExecSQL('delete from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
+    Raise;
   end;
 
   //关账

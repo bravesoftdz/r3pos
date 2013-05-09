@@ -1855,27 +1855,31 @@ begin
     '        ''00'','+GetTimeStamp(dataFactory.iDbType)+
     ' from   ('+str+') j ');
 
-  dataFactory.ExecSQL('delete from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := str;
     dataFactory.Open(rs);
     rs.First;
-    while not rs.Eof do
-      begin
-        str := ' insert into STO_STORAGE '+
-               ' (ROWS_ID,TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
-               ' values '+
-               ' ('+
-               ' '''+TSequence.NewId+''','+rs.FieldByName('TENANT_ID').AsString+','''+rs.FieldByName('SHOP_ID').AsString+''','''+
-                 rs.FieldByName('GODS_ID').AsString+''','''+rs.FieldByName('BATCH_NO').AsString+''',''#'',''#'','+
-                 rs.FieldByName('BAL_MONEY').AsString+','+rs.FieldByName('BAL_AMOUNT').AsString+','+rs.FieldByName('COST_PRICE').AsString+
-                 ',''00'','+GetTimeStamp(dataFactory.iDbType)+
-               ' )';
-        dataFactory.ExecSQL(str);
-        rs.Next;
-      end;
+    dataFactory.BeginTrans;
+    try
+      while not rs.Eof do
+        begin
+          str := ' insert into STO_STORAGE '+
+                 ' (ROWS_ID,TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
+                 ' values '+
+                 ' ('+
+                 ' '''+TSequence.NewId+''','+rs.FieldByName('TENANT_ID').AsString+','''+rs.FieldByName('SHOP_ID').AsString+''','''+
+                   rs.FieldByName('GODS_ID').AsString+''','''+rs.FieldByName('BATCH_NO').AsString+''',''#'',''#'','+
+                   rs.FieldByName('BAL_MONEY').AsString+','+rs.FieldByName('BAL_AMOUNT').AsString+','+rs.FieldByName('COST_PRICE').AsString+
+                   ',''00'','+GetTimeStamp(dataFactory.iDbType)+
+                 ' )';
+          dataFactory.ExecSQL(str);
+          rs.Next;
+        end;
+      dataFactory.CommitTrans;
+    except
+      dataFactory.RollbackTrans;
+    end;
   finally
     rs.Free;
   end;

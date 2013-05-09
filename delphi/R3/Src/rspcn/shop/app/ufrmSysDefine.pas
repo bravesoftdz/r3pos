@@ -1828,7 +1828,12 @@ begin
       if rs.IsEmpty then
          MaxDate := FormatDateTime('YYYYMMDD',now())
       else
-         MaxDate := rs.Fields[0].AsString;
+         begin
+           if trim(rs.Fields[0].AsString) = '' then
+              MaxDate := FormatDateTime('YYYYMMDD',now())
+           else
+              MaxDate := rs.Fields[0].AsString;
+         end;
     finally
       rs.Free;
     end;

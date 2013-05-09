@@ -113,8 +113,7 @@ begin
 end;
 
 destructor TSyncFactory.Destroy;
-var
-  i:integer;
+var i:integer;
 begin
   for i:=0 to FList.Count -1 do Dispose(FList[i]);
   FList.Free;
@@ -148,8 +147,7 @@ begin
 end;
 
 procedure TSyncFactory.ReadTimeStamp;
-var
-  Params:TftParamList;
+var Params:TftParamList;
 begin
   Params := TftParamList.Create(nil);
   try
@@ -170,8 +168,7 @@ begin
 end;
 
 function TSyncFactory.GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   if SHOP_ID='' then SHOP_ID:='#';
   rs := TZQuery.Create(nil);
@@ -1162,29 +1159,29 @@ end;
 procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields:string;
-  maxTimeStamp:int64;
+  MaxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
   tbName := 'STK_STOCKORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  maxTimeStamp := SyncTimeStamp;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+  MaxTimeStamp := SyncTimeStamp;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
   if SyncFlag = 0 then
      Params.ParamByName('SYN_COMM').AsBoolean := true
   else
      Params.ParamByName('SYN_COMM').AsBoolean := false;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  Params.ParamByName('SyncFlag').AsString := '1';
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
 
@@ -1272,8 +1269,8 @@ begin
         dataFactory.MoveToDefault;
       end;
 
-      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > maxTimeStamp then
-         maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
       if SyncFlag = 0 then
       begin
@@ -1288,7 +1285,7 @@ begin
 
       ls.Next;
     end;
-    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
@@ -1302,29 +1299,29 @@ end;
 procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields,glideFields:string;
-  maxTimeStamp:int64;
+  MaxTimeStamp:int64;
   ls,rs_h,rs_d,rs_s,cs_h,cs_d,cs_s:TZQuery;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
   tbName := 'SAL_SALESORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  maxTimeStamp := SyncTimeStamp;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+  MaxTimeStamp := SyncTimeStamp;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
   if SyncFlag = 0 then
      Params.ParamByName('SYN_COMM').AsBoolean := true
   else
      Params.ParamByName('SYN_COMM').AsBoolean := false;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  Params.ParamByName('SyncFlag').AsString := '1';
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
 
@@ -1421,8 +1418,8 @@ begin
         dataFactory.MoveToDefault;
       end;
 
-      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > maxTimeStamp then
-         maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
       if SyncFlag = 0 then
       begin
@@ -1449,7 +1446,7 @@ begin
 
       ls.Next;
     end;
-    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
@@ -1465,29 +1462,29 @@ end;
 procedure TSyncFactory.SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields:string;
-  maxTimeStamp:int64;
+  MaxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
   tbName := 'STO_CHANGEORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  maxTimeStamp := SyncTimeStamp;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+  MaxTimeStamp := SyncTimeStamp;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
   if SyncFlag = 0 then
      Params.ParamByName('SYN_COMM').AsBoolean := true
   else
      Params.ParamByName('SYN_COMM').AsBoolean := false;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  Params.ParamByName('SyncFlag').AsString := '1';
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
 
@@ -1575,8 +1572,8 @@ begin
         dataFactory.MoveToDefault;
       end;
 
-      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > maxTimeStamp then
-         maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
       if SyncFlag = 0 then
       begin
@@ -1591,7 +1588,7 @@ begin
 
       ls.Next;
     end;
-    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
@@ -1605,17 +1602,14 @@ end;
 procedure TSyncFactory.SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
 var
   tbName,orderFields,dataFields:string;
-  maxTimeStamp:int64;
+  MaxTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
 
   tbName := 'RCK_DAYS_CLOSE';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  maxTimeStamp := SyncTimeStamp; 
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+  MaxTimeStamp := SyncTimeStamp; 
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -1623,10 +1617,14 @@ begin
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('KEY_FLAG').AsInteger := 0;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
   if SyncFlag = 0 then
      Params.ParamByName('SYN_COMM').AsBoolean := true
   else
      Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+  if (SyncFlag <> 0) and (BeginDate <> '') then
+     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
 
@@ -1712,8 +1710,8 @@ begin
         dataFactory.MoveToDefault;
       end;
 
-      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > maxTimeStamp then
-         maxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
       if SyncFlag = 0 then
       begin
@@ -1728,7 +1726,7 @@ begin
 
       ls.Next;
     end;
-    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,maxTimeStamp,token.shopId);
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;

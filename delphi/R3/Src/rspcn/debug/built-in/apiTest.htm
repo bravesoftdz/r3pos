@@ -21,11 +21,11 @@
 	</p>
 	<input type='button' value='setSQL' onclick='setSQL()' />
 	<input type='button' value='open' onclick='openDataSet()' />
-	SQL: <input type='text' id='openSQL' size='100' value='select * from ca_shop_info where tenant_id = 500000007' />
+	SQL: <input type='text' id='openSQL' size='100' value='select * from ca_tenant where tenant_id = 610000004' />
 	</p>
 	<input type='button' value='openParams' onclick='openParams()' />
 	OpenNS: <input type='text' id='openns' size='30' value='Tenant@caTenant' />
-	Params: <input type='text' id='openparams' size='100' value='{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"}]}' />
+	Params: <input type='text' id='openparams' size='100' value='{"params":[{"name":"TENANT_ID","datatype":"integer","value":"610000004"}]}' />
 	</p>
 	<input type='button' value='append' onclick='append()' />
 	<input type='button' value='edit' onclick='edit()' />
@@ -36,14 +36,14 @@
 	<input type='button' value='getAsInteger' onclick='getAsInteger()' />
 	<input type='button' value='getAsValue' onclick='getAsValue()' />
 	<input type='button' value='getAsDouble' onclick='getAsDouble()' />
-	getFieldName: <input type='text' id='getFieldName' value='SHOP_NAME' />
+	getFieldName: <input type='text' id='getFieldName' value='TENANT_NAME' />
 	</p>
 	<input type='button' value='setAsString' onclick='setAsString()' />
 	<input type='button' value='setAsInteger' onclick='setAsInteger()' />
 	<input type='button' value='setAsValue' onclick='setAsValue()' />
 	<input type='button' value='setAsDouble' onclick='setAsDouble()' />
-	setFieldName: <input type='text' id='setFieldName' />
-	setValue: <input type='text' id='setValue' />
+	setFieldName: <input type='text' id='setFieldName' value='TENANT_NAME' />
+	setValue: <input type='text' id='setValue' value='TEST_NAME' />
 	</p>
 	<input type='button' value='first' onclick='first()' />
 	<input type='button' value='last' onclick='last()' />
@@ -55,18 +55,23 @@
 	<input type='button' value='getLastError' onclick='getLastError()' />
 	</p>
 	<input type='button' value='locate' onclick='locate()' /> 
-	locateFieldName: <input type='text' id='locateFieldName' value='TENANT_ID;SHOP_ID' />
-	locateValue: <input type='text' id='locateValue' size='100' value='{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}' />
+	locateFieldName: <input type='text' id='locateFieldName' value='TENANT_ID' />
+	locateValue: <input type='text' id='locateValue' size='100' value='610000004' />
 	</p>
 	<input type='button' value='execSQL' onclick='execSQL()' />
-	SQL: <input type='text' id='executeSQL' size='100' value="update ca_shop_info set shop_name = '总店' where shop_id = '5000000070001'" />
+	SQL: <input type='text' id='executeSQL' size='100' value="update ca_shop_info set shop_name = '总店' where shop_id = '6100000040001'" />
 	</p>
 	<input type='button' value='iDbType' onclick='iDbType()' />
 	<input type='button' value='moveToRemote' onclick='moveToRemote()' />
 	<input type='button' value='moveToSqlite' onclick='moveToSqlite()' />
 	</p>
-	<input type='button' value='testObj' onclick='testObj()' />
+	OpenNS: <input type='text' id='objopenns' size='30' value='Tenant@caTenant' />
+	Params: <input type='text' id='objopenparams' size='100' value='{"params":[{"name":"TENANT_ID","datatype":"integer","value":"610000004"}]}' />
 	</p>
+	<input type='button' value='testOpenObj' onclick='testOpenObj()' />
+	<input type='button' value='testCommitObj' onclick='testCommitObj()' />
+	</p>
+	<input type='button' value='testCommitBatch' onclick='testCommitBatch()' />
 	</p>
 	<input type='button' value='testJson' onclick='testJson()' />
 </form>
@@ -174,7 +179,9 @@ function setAsString() {
 	if (fieldName == '' || value == '') {
 		return;
 	}
+	ds.edit();
 	ds.setAsString(fieldName, value);
+	ds.post();
 }
 function setAsInteger() {
 	var fieldName = document.getElementById('setFieldName').value;
@@ -182,7 +189,9 @@ function setAsInteger() {
 	if (fieldName == '' || value == '') {
 		return;
 	}
+	ds.edit();
 	ds.setAsInteger(fieldName, value);
+	ds.post();
 }
 function setAsValue() {
 	var fieldName = document.getElementById('setFieldName').value;
@@ -190,7 +199,9 @@ function setAsValue() {
 	if (fieldName == '' || value == '') {
 		return;
 	}
+	ds.edit();
 	ds.setAsValue(fieldName, value);
+	ds.post();
 }
 function setAsDouble() {
 	var fieldName = document.getElementById('setFieldName').value;
@@ -198,7 +209,9 @@ function setAsDouble() {
 	if (fieldName == '' || value == '') {
 		return;
 	}
+	ds.edit();
 	ds.setAsDouble(fieldName, value);
+	ds.post();
 }
 function first() {
 	ds.first();
@@ -247,28 +260,84 @@ function moveToRemote() {
 function moveToSqlite() {
 	factor.moveToSqlite();
 }
-function testObj() {
-	var cdsHeader = new dataset();
-	var cdsDetail = new dataset();
-	cdsHeader.createDataSet();
-	cdsDetail.createDataSet();
-	factor.beginBatch();
+function testOpenObj() {
+	var cdsTenant = new dataset();
+	cdsTenant.createDataSet();
 	try {
-		factor.addBatch(cdsHeader, 'TDbOrder');
-		factor.addBatch(cdsDetail, 'TDbData');
-		factor.commitBatch();
+		var ns = document.getElementById('objopenns').value;
+		var params = document.getElementById('objopenparams').value;
+		factor.open(cdsTenant, ns, params);
+		alert(cdsTenant.getAsString('TENANT_NAME'));
 	} catch (e) {
-		factor.cancelBatch();
 		alert(e.message);
+	} finally {
+		cdsTenant.eraseDataSet();
+	}
+}
+function testCommitObj() {
+	var cdsTenant = new dataset();
+	cdsTenant.createDataSet();
+	try {
+		var ns = document.getElementById('objopenns').value;
+		var params = document.getElementById('objopenparams').value;
+		factor.open(cdsTenant, ns, params);
+		cdsTenant.edit();
+		cdsTenant.setAsString('TENANT_NAME', '测试用');
+		cdsTenant.post();
+		factor.updateBatch(cdsTenant, ns);
+	} catch (e) {
+		alert(e.message);
+	} finally {
+		cdsTenant.eraseDataSet();
+	}
+}
+function testCommitBatch() {
+	var cdsTenant = new dataset();
+	var cdsShopInfo = new dataset();
+	cdsTenant.createDataSet();
+	cdsShopInfo.createDataSet();
+	try {
+		factor.beginBatch();
+		try {
+			factor.addBatch(cdsTenant,'Tenant@caTenant','{"params":[{"name":"TENANT_ID","datatype":"integer","value":"610000004"}]}');
+			factor.addBatch(cdsShopInfo,'Shop@caShopInfo','{"params":[{"name":"TENANT_ID","datatype":"integer","value":"610000004"},{"name":"SHOP_ID","datatype":"string","value":"6100000040001"}]}');
+			factor.openBatch();
+		} catch (e) {
+			factor.cancelBatch();
+	    	alert(e.message);
+	    	return;
+		}
+
+		cdsTenant.edit();
+		cdsTenant.setAsString('TENANT_NAME','测试企业');
+		cdsTenant.post();
+	
+		cdsShopInfo.edit();
+		cdsShopInfo.setAsString('SHOP_NAME','测试门店');
+		cdsShopInfo.post();
+	
+		factor.beginBatch();
+		try {
+			factor.addBatch(cdsTenant,'Tenant@caTenant');
+			factor.addBatch(cdsShopInfo,'Shop@caShopInfo');
+			factor.commitBatch();
+		} catch (e) {
+			factor.cancelBatch();
+	    	alert(e.message);
+	    	return;
+		}
+	} finally {
+		cdsTenant.eraseDataSet();
+		cdsShopInfo.eraseDataSet();
 	}
 }
 function testJson() {
-	var jsonStr = '{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}';
+	var jsonStr = '{"params":[{"name":"TENANT_ID","datatype":"integer","value":"610000004"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}';
 	var jsonObj = JSON.parse(jsonStr);
 	alert(jsonObj.params[0].name + ' ' + jsonObj.params[0].datatype + ' ' + jsonObj.params[0].value);
 	alert(jsonObj.params[1].name + ' ' + jsonObj.params[1].datatype + ' ' + jsonObj.params[1].value);
 
-	var jsonObj1 = eval('(' + '{"params":[{"name":"TENANT_ID","datatype":"integer","value":"500000007"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}' + ')');
+	var jsonObj1 = eval('(' + '{"params":[{"name":"TENANT_ID","datatype":"integer","value":"610000004"},{"name":"SHOP_ID","datatype":"string","value":"5000000070034"}]}' + ')');
 	alert(jsonObj.params[0].name + ' ' + jsonObj.params[0].datatype + ' ' + jsonObj.params[0].value);
 	alert(jsonObj.params[1].name + ' ' + jsonObj.params[1].datatype + ' ' + jsonObj.params[1].value);
 
@@ -276,11 +345,11 @@ function testJson() {
 		"params" : [ {
 			"name" : "TENANT_ID",
 			"datatype" : "integer",
-			"value" : "500000007"
+			"value" : "610000004"
 		}, {
 			"name" : "SHOP_ID",
 			"datatype" : "string",
-			"value" : "5000000070034"
+			"value" : "6100000040001"
 		} ]
 	};
 	alert(jsonObj.params[0].name + ' ' + jsonObj.params[0].datatype + ' ' + jsonObj.params[0].value);

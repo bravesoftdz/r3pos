@@ -17,7 +17,7 @@ unit webMultInst;
 interface
 
 uses
-  Windows ,Messages, SysUtils, Classes, Forms;
+  Windows ,Messages, SysUtils, Classes, Forms, uAppMgr;
 var
   Runed         : boolean;
 implementation
@@ -27,6 +27,7 @@ const
   MI_ACTIVEAPP  = 1;  //激活应用程序
   MI_GETHANDLE  = 2;  //取得句柄
   MI_HOTKEY  = 3;  //激活热健
+  MI_LOADURL  = 4;  //激活热健
 
 var
   iMessageID    : Integer;
@@ -53,6 +54,8 @@ begin
           else
              SetForegroundWindow(lParam);
           PostMessage(HWND(lParam),iMessageID, MI_HOTKEY,0);
+          if ParamStr(1)='-open' then
+             PostMessage(HWND(lParam),iMessageID, MI_LOADURL,getUrlForId(ParamStr(2)));
           //终止本实例
           Application.Terminate;
         end;
@@ -65,6 +68,10 @@ begin
       MI_HOTKEY: //VK_F12
         begin
           PostMessage(Application.MainForm.Handle, WM_HOTKEY, frmBrowerForm.hotKeyid,frmBrowerForm.hotKeyid);
+        end;
+      MI_LOADURL: //WM_BROWSER_RUNED
+        begin
+          PostMessage(Application.MainForm.Handle, WM_BROWSER_RUNED, 0,lParam);
         end;
     end;
   end

@@ -925,8 +925,8 @@ procedure TfrmCustomer.DBGridPrint;
 begin
   inherited;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
-  PrintDBGridEh1.PageHeader.CenterText.Text := '商品库存报表';
-  DBGridEh1.DBGridTitle := '商品库存报表';
+  PrintDBGridEh1.PageHeader.CenterText.Text := '会员档案';
+  DBGridEh1.DBGridTitle := '会员档案';
   DBGridEh1.DBGridHeader.Text := '';
   DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());

@@ -111,7 +111,7 @@ type
 var
   dllFactory:TDLLFactory;
 implementation
-uses udataFactory,utokenFactory;
+uses udataFactory,utokenFactory,encDec;
 
 { TDLLFactory }
 
@@ -564,7 +564,7 @@ begin
         dataFactory.Open(rs);
         token.address := rs.FieldbyName('ADDRESS').AsString;
         token.xsmCode := rs.FieldbyName('XSM_CODE').AsString;
-        token.xsmPWD := rs.FieldbyName('XSM_PSWD').AsString;
+        token.xsmPWD := DecStr(rs.FieldbyName('XSM_PSWD').AsString,ENC_KEY);
         token.licenseCode := rs.FieldbyName('LICENSE_CODE').AsString;
         token.legal := rs.FieldbyName('LINKMAN').AsString;
         token.mobile := rs.FieldbyName('TELEPHONE').AsString;

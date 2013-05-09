@@ -1,7 +1,7 @@
 Document Type: WSE
 item: Global
   Version=8.13
-  Title=烟草现代零售终端管理系统
+  Title=烟草现代零售终端
   Flags=00000100
   Languages=65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
   Copy Default=1
@@ -65,7 +65,7 @@ item: Remark
 end
 item: Set Variable
   Variable=APPTITLE
-  Value=E商盟
+  Value=新商盟
   Flags=10000000
 end
 item: Remark
@@ -838,19 +838,19 @@ item: Install File
   EXE Type=32
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.dll
-  Destination=%MAINDIR%\shop.dll
-  Flags=0000000010000010
-  File Size=5985280
-  File Date=20130327 185312
-  EXE Type=32
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite.db
   Destination=%MAINDIR%\sqlite.db
   Flags=0000000010000010
   File Size=6594560
   File Date=20130325 185815
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.dll
+  Destination=%MAINDIR%\shop.dll
+  Flags=0000000010000010
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite3.dll
@@ -859,6 +859,27 @@ item: Install File
   File Size=570947
   File Date=20130323 155500
   EXE Type=32
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\apiTest.htm
+  Destination=%MAINDIR%\built-in\apiTest.htm
+  Flags=0000000010000010
+  File Size=5659
+  File Date=20130327 184443
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\Shop.xml
+  Destination=%MAINDIR%\built-in\Shop.xml
+  Flags=0000000010000010
+  File Size=5659
+  File Date=20130327 184443
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\Tenant.xml
+  Destination=%MAINDIR%\built-in\Tenant.xml
+  Flags=0000000010000010
+  File Size=5659
+  File Date=20130327 184443
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\report.html
@@ -1953,7 +1974,7 @@ item: Set Variable
 end
 item: Create Shortcut
   Source=%MAINDIR%\Shop.exe
-  Destination=%GROUP%\E商盟.lnk
+  Destination=%GROUP%\新商盟.lnk
   Icon Number=0
   Key Type=1536
   Flags=00000001
@@ -1964,14 +1985,14 @@ item: End Block
 end
 item: Create Shortcut
   Source=%MAINDIR%\测试账号.txt
-  Destination=%DESKTOPDIR%\E商盟-测试账号.lnk
+  Destination=%DESKTOPDIR%\新商盟-测试账号.lnk
   Icon Number=0
   Key Type=1536
   Flags=00000001
 end
 item: Create Shortcut
   Source=%MAINDIR%\Shop.exe
-  Destination=%DESKTOPDIR%\E商盟.lnk
+  Destination=%DESKTOPDIR%\新商盟.lnk
   Icon Number=0
   Key Type=1536
   Flags=00000001
@@ -1981,6 +2002,23 @@ item: Remark
 end
 item: Self-Register OCXs/DLLs
   Description=Updating System Configuration, Please Wait...
+end
+item: Edit Registry
+  Total Keys=2
+  item: Key
+    Key=SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION
+    New Value=9999
+    Value Name=shop.exe
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION
+    New Value=9999
+    Value Name=shop.exe
+    Root=2
+    Data Type=3
+  end
 end
 item: Edit INI File
   Pathname=%SYS32%\r3.inst

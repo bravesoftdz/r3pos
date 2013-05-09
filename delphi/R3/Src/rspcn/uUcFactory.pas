@@ -3,7 +3,7 @@ unit uUcFactory;
 interface
 
 uses
-  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
+  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp,
   IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB, EncDec, IniFiles, IdCookieManager,IdCookie,WinInet;
 
 type
@@ -19,6 +19,8 @@ type
     FxsmChallenge: string;
     FxsmSignature: string;
     FxsmLogined: boolean;
+    loginTime:int64;
+    FxsmUser: string;
     { Private declarations }
     function CreateXML(xml:string):IXMLDomDocument;
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
@@ -28,17 +30,28 @@ type
     procedure SetxsmChallenge(const Value: string);
     procedure SetxsmSignature(const Value: string);
     procedure SetxsmLogined(const Value: boolean);
+    function GetxsmLogined: boolean;
+    procedure SetxsmUser(const Value: string);
   public
     { Public declarations }
+    //∂¡»°—È–£¬Î
     function getChallenge:boolean;
+    //”√ªß√‹¬Î∑Ω Ωµ«¬º
     function xsmLogin(username,password:string):boolean;
+    //”√¡Ó≈∆µ«¬º
+    function xsmLoginForToken(token:string):boolean;
+    //ºÏ≤‚µ«¬º◊¥Ã¨
     function chkLogin(EWB:TEmbeddedWB):boolean;
+    //∂¡»°µ±«∞¡Ó≈∆
     function getSignature:boolean;
+    
     property xsmUC:string read FxsmUC write SetxsmUC;
     property xsmWB:string read FxsmWB write SetxsmWB;
     property xsmChallenge:string read FxsmChallenge write SetxsmChallenge;
     property xsmSignature:string read FxsmSignature write SetxsmSignature;
-    property xsmLogined:boolean read FxsmLogined write SetxsmLogined;
+    property xsmLogined:boolean read GetxsmLogined write SetxsmLogined;
+
+    property xsmUser:string read FxsmUser write SetxsmUser;
   end;
 
 var
@@ -156,6 +169,7 @@ begin
     if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Urlµÿ÷∑∑µªÿŒﬁ–ßXMLŒƒµµ£¨«Î«Û¡Ó≈∆ ß∞‹...');
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('«Î«Û¡Ó≈∆ ß∞‹,¥ÌŒÛ:'+Root.attributes.getNamedItem('msg').text);
     xsmSignature := xml;
+    loginTime := getTickCount;
     result := true;
   except
     Raise;
@@ -185,7 +199,7 @@ var
   xml:string;
   url:string;
 begin
-if not getChallenge then Raise Exception.Create('∂¡»°¡Ó≈∆ ß∞‹°£'); 
+if not getChallenge then Raise Exception.Create('∂¡»°¡Ó≈∆ ß∞‹°£');
 try
   result := false;
   url := xsmUC+'users/dologin/up?j_username='+username+'&j_password='+md5(md5(password)+xsmChallenge);
@@ -199,6 +213,8 @@ try
   if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
   xsmSignature := xml;
   xsmLogined := true;
+  xsmUser := username;
+  loginTime := getTickCount;
   result := true;
 except
   on E:Exception do
@@ -255,7 +271,7 @@ procedure TUcFactory.IdCookieManager1NewCookie(ASender: TObject;
   ACookie: TIdCookieRFC2109; var VAccept: Boolean);
 begin
 //  messagebox(0,pchar(ACookie.CookieText),'',mb_ok);
-  InternetSetCookie(pchar('xinshangmeng.com'),pchar(ACookie.CookieName),pchar(ACookie.Value+ ';expires=Sun,22-Feb-2099 00:00:00 GMT'));
+//  InternetSetCookie(pchar('xinshangmeng.com'),pchar(ACookie.CookieName),pchar(ACookie.Value+ ';expires=Sun,22-Feb-2099 00:00:00 GMT'));
 end;
 
 function TUcFactory.chkLogin(EWB: TEmbeddedWB): boolean;
@@ -269,6 +285,52 @@ begin
      s := EWB.OleObject.document.documentelement.innerText;
   end;
   result := pos('code="0000"',s)>0;
+end;
+
+function TUcFactory.xsmLoginForToken(token: string): boolean;
+var
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;
+  xml:string;
+  url:string;
+begin
+  try
+    result := false;
+    Doc := CreateXML(token);
+    if not Assigned(doc) then Raise Exception.Create('—È÷§¡Ó≈∆ ß∞‹...');
+    Root :=  doc.DocumentElement;
+    xsmUser := Root.selectSingleNode('/xsm/userId').text;
+
+    url := xsmUC+'tokenconsumer?xmlStr='+HttpEncode(token);
+    xml := IdHTTP1.Get(url);
+    xml := Utf8ToAnsi(xml);
+    Doc := CreateXML(xml);
+    if not Assigned(doc) then Raise Exception.Create('«Î«Ûµ«¬º ß∞‹...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Urlµÿ÷∑∑µªÿŒﬁ–ßXMLŒƒµµ£¨«Î«Ûµ«¬º ß∞‹...');
+    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Urlµÿ÷∑∑µªÿŒﬁ–ßXMLŒƒµµ£¨«Î«Ûµ«¬º ß∞‹...');
+    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
+    xsmSignature := token;
+    xsmLogined := true;
+    loginTime := getTickCount;
+    result := true;
+  except
+    on E:Exception do
+    begin
+      xsmLogined := false;
+      Raise;
+    end;
+  end;
+end;
+
+function TUcFactory.GetxsmLogined: boolean;
+begin
+  result := FxsmLogined and ((GetTickCount-LoginTime) < 1000*60*60);
+end;
+
+procedure TUcFactory.SetxsmUser(const Value: string);
+begin
+  FxsmUser := Value;
 end;
 
 end.

@@ -61,6 +61,7 @@ type
     function getUserInfo: WideString; safecall;
     function getLocalJson(const doMain: WideString): WideString; safecall;
     procedure setLocalJson(const doMain: WideString; const json: WideString); safecall;
+    function signToken(const _token: WideString): WordBool; safecall;
   end;
 
 implementation
@@ -129,11 +130,11 @@ begin
         if online then //在线操作情况重取系统参数
            begin
               //已经登录过了，用企业号订证一下，读取相关连接参数
-              if rspFactory.xsmLogin('testcusta01',3) then
+              if rspFactory.xsmLogin(inttostr(tenantId),4) then
                  begin
                    dataFactory.MoveToDefault;
                    dataFactory.connect;
-                 end;
+                 end else Raise Exception.Create('rsp认证失败了，当前企业没开通终端功能');
            end
         else
            begin
@@ -666,6 +667,103 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TjavaScriptExt.signToken(const _token: WideString): WordBool;
+var tenantId:integer;
+function CheckRegister:boolean;
+var
+  rs:TZQuery;
+begin
+  dataFactory.MoveToSqlite;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
+    dataFactory.Open(rs);
+    result := (rs.Fields[0].AsString<>'');
+    if result then tenantId := rs.Fields[0].asInteger;
+  finally
+    rs.Free;
+  end;
+end;
+var
+  rs,us:TZQuery;
+  isXsm:boolean;
+  username:string;
+begin
+  result := false;
+  signOut;
+  if not UcFactory.xsmLoginForToken(_token) then Raise Exception.Create('无效令牌，无法完成登录');
+  if not CheckRegister then
+     begin
+       dataFactory.signined := true;
+       token.shoped := false;
+       token.tenantId := '';
+       token.online := true;
+       token.account := UcFactory.xsmUser;
+       token.xsmCode := UcFactory.xsmUser;
+       token.xsmPWD := '';
+       token.userId := UcFactory.xsmUser;
+       token.username := UcFactory.xsmUser;
+       token.Logined := true;
+       token.online := true;
+       dataFactory.signined := true;
+       result := true;
+       Exit;
+     end;
+  //已经登录过了，用企业号订证一下，读取相关连接参数
+  if rspFactory.xsmLogin(inttostr(tenantId),4) then
+     begin
+       dataFactory.MoveToDefault;
+       dataFactory.connect;
+     end else Raise Exception.Create('rsp认证失败了，当前企业没开通终端功能');
+  username := UcFactory.xsmUser;
+  //开始登录
+  rs := TZQuery.Create(nil);
+  us := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,A.TENANT_ID,C.TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
+      'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT in ('''+username+''','''+lowercase(username)+''','''+uppercase(username)+''')';
+    rs.ParamByName('TENANT_ID').AsInteger := tenantId;
+    dataFactory.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('无效登录名.'); 
+    isXsm := (rs.FieldByName('ROLE_IDS').AsString = 'xsm');
+    if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or isXsm) then
+        begin
+          us.SQL.Text := 'select DIMI_DATE,PASS_WRD from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
+          ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' ';
+          dataFactory.Open(us);
+          if us.IsEmpty then Raise Exception.Create(username+'用户账号不存在,不能登录。');
+          if (us.FieldbyName('DIMI_DATE').AsString<>'') and (us.FieldbyName('DIMI_DATE').AsString<=FormatDateTime('YYYY-MM-DD',Date())) then Raise Exception.Create(username+'用户账号已经离职,不能登录。');
+        end;
+
+    token.userId := rs.FieldbyName('USER_ID').AsString;
+    token.account := rs.FieldbyName('ACCOUNT').AsString;
+    token.tenantId := rs.FieldbyName('TENANT_ID').AsString;
+    token.tenantName := rs.FieldbyName('TENANT_NAME').AsString;
+    token.shopId := rs.FieldbyName('SHOP_ID').AsString;
+    token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
+    token.username := rs.FieldbyName('USER_NAME').AsString;
+    rs.Close;
+    rs.SQL.Text := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    token.address := rs.FieldbyName('ADDRESS').AsString;
+    token.xsmCode := rs.FieldbyName('XSM_CODE').AsString;
+    token.xsmPWD := rs.FieldbyName('XSM_PSWD').AsString;
+    token.licenseCode := rs.FieldbyName('LICENSE_CODE').AsString;
+    token.legal := rs.FieldbyName('LINKMAN').AsString;
+    token.mobile := rs.FieldbyName('TELEPHONE').AsString;
+    if true then SaveTimeStamp else checkTimeStamp;
+    token.Logined := true;
+    token.online := true;
+    dataFactory.signined := true;
+  finally
+    us.Free;
+    rs.Free;
+  end;
+  result := true;
 end;
 
 initialization

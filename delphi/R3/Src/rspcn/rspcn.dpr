@@ -13,7 +13,10 @@ uses
   javaScriptExt in 'javaScriptExt.pas',
   uRspFactory in 'uRspFactory.pas' {rspFactory: TDataModule},
   uTokenFactory in 'uTokenFactory.pas',
-  webMultInst in 'webMultInst.pas';
+  webMultInst in 'webMultInst.pas',
+  uAppMgr in 'uAppMgr.pas',
+  ufrmUpdate in 'ufrmUpdate.pas',
+  ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog};
 
 {$R *.TLB}
 
@@ -27,11 +30,11 @@ begin
   else
      begin
        if not Runed then
-       begin
-         Application.CreateForm(TUcFactory, UcFactory);
-         Application.CreateForm(TrspFactory, rspFactory);
-         PostMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
-       end;
+          begin
+            Application.CreateForm(TUcFactory, UcFactory);
+            Application.CreateForm(TrspFactory, rspFactory);
+            PostMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
+          end;
      end;
   Application.Run;
 end.

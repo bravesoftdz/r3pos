@@ -32,34 +32,38 @@ var rspcn = function() {
 		return window.external.getLastError();
 	};
 
-	this.setLocalJson = function(doMain,json){
-		window.external.setLocalJson(doMain,json);
-	}
-	
-	this.getLocalJson = function(doMain){
+	this.setLocalJson = function(doMain, json) {
+		window.external.setLocalJson(doMain, json);
+	};
+
+	this.getLocalJson = function(doMain) {
 		return window.external.getLocalJson(doMain);
-	}
-	
-	this.fechTopResults = function(sql,cnt,orderby){
+	};
+
+	this.fechTopResults = function(sql, cnt, orderby) {
 		var type = factor.iDbType();
-		if(type==0){
-			sql = "select top "+cnt+" * from ("+sql+") j order by "+orderby;
-		}else if(type==1){
-			sql = "select * from ( select * from ("+sql+") j order by "+orderby+") where ROWNUM<="+cnt
-		}else if(type==4){
-			sql = "select * from ( select * from ("+sql+") j order by "+orderby+") tp fetch first "+cnt+"  rows only";	
-		}else if(type==5){
-			sql = "select * from ("+sql+") j order by "+orderby+" limit "+cnt;
-		}else{
-			sql = "select * from ("+sql+") j order by "+orderby;	
+		if (type == 0) {
+			sql = "select top " + cnt + " * from (" + sql + ") j order by "
+					+ orderby;
+		} else if (type == 1) {
+			sql = "select * from ( select * from (" + sql + ") j order by "
+					+ orderby + ") where ROWNUM<=" + cnt
+		} else if (type == 4) {
+			sql = "select * from ( select * from (" + sql + ") j order by "
+					+ orderby + ") tp fetch first " + cnt + "  rows only";
+		} else if (type == 5) {
+			sql = "select * from (" + sql + ") j order by " + orderby
+					+ " limit " + cnt;
+		} else {
+			sql = "select * from (" + sql + ") j order by " + orderby;
 		}
 		return sql;
-	}
+	};
 
-    this.parseSQL = function (sql){
+	this.parseSQL = function(sql) {
 		return window.external.parseSQL(sql);
-	}
-	
+	};
+
 };
 
 var dataset = function() {

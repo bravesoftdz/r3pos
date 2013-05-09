@@ -79,7 +79,10 @@ uses
   ufrmPriceGrade in 'app\ufrmPriceGrade.pas' {frmPriceGrade},
   ObjPriceGradeV60 in 'obj\ObjPriceGradeV60.pas',
   uDevFactory in 'app\uDevFactory.pas',
-  ufrmPayment in 'app\ufrmPayment.pas' {frmPayment};
+  ufrmPayment in 'app\ufrmPayment.pas' {frmPayment},
+  ufrmOrderPreview in 'app\ufrmOrderPreview.pas' {frmOrderPreview},
+  ufrmSaveDesigner in 'app\ufrmSaveDesigner.pas' {frmSaveDesigner},
+  ufrmMeaUnits in 'app\ufrmMeaUnits.pas' {frmMeaUnits};
 
 {$R *.res}
 exports

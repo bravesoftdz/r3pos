@@ -1435,9 +1435,13 @@ begin
     Raise Exception.create('你输入的数值无效无效');
   end;
   if IsAgio then
-     if abs(mny)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确')
+     begin
+       if abs(mny)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确');
+     end
   else
-     if abs(mny)>totalfee then Raise Exception.Create('输入的金额过大，请确认是否输入正确');
+     begin
+       if abs(mny)>totalfee then Raise Exception.Create('输入的金额过大，请确认是否输入正确');
+     end;
   if not IsAgio then
      begin
        AObj.FieldbyName('PAY_ZERO').asFloat := totalFee-mny;

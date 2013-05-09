@@ -110,9 +110,9 @@ ActiveLang=
 ProjectLang=
 RootDir=
 [Version Info]
-IncludeVerInfo=0
+IncludeVerInfo=1
 AutoIncBuild=0
-MajorVer=1
+MajorVer=0
 MinorVer=0
 Release=0
 Build=0
@@ -124,14 +124,14 @@ DLL=0
 Locale=2052
 CodePage=936
 [Version Info Keys]
-CompanyName=
+CompanyName=¿À≥±»Ìº˛
 FileDescription=
-FileVersion=1.0.0.0
+FileVersion=0.0.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=
+ProductName=¡„ €÷’∂À
 ProductVersion=1.0.0.0
 Comments=
 [HistoryLists\hlUnitAliases]

@@ -1,8 +1,8 @@
 object UcFactory: TUcFactory
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 247
-  Top = 130
+  Left = 248
+  Top = 37
   Height = 532
   Width = 704
   object IdHTTP1: TIdHTTP

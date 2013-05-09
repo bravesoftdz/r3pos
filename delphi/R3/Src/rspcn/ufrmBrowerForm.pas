@@ -39,10 +39,12 @@ uses
   Classes, Windows, Controls, Forms, ComCtrls, ExtCtrls, StdCtrls, OleCtrls, SysUtils,
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
   RzPanel, Messages, MSHTML, IEConst, RzPrgres,rspcn_TLB,EncDec, msxml, ComObj, urlParser,
-  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles;
+  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate;
 const
   WM_BROWSER_INIT =WM_USER+1000;
   WM_SEND_INPUT =WM_USER+9001;
+  WM_CLOSE_WINDOW = WM_USER+9002;
+  WM_BROWSER_RUNED = WM_USER+9003;
   WH_KEYBOARD_LL = 13;
 
 type
@@ -73,48 +75,40 @@ type
 type
   TfrmBrowerForm = class(TForm)
     pnlAddressBar: TPanel;
-    btnBack: TRzBmpButton;
-    btnGo: TRzBmpButton;
-    RzPanel1: TRzPanel;
-    IEAddress1: TIEAddress;
-    RzPanel2: TRzPanel;
-    serachText: TEdit;
     ImageList1: TImageList;
-    RzProgressBar1: TRzProgressBar;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
     pageTab: TRzPanel;
-    RzFormShape1: TRzFormShape;
     btnClose: TRzBmpButton;
     btnWindow: TRzBmpButton;
     RzBmpButton4: TRzBmpButton;
     RzTrayIcon1: TRzTrayIcon;
-    lblUserName: TRzLabel;
     Image9: TImage;
     btnPageClose: TRzBmpButton;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     Timer1: TTimer;
-    tool_left: TImage;
     mainPanel: TRzPanel;
     PageControl1: TRzPageControl;
-    toolleft: TRzPanel;
-    Image12: TImage;
-    RzBmpButton3: TRzBmpButton;
-    RzBmpButton6: TRzBmpButton;
-    RzBmpButton7: TRzBmpButton;
-    RzBmpButton8: TRzBmpButton;
-    RzBmpButton9: TRzBmpButton;
-    RzBmpButton10: TRzBmpButton;
-    Image6: TImage;
     button_close: TImage;
-    home_down: TImage;
     button_active: TImage;
-    Image7: TImage;
-    RzBmpButton1: TRzBmpButton;
-    RzBackground1: TRzBackground;
     RzBackground2: TRzBackground;
+    RzPanel3: TRzPanel;
+    RzBackground1: TRzBackground;
+    lblStatus: TRzLabel;
+    RzBmpButton3: TRzBmpButton;
+    RzLabel1: TRzLabel;
+    RzPanel1: TRzPanel;
+    RzProgressBar1: TRzProgressBar;
+    Panel1: TPanel;
+    IEAddress1: TIEAddress;
+    RzPanel2: TRzPanel;
+    serachText: TEdit;
+    btnBack: TRzBmpButton;
+    btnGo: TRzBmpButton;
+    btnSerach: TRzBmpButton;
+    RzFormShape1: TRzFormShape;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -202,6 +196,7 @@ type
     arr:array [1..13] of char;
     time:array [1..13] of int64;
     buf:TStringList;
+    frmUpdate:TfrmUpdate;
     procedure UpdateControls(_EWB:TEmbeddedWB=nil);
     procedure LoadXsm(_url:string;appId:string;TimeOut:integer=15000);
     procedure LoadUrl(_url:string;appId:string;TimeOut:integer=15000);
@@ -212,6 +207,8 @@ type
     procedure pageButtonSort;
     procedure PageButtonClick(Sender:TObject);
     procedure RzInit(var Message: TMessage); message WM_BROWSER_INIT;
+    procedure RzRuned(var Message: TMessage); message WM_BROWSER_RUNED;
+    procedure closeWindow(var Message: TMessage); message WM_CLOSE_WINDOW;
     procedure WMDisplayChange(var Message: TMessage); message WM_DISPLAYCHANGE;
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure FullScreen;
@@ -240,7 +237,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -287,7 +284,7 @@ begin
          end;
      end;
   if TabEx=nil then Exit;
-  if not IEAddress1.Focused then
+  if not IEAddress1.Focused or (IEAddress1.SelLength>0) or RzProgressBar1.Visible then
      begin
        case TabEx.url.appFlag of
        0:begin
@@ -340,7 +337,7 @@ begin
   TabSheetEx.Caption := '新建页';
   TabSheetEx.button := TrzBmpButton.Create(pageTab);
   TabSheetEx.button.Parent := pageTab;
-  TabSheetEx.button.Top := 0;
+  TabSheetEx.button.Top := 3;
   TabSheetEx.button.AllowAllUp := true;
   TabSheetEx.button.Bitmaps.Up.Assign(button_close.Picture);
   TabSheetEx.button.Bitmaps.Down.Assign(button_active.Picture);
@@ -482,6 +479,8 @@ begin
 end;
 
 procedure TfrmBrowerForm.RzInit(var Message: TMessage);
+var
+  F:TIniFile;
 begin
   jsExt :=  TjavaScriptExt.Create;
   CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
@@ -497,22 +496,30 @@ begin
   whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
     HInstance, 0);
   Timer1.Enabled := true;
-  case Message.LParam of
-  1:begin
-      ParentWindow := FindWindow('Progman',nil);
-      m_bFullScreen := true;
-      FullScreen;
-      Show;
-      LoadUrl('about:blank','');
-    end;
-  0:begin
-      m_bFullScreen := false;
-      setWindowState(wsMaximized);
-      Show;
-      OpenHome
-    end;
-  end;
+  m_bFullScreen := false;
+  setWindowState(wsMaximized);
+  Show;
+  OpenHome;
   UpdateControls;
+  if paramStr(1)='-open' then
+     begin
+       //调用DLL读取令牌后登录
+       if jsExt.signToken('<?xml version="1.0" encoding="gbk"?><xsm code="0000" msg="验证成功" trans_time="20130508155524"><userId>1061020100000191</userId><nickName>程晨</nickName><userType>2210</userType>'+'<comId>11610201</comId><saledptId>11610202</saledptId><refId>1061020100000191</refId><comName>铜川分公司</comName>'+
+          '<domainUrl>http://test.xinshangmeng.com/xsm6/main.html?v=2013032600</domainUrl><comType>02</comType><comShort>铜川</comShort><parentComId>11610001</parentComId><expirationTime>9999999999999</expirationTime>'+'<planText>1061020100000191程晨221011610201116102021061020100000191铜川分公司02铜川116100019999999999999</planText>'+
+          '<signatureValue>9605bcf1f6db8f0f2a76e1e7d30105e5ac6b881fbce8af6afc42242d33b2ff3d3b8f516b70e19889d8146360a2a1da5f132f81e985b6ef5c435f8c4df37bc0720a9fdc7c2c29bd16eb563c9b3988ae23f2a3f842ac9da633'+'b111e6029ccd3a0e8cda8afef843b017414b17b807d337a78ce26a81eb1a67ba5b847b922f27116c</signatureValue></xsm>')
+       then
+          begin
+            OpenHome;
+            LoadUrl(paramStr(2),'');
+          end
+     end;
+  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    frmUpdate.WebUpdater1.WebUrl := F.ReadString('soft','WebUrl','http://rsp.xinshangmeng.com/update');
+  finally
+    F.Free;
+  end;
+  if frmUpdate.WebUpdater1.Check then frmUpdate.Show;
 end;
 
 procedure TfrmBrowerForm.destroyTabBrowser;
@@ -526,11 +533,10 @@ begin
       if not dllFactory.close(tabEx.url) then Exit;
     end;
   end;
-
   if PageControl1.ActivePageIndex>0 then
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex -1 else
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex +1;
-
+  if assigned(tabEx.button) then freeandNil(tabEx.button);
   tabEx.Free;
   pagebuttonSort;
   UpdateControls;
@@ -578,6 +584,13 @@ begin
             begin
               CreateNewTabBrowser(urlToken);
             end
+         else
+            begin
+              if isRspcn(_url) then
+                 begin
+                   with (PageControl1.ActivePage as TTabSheetEx) do url := urlToken;
+                 end;
+            end;
        end;
     with (PageControl1.ActivePage as TTabSheetEx) do
     case url.appFlag of
@@ -641,6 +654,7 @@ end;
 constructor TfrmBrowerForm.Create(AOwner: TComponent);
 begin
   inherited;
+  frmUpdate := TfrmUpdate.Create(self);
   Buf := TStringList.Create;
   dllFactory := nil;
 end;
@@ -659,6 +673,7 @@ begin
         jsExt := nil;
         if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
      end;
+  frmUpdate.Free;
   Buf.Free;
   inherited;
 end;
@@ -734,24 +749,9 @@ end;
 
 procedure TfrmBrowerForm.WindowClosingEvent(ASender: TObject;
   IsChildWindow: WordBool; var Cancel: WordBool);
-var
-  i:integer;
-  tabEx:TTabSheetEx;
 begin
-  if PageControl1.PageCount=1 then
-     begin
-       Close;
-       Exit;
-     end;
-  for i:=0 to PageControl1.PageCount-1 do
-     begin
-       tabEx := (PageControl1.Pages[i] as TTabSheetEx);
-       if tabEx.EWB=ASender then
-          begin
-            destroyTabBrowser;
-            break;
-          end;
-     end;
+ // Cancel := false;
+  PostMessage(handle,WM_CLOSE_WINDOW,0,0);
 end;
 
 procedure TfrmBrowerForm.WindowSetHeightEvent(ASender: TObject;
@@ -915,6 +915,7 @@ begin
           LoadUrl('rspcn://local-in/index.html','home')
        else
           LoadUrl('rspcn://local-in/login.html','home');
+       //LoadUrl('www.xinshangmeng.com','home');
      end
   else
      begin
@@ -931,6 +932,7 @@ begin
             url := decodeUrl('rspcn://built-in/login.html');
             tabEx.EWB.Go(url.url,15000);
           end;
+       //tabEx.EWB.Go('www.xinshangmeng.com',15000);
      end;
 end;
 
@@ -997,17 +999,17 @@ procedure TfrmBrowerForm.pageButtonSort;
 var
   i,w:integer;
 begin
-  if token.logined then w := tool_left.Width+1 else w := 0;
   btnPageClose.Visible := false;
+  w := 0;
   for i:=0 to pageControl1.PageCount-1 do
     begin
-      TTabSheetEx(pageControl1.Pages[i]).button.Left := w;
+      TTabSheetEx(pageControl1.Pages[i]).button.Left := w+2;
       w := w + TTabSheetEx(pageControl1.Pages[i]).button.Width;
       TTabSheetEx(pageControl1.Pages[i]).button.Down := (pageControl1.ActivePageIndex = i);
       if TTabSheetEx(pageControl1.Pages[i]).button.Down then
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack
+         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite
       else
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite;
+         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack;
       if (pageControl1.ActivePageIndex = i) and (i>0) then
          begin
            btnPageClose.Visible := true;
@@ -1067,15 +1069,15 @@ begin
        begin
          try
            if token.online then dllFactory.Init(mainPanel.Handle);
-           TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
+           //TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
            pageButtonSort;
-           toolleft.Visible := true;
-           OpenHome;
+           //toolleft.Visible := true;
+           //OpenHome;
            Timer1.Tag := 1;
          except
            token.logined := false;
            Timer1.Tag := 0;
-           OpenHome;
+           //OpenHome;
            Raise;
          end;
        end
@@ -1083,14 +1085,14 @@ begin
     if not token.logined and (Timer1.Tag=1) then
        begin
          try
-           TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
+           //TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
            pageButtonSort;
-           toolleft.Visible := false;
+           //toolleft.Visible := false;
          finally
            Timer1.Tag :=0;
          end;
        end;
-    if token.logined then
+{    if token.logined then
        begin
          if token.tenantName<>'' then
             lblUserName.Caption := token.tenantName
@@ -1102,7 +1104,7 @@ begin
             lblUserName.Caption := lblUserName.Caption+'(脱机)';
        end
     else
-       lblUserName.Caption := '现代卷烟零售终端';
+       lblUserName.Caption := '现代卷烟零售终端';    }
   finally
     Timer1.Enabled := true;
   end;
@@ -1125,7 +1127,7 @@ begin
     urlToken.url := _url;
     urlToken.appId := appId;
     if CheckUrlExists(urlToken) then Exit;
-    if not UcFactory.xsmLogined then
+    if not token.Logined then
         begin
            OpenHome;
            Exit;
@@ -1336,7 +1338,7 @@ begin
     jsExt := nil;
     if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
 
-    messageBox(handle,'您已经安装成功了，感谢你的使用','友情提示..',MB_OK+MB_ICONINFORMATION);
+    //messageBox(handle,'您已经安装成功了，感谢你的使用','友情提示..',MB_OK+MB_ICONINFORMATION);
   except
     messageBox(handle,'安装失败了，请关闭360等相关防护服务再重新','友情提示..',MB_OK+MB_ICONINFORMATION);
   end;
@@ -1581,12 +1583,24 @@ end;
 
 destructor TTabSheetEx.Destroy;
 begin
-  if Assigned(button) then freeAndNil(button);
+//  if Assigned(button) then freeAndNil(button);
   if Assigned(EWB) then
      begin
        freeAndNil(EWB);
      end;
   inherited;
+end;
+
+procedure TfrmBrowerForm.closeWindow(var Message: TMessage);
+begin
+  destroyTabBrowser;
+end;
+
+procedure TfrmBrowerForm.RzRuned(var Message: TMessage);
+var appUrl:string;
+begin
+  appUrl := getIdForUrl(Message.lParam);
+  if appUrl='' then OpenHome else LoadUrl(appUrl,'');
 end;
 
 initialization

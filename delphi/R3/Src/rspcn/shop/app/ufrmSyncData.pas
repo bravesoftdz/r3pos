@@ -41,7 +41,7 @@ type
 
 implementation
 
-uses uSyncFactory,uRspSyncFactory;
+uses uSyncFactory,uRspSyncFactory,uRtcSyncFactory;
 
 {$R *.dfm}
 
@@ -83,6 +83,7 @@ begin
   inherited;
   SyncFactory.ProHandle := self.Handle;
   RspSyncFactory.ProHandle := self.Handle;
+  RtcSyncFactory.ProHandle := self.Handle;
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg') then
      Image1.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg');
 end;
@@ -91,8 +92,10 @@ procedure TfrmSyncData.WM_SetCaption(var Message: TMessage);
 begin
   if Message.LParam = 0 then
     SetShowTitle(SyncFactory.ProTitle)
+  else if Message.LParam = 1 then
+    SetShowTitle(RspSyncFactory.ProTitle)
   else
-    SetShowTitle(RspSyncFactory.ProTitle);
+    SetShowTitle(RtcSyncFactory.ProTitle);
 end;
 
 procedure TfrmSyncData.WM_SetMax(var Message: TMessage);

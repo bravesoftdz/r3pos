@@ -170,7 +170,7 @@ begin
   FDisp := TDoInvokeClientDispatch.Create;
   FDisp.Parant := Self;
   FInterpreter.DoInvokeDispatch := FDisp;
-  FSupportCallbacks := true;
+  FSupportCallbacks := false;
   FInWorking := 0;
   LocaliDbType := -1;
 end;
@@ -197,9 +197,9 @@ var
 begin
   Enter;
   try
+     InternalClose;
      for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
      FList.Free;
-     InternalClose;
      FInterpreter.DoInvokeDispatch := nil;
      FInterpreter.Free;
      if FHandle <> 0 then DeallocateHWnd(FHandle);

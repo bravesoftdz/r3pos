@@ -481,6 +481,7 @@ end;
 destructor TZTransportThread.Destroy;
 begin
   FData := nil;
+  FTransport := nil;
   CloseHandle(FSemaphore);
   if hEvent<>0 then CloseHandle(hEvent);
   if FReadEvent<>0 then CloseHandle(FReadEvent);
@@ -708,7 +709,8 @@ begin
     FSocket := FClientSocket.Socket;
     FClientSocket.Port := FPort;
     if FAddress <> '' then
-      FClientSocket.Address := FAddress else
+      FClientSocket.Address := FAddress
+    else
       FClientSocket.Host := FHost;
     FClientSocket.Open;
   end else
@@ -821,8 +823,7 @@ begin
               P := Pointer(Integer(P) + AmountSent);
             end;
        end;
-    if Amount <> 0 then
-       raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
+    if Amount <> 0 then raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
   finally
      Leave;
   end;

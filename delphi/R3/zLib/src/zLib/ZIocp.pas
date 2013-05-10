@@ -299,11 +299,13 @@ begin
              begin
                 try
                   Buf := PPER_IO_OPERATION_DATA(Overlapped);
-                  if (Buf^.IOMode in [IOSendBytesReserved,IOSend]) and (Buf=ASocket.FSendBuffer) then
+                  if (Buf=ASocket.FSendBuffer) then
                      ASocket.WorkSend(Buf,BytesTransd)
                   else
-                  if (Buf^.IOMode in [IORecvBytesReserved,IORecv]) and (Buf=ASocket.FRecvBuffer) then
-                     ASocket.WorkRecv(Buf,BytesTransd);
+                  if (Buf=ASocket.FRecvBuffer) then
+                     ASocket.WorkRecv(Buf,BytesTransd)
+                  else
+                     Raise Exception.Create('无效的数据请求');
                 except
                   on E:Exception do
                   begin
@@ -1011,11 +1013,15 @@ begin
        FillChar(IOData^.BytesReserved, SizeOf(IOData^.BytesReserved), 0);
        IOData^.Postion := @IOData^.BytesReserved[0];
        IOData^.DataBuf.buf := IOData^.Postion;
+       IOData^.Buffer := DataBlock;
      end;
   IORecv:begin
-       if FRecvBuffer.Buffer<>nil then FRecvBuffer.Buffer := nil;
-       FRecvBuffer.Buffer := DataBlock;
-       IOData^.DataBuf.len := IOData^.StreamLen;
+//       if FRecvBuffer.Buffer<>nil then FRecvBuffer.Buffer := nil;
+//       FRecvBuffer.Buffer := DataBlock;
+       if IOData^.StreamLen>(1024*8) then
+          IOData^.DataBuf.len := (1024*8)
+       else
+          IOData^.DataBuf.len :=  IOData^.StreamLen;
        IOData^.DataBuf.buf := IOData^.Postion;
      end;
   end;
@@ -1048,7 +1054,7 @@ begin
   GZip.DataOut(Data);
   SendEnter;
   try
-    while FSendBuffer^.IOMode <> IOIDLE do
+    while (FSendBuffer^.IOMode <> IOIDLE) do
       begin
         if FSocket=INVALID_SOCKET then Raise Exception.Create('Send数据失败，客户端已经断开连接了.');
         WaitForSingleObject(FhEvent, 50);
@@ -1123,12 +1129,12 @@ begin
           Move(IOData^.BytesReserved[0],Pointer(Sig),4);
           CheckSignature(Sig);
           Move(IOData^.BytesReserved[4],Pointer(StreamLen),4);
-          if StreamLen>(1024*1024*10) then
-             raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
+          if StreamLen>(1024*1024*10) then raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
           Data := TDataBlock.Create as IDataBlock;
           Data.Size := StreamLen;
           Data.Signature := Sig;
           IOData^.StreamLen := StreamLen;
+          IOData^.Buffer := Data;
           IOData^.Postion := Pointer(integer(Data.Memory)+Data.BytesReserved);
           IOData^.IOMode := IORecv;
           ReadBuffer(IOData,Data);
@@ -1138,10 +1144,12 @@ begin
           IOData^.StreamLen := IOData^.StreamLen - BytesReaded;
           IOData^.Postion := Pointer(Integer(IOData^.Postion) + BytesReaded);
           if IOData^.StreamLen = 0 then
-             AddBlock(Data);
+             begin
+               AddBlock(Data);
+             end;
           if IOData^.StreamLen > 0 then
              begin
-                ReadBuffer(IOData,Data);
+               ReadBuffer(IOData,Data);
              end
           else
              if IOData^.StreamLen < 0 then
@@ -1217,7 +1225,11 @@ begin
        IOData^.DataBuf.buf := IOData^.Postion;
      end;
   IOSend:begin
-       IOData^.DataBuf.len := IOData^.StreamLen;
+       if IOData^.StreamLen>(1024*8) then
+          IOData^.DataBuf.len := (1024*8)
+       else
+          IOData^.DataBuf.len :=  IOData^.StreamLen;
+//       IOData^.DataBuf.len := IOData^.StreamLen;
        IOData^.DataBuf.buf := IOData^.Postion;
      end;
   end;
@@ -1307,7 +1319,7 @@ begin
               end
               else //客户端忙，等待处理
               begin
-                 if Assigned(SocketDispatcher.FindClient(sdb.SessionId) ) then
+                 if Assigned(SocketDispatcher.FindClient(sdb.SessionId)) then
                     SocketDispatcher.AddBlock(sdb.Data,TServerClientSocket(sdb.SessionId),false);
               end;
             finally
@@ -1379,9 +1391,9 @@ begin
                  Exit;
                end;
             try
-               TServerClientSocket(SessionId).Free;
+              TServerClientSocket(SessionId).Free;
             finally
-               SocketCache.Remove(Pointer(SessionId));
+              SocketCache.Remove(Pointer(SessionId));
             end;
           end;
      except

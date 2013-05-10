@@ -31,9 +31,9 @@ object dllGlobal: TdllGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select SHOP_ID,SHOP_NAME,SHOP_SPELL,SEQ_NO,REGION_ID from CA_SHO' +
-        'P_INFO where TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') or' +
-        'der by SEQ_NO')
+        'select SHOP_ID,SHOP_NAME,LICENSE_CODE,SHOP_SPELL,SEQ_NO,REGION_I' +
+        'D from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (' +
+        #39'02'#39','#39'12'#39') order by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown

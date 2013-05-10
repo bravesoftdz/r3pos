@@ -752,13 +752,13 @@ begin
     if (RetVal = 0) then Exit;
     RetLen := FSocket.ReceiveBuf(Sig, SizeOf(Sig));
     if RetLen <> SizeOf(Sig) then
-      raise ESocketConnectionError.CreateRes(@SSocketReadError);
+      raise Exception.Create('服务器发送无效数据包。');
     CheckSignature(Sig);
     RetLen := FSocket.ReceiveBuf(StreamLen, SizeOf(StreamLen));
     if RetLen = 0 then
-      raise ESocketConnectionError.CreateRes(@SSocketReadError);
+      raise Exception.Create('SOCKET连接已经断开。');
     if RetLen <> SizeOf(StreamLen) then
-      raise ESocketConnectionError.CreateRes(@SSocketReadError);
+      raise Exception.Create('服务器发送无效数据包。');
     Result := TDataBlock.Create as IDataBlock;
     Result.Size := StreamLen;
     Result.Signature := Sig;

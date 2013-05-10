@@ -1108,6 +1108,7 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
+      SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
     finally
       Free;

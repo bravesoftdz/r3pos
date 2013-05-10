@@ -1510,6 +1510,109 @@ begin
       cdsGoodsPrice.Post;
     end;
 
+  // 远程保存非烟商品
+  if RspFinded and (dataFactory.iDbType = 5) then
+     begin
+       tmpGoodsInfo := TZQuery.Create(nil);
+       tmpBarCode := TZQuery.Create(nil);
+       dataFactory.MoveToRemote;
+       try
+         Params := TftParamList.Create(nil);
+         tmpGoodsInfo.Close;
+         try
+           Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+           Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+           dataFactory.Open(tmpGoodsInfo,'TGoodsInfoV60',Params);
+         finally
+           Params.Free;
+         end;
+
+         Params := TftParamList.Create(nil);
+         tmpBarCode.Close;
+         try
+           Params.ParamByName('TENANT_ID').AsInteger := cdsBarCode.FieldByName('TENANT_ID').AsInteger;
+           Params.ParamByName('GODS_ID').AsString := cdsBarCode.FieldByName('GODS_ID').AsString;
+           dataFactory.Open(tmpBarCode,'TBarCodeV60',Params);
+         finally
+           Params.Free;
+         end;
+
+         tmpObj := TRecord_.Create;
+         try
+           if tmpGoodsInfo.IsEmpty then tmpGoodsInfo.Append
+           else tmpGoodsInfo.Edit;
+           tmpObj.ReadFromDataSet(cdsGoodsInfo);
+           tmpObj.WriteToDataSet(tmpGoodsInfo, false);
+         finally
+           tmpObj.Free;
+         end;
+
+         tmpObj := TRecord_.Create;
+         try
+           if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+             begin
+               if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
+                 tmpBarCode.Edit
+               else
+                 tmpBarCode.Append;
+               tmpObj.ReadFromDataSet(cdsBarCode);
+               tmpObj.WriteToDataSet(tmpBarCode, false);
+             end
+           else
+             begin
+               if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
+                 tmpBarCode.Delete;
+             end;
+
+           if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+             begin
+               if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
+                 tmpBarCode.Edit
+               else
+                 tmpBarCode.Append;
+               tmpObj.ReadFromDataSet(cdsBarCode);
+               tmpObj.WriteToDataSet(tmpBarCode, false);
+             end
+           else
+             begin
+               if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
+                  tmpBarCode.Delete;
+             end;
+
+           if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+             begin
+               if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
+                 tmpBarCode.Edit
+               else
+                 tmpBarCode.Append;
+               tmpObj.ReadFromDataSet(cdsBarCode);
+               tmpObj.WriteToDataSet(tmpBarCode, false);
+             end
+           else
+             begin
+               if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
+                 tmpBarCode.Delete;
+             end;
+         finally
+           tmpObj.Free;
+         end;
+
+        dataFactory.BeginBatch;
+         try
+           dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
+           dataFactory.AddBatch(tmpBarCode,'TBarCodeV60',nil);
+           dataFactory.CommitBatch;
+         except
+           dataFactory.CancelBatch;
+           Raise;
+         end;
+       finally
+         dataFactory.MoveToDefault;
+         tmpGoodsInfo.Free;
+         tmpBarCode.Free;
+       end;
+     end;
+
   dataFactory.BeginBatch;
   try
     dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
@@ -1522,11 +1625,6 @@ begin
     dataFactory.CancelBatch;
     Raise;
   end;
-
-  LocalFinded := false;
-  RemoteFinded := false;
-  RspFinded := false;
-  edtInput.Text := '';
 
   // 本地保存
   if dataFactory.iDbType <> 5 then
@@ -1699,6 +1797,10 @@ begin
         tmpGoodsPrice.Free;
       end;
     end;
+  LocalFinded := false;
+  RemoteFinded := false;
+  RspFinded := false;
+  edtInput.Text := '';
   dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
   ModalResult := MROK;
 end;

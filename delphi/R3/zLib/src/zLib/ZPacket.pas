@@ -756,7 +756,7 @@ begin
     CheckSignature(Sig);
     RetLen := FSocket.ReceiveBuf(StreamLen, SizeOf(StreamLen));
     if RetLen = 0 then
-      raise Exception.Create('SOCKET连接已经断开。');
+      raise Exception.Create('远程服务器已断开连接。');
     if RetLen <> SizeOf(StreamLen) then
       raise Exception.Create('服务器发送无效数据包。');
     Result := TDataBlock.Create as IDataBlock;

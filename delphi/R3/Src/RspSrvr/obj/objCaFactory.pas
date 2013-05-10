@@ -238,7 +238,22 @@ end;
 
 function TcoGetTenant.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  selectSQL.Text := 'select * from CA_TENANT where TENANT_ID=:tenantId';
+  DataSet.Close;
+  TZQuery(DataSet).SQL.Text :=
+    'select * from CA_TENANT where TENANT_ID=:tenantId';
+  TZQuery(DataSet).ParamByName('tenantId').AsInteger := Params.ParambyName('tenantId').AsInteger;
+  AGlobal.Open(DataSet);
+  if not DataSet.IsEmpty then
+     begin
+       DataSet.First;
+       while not DataSet.Eof do
+          begin
+             DataSet.Edit;
+             DataSet.FieldbyName('PASSWRD').AsString := DecStr(DataSet.FieldbyName('PASSWRD').AsString,ENC_KEY);
+             DataSet.Post;
+             DataSet.Next;
+          end;
+     end;
   result := true;
 end;
 

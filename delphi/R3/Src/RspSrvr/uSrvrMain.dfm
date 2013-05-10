@@ -128,6 +128,7 @@ object SocketForm: TSocketForm
           Width = 73
           Height = 20
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          MaxLength = 20
           TabOrder = 0
           Text = '10'
           OnExit = IntegerExit

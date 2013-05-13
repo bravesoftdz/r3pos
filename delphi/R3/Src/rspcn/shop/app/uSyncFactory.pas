@@ -102,7 +102,7 @@ var SyncFactory:TSyncFactory;
 implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,
-     uRightsFactory,dllApi,ufrmSysDefine;
+     uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory;
 
 constructor TSyncFactory.Create;
 begin
@@ -1110,6 +1110,7 @@ begin
       BringToFront;
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
+      RtcSyncFactory.SyncRtcData;
     finally
       Free;
     end;

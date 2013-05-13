@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=D:\myWork\Delphi\R3\Src\rspcn\debug\rspcn.exe
+HostApplication=D:\myWork\Delphi\R3\Src\rspcn\debug\shop.exe
 Launcher=
 UseLauncher=0
 DebugCWD=

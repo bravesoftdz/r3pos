@@ -9,6 +9,12 @@ type
   TRspFunction=function(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
   TRspSetParams=function(_sslpwd:pansichar):boolean;stdcall;
 
+  TCaUpgrade=record
+    UpGrade:integer;
+    URL:string;
+    Version:string;
+  end;
+  
   TrspFactory = class(TDataModule)
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
@@ -45,6 +51,8 @@ type
     RspQueryUnion:TRspFunction;
     RspListModules:TRspFunction;
     RspDownloadSort:TRspFunction;
+
+    RspcheckUpgrade:TRspFunction;
   public
     { Public declarations }
     function  CreateRspXML: IXMLDomDocument;
@@ -54,6 +62,8 @@ type
     function  FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
     function  GetNodeValue(root:IXMLDOMNode;s:string):string;
     function  DesEncode(inStr, Key: string): string;
+
+    function CheckUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
 
     function xsmLogin(username:string;flag:integer):boolean;
     function getTenantInfo(tenantId:integer):widestring;
@@ -82,7 +92,7 @@ var
 
 implementation
 
-uses udataFactory;
+uses udataFactory,uFnUtil;
 
 const
   pubpwd = 'SaRi0+jf';
@@ -119,6 +129,8 @@ begin
   if @RspListModules=nil then Raise Exception.Create('无效Rsp插件包，没有实现listModules方法');
   @RspDownloadSort := GetProcAddress(RspHandle, 'downloadSort');
   if @RspDownloadSort=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadSort方法');
+  @RspcheckUpgrade := GetProcAddress(RspHandle, 'checkUpgrade');
+  if @RspcheckUpgrade=nil then Raise Exception.Create('无效Rsp插件包，没有实现checkUpgrade方法');
 end;
 
 procedure TrspFactory.FreeRspFactory;
@@ -739,6 +751,52 @@ end;
 procedure TrspFactory.SetdbId(const Value: integer);
 begin
   FdbId := Value;
+end;
+
+function TrspFactory.CheckUpgrade(TENANT_ID, PROD_ID,
+  CurVeraion: string): TCaUpgrade;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  caProductCheckUpgradeResp:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  F:TIniFile;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('caProductCheckUpgradeReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := TENANT_ID;
+  FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
+
+  Node := doc.createElement('prodId');
+  Node.text := PROD_ID;
+  FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
+
+  Node := doc.createElement('curVersion');
+  Node.text := CurVeraion;
+  FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+  doc := CreateXML(rspcheckUpgrade(inxml,rspUrl,1));
+  CheckRecAck(doc);
+
+  caProductCheckUpgradeResp := FindNode(doc,'body\caProductCheckUpgradeResp');
+  result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
+  result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
+  result.Version := GetNodeValue(caProductCheckUpgradeResp,'newVersion');
+  //写安装目录到临时文件夹
+  F := TIniFile.Create(FnSystem.GetWinTmp+'r3.inst');
+  try
+    F.WriteString('r3','path',ExtractFileDir(ParamStr(0)));
+  finally
+    F.Free;
+  end;
 end;
 
 end.

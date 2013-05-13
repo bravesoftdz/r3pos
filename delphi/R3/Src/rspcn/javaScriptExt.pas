@@ -66,7 +66,7 @@ type
 
 implementation
 
-uses ComServ,udataFactory,uUcFactory,uRspFactory,uTokenFactory;
+uses ComServ,udataFactory,uUcFactory,uRspFactory,uTokenFactory,ufrmBrowerForm;
 
 function TjavaScriptExt.signIn(const username, password,
   verify: WideString; online: WordBool): WordBool;
@@ -209,6 +209,7 @@ begin
     token.Logined := true;
     token.online := online;
     dataFactory.signined := true;
+    PostMessage(frmBrowerForm.Handle,WM_UPGRADE_CHECK,0,0);
   finally
     us.Free;
     rs.Free;
@@ -759,6 +760,7 @@ begin
     token.Logined := true;
     token.online := true;
     dataFactory.signined := true;
+    PostMessage(frmBrowerForm.Handle,WM_UPGRADE_CHECK,0,0);
   finally
     us.Free;
     rs.Free;

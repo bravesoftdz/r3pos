@@ -12,7 +12,6 @@ inherited frmStockOrder: TfrmStockOrder
       Width = 865
       inherited PageControl: TRzPageControl
         Width = 865
-        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -1546,6 +1545,7 @@ inherited frmStockOrder: TfrmStockOrder
                 Properties.OnChange = edtACCT_MNYPropertiesChange
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnExit = edtACCT_MNYExit
               end
               object edtAGIO_RATE: TcxTextEdit
                 Left = 254
@@ -1557,6 +1557,7 @@ inherited frmStockOrder: TfrmStockOrder
                 TabOrder = 2
                 Text = '100.0'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnExit = edtAGIO_RATEExit
               end
               object RzPanel8: TRzPanel
                 Left = 217
@@ -3886,8 +3887,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -3971,8 +3972,8 @@ inherited frmStockOrder: TfrmStockOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267

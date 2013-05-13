@@ -3703,9 +3703,9 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Top = 4
                 Width = 112
                 Height = 23
-                Properties.OnChange = edtACCT_MNYPropertiesChange
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtACCT_MNYKeyPress
               end
               object edtAGIO_RATE: TcxTextEdit
                 Left = 254
@@ -3713,10 +3713,10 @@ inherited frmSaleOrder: TfrmSaleOrder
                 Width = 47
                 Height = 23
                 Properties.Alignment.Horz = taRightJustify
-                Properties.OnChange = edtAGIO_RATEPropertiesChange
                 TabOrder = 2
                 Text = '100.0'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtAGIO_RATEKeyPress
               end
               object RzPanel8: TRzPanel
                 Left = 217

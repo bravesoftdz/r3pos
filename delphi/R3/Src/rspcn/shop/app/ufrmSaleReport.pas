@@ -146,7 +146,7 @@ begin
 
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
-     'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,c.CLIENT_NAME from ('+cdsReport2.SQL.Text+') j '+
+     'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,case when j.CLIENT_ID is null then ''ÆÕÍ¨¿Í»§'' else c.CLIENT_NAME end as CLIENT_NAME from ('+cdsReport2.SQL.Text+') j '+
      'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
      'left outer join VIW_CUSTOMER c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID order by j.SALES_DATE,j.GLIDE_NO';
   cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);

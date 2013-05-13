@@ -45,6 +45,7 @@ const
   WM_SEND_INPUT =WM_USER+9001;
   WM_CLOSE_WINDOW = WM_USER+9002;
   WM_BROWSER_RUNED = WM_USER+9003;
+  WM_UPGRADE_CHECK = WM_USER+9004;
   WH_KEYBOARD_LL = 13;
 
 type
@@ -209,13 +210,14 @@ type
     procedure RzInit(var Message: TMessage); message WM_BROWSER_INIT;
     procedure RzRuned(var Message: TMessage); message WM_BROWSER_RUNED;
     procedure closeWindow(var Message: TMessage); message WM_CLOSE_WINDOW;
+    procedure upgrade(var Message: TMessage); message WM_UPGRADE_CHECK;
     procedure WMDisplayChange(var Message: TMessage); message WM_DISPLAYCHANGE;
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure FullScreen;
     procedure OpenHome;
 
     procedure WMSendInput(var Msg: TMessage); message WM_SEND_INPUT;
-    procedure KeyBoardHook(Code: integer; Msg: word;lParam: longint);
+    function KeyBoardHook(Code: integer; Msg: word;lParam: longint):boolean;
     function  AddKey(scanCode: DWORD):boolean;
     function  checkBarcode:boolean;
     procedure ClearKey;
@@ -237,7 +239,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -259,8 +261,10 @@ begin
   Result := 0;
   if Code>=0 then
      begin
-       frmBrowerForm.KeyBoardHook(Code,msg,KeyboardHook);
-       Result := CallNextHookEx(whKeyboard, Code, Msg, KeyboardHook);
+       if frmBrowerForm.KeyBoardHook(Code,msg,KeyboardHook) then
+          result := 1
+       else
+          Result := CallNextHookEx(whKeyboard, Code, Msg, KeyboardHook);
      end;
 end;
 
@@ -479,8 +483,6 @@ begin
 end;
 
 procedure TfrmBrowerForm.RzInit(var Message: TMessage);
-var
-  F:TIniFile;
 begin
   jsExt :=  TjavaScriptExt.Create;
   CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
@@ -513,14 +515,10 @@ begin
             LoadUrl(paramStr(2),'');
           end
      end;
-  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
-  try
-    frmUpdate.WebUpdater1.WebUrl := F.ReadString('soft','WebUrl','http://rsp.xinshangmeng.com/update');
-  finally
-    F.Free;
-  end;
-  if frmUpdate.WebUpdater1.Check then frmUpdate.Show;
+   if frmUpdate.CheckDBVersion then
+      frmUpdate.Show;
 end;
+
 
 procedure TfrmBrowerForm.destroyTabBrowser;
 var
@@ -1065,6 +1063,11 @@ procedure TfrmBrowerForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
   try
+    if Runed then
+       begin
+         Application.Terminate;
+         Exit;
+       end;
     if token.logined and (Timer1.Tag=0) then
        begin
          try
@@ -1531,9 +1534,10 @@ begin
   for i:=1 to 13 do arr[i] := #0;
 end;
 
-procedure TfrmBrowerForm.KeyBoardHook(Code: integer; Msg: word;
-  lParam: Integer);
+function TfrmBrowerForm.KeyBoardHook(Code: integer; Msg: word;
+  lParam: Integer):boolean;
 begin
+ result := false;
  if (Code = HC_ACTION) then
   begin
     if ((1 shl 31)and lParam=0) then
@@ -1544,6 +1548,7 @@ begin
                  begin
                    if addKey(PBDLLHOOKSTRUCT(lParam)^.vkCode) then
                       begin
+                        result := true;
                       end;
                  end;
             end
@@ -1601,6 +1606,12 @@ var appUrl:string;
 begin
   appUrl := getIdForUrl(Message.lParam);
   if appUrl='' then OpenHome else LoadUrl(appUrl,'');
+end;
+
+procedure TfrmBrowerForm.upgrade(var Message: TMessage);
+begin
+  if frmUpdate.CheckUpgrade then
+     frmUpdate.Show;
 end;
 
 initialization

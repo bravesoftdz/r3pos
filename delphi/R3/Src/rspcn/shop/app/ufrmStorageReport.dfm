@@ -11,8 +11,6 @@ inherited frmStorageReport: TfrmStorageReport
     Width = 979
     inherited PageControl: TRzPageControl
       Width = 979
-      ActivePage = TabSheet2
-      TabIndex = 1
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet
@@ -516,8 +514,6 @@ inherited frmStorageReport: TfrmStorageReport
                 ParentFont = False
                 TabOrder = 0
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

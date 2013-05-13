@@ -152,6 +152,8 @@ type
       var ParValue: Variant);
     procedure frfSalesOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
+    procedure edtACCT_MNYExit(Sender: TObject);
+    procedure edtAGIO_RATEExit(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -203,6 +205,9 @@ type
     procedure DoPayZero(s:string);
     procedure DoPayInput(s:string;flag:string);
     procedure DoSaveOrder;
+
+    procedure BarcodeInput(_Buf:string);override;
+    
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -2206,6 +2211,26 @@ begin
        small := frParser.Calc(p1);
        Val := FnNumber.SmallTOBig(small);
      end;
+end;
+
+procedure TfrmPosOutOrder.edtACCT_MNYExit(Sender: TObject);
+begin
+  inherited;
+  DoShowPayment;
+
+end;
+
+procedure TfrmPosOutOrder.edtAGIO_RATEExit(Sender: TObject);
+begin
+  inherited;
+  DoShowPayment;
+
+end;
+
+procedure TfrmPosOutOrder.BarcodeInput(_Buf: string);
+begin
+  inherited;
+
 end;
 
 initialization

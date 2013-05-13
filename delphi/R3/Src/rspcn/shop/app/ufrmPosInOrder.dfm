@@ -1141,6 +1141,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Properties.OnChange = edtACCT_MNYPropertiesChange
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnExit = edtACCT_MNYExit
               end
               object edtAGIO_RATE: TcxTextEdit
                 Left = 254
@@ -1152,6 +1153,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 TabOrder = 2
                 Text = '100.0'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnExit = edtAGIO_RATEExit
               end
               object RzPanel8: TRzPanel
                 Left = 217

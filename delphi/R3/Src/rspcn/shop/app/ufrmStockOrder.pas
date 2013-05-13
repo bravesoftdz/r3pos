@@ -138,6 +138,8 @@ type
       var ParValue: Variant);
     procedure frfStockOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
+    procedure edtACCT_MNYExit(Sender: TObject);
+    procedure edtAGIO_RATEExit(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -174,6 +176,8 @@ type
     procedure DoPickUp;
     procedure DoPayZero(s:string);
     procedure DoPayInput(s:string;flag:string);
+
+    procedure BarcodeInput(_Buf:string);override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -716,6 +720,7 @@ end;
 
 procedure TfrmStockOrder.FormKeyPress(Sender: TObject; var Key: Char);
 begin
+  inherited;
   if char(Key) = '*' then
      begin
        if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
@@ -1553,6 +1558,26 @@ begin
        small := frParser.Calc(p1);
        Val := FnNumber.SmallTOBig(small);
      end;
+end;
+
+procedure TfrmStockOrder.edtACCT_MNYExit(Sender: TObject);
+begin
+  inherited;
+  DoShowPayment;
+
+end;
+
+procedure TfrmStockOrder.edtAGIO_RATEExit(Sender: TObject);
+begin
+  inherited;
+  DoShowPayment;
+
+end;
+
+procedure TfrmStockOrder.BarcodeInput(_Buf: string);
+begin
+  inherited;
+
 end;
 
 initialization

@@ -8,7 +8,7 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList;
+  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList, ZLogFile;
 
 const
 
@@ -196,7 +196,7 @@ type
     procedure FocusColumn(FieldName: string);
     procedure FocusNextColumn;
 
-    function doShortCut(s:string):boolean;virtual;
+    function  doShortCut(s:string):boolean;virtual;
     //清除无效数据
     procedure ClearInvaid;virtual;
     //检测数据合法性
@@ -235,7 +235,7 @@ type
 
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
-    function DecodeBarcode(BarCode: string):integer;
+    function  DecodeBarcode(BarCode: string):integer;
     procedure DoCustId(s:string);virtual;
     procedure BarcodeInput(_Buf:string);override;
   public
@@ -1550,6 +1550,7 @@ var
   mny:currency;
   Pri:currency;
 begin
+       LogFile.AddLogFile(0,'我的条码'+BarCode);
   result := 2;
   if BarCode='' then Exit;
   fndStr := BarCode;
@@ -1968,6 +1969,7 @@ var AObj:TRecord_;
   pt:boolean;
 begin
   inherited;
+  if not fndGODS_ID.Focused then Exit;
   if not edtTable.Active then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then exit;
   edtTable.DisableControls;
@@ -2521,7 +2523,7 @@ end;
 procedure TfrmOrderForm.BarcodeInput(_Buf: string);
 begin
   inherited;
-  edtInput.Text := '';
+  fndGODS_ID.Visible := false;
   try
     case inputFlag of
     6:begin

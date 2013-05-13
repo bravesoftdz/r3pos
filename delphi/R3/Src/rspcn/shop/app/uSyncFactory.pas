@@ -366,7 +366,6 @@ begin
                   openSQL := n^.selectLocalSQL
                else
                   openSQL := n^.selectSQL;
-               LogFile.AddLogFile(0,'ÉÏ´«SQL='+openSQL);
                rs_l.SQL.Text := openSQL;
                rs_l.Params := Params;
                dataFactory.Open(rs_l);
@@ -399,7 +398,6 @@ begin
                   openSQL := n^.selectRemoteSQL
                else
                   openSQL := n^.selectSQL;
-               LogFile.AddLogFile(0,'ÏÂÔØSQL='+openSQL);
                rs_r.SQL.Text := openSQL;
                rs_r.Params := Params;
                dataFactory.Open(rs_r);

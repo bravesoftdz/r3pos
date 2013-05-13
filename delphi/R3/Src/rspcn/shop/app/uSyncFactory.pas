@@ -52,6 +52,7 @@ type
   private
     CloseAccDate:integer;
     LoginSyncDate:integer;
+    LastLoginSyncDate,LastLogoutSyncDate:integer;
     procedure InitTenant;
     procedure InitSyncList1;
     procedure InitSyncList;
@@ -65,7 +66,8 @@ type
     procedure SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
     procedure GetCloseAccDate;
-    function  CheckNeedSync:boolean;
+    function  CheckNeedLoginSync:boolean;
+    function  CheckNeedLoginSyncBizData:boolean;
   protected
     procedure ClearSyncList;
     procedure ReadTimeStamp;
@@ -108,6 +110,8 @@ constructor TSyncFactory.Create;
 begin
   CloseAccDate := -1;
   LoginSyncDate := 0;
+  LastLoginSyncDate := 0;
+  LastLogoutSyncDate := 0;
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
 end;
@@ -1034,7 +1038,7 @@ begin
   Application.ProcessMessages;
 end;
 
-function TSyncFactory.CheckNeedSync: boolean;
+function TSyncFactory.CheckNeedLoginSync: boolean;
 var timestamp:int64;
 begin
   result := true;
@@ -1047,6 +1051,18 @@ begin
      result := true
   else
      result := false; 
+end;
+
+function TSyncFactory.CheckNeedLoginSyncBizData: boolean;
+begin
+  result := false;
+  LastLoginSyncDate  := GetSynTimeStamp(token.tenantId,'LOGIN_SYNC','#');
+  LastLogoutSyncDate := GetSynTimeStamp(token.tenantId,'LOGOUT_SYNC','#');
+  if LastLoginSyncDate  = 5497000 then Exit;
+  if LastLogoutSyncDate = 5497000 then Exit;
+  if LastLoginSyncDate  = token.lDate then Exit;
+  if LastLogoutSyncDate = token.lDate then Exit;
+  if LastLogoutSyncDate < LastLoginSyncDate then result := true;
 end;
 
 procedure TSyncFactory.InitTenant;
@@ -1077,7 +1093,7 @@ begin
          begin
            TfrmSysDefine.AutoRegister;
            if token.tenantId = '' then Exit;
-           if not CheckNeedSync then Exit;
+           if not CheckNeedLoginSync then Exit;
            RspSyncFactory.SyncAll;
            RspSyncFactory.copyGoodsSort;
            SyncFactory.InitTenant;
@@ -1086,8 +1102,16 @@ begin
          end
       else
          begin
-           if not CheckNeedSync then Exit;
+           if not CheckNeedLoginSync then Exit;
            SyncFactory.SyncBasic;
+           if CheckNeedLoginSyncBizData then
+              begin
+                if MessageBox(PHWnd,'系统检测到上次未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
+                   begin
+                     SyncFactory.SyncBizData;
+                     SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
+                   end;
+              end;
          end;
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
@@ -1110,6 +1134,7 @@ begin
       BringToFront;
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
+      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
       RtcSyncFactory.SyncRtcData;
     finally
       Free;
@@ -1139,7 +1164,7 @@ procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
-  if not CheckNeedSync then Exit;
+  if not CheckNeedLoginSync then Exit;
   with TfrmSyncData.CreateParented(PHWnd) do
   begin
     try

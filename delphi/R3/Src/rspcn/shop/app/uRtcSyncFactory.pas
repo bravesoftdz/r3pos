@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
-  ObjCommon, Dialogs, DB, msxml, ComObj, uSyncFactory, dllApi, ufrmSyncData;
+  ObjCommon, Dialogs, DB, msxml, ComObj, dllApi, ufrmSyncData;
 
 const
   appId = '123';
@@ -14,7 +14,7 @@ type
   TDllGetCustAuthen = function(appId:pchar;var netStatus:integer;ticket:pchar;var ticketLength:integer):integer;stdcall;
   TDllSendDataAsync = function(appId:pchar;ticket:pchar;var ticketLength:integer;data:pchar;dataLength:integer;controlFlag:integer;var jobId:integer):integer;stdcall;
 
-  TRtcSyncFactory=class(TSyncFactory)
+  TRtcSyncFactory=class
   private
     F:TextFile;
     dllHandle:THandle;
@@ -24,6 +24,8 @@ type
     FThreadLock:TRTLCriticalSection;
     GetCustAuthen:TDllGetCustAuthen;
     SendDataAsync:TDllSendDataAsync;
+    FProHandle: Hwnd;
+    FProTitle: string;
     procedure GetLicenseCode;
     function  GetXmlHeader(xml:widestring):widestring;
     function  GetTransUnitId(unitId:string):string;
@@ -43,11 +45,18 @@ type
     procedure FreeDllFactory;
     function  GetToken:boolean;
     function  SendData(xml:widestring):boolean;
+    procedure SetProHandle(const Value: Hwnd);
+    procedure SetProTitle(const Value: string);
+  protected
+    procedure SetProCaption;
+    procedure SetProMax(max:integer);
+    procedure SetProPosition(position:integer);
   public
     constructor Create;
     destructor Destroy; override;
-    procedure  SyncRtcData;
-    procedure  SetProCaption;override;
+    procedure SyncRtcData;
+    property  ProTitle:string read FProTitle write SetProTitle;
+    property  ProHandle:Hwnd read FProHandle write SetProHandle;
   end;
 
 var RtcSyncFactory:TRtcSyncFactory;
@@ -577,18 +586,6 @@ begin
   end;
 end;
 
-procedure TRtcSyncFactory.SetProCaption;
-begin
-  inherited;
-  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 2);
-  Application.ProcessMessages;
-end;
-
-function TRtcSyncFactory.GetXmlHeader(xml:widestring):widestring;
-begin
-  result := '<?xml version="1.0" encoding="UTF-8"?>'+xml;
-end;
-
 procedure TRtcSyncFactory.LoadDllFactory;
 begin
   if dllValid then Exit;
@@ -649,6 +646,41 @@ begin
   rtn := SendDataAsync(pchar(appId),pchar(ticket),ticketLength,pchar(data),dataLength,3,jobId);
   if rtn <> 0 then AddSyncLogFile('异步数据发送失败，接口返回值='+inttostr(rtn));
   result := (rtn = 0);
+end;
+
+function TRtcSyncFactory.GetXmlHeader(xml:widestring):widestring;
+begin
+  result := '<?xml version="1.0" encoding="UTF-8"?>'+xml;
+end;
+
+procedure TRtcSyncFactory.SetProTitle(const Value: string);
+begin
+  FProTitle := Value;
+  SetProCaption;
+end;
+
+procedure TRtcSyncFactory.SetProHandle(const Value: Hwnd);
+begin
+  FProHandle := Value;
+end;
+
+procedure TRtcSyncFactory.SetProCaption;
+begin
+  inherited;
+  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 2);
+  Application.ProcessMessages;
+end;
+
+procedure TRtcSyncFactory.SetProMax(max: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_MAX, max, 0);
+  Application.ProcessMessages;
+end;
+
+procedure TRtcSyncFactory.SetProPosition(position: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
+  Application.ProcessMessages;
 end;
 
 initialization

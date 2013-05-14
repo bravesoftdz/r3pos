@@ -71,12 +71,10 @@ type
   protected
     procedure ClearSyncList;
     procedure ReadTimeStamp;
-    function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
-    procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     function  GetFactoryName(node:PSynTableInfo):string;
     function  GetTableFields(tbName:string;alias:string=''):string;
     // 进度条控制
-    procedure SetProCaption;virtual;
+    procedure SetProCaption;
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
   public
@@ -92,6 +90,8 @@ type
     procedure RegisterSync(PHWnd:THandle);
     // 灾难恢复时关账
     procedure RecoveryClose(CloseDate:string);
+    function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
+    procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     property  Params:TftParamList read FParams write SetParams;
     property  SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property  Stoped:boolean read FStoped write SetStoped;
@@ -1013,29 +1013,6 @@ begin
   InitList29;
 end;
 
-procedure TSyncFactory.SetProHandle(const Value: Hwnd);
-begin
-  FProHandle := Value;
-end;
-
-procedure TSyncFactory.SetProCaption;
-begin
-  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 0);
-  Application.ProcessMessages;
-end;
-
-procedure TSyncFactory.SetProMax(max: integer);
-begin
-  PostMessage(ProHandle, MSC_SET_MAX, max, 0);
-  Application.ProcessMessages;
-end;
-
-procedure TSyncFactory.SetProPosition(position: integer);
-begin
-  PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
-  Application.ProcessMessages;
-end;
-
 function TSyncFactory.CheckNeedLoginSync: boolean;
 var timestamp:int64;
 begin
@@ -1818,12 +1795,6 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SetProTitle(const Value: string);
-begin
-  FProTitle := Value;
-  SetProCaption;
-end;
-
 procedure TSyncFactory.RecoveryClose(CloseDate: string);
 var str:string;
 begin
@@ -1870,6 +1841,35 @@ begin
   finally
     dataFactory.MoveToDefault;
   end;
+end;
+
+procedure TSyncFactory.SetProTitle(const Value: string);
+begin
+  FProTitle := Value;
+  SetProCaption;
+end;
+
+procedure TSyncFactory.SetProHandle(const Value: Hwnd);
+begin
+  FProHandle := Value;
+end;
+
+procedure TSyncFactory.SetProCaption;
+begin
+  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 0);
+  Application.ProcessMessages;
+end;
+
+procedure TSyncFactory.SetProMax(max: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_MAX, max, 0);
+  Application.ProcessMessages;
+end;
+
+procedure TSyncFactory.SetProPosition(position: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
+  Application.ProcessMessages;
 end;
 
 initialization

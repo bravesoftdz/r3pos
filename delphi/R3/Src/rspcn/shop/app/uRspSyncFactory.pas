@@ -8,7 +8,18 @@ uses
 
 type
 
-  TRspSyncFactory=class(TSyncFactory)
+  TRspSyncFactory=class
+  private
+    FProHandle: Hwnd;
+    FParams: TftParamList;
+    procedure SetProTitle(const Value: string);
+    procedure SetProHandle(const Value: Hwnd);
+    procedure SetParams(const Value: TftParamList);
+  protected
+    FProTitle:string;
+    procedure SetProCaption;
+    procedure SetProMax(max:integer);
+    procedure SetProPosition(position:integer);
   public
     procedure downloadTenants;
     procedure downloadServiceLines;
@@ -18,7 +29,9 @@ type
     procedure downloadGoodsSort;
     procedure copyGoodsSort;
     procedure SyncAll;
-    procedure SetProCaption;override;
+    property  Params:TftParamList read FParams write SetParams;
+    property  ProTitle:string read FProTitle write SetProTitle;
+    property  ProHandle:Hwnd read FProHandle write SetProHandle;
   end;
 
 var RspSyncFactory:TRspSyncFactory;
@@ -37,7 +50,7 @@ var
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
-  timestamp := GetSynTimeStamp(token.tenantId,'RSP_CA_TENANT');
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_CA_TENANT');
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadTenants(strtoint(token.tenantId), 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -120,7 +133,7 @@ begin
           Params.ParamByName('TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
-          SetSynTimeStamp(token.tenantId,'RSP_CA_TENANT',maxtimestamp);
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_CA_TENANT',maxtimestamp);
         finally
           Params.Free;
         end;
@@ -159,7 +172,7 @@ var
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
-  timestamp := GetSynTimeStamp(token.tenantId,'RSP_CA_RELATION');
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_CA_RELATION');
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadServiceLines(strtoint(token.tenantId), 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -206,7 +219,7 @@ begin
           Params.ParamByName('TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
-          SetSynTimeStamp(token.tenantId,'RSP_CA_RELATION',maxtimestamp);
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_CA_RELATION',maxtimestamp);
         finally
           Params.Free;
         end;
@@ -244,7 +257,7 @@ var
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
-  timestamp := GetSynTimeStamp(token.tenantId,'RSP_CA_RELATIONS');
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_CA_RELATIONS');
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadRelations(strtoint(token.tenantId), 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -298,7 +311,7 @@ begin
           Params.ParamByName('TIME_STAMP').Value := timeStamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
-          SetSynTimeStamp(token.tenantId,'RSP_CA_RELATIONS',maxtimestamp);
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_CA_RELATIONS',maxtimestamp);
         finally
           Params.Free;
         end;
@@ -350,7 +363,7 @@ var
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
-  timestamp := GetSynTimeStamp(token.tenantId,'RSP_PUB_UNION_INFO');
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_PUB_UNION_INFO');
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadUnion(strtoint(token.tenantId), GetParent, 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -491,7 +504,7 @@ begin
             dataFactory.CancelBatch;
             Raise;
           end;
-          SetSynTimeStamp(token.tenantId,'RSP_PUB_UNION_INFO',maxtimestamp);
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_PUB_UNION_INFO',maxtimestamp);
         finally
           Params.Free;
         end;
@@ -548,7 +561,7 @@ var
   ProductId:string;
 begin
   ProductId := dllGlobal.GetProductId;
-  timestamp := GetSynTimeStamp(token.tenantId,'RSP_CA_MODULE',ProductId);
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_CA_MODULE',ProductId);
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadModules(strtoint(token.tenantId), 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -603,7 +616,7 @@ begin
           Params.ParamByName('TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
           dataFactory.UpdateBatch(rs,'TSyncCaModuleV60',Params);
-          SetSynTimeStamp(token.tenantId,'RSP_CA_MODULE',maxtimeStamp,ProductId);
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_CA_MODULE',maxtimeStamp,ProductId);
         finally
           Params.Free;
         end;
@@ -642,7 +655,7 @@ var
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
-  timestamp := GetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT');
+  timestamp := SyncFactory.GetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT');
   maxtimestamp := timestamp;
   outxml := rspFactory.downloadSort(strtoint(token.tenantId), 1, timestamp);
   doc := rspFactory.CreateXML(outxml);
@@ -694,7 +707,7 @@ begin
           Params.ParamByName('TIME_STAMP').Value := timestamp;
           Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
-          SetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT',maxtimestamp);
+          SyncFactory.SetSynTimeStamp(token.tenantId,'RSP_PUB_GOODSSORT',maxtimestamp);
         finally
           Params.Free;
         end;
@@ -751,12 +764,6 @@ begin
   Application.ProcessMessages;
   downloadModules;
   SetProPosition(6);
-end;
-
-procedure TRspSyncFactory.SetProCaption;
-begin
-  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 1);
-  Application.ProcessMessages;
 end;
 
 procedure TRspSyncFactory.copyGoodsSort;
@@ -835,6 +842,40 @@ begin
     ss.Free;
   end;
   dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
+end;
+
+procedure TRspSyncFactory.SetProTitle(const Value: string);
+begin
+  FProTitle := Value;
+  SetProCaption;
+end;
+
+procedure TRspSyncFactory.SetProHandle(const Value: Hwnd);
+begin
+  FProHandle := Value;
+end;
+
+procedure TRspSyncFactory.SetParams(const Value: TftParamList);
+begin
+  FParams := Value;
+end;
+
+procedure TRspSyncFactory.SetProCaption;
+begin
+  PostMessage(ProHandle, MSC_SET_CAPTION, 0, 1);
+  Application.ProcessMessages;
+end;
+
+procedure TRspSyncFactory.SetProMax(max: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_MAX, max, 0);
+  Application.ProcessMessages;
+end;
+
+procedure TRspSyncFactory.SetProPosition(position: integer);
+begin
+  PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
+  Application.ProcessMessages;
 end;
 
 initialization

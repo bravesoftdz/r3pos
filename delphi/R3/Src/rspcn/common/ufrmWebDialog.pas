@@ -4,21 +4,25 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, RzBmpBtn, RzForms, jpeg, ExtCtrls, RzPanel, DB, DBGridEh;
+  Dialogs, RzBmpBtn, RzForms, jpeg, ExtCtrls, RzPanel, DB, DBGridEh,
+  StdCtrls, RzLabel;
 
 type
   TfrmWebDialog = class(TForm)
-    pnlAddressBar: TPanel;
-    Image1: TImage;
-    Image3: TImage;
-    RzFormShape1: TRzFormShape;
-    Image2: TImage;
     RzPanel1: TRzPanel;
-    RzBmpButton2: TRzBmpButton;
-    procedure RzBmpButton2Click(Sender: TObject);
+    pnlAddressBar: TPanel;
+    Image2: TImage;
+    Image3: TImage;
+    RzLabel1: TRzLabel;
+    Image1: TImage;
+    RzFormShape1: TRzFormShape;
+    btnClose: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    btnWindow: TRzBmpButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure btnCloseClick(Sender: TObject);
   private
     FdbState: TDataSetState;
     procedure OnEnterPress(CurrentForm: TForm; Key: Char);
@@ -47,11 +51,6 @@ destructor TfrmWebDialog.Destroy;
 begin
   Freeform(self);
   inherited;
-end;
-
-procedure TfrmWebDialog.RzBmpButton2Click(Sender: TObject);
-begin
-  Close;
 end;
 
 procedure TfrmWebDialog.SetdbState(const Value: TDataSetState);
@@ -90,6 +89,11 @@ procedure TfrmWebDialog.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if Key=27 then Close;
+end;
+
+procedure TfrmWebDialog.btnCloseClick(Sender: TObject);
+begin
+  Close;
 end;
 
 end.

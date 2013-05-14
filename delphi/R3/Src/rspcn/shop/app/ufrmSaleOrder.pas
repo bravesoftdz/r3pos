@@ -123,7 +123,6 @@ type
     procedure RzToolButton1Click(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
-    procedure edtPAY_TOTALPropertiesChange(Sender: TObject);
     procedure serachTextEnter(Sender: TObject);
     procedure serachTextExit(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
@@ -140,6 +139,7 @@ type
       p3: Variant; var Val: Variant);
     procedure edtACCT_MNYKeyPress(Sender: TObject; var Key: Char);
     procedure edtAGIO_RATEKeyPress(Sender: TObject; var Key: Char);
+    procedure edtPAY_TOTALKeyPress(Sender: TObject; var Key: Char);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1938,27 +1938,6 @@ begin
   end;
 end;
 
-procedure TfrmSaleOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
-var r:currency;
-begin
-  inherited;
-  if edtPAY_TOTAL.Focused then
-     begin
-       r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
-       AObj.FieldbyName('PAY_A').AsFloat := r;
-       AObj.FieldbyName('PAY_B').AsFloat := 0;
-       AObj.FieldbyName('PAY_C').AsFloat := 0;
-       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat)-r;
-       AObj.FieldbyName('PAY_E').AsFloat := 0;
-       AObj.FieldbyName('PAY_F').AsFloat := 0;
-       AObj.FieldbyName('PAY_G').AsFloat := 0;
-       AObj.FieldbyName('PAY_H').AsFloat := 0;
-       AObj.FieldbyName('PAY_I').AsFloat := 0;
-       AObj.FieldbyName('PAY_J').AsFloat := 0;
-       payment.Caption := '现金收款';
-     end;
-end;
-
 procedure TfrmSaleOrder.serachTextEnter(Sender: TObject);
 begin
   inherited;
@@ -2184,6 +2163,28 @@ begin
        else
           edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
+     end;
+end;
+
+procedure TfrmSaleOrder.edtPAY_TOTALKeyPress(Sender: TObject;
+  var Key: Char);
+var r:currency;
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
+       AObj.FieldbyName('PAY_A').AsFloat := r;
+       AObj.FieldbyName('PAY_B').AsFloat := 0;
+       AObj.FieldbyName('PAY_C').AsFloat := 0;
+       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat)-r;
+       AObj.FieldbyName('PAY_E').AsFloat := 0;
+       AObj.FieldbyName('PAY_F').AsFloat := 0;
+       AObj.FieldbyName('PAY_G').AsFloat := 0;
+       AObj.FieldbyName('PAY_H').AsFloat := 0;
+       AObj.FieldbyName('PAY_I').AsFloat := 0;
+       AObj.FieldbyName('PAY_J').AsFloat := 0;
+       payment.Caption := '现金收款';
      end;
 end;
 

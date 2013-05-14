@@ -10,42 +10,14 @@ inherited frmInitGoods: TfrmInitGoods
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 613
-    inherited Image3: TImage
-      Width = 195
-    end
-    inherited Image1: TImage
-      Left = 403
-    end
-    inherited RzFormShape1: TRzFormShape
-      Width = 613
-    end
-    object RzLabel26: TRzLabel [4]
-      Left = 10
-      Top = 7
-      Width = 106
-      Height = 16
-      Alignment = taCenter
-      Caption = #21830#21697#21021#22987#21270#21521#23548
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 582
-    end
-  end
   inherited RzPanel1: TRzPanel
     Width = 613
-    Height = 395
+    Height = 397
     object RzPanel2: TRzPanel
       Left = 1
       Top = 1
       Width = 611
-      Height = 393
+      Height = 395
       Align = alClient
       BorderOuter = fsFlatRounded
       BorderWidth = 2
@@ -54,7 +26,7 @@ inherited frmInitGoods: TfrmInitGoods
         Left = 184
         Top = 4
         Width = 423
-        Height = 340
+        Height = 342
         Align = alClient
         BorderOuter = fsFlat
         TabOrder = 0
@@ -62,7 +34,7 @@ inherited frmInitGoods: TfrmInitGoods
           Left = 1
           Top = 1
           Width = 421
-          Height = 338
+          Height = 340
           ActivePage = TabSheet2
           Align = alClient
           Color = clWindow
@@ -97,20 +69,6 @@ inherited frmInitGoods: TfrmInitGoods
               ShowGradient = True
               ShowImage = False
               ShowTexture = False
-            end
-            object RzLabel1: TRzLabel
-              Left = 20
-              Top = 23
-              Width = 100
-              Height = 24
-              Caption = #31532#19968#27493#65306
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clWhite
-              Font.Height = -24
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-              Transparent = True
             end
             object RzLabel2: TRzLabel
               Left = 111
@@ -1771,7 +1729,7 @@ inherited frmInitGoods: TfrmInitGoods
       end
       object RzPanel4: TRzPanel
         Left = 4
-        Top = 344
+        Top = 346
         Width = 603
         Height = 45
         Align = alBottom
@@ -2216,7 +2174,7 @@ inherited frmInitGoods: TfrmInitGoods
         Left = 4
         Top = 4
         Width = 180
-        Height = 340
+        Height = 342
         Align = alLeft
         BorderOuter = fsFlat
         Color = clWhite
@@ -2225,10 +2183,48 @@ inherited frmInitGoods: TfrmInitGoods
           Left = 1
           Top = 1
           Width = 178
-          Height = 338
+          Height = 340
           Align = alClient
         end
       end
+    end
+  end
+  inherited pnlAddressBar: TPanel
+    Width = 613
+    inherited Image3: TImage
+      Width = 605
+    end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
+    inherited Image1: TImage
+      Left = 609
+    end
+    object RzLabel26: TRzLabel [4]
+      Left = 10
+      Top = 7
+      Width = 106
+      Height = 16
+      Alignment = taCenter
+      Caption = #21830#21697#21021#22987#21270#21521#23548
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 613
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 580
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 528
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 554
     end
   end
   object cdsGoodsPrice: TZQuery

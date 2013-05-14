@@ -22,7 +22,6 @@ type
     barcode_input_right: TImage;
     barcode_input_line: TImage;
     edtInput: TcxTextEdit;
-    RzLabel1: TRzLabel;
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure RzBmpButton1Click(Sender: TObject);

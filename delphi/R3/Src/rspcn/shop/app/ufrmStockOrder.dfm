@@ -19,45 +19,19 @@ inherited frmStockOrder: TfrmStockOrder
             Width = 865
             Height = 149
             inherited RzPanel2: TRzPanel
-              Width = 845
-              Height = 129
+              Width = 843
+              Height = 127
               DesignSize = (
-                845
-                129)
+                843
+                127)
               inherited RzBorder1: TRzBorder
-                Width = 807
-              end
-              inherited barcode_panel_left_line: TImage
-                Height = 113
-              end
-              inherited barcode_panel_right_line: TImage
-                Left = 843
-                Height = 113
+                Width = 805
               end
               inherited lblHint: TRzLabel
                 ShadowColor = 15921906
               end
               inherited help: TRzBmpButton
-                Left = 813
-              end
-              inherited barcode_top: TRzPanel
-                Width = 845
-                inherited barcode_panel_top_right: TImage
-                  Left = 835
-                end
-                inherited barcode_panel_top_line: TImage
-                  Width = 816
-                end
-              end
-              inherited barcode_botton: TRzPanel
-                Top = 121
-                Width = 845
-                inherited barcode_panel_bottom_line: TImage
-                  Width = 841
-                end
-                inherited barcodeb_panel_right_line: TImage
-                  Left = 843
-                end
+                Left = 811
               end
               inherited barcode: TRzPanel
                 inherited edtInput: TcxTextEdit
@@ -65,7 +39,7 @@ inherited frmStockOrder: TfrmStockOrder
                 end
               end
               inherited helpPanel: TRzPanel
-                Left = 414
+                Left = 412
                 Width = 417
                 inherited lblModifyUnit: TRzLabel
                   Left = 5
@@ -257,7 +231,7 @@ inherited frmStockOrder: TfrmStockOrder
               object RzPanel19: TRzPanel
                 Left = 16
                 Top = 59
-                Width = 384
+                Width = 382
                 Height = 56
                 Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsNone
@@ -270,14 +244,14 @@ inherited frmStockOrder: TfrmStockOrder
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
-                TabOrder = 5
+                TabOrder = 3
                 DesignSize = (
-                  384
+                  382
                   56)
                 object Image5: TImage
                   Left = 5
                   Top = 0
-                  Width = 374
+                  Width = 372
                   Height = 56
                   Align = alClient
                   AutoSize = True
@@ -305,7 +279,7 @@ inherited frmStockOrder: TfrmStockOrder
                 object MarqueeStatus: TRzMarqueeStatus
                   Left = 5
                   Top = 2
-                  Width = 373
+                  Width = 371
                   Height = 52
                   FrameStyle = fsNone
                   Anchors = [akLeft, akTop, akRight]
@@ -363,7 +337,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Stretch = True
                 end
                 object Image7: TImage
-                  Left = 379
+                  Left = 377
                   Top = 0
                   Width = 5
                   Height = 56
@@ -792,14 +766,7 @@ inherited frmStockOrder: TfrmStockOrder
             Top = 366
             Width = 865
             Height = 109
-            inherited footerb_panel_left_line: TImage
-              Height = 73
-            end
-            inherited footerb_panel_right_line: TImage
-              Left = 853
-              Height = 73
-            end
-            object Image2: TImage [2]
+            object Image2: TImage
               Left = 17
               Top = 18
               Width = 318
@@ -1329,25 +1296,6 @@ inherited frmStockOrder: TfrmStockOrder
                 F66CFF00EBE5EFDD7BA9D49FC37EDF29A7FBBD6FB18FC9E3FEF5E8D1FC4F1D6F
                 3F97D7E2D7A6DE3F5EBD37F46AF7EEBDD7FFD9}
             end
-            inherited footer_bottom: TRzPanel
-              Top = 91
-              Width = 845
-              inherited footer_panel_bottom_right: TImage
-                Left = 838
-              end
-              inherited footer_panel_bottom_line: TImage
-                Width = 825
-              end
-            end
-            inherited footer_top: TRzPanel
-              Width = 845
-              inherited footer_panel_top_line: TImage
-                Width = 841
-              end
-              inherited footer_panel_right_line: TImage
-                Left = 843
-              end
-            end
             object edtBK_GUIDE_USER: TRzPanel
               Left = 106
               Top = 18
@@ -1357,7 +1305,7 @@ inherited frmStockOrder: TfrmStockOrder
               BorderWidth = 1
               Color = clWhite
               FlatColor = 9145227
-              TabOrder = 2
+              TabOrder = 0
               DesignSize = (
                 229
                 31)
@@ -1457,7 +1405,7 @@ inherited frmStockOrder: TfrmStockOrder
               Top = 63
               Width = 316
               Height = 23
-              TabOrder = 3
+              TabOrder = 1
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtBK_ACCT_MNY: TRzPanel
@@ -1470,7 +1418,7 @@ inherited frmStockOrder: TfrmStockOrder
               BorderWidth = 1
               Color = clWhite
               FlatColor = 9145227
-              TabOrder = 4
+              TabOrder = 2
               object RzLabel9: TRzLabel
                 Left = 307
                 Top = 2
@@ -1542,10 +1490,9 @@ inherited frmStockOrder: TfrmStockOrder
                 Top = 4
                 Width = 112
                 Height = 23
-                Properties.OnChange = edtACCT_MNYPropertiesChange
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                OnExit = edtACCT_MNYExit
+                OnKeyPress = edtACCT_MNYKeyPress
               end
               object edtAGIO_RATE: TcxTextEdit
                 Left = 254
@@ -1553,11 +1500,10 @@ inherited frmStockOrder: TfrmStockOrder
                 Width = 47
                 Height = 23
                 Properties.Alignment.Horz = taRightJustify
-                Properties.OnChange = edtAGIO_RATEPropertiesChange
                 TabOrder = 2
                 Text = '100.0'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                OnExit = edtAGIO_RATEExit
+                OnKeyPress = edtAGIO_RATEKeyPress
               end
               object RzPanel8: TRzPanel
                 Left = 217
@@ -1614,7 +1560,7 @@ inherited frmStockOrder: TfrmStockOrder
               BorderWidth = 1
               Color = clWhite
               FlatColor = 9145227
-              TabOrder = 5
+              TabOrder = 3
               DesignSize = (
                 318
                 35)
@@ -1673,7 +1619,6 @@ inherited frmStockOrder: TfrmStockOrder
                 Height = 23
                 Anchors = [akTop, akRight]
                 ParentFont = False
-                Properties.OnChange = edtPAY_TOTALPropertiesChange
                 Style.Font.Charset = GB2312_CHARSET
                 Style.Font.Color = clMaroon
                 Style.Font.Height = -15
@@ -1682,6 +1627,7 @@ inherited frmStockOrder: TfrmStockOrder
                 TabOrder = 1
                 Text = '34866.55'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtPAY_TOTALKeyPress
               end
             end
             object btnSave: TRzBmpButton
@@ -3275,7 +3221,7 @@ inherited frmStockOrder: TfrmStockOrder
                 04606060DEDEDEDEDEDE}
               Color = clBtnFace
               Anchors = [akTop, akRight]
-              TabOrder = 6
+              TabOrder = 4
               OnClick = btnSaveClick
             end
             object btnNew: TRzBmpButton
@@ -3813,7 +3759,7 @@ inherited frmStockOrder: TfrmStockOrder
               Color = clBtnFace
               Anchors = [akTop, akRight]
               Caption = #28165#31354
-              TabOrder = 7
+              TabOrder = 5
               OnClick = btnNewClick
             end
           end

@@ -121,9 +121,6 @@ type
     procedure DBGridEh1Columns8UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
-    procedure edtPAY_TOTALPropertiesChange(Sender: TObject);
-    procedure edtACCT_MNYPropertiesChange(Sender: TObject);
-    procedure edtAGIO_RATEPropertiesChange(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
     procedure serachTextEnter(Sender: TObject);
     procedure serachTextExit(Sender: TObject);
@@ -138,8 +135,9 @@ type
       var ParValue: Variant);
     procedure frfStockOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
-    procedure edtACCT_MNYExit(Sender: TObject);
-    procedure edtAGIO_RATEExit(Sender: TObject);
+    procedure edtACCT_MNYKeyPress(Sender: TObject; var Key: Char);
+    procedure edtAGIO_RATEKeyPress(Sender: TObject; var Key: Char);
+    procedure edtPAY_TOTALKeyPress(Sender: TObject; var Key: Char);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1331,83 +1329,6 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
-var
-  r:currency;
-begin
-  inherited;
-  if edtPAY_TOTAL.Focused then
-     begin
-       r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
-       AObj.FieldbyName('PAY_A').AsFloat := r;
-       AObj.FieldbyName('PAY_B').AsFloat := 0;
-       AObj.FieldbyName('PAY_C').AsFloat := 0;
-       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat)-r;
-       AObj.FieldbyName('PAY_E').AsFloat := 0;
-       AObj.FieldbyName('PAY_F').AsFloat := 0;
-       AObj.FieldbyName('PAY_G').AsFloat := 0;
-       AObj.FieldbyName('PAY_H').AsFloat := 0;
-       AObj.FieldbyName('PAY_I').AsFloat := 0;
-       AObj.FieldbyName('PAY_J').AsFloat := 0;
-       payment.Caption := '现金收款';
-     end;
-end;
-
-procedure TfrmStockOrder.edtACCT_MNYPropertiesChange(Sender: TObject);
-var r,fee:currency;
-begin
-  inherited;
-  if edtACCT_MNY.Focused then
-     begin
-       r := StrtoFloatDef(edtACCT_MNY.Text,0);
-       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-r;
-       if TotalFee<>0 then
-          edtAGIO_RATE.Text := formatFloat('#0.0',r*100/TotalFee)
-       else
-          edtAGIO_RATE.Text := '';
-       fee :=
-        AObj.FieldbyName('PAY_B').AsFloat+
-        AObj.FieldbyName('PAY_C').AsFloat+
-        AObj.FieldbyName('PAY_D').AsFloat+
-        AObj.FieldbyName('PAY_E').AsFloat+
-        AObj.FieldbyName('PAY_F').AsFloat+
-        AObj.FieldbyName('PAY_G').AsFloat+
-        AObj.FieldbyName('PAY_H').AsFloat+
-        AObj.FieldbyName('PAY_I').AsFloat+
-        AObj.FieldbyName('PAY_J').AsFloat;
-       if fee=0 then
-          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
-       else
-          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
-     end;
-end;
-
-procedure TfrmStockOrder.edtAGIO_RATEPropertiesChange(Sender: TObject);
-var r,fee:currency;
-begin
-  inherited;
-  if edtAGIO_RATE.Focused then
-     begin
-       r := StrtoFloatDef(edtAGIO_RATE.Text,0);
-       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
-       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_ZERO').AsFloat);
-       fee :=
-        AObj.FieldbyName('PAY_B').AsFloat+
-        AObj.FieldbyName('PAY_C').AsFloat+
-        AObj.FieldbyName('PAY_D').AsFloat+
-        AObj.FieldbyName('PAY_E').AsFloat+
-        AObj.FieldbyName('PAY_F').AsFloat+
-        AObj.FieldbyName('PAY_G').AsFloat+
-        AObj.FieldbyName('PAY_H').AsFloat+
-        AObj.FieldbyName('PAY_I').AsFloat+
-        AObj.FieldbyName('PAY_J').AsFloat;
-       if fee=0 then
-          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
-       else
-          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
-     end;
-end;
-
 procedure TfrmStockOrder.PageControlChange(Sender: TObject);
 begin
   inherited;
@@ -1560,24 +1481,90 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.edtACCT_MNYExit(Sender: TObject);
-begin
-  inherited;
-  DoShowPayment;
-
-end;
-
-procedure TfrmStockOrder.edtAGIO_RATEExit(Sender: TObject);
-begin
-  inherited;
-  DoShowPayment;
-
-end;
-
 procedure TfrmStockOrder.BarcodeInput(_Buf: string);
 begin
   inherited;
 
+end;
+
+procedure TfrmStockOrder.edtACCT_MNYKeyPress(Sender: TObject;
+  var Key: Char);
+var r,fee:currency;
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       r := StrtoFloatDef(edtACCT_MNY.Text,0);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-r;
+       if TotalFee<>0 then
+          edtAGIO_RATE.Text := formatFloat('#0.0',r*100/TotalFee)
+       else
+          edtAGIO_RATE.Text := '';
+       fee :=
+        AObj.FieldbyName('PAY_B').AsFloat+
+        AObj.FieldbyName('PAY_C').AsFloat+
+        AObj.FieldbyName('PAY_D').AsFloat+
+        AObj.FieldbyName('PAY_E').AsFloat+
+        AObj.FieldbyName('PAY_F').AsFloat+
+        AObj.FieldbyName('PAY_G').AsFloat+
+        AObj.FieldbyName('PAY_H').AsFloat+
+        AObj.FieldbyName('PAY_I').AsFloat+
+        AObj.FieldbyName('PAY_J').AsFloat;
+       if fee=0 then
+          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+       else
+          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+     end;
+end;
+
+procedure TfrmStockOrder.edtAGIO_RATEKeyPress(Sender: TObject;
+  var Key: Char);
+var r,fee:currency;
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       r := StrtoFloatDef(edtAGIO_RATE.Text,0);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
+       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_ZERO').AsFloat);
+       fee :=
+        AObj.FieldbyName('PAY_B').AsFloat+
+        AObj.FieldbyName('PAY_C').AsFloat+
+        AObj.FieldbyName('PAY_D').AsFloat+
+        AObj.FieldbyName('PAY_E').AsFloat+
+        AObj.FieldbyName('PAY_F').AsFloat+
+        AObj.FieldbyName('PAY_G').AsFloat+
+        AObj.FieldbyName('PAY_H').AsFloat+
+        AObj.FieldbyName('PAY_I').AsFloat+
+        AObj.FieldbyName('PAY_J').AsFloat;
+       if fee=0 then
+          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+       else
+          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+     end;
+end;
+
+procedure TfrmStockOrder.edtPAY_TOTALKeyPress(Sender: TObject;
+  var Key: Char);
+var
+  r:currency;
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
+       AObj.FieldbyName('PAY_A').AsFloat := r;
+       AObj.FieldbyName('PAY_B').AsFloat := 0;
+       AObj.FieldbyName('PAY_C').AsFloat := 0;
+       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat)-r;
+       AObj.FieldbyName('PAY_E').AsFloat := 0;
+       AObj.FieldbyName('PAY_F').AsFloat := 0;
+       AObj.FieldbyName('PAY_G').AsFloat := 0;
+       AObj.FieldbyName('PAY_H').AsFloat := 0;
+       AObj.FieldbyName('PAY_I').AsFloat := 0;
+       AObj.FieldbyName('PAY_J').AsFloat := 0;
+       payment.Caption := '现金收款';
+     end;
 end;
 
 initialization

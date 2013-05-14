@@ -7,46 +7,17 @@ inherited frmPayment: TfrmPayment
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 397
-    TabOrder = 2
-    inherited Image3: TImage
-      Width = 0
-    end
-    inherited Image1: TImage
-      Left = 187
-    end
-    inherited RzFormShape1: TRzFormShape
-      Width = 397
-    end
-    object RzLabel1: TRzLabel [4]
-      Left = 10
-      Top = 7
-      Width = 76
-      Height = 16
-      Alignment = taCenter
-      Caption = #25903#20184#23545#35805#26694
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 366
-    end
-  end
   inherited RzPanel1: TRzPanel
-    Top = 73
+    Top = 71
     Width = 397
-    Height = 242
+    Height = 244
     BorderWidth = 10
     TabOrder = 1
     object DBGridEh1: TDBGridEh
       Left = 11
       Top = 11
       Width = 375
-      Height = 220
+      Height = 222
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       AutoFitColWidths = True
@@ -143,9 +114,31 @@ inherited frmPayment: TfrmPayment
         end>
     end
   end
+  inherited pnlAddressBar: TPanel
+    Width = 397
+    TabOrder = 2
+    inherited Image3: TImage
+      Width = 389
+    end
+    inherited Image1: TImage
+      Left = 393
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 397
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 367
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 315
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 341
+    end
+  end
   object RzPanel2: TRzPanel
     Left = 0
-    Top = 30
+    Top = 28
     Width = 397
     Height = 43
     Align = alTop

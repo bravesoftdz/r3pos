@@ -18,7 +18,6 @@ type
     rzPage: TRzPageControl;
     TabSheet1: TRzTabSheet;
     RzBackground1: TRzBackground;
-    RzLabel1: TRzLabel;
     RzLabel2: TRzLabel;
     RzBorder1: TRzBorder;
     RzLabel6: TRzLabel;

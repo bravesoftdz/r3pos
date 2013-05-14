@@ -44,11 +44,19 @@ type
     FinishIndex:integer;
     procedure SetTicket;
     function  GetTicket:Int64;
+    procedure ClearSyncList;
+    procedure ReadTimeStamp;
+    function  GetFactoryName(node:PSynTableInfo):string;
+    function  GetTableFields(tbName:string;alias:string=''):string;
+
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetStoped(const Value: boolean);
     procedure SetProHandle(const Value: Hwnd);
     procedure SetProTitle(const Value: string);
+    procedure SetProCaption;
+    procedure SetProMax(max:integer);
+    procedure SetProPosition(position:integer);
   private
     CloseAccDate:integer;
     LoginSyncDate:integer;
@@ -68,15 +76,6 @@ type
     procedure GetCloseAccDate;
     function  CheckNeedLoginSync:boolean;
     function  CheckNeedLoginSyncBizData:boolean;
-  protected
-    procedure ClearSyncList;
-    procedure ReadTimeStamp;
-    function  GetFactoryName(node:PSynTableInfo):string;
-    function  GetTableFields(tbName:string;alias:string=''):string;
-    // 进度条控制
-    procedure SetProCaption;
-    procedure SetProMax(max:integer);
-    procedure SetProPosition(position:integer);
   public
     constructor Create;
     destructor  Destroy;override;
@@ -1062,7 +1061,7 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
-      Application.ProcessMessages;
+      Update;
       if not token.online then Exit;
       if token.tenantId = '' then
          begin
@@ -1107,6 +1106,7 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
+      Update;
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
@@ -1128,6 +1128,7 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
+      Update;
       SyncFactory.SyncBizData(1,BeginDate);
     finally
       Free;
@@ -1146,6 +1147,7 @@ begin
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
+      Update;
       RspSyncFactory.SyncAll;
       RspSyncFactory.copyGoodsSort;
       SyncFactory.InitTenant;

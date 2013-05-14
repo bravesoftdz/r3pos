@@ -10,13 +10,12 @@ type
 
   TRspSyncFactory=class
   private
+    FProTitle:string;
     FProHandle: Hwnd;
     FParams: TftParamList;
     procedure SetProTitle(const Value: string);
     procedure SetProHandle(const Value: Hwnd);
     procedure SetParams(const Value: TftParamList);
-  protected
-    FProTitle:string;
     procedure SetProCaption;
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
@@ -741,27 +740,21 @@ begin
   SetProMax(6);
   SetProPosition(0);
   ProTitle := '正在下载<企业信息>...';
-  Application.ProcessMessages;
   downloadTenants;
   SetProPosition(1);
   ProTitle := '正在下载<供应链信息>...';
-  Application.ProcessMessages;
   downloadServiceLines;
   SetProPosition(2);
   ProTitle := '正在下载<供应关系>...';
-  Application.ProcessMessages;
   downloadRelations;
   SetProPosition(3);
   ProTitle := '正在下载<计量单位>...';
-  Application.ProcessMessages;
   downloadUnion;
   SetProPosition(4);
   ProTitle := '正在下载<商品分类>...';
-  Application.ProcessMessages;
   downloadGoodsSort;
   SetProPosition(5);
   ProTitle := '正在下载<功能模块>...';
-  Application.ProcessMessages;
   downloadModules;
   SetProPosition(6);
 end;

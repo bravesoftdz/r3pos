@@ -16,6 +16,8 @@ type
 
   TRtcSyncFactory=class
   private
+    FProHandle: Hwnd;
+    FProTitle: string;
     F:TextFile;
     dllHandle:THandle;
     dllLoaded,dllValid:boolean;
@@ -24,8 +26,6 @@ type
     FThreadLock:TRTLCriticalSection;
     GetCustAuthen:TDllGetCustAuthen;
     SendDataAsync:TDllSendDataAsync;
-    FProHandle: Hwnd;
-    FProTitle: string;
     procedure GetLicenseCode;
     function  GetXmlHeader(xml:widestring):widestring;
     function  GetTransUnitId(unitId:string):string;
@@ -45,9 +45,9 @@ type
     procedure FreeDllFactory;
     function  GetToken:boolean;
     function  SendData(xml:widestring):boolean;
+
     procedure SetProHandle(const Value: Hwnd);
     procedure SetProTitle(const Value: string);
-  protected
     procedure SetProCaption;
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
@@ -566,19 +566,15 @@ begin
     SetProMax(4);
     SetProPosition(0);
     ProTitle := '正在上传<进货单>...';
-    Application.ProcessMessages;
     SyncStockOrder;
     SetProPosition(1);
     ProTitle := '正在上传<销售单>...';
-    Application.ProcessMessages;
     SyncSalesOrder;
     SetProPosition(2);
     ProTitle := '正在上传<库存数据>...';
-    Application.ProcessMessages;
     SyncStorage;
     SetProPosition(3);
     ProTitle := '正在上传<消费者信息>...';
-    Application.ProcessMessages;
     SyncCustomer;
     SetProPosition(4);
   finally

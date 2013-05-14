@@ -21,10 +21,8 @@ type
     RzPanel2: TRzPanel;
     RzPanel3: TRzPanel;
     RzBackground1: TRzBackground;
-    RzLabel1: TRzLabel;
     edtSORT_NAME: TcxTextEdit;
     btnSave: TRzBmpButton;
-    btnClose: TRzBmpButton;
     RzLabel26: TRzLabel;
     procedure edtSUP_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);

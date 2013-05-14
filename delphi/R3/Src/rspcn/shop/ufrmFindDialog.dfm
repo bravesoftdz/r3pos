@@ -2,37 +2,8 @@ inherited frmFindDialog: TfrmFindDialog
   Caption = 'frmFindDialog'
   ClientWidth = 433
   OldCreateOrder = True
-  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 433
-    inherited RzFormShape1: TRzFormShape
-      Width = 433
-    end
-    inherited Image3: TImage
-      Width = 15
-    end
-    inherited Image1: TImage
-      Left = 223
-    end
-    object RzLabel1: TRzLabel [4]
-      Left = 10
-      Top = 7
-      Width = 76
-      Height = 16
-      Alignment = taCenter
-      Caption = #26597#25214#23545#35805#26694
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 408
-    end
-  end
   inherited RzPanel1: TRzPanel
     Width = 433
     object RzPanel3: TRzPanel
@@ -441,6 +412,18 @@ inherited frmFindDialog: TfrmFindDialog
         OnExit = serachTextExit
         OnKeyPress = serachTextKeyPress
       end
+    end
+  end
+  inherited pnlAddressBar: TPanel
+    Width = 433
+    inherited Image3: TImage
+      Width = 425
+    end
+    inherited Image1: TImage
+      Left = 429
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 433
     end
   end
   object rs: TZQuery

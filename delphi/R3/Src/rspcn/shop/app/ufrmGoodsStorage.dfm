@@ -1651,6 +1651,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         Width = 1280
         Height = 311
         Align = alTop
+        BorderInner = fsStatus
         BorderOuter = fsNone
         BorderColor = 15461355
         BorderWidth = 10
@@ -1666,35 +1667,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Width = 1231
           Height = 2
           Anchors = [akLeft, akTop, akRight]
-        end
-        object barcode_panel_left_line: TImage
-          Left = 10
-          Top = 18
-          Width = 2
-          Height = 275
-          Align = alLeft
-          AutoSize = True
-          Picture.Data = {
-            07544269746D617076000000424D760000000000000036000000280000000200
-            000008000000010018000000000040000000120B0000120B0000000000000000
-            00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
-            00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
-            0000}
-          Stretch = True
-        end
-        object barcode_panel_right_line: TImage
-          Left = 1268
-          Top = 18
-          Width = 2
-          Height = 275
-          Align = alRight
-          AutoSize = True
-          Picture.Data = {
-            07544269746D617066000000424D660000000000000036000000280000000200
-            000006000000010018000000000030000000120B0000120B0000000000000000
-            0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF
-            0000ECECECFFFFFF0000ECECECFFFFFF0000}
-          Stretch = True
         end
         object btnSave: TRzBmpButton
           Left = 1092
@@ -2129,134 +2101,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Caption = #20851#38381
           TabOrder = 14
           OnClick = RzBmpButton5Click
-        end
-        object barcode_top: TRzPanel
-          Left = 10
-          Top = 10
-          Width = 1260
-          Height = 8
-          Align = alTop
-          BorderOuter = fsNone
-          Color = 14606046
-          TabOrder = 15
-          object barcode_panel_top_left: TImage
-            Left = 0
-            Top = 0
-            Width = 19
-            Height = 8
-            Align = alLeft
-            AutoSize = True
-            Picture.Data = {
-              07544269746D617016020000424D160200000000000036000000280000001300
-              0000080000000100180000000000E0010000120B0000120B0000000000000000
-              00009F9F9F9C9C9CCACACADDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000BFBF
-              BF898989B9B9B9D8D8D8DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000DFDFDF848484
-              9D9D9DC6C6C6DBDBDBDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000EBEBEBBBBBBB808080A5
-              A5A5C8C8C8DADADADDDDDDDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDE000000EBEBEBEBEBEBA5A5A5828282A1A1
-              A1C0C0C0D4D4D4DCDCDCDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDE000000E2E2E2EBEBEBEBEBEBAFAFAF808080949494
-              B2B2B2C8C8C8D3D3D3D9D9D9DCDCDCDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDE000000EBEBEBE2E2E2EBEBEBEBEBEBD0D0D08E8E8E8585859A
-              9A9AACACACB7B7B7BFBFBFC1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1
-              C1C1C1000000EBEBEBEBEBEBE2E2E2EBEBEBEBEBEBE1E1E1C4C4C49F9F9F9191
-              918585858888888A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A00
-              0000}
-          end
-          object barcode_panel_top_right: TImage
-            Left = 1250
-            Top = 0
-            Width = 10
-            Height = 8
-            Align = alRight
-            AutoSize = True
-            Picture.Data = {
-              07544269746D617036010000424D360100000000000036000000280000000A00
-              000008000000010018000000000000010000120B0000120B0000000000000000
-              0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDDDDDDDDDDDDF2F2F2
-              0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDED7D7D7E3E3E3EBEBEB
-              0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDBDBDBCECECEF0F0F0E2E2E2
-              0000DEDEDEDEDEDEDEDEDEDEDEDEDDDDDDDADADAC8C8C8D8D8D8EBEBEBEBEBEB
-              0000DEDEDEDEDEDEDEDEDEDCDCDCD4D4D4C0C0C0C7C7C7EBEBEBE2E2E2EBEBEB
-              0000DCDCDCD9D9D9D3D3D3C8C8C8B5B5B5C6C6C6E2E2E2EBEBEBEBEBEBE2E2E2
-              0000BFBFBFB7B7B7ACACACACACACD4D4D4EBEBEBEBEBEBE2E2E2EBEBEBEBEBEB
-              00009C9C9CA8A8A8C2C2C2EAEAEAEBEBEBE2E2E2EBEBEBEBEBEBE2E2E2EBEBEB
-              0000}
-          end
-          object barcode_panel_top_line: TImage
-            Left = 19
-            Top = 0
-            Width = 1231
-            Height = 8
-            Align = alClient
-            AutoSize = True
-            Picture.Data = {
-              07544269746D6170D6000000424DD60000000000000036000000280000000600
-              0000080000000100180000000000A0000000120B0000120B0000000000000000
-              0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000DEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDE0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000DEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000DEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDE0000DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE0000C1C1C1C1C1C1
-              C1C1C1C1C1C1C1C1C1C1C1C100008A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A8A
-              0000}
-            Stretch = True
-          end
-        end
-        object barcode_botton: TRzPanel
-          Left = 10
-          Top = 293
-          Width = 1260
-          Height = 8
-          Align = alBottom
-          BorderOuter = fsNone
-          Color = 14606046
-          TabOrder = 16
-          object barcode_panel_bottom_line: TImage
-            Left = 2
-            Top = 0
-            Width = 1256
-            Height = 8
-            Align = alClient
-            AutoSize = True
-            Picture.Data = {
-              07544269746D617096000000424D960000000000000036000000280000000400
-              000008000000010018000000000060000000120B0000120B0000000000000000
-              0000FFFFFFFFFFFFFFFFFFFFFFFFDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
-              DEDE}
-            Stretch = True
-          end
-          object barcodeb_panel_right_line: TImage
-            Left = 1258
-            Top = 0
-            Width = 2
-            Height = 8
-            Align = alRight
-            AutoSize = True
-            Picture.Data = {
-              07544269746D617066000000424D660000000000000036000000280000000200
-              000006000000010018000000000030000000120B0000120B0000000000000000
-              0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF0000ECECECFFFFFF
-              0000ECECECFFFFFF0000ECECECFFFFFF0000}
-          end
-          object barcodeb_panel_left_line: TImage
-            Left = 0
-            Top = 0
-            Width = 2
-            Height = 8
-            Align = alLeft
-            AutoSize = True
-            Picture.Data = {
-              07544269746D617076000000424D760000000000000036000000280000000200
-              000008000000010018000000000040000000120B0000120B0000000000000000
-              00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
-              00008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C100008A8A8AC1C1C1
-              0000}
-          end
         end
         object edtBK_BARCODE: TRzPanel
           Left = 24

@@ -55,7 +55,6 @@ uses
   ufrmSaleReport in 'app\ufrmSaleReport.pas' {frmSaleReport},
   ufrmStockReport in 'app\ufrmStockReport.pas' {frmStockReport},
   ufrmStocksCalc in 'app\ufrmStocksCalc.pas' {frmStocksCalc},
-  ufrmProfitReport in 'app\ufrmProfitReport.pas' {frmProfitReport},
   uSyncFactory in 'app\uSyncFactory.pas',
   ObjMeaUnitsV60 in 'obj\ObjMeaUnitsV60.pas',
   ObjShopInfoV60 in 'obj\ObjShopInfoV60.pas',
@@ -82,7 +81,8 @@ uses
   ufrmPayment in 'app\ufrmPayment.pas' {frmPayment},
   ufrmOrderPreview in 'app\ufrmOrderPreview.pas' {frmOrderPreview},
   ufrmSaveDesigner in 'app\ufrmSaveDesigner.pas' {frmSaveDesigner},
-  ufrmMeaUnits in 'app\ufrmMeaUnits.pas' {frmMeaUnits};
+  ufrmMeaUnits in 'app\ufrmMeaUnits.pas' {frmMeaUnits},
+  uRtcSyncFactory in 'app\uRtcSyncFactory.pas';
 
 {$R *.res}
 exports

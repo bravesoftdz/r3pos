@@ -16,10 +16,8 @@ type
     RzPanel2: TRzPanel;
     RzPanel3: TRzPanel;
     RzBackground1: TRzBackground;
-    RzLabel1: TRzLabel;
     edtUNIT_NAME: TcxTextEdit;
     btnSave: TRzBmpButton;
-    btnClose: TRzBmpButton;
     RzLabel26: TRzLabel;
     procedure btnCloseClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);

@@ -561,6 +561,7 @@ begin
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
     Calc;
+    if not cdsHeader.IsEmpty and (cdsHeader.FieldByName('CLIENT_ID').AsString='') then edtCLIENT_ID.Text := 'ÆÕÍ¨¿Í»§';
     DoShowPayment;
   finally
     Params.Free;

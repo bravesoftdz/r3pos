@@ -514,6 +514,8 @@ inherited frmStorageReport: TfrmStorageReport
                 ParentFont = False
                 TabOrder = 0
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

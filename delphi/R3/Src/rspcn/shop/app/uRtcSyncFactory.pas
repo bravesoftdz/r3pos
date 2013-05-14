@@ -67,6 +67,7 @@ uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,EncDec;
 
 constructor TRtcSyncFactory.Create;
 begin
+  inherited;
   dllValid := false;
   dllLoaded := false;
   DefaultPath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
@@ -79,7 +80,6 @@ begin
   Enter;
   try
     inherited;
-    RtcSyncFactory := nil;
   finally
     Leave;
     DeleteCriticalSection(FThreadLock);

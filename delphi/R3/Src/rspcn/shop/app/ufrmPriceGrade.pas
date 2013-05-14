@@ -23,7 +23,6 @@ type
     edtBK_AGIO_TYPE: TRzPanel;
     RzPanel5: TRzPanel;
     RzBackground1: TRzBackground;
-    RzLabel1: TRzLabel;
     edtAGIO_TYPE: TcxComboBox;
     RzPanel13: TRzPanel;
     RzPanel14: TRzPanel;

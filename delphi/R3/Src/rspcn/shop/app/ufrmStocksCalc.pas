@@ -15,7 +15,6 @@ type
     lblInfo: TRzLabel;
     RzBorder1: TRzBorder;
     RzLabel2: TRzLabel;
-    RzLabel1: TRzLabel;
     btnCalc: TRzBmpButton;
     Timer1: TTimer;
     procedure btnCalcClick(Sender: TObject);

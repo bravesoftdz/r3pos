@@ -53,16 +53,6 @@ type
     btnFind: TRzBmpButton;
     btnSave: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
-    barcode_top: TRzPanel;
-    barcode_panel_top_left: TImage;
-    barcode_panel_top_right: TImage;
-    barcode_panel_top_line: TImage;
-    barcode_panel_left_line: TImage;
-    barcode_panel_right_line: TImage;
-    barcode_botton: TRzPanel;
-    barcode_panel_bottom_line: TImage;
-    barcodeb_panel_right_line: TImage;
-    barcodeb_panel_left_line: TImage;
     btnAMOUNT: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
     RzBmpButton7: TRzBmpButton;

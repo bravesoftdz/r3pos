@@ -9,42 +9,14 @@ inherited frmPriceGrade: TfrmPriceGrade
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 552
-    inherited Image3: TImage
-      Width = 134
-    end
-    inherited Image1: TImage
-      Left = 342
-    end
-    inherited RzFormShape1: TRzFormShape
-      Width = 552
-    end
-    object RzLabel26: TRzLabel [4]
-      Left = 10
-      Top = 7
-      Width = 61
-      Height = 16
-      Alignment = taCenter
-      Caption = #20250#21592#31561#32423
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 521
-    end
-  end
   inherited RzPanel1: TRzPanel
     Width = 552
-    Height = 392
+    Height = 394
     object RzPanel2: TRzPanel
       Left = 1
       Top = 1
       Width = 550
-      Height = 390
+      Height = 392
       Align = alClient
       BorderOuter = fsNone
       BorderColor = 15461355
@@ -161,26 +133,6 @@ inherited frmPriceGrade: TfrmPriceGrade
               ShowGradient = True
               ShowImage = False
               ShowTexture = False
-            end
-            object RzLabel1: TRzLabel
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Align = alClient
-              Alignment = taCenter
-              Caption = #20248#24800#31867#22411
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -15
-              Font.Name = #23435#20307
-              Font.Style = []
-              ParentFont = False
-              Transparent = True
-              Layout = tlCenter
-              ShadowColor = 16250871
-              ShadowDepth = 1
-              TextStyle = tsShadow
             end
           end
           object edtAGIO_TYPE: TcxComboBox
@@ -384,7 +336,7 @@ inherited frmPriceGrade: TfrmPriceGrade
         Left = 5
         Top = 133
         Width = 540
-        Height = 252
+        Height = 254
         Align = alClient
         BorderOuter = fsNone
         BorderSides = []
@@ -1186,6 +1138,31 @@ inherited frmPriceGrade: TfrmPriceGrade
           OnClick = btnCancelClick
         end
       end
+    end
+  end
+  inherited pnlAddressBar: TPanel
+    Width = 552
+    inherited Image3: TImage
+      Width = 544
+    end
+    inherited Image1: TImage
+      Left = 548
+    end
+    object RzLabel26: TRzLabel [4]
+      Left = 10
+      Top = 7
+      Width = 61
+      Height = 16
+      Alignment = taCenter
+      Caption = #20250#21592#31561#32423
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 552
     end
   end
   object DataSource1: TDataSource

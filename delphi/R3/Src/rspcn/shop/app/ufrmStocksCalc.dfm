@@ -7,47 +7,9 @@ inherited frmStocksCalc: TfrmStocksCalc
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 359
-    inherited RzFormShape1: TRzFormShape
-      Width = 359
-    end
-    inherited Image1: TImage
-      Left = 149
-    end
-    object lblInfo: TRzLabel [4]
-      Left = 23
-      Top = 32
-      Width = 313
-      Height = 15
-      Alignment = taCenter
-      AutoSize = False
-      Caption = #35831#28857#20987#24320#22987#35745#31639
-      Transparent = True
-      ShadowColor = clWhite
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    object RzLabel1: TRzLabel [5]
-      Left = 10
-      Top = 7
-      Width = 61
-      Height = 16
-      Alignment = taCenter
-      Caption = #21488#36134#35745#31639
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 334
-    end
-  end
   inherited RzPanel1: TRzPanel
     Width = 359
-    Height = 160
+    Height = 162
     object RzProgressBar1: TRzProgressBar
       Left = 45
       Top = 49
@@ -384,6 +346,31 @@ inherited frmStocksCalc: TfrmStocksCalc
       Caption = #24320#22987#35745#31639
       TabOrder = 0
       OnClick = btnCalcClick
+    end
+  end
+  inherited pnlAddressBar: TPanel
+    Width = 359
+    inherited Image3: TImage
+      Width = 351
+    end
+    inherited Image1: TImage
+      Left = 355
+    end
+    object lblInfo: TRzLabel [4]
+      Left = 23
+      Top = 32
+      Width = 313
+      Height = 15
+      Alignment = taCenter
+      AutoSize = False
+      Caption = #35831#28857#20987#24320#22987#35745#31639
+      Transparent = True
+      ShadowColor = clWhite
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 359
     end
   end
   object Timer1: TTimer

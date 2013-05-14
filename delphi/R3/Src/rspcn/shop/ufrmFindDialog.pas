@@ -21,7 +21,6 @@ type
     Image6: TImage;
     Image7: TImage;
     serachText: TEdit;
-    RzLabel1: TRzLabel;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnFindClick(Sender: TObject);

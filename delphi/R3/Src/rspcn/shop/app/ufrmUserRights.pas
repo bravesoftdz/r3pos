@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmWebDialog, RzPanel, RzBmpBtn, RzForms, jpeg, ExtCtrls,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, StdCtrls, RzTabs,
-  ZDataset, DB, ZAbstractRODataset, ZAbstractDataset, ZBase;
+  ZDataset, DB, ZAbstractRODataset, ZAbstractDataset, ZBase, RzLabel;
 
 type
   TfrmUserRights = class(TfrmWebDialog)
@@ -24,7 +24,6 @@ type
     RzPanel_ROLE: TRzPanel;
     DbGridEh1: TDBGridEh;
     btnOk: TRzBmpButton;
-    btnClose: TRzBmpButton;
     RzPanel10: TRzPanel;
     Photo: TImage;
     procedure btnOkClick(Sender: TObject);

@@ -150,6 +150,7 @@ type
     procedure GodsStringGridGetCellBorder(Sender: TObject; ARow,
       ACol: Integer; APen: TPen; var Borders: TCellBorders);
     procedure GodsRzPageControlChange(Sender: TObject);
+    procedure helpClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -190,6 +191,7 @@ type
 
     procedure BarcodeInput(_Buf:string);override;
 
+    procedure AdjustGodsStringGrid;
     procedure InitGodsStringGrid;
     procedure SaveGodsStringGrid;
     procedure LoadGodsStringGrid;
@@ -200,6 +202,7 @@ type
     destructor Destroy; override;
 
     procedure showForm;override;
+    procedure ajustPostion;override;
 
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -1632,8 +1635,7 @@ begin
    end;
 end;
 
-procedure TfrmPosInOrder.InitGodsStringGrid;
-var i,j:integer;
+procedure TfrmPosInOrder.AdjustGodsStringGrid;
 begin
   GodsStringGrid.RowHeights[0] := (GodsStringGrid.Height - 1) * 70 div 400;
   GodsStringGrid.RowHeights[2] := (GodsStringGrid.Height - 1) * 70 div 400;
@@ -1649,7 +1651,12 @@ begin
   GodsStringGrid.ColWidths[1] := (GodsStringGrid.Width - 2) div 4;
   GodsStringGrid.ColWidths[2] := (GodsStringGrid.Width - 2) div 4;
   GodsStringGrid.ColWidths[3] := (GodsStringGrid.Width - 1) div 4;
+end;
 
+procedure TfrmPosInOrder.InitGodsStringGrid;
+var i,j:integer;
+begin
+  AdjustGodsStringGrid;
   GodsStringGrid.GridLineWidth := 0;
   GodsStringGrid.VAlignment := vtaCenter;
 
@@ -1880,6 +1887,18 @@ begin
   inherited;
   LoadGodsStringGrid;
   CheckGodsStringGrid;
+end;
+
+procedure TfrmPosInOrder.helpClick(Sender: TObject);
+begin
+  inherited;
+  AdjustGodsStringGrid;
+end;
+
+procedure TfrmPosInOrder.ajustPostion;
+begin
+  inherited;
+  AdjustGodsStringGrid;
 end;
 
 initialization

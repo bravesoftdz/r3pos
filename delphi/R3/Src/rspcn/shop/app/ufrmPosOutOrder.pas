@@ -204,6 +204,7 @@ type
 
     procedure BarcodeInput(_Buf:string);override;
 
+    procedure AdjustGodsStringGrid;
     procedure InitGodsStringGrid;
     procedure SaveGodsStringGrid;
     procedure LoadGodsStringGrid;
@@ -214,6 +215,7 @@ type
     destructor Destroy; override;
 
     procedure showForm;override;
+    procedure ajustPostion;override;
 
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -1950,6 +1952,7 @@ end;
 procedure TfrmPosOutOrder.helpClick(Sender: TObject);
 begin
   inherited;
+  AdjustGodsStringGrid;
 //  help.Down := not help.Down;
 //  helpPanel.Visible := help.Down;
 end;
@@ -2226,8 +2229,7 @@ begin
   VAlign := vtaCenter;
 end;
 
-procedure TfrmPosOutOrder.InitGodsStringGrid;
-var i,j:integer;
+procedure TfrmPosOutOrder.AdjustGodsStringGrid;
 begin
   GodsStringGrid.RowHeights[0] := (GodsStringGrid.Height) * 70 div 400;
   GodsStringGrid.RowHeights[2] := (GodsStringGrid.Height) * 70 div 400;
@@ -2243,7 +2245,12 @@ begin
   GodsStringGrid.ColWidths[1] := (GodsStringGrid.Width - 2) div 4;
   GodsStringGrid.ColWidths[2] := (GodsStringGrid.Width - 2) div 4;
   GodsStringGrid.ColWidths[3] := (GodsStringGrid.Width - 1) div 4;
+end;
 
+procedure TfrmPosOutOrder.InitGodsStringGrid;
+var i,j:integer;
+begin
+  AdjustGodsStringGrid;
   GodsStringGrid.GridLineWidth := 0;
   GodsStringGrid.VAlignment := vtaCenter;
 
@@ -2483,6 +2490,12 @@ begin
   SaveGodsStringGrid;
   LoadGodsStringGrid;
   CheckGodsStringGrid;
+end;
+
+procedure TfrmPosOutOrder.ajustPostion;
+begin
+  inherited;
+  AdjustGodsStringGrid;
 end;
 
 initialization

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmBasic, ActnList, Menus, ComCtrls, ToolWin, ExtCtrls,ZBase,
+  Dialogs, ActnList, Menus, ComCtrls, ToolWin, ExtCtrls,ZBase,
   FR_View, FR_Class, FR_DSet, FR_DBSet, DB, FR_E_RTF, FR_E_HTM, FR_E_TXT,
   FR_E_CSV,DbClient, FR_E_PDF, FR_Desgn, ZAbstractRODataset, ZDataSet,
   ZAbstractDataset, ufrmWebToolForm, RzBmpBtn, StdCtrls, RzLabel, PrViewEh,

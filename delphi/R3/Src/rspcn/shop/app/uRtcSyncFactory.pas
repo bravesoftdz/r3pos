@@ -662,7 +662,7 @@ end;
 
 procedure TRtcSyncFactory.SetProCaption;
 begin
-  inherited;
+  GlobalProTitle := ProTitle;
   PostMessage(ProHandle, MSC_SET_CAPTION, 0, 2);
   Application.ProcessMessages;
 end;

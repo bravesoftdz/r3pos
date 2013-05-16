@@ -37,7 +37,8 @@ var RspSyncFactory:TRspSyncFactory;
 
 implementation
 
-uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,msxml,uRspFactory,EncDec;
+uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,msxml,uRspFactory,EncDec,
+     ufrmSyncData;
 
 procedure TRspSyncFactory.downloadTenants;
 var
@@ -855,6 +856,7 @@ end;
 
 procedure TRspSyncFactory.SetProCaption;
 begin
+  GlobalProTitle := ProTitle;
   PostMessage(ProHandle, MSC_SET_CAPTION, 0, 1);
   Application.ProcessMessages;
 end;

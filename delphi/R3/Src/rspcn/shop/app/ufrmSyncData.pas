@@ -28,6 +28,7 @@ type
     FPosition: integer;
     procedure SetShowTitle(const Value: string);
     procedure SetPosition(const Value: integer);
+    procedure SetMax(const Value: integer);
     procedure WM_SetMax(var Message: TMessage); message MSC_SET_MAX;
     procedure WM_SetCaption(var Message: TMessage); message MSC_SET_CAPTION;
     procedure WM_SetPosition(var Message: TMessage); message MSC_SET_POSITION;
@@ -38,6 +39,8 @@ type
     property ShowTitle:string read FShowTitle write SetShowTitle;
     property Position:integer read FPosition write SetPosition;
   end;
+
+var GlobalProTitle:string;
 
 implementation
 
@@ -66,6 +69,7 @@ begin
   if not Visible then Exit;
   FShowTitle := Value;
   Label1.Caption := Value;
+  Label1.Update;
   Update;
 end;
 
@@ -76,6 +80,13 @@ begin
   ProgressBar1.Position := Postion;
   Label1.Caption := Caption;
   Label1.Update;
+  Update;
+end;
+
+procedure TfrmSyncData.SetMax(const Value: integer);
+begin
+  ProgressBar1.Max := Value;
+  Update;
 end;
 
 procedure TfrmSyncData.FormCreate(Sender: TObject);
@@ -90,17 +101,12 @@ end;
 
 procedure TfrmSyncData.WM_SetCaption(var Message: TMessage);
 begin
-  if Message.LParam = 0 then
-    SetShowTitle(SyncFactory.ProTitle)
-  else if Message.LParam = 1 then
-    SetShowTitle(RspSyncFactory.ProTitle)
-  else
-    SetShowTitle(RtcSyncFactory.ProTitle);
+  SetShowTitle(GlobalProTitle);
 end;
 
 procedure TfrmSyncData.WM_SetMax(var Message: TMessage);
 begin
-  ProgressBar1.Max := Message.WParam;
+  SetMax(Message.WParam);
 end;
 
 procedure TfrmSyncData.WM_SetPosition(var Message: TMessage);

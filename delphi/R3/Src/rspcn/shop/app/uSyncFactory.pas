@@ -1858,6 +1858,7 @@ end;
 
 procedure TSyncFactory.SetProCaption;
 begin
+  GlobalProTitle := ProTitle;
   PostMessage(ProHandle, MSC_SET_CAPTION, 0, 0);
   Application.ProcessMessages;
 end;

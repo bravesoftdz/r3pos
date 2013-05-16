@@ -9,7 +9,7 @@ uses
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, PrnDbgeh,ufrmDBGridPreview,
-  ComCtrls, ToolWin, ImgList, FR_Class;
+  ComCtrls, ToolWin, ImgList, FR_Class, BaseGrid, AdvGrid, IniFiles;
 
 type
   TfrmPosInOrder = class(TfrmOrderForm)
@@ -83,32 +83,22 @@ type
     RzLabel11: TRzLabel;
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
-    RzPanel4: TRzPanel;
-    Image8: TImage;
-    Image9: TImage;
-    RzPanel13: TRzPanel;
-    Image10: TImage;
-    Image11: TImage;
-    Image12: TImage;
-    RzPanel15: TRzPanel;
-    Image13: TImage;
-    Image14: TImage;
-    Image15: TImage;
-    RzPanel16: TRzPanel;
-    RzPanel24: TRzPanel;
-    godsName: TRzLabel;
-    godsPrice: TRzLabel;
-    godsAmount: TRzLabel;
-    RzPanel25: TRzPanel;
     edtBK_PAY_TOTAL: TRzPanel;
     RzPanel10: TRzPanel;
     RzBackground6: TRzBackground;
     payment: TRzLabel;
     edtPAY_TOTAL: TcxTextEdit;
-    godsPhotoBk: TRzPanel;
-    godsPhoto: TImage;
     PrintDBGridEh1: TPrintDBGridEh;
     frfStockOrder: TfrReport;
+    RzPanel4: TRzPanel;
+    RzPanel16: TRzPanel;
+    GodsRzPageControl: TRzPageControl;
+    GodsGrid_1: TRzTabSheet;
+    GodsGrid_2: TRzTabSheet;
+    GodsGrid_3: TRzTabSheet;
+    GodsStringGrid: TAdvStringGrid;
+    DelGodsShortCust: TPopupMenu;
+    DeleteShortCut: TMenuItem;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -150,6 +140,16 @@ type
       p3: Variant; var Val: Variant);
     procedure edtACCT_MNYKeyPress(Sender: TObject; var Key: Char);
     procedure edtAGIO_RATEKeyPress(Sender: TObject; var Key: Char);
+    procedure DeleteShortCutClick(Sender: TObject);
+    procedure GodsStringGridClickCell(Sender: TObject; ARow,
+      ACol: Integer);
+    procedure GodsStringGridDblClickCell(Sender: TObject; ARow,
+      ACol: Integer);
+    procedure GodsStringGridGetAlignment(Sender: TObject; ARow,
+      ACol: Integer; var HAlign: TAlignment; var VAlign: TVAlignment);
+    procedure GodsStringGridGetCellBorder(Sender: TObject; ARow,
+      ACol: Integer; APen: TPen; var Borders: TCellBorders);
+    procedure GodsRzPageControlChange(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -164,6 +164,7 @@ type
     TotalAmt:Currency;
 
     searchTxt:string;
+    GodsArray:Array[0..7] of Array[0..3] of string;
     procedure DBGridPrint;
   protected
     procedure SetdbState(const Value: TDataSetState);override;
@@ -188,7 +189,12 @@ type
     procedure DoPayInput(s:string;flag:string);
 
     procedure BarcodeInput(_Buf:string);override;
-    
+
+    procedure InitGodsStringGrid;
+    procedure SaveGodsStringGrid;
+    procedure LoadGodsStringGrid;
+    procedure ClearGodsStringGrid;
+    procedure CheckGodsStringGrid;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -213,7 +219,7 @@ var frmPosInOrder: TfrmPosInOrder;
 implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,uCacheFactory,
-     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview;
+     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,ufrmSelectGoods;
 
 {$R *.dfm}
 
@@ -452,9 +458,9 @@ begin
   InRate2 := StrtoFloatDef(dllGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(dllGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(dllGlobal.GetParameter('IN_INV_FLAG'),1);
-
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
   NewOrder;
+  InitGodsStringGrid;
 end;
 
 procedure TfrmPosInOrder.DBGridEh1Columns1BeforeShowControl(
@@ -1375,10 +1381,11 @@ begin
 end;
 
 procedure TfrmPosInOrder.getGodsInfo(godsId: string);
-var
-  rs:TZQuery;
-  SourceScale:real;
+//var
+//  rs:TZQuery;
+//  SourceScale:real;
 begin
+{
   CacheFactory.getGodsPngImage(edtTable.FieldbyName('GODS_ID').AsString,godsPhoto.Picture);
   godsPhoto.Top := 0;
   godsPhoto.Left := (godsPhotoBk.Width-godsPhoto.Width) div 2-1;
@@ -1415,6 +1422,7 @@ begin
   finally
     rs.Free;
   end;
+}
 end;
 
 procedure TfrmPosInOrder.DBGridEh1CellClick(Column: TColumnEh);
@@ -1591,6 +1599,287 @@ begin
           edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
      end;
+end;
+
+procedure TfrmPosInOrder.CheckGodsStringGrid;
+var r,c:integer;
+begin
+ for r:=0 to GodsStringGrid.RowCount - 1 do
+   begin
+     for c:=0 to GodsStringGrid.ColCount - 1 do
+       begin
+         if (r mod 2 = 0) and (GodsArray[r,c] = '') then
+            begin
+              GodsStringGrid.Cells[c,r] := '+';
+              GodsStringGrid.FontSizes[c,r] := 30;
+              GodsStringGrid.FontColors[c,r] := clSilver;
+              Exit;
+            end;
+       end;
+   end;
+end;
+
+procedure TfrmPosInOrder.ClearGodsStringGrid;
+var r,c:integer;
+begin
+ for r:=0 to GodsStringGrid.RowCount - 1 do
+   begin
+     for c:=0 to GodsStringGrid.ColCount - 1 do
+       begin
+          GodsArray[r,c] := '';
+          GodsStringGrid.Cells[c,r] := '';
+       end;
+   end;
+end;
+
+procedure TfrmPosInOrder.InitGodsStringGrid;
+var i,j:integer;
+begin
+  GodsStringGrid.RowHeights[0] := (GodsStringGrid.Height - 1) * 70 div 400;
+  GodsStringGrid.RowHeights[2] := (GodsStringGrid.Height - 1) * 70 div 400;
+  GodsStringGrid.RowHeights[4] := (GodsStringGrid.Height - 0) * 70 div 400;
+  GodsStringGrid.RowHeights[6] := (GodsStringGrid.Height - 0) * 70 div 400;
+
+  GodsStringGrid.RowHeights[1] := (GodsStringGrid.Height - 0) * 30 div 400;
+  GodsStringGrid.RowHeights[3] := (GodsStringGrid.Height - 0) * 30 div 400;
+  GodsStringGrid.RowHeights[5] := (GodsStringGrid.Height - 0) * 30 div 400;
+  GodsStringGrid.RowHeights[7] := (GodsStringGrid.Height - 0) * 30 div 400;
+
+  GodsStringGrid.ColWidths[0] := (GodsStringGrid.Width - 2) div 4;
+  GodsStringGrid.ColWidths[1] := (GodsStringGrid.Width - 2) div 4;
+  GodsStringGrid.ColWidths[2] := (GodsStringGrid.Width - 2) div 4;
+  GodsStringGrid.ColWidths[3] := (GodsStringGrid.Width - 1) div 4;
+
+  GodsStringGrid.GridLineWidth := 0;
+  GodsStringGrid.VAlignment := vtaCenter;
+
+  for i:=0 to GodsStringGrid.RowCount-1 do
+  begin
+    if i mod 2 = 1 then
+       begin
+         GodsStringGrid.FontColors[0,i] := clRed;
+         GodsStringGrid.FontColors[1,i] := clRed;
+         GodsStringGrid.FontColors[2,i] := clRed;
+         GodsStringGrid.FontColors[3,i] := clRed;
+       end
+    else
+       begin
+         GodsStringGrid.FontColors[0,i] := $002F2F2F;
+         GodsStringGrid.FontColors[1,i] := $002F2F2F;
+         GodsStringGrid.FontColors[2,i] := $002F2F2F;
+         GodsStringGrid.FontColors[3,i] := $002F2F2F;
+       end;
+  end;
+
+  for i:=0 to GodsStringGrid.RowCount-1 do
+    begin
+      for j:=0 to GodsStringGrid.ColCount-1 do
+        begin
+          GodsStringGrid.Colors[j,i] := $00EFEFEF;
+          GodsStringGrid.FontNames[j,i] := '微软雅黑';
+          GodsStringGrid.Alignments[j,i] := taCenter;
+        end;
+    end;
+  LoadGodsStringGrid;
+  CheckGodsStringGrid;
+end;
+
+procedure TfrmPosInOrder.LoadGodsStringGrid;
+  procedure FillCell(GodsId:string);
+  var
+    r,c:integer;
+    gs,us:TZQuery;
+  begin
+    gs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+    us := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+    if not gs.Locate('GODS_ID',GodsId,[]) then Exit;
+    for r:=0 to GodsStringGrid.RowCount - 1 do
+      begin
+        for c:=0 to GodsStringGrid.ColCount - 1 do
+          begin
+            if (r mod 2 = 0) and (GodsArray[r,c] = '') then
+               begin
+                 GodsArray[r,c] := GodsId;
+                 GodsStringGrid.FontSizes[c,r] := 10;
+                 GodsStringGrid.FontColors[c,r] := $002F2F2F;
+                 GodsStringGrid.Cells[c,r] := gs.FieldByName('GODS_NAME').AsString;
+                 GodsStringGrid.Cells[c,r+1] := FloatToStr(dllGlobal.GetNewInPrice(GodsId,gs.FieldByName('CALC_UNITS').AsString))+'元';
+                 if us.Locate('UNIT_ID',gs.FieldByName('CALC_UNITS').AsString,[]) then
+                    begin
+                      GodsStringGrid.Cells[c,r+1] := GodsStringGrid.Cells[c,r+1] +'/'+ us.FieldByName('UNIT_NAME').AsString;
+                    end;
+                 Exit;
+               end
+          end;
+      end;
+  end;
+var
+  F:TIniFile;
+  Section:string;
+  i:integer;
+  GodsList:TStrings;
+begin
+  inherited;
+  ClearGodsStringGrid;
+  Section := 'STOCKORDER_'+inttostr(GodsRzPageControl.ActivePageIndex);
+  GodsList := TStringList.Create;
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'temp\GodsShortCut.ini');
+  try
+    F.ReadSection(Section,GodsList);
+    for i:=0 to GodsList.Count - 1 do
+      begin
+        FillCell(F.ReadString(Section,GodsList[i],''));
+      end;
+  finally
+    try
+      F.Free;
+      GodsList.Free;
+    except
+    end;
+  end;
+end;
+
+procedure TfrmPosInOrder.SaveGodsStringGrid;
+var
+  F:TIniFile;
+  c,r,idx:integer;
+  Section:string;
+begin
+  inherited;
+  idx := 1;
+  Section := 'STOCKORDER_'+inttostr(GodsRzPageControl.ActivePageIndex);
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'temp\GodsShortCut.ini');
+  try
+    F.EraseSection(Section);
+    for r:=0 to GodsStringGrid.RowCount - 1 do
+      begin
+        for c:=0 to GodsStringGrid.ColCount - 1 do
+          begin
+            if (r mod 2 = 0) and (trim(GodsArray[r,c]) <> '') then
+               begin
+                 F.WriteString(Section,'GODS_'+inttostr(idx),trim(GodsArray[r,c]));
+                 inc(idx);
+               end; 
+          end;
+      end;
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+end;
+
+procedure TfrmPosInOrder.DeleteShortCutClick(Sender: TObject);
+var row,col:integer;
+begin
+  inherited;
+  row := GodsStringGrid.Row;
+  col := GodsStringGrid.Col;
+  if (col < 0) or (col > GodsStringGrid.ColCount - 1) then Exit;
+  if (row < 0) or (row > GodsStringGrid.RowCount - 1) then Exit;
+  if row mod 2 = 1 then row := row - 1;
+  if GodsArray[row,col] = '' then Exit;
+  GodsArray[row,col] := '';
+  SaveGodsStringGrid;
+  LoadGodsStringGrid;
+  CheckGodsStringGrid;
+end;
+
+procedure TfrmPosInOrder.GodsStringGridClickCell(Sender: TObject; ARow,ACol: Integer);
+var
+  gs,us:TZQuery;
+  col,row:integer;
+begin
+  inherited;
+  gs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  us := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  col := ACol;
+  row := ARow;
+  if ARow mod 2 = 1 then row := row - 1;
+  if (GodsStringGrid.Cells[col,row] = '+') and (GodsArray[row,col] = '') then
+     begin
+       with TfrmSelectGoods.Create(self) do
+         begin
+           try
+             if ShowModal=MROK then
+                begin
+                  GodsArray[row,col] := cdsList.FieldByName('GODS_ID').AsString;
+                  GodsStringGrid.FontSizes[col,row] := 10;
+                  GodsStringGrid.FontColors[col,row] := $002F2F2F;
+                  GodsStringGrid.Cells[col,row] := cdsList.FieldByName('GODS_NAME').AsString;
+                  GodsStringGrid.Cells[col,row+1] := cdsList.FieldByName('NEW_INPRICE').AsString+'元';
+                  if gs.Locate('GODS_ID',cdsList.FieldByName('GODS_ID').AsString,[]) then
+                     begin
+                       if us.Locate('UNIT_ID',gs.FieldByName('CALC_UNITS').AsString,[]) then
+                          begin
+                            GodsStringGrid.Cells[col,row+1] := GodsStringGrid.Cells[col,row+1] +'/'+ us.FieldByName('UNIT_NAME').AsString;
+                          end;
+                     end;
+                  SaveGodsStringGrid;
+                  CheckGodsStringGrid;
+                end;
+             finally
+               Free;
+             end;
+         end
+     end
+end;
+
+procedure TfrmPosInOrder.GodsStringGridDblClickCell(Sender: TObject; ARow,ACol: Integer);
+var
+  gs:TZQuery;
+  col,row:integer;
+  AObj_:TRecord_;
+begin
+  inherited;
+  gs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  col := ACol;
+  row := ARow;
+  if ARow mod 2 = 1 then row := row - 1;
+  if GodsArray[row,col] <> '' then
+     begin
+       AObj_:=TRecord_.Create;
+       try
+         if gs.Locate('GODS_ID',GodsArray[row,col],[]) then
+            begin
+              AObj_.ReadFromDataSet(gs);
+              AddRecord(AObj_,gs.FieldByName('CALC_UNITS').AsString);
+              WriteAmount(gs.FieldByName('CALC_UNITS').AsString,'#','#',1,true);
+            end;
+       finally
+         AObj_.Free;
+       end;
+     end;
+end;
+
+procedure TfrmPosInOrder.GodsStringGridGetAlignment(Sender: TObject; ARow,
+  ACol: Integer; var HAlign: TAlignment; var VAlign: TVAlignment);
+begin
+  inherited;
+  VAlign := vtaCenter;
+end;
+
+procedure TfrmPosInOrder.GodsStringGridGetCellBorder(Sender: TObject; ARow,
+  ACol: Integer; APen: TPen; var Borders: TCellBorders);
+begin
+  inherited;
+  APen.Width := 1;
+  APen.Color := clSilver;
+  Borders := [cbBottom,cbRight];
+  if ARow = GodsStringGrid.RowCount - 1 then Borders := Borders - [cbBottom];
+  if ACol = GodsStringGrid.ColCount - 1 then Borders := Borders - [cbRight];
+  if ARow mod 2 = 0 then
+     begin
+       Borders := Borders - [cbBottom];
+     end;
+end;
+
+procedure TfrmPosInOrder.GodsRzPageControlChange(Sender: TObject);
+begin
+  inherited;
+  LoadGodsStringGrid;
+  CheckGodsStringGrid;
 end;
 
 initialization

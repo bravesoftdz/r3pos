@@ -32,7 +32,7 @@ inherited frmStocksCalc: TfrmStocksCalc
       Left = 1
       Top = 1
       Width = 357
-      Height = 32
+      Height = 16
       Align = alTop
       Alignment = taCenter
       Caption = #38144#21806#26085#26399
@@ -353,6 +353,10 @@ inherited frmStocksCalc: TfrmStocksCalc
     inherited Image3: TImage
       Width = 351
     end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
     inherited Image1: TImage
       Left = 355
     end
@@ -371,6 +375,19 @@ inherited frmStocksCalc: TfrmStocksCalc
     end
     inherited RzFormShape1: TRzFormShape
       Width = 359
+    end
+    object RzLabel26: TRzLabel [6]
+      Left = 10
+      Top = 7
+      Width = 61
+      Height = 16
+      Alignment = taCenter
+      Caption = #25104#26412#26680#31639
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
     end
     inherited btnClose: TRzBmpButton
       Left = 330

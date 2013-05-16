@@ -17,6 +17,7 @@ type
     RzLabel2: TRzLabel;
     btnCalc: TRzBmpButton;
     Timer1: TTimer;
+    RzLabel26: TRzLabel;
     procedure btnCalcClick(Sender: TObject);
   private
     { Private declarations }

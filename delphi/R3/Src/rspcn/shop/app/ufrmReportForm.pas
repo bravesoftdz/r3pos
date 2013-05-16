@@ -43,7 +43,7 @@ type
   end;
 
 implementation
-uses udataFactory,utokenFactory,uCtrlUtil, ufrmDBGridPreview;
+uses udataFactory,utokenFactory,udllCtrlUtil, ufrmDBGridPreview;
 {$R *.dfm}
 
 { TfrmReportForm }

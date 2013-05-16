@@ -2258,10 +2258,10 @@ begin
        end
     else
        begin
-         GodsStringGrid.FontColors[0,i] := clSilver;
-         GodsStringGrid.FontColors[1,i] := clSilver;
-         GodsStringGrid.FontColors[2,i] := clSilver;
-         GodsStringGrid.FontColors[3,i] := clSilver;
+         GodsStringGrid.FontColors[0,i] := $002F2F2F;
+         GodsStringGrid.FontColors[1,i] := $002F2F2F;
+         GodsStringGrid.FontColors[2,i] := $002F2F2F;
+         GodsStringGrid.FontColors[3,i] := $002F2F2F;
        end;
   end;
 
@@ -2269,6 +2269,8 @@ begin
     begin
       for j:=0 to GodsStringGrid.ColCount-1 do
         begin
+          GodsStringGrid.Colors[j,i] := $00EFEFEF;
+          GodsStringGrid.FontNames[j,i] := 'Î¢ÈíÑÅºÚ';
           GodsStringGrid.Alignments[j,i] := taCenter;
         end;
     end;
@@ -2296,6 +2298,7 @@ begin
                 begin
                   GodsArray[row,col] := cdsList.FieldByName('GODS_ID').AsString;
                   GodsStringGrid.FontSizes[col,row] := 10;
+                  GodsStringGrid.FontColors[col,row] := $002F2F2F;
                   GodsStringGrid.Cells[col,row] := cdsList.FieldByName('GODS_NAME').AsString;
                   GodsStringGrid.Cells[col,row+1] := cdsList.FieldByName('NEW_OUTPRICE').AsString+'Ôª';
                   if gs.Locate('GODS_ID',cdsList.FieldByName('GODS_ID').AsString,[]) then
@@ -2366,6 +2369,7 @@ begin
             begin
               GodsStringGrid.Cells[c,r] := '+';
               GodsStringGrid.FontSizes[c,r] := 30;
+              GodsStringGrid.FontColors[c,r] := clSilver;
               Exit;
             end;
        end;
@@ -2420,6 +2424,7 @@ procedure TfrmPosOutOrder.LoadGodsStringGrid;
                begin
                  GodsArray[r,c] := GodsId;
                  GodsStringGrid.FontSizes[c,r] := 10;
+                 GodsStringGrid.FontColors[c,r] := $002F2F2F;
                  GodsStringGrid.Cells[c,r] := gs.FieldByName('GODS_NAME').AsString;
                  GodsStringGrid.Cells[c,r+1] := FloatToStr(dllGlobal.GetNewOutPrice(GodsId,gs.FieldByName('CALC_UNITS').AsString))+'Ôª';
                  if us.Locate('UNIT_ID',gs.FieldByName('CALC_UNITS').AsString,[]) then

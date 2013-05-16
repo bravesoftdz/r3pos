@@ -7,37 +7,9 @@ inherited frmSelectFormer: TfrmSelectFormer
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 275
-    inherited Image3: TImage
-      Width = 32
-    end
-    inherited Image1: TImage
-      Left = 65
-    end
-    inherited RzFormShape1: TRzFormShape
-      Width = 275
-    end
-    object RzLabel26: TRzLabel [4]
-      Left = 10
-      Top = 7
-      Width = 61
-      Height = 16
-      Alignment = taCenter
-      Caption = #25253#34920#27169#26495
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 244
-    end
-  end
   inherited RzPanel1: TRzPanel
     Width = 275
-    Height = 254
+    Height = 256
     object RzPanel3: TRzPanel
       Left = 10
       Top = 10
@@ -71,7 +43,7 @@ inherited frmSelectFormer: TfrmSelectFormer
     end
     object RzPanel4: TRzPanel
       Left = 1
-      Top = 208
+      Top = 210
       Width = 273
       Height = 45
       Align = alBottom
@@ -516,6 +488,44 @@ inherited frmSelectFormer: TfrmSelectFormer
         TabOrder = 1
         OnClick = btnCancelClick
       end
+    end
+  end
+  inherited pnlAddressBar: TPanel
+    Width = 275
+    inherited Image3: TImage
+      Width = 267
+    end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
+    inherited Image1: TImage
+      Left = 271
+    end
+    object RzLabel26: TRzLabel [4]
+      Left = 10
+      Top = 7
+      Width = 61
+      Height = 16
+      Alignment = taCenter
+      Caption = #25253#34920#27169#26495
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 275
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 248
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 200
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 224
     end
   end
 end

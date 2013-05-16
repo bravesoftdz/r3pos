@@ -26,8 +26,10 @@ type
     btnOk: TRzBmpButton;
     RzPanel10: TRzPanel;
     Photo: TImage;
+    RzLabel26: TRzLabel;
+    btnCancel: TRzBmpButton;
     procedure btnOkClick(Sender: TObject);
-    procedure btnCloseClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     USER_ID:string;
@@ -158,7 +160,7 @@ begin
   ModalResult:=MROK;
 end;
 
-procedure TfrmUserRights.btnCloseClick(Sender: TObject);
+procedure TfrmUserRights.btnCancelClick(Sender: TObject);
 begin
   inherited;
   Close;

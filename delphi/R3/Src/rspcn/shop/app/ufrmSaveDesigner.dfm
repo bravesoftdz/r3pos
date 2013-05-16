@@ -5,34 +5,9 @@ inherited frmSaveDesigner: TfrmSaveDesigner
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
-  inherited pnlAddressBar: TPanel
-    Width = 316
-    inherited Image1: TImage
-      Left = 106
-    end
-    inherited RzFormShape1: TRzFormShape
-      Width = 316
-    end
-    object RzLabel26: TRzLabel [4]
-      Left = 10
-      Top = 7
-      Width = 76
-      Height = 16
-      Alignment = taCenter
-      Caption = #20445#23384#34920#26679#33267
-      Transparent = True
-      Layout = tlCenter
-      ShadowColor = 16250871
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
-    inherited RzBmpButton2: TRzBmpButton
-      Left = 285
-    end
-  end
   inherited RzPanel1: TRzPanel
     Width = 316
-    Height = 279
+    Height = 281
     object RzPanel2: TRzPanel
       Left = 10
       Top = 10
@@ -60,7 +35,7 @@ inherited frmSaveDesigner: TfrmSaveDesigner
     end
     object RzPanel4: TRzPanel
       Left = 1
-      Top = 224
+      Top = 226
       Width = 314
       Height = 54
       Align = alBottom
@@ -804,6 +779,44 @@ inherited frmSaveDesigner: TfrmSaveDesigner
         TabOrder = 2
         OnClick = btnSaveClick
       end
+    end
+  end
+  inherited pnlAddressBar: TPanel
+    Width = 316
+    inherited Image3: TImage
+      Width = 308
+    end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
+    inherited Image1: TImage
+      Left = 312
+    end
+    object RzLabel26: TRzLabel [4]
+      Left = 10
+      Top = 7
+      Width = 76
+      Height = 16
+      Alignment = taCenter
+      Caption = #20445#23384#34920#26679#33267
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited RzFormShape1: TRzFormShape
+      Width = 316
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 289
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 239
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 264
     end
   end
 end

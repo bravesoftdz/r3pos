@@ -419,11 +419,37 @@ inherited frmFindDialog: TfrmFindDialog
     inherited Image3: TImage
       Width = 425
     end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
     inherited Image1: TImage
       Left = 429
     end
     inherited RzFormShape1: TRzFormShape
       Width = 433
+    end
+    object RzLabel26: TRzLabel [5]
+      Left = 10
+      Top = 7
+      Width = 55
+      Height = 16
+      Alignment = taCenter
+      Caption = #25628#32034'...'
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 403
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 351
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 377
     end
   end
   object rs: TZQuery

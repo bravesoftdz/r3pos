@@ -19,8 +19,10 @@ type
     edtUNIT_NAME: TcxTextEdit;
     btnSave: TRzBmpButton;
     RzLabel26: TRzLabel;
-    procedure btnCloseClick(Sender: TObject);
+    btnCancel: TRzBmpButton;
+    RzLabel9: TRzLabel;
     procedure btnSaveClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   public
     procedure Open(id:string);
@@ -153,7 +155,7 @@ begin
     end;
 end;
 
-procedure TfrmMeaUnits.btnCloseClick(Sender: TObject);
+procedure TfrmMeaUnits.btnCancelClick(Sender: TObject);
 begin
   inherited;
   Close;

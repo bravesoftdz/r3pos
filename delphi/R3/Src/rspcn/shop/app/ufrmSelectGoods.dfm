@@ -978,13 +978,13 @@ inherited frmSelectGoods: TfrmSelectGoods
       TextStyle = tsShadow
     end
     inherited btnClose: TRzBmpButton
-      Left = 573
+      Left = 576
     end
     inherited RzBmpButton4: TRzBmpButton
-      Left = 521
+      Left = 524
     end
     inherited btnWindow: TRzBmpButton
-      Left = 547
+      Left = 550
     end
   end
   object cdsList: TZQuery

@@ -24,14 +24,16 @@ type
     edtSORT_NAME: TcxTextEdit;
     btnSave: TRzBmpButton;
     RzLabel26: TRzLabel;
+    RzLabel2: TRzLabel;
+    btnCancel: TRzBmpButton;
     procedure edtSUP_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure edtSUP_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure btnCloseClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure edtSUP_SORT_IDKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
   private
     SUP_SORT_ID:string;
     SUP_LEVEL_ID:string;
@@ -231,7 +233,7 @@ begin
      end;
 end;
 
-procedure TfrmGoodsSort.btnCloseClick(Sender: TObject);
+procedure TfrmGoodsSort.btnCancelClick(Sender: TObject);
 begin
   inherited;
   Close;

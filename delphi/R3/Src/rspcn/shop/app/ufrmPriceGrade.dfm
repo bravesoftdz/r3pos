@@ -134,6 +134,26 @@ inherited frmPriceGrade: TfrmPriceGrade
               ShowImage = False
               ShowTexture = False
             end
+            object RzLabel9: TRzLabel
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 26
+              Align = alClient
+              Alignment = taCenter
+              Caption = #20248#24800#31867#22411
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
           end
           object edtAGIO_TYPE: TcxComboBox
             Left = 105
@@ -1145,6 +1165,10 @@ inherited frmPriceGrade: TfrmPriceGrade
     inherited Image3: TImage
       Width = 544
     end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
     inherited Image1: TImage
       Left = 548
     end
@@ -1163,6 +1187,15 @@ inherited frmPriceGrade: TfrmPriceGrade
     end
     inherited RzFormShape1: TRzFormShape
       Width = 552
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 523
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 471
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 497
     end
   end
   object DataSource1: TDataSource

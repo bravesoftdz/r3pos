@@ -120,11 +120,28 @@ inherited frmPayment: TfrmPayment
     inherited Image3: TImage
       Width = 389
     end
+    inherited RzLabel1: TRzLabel
+      Width = 7
+      Caption = ''
+    end
     inherited Image1: TImage
       Left = 393
     end
     inherited RzFormShape1: TRzFormShape
       Width = 397
+    end
+    object RzLabel26: TRzLabel [5]
+      Left = 10
+      Top = 7
+      Width = 61
+      Height = 16
+      Alignment = taCenter
+      Caption = #25903#20184#26041#24335
+      Transparent = True
+      Layout = tlCenter
+      ShadowColor = 16250871
+      ShadowDepth = 1
+      TextStyle = tsShadow
     end
     inherited btnClose: TRzBmpButton
       Left = 367

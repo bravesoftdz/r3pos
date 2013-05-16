@@ -67,6 +67,7 @@ type
     rowToolNav: TRzToolbar;
     RzToolButton1: TRzToolButton;
     cdsGoodsPercent: TZQuery;
+    RzLabel9: TRzLabel;
     procedure edtAGIO_TYPEPropertiesChange(Sender: TObject);
     procedure edtINTE_TYPEPropertiesChange(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);

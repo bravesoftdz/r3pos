@@ -189,7 +189,7 @@ var
 begin
   try
     if not Assigned(webForm) then Exit;
-    if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...'); 
+    if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...');
     if assigned(SyncFactory) then SyncFactory.LogoutSync(dllApplication.handle);
     while webForm.Count>0 do
        begin
@@ -197,7 +197,7 @@ begin
           webForm.Delete(0);
           Form.Free; 
        end;
-    if assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
+    //if assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
     if assigned(DevFactory) then FreeAndNil(DevFactory);
     if assigned(RightsFactory) then FreeAndNil(RightsFactory);
     if assigned(RtcSyncFactory) then FreeAndNil(RtcSyncFactory);

@@ -44,7 +44,7 @@ var GlobalProTitle:string;
 
 implementation
 
-uses uSyncFactory,uRspSyncFactory,uRtcSyncFactory;
+uses uSyncFactory,uRspSyncFactory;
 
 {$R *.dfm}
 
@@ -94,7 +94,7 @@ begin
   inherited;
   SyncFactory.ProHandle := self.Handle;
   RspSyncFactory.ProHandle := self.Handle;
-  RtcSyncFactory.ProHandle := self.Handle;
+//  RtcSyncFactory.ProHandle := self.Handle;
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg') then
      Image1.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg');
 end;

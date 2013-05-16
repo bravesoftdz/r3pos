@@ -58,7 +58,7 @@ var
   dbHelp:IdbDllHelp;
   dllApplication:TdllApplication;
 implementation
-uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory;
+uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,uCacheFactory,udllXDictFactory,ufrmSortDropFrom;
 var
   webForm:TStringList;
   oldHandle:THandle;
@@ -200,7 +200,7 @@ begin
     if assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
     if assigned(DevFactory) then FreeAndNil(DevFactory);
     if assigned(RightsFactory) then FreeAndNil(RightsFactory);
-    if assigned(RtcSyncFactory) then FreeAndNil(RtcSyncFactory);
+//    if assigned(RtcSyncFactory) then FreeAndNil(RtcSyncFactory);
     if assigned(RspSyncFactory) then FreeAndNil(RspSyncFactory);
     if assigned(SyncFactory) then FreeAndNil(SyncFactory);
     if assigned(CacheFactory) then FreeAndNil(CacheFactory);

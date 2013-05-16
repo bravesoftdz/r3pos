@@ -103,7 +103,7 @@ var SyncFactory:TSyncFactory;
 implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,
-     uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory;
+     uRightsFactory,dllApi,ufrmSysDefine;
 
 constructor TSyncFactory.Create;
 begin
@@ -1110,7 +1110,7 @@ begin
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
-      RtcSyncFactory.SyncRtcData;
+      //RtcSyncFactory.SyncRtcData;
     finally
       Free;
     end;

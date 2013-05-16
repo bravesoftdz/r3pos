@@ -32,7 +32,7 @@ inherited frmStocksCalc: TfrmStocksCalc
       Left = 1
       Top = 1
       Width = 357
-      Height = 16
+      Height = 32
       Align = alTop
       Alignment = taCenter
       Caption = #38144#21806#26085#26399
@@ -371,6 +371,15 @@ inherited frmStocksCalc: TfrmStocksCalc
     end
     inherited RzFormShape1: TRzFormShape
       Width = 359
+    end
+    inherited btnClose: TRzBmpButton
+      Left = 330
+    end
+    inherited RzBmpButton4: TRzBmpButton
+      Left = 278
+    end
+    inherited btnWindow: TRzBmpButton
+      Left = 304
     end
   end
   object Timer1: TTimer

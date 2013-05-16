@@ -80,5 +80,5 @@ end;
 initialization
   frmSortDropFrom := TfrmSortDropFrom.Create(nil);
 finalization
-  if Assigned(frmSortDropFrom) then frmSortDropFrom.Free;
+  if Assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
 end.

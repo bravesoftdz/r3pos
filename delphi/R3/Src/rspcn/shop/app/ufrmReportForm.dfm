@@ -1,6 +1,6 @@
 inherited frmReportForm: TfrmReportForm
   Left = 343
-  Top = 218
+  Top = 174
   Caption = #25253#34920#22522#31867
   ClientWidth = 861
   PixelsPerInch = 96

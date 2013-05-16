@@ -82,7 +82,9 @@ uses
   ufrmOrderPreview in 'app\ufrmOrderPreview.pas' {frmOrderPreview},
   ufrmSaveDesigner in 'app\ufrmSaveDesigner.pas' {frmSaveDesigner},
   ufrmMeaUnits in 'app\ufrmMeaUnits.pas' {frmMeaUnits},
-  uRtcSyncFactory in 'app\uRtcSyncFactory.pas';
+  uRtcSyncFactory in 'app\uRtcSyncFactory.pas',
+  ufrmAnlyReport in 'app\ufrmAnlyReport.pas' {frmAnlyReport},
+  ufrmProfitReport in 'app\ufrmProfitReport.pas' {frmProfitReport};
 
 {$R *.res}
 exports

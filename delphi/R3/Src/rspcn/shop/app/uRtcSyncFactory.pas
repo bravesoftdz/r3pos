@@ -6,34 +6,16 @@ uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
   ObjCommon, Dialogs, DB, msxml, ComObj, dllApi, ufrmSyncData;
 
-const
-  appId = '01_01_01_0';
-  dllname = 'iRTCLib.dll';
-
 type
-  TDllGetCustAuthen = function(appId:pchar;var netStatus:integer;ticket:pchar;var ticketLength:integer):integer;stdcall;
-  TDllLog = function(appId:pchar;ticket:pchar;ticketLength:integer;levelId,eventId:integer;logText:pchar;logTextLength:integer):integer;stdcall;
-  TDllSendDataAsync = function(appId:pchar;ticket:pchar;ticketLength:integer;data:pchar;dataLength:integer;controlFlag:integer;var jobId:integer):integer;stdcall;
-  TDllHeartBeat = function(appId:pchar;ticket:pchar;ticketLength:integer;msg:pchar;var msgLength:integer):integer;stdcall;
-
   TRtcSyncFactory=class
   private
-    ticket:string;
-    ticketLength:integer;
     FProHandle: Hwnd;
     FProTitle: string;
     F:TextFile;
-    dllHandle:THandle;
-    dllLoaded,dllValid,dllAuthed:boolean;
     DefaultPath:string;
     LicenseCode:string;
     FThreadLock:TRTLCriticalSection;
-    DllLog:TDllLog;
-    DllHeartBeat:TDllHeartBeat;
-    GetCustAuthen:TDllGetCustAuthen;
-    SendDataAsync:TDllSendDataAsync;
     procedure GetLicenseCode;
-    function  GetXmlHeader(xml:widestring):widestring;
     function  GetTransUnitId(unitId:string):string;
     function  CreateXML(flag:string;godsType:string=''): IXMLDomDocument;
     function  GetSyncTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
@@ -46,22 +28,17 @@ type
     procedure Enter;
     procedure Leave;
     procedure AddSyncLogFile(s:string);
-    // dll接口
-    procedure LoadDllFactory;
-    procedure FreeDllFactory;
-
     procedure SetProHandle(const Value: Hwnd);
     procedure SetProTitle(const Value: string);
     procedure SetProCaption;
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
+    function  SendData(xml:widestring):boolean;
   public
     constructor Create;
     destructor Destroy; override;
     function  GetToken:boolean;
-    function  HeartBeat:boolean;
-    function  RtcLogout:boolean;
-    function  SendData(xml:widestring):boolean;
+    procedure RtcLogout;
     procedure SyncRtcData;
     property  ProTitle:string read FProTitle write SetProTitle;
     property  ProHandle:Hwnd read FProHandle write SetProHandle;
@@ -71,23 +48,14 @@ var RtcSyncFactory:TRtcSyncFactory;
 
 implementation
 
-uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,EncDec;
+uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,EncDec,uRtcLibFactory;
 
 constructor TRtcSyncFactory.Create;
 begin
   inherited;
-  dllValid := false;
-  dllLoaded := false;
-  dllAuthed := false;
   DefaultPath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
   ForceDirectories(DefaultPath+'log');
   InitializeCriticalSection(FThreadLock);
-  LoadDllFactory;
-  if dllValid then
-     begin
-       ticketLength := 5000;
-       SetLength(ticket,ticketLength);
-     end;
 end;
 
 destructor TRtcSyncFactory.Destroy;
@@ -99,7 +67,6 @@ begin
     Leave;
     DeleteCriticalSection(FThreadLock);
   end;
-  FreeDllFactory;
 end;
 
 function TRtcSyncFactory.CreateXML(flag:string;godsType:string): IXMLDomDocument;
@@ -574,12 +541,6 @@ end;
 
 procedure TRtcSyncFactory.SyncRtcData;
 begin
-  if not dllValid then Exit;
-  if not dllAuthed then
-     begin
-       AddSyncLogFile('数据上传失败，尚未进行认证...');
-       Exit;
-     end;
   GetLicenseCode;
   SetProMax(4);
   SetProPosition(0);
@@ -595,129 +556,6 @@ begin
   ProTitle := '正在上传<消费者信息>...';
   SyncCustomer;
   SetProPosition(4);
-end;
-
-procedure TRtcSyncFactory.LoadDllFactory;
-begin
-  if dllValid then Exit;
-  if not FileExists(ExtractFilePath(ParamStr(0)) + dllname) then Exit;
-  dllHandle := LoadLibrary(Pchar(ExtractFilePath(ParamStr(0)) + dllname));
-  if dllHandle = 0 then Exit;
-  dllLoaded := true;
-
-  @GetCustAuthen := GetProcAddress(dllHandle, 'GetCustAuthen');
-  if @GetCustAuthen = nil then
-     begin
-       AddSyncLogFile('加载容器插件失败，插件未实现GetCustAuthen方法...');
-       Exit;
-     end;
-  @DllLog := GetProcAddress(dllHandle, 'Log');
-  if @DllLog = nil then
-     begin
-       AddSyncLogFile('加载容器插件失败，插件未实现Log方法...');
-       Exit;
-     end;
-  @DllHeartBeat := GetProcAddress(dllHandle, 'HeartBeat');
-  if @DllHeartBeat = nil then
-     begin
-       AddSyncLogFile('加载容器插件失败，插件未实现HeartBeat方法...');
-       Exit;
-     end;
-  @SendDataAsync := GetProcAddress(dllHandle, 'SendDataAsync');
-  if @SendDataAsync = nil then
-     begin
-       AddSyncLogFile('加载容器插件失败，插件未实现GetCustAuthen方法...');
-       Exit;
-     end;
-  dllValid := true;
-end;
-
-procedure TRtcSyncFactory.FreeDllFactory;
-begin
-  if not dllLoaded then Exit;
-  FreeLibrary(dllHandle);
-  dllValid := false; 
-  dllLoaded := false;
-  dllAuthed := false;
-end;
-
-function TRtcSyncFactory.GetToken:boolean;
-var
-  rtn:integer;
-  NetStatus:integer;
-begin
-  if not dllValid then Exit;
-  rtn := GetCustAuthen(pchar(appId),NetStatus,pchar(ticket),ticketLength);
-  if rtn = 0 then
-     begin
-       dllAuthed := true;
-       SetLength(ticket,ticketLength);
-     end;
-  if rtn <> 0 then AddSyncLogFile('容器认证失败，接口返回值='+inttostr(rtn));
-  result := (rtn = 0);
-end;
-
-function TRtcSyncFactory.RtcLogout: boolean;
-var
-  rtn:integer;
-  logText:string;
-  logTextLength:integer;
-begin
-  if not dllValid then Exit;
-  if not dllAuthed then
-     begin
-       AddSyncLogFile('写退出日志失败，尚未进行认证...');
-       Exit;
-     end;
-  logText := 'Logout';
-  logTextLength := Length(logText);
-  rtn := (DllLog(pchar(appId),pchar(ticket),ticketLength,1,2,pchar(logText),logTextLength));
-  if rtn <> 0 then AddSyncLogFile('写退出日志失败，接口返回值='+inttostr(rtn));
-  result := (rtn = 0);
-end;
-
-function TRtcSyncFactory.HeartBeat: boolean;
-var
-  msg:string;
-  rtn,msgLength:integer;
-begin
-  if not dllValid then Exit;
-  if not dllAuthed then
-     begin
-       AddSyncLogFile('发送心跳失败，尚未进行认证...');
-       Exit;
-     end;
-  msgLength := 256;
-  SetLength(msg,msgLength);
-  rtn := DllHeartBeat(pchar(appId),pchar(ticket),ticketLength,pchar(msg),msgLength);
-  if rtn <> 0 then AddSyncLogFile('发送心跳失败，接口返回值='+inttostr(rtn));
-  result := (rtn = 0);
-end;
-
-function TRtcSyncFactory.SendData(xml:widestring):boolean;
-var
-  rtn:integer;
-  jobId:integer;
-  data:widestring;
-  dataLength:integer;
-begin
-  if not dllValid then Exit;
-  if not dllAuthed then
-     begin
-       AddSyncLogFile('异步数据发送失败，尚未进行认证...');
-       Exit;
-     end;
-  data := GetXmlHeader(xml);
-  ticketLength := Length(ticket);
-  dataLength := Length(data);
-  rtn := SendDataAsync(pchar(appId),pchar(ticket),ticketLength,pchar(data),dataLength,3,jobId);
-  if rtn <> 0 then AddSyncLogFile('异步数据发送失败，接口返回值='+inttostr(rtn));
-  result := (rtn = 0);
-end;
-
-function TRtcSyncFactory.GetXmlHeader(xml:widestring):widestring;
-begin
-  result := '<?xml version="1.0" encoding="UTF-8"?>'+xml;
 end;
 
 procedure TRtcSyncFactory.SetProTitle(const Value: string);
@@ -748,6 +586,38 @@ procedure TRtcSyncFactory.SetProPosition(position: integer);
 begin
   PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
   Application.ProcessMessages;
+end;
+
+function TRtcSyncFactory.SendData(xml: widestring): boolean;
+var rtn:integer;
+begin
+  rtn := RtcLibFactory.SendData(xml);
+  result := (rtn = 0);
+  if rtn <> 0 then
+     begin
+       AddSyncLogFile('异步数据发送失败，返回值'+inttostr(rtn));
+     end;
+end;
+
+procedure TRtcSyncFactory.RtcLogout;
+var rtn:integer;
+begin
+  rtn := RtcLibFactory.RtcLogout;
+  if rtn <> 0 then
+     begin
+       AddSyncLogFile('写退出日志失败，返回值'+inttostr(rtn));
+     end;
+end;
+
+function TRtcSyncFactory.GetToken: boolean;
+var rtn:integer;
+begin
+  rtn := RtcLibFactory.GetToken;
+  result := (rtn = 0);
+  if rtn <> 0 then
+     begin
+       AddSyncLogFile('容器认证失败，返回值'+inttostr(rtn));
+     end;
 end;
 
 initialization

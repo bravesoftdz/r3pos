@@ -1110,8 +1110,11 @@ begin
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
-      RtcSyncFactory.RtcLogout;
-      RtcSyncFactory.SyncRtcData;
+      if RtcSyncFactory.GetToken then
+         begin
+           RtcSyncFactory.RtcLogout;
+           RtcSyncFactory.SyncRtcData;
+         end;
     finally
       Free;
     end;

@@ -1666,7 +1666,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                 0000}
               Color = clBtnFace
               Anchors = [akTop, akRight]
-              Caption = #25910#38134#32467#36134
+              Caption = #25910#38134#32467#36134'(+)'
               TabOrder = 0
               OnClick = btnSaveClick
             end

@@ -211,7 +211,7 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmDBGridPreview;
+uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmDBGridPreview;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -714,11 +714,12 @@ procedure TfrmGoodsStorage.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj := TRecord_.Create;
-
+  TDbGridEhSort.InitForm(self);
 end;
 
 procedure TfrmGoodsStorage.FormDestroy(Sender: TObject);
 begin
+  TDbGridEhSort.FreeForm(self);
   AObj.Free;
   inherited;
 

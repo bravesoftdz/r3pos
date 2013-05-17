@@ -819,7 +819,7 @@ item: Install File
   File Date=20130323 155500
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\rspcn.exe
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.exe
   Destination=%MAINDIR%\shop.exe
   Flags=0000000010000010
   File Size=2706432
@@ -836,6 +836,13 @@ item: Install File
   File Size=1064448
   File Date=20130323 155500
   EXE Type=32
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\dbfile.dat
+  Destination=%MAINDIR%\dbfile.dat
+  Flags=0000000010000010
+  File Size=6594560
+  File Date=20130325 185815
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite.db

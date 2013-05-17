@@ -145,6 +145,7 @@ begin
   except
     edtInput.SelectAll;
     edtInput.SetFocus;
+    Raise;
   end;
   ModalResult := MROK;
 end;

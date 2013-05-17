@@ -1891,12 +1891,35 @@ end;
 
 function TfrmSaleOrder.payCashMny(s:string): boolean;
 var r:currency;
+    fee,A:currency;
 begin
+  fee :=
+    AObj.FieldbyName('PAY_B').AsFloat+
+    AObj.FieldbyName('PAY_C').AsFloat+
+    AObj.FieldbyName('PAY_D').AsFloat+
+    AObj.FieldbyName('PAY_E').AsFloat+
+    AObj.FieldbyName('PAY_F').AsFloat+
+    AObj.FieldbyName('PAY_G').AsFloat+
+    AObj.FieldbyName('PAY_H').AsFloat+
+    AObj.FieldbyName('PAY_I').AsFloat+
+    AObj.FieldbyName('PAY_J').AsFloat;
+  A := (AObj.FieldbyName('SALE_MNY').AsFloat-AObj.FieldbyName('PAY_ZERO').AsFloat)-fee;
   try
     r := strtoFloat(s);
   except
     Raise Exception.Create('你输入的实收现金不正确，请重新输入');
   end;
+
+  AObj.FieldByName('CASH_MNY').AsFloat := r;
+
+  if A<0 then
+     begin
+       if r>A then Raise Exception.Create('实退金额不能大于应退现金');
+     end
+  else
+     begin
+       if r<A then Raise Exception.Create('实收金额不能小于应收现金'); 
+     end;
   AObj.FieldByName('CASH_MNY').AsFloat := r;
   FInputFlag :=1;
   try

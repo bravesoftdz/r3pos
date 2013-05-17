@@ -72,7 +72,7 @@ begin
       MI_LOADURL: //WM_BROWSER_RUNED
         begin
           PostMessage(Application.MainForm.Handle, WM_BROWSER_RUNED, 0,lParam);
-        end;
+        end;  
     end;
   end
   else

@@ -245,7 +245,8 @@ begin
       cdsReport2.SQL.Text := cdsReport2.SQL.Text +' group by TENANT_ID,GODS_ID,CLIENT_ID';
 
       cdsReport2.SQL.Text :=
-         'select j.*,1 as flag,case when j.SALE_MONEY<>0 then cast(j.SALE_PRF as decimal(18,3)) *100.00 / cast(j.SALE_MONEY as decimal(18,3)) else 0 end as PRF_RATE,b.CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport2.SQL.Text+') j '+
+         'select j.*,1 as flag,case when j.SALE_MONEY<>0 then cast(j.SALE_PRF as decimal(18,3)) *100.00 / cast(j.SALE_MONEY as decimal(18,3)) else 0 end as PRF_RATE,'+
+         'case when j.CLIENT_ID is null then ''ÆÕÍ¨¿Í»§'' else b.CLIENT_NAME end as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport2.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID  order by j.GODS_ID,b.CLIENT_CODE';
       cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
       cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));

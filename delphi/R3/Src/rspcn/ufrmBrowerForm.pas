@@ -110,6 +110,8 @@ type
     btnGo: TRzBmpButton;
     btnSerach: TRzBmpButton;
     RzFormShape1: TRzFormShape;
+    Image4: TImage;
+    Image5: TImage;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -117,7 +119,6 @@ type
     procedure btnBackClick(Sender: TObject);
     procedure PageControl1Close(Sender: TObject; var AllowClose: Boolean);
     procedure serachTextEnter(Sender: TObject);
-    procedure PageControl1DblClick(Sender: TObject);
     procedure IEAddress1KeyPress(Sender: TObject; var Key: Char);
     procedure IEAddress1UrlSelected(Sender: TObject; Url: WideString;
       var Cancel: Boolean);
@@ -239,7 +240,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst,uRtcLibFactory;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -341,7 +342,7 @@ begin
   TabSheetEx.Caption := '新建页';
   TabSheetEx.button := TrzBmpButton.Create(pageTab);
   TabSheetEx.button.Parent := pageTab;
-  TabSheetEx.button.Top := 3;
+  TabSheetEx.button.Top := 2;
   TabSheetEx.button.AllowAllUp := true;
   TabSheetEx.button.Bitmaps.Up.Assign(button_close.Picture);
   TabSheetEx.button.Bitmaps.Down.Assign(button_active.Picture);
@@ -497,6 +498,7 @@ begin
   Initialized := true;
   whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
     HInstance, 0);
+  Runed := false;
   Timer1.Enabled := true;
   m_bFullScreen := false;
   setWindowState(wsMaximized);
@@ -505,10 +507,9 @@ begin
   UpdateControls;
   if paramStr(1)='-open' then
      begin
+       if RtcLibFactory.GetToken<>0 then Raise Exception.Create('读取容器令牌失败。'); 
        //调用DLL读取令牌后登录
-       if jsExt.signToken('<?xml version="1.0" encoding="gbk"?><xsm code="0000" msg="验证成功" trans_time="20130508155524"><userId>1061020100000191</userId><nickName>程晨</nickName><userType>2210</userType>'+'<comId>11610201</comId><saledptId>11610202</saledptId><refId>1061020100000191</refId><comName>铜川分公司</comName>'+
-          '<domainUrl>http://test.xinshangmeng.com/xsm6/main.html?v=2013032600</domainUrl><comType>02</comType><comShort>铜川</comShort><parentComId>11610001</parentComId><expirationTime>9999999999999</expirationTime>'+'<planText>1061020100000191程晨221011610201116102021061020100000191铜川分公司02铜川116100019999999999999</planText>'+
-          '<signatureValue>9605bcf1f6db8f0f2a76e1e7d30105e5ac6b881fbce8af6afc42242d33b2ff3d3b8f516b70e19889d8146360a2a1da5f132f81e985b6ef5c435f8c4df37bc0720a9fdc7c2c29bd16eb563c9b3988ae23f2a3f842ac9da633'+'b111e6029ccd3a0e8cda8afef843b017414b17b807d337a78ce26a81eb1a67ba5b847b922f27116c</signatureValue></xsm>')
+       if jsExt.signToken(RtcLibFactory.ticket)
        then
           begin
             OpenHome;
@@ -538,11 +539,6 @@ begin
   tabEx.Free;
   pagebuttonSort;
   UpdateControls;
-end;
-
-procedure TfrmBrowerForm.PageControl1DblClick(Sender: TObject);
-begin
-//  destroyTabBrowser;
 end;
 
 procedure TfrmBrowerForm.LoadUrl(_url: string;appId:string;TimeOut:integer=15000);
@@ -1011,8 +1007,8 @@ begin
       if (pageControl1.ActivePageIndex = i) and (i>0) then
          begin
            btnPageClose.Visible := true;
-           btnPageClose.Top := 5;
-           btnPageClose.Left := w - 20;
+           btnPageClose.Top := 7;
+           btnPageClose.Left := w - 16;
            btnPageClose.BringToFront;
          end;
     end;

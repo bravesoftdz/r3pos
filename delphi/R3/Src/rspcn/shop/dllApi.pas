@@ -103,7 +103,7 @@ begin
     result := true;
     if token.online then
        begin
-//         SyncFactory.LoginSync(appWnd);
+         SyncFactory.LoginSync(appWnd);
        end;
     result := true;
   except

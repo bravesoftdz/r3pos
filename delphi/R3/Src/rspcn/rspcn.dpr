@@ -16,7 +16,8 @@ uses
   webMultInst in 'webMultInst.pas',
   uAppMgr in 'uAppMgr.pas',
   ufrmUpdate in 'ufrmUpdate.pas',
-  ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog};
+  ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
+  uRtcLibFactory in 'shop\app\uRtcLibFactory.pas';
 
 {$R *.TLB}
 

@@ -513,7 +513,7 @@ begin
        then
           begin
             OpenHome;
-            LoadUrl(paramStr(2),'');
+            if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
           end
      end;
    if frmUpdate.CheckDBVersion then

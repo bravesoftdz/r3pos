@@ -70,15 +70,22 @@ end;
 implementation
 procedure AddRoot(ATree:TRzTreeView;RootName:string);
 var P,Root:TTreeNode;
+  SaveChange:TTVChangedEvent;
 begin
-  Root := ATree.Items.Add(nil,RootName);
-  P := Root.getPrevSibling;
-  while P <> nil do
-  begin
-    P.MoveTo(Root, naAddChildFirst);
+ SaveChange := ATree.onChange;
+ try
+    ATree.onChange := nil;
+    Root := ATree.Items.Add(nil,RootName);
     P := Root.getPrevSibling;
-  end;
-  Root.Selected := true;
+    while P <> nil do
+    begin
+      P.MoveTo(Root, naAddChildFirst);
+      P := Root.getPrevSibling;
+    end;
+    Root.Selected := true;
+ finally
+    ATree.onChange := SaveChange;
+ end;
 end;
 //根据代码返加树结点级别;
 Function GetNodeLevel(LevelID:String;ATreeFormat:String):Integer;
@@ -111,63 +118,77 @@ End;
 
 procedure ClearTree(ATree:TRzTreeView;RootNode:TTreeNode=nil);
 var
-  i:Integer;
-  Node:TTreeNode;
+   i:Integer;
+   Node:TTreeNode;
+   SaveChange:TTVChangedEvent;
 begin
- ATree.Selected := nil;
- if RootNode=nil then
- begin
-   for i:=0 to ATree.Items.Count-1 do
+   SaveChange := ATree.onChange;
+   try
+     ATree.onChange := nil;
+     ATree.Selected := nil;
+     if RootNode=nil then
      begin
-     if (ATree.Items[I].Data <> Nil) then
-        begin
-          TObject(ATree.Items[I].Data).free;
-          ATree.Items[I].Data := nil;
-        end;
+       for i:=0 to ATree.Items.Count-1 do
+         begin
+         if (ATree.Items[I].Data <> Nil) then
+            begin
+              TObject(ATree.Items[I].Data).free;
+              ATree.Items[I].Data := nil;
+            end;
+         end;
+       ATree.Items.Clear;
+     end
+     else
+     begin
+       Node := RootNode.getFirstChild;
+       while Node<>nil do
+          begin
+            ClearTree(ATree,Node);
+            Node := RootNode.getFirstChild;
+          end;
+       TObject(RootNode.Data).free;
+       RootNode.Data := nil;
+       ATree.Items.Delete(RootNode);
      end;
-   ATree.Items.Clear;
- end
- else
- begin
-   Node := RootNode.getFirstChild;
-   while Node<>nil do
-      begin
-        ClearTree(ATree,Node);
-        Node := RootNode.getFirstChild;
-      end;
-   TObject(RootNode.Data).free;
-   RootNode.Data := nil;
-   ATree.Items.Delete(RootNode); 
- end;
+  finally
+     ATree.OnChange := saveChange;
+  end;
 end;
 procedure ClearTree(ATree:TRzCheckTree;RootNode:TTreeNode=nil);
 var
   i:Integer;
   Node:TTreeNode;
+  SaveChange:TTVChangedEvent;
 begin
- if RootNode=nil then
- begin
-   for i:=0 to ATree.Items.Count-1 do
-     begin
-     if (ATree.Items[I].Data <> Nil) then
+ SaveChange := ATree.onChange;
+ try
+   ATree.onChange := nil;
+   if RootNode=nil then
+   begin
+     for i:=0 to ATree.Items.Count-1 do
+       begin
+       if (ATree.Items[I].Data <> Nil) then
+          begin
+            TObject(ATree.Items[I].Data).free;
+            ATree.Items[I].Data := nil;
+          end;
+       end;
+     ATree.Items.Clear;
+   end
+   else
+   begin
+     Node := RootNode.getFirstChild;
+     while Node<>nil do
         begin
-          TObject(ATree.Items[I].Data).free;
-          ATree.Items[I].Data := nil;
+          ClearTree(ATree,Node);
+          Node := RootNode.getFirstChild;
         end;
-     end;
-   ATree.Items.Clear;
- end
- else
- begin
-   Node := RootNode.getFirstChild;
-   while Node<>nil do
-      begin
-        ClearTree(ATree,Node);
-        Node := RootNode.getFirstChild;
-      end;
-   TObject(RootNode.Data).free;
-   RootNode.Data := nil;
-   ATree.Items.Delete(RootNode); 
+     TObject(RootNode.Data).free;
+     RootNode.Data := nil;
+     ATree.Items.Delete(RootNode); 
+   end;
+ finally
+   ATree.onChange := SaveChange;
  end;
 end;
 Procedure CreateLevelTree(DataSet:TDataSet;ATree:TRzTreeView;

@@ -92,25 +92,38 @@ begin
        begin
          sFactor := Factor;
          try
-           ext := CreateDbFactroy.dbVersion;
-           if ext='' then ext := '1.0.0.0';
-           //备份数据库
-           if not fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then // and not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then Raise Exception.Create('r3.'+ext+'文件被其他程序占用，不能完成升级备份');
-              Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),false);
-           try
-             Factor := LocalFactor;
-             if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
-                CreateDbFactroy.Run;
-             deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)); //升级成功，删除备份文件
-           except
-             on E:Exception do
+           CreateDbFactroy.dbFactor := LocalFactor;
+           if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
+           begin
+             ext := CreateDbFactroy.PrgVersion;
+             //备份数据库
+             if not fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then // and not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then Raise Exception.Create('r3.'+ext+'文件被其他程序占用，不能完成升级备份');
                 begin
-                   LocalFactor.DisConnect;
-                   if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
-                   Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false);
-                   LocalFactor.Connect;
-                   Raise Exception.Create('升级出错了,错误:'+E.Message);
+                  if not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),false) then Raise Exception.Create('升级时备份数据库失败');
+                end
+             else
+                begin
+                  if MessageBox(handle,'系统检测到升级异常文件，是否恢复原文件？','友情提示...',MB_YESNO+MB_ICONINFORMATION)=6 then
+                     begin
+                       LocalFactor.DisConnect;
+                       if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
+                       if not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
+                       LocalFactor.Connect;
+                     end;
                 end;
+             try
+               CreateDbFactroy.Run;
+               deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)); //升级成功，删除备份文件
+             except
+               on E:Exception do
+                  begin
+                     LocalFactor.DisConnect;
+                     if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
+                     if not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
+                     LocalFactor.Connect;
+                     Raise Exception.Create('升级出错了,错误:'+E.Message);
+                  end;
+             end;
            end;
          finally
            Factor := sFactor;
@@ -119,7 +132,6 @@ begin
     if (LocalFactor<>Factor) and CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
        begin
          Raise Exception.Create('服务器的版本过旧，请联系管理员升级后台服务器，再使用。'); 
-         //CreateDbFactroy.Run;
        end;
   finally
     Screen.Cursor := crDefault;

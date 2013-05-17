@@ -18,6 +18,7 @@ TCreateDbFactory=class
     FTBSPPATH3: string;
     FTBSPPATH2: string;
     FTBSPPATH4: string;
+    FdbFactor: TdbFactory;
     function GetWindowTmp: string;
     procedure SetCaptureError(const Value: Boolean);
     procedure SetonCreateDbCallBack(const Value: TCreateDbCallBack);
@@ -30,12 +31,14 @@ TCreateDbFactory=class
     procedure SetTBSPPATH2(const Value: string);
     procedure SetTBSPPATH3(const Value: string);
     procedure SetTBSPPATH4(const Value: string);
+    procedure SetdbFactor(const Value: TdbFactory);
   public
     constructor Create;
     destructor  Destroy;override;
     function CompareVersion(v1,v2:string):Boolean;
     function CheckVersion(Version:string;aFactor:TdbFactory=nil):Boolean;
     procedure UpdateVersion;
+    function getMaxVersion:string;
     procedure Load(FileName:string);
     procedure dbInit;
     procedure Run;
@@ -52,10 +55,11 @@ TCreateDbFactory=class
     property TBSPPATH3:string read FTBSPPATH3 write SetTBSPPATH3;
     property TBSPPATH4:string read FTBSPPATH4 write SetTBSPPATH4;
     property PARTITION:string read FPARTITION write SetPARTITION;
+    property dbFactor:TdbFactory read FdbFactor write SetdbFactor;
   end;
-function CheckDbVersion(DBVersion:string):boolean;
+//function CheckDbVersion(DBVersion:string):boolean;
 implementation
-uses uGlobal,ufrmDbUpgrade;
+//uses uGlobal;
 { TCreateDbFactory }
 procedure WriteLog(s:string);
 var
@@ -73,7 +77,7 @@ begin
   end;
 end;
 
-function CheckDbVersion(DBVersion:string):boolean;
+{function CheckDbVersion(DBVersion:string):boolean;
 var Factory:TCreateDbFactory;
 begin
   result := true;
@@ -89,7 +93,7 @@ begin
   finally
     Factory.Free;
   end;
-end;
+end;  }
 function TCreateDbFactory.CheckVersion(Version: string;aFactor:TdbFactory=nil): Boolean;
 var rs:TZQuery;
 begin
@@ -99,7 +103,7 @@ begin
     try
       FPrgVersion := Version;
       if aFactor=nil then
-         Factor.Open(rs)
+         dbFactor.Open(rs)
       else
          aFactor.Open(rs);
       CurVersion := rs.Fields[0].asString;
@@ -168,6 +172,7 @@ end;
 constructor TCreateDbFactory.Create;
 begin
   FList := TStringList.Create;
+  dbFactor := nil;
 end;
 
 procedure TCreateDbFactory.dbInit;
@@ -181,7 +186,7 @@ var
   dbInit:string;
 begin
   if CompareVersion(CurVersion,'1.0.2.4') then Exit;
-  if not (Factor.iDbType in [1,4]) then Exit;
+  if not (dbFactor.iDbType in [1,4]) then Exit;
   if TBSPPATH1='' then Raise Exception.Create('请正确设置基础表空间的存储路径');
   if TBSPPATH2='' then Raise Exception.Create('请正确设置业务表空间的存储路径');
   if TBSPPATH3='' then Raise Exception.Create('请正确设置台账表空间的存储路径');
@@ -194,7 +199,7 @@ begin
        SQL.Clear;
        if Assigned(onCreateDbCallBack) then
           onCreateDbCallBack('初始化数据库','',0);
-       case Factor.iDbType of
+       case dbFactor.iDbType of
        0:dbInit := 'dbInit.mssql';
        1:dbInit := 'dbInit.oracle';
        4:dbInit := 'dbInit.db2';
@@ -231,7 +236,7 @@ begin
                      end;
                   if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
                      begin
-                        Factor.ExecSQL(
+                        dbFactor.ExecSQL(
                             EncodeSQL(SQL.Text)
                             );
                      end;
@@ -258,7 +263,7 @@ begin
          end;
            try
              if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
-                Factor.ExecSQL(
+                dbFactor.ExecSQL(
                     EncodeSQL(SQL.Text)
                     );
              srDbType := -1;
@@ -304,7 +309,21 @@ end;
 
 function TCreateDbFactory.GetiDbType: integer;
 begin
-  result := Factor.iDbType;
+  result := dbFactor.iDbType;
+end;
+
+function TCreateDbFactory.getMaxVersion: string;
+begin
+  if FList.Count>0 then
+     begin
+       FList.Sort;
+       result := FList[FList.Count-1];
+       delete(result,1,2);
+       result := copy(result,1,7);
+     end
+  else
+     result := '0.0.0.0';
+  FPrgVersion := result;
 end;
 
 function TCreateDbFactory.GetWindowTmp: string;
@@ -313,7 +332,9 @@ begin
 end;
 
 procedure TCreateDbFactory.Load(FileName: string);
-var s:string;
+var
+  s:string;
+  i:integer;
 begin
   try
     UnZipFiles(FileName,WindowTmp,'',s);
@@ -325,6 +346,11 @@ begin
       end;
   end;
   FList.CommaText := s;
+  for i:=FList.Count-1 downto 0 do
+    begin
+      if copy(FList[i],1,6)='dbinit' then
+         FList.Delete(i); 
+    end;
 end;
 
 procedure TCreateDbFactory.Run;
@@ -344,7 +370,7 @@ begin
   FList.Sort;
   for i:= 0 to FList.Count - 1 do
     begin
-      if uppercase(FList[i])='dbinit' then continue;
+      if uppercase(copy(FList[i],1,6))='dbinit' then continue;
       SQL.Clear;
       n := length(FList[i])-2-length(ExtractFileExt(FList[i]));
       Version := copy(FList[i],3,n);
@@ -394,7 +420,7 @@ begin
                            SQL.Add(s);
                          end;
                       if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
-                          Factor.ExecSQL(
+                          dbFactor.ExecSQL(
                               EncodeSQL(SQL.Text)
                               );
                       srDbType := -1;
@@ -420,7 +446,7 @@ begin
              end;
                try
                  if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
-                    Factor.ExecSQL(
+                    dbFactor.ExecSQL(
                         EncodeSQL(SQL.Text)
                         );
                  srDbType := -1;
@@ -455,6 +481,11 @@ end;
 procedure TCreateDbFactory.SetCaptureError(const Value: Boolean);
 begin
   FCaptureError := Value;
+end;
+
+procedure TCreateDbFactory.SetdbFactor(const Value: TdbFactory);
+begin
+  FdbFactor := Value;
 end;
 
 procedure TCreateDbFactory.SetHasError(const Value: Boolean);
@@ -502,8 +533,8 @@ procedure TCreateDbFactory.UpdateVersion;
 var n:integer;
 begin
   try
-    n := Factor.ExecSQL('update SYS_DEFINE set VALUE='''+NewVersion+''' where TENANT_ID=0 and DEFINE=''DBVERSION''');
-    if n=0 then  Factor.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''DBVERSION'','''+NewVersion+''',0,''00'',5497000)');
+    n := dbFactor.ExecSQL('update SYS_DEFINE set VALUE='''+NewVersion+''' where TENANT_ID=0 and DEFINE=''DBVERSION''');
+    if n=0 then  dbFactor.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''DBVERSION'','''+NewVersion+''',0,''00'',5497000)');
   except
     on E:Exception do
       begin

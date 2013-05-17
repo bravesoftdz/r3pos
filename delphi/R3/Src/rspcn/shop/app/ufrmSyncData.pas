@@ -43,8 +43,8 @@ type
 var GlobalProTitle:string;
 
 implementation
-
-uses uSyncFactory,uRspSyncFactory,uRtcSyncFactory;
+uses
+  uSyncFactory,uRspSyncFactory,uRtcSyncFactory;
 
 {$R *.dfm}
 

@@ -2147,7 +2147,7 @@ end;
 procedure TfrmPosOutOrder.BarcodeInput(_Buf: string);
 begin
   inherited;
-
+  
 end;
 
 procedure TfrmPosOutOrder.edtACCT_MNYKeyPress(Sender: TObject;

@@ -1062,7 +1062,6 @@ begin
       ShowForm;
       BringToFront;
       Update;
-      Exit;
       if not token.online then Exit;
       if token.tenantId = '' then
          begin
@@ -1108,10 +1107,10 @@ begin
       ShowForm;
       BringToFront;
       Update;
-      Exit;
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
+      RtcSyncFactory.RtcLogout;
       RtcSyncFactory.SyncRtcData;
     finally
       Free;

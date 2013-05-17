@@ -2393,7 +2393,7 @@ var
 begin
   inherited;
   idx := 1;
-  Section := 'SALESORDER_'+inttostr(GodsRzPageControl.ActivePageIndex);
+  Section := 'GODS_SHORTCUT_'+inttostr(GodsRzPageControl.ActivePageIndex);
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'temp\GodsShortCut.ini');
   try
     F.EraseSection(Section);
@@ -2453,7 +2453,7 @@ var
 begin
   inherited;
   ClearGodsStringGrid;
-  Section := 'SALESORDER_'+inttostr(GodsRzPageControl.ActivePageIndex);
+  Section := 'GODS_SHORTCUT_'+inttostr(GodsRzPageControl.ActivePageIndex);
   GodsList := TStringList.Create;
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'temp\GodsShortCut.ini');
   try

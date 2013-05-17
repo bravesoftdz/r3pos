@@ -1993,6 +1993,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 Height = 212
                 Cursor = crDefault
                 Align = alClient
+                Color = 15724527
                 ColCount = 4
                 Ctl3D = True
                 DefaultRowHeight = 21

@@ -71,23 +71,6 @@ type
     MarqueeStatus: TRzMarqueeStatus;
     Image6: TImage;
     Image7: TImage;
-    edtBK_ACCT_MNY: TRzPanel;
-    RzLabel9: TRzLabel;
-    RzPanel7: TRzPanel;
-    RzBackground4: TRzBackground;
-    RzLabel10: TRzLabel;
-    edtACCT_MNY: TcxTextEdit;
-    edtAGIO_RATE: TcxTextEdit;
-    RzPanel8: TRzPanel;
-    RzBackground5: TRzBackground;
-    RzLabel11: TRzLabel;
-    btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
-    edtBK_PAY_TOTAL: TRzPanel;
-    RzPanel10: TRzPanel;
-    RzBackground6: TRzBackground;
-    payment: TRzLabel;
-    edtPAY_TOTAL: TcxTextEdit;
     PrintDBGridEh1: TPrintDBGridEh;
     frfStockOrder: TfrReport;
     RzPanel4: TRzPanel;
@@ -99,6 +82,20 @@ type
     GodsStringGrid: TAdvStringGrid;
     DelGodsShortCust: TPopupMenu;
     DeleteShortCut: TMenuItem;
+    edtBK_ACCT_MNY: TRzPanel;
+    RzLabel9: TRzLabel;
+    RzPanel7: TRzPanel;
+    RzBackground4: TRzBackground;
+    RzLabel10: TRzLabel;
+    edtACCT_MNY: TcxTextEdit;
+    edtAGIO_RATE: TcxTextEdit;
+    RzPanel8: TRzPanel;
+    RzBackground5: TRzBackground;
+    RzLabel11: TRzLabel;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -151,6 +148,8 @@ type
       ACol: Integer; APen: TPen; var Borders: TCellBorders);
     procedure GodsRzPageControlChange(Sender: TObject);
     procedure helpClick(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1050,78 +1049,78 @@ begin
   s := '0000000000';
   w := 0;
   payInfo := '';
-  payment.Caption := '本次付款';
+//  payment.Caption := '本次付款';
   if AObj.FieldbyName('PAY_A').asFloat<>0 then
      begin
        s[1] := '1';
-       payment.Caption := '现金付款';
+//       payment.Caption := '现金付款';
        inc(w);
        payInfo := payInfo +'现金:'+formatFloat('#0.0#',AObj.FieldbyName('PAY_A').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_B').asFloat<>0 then
      begin
        s[2] := '1';
-       payment.Caption := getPaymentTitle('B')+'付款';
+//       payment.Caption := getPaymentTitle('B')+'付款';
        inc(w);
        payInfo := payInfo +getPaymentTitle('B')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_B').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_C').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('C')+'付款';
+//       payment.Caption := getPaymentTitle('C')+'付款';
        inc(w);
        s[3] := '1';
        payInfo := payInfo +getPaymentTitle('C')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_C').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_D').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('D')+'欠款';
+//       payment.Caption := getPaymentTitle('D')+'欠款';
        inc(w);
        s[4] := '0';
        payInfo := payInfo +getPaymentTitle('D')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_D').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_E').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('E')+'付款';
+//       payment.Caption := getPaymentTitle('E')+'付款';
        inc(w);
        s[5] := '1';
        payInfo := payInfo +getPaymentTitle('E')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_E').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_F').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('F')+'付款';
+//       payment.Caption := getPaymentTitle('F')+'付款';
        inc(w);
        s[6] := '1';
        payInfo := payInfo +getPaymentTitle('F')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_F').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_G').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('G')+'付款';
+//       payment.Caption := getPaymentTitle('G')+'付款';
        inc(w);
        s[7] := '1';
        payInfo := payInfo +getPaymentTitle('G')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_G').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_H').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('H')+'付款';
+//       payment.Caption := getPaymentTitle('H')+'付款';
        inc(w);
        s[8] := '1';
        payInfo := payInfo +getPaymentTitle('H')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_H').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_I').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('I')+'付款';
+//       payment.Caption := getPaymentTitle('I')+'付款';
        inc(w);
        s[9] := '1';
        payInfo := payInfo +getPaymentTitle('I')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_I').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_J').asFloat<>0 then
      begin
-       payment.Caption := getPaymentTitle('J')+'付款';
+//       payment.Caption := getPaymentTitle('J')+'付款';
        inc(w);
        s[10] := '1';
        payInfo := payInfo +getPaymentTitle('J')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_J').asFloat)+ ' ';
      end;
-  if w>1 then payment.Caption := '组合付款';
+//  if w>1 then payment.Caption := '组合付款';
   case inputFlag of
   13: MarqueeStatus.Caption := payInfo;
   else
@@ -1323,10 +1322,10 @@ begin
 end;
 
 procedure TfrmPosInOrder.edtPAY_TOTALPropertiesChange(Sender: TObject);
-var r:currency;
+//var r:currency;
 begin
   inherited;
-  if edtPAY_TOTAL.Focused then
+{  if edtPAY_TOTAL.Focused then
      begin
        r := StrtoFloatDef(edtPAY_TOTAL.Text,0);
        AObj.FieldbyName('PAY_A').AsFloat := r;
@@ -1340,7 +1339,7 @@ begin
        AObj.FieldbyName('PAY_I').AsFloat := 0;
        AObj.FieldbyName('PAY_J').AsFloat := 0;
        payment.Caption := '现金收款';
-     end;
+     end;   }
 end;
 
 procedure TfrmPosInOrder.PageControlChange(Sender: TObject);
@@ -1568,10 +1567,10 @@ begin
         AObj.FieldbyName('PAY_H').AsFloat+
         AObj.FieldbyName('PAY_I').AsFloat+
         AObj.FieldbyName('PAY_J').AsFloat;
-       if fee=0 then
-          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
-       else
-          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+//       if fee=0 then
+//          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+//       else
+//          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
      end;
 end;
@@ -1596,10 +1595,10 @@ begin
         AObj.FieldbyName('PAY_H').AsFloat+
         AObj.FieldbyName('PAY_I').AsFloat+
         AObj.FieldbyName('PAY_J').AsFloat;
-       if fee=0 then
-          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
-       else
-          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+//       if fee=0 then
+//          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+//       else
+//          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
      end;
 end;
@@ -1899,6 +1898,18 @@ procedure TfrmPosInOrder.ajustPostion;
 begin
   inherited;
   AdjustGodsStringGrid;
+end;
+
+procedure TfrmPosInOrder.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  DoHangUp;
+end;
+
+procedure TfrmPosInOrder.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  DoPickUp;
 end;
 
 initialization

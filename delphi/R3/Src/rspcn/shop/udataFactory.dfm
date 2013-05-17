@@ -1,7 +1,7 @@
 object dataFactory: TdataFactory
   OldCreateOrder = False
-  Left = 240
-  Top = 135
+  Left = 269
+  Top = 248
   Height = 150
   Width = 215
 end

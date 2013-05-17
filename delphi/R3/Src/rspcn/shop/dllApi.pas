@@ -71,7 +71,7 @@ begin
   if (dwReason = DLL_PROCESS_DETACH) Then
   Begin
     eraseApp;
-    asm
+    {asm
       xor edx, edx
       push ebp
       push OFFSET @@safecode
@@ -82,7 +82,7 @@ begin
       @@safecode:
       call Halt0;
       @@exit:
-    end;
+    end; }
   end;
 end;
 //1.初始化应用
@@ -103,7 +103,7 @@ begin
     result := true;
     if token.online then
        begin
-         SyncFactory.LoginSync(appWnd);
+//         SyncFactory.LoginSync(appWnd);
        end;
     result := true;
   except
@@ -195,7 +195,7 @@ begin
        begin
           Form := TfrmWebForm(webForm.Objects[0]);
           webForm.Delete(0);
-          Form.Free; 
+          Form.Free;
        end;
     //if assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
     if assigned(DevFactory) then FreeAndNil(DevFactory);

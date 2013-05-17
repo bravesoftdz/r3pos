@@ -20,7 +20,6 @@ uses
   uTokenFactory in '..\uTokenFactory.pas',
   dllApi in 'dllApi.pas',
   udataFactory in 'udataFactory.pas' {dataFactory: TDataModule},
-  rspcn_TLB in '..\rspcn_TLB.pas',
   dllIntf in '..\dllIntf.pas',
   uRspFactory in '..\uRspFactory.pas' {rspFactory: TDataModule},
   ufrmWebToolForm in 'ufrmWebToolForm.pas' {frmWebToolForm},
@@ -84,7 +83,9 @@ uses
   ufrmMeaUnits in 'app\ufrmMeaUnits.pas' {frmMeaUnits},
   ufrmAnlyReport in 'app\ufrmAnlyReport.pas' {frmAnlyReport},
   ufrmProfitReport in 'app\ufrmProfitReport.pas' {frmProfitReport},
-  ufrmSelectGoods in 'app\ufrmSelectGoods.pas' {frmSelectGoods};
+  ufrmSelectGoods in 'app\ufrmSelectGoods.pas' {frmSelectGoods},
+  uRtcSyncFactory in 'app\uRtcSyncFactory.pas',
+  udllCtrlUtil in 'utils\udllCtrlUtil.pas';
 
 {$R *.res}
 exports

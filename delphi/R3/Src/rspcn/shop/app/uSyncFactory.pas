@@ -1055,13 +1055,14 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
-  with TfrmSyncData.CreateParented(PHWnd) do
+  with TfrmSyncData.Create(nil) do
   begin
     try
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
       Update;
+      Exit;
       if not token.online then Exit;
       if token.tenantId = '' then
          begin
@@ -1100,13 +1101,14 @@ begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
   if not token.online then Exit;
-  with TfrmSyncData.CreateParented(PHWnd) do
+  with TfrmSyncData.Create(nil) do
   begin
     try
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
       Update;
+      Exit;
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
@@ -1122,7 +1124,7 @@ begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
   if not token.online then Exit;
-  with TfrmSyncData.CreateParented(PHWnd) do
+  with TfrmSyncData.Create(nil) do
   begin
     try
       hWnd := PHWnd;
@@ -1141,7 +1143,7 @@ begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
   if not CheckNeedLoginSync then Exit;
-  with TfrmSyncData.CreateParented(PHWnd) do
+  with TfrmSyncData.Create(nil) do
   begin
     try
       hWnd := PHWnd;

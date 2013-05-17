@@ -78,8 +78,6 @@ type
     RzPanel8: TRzPanel;
     RzBackground5: TRzBackground;
     RzLabel5: TRzLabel;
-    btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
     edtBK_CLIENT_ID: TRzPanel;
     RzPanel21: TRzPanel;
     RzBackground1: TRzBackground;
@@ -97,6 +95,8 @@ type
     GodsStringGrid: TAdvStringGrid;
     DelGodsShortCust: TPopupMenu;
     DeleteShortCut: TMenuItem;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -149,6 +149,8 @@ type
     procedure GodsStringGridClickCell(Sender: TObject; ARow,
       ACol: Integer);
     procedure DeleteShortCutClick(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -2496,6 +2498,18 @@ procedure TfrmPosOutOrder.ajustPostion;
 begin
   inherited;
   AdjustGodsStringGrid;
+end;
+
+procedure TfrmPosOutOrder.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  DoPickUp;
+end;
+
+procedure TfrmPosOutOrder.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  DoHangUp;
 end;
 
 initialization

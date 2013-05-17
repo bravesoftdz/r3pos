@@ -61,8 +61,6 @@ type
     RzBackground6: TRzBackground;
     payment: TRzLabel;
     edtPAY_TOTAL: TcxTextEdit;
-    btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
     RzPanel3: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel9: TRzPanel;
@@ -97,6 +95,8 @@ type
     Image7: TImage;
     PrintDBGridEh1: TPrintDBGridEh;
     frfStockOrder: TfrReport;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;

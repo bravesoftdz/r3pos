@@ -1476,6 +1476,8 @@ begin
       until FindNext(sr) <> 0;
       FindClose(sr);
     end;
+  if trim(s) = '' then Raise Exception.Create('系统尚未挂单...');
+  ClearInvaid;
   if not edtTable.IsEmpty and (MessageBox(Handle,'是否清空当前录入的所有商品？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
   NewOrder;
   mm := TMemoryStream.Create;
@@ -1494,7 +1496,7 @@ begin
   end;
   edtTable.Last;
   RowId := edtTable.FieldbyName('SEQNO').AsInteger;
-  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\'+s);
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\H'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\P'+s);
   Calc;

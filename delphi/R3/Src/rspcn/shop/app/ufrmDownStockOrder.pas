@@ -345,6 +345,7 @@ begin
             cdsDetail.FieldByName('UNIT_ID').AsString := orderDetail.FieldByName('UNIT_ID').AsString;
             cdsDetail.FieldByName('AMOUNT').AsFloat := orderDetail.FieldByName('AMOUNT').AsFloat;
             cdsDetail.FieldByName('IS_PRESENT').AsInteger := 0;
+            cdsDetail.FieldByName('TAX_RATE').AsFloat := taxRate;
             cdsDetail.FieldByName('REMARK').AsString := '<订单号:'+orderDetail.FieldByName('INDE_ID').AsString+'> 需求量:'+orderDetail.FieldByName('NEED_AMT').AsString+' 审核量:'+orderDetail.FieldByName('CHK_AMT').AsString;
             cdsDetail.Post;
             AmountToCalc(cdsDetail);

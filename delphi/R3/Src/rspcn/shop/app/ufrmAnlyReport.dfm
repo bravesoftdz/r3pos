@@ -222,7 +222,7 @@ inherited frmAnlyReport: TfrmAnlyReport
                 TextStyle = tsShadow
               end
             end
-            object cxRadioButton1: TcxRadioButton
+            object edtChar1Type: TcxRadioButton
               Left = 119
               Top = 8
               Width = 70
@@ -232,7 +232,7 @@ inherited frmAnlyReport: TfrmAnlyReport
               TabOrder = 1
               TabStop = True
             end
-            object cxRadioButton2: TcxRadioButton
+            object edtChar2Type: TcxRadioButton
               Left = 199
               Top = 8
               Width = 86
@@ -298,7 +298,7 @@ inherited frmAnlyReport: TfrmAnlyReport
                 TextStyle = tsShadow
               end
             end
-            object cxComboBox1: TcxComboBox
+            object edtDataSource: TcxComboBox
               Left = 88
               Top = 5
               Width = 91
@@ -306,14 +306,12 @@ inherited frmAnlyReport: TfrmAnlyReport
               Properties.DropDownAutoWidth = False
               Properties.DropDownListStyle = lsFixedList
               Properties.Items.Strings = (
-                #38144#37327
-                #38144#21806#39069
-                #27611#21033)
+                #38144#21806#37327
+                #38144#21806#39069)
               Style.Edges = []
               Style.HotTrack = False
               Style.ButtonTransparency = ebtInactive
               TabOrder = 1
-              Text = '5'
             end
           end
         end
@@ -439,6 +437,7 @@ inherited frmAnlyReport: TfrmAnlyReport
             Properties.Items.Strings = (
               #25353#23458#25143
               #25353#21830#21697)
+            Properties.OnChange = edtReportTypePropertiesChange
             Style.Edges = []
             Style.HotTrack = False
             Style.ButtonTransparency = ebtInactive
@@ -1043,6 +1042,7 @@ inherited frmAnlyReport: TfrmAnlyReport
           Color = clBtnFace
           Anchors = [akTop, akRight]
           TabOrder = 5
+          OnClick = chartClick
         end
       end
     end

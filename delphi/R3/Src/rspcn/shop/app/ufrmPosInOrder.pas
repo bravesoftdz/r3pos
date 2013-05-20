@@ -1268,7 +1268,7 @@ begin
       until FindNext(sr) <> 0;
       FindClose(sr);
     end;
-  if trim(s) = '' then Raise Exception.Create('系统尚未挂单...');
+  if trim(s) = '' then Raise Exception.Create('未检测到挂单记录...');
   ClearInvaid;
   if not edtTable.IsEmpty and (MessageBox(Handle,'是否清空当前录入的所有商品？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
   NewOrder;

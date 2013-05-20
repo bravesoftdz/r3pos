@@ -1,33 +1,51 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>登陆页</title>
-<link href="css/login.css" type="text/css" rel="stylesheet">
-<script src="js/json.js" type="text/javascript"></script>
+<link href="css/login.css" rel="stylesheet" type="text/css">
 <script src="js/rspcn.js" type="text/javascript"></script>
-<script src="js/jquery-1.6.1.min.js" type="text/javascript"></script>
-<script src="js/jquery.cycle.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="xsm">
+<div id="xsmLogin">
+<div class="title"><strong>现代零售终端营销管理系统</strong></div>
+<div class="content">
+<div class="login">
+<div class="lTitle loginFont1">用户登录</div>
+<div class="lCon">
+<ul>
+	<li class="loginFont2">用户名：</li>
+	<li><input type="text" class="input" id="username"></li>
+	<li class="loginFont2" style="margin-top: 10px;">登录密码：</li>
+	<li><input type="password" class="input" id="password"></li>
+	<li class="loginFont3" style="padding: 5px 0 15px 15px;">
+	<input type="checkbox" id="offline">&nbsp;离线登录
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="checkbox">&nbsp;记住账号</li>
+	<li><a href="javascript:doLogin()"><img src="images/loginBtn.jpg" /></a></li>
+</ul>
+</div>
+</div>
+</div>
 
-<script type="text/javascript">
-	$(function(){
-		$('#banner1').cycle({ 
-			fx:'scrollLeft',
-			pager:'#btn1'
-		});
-		$('#banner2').cycle({ 
-			fx:'scrollLeft',
-			pager:'#btn2'
-		});		
-		var username = rsp.getLocalJson('rmbUser');
-		if(username!=''){
-			$("#username").val(username);
-			$("#rmbUser").attr("checked",true);
-		}
-	})
-</script>
-<script type="text/javascript">
-function dologin() {
+<div class="friendLinks">
+<div class="dt">友情链接</div>
+<div class="dd">
+<ul>
+	<li><a href="#">Google谷歌</a></li>
+	<li><a href="#">新浪·微博</a></li>
+	<li><a href="#">腾讯·空间</a></li>
+	<li><a href="#">百度</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+<script>
+function doLogin() {
 	var username = document.getElementById('username').value;
 	var password = document.getElementById('password').value;
 	if (username == '' || username == '用户名') {
@@ -40,16 +58,6 @@ function dologin() {
 		document.getElementById('password').focus();
 		return;
 	}
-	
-	//记住用户名 start
-	var check = document.getElementById("rmbUser").checked;
-	if(check){
-		rsp.setLocalJson('rmbUser',username);
-	}else{
-		rsp.setLocalJson('rmbUser','');
-	}	
-	//记住用户名 end
-	
 	var verify = rsp.getVerify();
 	var offline = document.getElementById('offline').checked;
 	try {
@@ -64,90 +72,4 @@ function dologin() {
 		alert('登录失败');
 	}
 }
-function usernameFocus() {
-	var username = document.getElementById('username').value;
-	if (username == '用户名') {
-		document.getElementById('username').value = '';
-	}
-}
-function passwordFocus() {
-	var tmpPwd = document.getElementById("tmpPwd");
-	var password = document.getElementById("password");	
-	if (tmpPwd.value == '密码') {
-		password.style.display="block";
-		tmpPwd.style.display="none";
-		password.focus();
-	}
-}
-function usernameBlur() {
-	var username = document.getElementById('username').value;
-	if (username == '') {
-		document.getElementById('username').value = '用户名';
-	}
-}
-function passwordBlur() {
-	var tmpPwd = document.getElementById('tmpPwd');
-	var password = document.getElementById('password');
-	if (password.value == '') {	
-		password.style.display="none";
-		tmpPwd.style.display="block";
-	}
-}
-
 </script>
-</head>
-
-<body>
-<div id="loginBg">
-<div id="loginContent"><!--滚动图片start-->
-<div id="adsFla1">
-<div id="banner1">
-	<img onClick="diao();" src="images/ad1.png" width="985" height="209" />
-	<img onClick="diao();" src="images/ad1.png" width="985" height="209" />
-	<img onClick="diao();" src="images/ad1.png" width="985" height="209" />
-	<img onClick="diao();" src="images/ad1.png" width="985" height="209" />
-</div>
-<div id="btn1"></div>
-</div>
-<!--滚动图片end-->
-<div class="left">
-	<input class="input1" id="username" type="text" onFocus="usernameFocus()" onBlur="usernameBlur()" value="用户名">
-	<input class="input1" id="tmpPwd" type="text" onFocus="passwordFocus();" value="密码">
-	<input class="input1" id="password" type="password"  onBlur="passwordBlur()"  style="display:none;">
-	<input style="margin-left: 20px;" type="checkbox" id="offline">&nbsp;离线登录
-	<input id="rmbUser" style="margin-left: 70px;" type="checkbox">&nbsp;记住账号
-	<br />
-	<div class="clearfloat"></div>
-	<a href="javascript:dologin()" style="margin: 5px 11px; display: inline-block;"><img src="images/loginbtn.png" /></a>
-</div>
-<!--mid  start-->
-<div class="mid">
-<div id="banner2">
-	<img onClick="diao();" src="images/ad2.png" width="425" height="209" />
-	<img onClick="diao();" src="images/ad2.png" width="425" height="209" />
-	<img onClick="diao();" src="images/ad2.png" width="425" height="209" />
-	<img onClick="diao();" src="images/ad2.png" width="425" height="209" />
-</div>
-<div id="btn2"></div>
-</div>
-<!--mid  end-->
-<div class="right">
-<div class="content">
-<ul>
-	<li><a href="#">通知1</a></li>
-	<li><a href="#">通知2</a></li>
-	<li><a href="#">通知3</a></li>
-</ul>
-</div>
-</div>
-</div>
-<div id="links">
-<div style="display: inline-block;"><a href="#"><img src="images/android.png" /></a>&nbsp; <a href="#"><img src="images/app.png" /></a></div>
-</div>
-<div id="footer">
-Copyright 2012-2013 by www.xinshangmeng.com All Right Reserved<br />
-增值电信业务经营许可证：京备1000008-01 本网站含有烟草内容，未成年人谢绝访问
-</div>
-</div>
-</body>
-</html>

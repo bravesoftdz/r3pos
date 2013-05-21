@@ -63,16 +63,15 @@ begin
      try
        Tmp := TZQuery.Create(nil);
        Tmp.Close;
-       Tmp.SQL.Text := 'Select COMM From PUB_IC_INFO Where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+       Tmp.SQL.Text := 'select COMM from PUB_IC_INFO Where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID';
        Tmp.ParamByName('CUST_CODE').AsString := FieldbyName('CUST_CODE').AsString;
        Tmp.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-       Tmp.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsString;
        AGlobal.Open(Tmp);
        Tmp.First;
        while not Tmp.Eof do
         begin
           if Copy(Tmp.FieldByName('COMM').AsString,2,1) = '2' then
-            AGlobal.ExecSQL('delete from PUB_IC_INFO where IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self)
+            AGlobal.ExecSQL('delete from PUB_IC_INFO where IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID',Self)
           else
             Raise Exception.Create('此会员卡号已经存在,不能重复!');
           Tmp.Next;
@@ -107,11 +106,9 @@ begin
       if FieldByName('CUST_CODE').AsString <> '' then
       begin
         Tmp.Close;
-        Tmp.SQL.Text := 'select COMM,CLIENT_ID from PUB_IC_INFO where IC_CARDNO=:CUST_CODE'+
-        ' and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+        Tmp.SQL.Text := 'select COMM,CLIENT_ID from PUB_IC_INFO where IC_CARDNO=:CUST_CODE and TENANT_ID=:OLD_TENANT_ID';
         Tmp.ParamByName('CUST_CODE').AsString := FieldbyName('CUST_CODE').AsString;
         Tmp.ParamByName('OLD_TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-        Tmp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
         AGlobal.Open(Tmp);
 
         if not Tmp.IsEmpty then

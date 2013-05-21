@@ -604,9 +604,29 @@ end;
 procedure TfrmCustomer.RzBmpButton7Click(Sender: TObject);
 var
   gid:string;
+  isSelected:boolean;
 begin
   inherited;
-  if fndPRICE_ID.asString='' then Raise Exception.Create('请选择更改的目标等级。');
+  isSelected := false;
+  gid := cdsList.FieldbyName('CUST_ID').AsString;
+  cdsList.DisableControls;
+  try
+    cdsList.First;
+    while not cdsList.Eof do
+      begin
+        if cdsList.FieldByName('A').AsString = '1' then
+           begin
+             isSelected := true;
+             break;
+           end;
+        cdsList.Next;
+      end;
+  finally
+    cdsList.Locate('CUST_ID',gid,[]);
+    cdsList.EnableControls;
+  end;
+  if not isSelected then Raise Exception.Create('请选择要变更的记录...');
+  if fndPRICE_ID.asString='' then Raise Exception.Create('请选择更改的目标等级...');
   if MessageBox(Handle,'是否修改选中的所有会员等级？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('CUST_ID').AsString;
   cdsList.DisableControls;
@@ -632,8 +652,28 @@ end;
 procedure TfrmCustomer.RzBmpButton6Click(Sender: TObject);
 var
   gid:string;
+  isSelected:boolean;
 begin
   inherited;
+  isSelected := false;
+  gid := cdsList.FieldbyName('CUST_ID').AsString;
+  cdsList.DisableControls;
+  try
+    cdsList.First;
+    while not cdsList.Eof do
+      begin
+        if cdsList.FieldByName('A').AsString = '1' then
+           begin
+             isSelected := true;
+             break;
+           end;
+        cdsList.Next;
+      end;
+  finally
+    cdsList.Locate('CUST_ID',gid,[]);
+    cdsList.EnableControls;
+  end;
+  if not isSelected then Raise Exception.Create('请选择要删除的记录...');  
   if MessageBox(Handle,'是否删除选中的所有会员？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('CUST_ID').AsString;
   cdsList.DisableControls;

@@ -1912,7 +1912,7 @@ begin
   if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
   s := trim(id);
   IsAgio := (s[1]='/');
-  delete(s,1,1);
+  if IsAgio then delete(s,1,1);
   s := trim(s);
   try
     StrToFloat(s);

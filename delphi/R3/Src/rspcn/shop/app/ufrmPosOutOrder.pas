@@ -470,6 +470,7 @@ begin
     cdsICGlide.CancelUpdates;
     Raise;
   end;
+  cdsList.Delete;
   AObj.ReadFromDataSet(cdsHeader);
   ReadFromObject(AObj,self);
   ReadFrom(cdsDetail);
@@ -1866,10 +1867,9 @@ procedure TfrmPosOutOrder.RzToolButton1Click(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if messageBox(handle,'是否删除当前销售单？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   open(cdsList.FieldbyName('SALES_ID').AsString);
   DeleteOrder;
-  cdsList.Delete;
+  NewOrder;
 end;
 
 procedure TfrmPosOutOrder.btnNewClick(Sender: TObject);

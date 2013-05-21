@@ -276,6 +276,7 @@ begin
     cdsDetail.CancelUpdates;
     Raise;
   end;
+  cdsList.Delete;
   AObj.ReadFromDataSet(cdsHeader);
   ReadFromObject(AObj,self);
   ReadFrom(cdsDetail);
@@ -916,10 +917,9 @@ procedure TfrmStockOrder.RzToolButton1Click(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if messageBox(handle,'是否删除当前进货单？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   open(cdsList.FieldbyName('STOCK_ID').AsString);
   DeleteOrder;
-  cdsList.Delete;
+  NewOrder;
 end;
 
 procedure TfrmStockOrder.btnNewClick(Sender: TObject);

@@ -2293,6 +2293,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 233
             Height = 23
+            Properties.MaxLength = 25
             Properties.OnChange = edtGODS_NAMEPropertiesChange
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -2347,6 +2348,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Width = 91
             Height = 23
             TabStop = False
+            Properties.MaxLength = 25
             TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -2904,6 +2906,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 110
             Height = 23
+            Properties.MaxLength = 9
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -2969,6 +2972,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 110
             Height = 23
+            Properties.MaxLength = 9
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -3034,6 +3038,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 110
             Height = 23
+            Properties.MaxLength = 9
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -3100,6 +3105,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Width = 110
             Height = 23
             ParentFont = False
+            Properties.MaxLength = 9
             Style.Font.Charset = GB2312_CHARSET
             Style.Font.Color = clPurple
             Style.Font.Height = -15
@@ -3170,6 +3176,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 110
             Height = 23
+            Properties.MaxLength = 9
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -3235,6 +3242,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Top = 4
             Width = 110
             Height = 23
+            Properties.MaxLength = 9
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end

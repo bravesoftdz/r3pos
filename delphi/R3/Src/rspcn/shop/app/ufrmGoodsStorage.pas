@@ -722,7 +722,6 @@ begin
   TDbGridEhSort.FreeForm(self);
   AObj.Free;
   inherited;
-
 end;
 
 procedure TfrmGoodsStorage.edtSORT_ID1PropertiesButtonClick(
@@ -731,6 +730,7 @@ var
   Obj:TRecord_;
 begin
   inherited;
+  if edtSORT_ID1.Properties.ReadOnly then Exit;
   Obj := TRecord_.Create;
   try
     if frmSortDropFrom.DropForm(edtSORT_ID1,obj) then
@@ -1280,7 +1280,6 @@ begin
   inherited;
   SaveInfo;
   EditPanel.Visible := false;
-
 end;
 
 procedure TfrmGoodsStorage.RzBmpButton2Click(Sender: TObject);
@@ -1293,7 +1292,6 @@ procedure TfrmGoodsStorage.edtGODS_NAMEPropertiesChange(Sender: TObject);
 begin
   inherited;
   if edtGODS_NAME.Focused then edtGODS_SPELL.Text := FnString.GetWordSpell(edtGODS_NAME.Text,3) ;
-
 end;
 
 procedure TfrmGoodsStorage.unDeleteInfo(godsId: string; Relation: integer);
@@ -1862,7 +1860,6 @@ begin
   inherited;
   DBGridPrint;
   TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
-
 end;
 
 procedure TfrmGoodsStorage.RzBmpButton1Click(Sender: TObject);
@@ -1870,7 +1867,6 @@ begin
   inherited;
   DBGridPrint;
   TfrmDBGridPreview.Print(self,PrintDBGridEh1);
-
 end;
 
 procedure TfrmGoodsStorage.DBGridPrint;

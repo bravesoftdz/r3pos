@@ -2557,13 +2557,13 @@ begin
   inherited;
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
+  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
   if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认删除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        fndGODS_ID.Visible := false;
        edtTable.Delete;
        DBGridEh1.SetFocus;
      end;
-
 end;
 
 procedure TfrmOrderForm.toolReturnClick(Sender: TObject);
@@ -2572,6 +2572,7 @@ var
   rs:TZQuery;
 begin
   inherited;
+  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
   if dbState = dsBrowse then
      begin
        if edtTable.FieldbyName('AMOUNT').asFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
@@ -2619,7 +2620,6 @@ begin
        AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
        edtTable.Post;
      end;
-
 end;
 
 procedure TfrmOrderForm.mnuReturnClick(Sender: TObject);

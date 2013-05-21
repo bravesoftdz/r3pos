@@ -990,7 +990,7 @@ inherited frmCustomer: TfrmCustomer
               AutoFitColWidth = False
               ShowButton = True
               LocateStyle = lsDark
-              Buttons = [zbNew]
+              Buttons = []
               DropListStyle = lsFixed
               MultiSelect = False
             end
@@ -1187,7 +1187,6 @@ inherited frmCustomer: TfrmCustomer
                   Width = 92
                 end
                 item
-                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'BIRTHDAY'
                   Footers = <>

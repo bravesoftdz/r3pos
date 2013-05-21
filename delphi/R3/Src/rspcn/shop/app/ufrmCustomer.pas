@@ -163,7 +163,6 @@ type
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
   private
-    { Private declarations }
     searchTxt:string;
     FdbState: TDataSetState;
     AObj:TRecord_;
@@ -173,7 +172,6 @@ type
     procedure WriteInfo;
     procedure DBGridPrint;
   public
-    { Public declarations }
     procedure CreatePriceGrade;
     procedure OpenInfo(custId:string);
     procedure SaveInfo;
@@ -182,20 +180,18 @@ type
     procedure unDeleteInfo(custId:string);
     procedure UpdateGrade(custId:string);
     procedure NewInfo;
-
     procedure Open;
     procedure showForm;override;
     property dbState:TDataSetState read FdbState write SetdbState;
   end;
 
-var
-  frmCustomer: TfrmCustomer;
+var frmCustomer: TfrmCustomer;
 
 implementation
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,ufrmDBGridPreview;
-{$R *.dfm}
 
-{ TfrmCustomer }
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,ufrmDBGridPreview;
+
+{$R *.dfm}
 
 procedure TfrmCustomer.CreatePriceGrade;
 var
@@ -447,6 +443,16 @@ end;
 
 procedure TfrmCustomer.SaveInfo;
 begin
+  if trim(edtCUST_CODE.Text) = '' then
+     begin
+       if edtCUST_CODE.CanFocus then edtCUST_CODE.SetFocus;
+       Raise Exception.Create('会员卡号不能为空...');
+     end;
+  if trim(edtCUST_NAME.Text) = '' then
+     begin
+       if edtCUST_NAME.CanFocus then edtCUST_NAME.SetFocus;
+       Raise Exception.Create('会员名称不能为空...');
+     end;
   WriteInfo;
   dataFactory.BeginBatch;
   try
@@ -468,7 +474,10 @@ begin
        cdsList.FieldByName('CUST_CODE').AsString := edtCUST_CODE.Text;
        cdsList.FieldByName('PRICE_ID').AsString := cmbPRICE_ID.asString;
        cdsList.FieldByName('MOVE_TELE').AsString := edtMOVE_TELE.Text;
-       cdsList.FieldByName('BIRTHDAY').AsString := formatDatetime('YYYY-MM-DD',cmbBIRTHDAY.Date);
+       if trim(cmbBIRTHDAY.Text) <> '' then
+          cdsList.FieldByName('BIRTHDAY').AsString := FormatDatetime('YYYY-MM-DD',cmbBIRTHDAY.Date)
+       else
+          cdsList.FieldByName('BIRTHDAY').AsString := '';
        cdsList.Post;
      end;
 end;
@@ -552,28 +561,24 @@ begin
   cdsCustomer.Edit;
   AObj.WriteToDataSet(cdsCustomer);
   cdsCustomer.Post;
-
 end;
 
 procedure TfrmCustomer.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj := TRecord_.Create;
-
 end;
 
 procedure TfrmCustomer.FormDestroy(Sender: TObject);
 begin
   AObj.Free;
   inherited;
-
 end;
 
 procedure TfrmCustomer.toolEditClick(Sender: TObject);
 begin
   inherited;
   openinfo(cdsList.FieldbyName('CUST_ID').AsString);
-
 end;
 
 procedure TfrmCustomer.DBGridEh1DblClick(Sender: TObject);
@@ -588,14 +593,12 @@ begin
   inherited;
   SaveInfo;
   EditPanel.Visible := false;
-
 end;
 
 procedure TfrmCustomer.RzBmpButton5Click(Sender: TObject);
 begin
   inherited;
   EditPanel.Visible := false;
-
 end;
 
 procedure TfrmCustomer.RzBmpButton7Click(Sender: TObject);
@@ -784,7 +787,6 @@ begin
        unDeleteInfo(cdsList.FieldbyName('CUST_ID').AsString);
        cdsList.Delete;
      end;
-
 end;
 
 procedure TfrmCustomer.btnNewSortClick(Sender: TObject);
@@ -918,7 +920,6 @@ begin
   inherited;
   if Key=#13 then
      Open;
-
 end;
 
 procedure TfrmCustomer.DBGridPrint;
@@ -938,7 +939,6 @@ begin
   inherited;
   DBGridPrint;
   TfrmDBGridPreview.Preview(self,PrintDBGridEh1);
-
 end;
 
 procedure TfrmCustomer.RzBmpButton1Click(Sender: TObject);
@@ -946,8 +946,6 @@ begin
   inherited;
   DBGridPrint;
   TfrmDBGridPreview.Print(self,PrintDBGridEh1);
-
-
 end;
 
 initialization

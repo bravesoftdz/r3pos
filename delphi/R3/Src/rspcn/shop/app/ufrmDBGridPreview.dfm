@@ -56,7 +56,7 @@ inherited frmDBGridPreview: TfrmDBGridPreview
       Color = 12040119
       TabOrder = 0
       object RzBmpButton1: TRzBmpButton
-        Left = 104
+        Left = 105
         Top = 9
         Width = 72
         Height = 31
@@ -280,7 +280,7 @@ inherited frmDBGridPreview: TfrmDBGridPreview
         OnClick = RzBmpButton1Click
       end
       object RzBmpButton3: TRzBmpButton
-        Left = 181
+        Left = 25
         Top = 9
         Width = 72
         Height = 31
@@ -504,7 +504,7 @@ inherited frmDBGridPreview: TfrmDBGridPreview
         OnClick = RzBmpButton3Click
       end
       object RzBmpButton2: TRzBmpButton
-        Left = 261
+        Left = 185
         Top = 9
         Width = 72
         Height = 31
@@ -728,7 +728,7 @@ inherited frmDBGridPreview: TfrmDBGridPreview
         OnClick = RzBmpButton2Click
       end
       object btnPrior: TRzBmpButton
-        Left = 24
+        Left = 265
         Top = 9
         Width = 72
         Height = 31

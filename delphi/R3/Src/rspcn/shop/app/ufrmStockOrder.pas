@@ -1440,7 +1440,7 @@ procedure TfrmStockOrder.PrintOrder;
 var tid,oid:string;
 begin
   inherited;
-  if dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+  if dbState <> dsBrowse then Raise Exception.Create('请在历史单据中打印...');
   if AObj.FieldbyName('STOCK_ID').AsString = '' then Exit;
   tid := token.tenantId;
   oid := AObj.FieldbyName('STOCK_ID').AsString;

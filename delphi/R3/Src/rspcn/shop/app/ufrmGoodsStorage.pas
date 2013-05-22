@@ -1199,8 +1199,28 @@ end;
 procedure TfrmGoodsStorage.RzBmpButton6Click(Sender: TObject);
 var
   gid:string;
+  isSelected:boolean;
 begin
   inherited;
+  isSelected := false;
+  gid := cdsList.FieldbyName('GODS_ID').AsString;
+  cdsList.DisableControls;
+  try
+    cdsList.First;
+    while not cdsList.Eof do
+      begin
+        if cdsList.FieldByName('A').AsString = '1' then
+           begin
+             isSelected := true;
+             break;
+           end;
+        cdsList.Next;
+      end;
+  finally
+    cdsList.Locate('GODS_ID',gid,[]);
+    cdsList.EnableControls;
+  end;
+  if not isSelected then Raise Exception.Create('请选择要删除的记录...');
   if MessageBox(Handle,'是否删除选中的所有商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('GODS_ID').AsString;
   cdsList.DisableControls;
@@ -1210,8 +1230,12 @@ begin
       begin
         if cdsList.FieldbyName('A').AsString='1' then
            begin
-             DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
-             cdsList.Delete;
+             if Copy(cdsList.FieldByName('COMM').AsString,2,2) <> '2' then
+                begin
+                  DeleteInfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
+                  cdsList.Delete;
+                end
+             else cdsList.Next;
            end
         else
            cdsList.Next;
@@ -1225,8 +1249,28 @@ end;
 procedure TfrmGoodsStorage.RzBmpButton7Click(Sender: TObject);
 var
   gid:string;
+  isSelected:boolean;
 begin
   inherited;
+  isSelected := false;
+  gid := cdsList.FieldbyName('GODS_ID').AsString;
+  cdsList.DisableControls;
+  try
+    cdsList.First;
+    while not cdsList.Eof do
+      begin
+        if cdsList.FieldByName('A').AsString = '1' then
+           begin
+             isSelected := true;
+             break;
+           end;
+        cdsList.Next;
+      end;
+  finally
+    cdsList.Locate('GODS_ID',gid,[]);
+    cdsList.EnableControls;
+  end;
+  if not isSelected then Raise Exception.Create('请选择要变更的记录...');
   if FSortId='' then Raise Exception.Create('请选择更改的目标分类。');
   if MessageBox(Handle,'是否修改选中的所有商品分类？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('GODS_ID').AsString;

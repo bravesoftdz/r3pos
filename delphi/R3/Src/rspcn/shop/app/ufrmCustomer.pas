@@ -683,8 +683,12 @@ begin
       begin
         if cdsList.FieldbyName('A').AsString='1' then
            begin
-             DeleteInfo(cdsList.FieldbyName('CUST_ID').AsString);
-             cdsList.Delete;
+             if Copy(cdsList.FieldByName('COMM').AsString,2,2) <> '2' then
+                begin
+                  DeleteInfo(cdsList.FieldbyName('CUST_ID').AsString);
+                  cdsList.Delete;
+                end
+             else cdsList.Next;
            end
         else
            cdsList.Next;

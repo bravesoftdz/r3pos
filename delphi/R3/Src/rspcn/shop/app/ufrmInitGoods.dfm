@@ -884,6 +884,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Width = 153
                 Height = 23
                 Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 9
                 TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 OnKeyPress = edtNEW_INPRICEKeyPress
@@ -954,6 +955,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Width = 153
                 Height = 23
                 Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 9
                 TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 OnKeyPress = edtNEW_OUTPRICEKeyPress
@@ -1024,6 +1026,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Width = 153
                 Height = 23
                 Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 9
                 TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 OnKeyPress = edtSHOP_NEW_OUTPRICEKeyPress
@@ -1174,8 +1177,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel21: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#21333#20301
@@ -1237,6 +1240,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 OnSaveValue = edtSMALL_UNITSSaveValue
+                OnClearValue = edtSMALL_UNITSClearValue
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
@@ -1282,8 +1286,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel22: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#26465#30721
@@ -1352,8 +1356,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel23: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#31995#25968
@@ -1376,9 +1380,11 @@ inherited frmInitGoods: TfrmInitGoods
                 Width = 40
                 Height = 23
                 Anchors = [akLeft, akTop, akRight]
+                Properties.MaxLength = 9
                 Style.Edges = [bLeft, bTop, bRight, bBottom]
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtSMALLTO_CALCKeyPress
               end
             end
             object RzPanel13: TRzPanel
@@ -1418,8 +1424,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzPanel_SMALL: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 9
-                  Height = 16
+                  Width = 111
+                  Height = 28
                   Align = alClient
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
@@ -1473,8 +1479,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel24: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#21333#20301
@@ -1535,6 +1541,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 OnSaveValue = edtBIG_UNITSSaveValue
+                OnClearValue = edtBIG_UNITSClearValue
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
@@ -1577,8 +1584,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel25: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#26465#30721
@@ -1642,8 +1649,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzPanel_BIG: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 9
-                  Height = 16
+                  Width = 111
+                  Height = 28
                   Align = alClient
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
@@ -1697,8 +1704,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel27: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 61
-                  Height = 16
+                  Width = 102
+                  Height = 26
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21253#35013#31995#25968
@@ -1720,8 +1727,10 @@ inherited frmInitGoods: TfrmInitGoods
                 Top = 4
                 Width = 40
                 Height = 23
+                Properties.MaxLength = 9
                 TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnKeyPress = edtBIGTO_CALCKeyPress
               end
             end
           end
@@ -2218,13 +2227,15 @@ inherited frmInitGoods: TfrmInitGoods
       Width = 613
     end
     inherited btnClose: TRzBmpButton
-      Left = 580
+      Left = 582
     end
     inherited RzBmpButton4: TRzBmpButton
-      Left = 528
+      Left = 530
+      Visible = False
     end
     inherited btnWindow: TRzBmpButton
-      Left = 554
+      Left = 556
+      Visible = False
     end
   end
   object cdsGoodsPrice: TZQuery

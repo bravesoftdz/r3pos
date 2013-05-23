@@ -178,6 +178,10 @@ type
     procedure edtNEW_OUTPRICEKeyPress(Sender: TObject; var Key: Char);
     procedure edtSHOP_NEW_OUTPRICEKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure edtBIG_UNITSClearValue(Sender: TObject);
+    procedure edtSMALL_UNITSClearValue(Sender: TObject);
+    procedure edtSMALLTO_CALCKeyPress(Sender: TObject; var Key: Char);
+    procedure edtBIGTO_CALCKeyPress(Sender: TObject; var Key: Char);
   private
     function  GetFinded:boolean;
     function  CanFocus(Control:TControl):Boolean;
@@ -269,7 +273,7 @@ begin
   if (FY_TENANT_ID = '') or (FY_RELATION_ID = '') then
     begin
       btnNext.Enabled := false;
-      Raise Exception.Create('当前企业尚未加盟非烟供应链...');
+      Raise Exception.Create('当前企业尚未加盟非烟供应链！');
     end;
 end;
 
@@ -296,7 +300,7 @@ begin
       RefreshUnitsList;
       if edtGOODS_OPTION1.Checked then
         begin
-          if dllApplication.mode = 'demo' then Raise Exception.Create('演示模式下不允许新增供应链商品...');
+          if dllApplication.mode = 'demo' then Raise Exception.Create('演示模式下不允许新增供应链商品！');
           GetGoodsInfo;
           edtBARCODE1.Text := '';
           edtBARCODE2.Text := '';
@@ -348,7 +352,7 @@ begin
           WriteToObject;
           if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
           Save;
-          if (not Simple) then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
+          if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK);
           rzPage.ActivePageIndex := 0;
           btnPrev.Visible := False;
           btnNext.Visible := True;
@@ -361,7 +365,7 @@ begin
       WriteToObject;
       if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
       Save;
-      if (not Simple) then MessageBox(Handle,'商品添加成功...','友情提示..',MB_OK);
+      if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK);
       rzPage.ActivePageIndex := 0;
       btnPrev.Visible := False;
       btnNext.Visible := True;
@@ -417,12 +421,12 @@ begin
   if barcode = '' then
     begin
       if CanFocus(edtInput) then edtInput.SetFocus;
-      Raise Exception.Create('请输入条形码...');
+      Raise Exception.Create('请输入条形码！');
     end;
   if IsChinese(barcode) or (Length(barcode) <> 13) then
     begin
       if CanFocus(edtInput) then edtInput.SetFocus;
-      Raise Exception.Create('条形码格式不合法...');
+      Raise Exception.Create('条形码格式不合法！');
     end;
 
   // 查询自经营商品
@@ -763,7 +767,7 @@ begin
     end;
 
   if Finded and (cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID) then
-     Raise Exception.Create('卷烟商品不允许新增...'); 
+     Raise Exception.Create('卷烟商品不允许新增！'); 
 
   edtTable.Data := cdsGoodsInfo.Data;
 end;
@@ -1005,7 +1009,7 @@ procedure TfrmInitGoods.CheckInput1;
       if StrToFloatDef(edtPrice.Text,0) > 999999999 then
         begin
           if CanFocus(edtPrice) then edtPrice.SetFocus;
-          Raise Exception.Create('输入的〖'+MsgInfo+'〗数值过大，无效...');
+          Raise Exception.Create('输入的〖'+MsgInfo+'〗数值过大，无效！');
         end;
     end;
 var barcode:string;
@@ -1057,7 +1061,7 @@ begin
   if trim(edtNEW_OUTPRICE.Text)='' then
     begin
       if CanFocus(edtNEW_OUTPRICE) then edtNEW_OUTPRICE.SetFocus;
-      Raise Exception.Create('标准售价不能为空！');
+      Raise Exception.Create('零售价不能为空！');
     end;
   if trim(edtSHOP_NEW_OUTPRICE.Text)='' then
     begin
@@ -1469,7 +1473,7 @@ begin
     on E:Exception do
        Raise Exception.Create('发布新品失败，原因：'+E.Message);
   end;
-  if not success then Raise Exception.Create('发布新品失败...');
+  if not success then Raise Exception.Create('发布新品失败！');
 end;
 
 procedure TfrmInitGoods.Save;
@@ -2032,8 +2036,8 @@ begin
   if edtGOODS_OPTION1.Checked then
      begin
        edtCALC_UNITS.Buttons := [];
-       edtSMALL_UNITS.Buttons := [];
-       edtBIG_UNITS.Buttons := [];
+       edtSMALL_UNITS.Buttons := [zbClear];
+       edtBIG_UNITS.Buttons := [zbClear];
        edtCALC_UNITS.OnAddClick := nil;
        edtSMALL_UNITS.OnAddClick := nil;
        edtBIG_UNITS.OnAddClick := nil;
@@ -2044,8 +2048,8 @@ begin
   else
      begin
        edtCALC_UNITS.Buttons := [zbNew];
-       edtSMALL_UNITS.Buttons := [zbNew];
-       edtBIG_UNITS.Buttons := [zbNew];
+       edtSMALL_UNITS.Buttons := [zbNew,zbClear];
+       edtBIG_UNITS.Buttons := [zbNew,zbClear];
        edtCALC_UNITS.OnAddClick := AddUnits;
        edtSMALL_UNITS.OnAddClick := AddUnits;
        edtBIG_UNITS.OnAddClick := AddUnits;
@@ -2410,7 +2414,8 @@ begin
      begin
        if CanFocus(edtNEW_INPRICE) then edtNEW_INPRICE.SetFocus;
        Key := #0;
-     end;
+     end
+  else if not (Key in ['0'..'9',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtNEW_OUTPRICEKeyPress(Sender: TObject;
@@ -2421,7 +2426,8 @@ begin
      begin
        if CanFocus(edtNEW_OUTPRICE) then edtNEW_OUTPRICE.SetFocus;
        Key := #0;
-     end;
+     end
+  else if not (Key in ['0'..'9',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtSHOP_NEW_OUTPRICEKeyPress(Sender: TObject;
@@ -2432,7 +2438,8 @@ begin
      begin
        if CanFocus(edtSHOP_NEW_OUTPRICE) then edtSHOP_NEW_OUTPRICE.SetFocus;
        Key := #0;
-     end;
+     end
+  else if not (Key in ['0'..'9',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.FormKeyPress(Sender: TObject; var Key: Char);
@@ -2485,6 +2492,38 @@ begin
   red3.Top := 173;
   red4.Top := 205;
   red5.Top := 269;
+end;
+
+procedure TfrmInitGoods.edtBIG_UNITSClearValue(Sender: TObject);
+begin
+  inherited;
+  edtBIG_UNITS.KeyValue := null;
+  edtBIG_UNITS.Text := '';
+  if not edtBARCODE3.Properties.ReadOnly then edtBARCODE3.Text := '';
+  edtBIGTO_CALC.Text := '';
+end;
+
+procedure TfrmInitGoods.edtSMALL_UNITSClearValue(Sender: TObject);
+begin
+  inherited;
+  edtSMALL_UNITS.KeyValue := null;
+  edtSMALL_UNITS.Text := '';
+  if not edtBARCODE2.Properties.ReadOnly then edtBARCODE2.Text := '';
+  edtSMALLTO_CALC.Text := '';
+end;
+
+procedure TfrmInitGoods.edtSMALLTO_CALCKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if not (Key in ['0'..'9',#8]) then Key := #0;
+end;
+
+procedure TfrmInitGoods.edtBIGTO_CALCKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if not (Key in ['0'..'9',#8]) then Key := #0;
 end;
 
 end.

@@ -644,7 +644,7 @@ begin
   for i:=FList.Count-1 downto 0 do
     begin
       if not TDLLPlugin(FList[i]).eraseApp then
-         Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
+         MessageBox(Application.MainForm.Handle,TDLLPlugin(FList[i]).getLastError,'ณ๖ดํมห..',MB_OK+MB_ICONERROR);
       TObject(FList[i]).Free;
       FList.Delete(i); 
     end;

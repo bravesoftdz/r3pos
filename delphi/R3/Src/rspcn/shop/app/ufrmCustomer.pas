@@ -681,6 +681,13 @@ begin
     cdsList.First;
     while not cdsList.Eof do
       begin
+        if Copy(cdsList.FieldByName('COMM').AsString,2,2) = '2' then
+           Raise Exception.Create('回收站内会员不能删除...');
+        cdsList.Next;
+      end;
+    cdsList.First;
+    while not cdsList.Eof do
+      begin
         if cdsList.FieldbyName('A').AsString='1' then
            begin
              if Copy(cdsList.FieldByName('COMM').AsString,2,2) <> '2' then

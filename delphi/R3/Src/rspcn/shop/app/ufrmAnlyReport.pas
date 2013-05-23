@@ -261,7 +261,7 @@ procedure TfrmAnlyReport.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
   case PageControl.ActivePageIndex of
-  0:OpenReport1;
+  0:OpenChart;
   end;
 
 end;

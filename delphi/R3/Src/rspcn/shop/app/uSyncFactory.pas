@@ -1055,6 +1055,7 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
+  if not token.online then Exit;
   with TfrmSyncData.Create(nil) do
   begin
     try
@@ -1062,7 +1063,6 @@ begin
       ShowForm;
       BringToFront;
       Update;
-      if not token.online then Exit;
       if token.tenantId = '' then
          begin
            TfrmSysDefine.AutoRegister;

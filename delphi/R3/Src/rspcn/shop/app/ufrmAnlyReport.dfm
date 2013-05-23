@@ -103,6 +103,8 @@ inherited frmAnlyReport: TfrmAnlyReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -893,6 +895,7 @@ inherited frmAnlyReport: TfrmAnlyReport
           Color = clBtnFace
           Anchors = [akTop, akRight]
           TabOrder = 4
+          Visible = False
         end
         object chart: TRzBmpButton
           Left = 904
@@ -1042,6 +1045,7 @@ inherited frmAnlyReport: TfrmAnlyReport
           Color = clBtnFace
           Anchors = [akTop, akRight]
           TabOrder = 5
+          Visible = False
           OnClick = chartClick
         end
       end

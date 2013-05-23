@@ -101,10 +101,7 @@ begin
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
     result := true;
-    if token.online then
-       begin
-         SyncFactory.LoginSync(appWnd);
-       end;
+    SyncFactory.LoginSync(appWnd);
     result := true;
   except
     on E:Exception do

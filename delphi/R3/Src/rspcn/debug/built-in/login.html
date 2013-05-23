@@ -5,6 +5,18 @@
 <title>登录页</title>
 <link href="css/login.css" rel="stylesheet" type="text/css">
 <script src="js/rspcn.js" type="text/javascript"></script>
+<script src="js/jquery-1.6.1.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	$("#username").focus();
+	var username = rsp.getLocalJson('rmbUser');
+	if(username!=''){
+		$("#username").val(username);
+		$("#rmbUser").attr("checked",true);
+		$("#password").focus();
+	}
+})
+</script>
 </head>
 <body>
 
@@ -23,7 +35,7 @@
 			<li class="loginFont3" style="padding: 5px 0 15px 15px;">
 			<input type="checkbox" id="offline">&nbsp;离线登录 
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="checkbox" id="remember">&nbsp;记住账号</li>
+			<input type="checkbox" id="rmbUser">&nbsp;记住账号</li>
 			<li><a href="javascript:doLogin()"><img src="images/loginBtn.jpg" /></a></li>
 		</ul>
 		</div>
@@ -48,6 +60,14 @@ function doLogin() {
 		document.getElementById('password').focus();
 		return;
 	}
+	//记住用户名 start
+	var check = document.getElementById("rmbUser").checked;
+	if(check){
+		rsp.setLocalJson('rmbUser',username);
+	}else{
+		rsp.setLocalJson('rmbUser','');
+	}	
+	//记住用户名 end
 	var verify = rsp.getVerify();
 	var offline = document.getElementById('offline').checked;
 	try {

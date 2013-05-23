@@ -3,8 +3,22 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>首页</title>
-<link href="css/index.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="css/index.css">
+<script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
 <script type="text/javascript">
+$(function() {
+	setLength();
+})
+function setLength() {
+	var remainder = 960;
+	$("#tabXsm").find('li').each(function() {
+		if ($(this).attr("id") != 'lastX') {
+			remainder = remainder - this.offsetWidth;
+		}
+	});
+	var lastX = document.getElementById("lastX");
+	lastX.style.width = remainder - 1 + "px";
+}
 var flag = 1;
 function setTab(name, cursel, n) {
 	flag = cursel;
@@ -14,6 +28,7 @@ function setTab(name, cursel, n) {
 		menu.className = i == cursel ? "hover" : "link";
 		con.style.display = i == cursel ? "block" : "none";
 	}
+	setLength();
 }
 function flowTab(name, n, direction) {
 	if (direction == 'left' && flag > 1) {
@@ -25,24 +40,26 @@ function flowTab(name, n, direction) {
 	setTab(name, flag, n);
 }
 </script>
-</head>
-<body>
 
-<div id="xsm">
-<br>
+</head>
+
+<body>
+<div id="xsm"><br>
 <div id="xsmIndex">
 
 <div class="content">
 
 <div class="xsm_Menubox">
-<ul>
-	<li class="link first"></li>
+
+<ul id="tabXsm">
+	<li id="firstX" class="first"></li>
 	<li id="xsm1" onClick="setTab('xsm',1,4)" class="hover">我的店铺</li>
 	<li id="xsm2" onClick="setTab('xsm',2,4)" class="link">微商圈</li>
 	<li id="xsm3" onClick="setTab('xsm',3,4)" class="link">在线学堂</li>
 	<li id="xsm4" onClick="setTab('xsm',4,4)" class="link">客户服务</li>
-	<li class="link last"></li>
+	<li id="lastX" class="last"></li>
 </ul>
+
 </div>
 
 <div class="xsm_Contentbox ">
@@ -58,61 +75,61 @@ function flowTab(name, n, direction) {
 	<li><a href="rspcn://shop.dll/TfrmStockOrder" target="_blank"><img src="images/fyrk.jpg" /></a></li>
 	<li><a href="#"><img src="images/wsph.jpg" /></a></li>
 	<li><a href="rspcn://shop.dll/TfrmSysDefine" target="_blank"><img src="images/xtsz.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/yxhd.jpg" /></a></li>
+	<li><a href="#"><img src="images/wsdh.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_1结束--> <!--con_xsm_2开始-->
 <div id="con_xsm_2" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_2结束--> <!--con_xsm_3开始-->
 <div id="con_xsm_3" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_3结束--> <!--con_xsm_4开始-->
 <div id="con_xsm_4" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
-	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/add.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_4结束--></div>
@@ -125,7 +142,7 @@ function flowTab(name, n, direction) {
 <div class="dt">常用链接</div>
 <div class="dd">
 <ul>
-	<li><a target="_blank" href="http://www.google.com.hk/">Google</a></li>
+	<li><a target="_blank" href="http://www.google.com.hk/">Google谷歌</a></li>
 	<li><a target="_blank" href="http://weibo.sina.com.cn/">新浪·微博</a></li>
 	<li><a target="_blank" href="http://qzone.qq.com/">腾讯·空间</a></li>
 	<li><a target="_blank" href="http://www.baidu.com/">百度</a></li>

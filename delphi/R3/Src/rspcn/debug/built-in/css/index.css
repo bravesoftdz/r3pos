@@ -48,8 +48,6 @@ a {
 
 #xsm {
 	width: 100%;
-	height: 100%;
-	position:absolute;
 	overflow: hidden;
 	margin: 0 auto;
 	background: url(../images/indexBg.jpg) no-repeat center top;
@@ -72,7 +70,7 @@ a {
 	background-color: #01A7A7;
 	padding-left: 30px;
 	font-size: 22px;
-	font-family: "\5B8B\4F53", "SimSun";
+	font-family: "Microsoft YaHei";
 	color: #ffffff;
 	font-weight: bold;
 }
@@ -99,7 +97,7 @@ a {
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
-	background-color: #1E2223;
+	background-color: #293031;
 	padding: 5px 0;
 }
 
@@ -107,10 +105,10 @@ a {
 	width: 100px;
 	padding-left: 15px;
 	overflow: hidden;
-	line-height: 20px;
+	line-height: 25px;
 	vertical-align: middle;
 	font-size: 14px;
-	font-family: "\5B8B\4F53", "SimSun";
+	font-family: "Microsoft YaHei";
 	color: #ffffff;
 	font-weight: bold;
 	letter-spacing: 1px;
@@ -118,16 +116,16 @@ a {
 }
 
 #xsm #xsmIndex .friendLinks .dd {
-	line-height: 20px;
+	line-height: 25px;
 	width: 840px;
 	float: left;
 	overflow: hidden;
 	font-size: 12px;
-	font-family: "\5B8B\4F53", "SimSun";
+	font-family: "Microsoft YaHei";
 	color: #ffffff;
 	letter-spacing: 1px;
 	font-weight: bold;
-	height: 20px;
+	height: 25px;
 }
 
 #xsm #xsmIndex .friendLinks .dd li {
@@ -144,57 +142,58 @@ a {
 .xsm_Menubox {
 	height: 30px;
 	line-height: 30px;
-	position: relative;
 	vertical-align: middle;
+	overflow: hidden;
 }
 
 .xsm_Menubox ul {
 	list-style: none;
-	position: absolute;
-	top: 2px;
-	left: 0;
-	height: 28px;
+	height: 30px;
 	text-align: center;
 	width: 960px;
 }
 
 .xsm_Menubox li.link {
 	float: left;
-	display: block;
 	cursor: pointer;
 	color: #ffffff;
-	font-family: "\5B8B\4F53", "SimSun";
-	font-size: 14px;
+	font-family: "Microsoft YaHei";
+	font-size: 15px;
 	height: 30px;
 	line-height: 30px;
-	letter-spacing: 1px;
+	letter-spacing: 2px;
 	font-weight: bold;
 	background-color: #293031;
-	width: 110px;
+	padding: 0 35px;
 	text-align: center;
 }
 
 .xsm_Menubox li.hover {
 	float: left;
-	display: block;
 	cursor: pointer;
-	color: #1E2223;
-	font-family: "\5B8B\4F53", "SimSun";
-	font-size: 16px;
+	color: #31365b;
+	font-family: "Microsoft YaHei";
+	font-size: 17px;
 	height: 30px;
 	line-height: 30px;
-	letter-spacing: 1px;
+	letter-spacing: 2px;
 	font-weight: bold;
-	width: 110px;
+	padding: 0 35px;
 	text-align: center;
 }
 
 .xsm_Menubox li.first {
-	width: 35px !important;
+	float: left;
+	height: 30px;
+	background-color: #293031;
+	width: 30px !important;
 }
 
 .xsm_Menubox li.last {
-	width: 484px !important;
+	height: 30px;
+	background-color: #293031;
+	float: left;
+	width: 0;
 }
 
 .xsm_Contentbox {

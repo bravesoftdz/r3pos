@@ -2213,6 +2213,7 @@ begin
       end
     else
       begin
+        frmSortDropFrom.ShowCgtSort := false;
         if frmSortDropFrom.DropForm(edtSORT_ID, Obj) then
           begin
             if Obj.Count > 0 then

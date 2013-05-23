@@ -215,7 +215,7 @@ uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,ud
 {$R *.dfm}
 
 function getTodayId:string;
-begin                                                    
+begin
   result := token.shopId+formatDatetime('YYYYMMDD',dllGlobal.SysDate)+'000000000000000';
 end;
 procedure TfrmGoodsStorage.sortDropPropertiesButtonClick(Sender: TObject;
@@ -226,6 +226,7 @@ begin
   inherited;
   Obj := TRecord_.Create;
   try
+    frmSortDropFrom.ShowCgtSort := false;
     if frmSortDropFrom.DropForm(sortDrop,obj) then
     begin
       if Obj.Count>0 then

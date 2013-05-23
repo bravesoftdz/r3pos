@@ -58,7 +58,7 @@ type
     //检测供应链是否允许调价 还回true 允许调价
     function checkChangePrice(relationId:integer):boolean;
     //创建分类树
-    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowNoSort:boolean=true):boolean;overload;
+    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowCgtSort:boolean=true;ShowNoSort:boolean=true):boolean;overload;
     function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false):boolean;overload;
   end;
 
@@ -341,7 +341,7 @@ begin
      result := fnTime.fnStrtoDate(inttostr(token.LDate));
 end;
 
-function TdllGlobal.CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowNoSort:boolean=true): boolean;
+function TdllGlobal.CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowCgtSort:boolean=true;ShowNoSort:boolean=true): boolean;
 var IsRoot: Boolean;
     rs:TZQuery;
     i:Integer;
@@ -361,6 +361,14 @@ begin
       Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
       if (Pos(Rel_ID,Rel_IDS)<=0) and (rs.FieldByName('RELATION_ID').asString<>'1000008') then   //1000008为平台内置条码库，不显示
       begin
+        if not ShowCgtSort then
+           begin
+             if rs.FieldByName('RELATION_ID').asString='1000006' then
+                begin
+                  rs.Next;
+                  continue;
+                end;
+           end;
         Rel_IDS:=Rel_IDS+Rel_ID;  //2011.09.25 add
         if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
         begin

@@ -17,8 +17,10 @@ type
     procedure rzTreeKeyPress(Sender: TObject; var Key: Char);
     procedure RzLabel1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
   public
     RelationId:string;
+    ShowCgtSort:boolean;
     ShowNoSort:boolean;
     SelectAll:boolean;
     SelfRoot:boolean;
@@ -37,7 +39,7 @@ function TfrmSortDropFrom.showForm: boolean;
 begin
   result := inherited showForm;
   if RelationId = '' then
-    dllGlobal.CreateGoodsSortTree(rzTree,false,ShowNoSort)
+    dllGlobal.CreateGoodsSortTree(rzTree,false,ShowCgtSort,ShowNoSort)
   else
     dllGlobal.CreateGoodsSortTree(rzTree,RelationId,SelfRoot);
 end;
@@ -85,6 +87,17 @@ begin
   inherited;
   RelationId := '';
   ShowNoSort := true;
+  ShowCgtSort := true;
+  SelectAll := false;
+  SelfRoot := false;
+end;
+
+procedure TfrmSortDropFrom.FormCreate(Sender: TObject);
+begin
+  inherited;
+  RelationId := '';
+  ShowNoSort := true;
+  ShowCgtSort := true;
   SelectAll := false;
   SelfRoot := false;
 end;

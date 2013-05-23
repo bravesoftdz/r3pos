@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase, ObjCommon, ZLogFile,
-  Dialogs, DB, uFnUtil, math;
+  Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -35,6 +35,7 @@ type
   TSyncFactory=class
   protected
     _Start:Int64;
+    LoginStart:Int64;
     FList:TList;
     FStoped: boolean;
     FProHandle:Hwnd;
@@ -61,6 +62,7 @@ type
     CloseAccDate:integer;
     LoginSyncDate:integer;
     LastLoginSyncDate,LastLogoutSyncDate:integer;
+    FLoginId: string;
     procedure InitTenant;
     procedure InitSyncList1;
     procedure InitSyncList;
@@ -76,6 +78,10 @@ type
     procedure GetCloseAccDate;
     function  CheckNeedLoginSync:boolean;
     function  CheckNeedLoginSyncBizData:boolean;
+    // 登陆日志
+    procedure AddLoginLog;
+    procedure AddLogoutLog;
+    procedure SetLoginId(const Value: string);
   public
     constructor Create;
     destructor  Destroy;override;
@@ -96,6 +102,7 @@ type
     property  Stoped:boolean read FStoped write SetStoped;
     property  ProHandle:Hwnd read FProHandle write SetProHandle;
     property  ProTitle:string read FProTitle write SetProTitle;
+    property  LoginId:string read FLoginId write SetLoginId;
   end; 
 
 var SyncFactory:TSyncFactory;
@@ -645,6 +652,15 @@ procedure TSyncFactory.InitSyncList;
     n^.isSyncUp := '1';
     n^.isSyncDown := '1';
     FList.Add(n);
+
+    new(n);
+    n^.tbname := 'CA_LOGIN_INFO';
+    n^.keyFields := 'TENANT_ID;LOGIN_ID';
+    n^.synFlag := 0;
+    n^.keyFlag := 0;
+    n^.tbtitle := '登录日志';
+    n^.isSyncUp := '1';
+    FList.Add(n);
   end;
 
   procedure InitList00;
@@ -1055,6 +1071,7 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
+  AddLoginLog;
   if not token.online then Exit;
   with TfrmSyncData.Create(nil) do
   begin
@@ -1099,6 +1116,7 @@ procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
+  AddLogoutLog;
   if not token.online then Exit;
   with TfrmSyncData.Create(nil) do
   begin
@@ -1877,6 +1895,130 @@ procedure TSyncFactory.SetProPosition(position: integer);
 begin
   PostMessage(ProHandle, MSC_SET_POSITION, position, 0);
   Application.ProcessMessages;
+end;
+
+procedure TSyncFactory.AddLoginLog;
+  function GetSystemInfo: string;
+  var Reg:TRegistry;
+  begin
+    Reg := TRegistry.Create;
+    try
+      Reg.RootKey:=HKEY_LOCAL_MACHINE;
+      if Reg.OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion',false) then
+      begin
+        result:=Reg.ReadString('ProductName');
+        Reg.CloseKey;
+      end;
+    finally
+      Reg.Free;
+    end;
+  end;
+
+  function GetComputerName: string;
+  var
+    s: array [0..MAX_COMPUTERNAME_LENGTH] of Char;
+    w:dword;
+  begin
+    w := MAX_COMPUTERNAME_LENGTH+1;
+    Windows.GetComputerName(s,w);
+    result := string(s);
+  end;
+
+  function GetMacAddr: string;
+  var
+    NCB: TNCB;
+    ADAPTER: TADAPTERSTATUS;
+    LANAENUM: TLANAENUM;
+    intIdx: Integer;
+    cRC: Char;
+    strTemp: string;
+    Index:integer;
+  begin
+    Index := 0;
+    result := '';
+    ZeroMemory(@NCB, SizeOf(NCB));
+    NCB.ncb_command := Chr(NCBENUM);
+    cRC := NetBios(@NCB);
+    NCB.ncb_buffer := @LANAENUM;
+    NCB.ncb_length := SizeOf(LANAENUM);
+    cRC := NetBios(@NCB);
+    if Ord(cRC) <> 0 then exit;
+    ZeroMemory(@NCB, SizeOf(NCB));
+    NCB.ncb_command := Chr(NCBRESET);
+    NCB.ncb_lana_num := LANAENUM.lana[index];
+    cRC := NetBios(@NCB);
+    if Ord(cRC) <> 0 then exit;
+    ZeroMemory(@NCB, SizeOf(NCB));
+    NCB.ncb_command := Chr(NCBASTAT);
+    NCB.ncb_lana_num := LANAENUM.lana[index];
+    StrPCopy(NCB.ncb_callname, '*');
+    NCB.ncb_buffer := @ADAPTER;
+    NCB.ncb_length := SizeOf(ADAPTER);
+    cRC := NetBios(@NCB);
+    strTemp := '';
+    for intIdx := 0 to 5 do
+      strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
+    result := strTemp;
+  end;
+
+  function GetIpAddr:string;
+  var
+    WSAData: TWSAData;
+    HostEnt: PHostEnt;
+    s: string;
+    size: Cardinal;
+  begin
+    result := '';
+    s := GetComputerName;
+    WSAStartup(2, WSAData);
+    HostEnt := GetHostByName(PChar(s));
+    if HostEnt <> nil then
+    begin
+      with HostEnt^ do result := Format('%d.%d.%d.%d', [Byte(h_addr^[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
+    end;
+    WSACleanup;
+  end;
+var SQL,Flag,ConnectTo:string;
+begin
+  LoginStart := GetTickCount;
+  LoginId := TSequence.NewId;
+  if token.online then
+     begin
+       Flag := '1';
+       ConnectTo := 'Remote';
+       dataFactory.MoveToRemote;
+     end
+  else
+     begin
+       Flag := '2';
+       ConnectTo := 'Local';
+       dataFactory.MoveToSqlite;
+     end;
+  try
+    SQL :=
+      'insert into CA_LOGIN_INFO(LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
+      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+GetSystemInfo+''',''R6'','''+Flag+''','''+ConnectTo+''','''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
+    dataFactory.ExecSQL(SQL);
+  finally
+    dataFactory.MoveToDefault;
+  end;
+end;
+
+procedure TSyncFactory.AddLogoutLog;
+begin
+  if LoginId='' then Exit;
+  if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
+  try
+    dataFactory.ExecSQL('update CA_LOGIN_INFO set LOGOUT_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
+  finally
+    dataFactory.MoveToDefault;
+  end;
+  LoginId := '';
+end;
+
+procedure TSyncFactory.SetLoginId(const Value: string);
+begin
+  FLoginId := Value;
 end;
 
 initialization

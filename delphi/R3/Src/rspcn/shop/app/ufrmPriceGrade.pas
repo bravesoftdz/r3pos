@@ -223,13 +223,13 @@ begin
          begin
            strSort := Copy(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1);
            if rs.Locate('SORT_ID',strSort,[]) then
-           begin
-             cdsGoodsPercent.Append;
-             cdsGoodsPercent.FieldByName('SORT_ID').AsString:=rs.FieldByName('SORT_ID').AsString;
-             cdsGoodsPercent.FieldByName('SORT_NAME').AsString:=rs.FieldByName('SORT_NAME').AsString;
-             cdsGoodsPercent.FieldByName('AGIO_SORTS').AsString:=vList.Values[strSort];
-             cdsGoodsPercent.Post;
-           end;
+              begin
+                cdsGoodsPercent.Append;
+                cdsGoodsPercent.FieldByName('SORT_ID').AsString:=rs.FieldByName('SORT_ID').AsString;
+                cdsGoodsPercent.FieldByName('SORT_NAME').AsString:=rs.FieldByName('SORT_NAME').AsString;
+                cdsGoodsPercent.FieldByName('AGIO_SORTS').AsString:=vList.Values[strSort];
+                cdsGoodsPercent.Post;
+              end;
          end;
        finally
          vList.Free;
@@ -264,7 +264,7 @@ begin
   inherited;
   Obj := TRecord_.Create;
   try
-    frmSortDropFrom.SelectAll := true;  
+    frmSortDropFrom.ShowNoSort := false;  
     if frmSortDropFrom.DropForm(edtSORT_ID,Obj) then
     begin
       if Obj.Count > 0 then

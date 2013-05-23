@@ -58,7 +58,7 @@ type
     //检测供应链是否允许调价 还回true 允许调价
     function checkChangePrice(relationId:integer):boolean;
     //创建分类树
-    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean):boolean;overload;
+    function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowNoSort:boolean=true):boolean;overload;
     function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false):boolean;overload;
   end;
 
@@ -341,7 +341,7 @@ begin
      result := fnTime.fnStrtoDate(inttostr(token.LDate));
 end;
 
-function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;IsAll:boolean): boolean;
+function TdllGlobal.CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowNoSort:boolean=true): boolean;
 var IsRoot: Boolean;
     rs:TZQuery;
     i:Integer;
@@ -366,6 +366,7 @@ begin
         begin
           CurObj := TRecord_.Create;
           CurObj.ReadFromDataSet(rs);
+          CurObj.FieldByName('SORT_ID').AsString := '0000000';
           CurObj.FieldByName('LEVEL_ID').AsString := '';
           CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
           IsRoot:=true;
@@ -374,6 +375,7 @@ begin
           Aobj := TRecord_.Create;
           Aobj.ReadFromDataSet(rs);
           Aobj.FieldByName('LEVEL_ID').AsString := '';
+          Aobj.FieldByName('SORT_ID').AsString := rs.FieldByName('RELATION_ID').AsString;
           Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
           rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
         end;
@@ -392,13 +394,16 @@ begin
         CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
       end;
 
-    Aobj := TRecord_.Create;
-    Aobj.ReadField(rs);
-    Aobj.FieldByName('SORT_ID').AsString := '#';
-    Aobj.FieldByName('RELATION_ID').AsString := '0';
-    Aobj.FieldByName('LEVEL_ID').AsString := '';
-    Aobj.FieldByName('SORT_NAME').AsString := '无 分 类';
-    rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+    if ShowNoSort then
+       begin
+         Aobj := TRecord_.Create;
+         Aobj.ReadField(rs);
+         Aobj.FieldByName('SORT_ID').AsString := '#';
+         Aobj.FieldByName('RELATION_ID').AsString := '0';
+         Aobj.FieldByName('LEVEL_ID').AsString := '';
+         Aobj.FieldByName('SORT_NAME').AsString := '无 分 类';
+         rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+       end;
 
     if IsAll then AddRoot(rzTree,'所有分类');
   finally
@@ -406,7 +411,7 @@ begin
   end;
 end;
 
-function TdllGlobal.CreateGoodsSortTree(rzTree: TRzTreeView;RelationId:string;SelfRoot:boolean=false): boolean;
+function TdllGlobal.CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false): boolean;
 var IsRoot: Boolean;
     rs:TZQuery;
     i:Integer;
@@ -432,6 +437,7 @@ begin
           CurObj := TRecord_.Create;
           CurObj.ReadFromDataSet(rs);
           CurObj.FieldByName('LEVEL_ID').AsString := '';
+          CurObj.FieldByName('SORT_ID').AsString := '0000000';
           CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
           IsRoot:=true;
         end else
@@ -439,6 +445,7 @@ begin
           Aobj := TRecord_.Create;
           Aobj.ReadFromDataSet(rs);
           Aobj.FieldByName('LEVEL_ID').AsString := '';
+          Aobj.FieldByName('SORT_ID').AsString := rs.FieldByName('RELATION_ID').AsString;
           Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
           rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
         end;

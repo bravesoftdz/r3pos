@@ -19,6 +19,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   public
     RelationId:string;
+    ShowNoSort:boolean;
     SelectAll:boolean;
     SelfRoot:boolean;
     function showForm:boolean;override;
@@ -36,7 +37,7 @@ function TfrmSortDropFrom.showForm: boolean;
 begin
   result := inherited showForm;
   if RelationId = '' then
-    dllGlobal.CreateGoodsSortTree(rzTree,false)
+    dllGlobal.CreateGoodsSortTree(rzTree,false,ShowNoSort)
   else
     dllGlobal.CreateGoodsSortTree(rzTree,RelationId,SelfRoot);
 end;
@@ -44,13 +45,23 @@ end;
 procedure TfrmSortDropFrom.rzTreeClick(Sender: TObject);
 begin
   inherited;
-  if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data)
-     and
-     ((not SelectAll and not rzTree.Selected.HasChildren) or SelectAll) then
+  if SelectAll then
      begin
-       SaveObj.Clear;
-       TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
-       ModalResult := MROK;
+      if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data) then
+         begin
+           SaveObj.Clear;
+           TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
+           ModalResult := MROK;
+         end;
+     end
+  else
+     begin
+       if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data) and (not rzTree.Selected.HasChildren) then
+          begin
+            SaveObj.Clear;
+            TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
+            ModalResult := MROK;
+          end;
      end;
 end;
 
@@ -73,6 +84,7 @@ procedure TfrmSortDropFrom.FormClose(Sender: TObject;
 begin
   inherited;
   RelationId := '';
+  ShowNoSort := true;
   SelectAll := false;
   SelfRoot := false;
 end;

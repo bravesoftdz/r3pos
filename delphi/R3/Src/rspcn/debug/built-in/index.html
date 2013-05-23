@@ -11,7 +11,7 @@ function setTab(name, cursel, n) {
 	for (i = 1; i <= n; i++) {
 		var menu = document.getElementById(name + i);
 		var con = document.getElementById("con_" + name + "_" + i);
-		menu.className = i == cursel ? "hover" : "";
+		menu.className = i == cursel ? "hover" : "link";
 		con.style.display = i == cursel ? "block" : "none";
 	}
 }
@@ -26,23 +26,20 @@ function flowTab(name, n, direction) {
 }
 </script>
 </head>
-
 <body>
 <div id="xsm">
 <div id="xsmIndex">
-<div class="title">
-<div style="width: 645px; float: left;">现代零售终端营销管理系统</div>
-<div class="userInfo"></div>
-</div>
 
 <div class="content">
 
 <div class="xsm_Menubox">
 <ul>
-	<li id="xsm1" onClick="setTab('xsm',1,4)" class="hover" style="margin-left: 30px;">我的店铺</li>
-	<li id="xsm2" onClick="setTab('xsm',2,4)">微商圈</li>
-	<li id="xsm3" onClick="setTab('xsm',3,4)">在线学堂</li>
-	<li id="xsm4" onClick="setTab('xsm',4,4)">客户服务</li>
+	<li class="link first"></li>
+	<li id="xsm1" onClick="setTab('xsm',1,4)" class="hover">我的店铺</li>
+	<li id="xsm2" onClick="setTab('xsm',2,4)" class="link">微商圈</li>
+	<li id="xsm3" onClick="setTab('xsm',3,4)" class="link">在线学堂</li>
+	<li id="xsm4" onClick="setTab('xsm',4,4)" class="link">客户服务</li>
+	<li class="link last"></li>
 </ul>
 </div>
 
@@ -51,69 +48,69 @@ function flowTab(name, n, direction) {
 <div class="middle"><!--con_xsm_1开始-->
 <div id="con_xsm_1">
 <ul>
-	<li><a target="_blank" href="rspcn://shop.dll/TfrmSaleOrder"><img src="images/6.jpg" /></a></li>
-	<li><a target="_blank" href="rspcn://shop.dll/TfrmGoodsStorage"><img src="images/5.jpg" /></a></li>
-	<li><a target="_blank" href="rspcn://shop.dll/TfrmDownStockOrder"><img src="images/4.jpg" /></a></li>
-	<li><a target="_blank" href="rspcn://local-in/report.html"><img src="images/3.jpg" /></a></li>
-	<li><a target="_blank" href="rspcn://shop.dll/TfrmCustomer"><img src="images/2.jpg" /></a></li>
-	<li><a target="_blank" href="rspcn://shop.dll/TfrmStockOrder"><img src="images/1.jpg" /></a></li>
-	<li><a href="#"><img src="images/7.jpg" /></a></li>
-	<li><a target="_blank" href="rspcn://shop.dll/TfrmSysDefine"><img src="images/8.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
+	<li><a href="rspcn://shop.dll/TfrmSaleOrder" target="_blank"><img src="images/spxs.jpg" /></a></li>
+	<li><a href="rspcn://shop.dll/TfrmGoodsStorage" target="_blank"><img src="images/spkc.jpg" /></a></li>
+	<li><a href="rspcn://shop.dll/TfrmDownStockOrder" target="_blank"><img src="images/jyrk.jpg" /></a></li>
+	<li><a href="rspcn://built-in/report.html" target="_blank"><img src="images/jyfx.jpg" /></a></li>
+	<li><a href="rspcn://shop.dll/TfrmCustomer" target="_blank"><img src="images/hygl.jpg" /></a></li>
+	<li><a href="rspcn://shop.dll/TfrmStockOrder" target="_blank"><img src="images/fyrk.jpg" /></a></li>
+	<li><a href="#"><img src="images/wsph.jpg" /></a></li>
+	<li><a href="rspcn://shop.dll/TfrmSysDefine" target="_blank"><img src="images/xtsz.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_1结束--> <!--con_xsm_2开始-->
 <div id="con_xsm_2" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_2结束--> <!--con_xsm_3开始-->
 <div id="con_xsm_3" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_3结束--> <!--con_xsm_4开始-->
 <div id="con_xsm_4" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
-	<li><a href="#"><img src="images/9.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
+	<li><a href="#"><img src="images/other.jpg" /></a></li>
 </ul>
 </div>
 <!--con_xsm_4结束--></div>
@@ -123,16 +120,17 @@ function flowTab(name, n, direction) {
 </div>
 
 <div class="friendLinks">
-<div class="dt">友情链接</div>
+<div class="dt">常用链接</div>
 <div class="dd">
 <ul>
-	<li><a target="_blank" href="http://www.google.com.hk/">Google谷歌</a></li>
-	<li><a target="_blank" href="http://blog.sina.com.cn/">新浪·微博</a></li>
+	<li><a target="_blank" href="http://www.google.com.hk/">Google</a></li>
+	<li><a target="_blank" href="http://weibo.sina.com.cn/">新浪·微博</a></li>
 	<li><a target="_blank" href="http://qzone.qq.com/">腾讯·空间</a></li>
 	<li><a target="_blank" href="http://www.baidu.com/">百度</a></li>
 </ul>
 </div>
 </div>
+
 </div>
 </div>
 </body>

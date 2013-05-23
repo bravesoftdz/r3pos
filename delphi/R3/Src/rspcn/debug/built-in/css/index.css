@@ -50,10 +50,11 @@ a {
 	width: 100%;
 	overflow: hidden;
 	margin: 0 auto;
-	background-color: #09C;
+	background: url(../images/indexBg.jpg) no-repeat center top;
 }
 
 #xsm #xsmIndex {
+	padding: 10px 0 50px 0;
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
@@ -104,7 +105,7 @@ a {
 	width: 100px;
 	padding-left: 15px;
 	overflow: hidden;
-	line-height: 40px;
+	line-height: 20px;
 	vertical-align: middle;
 	font-size: 14px;
 	font-family: "\5B8B\4F53", "SimSun";
@@ -124,6 +125,7 @@ a {
 	color: #ffffff;
 	letter-spacing: 1px;
 	font-weight: bold;
+	height: 20px;
 }
 
 #xsm #xsmIndex .friendLinks .dd li {
@@ -151,34 +153,49 @@ a {
 	left: 0;
 	height: 28px;
 	text-align: center;
-	background-color: #293031;
 	width: 960px;
 }
 
-.xsm_Menubox li {
+.xsm_Menubox li.link {
 	float: left;
 	display: block;
 	cursor: pointer;
 	color: #ffffff;
 	font-family: "\5B8B\4F53", "SimSun";
 	font-size: 14px;
-	height: 26px;
-	line-height: 26px;
-	padding: 0 25px;
+	height: 30px;
+	line-height: 30px;
 	letter-spacing: 1px;
 	font-weight: bold;
+	background-color: #293031;
+	width: 110px;
+	text-align: center;
 }
 
 .xsm_Menubox li.hover {
-	font-size: 16px;
+	float: left;
+	display: block;
+	cursor: pointer;
 	color: #1E2223;
-	background-color: #ffffff;
-	height: 28px;
-	line-height: 28px;
+	font-family: "\5B8B\4F53", "SimSun";
+	font-size: 16px;
+	height: 30px;
+	line-height: 30px;
+	letter-spacing: 1px;
+	font-weight: bold;
+	width: 110px;
+	text-align: center;
+}
+
+.xsm_Menubox li.first {
+	width: 35px !important;
+}
+
+.xsm_Menubox li.last {
+	width: 484px !important;
 }
 
 .xsm_Contentbox {
-	background-color: #ffffff;
 	width: 960px;
 	overflow: hidden;
 	padding-top: 10px;

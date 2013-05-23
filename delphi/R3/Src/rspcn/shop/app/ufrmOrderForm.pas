@@ -258,11 +258,11 @@ begin
   case inputFlag of
   0:begin
       lblInput.Caption := '输入条码';
-      lblHint.Caption := '无法扫码时可用健盘输入条码数字串后按 enter 健';
+      lblHint.Caption := '无法扫码时可用键盘输入条码数字串后按 Enter 键';
     end;
   2:begin
       lblInput.Caption := '单位切换';
-      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按 enter 健';
+      lblHint.Caption := '"最小单位请输1、小件单位请输 2、大件单位请输 3"输入完毕按 Enter 键';
     end;
   3:begin
       lblInput.Caption := '输入数量';
@@ -270,13 +270,13 @@ begin
     end;
   4:begin
       lblInput.Caption := '输入单价';
-      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按 enter 健,赠送商品输入0后按 enter 健';
+      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按 Enter 键,赠送商品输入0后按 Enter 键';
     end;
   else
     begin
       FinputFlag := 0;
       lblInput.Caption := '输入条码';
-      lblHint.Caption := '无法扫码时可用健盘输入条码数字串后按 enter 健';
+      lblHint.Caption := '无法扫码时可用键盘输入条码数字串后按 Enter 键';
     end;
   end;
 end;

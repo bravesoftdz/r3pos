@@ -282,9 +282,9 @@ begin
     or                                                      
     (pos('sql0803',lowercase(s))>0)
     or
-    (pos('Ö÷½¡',s)>0)
+    (pos('Ö÷¼ü',s)>0)
     or
-    (pos('¹Ø½¡×Ö',s)>0)
+    (pos('¹Ø¼ü×Ö',s)>0)
     or
     (pos('ÖØ¸´¼ü',s)>0)
     or

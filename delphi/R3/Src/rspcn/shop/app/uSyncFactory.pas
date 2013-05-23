@@ -18,14 +18,14 @@ type
   TSynTableInfo=record
     tbName:string;//表名
     tbTitle:string;//说明
-    keyFields:string;//关健字段
+    keyFields:string;//关键字段
     tableFields:string;//同步字段
     selectLocalSQL:string;//本地openSQL，用于上传下载SQL不一致的情况
     selectRemoteSQL:string;//服务端openSQL，用于上传下载SQL不一致的情况
     selectSQL:string;//默认openSQL
     whereStr:string;//where条件
     synFlag:integer;
-    keyFlag:integer; //0是按表结构关健字 1是按业务关健字
+    keyFlag:integer; //0是按表结构关键字 1是按业务关键字
     syncTenantId:string;//时间戳控制TENANT_ID
     syncShopId:string;//时间戳控制SHOP_ID
     isSyncUp:string;//是否上传

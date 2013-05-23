@@ -178,7 +178,7 @@ type
     procedure CalcPrice;
     function getPaymentTitle(pay:string):string;
 
-    //快捷健
+    //快捷键
     function  doShortCut(s:string):boolean;override;
     procedure DoIsPresent(s:string);
     procedure DoCustId(s:string);override;
@@ -1195,22 +1195,22 @@ begin
   5:begin
       FInputFlag := value;
       lblInput.Caption := '销售类型';
-      lblHint.Caption := '"1.正常销售、2.赠送商品、3.积分兑换" 请输入类型序号后按 enter 健';
+      lblHint.Caption := '"1.正常销售、2.赠送商品、3.积分兑换" 请输入类型序号后按 Enter 键';
     end;
   6:begin
       FInputFlag := value;
       lblInput.Caption := '会员卡号';
-      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按 enter 健';
+      lblHint.Caption := '请输入完整的"会员卡号或手机号"后按 Enter 键';
     end;
   7:begin
       FInputFlag := value;
       lblInput.Caption := '导 购 员';
-      lblHint.Caption := '请输入导购员员工编号后按 enter 健';
+      lblHint.Caption := '请输入导购员员工编号后按 Enter 键';
     end;
   11:begin
       FInputFlag := value;
       lblInput.Caption := '应收金额';
-      lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按 enter 健';
+      lblHint.Caption := '请直接输入结算金额或折扣率(如95折/95)后按 Enter 键';
     end;
   13:begin
       FInputFlag := value;
@@ -1220,7 +1220,7 @@ begin
   14:begin
       FInputFlag := value;
       lblInput.Caption := '实收现金';
-      lblHint.Caption := '请输入实收现金后按 enter 健或+健';
+      lblHint.Caption := '请输入实收现金后按 Enter 键或+键';
     end;
   end;
 end;

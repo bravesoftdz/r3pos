@@ -152,16 +152,16 @@ object dllGlobal: TdllGlobal
     CachedUpdates = True
     SQL.Strings = (
       'select'
-      '       0 as A,GODS_ID,GODS_CODE,BARCODE,GODS_NAME,GODS_SPELL,'
+      '  0 as A,GODS_ID,GODS_CODE,BARCODE,GODS_NAME,GODS_SPELL,'
+      '  UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,'
+      '  BIGTO_CALC,SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,'
+      '  USING_BATCH_NO,USING_LOCUS_NO,RELATION_ID,'
+      '  NEW_INPRICE,NEW_LOWPRICE,NEW_OUTPRICE'
       
-        '       UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIG' +
-        'TO_CALC,'
-      
-        '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,USING_BATC' +
-        'H_NO,USING_LOCUS_NO,RELATION_ID,NEW_INPRICE,NEW_LOWPRICE'
-      
-        'from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and COMM not in ('#39 +
-        '02'#39','#39'12'#39') order by GODS_CODE')
+        'from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and COMM not in' +
+        ' ('#39'02'#39','#39'12'#39') order by GODS_CODE'
+      ' '
+      ' ')
     Params = <
       item
         DataType = ftUnknown

@@ -2459,7 +2459,7 @@ procedure TfrmPosOutOrder.LoadGodsStringGrid;
                  GodsStringGrid.FontSizes[c,r] := 10;
                  GodsStringGrid.FontColors[c,r] := $002F2F2F;
                  GodsStringGrid.Cells[c,r] := gs.FieldByName('GODS_NAME').AsString;
-                 GodsStringGrid.Cells[c,r+1] := FloatToStr(dllGlobal.GetNewOutPrice(GodsId,gs.FieldByName('CALC_UNITS').AsString))+'Ԫ';
+                 GodsStringGrid.Cells[c,r+1] := gs.FieldByName('NEW_OUTPRICE').AsString+'Ԫ';
                  if us.Locate('UNIT_ID',gs.FieldByName('CALC_UNITS').AsString,[]) then
                     begin
                       GodsStringGrid.Cells[c,r+1] := GodsStringGrid.Cells[c,r+1] +'/'+ us.FieldByName('UNIT_NAME').AsString;

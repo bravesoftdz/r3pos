@@ -157,15 +157,23 @@ object dllGlobal: TdllGlobal
       '  BIGTO_CALC,SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,'
       '  USING_BATCH_NO,USING_LOCUS_NO,RELATION_ID,'
       '  NEW_INPRICE,NEW_LOWPRICE,NEW_OUTPRICE'
-      
-        'from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and COMM not in' +
-        ' ('#39'02'#39','#39'12'#39') order by GODS_CODE'
+      'from  VIW_GOODSPRICEEXT'
+      'where TENANT_ID=:TENANT_ID'
+      '      and SHOP_ID=:SHOP_ID'
+      '      and COMM not in ('#39'02'#39','#39'12'#39')'
+      'order by GODS_CODE'
+      ' '
       ' '
       ' ')
     Params = <
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
     IndexFieldNames = 'GODS_ID Asc'
@@ -175,6 +183,11 @@ object dllGlobal: TdllGlobal
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
   end

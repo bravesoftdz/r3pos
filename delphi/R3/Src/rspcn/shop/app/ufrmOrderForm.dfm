@@ -1718,6 +1718,7 @@ inherited frmOrderForm: TfrmOrderForm
     end
     object N2: TMenuItem
       Caption = #22797#21046#24403#21069#34892
+      Visible = False
     end
     object N3: TMenuItem
       Caption = #21024#38500#24403#21069#34892

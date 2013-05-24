@@ -267,7 +267,7 @@ begin
 
       cdsReport2.SQL.Text :=
          'select j.*,1 as flag,case when j.SALE_MONEY<>0 then cast(j.SALE_PRF as decimal(18,3)) *100.00 / cast(j.SALE_MONEY as decimal(18,3)) else 0 end as PRF_RATE,'+
-         'case when j.CLIENT_ID is null then ''普通客户'' else b.CLIENT_NAME end as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport2.SQL.Text+') j '+
+         'case when j.CLIENT_ID is null or j.CLIENT_ID = ''#'' then ''零售客户'' else b.CLIENT_NAME end as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport2.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID  order by j.GODS_ID,b.CLIENT_CODE';
       cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
       cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
@@ -405,6 +405,16 @@ end;
 procedure TfrmProfitReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
+  case edtReportType.ItemIndex of
+  0:begin
+      edtCLIENT_ID.KeyValue := cdsReport1.FieldByName('CLIENT_ID').AsString;
+      edtCLIENT_ID.Text := cdsReport1.FieldByName('CLIENT_NAME').AsString;
+    end;
+  1:begin
+      edtGODS_ID.KeyValue := cdsReport1.FieldByName('GODS_ID').AsString;
+      edtGODS_ID.Text := cdsReport1.FieldByName('GODS_NAME').AsString;
+    end;
+  end;
   OpenReport2(false);
 end;
 

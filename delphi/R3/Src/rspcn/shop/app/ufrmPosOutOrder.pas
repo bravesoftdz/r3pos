@@ -1717,6 +1717,16 @@ end;
 
 procedure TfrmPosOutOrder.OpenList;
 begin
+  if D1.EditValue = null then
+     begin
+       if D1.CanFocus then D1.SetFocus;
+       Raise Exception.Create('开始日期不能为空！');
+     end;
+  if D2.EditValue = null then
+     begin
+       if D2.CanFocus then D2.SetFocus;
+       Raise Exception.Create('结束条件不能为空！');
+     end;
   cdsList.Close;
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,

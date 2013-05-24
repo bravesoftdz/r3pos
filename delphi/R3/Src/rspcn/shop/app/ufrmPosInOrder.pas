@@ -804,6 +804,16 @@ end;
 
 procedure TfrmPosInOrder.OpenList;
 begin
+  if D1.EditValue = null then
+     begin
+       if D1.CanFocus then D1.SetFocus;
+       Raise Exception.Create('开始日期不能为空！');
+     end;
+  if D2.EditValue = null then
+     begin
+       if D2.CanFocus then D2.SetFocus;
+       Raise Exception.Create('结束条件不能为空！');
+     end;
   cdsList.Close;
   cdsList.SQL.Text := 'select A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,B.CLIENT_NAME,A.STOCK_MNY,A.STOCK_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
     'from STK_STOCKORDER A '+

@@ -673,6 +673,7 @@ end;
 
 procedure TfrmStockOrder.DoIsPresent(s:string);
 begin
+  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
   if s='1' then
      PresentToCalc(0)
   else

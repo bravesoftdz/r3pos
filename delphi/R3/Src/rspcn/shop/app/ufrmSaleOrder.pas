@@ -1406,6 +1406,7 @@ end;
 
 procedure TfrmSaleOrder.DoIsPresent(s:string);
 begin
+  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
   if s='1' then
      PresentToCalc(0)
   else
@@ -1915,11 +1916,11 @@ begin
 
   if A<0 then
      begin
-       if r>A then Raise Exception.Create('实退金额不能大于应退现金');
+       if r>A then Raise Exception.Create('实退现金不能大于应退金额');
      end
   else
      begin
-       if r<A then Raise Exception.Create('实收金额不能小于应收现金'); 
+       if r<A then Raise Exception.Create('实收现金不能小于应收金额');
      end;
   AObj.FieldByName('CASH_MNY').AsFloat := r;
   FInputFlag :=1;

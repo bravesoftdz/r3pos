@@ -1071,47 +1071,45 @@ end;
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
-  if token.online then
+  AddLoginLog;
+  if not token.online then Exit;
+  with TfrmSyncData.Create(nil) do
   begin
-    with TfrmSyncData.Create(nil) do
-    begin
-      try
-        hWnd := PHWnd;
-        ShowForm;
-        BringToFront;
-        Update;
-        if token.tenantId = '' then
-           begin
-             TfrmSysDefine.AutoRegister;
-             if token.tenantId = '' then Exit;
-             if not CheckNeedLoginSync then Exit;
-             RspSyncFactory.SyncAll;
-             RspSyncFactory.copyGoodsSort;
-             SyncFactory.InitTenant;
-             SyncFactory.SyncBasic;
-             TfrmSysDefine.SaveRegister;
-           end
-        else
-           begin
-             if not CheckNeedLoginSync then Exit;
-             SyncFactory.SyncBasic;
-             if CheckNeedLoginSyncBizData then
-                begin
-                  if MessageBox(PHWnd,'系统检测到上次未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
-                     begin
-                       SyncFactory.SyncBizData;
-                       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
-                     end;
-                end;
-           end;
-        SyncFactory.LoginSyncDate := token.lDate;
-        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
-      finally
-        Free;
-      end;
+    try
+      hWnd := PHWnd;
+      ShowForm;
+      BringToFront;
+      Update;
+      if token.tenantId = '' then
+         begin
+           TfrmSysDefine.AutoRegister;
+           if token.tenantId = '' then Exit;
+           if not CheckNeedLoginSync then Exit;
+           RspSyncFactory.SyncAll;
+           RspSyncFactory.copyGoodsSort;
+           SyncFactory.InitTenant;
+           SyncFactory.SyncBasic;
+           TfrmSysDefine.SaveRegister;
+         end
+      else
+         begin
+           if not CheckNeedLoginSync then Exit;
+           SyncFactory.SyncBasic;
+           if CheckNeedLoginSyncBizData then
+              begin
+                if MessageBox(PHWnd,'系统检测到上次未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
+                   begin
+                     SyncFactory.SyncBizData;
+                     SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
+                   end;
+              end;
+         end;
+      SyncFactory.LoginSyncDate := token.lDate;
+      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
+    finally
+      Free;
     end;
   end;
-  AddLoginLog;
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);

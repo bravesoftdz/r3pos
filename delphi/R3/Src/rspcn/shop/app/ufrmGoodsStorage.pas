@@ -900,7 +900,7 @@ begin
            if rs.FieldbyName('RELATION_TYPE').AsInteger=1 then
               result := strtoint(token.tenantId)
            else
-              Raise Exception.Create('不能更改供应链中的商品');
+              Raise Exception.Create('不能删除供应链中的商品');
          end;
        end;
      end
@@ -1093,7 +1093,7 @@ begin
            if rs.FieldbyName('RELATION_TYPE').AsInteger=1 then
               result := strtoint(token.tenantId)
            else
-              Raise Exception.Create('不能删除供应链中的商品');
+              Raise Exception.Create('不能更改供应链中的商品');
          end;
        end;
      end
@@ -1368,7 +1368,7 @@ begin
            if rs.FieldbyName('RELATION_TYPE').AsInteger=1 then
               result := strtoint(token.tenantId)
            else
-              Raise Exception.Create('不能更改供应链中的商品');
+              Raise Exception.Create('不能还原供应链中的商品');
          end;
        end;
      end

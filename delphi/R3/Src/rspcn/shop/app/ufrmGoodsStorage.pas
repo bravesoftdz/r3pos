@@ -754,6 +754,7 @@ end;
 procedure TfrmGoodsStorage.toolEditClick(Sender: TObject);
 begin
   inherited;
+  if cdsList.FieldByName('GODS_ID').AsString = '' then Exit;
   openinfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
 end;
 
@@ -1046,6 +1047,7 @@ end;
 procedure TfrmGoodsStorage.toolDeleteClick(Sender: TObject);
 begin
   inherited;
+  if cdsList.FieldByName('GODS_ID').AsString = '' then Exit;
   if cdsList.FieldbyName('COMM').AsString[2]<>'2' then
      begin
        if MessageBox(Handle,'是否删除当前行的商品？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;

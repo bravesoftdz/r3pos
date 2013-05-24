@@ -10,6 +10,7 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, ObjCommon, ZLogFile;
 
 type
+  TOnSaveEvent=procedure(AObj:TRecord_) of object;
   TfrmSelectGoods = class(TfrmWebDialog)
     RzLabel26: TRzLabel;
     RzPanel2: TRzPanel;
@@ -49,13 +50,15 @@ type
       Shift: TShiftState);
   private
     searchTxt:string;
+    FOnSave: TOnSaveEvent;
     procedure Open;
     procedure InitGrid;
     procedure LoadTree;
     function  GetOpenWhere:string;
     function  FindDBColumn(Grid:TDBGridEh;FieldName:string):TColumnEh;
+    procedure SetOnSave(const Value: TOnSaveEvent);
   public
-
+    property  OnSave:TOnSaveEvent read FOnSave write SetOnSave;
   end;
 
 implementation
@@ -253,13 +256,27 @@ begin
 end;
 
 procedure TfrmSelectGoods.DBGridEh1DblClick(Sender: TObject);
+var AObj:TRecord_;
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if not cdsList.IsEmpty then
-     btnOkClick(nil)
+  if Assigned(OnSave) then
+     begin
+       AObj := TRecord_.Create;
+       try
+         AObj.ReadFromDataSet(cdsList);
+         OnSave(AObj); 
+       finally
+         AObj.Free;
+       end;
+     end
   else
-     edtSearch.SetFocus;
+     begin
+       if not cdsList.IsEmpty then
+          btnOkClick(nil)
+       else
+          edtSearch.SetFocus;
+     end;
 end;
 
 procedure TfrmSelectGoods.btnSearchClick(Sender: TObject);
@@ -308,6 +325,11 @@ begin
      begin
        DBGridEh1DblClick(nil);
      end;
+end;
+
+procedure TfrmSelectGoods.SetOnSave(const Value: TOnSaveEvent);
+begin
+  FOnSave := Value;
 end;
 
 end.

@@ -138,8 +138,8 @@ type
     procedure mnuReturnClick(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure edtTableAfterOpen(DataSet: TDataSet);
+    procedure fndGODS_IDFindClick(Sender: TObject);
   private
-
     // 散装条码参数
     BulkiFlag:string;
     BulkId:integer;
@@ -157,8 +157,8 @@ type
     vgds,vP1,vP2,vBtNo:string;
     FdefUnit: integer;
     procedure SetdefUnit(const Value: integer);
-
-    { Private declarations }
+    procedure OpenDialogGoods;
+    procedure AddFromDialog(AObj:TRecord_);
   protected
     RowID:integer;
     FinputMode: integer;
@@ -170,7 +170,6 @@ type
     procedure SetinputFlag(const Value: integer);virtual;
     procedure InitRecord;
     function EnCodeBarcode: string;
-
 
     function  FindColumn(FieldName:string):TColumnEh;
     procedure FocusColumn(FieldName: string);
@@ -219,7 +218,6 @@ type
     procedure DoCustId(s:string);virtual;
     procedure BarcodeInput(_Buf:string);override;
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -240,13 +238,12 @@ type
     property defUnit:integer read FdefUnit write SetdefUnit;
   end;
 
-var
-  frmOrderForm: TfrmOrderForm;
+var frmOrderForm: TfrmOrderForm;
 
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,uFnUtil,udllDsUtil,udllShopUtil,
-  udataFactory,uCacheFactory,ufrmInitGoods;
+     udataFactory,uCacheFactory,ufrmInitGoods,ufrmSelectGoods;
 
 {$R *.dfm}
 
@@ -2658,6 +2655,65 @@ end;
 procedure TfrmOrderForm.SetdefUnit(const Value: integer);
 begin
   FdefUnit := Value;
+end;
+
+procedure TfrmOrderForm.fndGODS_IDFindClick(Sender: TObject);
+begin
+  inherited;
+  fndGODS_ID.CloseList;
+  fndGODS_ID.Visible := false;
+  OpenDialogGoods;
+end;
+
+procedure TfrmOrderForm.OpenDialogGoods;
+var
+  AObj:TRecord_;
+  fcsInput:boolean;
+begin
+  fcsInput := edtInput.Focused;
+  try
+    with TfrmSelectGoods.Create(self) do
+    begin
+      try
+        OnSave := AddFromDialog;
+        if ShowModal=MROK then
+           begin
+             AObj := TRecord_.Create;
+             try
+               AObj.ReadFromDataSet(cdsList);
+               AddFromDialog(AObj);
+             finally
+               AObj.Free;
+             end;
+           end;
+      finally
+        Free;
+      end;
+    end;
+  finally
+    if fcsInput then
+       begin
+         if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
+       end
+    else DBGridEh1.SetFocus;
+  end;
+end;
+
+procedure TfrmOrderForm.AddFromDialog(AObj: TRecord_);
+var basInfo:TZQuery;
+begin
+  basInfo := dllGlobal.GetZQueryFromName('PUB_GOODSINFO'); 
+  if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
+  AddRecord(AObj,basInfo.FieldbyName('UNIT_ID').AsString);
+  if (edtTable.FindField('AMOUNT')<>nil) then
+     begin
+       if not PropertyEnabled then
+          begin
+            edtTable.Edit;
+            edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat+0;
+            AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+          end;
+     end;
 end;
 
 end.

@@ -159,19 +159,20 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2 from VIW_GOODSPRICEEXT where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID';
     rs.ParamByName('TENANT_ID').AsInteger  := StrtoInt(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString  := token.shopId;
     rs.ParamByName('GODS_ID').AsString := GodsId;
     OpenSqlite(rs);
     if rs.IsEmpty then Raise Exception.Create('经营商品中没找到“'+GodsId+'”');
     if UnitId = rs.FieldbyName('SMALL_UNITS').AsString then
       begin
-        result := rs.FieldbyName('NEW_INPRICE').AsFloat*rs.FieldbyName('SMALLTO_CALC').AsFloat;
+        result := rs.FieldbyName('NEW_INPRICE1').AsFloat;
       end
     else
     if UnitId = rs.FieldbyName('BIG_UNITS').AsString then
       begin
-        result := rs.FieldbyName('NEW_INPRICE').AsFloat*rs.FieldbyName('BIGTO_CALC').AsFloat;
+        result := rs.FieldbyName('NEW_INPRICE2').AsFloat;
       end
     else
       begin
@@ -187,7 +188,7 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.SQL.Text := 'select CALC_UNITS,SMALL_UNITS,BIG_UNITS,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 from VIW_GOODSINFOEXT where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
     rs.ParamByName('TENANT_ID').AsInteger  := StrtoInt(token.tenantId);
     rs.ParamByName('GODS_ID').AsString := GodsId;
     OpenSqlite(rs);

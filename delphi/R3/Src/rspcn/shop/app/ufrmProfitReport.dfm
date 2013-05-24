@@ -1,6 +1,6 @@
 inherited frmProfitReport: TfrmProfitReport
-  Left = 193
-  Top = 230
+  Left = 197
+  Top = 144
   Caption = #30408#21033#20998#26512#25253#34920
   ClientWidth = 979
   OnCreate = FormCreate
@@ -81,6 +81,7 @@ inherited frmProfitReport: TfrmProfitReport
                 DigitalNumber = 12
                 OnDblClick = DBGridEh1DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
+                OnGetFooterParams = DBGridEh1GetFooterParams
                 Columns = <
                   item
                     EditButtons = <>
@@ -285,6 +286,7 @@ inherited frmProfitReport: TfrmProfitReport
                 DecimalNumber = 2
                 DigitalNumber = 12
                 OnDrawColumnCell = DBGridEh2DrawColumnCell
+                OnGetFooterParams = DBGridEh2GetFooterParams
                 Columns = <
                   item
                     EditButtons = <>
@@ -430,8 +432,6 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 0
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -795,6 +795,8 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

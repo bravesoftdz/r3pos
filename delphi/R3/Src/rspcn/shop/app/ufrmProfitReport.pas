@@ -97,13 +97,20 @@ type
     procedure edtCLIENT_IDClearValue(Sender: TObject);
     procedure listClick(Sender: TObject);
     procedure chartClick(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
-    { Private declarations }
+    SumMny,SumPrf:real;
     WTitle1:TStringList;
     WTitle2:TStringList;
     procedure DBGridPrint;override;
   public
-    { Public declarations }
     procedure CreateChart;
     procedure CreateGrid1;
     procedure CreateGrid2;
@@ -113,14 +120,13 @@ type
     procedure showForm;override;
   end;
 
-var
-  frmProfitReport: TfrmProfitReport;
+var frmProfitReport: TfrmProfitReport;
 
 implementation
-uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon;
-{$R *.dfm}
 
-{ TfrmSaleReport }
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon;
+
+{$R *.dfm}
 
 procedure TfrmProfitReport.OpenReport1;
 var
@@ -196,6 +202,21 @@ begin
     end;
   end;
   dataFactory.Open(cdsReport1);
+  cdsReport1.DisableControls;
+  try
+    SumMny := 0;
+    SumPrf := 0;
+    cdsReport1.First;
+    while not cdsReport1.Eof do
+    begin
+      SumMny := SumMny + cdsReport1.FieldByName('SALE_MONEY').AsFloat;
+      SumPrf := SumPrf + cdsReport1.FieldByName('SALE_PRF').AsFloat;
+      cdsReport1.Next;
+    end;
+  finally
+    cdsReport1.First;
+    cdsReport1.EnableControls;
+  end;
 end;
 
 procedure TfrmProfitReport.OpenReport2(all:boolean=true);
@@ -269,6 +290,21 @@ begin
   D1.Properties.ReadOnly := not all;
   D2.Properties.ReadOnly := not all;
   RzBmpButton4.Caption := 'Õ¹¿ªÃ÷Ï¸';
+  cdsReport2.DisableControls;
+  try
+    SumMny := 0;
+    SumPrf := 0;
+    cdsReport2.First;
+    while not cdsReport2.Eof do
+    begin
+      SumMny := SumMny + cdsReport2.FieldByName('SALE_MONEY').AsFloat;
+      SumPrf := SumPrf + cdsReport2.FieldByName('SALE_PRF').AsFloat;
+      cdsReport2.Next;
+    end;
+  finally
+    cdsReport2.First;
+    cdsReport2.EnableControls;
+  end;
 end;
 
 procedure TfrmProfitReport.dateFlagPropertiesChange(Sender: TObject);
@@ -751,7 +787,6 @@ begin
   1:OpenReport2;
   2:OpenChart;
   end;
-
 end;
 
 procedure TfrmProfitReport.btnPriorClick(Sender: TObject);
@@ -860,6 +895,38 @@ begin
   inherited;
   PageControl.ActivePageIndex := 2;
   OpenChart;
+end;
+
+procedure TfrmProfitReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if trim(UpperCase(Column.FieldName)) = 'PRF_RATE' then
+     begin
+       if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
+       if SumMny <> 0 then
+          Text:=FormatFloat(Column.DisplayFormat,SumPrf*100/SumMny)
+       else
+          Text:=FormatFloat(Column.DisplayFormat,0);
+     end;
+end;
+
+procedure TfrmProfitReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if trim(UpperCase(Column.FieldName)) = 'PRF_RATE' then
+     begin
+       if Column.Footer.ValueType<>fvtStaticText then Column.Footer.ValueType:=fvtStaticText;
+       if SumMny <> 0 then
+          Text:=FormatFloat(Column.DisplayFormat,SumPrf*100/SumMny)
+       else
+          Text:=FormatFloat(Column.DisplayFormat,0);
+     end;
 end;
 
 initialization

@@ -627,6 +627,7 @@ begin
     ColumnInfo.ReadOnly := TableColumns.GetBoolean(24);
   if not TableColumns.IsNull(13) then
     ColumnInfo.DefaultValue := TableColumns.GetString(13);
+  if (ColumnInfo.ColumnType=stString) and (ColumnInfo.Precision=0) then ColumnInfo.Precision := 255;
 end;
 
 {**

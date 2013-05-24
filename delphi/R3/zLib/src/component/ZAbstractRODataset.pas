@@ -1483,7 +1483,10 @@ begin
         FieldType := ConvertDbcToDatasetType(GetColumnType(I));
 
         if FieldType in [ftString, ftWidestring, ftBytes] then
-          Size := GetPrecision(I)
+           begin
+             Size := GetPrecision(I);
+             if Size=0 then Size := 255;
+           end
         else Size := 0;
 
         J := 0;

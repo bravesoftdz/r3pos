@@ -982,9 +982,11 @@ inherited frmSelectGoods: TfrmSelectGoods
     end
     inherited RzBmpButton4: TRzBmpButton
       Left = 524
+      Visible = False
     end
     inherited btnWindow: TRzBmpButton
       Left = 550
+      Visible = False
     end
   end
   object cdsList: TZQuery

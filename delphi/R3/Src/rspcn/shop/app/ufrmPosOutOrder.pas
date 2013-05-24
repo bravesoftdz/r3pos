@@ -1570,13 +1570,7 @@ begin
               inputFlag := 0;
             end;
           end;
-       key := #0;
-//       if dllGlobal.GetParameter('USING_PAYMENT')<>'1' then Raise Exception.Create('没有启用收款方式，不能操作此功能');
-{       inputMode := 1;
-       inputFlag := 13;
-       DoShowPayment;
-       edtInput.selectAll;
-       edtInput.SetFocus;   }
+       Key := #0;
      end;
   if char(Key) = '+' then
      begin
@@ -1619,6 +1613,11 @@ begin
                   edtInput.SetFocus;
                end;
           end;
+     end;
+  if (Key = #27) and (PageControl.ActivePageIndex = 1) then
+     begin
+       PageControl.ActivePageIndex := 0;
+       PageControlChange(nil);
      end;
 end;
 

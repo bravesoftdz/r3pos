@@ -2,8 +2,7 @@ unit udataFactory;
 
 interface
 
-uses
-  SysUtils, Classes,DB ,ZDataSet, ZBase, ZIntf, ZdbFactory,Forms,IniFiles;
+uses SysUtils, Classes,DB ,ZDataSet, ZBase, ZIntf, ZdbFactory,Forms,IniFiles;
 
 type
   TdataFactory = class(TDataModule)
@@ -195,13 +194,14 @@ end;
 
 function TdataFactory.ExecProc(AClassName: String;
   Params: TftParamList): String;
+var Msg:pchar;
 begin
   case dbFlag of
   0:result := sqlite.ExecProc(AClassName,Params);
   else
     begin
       try
-        result := StrPas(dbHelp.ExecProc(AClassName,TftParamList.Encode(Params)));
+        Msg := dbHelp.ExecProc(AClassName,TftParamList.Encode(Params));
       except
         raise Exception.Create(StrPas(dbHelp.getLastError));
       end;

@@ -95,6 +95,9 @@ type
     procedure RegisterSync(PHWnd:THandle);
     // 灾难恢复时关账
     procedure RecoveryClose(CloseDate:string);
+    // 数据库锁定
+    function  SyncLockCheck:boolean;
+    function  SyncLockDb:boolean;
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     property  Params:TftParamList read FParams write SetParams;
@@ -1125,9 +1128,14 @@ begin
       ShowForm;
       BringToFront;
       Update;
+      SyncFactory.SyncLockDb;
       SyncFactory.SyncBasic;
-      SyncFactory.SyncBizData;
-      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
+      if SyncFactory.SyncLockCheck then
+         begin
+           SyncFactory.SyncBizData;
+           SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
+         end
+      else MessageBox(PHWnd,pchar('请联系客户经理解除锁定状态...'),'友情提示',MB_OK+MB_ICONINFORMATION);
       if RtcSyncFactory.GetToken then
          begin
            RtcSyncFactory.RtcLogout;
@@ -2020,6 +2028,85 @@ end;
 procedure TSyncFactory.SetLoginId(const Value: string);
 begin
   FLoginId := Value;
+end;
+
+function TSyncFactory.SyncLockCheck: boolean;
+var
+  rs:TZQuery;
+  rid,cid:string;
+begin
+  result := true;
+  if (dllGlobal.GetSFVersion = '.ONL') or (dllGlobal.GetSFVersion = '.NET') then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
+    dataFactory.MoveToSqlite;
+    try
+      dataFactory.Open(rs);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+    cid := rs.Fields[0].AsString;
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
+    dataFactory.MoveToRemote;
+    try
+      dataFactory.Open(rs);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+    rid := rs.Fields[0].AsString;
+    result := (rid=cid) or (rid='');
+  finally
+    rs.Free;
+  end;
+end;
+
+function TSyncFactory.SyncLockDb: boolean;
+var
+  id:string;
+  rs:TZQuery;
+  vParams:TftParamList;
+begin
+  result := true;
+  if not token.online then Exit;
+  if (dllGlobal.GetSFVersion = '.ONL') or (dllGlobal.GetSFVersion = '.NET') then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
+    dataFactory.MoveToRemote;
+    try
+      dataFactory.Open(rs);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+    if rs.Fields[0].AsString<>'' then Exit;
+  finally
+    rs.Free;
+  end;
+  id := TSequence.NewId;
+  vParams:=TftParamList.Create(nil);
+  try
+    try
+      vParams.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
+      vParams.ParamByName('DBKEY').AsString:='DBKEY_'+token.shopId;
+      vParams.ParamByName('NEWID').AsString:=id;
+      try
+        dataFactory.MoveToRemote;
+        dataFactory.ExecProc('TDoLockDBKey',vParams);
+        dataFactory.MoveToSqlite;
+        dataFactory.ExecProc('TDoLockDBKey',vParams);
+      finally
+        dataFactory.MoveToDefault;
+      end;
+    except
+      Raise;
+    end;
+  finally
+    vParams.Free;
+  end;
 end;
 
 initialization

@@ -1210,6 +1210,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Properties.OnChange = edtSMALL_UNITSPropertiesChange
                 Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
+                OnKeyPress = edtSMALL_UNITSKeyPress
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -1511,6 +1512,7 @@ inherited frmInitGoods: TfrmInitGoods
                 Properties.OnChange = edtBIG_UNITSPropertiesChange
                 Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
+                OnKeyPress = edtBIG_UNITSKeyPress
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'

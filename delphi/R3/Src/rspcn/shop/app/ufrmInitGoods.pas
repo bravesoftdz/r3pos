@@ -182,6 +182,8 @@ type
     procedure edtSMALL_UNITSClearValue(Sender: TObject);
     procedure edtSMALLTO_CALCKeyPress(Sender: TObject; var Key: Char);
     procedure edtBIGTO_CALCKeyPress(Sender: TObject; var Key: Char);
+    procedure edtSMALL_UNITSKeyPress(Sender: TObject; var Key: Char);
+    procedure edtBIG_UNITSKeyPress(Sender: TObject; var Key: Char);
   private
     function  GetFinded:boolean;
     function  CanFocus(Control:TControl):Boolean;
@@ -346,6 +348,7 @@ begin
           btnPrev.Visible := True;
           btnNext.Visible := True;
           btnNext.Caption := 'Íê³É';
+          if edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus; 
         end
       else
         begin
@@ -404,6 +407,8 @@ begin
     result := (self.Visible) and TcxTextEdit(Control).CanFocus;
   if Control is TzrComboBoxList then
     result := (self.Visible) and TzrComboBoxList(Control).CanFocus;
+  if Control is TcxButtonEdit then
+    result := (self.Visible) and TcxButtonEdit(Control).CanFocus;
 end;
 
 procedure TfrmInitGoods.GetGoodsInfo;
@@ -2393,6 +2398,7 @@ begin
      begin
        if CanFocus(edtSORT_ID) then edtSORT_ID.SetFocus;
        Key := #0;
+       edtSORT_IDPropertiesButtonClick(nil,0);
      end;
 end;
 
@@ -2404,7 +2410,8 @@ begin
      begin
        if CanFocus(edtCALC_UNITS) then edtCALC_UNITS.SetFocus;
        Key := #0;
-     end;
+     end
+  else if Key <> #13 then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtNEW_INPRICEKeyPress(Sender: TObject;
@@ -2525,6 +2532,20 @@ procedure TfrmInitGoods.edtBIGTO_CALCKeyPress(Sender: TObject;
 begin
   inherited;
   if not (Key in ['0'..'9',#8]) then Key := #0;
+end;
+
+procedure TfrmInitGoods.edtSMALL_UNITSKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key <> #13 then Key := #0;
+end;
+
+procedure TfrmInitGoods.edtBIG_UNITSKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key <> #13 then Key := #0;
 end;
 
 end.

@@ -1040,18 +1040,18 @@ begin
       Raise Exception.Create('商品名称不能为空！');
     end;
 
+  if trim(edtSORT_ID1.Text)='' then
+    begin
+      if CanFocus(edtSORT_ID) then edtSORT_ID.SetFocus;
+      Raise Exception.Create('商品分类不能为空！');
+    end;
+
   if trim(edtCALC_UNITS.Text)='' then edtCALC_UNITS.KeyValue := null;
 
   if (trim(edtCALC_UNITS.AsString)='') or (trim(edtCALC_UNITS.Text)='') then
     begin
       if CanFocus(edtCALC_UNITS) then edtCALC_UNITS.SetFocus;
       Raise Exception.Create('计量单位不能为空！');
-    end;
-
-  if trim(edtSORT_ID1.Text)='' then
-    begin
-      if CanFocus(edtSORT_ID) then edtSORT_ID.SetFocus;
-      Raise Exception.Create('商品分类不能为空！');
     end;
 
   if trim(edtNEW_INPRICE.Text)='' then

@@ -966,7 +966,7 @@ inherited frmCustomer: TfrmCustomer
                 item
                   Default = True
                 end>
-              Properties.ReadOnly = True
+              Properties.ReadOnly = False
               Style.Edges = []
               Style.HotTrack = False
               Style.ButtonTransparency = ebtInactive

@@ -2106,7 +2106,7 @@ var
   tid,oid:string;
 begin
   inherited;
-  if dbState <> dsBrowse then Raise Exception.Create('请保存后再预览...');
+  if dbState <> dsBrowse then Raise Exception.Create('请在历史单据中预览...');
   if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
   r := TfrmSaveDesigner.ShowDialog(self,'frfSalesOrder',nil);
   if r < 0 then Exit;

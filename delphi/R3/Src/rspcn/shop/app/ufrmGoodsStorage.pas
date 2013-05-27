@@ -1292,7 +1292,7 @@ begin
            begin
              UpdateSort(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
              cdsList.Edit;
-             cdsList.FieldbyName('SORT_ID1').AsString := ESortId;
+             cdsList.FieldbyName('SORT_ID1').AsString := FSortId;
              cdsList.Post;
            end;
         cdsList.Next;

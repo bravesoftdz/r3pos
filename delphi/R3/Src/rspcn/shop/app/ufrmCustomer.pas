@@ -652,10 +652,11 @@ end;
 procedure TfrmCustomer.RzBmpButton6Click(Sender: TObject);
 var
   gid:string;
-  isSelected:boolean;
+  isSelected,canDelete:boolean;
 begin
   inherited;
   isSelected := false;
+  canDelete := true;
   gid := cdsList.FieldbyName('CUST_ID').AsString;
   cdsList.DisableControls;
   try
@@ -665,7 +666,11 @@ begin
         if cdsList.FieldByName('A').AsString = '1' then
            begin
              isSelected := true;
-             break;
+             if Copy(cdsList.FieldByName('COMM').AsString,2,2) = '2' then
+                begin
+                  canDelete := false;
+                  break;
+                end;
            end;
         cdsList.Next;
       end;
@@ -673,18 +678,12 @@ begin
     cdsList.Locate('CUST_ID',gid,[]);
     cdsList.EnableControls;
   end;
-  if not isSelected then Raise Exception.Create('请选择要删除的记录...');  
+  if not isSelected then Raise Exception.Create('请选择要删除的记录...');
+  if not canDelete then Raise Exception.Create('回收站内会员不能删除...');  
   if MessageBox(Handle,'是否删除选中的所有会员？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('CUST_ID').AsString;
   cdsList.DisableControls;
   try
-    cdsList.First;
-    while not cdsList.Eof do
-      begin
-        if Copy(cdsList.FieldByName('COMM').AsString,2,2) = '2' then
-           Raise Exception.Create('回收站内会员不能删除...');
-        cdsList.Next;
-      end;
     cdsList.First;
     while not cdsList.Eof do
       begin

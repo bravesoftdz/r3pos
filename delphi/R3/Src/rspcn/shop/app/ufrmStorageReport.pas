@@ -72,27 +72,24 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    { Private declarations }
-    fsortId:string;
+    FSortId:string;
     WTitle1:TStringList;
     WTitle2:TStringList;
     procedure DBGridPrint;override;
   public
-    { Public declarations }
     procedure OpenReport1;
     procedure OpenReport2(gid,bno:string);
     procedure showForm;override;
   end;
 
-var
-  frmStorageReport: TfrmStorageReport;
+var frmStorageReport: TfrmStorageReport;
 
 implementation
-uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,
-  ufrmSortDropFrom;
-{$R *.dfm}
 
-{ TfrmSaleReport }
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,ObjCommon,
+     ufrmSortDropFrom;
+
+{$R *.dfm}
 
 procedure TfrmStorageReport.OpenReport1;
 var
@@ -105,8 +102,7 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-
-//  if RckMaxDate < vEndDate then
+  // if RckMaxDate < vEndDate then
      begin
        //没有计算，需重计算流水
        if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
@@ -133,18 +129,30 @@ begin
      end;
   cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID,BATCH_NO';
 
-  cdsReport1.SQL.Text :=
-     ParseSQL(dataFactory.iDbType,
-     'select j.*,1 as flag,'+
-     'j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT as BAL_AMOUNT,'+
-     'j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
-     'b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID from ('+cdsReport1.SQL.Text+') j '+
-     'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,CALC_UNITS',true)+
-     ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID order by b.GODS_CODE'
-     );
+  if FSortId = '' then
+     cdsReport1.SQL.Text :=
+        ParseSQL(dataFactory.iDbType,
+        'select j.*,1 as flag,'+
+        'j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT as BAL_AMOUNT,'+
+        'j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
+        'b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID from ('+cdsReport1.SQL.Text+') j '+
+        'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,CALC_UNITS',true)+
+        ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID order by b.GODS_CODE'
+        )
+  else
+     cdsReport1.SQL.Text :=
+        ParseSQL(dataFactory.iDbType,
+        'select j.*,1 as flag,'+
+        'j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT as BAL_AMOUNT,'+
+        'j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
+        'b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID from ('+cdsReport1.SQL.Text+') j '+
+        'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,CALC_UNITS,SORT_ID1',true)+
+        ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where b.SORT_ID1=:SORT_ID1 order by b.GODS_CODE'
+        );
   cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport1.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMM01',D1.Date));
   cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
+  if cdsReport1.Params.FindParam('SORT_ID1')<>nil then cdsReport1.ParamByName('SORT_ID1').AsString := FSortId;
   if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
   if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
   dataFactory.Open(cdsReport1);
@@ -161,12 +169,11 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-//  if RckMaxDate < vEndDate then
-     begin
-       //没有计算，需重计算流水
-//       if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
-     end;
-
+  // if RckMaxDate < vEndDate then
+  //   begin
+       // 没有计算，需重计算流水
+       // if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
+  //   end;
   cdsReport2.close;
   WTitle2.Clear;
   WTitle2.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
@@ -225,30 +232,29 @@ begin
   0:begin
       D1.Date := dllGlobal.SysDate;
       D2.Date := dllGlobal.SysDate;
-//      D1.Properties.ReadOnly := true;
-//      D2.Properties.ReadOnly := true;
+      // D1.Properties.ReadOnly := true;
+      // D2.Properties.ReadOnly := true;
     end;
   1:begin
       D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',dllGlobal.SysDate));
       D2.Date := dllGlobal.SysDate;
-//      D1.Properties.ReadOnly := true;
-//      D2.Properties.ReadOnly := true;
+      // D1.Properties.ReadOnly := true;
+      // D2.Properties.ReadOnly := true;
     end;
   2:begin
       D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',dllGlobal.SysDate));
       D2.Date := dllGlobal.SysDate();
-//      D1.Properties.ReadOnly := true;
-//      D2.Properties.ReadOnly := true;
+      // D1.Properties.ReadOnly := true;
+      // D2.Properties.ReadOnly := true;
     end;
   else
     begin
       D1.Date := dllGlobal.SysDate;
       D2.Date := dllGlobal.SysDate;
-//      D1.Properties.ReadOnly := false;
-//      D2.Properties.ReadOnly := false;
+      // D1.Properties.ReadOnly := false;
+      // D2.Properties.ReadOnly := false;
     end;
   end;
-
 end;
 
 procedure TfrmStorageReport.showForm;
@@ -269,7 +275,6 @@ begin
       Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       rs.Next;
     end;
-
 end;
 
 procedure TfrmStorageReport.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -384,7 +389,6 @@ begin
        edtGODS_ID.KeyValue := null;
        edtGODS_ID.Text := '全部商品';
      end;
-
 end;
 
 procedure TfrmStorageReport.edtGODS_IDClearValue(Sender: TObject);
@@ -392,7 +396,6 @@ begin
   inherited;
   edtGODS_ID.KeyValue := null;
   edtGODS_ID.Text := '全部商品';
-
 end;
 
 procedure TfrmStorageReport.sortDropExit(Sender: TObject);
@@ -400,16 +403,14 @@ begin
   inherited;
   if trim(sortDrop.Text)='' then
      begin
-       fsortId := '';
+       FSortId := '';
        sortDrop.Text := '全部分类';
      end;
-
 end;
 
 procedure TfrmStorageReport.sortDropPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
-var
-  Obj:TRecord_;
+var Obj:TRecord_;
 begin
   inherited;
   Obj := TRecord_.Create;
@@ -437,16 +438,13 @@ begin
   inherited;
   if PageControl.ActivePageIndex>0 then PageControl.ActivePageIndex := PageControl.ActivePageIndex - 1;
   PageControlChange(nil);
-
-  RzPanel11.Visible := true;
-  
+  RzPanel11.Visible := true;  
 end;
 
 procedure TfrmStorageReport.PageControlChange(Sender: TObject);
 begin
   inherited;
   btnPrior.Visible := PageControl.ActivePageIndex>0;
-
 end;
 
 procedure TfrmStorageReport.RzBmpButton4Click(Sender: TObject);
@@ -456,21 +454,18 @@ begin
   0:OpenReport1;
   1:OpenReport2(cdsReport1.FieldbyName('GODS_ID').AsString,cdsReport1.FieldbyName('BATCH_NO').AsString);
   end;
-
 end;
 
 procedure TfrmStorageReport.cdsReport1BeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav.Visible := false;
-
 end;
 
 procedure TfrmStorageReport.cdsReport2BeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav2.Visible := false;
-
 end;
 
 procedure TfrmStorageReport.DBGridPrint;
@@ -504,7 +499,6 @@ begin
   inherited;
   WTitle1 := TStringList.Create;
   WTitle2 := TStringList.Create;
-
 end;
 
 procedure TfrmStorageReport.FormDestroy(Sender: TObject);
@@ -512,7 +506,6 @@ begin
   WTitle1.Free;
   WTitle2.Free;
   inherited;
-
 end;
 
 initialization

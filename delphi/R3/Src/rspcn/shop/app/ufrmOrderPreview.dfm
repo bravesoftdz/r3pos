@@ -55,7 +55,7 @@ inherited frmOrderPreview: TfrmOrderPreview
       Color = 12040119
       TabOrder = 0
       object btnSet: TRzBmpButton
-        Left = 131
+        Left = 59
         Top = 9
         Width = 72
         Height = 31
@@ -279,7 +279,7 @@ inherited frmOrderPreview: TfrmOrderPreview
         OnClick = btnSetClick
       end
       object btnPrint: TRzBmpButton
-        Left = 287
+        Left = 213
         Top = 9
         Width = 72
         Height = 31
@@ -503,7 +503,7 @@ inherited frmOrderPreview: TfrmOrderPreview
         OnClick = btnPrintClick
       end
       object btnExport: TRzBmpButton
-        Left = 365
+        Left = 290
         Top = 9
         Width = 72
         Height = 31
@@ -727,7 +727,7 @@ inherited frmOrderPreview: TfrmOrderPreview
         OnClick = btnExportClick
       end
       object btnReturn: TRzBmpButton
-        Left = 53
+        Left = 367
         Top = 9
         Width = 72
         Height = 31
@@ -951,7 +951,7 @@ inherited frmOrderPreview: TfrmOrderPreview
         OnClick = btnReturnClick
       end
       object RzBmpButton4: TRzBmpButton
-        Left = 209
+        Left = 136
         Top = 9
         Width = 72
         Height = 31

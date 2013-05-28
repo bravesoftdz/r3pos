@@ -102,6 +102,8 @@ begin
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
 
+  if D1.EditValue = null then Raise Exception.Create('日期条件不能为空!');
+  if D2.EditValue = null then Raise Exception.Create('日期条件不能为空!');
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
   //RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:

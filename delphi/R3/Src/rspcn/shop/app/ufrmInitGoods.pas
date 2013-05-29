@@ -2423,7 +2423,7 @@ begin
        if CanFocus(edtNEW_INPRICE) then edtNEW_INPRICE.SetFocus;
        Key := #0;
      end
-  else if not (Key in ['0'..'9',#8]) then Key := #0;
+  else if not (Key in ['0'..'9','.',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtNEW_OUTPRICEKeyPress(Sender: TObject;
@@ -2435,7 +2435,7 @@ begin
        if CanFocus(edtNEW_OUTPRICE) then edtNEW_OUTPRICE.SetFocus;
        Key := #0;
      end
-  else if not (Key in ['0'..'9',#8]) then Key := #0;
+  else if not (Key in ['0'..'9','.',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtSHOP_NEW_OUTPRICEKeyPress(Sender: TObject;
@@ -2447,7 +2447,7 @@ begin
        if CanFocus(edtSHOP_NEW_OUTPRICE) then edtSHOP_NEW_OUTPRICE.SetFocus;
        Key := #0;
      end
-  else if not (Key in ['0'..'9',#8]) then Key := #0;
+  else if not (Key in ['0'..'9','.',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.FormKeyPress(Sender: TObject; var Key: Char);
@@ -2524,14 +2524,14 @@ procedure TfrmInitGoods.edtSMALLTO_CALCKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
-  if not (Key in ['0'..'9',#8]) then Key := #0;
+  if not (Key in ['0'..'9','.',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtBIGTO_CALCKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
-  if not (Key in ['0'..'9',#8]) then Key := #0;
+  if not (Key in ['0'..'9','.',#8]) then Key := #0;
 end;
 
 procedure TfrmInitGoods.edtSMALL_UNITSKeyPress(Sender: TObject;

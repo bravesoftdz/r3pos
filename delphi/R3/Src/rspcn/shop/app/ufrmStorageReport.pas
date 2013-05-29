@@ -52,6 +52,7 @@ type
     sortDrop: TcxButtonEdit;
     RzPanel10: TRzPanel;
     RzLabel1: TRzLabel;
+    linkToStock: TRzToolButton;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -71,6 +72,7 @@ type
     procedure cdsReport2BeforeOpen(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure linkToStockClick(Sender: TObject);
   private
     FSortId:string;
     WTitle1:TStringList;
@@ -127,6 +129,8 @@ begin
      begin
        cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID';
      end;
+  if FSortId <> '' then
+     cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SORT_ID=:SORT_ID';
   cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID,BATCH_NO';
 
   if FSortId = '' then
@@ -155,6 +159,7 @@ begin
   if cdsReport1.Params.FindParam('SORT_ID1')<>nil then cdsReport1.ParamByName('SORT_ID1').AsString := FSortId;
   if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
   if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
+  if cdsReport1.Params.FindParam('SORT_ID')<>nil then cdsReport1.ParamByName('SORT_ID').AsString := FSortID;
   dataFactory.Open(cdsReport1);
 end;
 
@@ -450,6 +455,8 @@ end;
 procedure TfrmStorageReport.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if D1.EditValue = null then Raise Exception.Create('日期条件不能为空!');
+  if D2.EditValue = null then Raise Exception.Create('日期条件不能为空!');
   case PageControl.ActivePageIndex of
   0:OpenReport1;
   1:OpenReport2(cdsReport1.FieldbyName('GODS_ID').AsString,cdsReport1.FieldbyName('BATCH_NO').AsString);
@@ -506,6 +513,12 @@ begin
   WTitle1.Free;
   WTitle2.Free;
   inherited;
+end;
+
+procedure TfrmStorageReport.linkToStockClick(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'当前版本不支持此功能','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 initialization

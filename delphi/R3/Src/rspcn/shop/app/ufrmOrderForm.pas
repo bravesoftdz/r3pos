@@ -1970,14 +1970,17 @@ begin
           Exit;
        end;
      end;
+
   if VarIsNull(fndGODS_ID.KeyValue) then
   begin
     EraseRecord;
+
   end
   else
   begin
     AObj := TRecord_.Create;
     try
+
       rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
       if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
       begin
@@ -1994,12 +1997,14 @@ begin
            UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString)
         else
            UpdateRecord(AObj,rs.FieldByName('CALC_UNITS').AsString);
+
       end
       else
         Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
     finally
       AObj.Free;
     end;
+    
     if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) then
        begin
          if not PropertyEnabled then
@@ -2453,7 +2458,7 @@ begin
   if not edtTable.IsEmpty then
      begin
        if (edtTable.FieldByName('GODS_ID').AsString = '') or
-          (MessageBox(Handle,pchar('确认删除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+          (MessageBox(Handle,pchar('确认删除商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
           begin
             fndGODS_ID.Visible := false;
             edtTable.Delete;
@@ -2468,7 +2473,7 @@ begin
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
-  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认清除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认清除商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        fndGODS_ID.Visible := false;
        EraseRecord;
@@ -2481,7 +2486,7 @@ begin
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
-  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认赠送"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认赠送商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        fndGODS_ID.Visible := false;
        PresentToCalc(1);
@@ -2561,7 +2566,7 @@ begin
   if not edtTable.IsEmpty then
      begin
        if (edtTable.FieldByName('GODS_ID').AsString = '') or
-          (MessageBox(Handle,pchar('确认删除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+          (MessageBox(Handle,pchar('确认删除商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
           begin
             fndGODS_ID.Visible := false;
             edtTable.Delete;
@@ -2580,7 +2585,7 @@ begin
   if dbState = dsBrowse then
      begin
        if edtTable.FieldbyName('AMOUNT').asFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
-       if (MessageBox(Handle,pchar('确认对"'+edtTable.FieldbyName('GODS_NAME').AsString+'"退货或换货商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+       if (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
        _obj := TRecord_.Create;
        rs := TZQuery.Create(nil);
        try
@@ -2617,7 +2622,7 @@ begin
        Exit;
      end;
   if DBGridEh1.ReadOnly then Exit;
-  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对"'+edtTable.FieldbyName('GODS_NAME').AsString+'"退货或换货商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        edtTable.Edit;
        edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
@@ -2630,7 +2635,7 @@ procedure TfrmOrderForm.mnuReturnClick(Sender: TObject);
 begin
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
-  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对"'+edtTable.FieldbyName('GODS_NAME').AsString+'"退货或换货商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        edtTable.Edit;
        edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;

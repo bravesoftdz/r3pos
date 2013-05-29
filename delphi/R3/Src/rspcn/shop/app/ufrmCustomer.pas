@@ -272,6 +272,7 @@ procedure TfrmCustomer.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
   if rzTree.CanFocus then Open;
+  rowToolNav.Visible := not cdsList.IsEmpty;
   toolSpacer.Visible := Node.Text<>'回收站';
   toolEdit.Visible := Node.Text<>'回收站';
   if toolEdit.Visible then

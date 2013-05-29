@@ -1,6 +1,6 @@
 inherited frmGoodsStorage: TfrmGoodsStorage
   Left = -8
-  Top = -8
+  Top = -5
   Caption = #21830#21697#24211#23384
   ClientHeight = 738
   ClientWidth = 1280

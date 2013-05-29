@@ -133,7 +133,7 @@ begin
   WTitle2.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
   WTitle2.add('供应商：'+edtCLIENT_ID.Text);
   cdsReport2.SQL.Text :=
-     'select TENANT_ID,GODS_ID,STOCK_DATE,CLIENT_ID,GLIDE_NO,AMOUNT,APRICE,CALC_MONEY '+
+     'select TENANT_ID,GODS_ID,STOCK_DATE,CLIENT_ID,GLIDE_NO,AMOUNT,APRICE,CALC_MONEY,UNIT_ID '+
      'from VIW_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_DATE>=:D1 and STOCK_DATE<=:D2';
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and SHOP_ID=:SHOP_ID';
@@ -145,7 +145,7 @@ begin
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
-     'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,c.CLIENT_NAME from ('+cdsReport2.SQL.Text+') j '+
+     'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,c.CLIENT_NAME from ('+cdsReport2.SQL.Text+') j '+
      'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
      'left outer join VIW_CLIENTINFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID order by j.STOCK_DATE,j.GLIDE_NO';
   cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
@@ -294,6 +294,7 @@ end;
 procedure TfrmStockReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
+  if cdsReport1.IsEmpty then exit;
   OpenReport2(false);
 end;
 
@@ -345,6 +346,8 @@ end;
 procedure TfrmStockReport.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if D1.EditValue = null then Raise Exception.Create('日期条件不能为空!');
+  if D2.EditValue = null then Raise Exception.Create('日期条件不能为空!');
   case PageControl.ActivePageIndex of
   0:OpenReport1;
   1:OpenReport2;

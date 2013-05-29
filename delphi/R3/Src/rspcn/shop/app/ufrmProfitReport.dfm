@@ -432,7 +432,9 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 0
                 Visible = False
-                object TRzToolButton
+                ToolbarControls = (
+                  linkToStock)
+                object linkToStock: TRzToolButton
                   Left = 0
                   Top = 0
                   Width = 35
@@ -447,6 +449,7 @@ inherited frmProfitReport: TfrmProfitReport
                   Font.Name = #23435#20307
                   Font.Style = [fsBold, fsUnderline]
                   ParentFont = False
+                  OnClick = linkToStockClick
                 end
               end
             end
@@ -795,8 +798,6 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

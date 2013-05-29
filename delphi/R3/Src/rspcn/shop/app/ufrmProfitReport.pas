@@ -77,6 +77,7 @@ type
     RzLabel3: TRzLabel;
     list: TRzBmpButton;
     chart: TRzBmpButton;
+    linkToStock: TRzToolButton;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -105,6 +106,7 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure linkToStockClick(Sender: TObject);
   private
     SumMny,SumPrf:real;
     WTitle1:TStringList;
@@ -405,6 +407,7 @@ end;
 procedure TfrmProfitReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
+  if cdsReport1.isEmpty then exit;
   case edtReportType.ItemIndex of
   0:begin
       edtCLIENT_ID.KeyValue := cdsReport1.FieldByName('CLIENT_ID').AsString;
@@ -792,6 +795,8 @@ end;
 procedure TfrmProfitReport.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if D1.EditValue = null then Raise Exception.Create('日期条件不能为空!');
+  if D2.EditValue = null then Raise Exception.Create('日期条件不能为空!');
   case PageControl.ActivePageIndex of
   0:OpenReport1;
   1:OpenReport2;
@@ -937,6 +942,12 @@ begin
        else
           Text:=FormatFloat(Column.DisplayFormat,0);
      end;
+end;
+
+procedure TfrmProfitReport.linkToStockClick(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'当前版本不支持此功能','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 initialization

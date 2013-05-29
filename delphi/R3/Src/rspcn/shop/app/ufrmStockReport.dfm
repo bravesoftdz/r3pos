@@ -11,8 +11,6 @@ inherited frmStockReport: TfrmStockReport
     Width = 991
     inherited PageControl: TRzPageControl
       Width = 991
-      ActivePage = TabSheet2
-      TabIndex = 1
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet

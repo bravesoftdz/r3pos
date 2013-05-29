@@ -11,10 +11,8 @@ inherited frmSaleReport: TfrmSaleReport
     Width = 991
     inherited PageControl: TRzPageControl
       Width = 991
-      ActivePage = TabSheet2
       Color = 15461355
       ParentColor = False
-      TabIndex = 1
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet

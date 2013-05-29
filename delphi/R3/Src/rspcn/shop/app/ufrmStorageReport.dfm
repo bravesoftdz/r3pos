@@ -515,8 +515,8 @@ inherited frmStorageReport: TfrmStorageReport
                 TabOrder = 0
                 Visible = False
                 ToolbarControls = (
-                  )
-                object TRzToolButton
+                  linkToStock)
+                object linkToStock: TRzToolButton
                   Left = 0
                   Top = 0
                   Width = 35
@@ -531,6 +531,7 @@ inherited frmStorageReport: TfrmStorageReport
                   Font.Name = #23435#20307
                   Font.Style = [fsBold, fsUnderline]
                   ParentFont = False
+                  OnClick = linkToStockClick
                 end
               end
             end

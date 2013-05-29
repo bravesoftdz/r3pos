@@ -644,9 +644,11 @@ inherited frmUserRights: TfrmUserRights
     end
     inherited RzBmpButton4: TRzBmpButton
       Left = 303
+      Visible = False
     end
     inherited btnWindow: TRzBmpButton
       Left = 329
+      Visible = False
     end
   end
   object RoleDataSource: TDataSource

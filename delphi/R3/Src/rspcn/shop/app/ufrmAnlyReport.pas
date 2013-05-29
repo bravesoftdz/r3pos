@@ -79,6 +79,7 @@ type
     procedure CreateChart;
     procedure OpenChart;
     procedure CalcClientNum(var rs:TZQuery;filterStr:string);
+    procedure CalcWeek(var rs:TZQuery;filterStr:string);
   end;
 
   const
@@ -122,7 +123,7 @@ begin
       if edtChar1Type.Checked then
       begin
         cdsReport1.SQL.Text :=
-           'SELECT SUBSTR(CREA_DATE,12,2) as HOUR, SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
+           'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
            'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+
            'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
            'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=''4'' '+
@@ -138,7 +139,7 @@ begin
       end else
       begin
         cdsReport1.SQL.Text :=
-         'SELECT '''' as HOUR, SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
          'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+
          'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
          'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=''4'' '+
@@ -173,7 +174,7 @@ begin
       if edtChar1Type.Checked then
       begin
       cdsReport1.SQL.Text :=
-         'SELECT SUBSTR(CREA_DATE,12,2) as HOUR, SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
+         'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
          'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+ vStr+
          'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
          'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=''4'' '+
@@ -189,7 +190,7 @@ begin
       end else
       begin
         cdsReport1.SQL.Text :=
-         'SELECT '''' as HOUR, SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
          'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+vStr+
          'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
          'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=''4'' '+
@@ -339,6 +340,9 @@ begin
     if (edtReportType.ItemIndex=1) and (edtDataSource.ItemIndex=0) then
        CalcClientNum(rs,rs.SortedFields);
 
+    if edtChar2Type.Checked then
+       CalcWeek(rs,rs.SortedFields);
+
     rs.First;
     while not rs.Eof do
       begin
@@ -354,7 +358,7 @@ begin
           end
           else
           begin
-             i:=DayofWeek(FnTime.fnStrtoDate(rs.FieldbyName('SALES_DATE').AsString));
+             i:=rs.FieldbyName('WEEK').AsInteger;
              case edtDataSource.ItemIndex of
                0:Chart2.Series[0].Add(rs.FieldbyName('CLIENTNUM').AsFloat,weekList[i-1]);
                1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
@@ -419,7 +423,7 @@ begin
   
   if cdsReport1.IsEmpty then exit;
   ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT '''' as HOUR, SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+  ss.SQL.Text:='SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
          '0 AS SALE_AMOUNT,0 AS SALE_MONEY '+
          'FROM SAL_SALESORDER SO '+
          'WHERE  1=2 ';
@@ -434,9 +438,9 @@ begin
 
     if (ss.IsEmpty) or (not ss.Locate(filterStr,cdsReport1.fieldByName(filterStr).AsString,[])) then
     begin
-      ss.Append; 
+      ss.Append;
       item:=TRecord_.Create;
-      item.ReadFromDataSet(cdsReport1); 
+      item.ReadFromDataSet(cdsReport1);
       item.FieldByName('CLIENTNUM').AsString:=inttostr(rs.RecordCount);
       item.WriteToDataSet(ss);
       ss.Post;
@@ -449,6 +453,46 @@ begin
   rs.Data:=ss.Data;
   ss.Free;
   
+end;
+
+procedure TfrmAnlyReport.CalcWeek(var rs: TZQuery; filterStr: string);
+var ss:TZQuery;
+    item:TRecord_;
+    i:integer;
+begin
+  ss:=TZQuery.Create(nil);
+  ss.SQL.Text:='SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+         '0 AS SALE_AMOUNT,0 AS SALE_MONEY '+
+         'FROM SAL_SALESORDER SO '+
+         'WHERE  1=2 ';
+  dataFactory.Open(ss);
+
+  rs.First;
+  while not rs.Eof do
+  begin
+    i:=DayofWeek(FnTime.fnStrtoDate(rs.FieldbyName('SALES_DATE').AsString));
+    if (ss.IsEmpty) or (not ss.Locate('WEEK',i,[])) then
+    begin
+      ss.Append;
+      item:=TRecord_.Create;
+      item.ReadFromDataSet(rs);
+      item.FieldByName('WEEK').AsString:=inttostr(i);
+      item.WriteToDataSet(ss);
+      ss.Post;
+    end
+    else
+    begin
+      ss.Edit;
+      ss.FieldByName('SALE_AMOUNT').AsFloat:=ss.FieldByName('SALE_AMOUNT').AsFloat+rs.FieldByName('SALE_AMOUNT').AsFloat;
+      ss.FieldByName('SALE_MONEY').AsFloat:=ss.FieldByName('SALE_MONEY').AsFloat+rs.FieldByName('SALE_MONEY').AsFloat;
+      ss.FieldByName('CLIENTNUM').AsFloat:=ss.FieldByName('CLIENTNUM').AsFloat+rs.FieldByName('CLIENTNUM').AsFloat;
+      ss.Post;
+    end;
+    rs.Next;
+  end;
+  rs.Close;
+  rs.Data:=ss.Data;
+  ss.Free;
 end;
 
 initialization

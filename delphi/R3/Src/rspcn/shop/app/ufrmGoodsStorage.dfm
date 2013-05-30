@@ -1310,7 +1310,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 25
             Anchors = [akTop, akRight]
             BorderOuter = fsFlatRounded
-            Caption = #19978#38480#24211#23384
+            Caption = #21512#29702#24211#23384
             Color = 11908607
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
@@ -3157,7 +3157,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Height = 26
               Align = alClient
               Alignment = taCenter
-              Caption = #26368#20302#24211#23384
+              Caption = #23433#20840#24211#23384
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
               Font.Height = -15
@@ -3223,7 +3223,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Height = 26
               Align = alClient
               Alignment = taCenter
-              Caption = #26368#39640#24211#23384
+              Caption = #21512#29702#24211#23384
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
               Font.Height = -15

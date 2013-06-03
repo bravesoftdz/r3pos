@@ -572,6 +572,7 @@ begin
          finally
            dataFactory.MoveToDefault;
          end;
+         if rs.IsEmpty then Raise Exception.Create('rim中找不到对应零售户...');
          comId := rs.FieldByName('COM_ID').AsString;
          custId := rs.FieldByName('CUST_ID').AsString;
        finally

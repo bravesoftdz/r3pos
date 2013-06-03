@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzButton, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, StdCtrls,
-  RzLabel, Menus, RzBmpBtn, jpeg, RzBckgnd;
+  RzLabel, Menus, RzBmpBtn, jpeg, RzBckgnd, IniFiles;
 
 type
   TfrmDownStockOrder = class(TfrmWebDialogForm)
@@ -37,7 +37,9 @@ type
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
   private
-    { Private declarations }
+    comId,custId,rimUrl,downOrderMode:string;
+    function GetDownOrderMode: string;
+    function GetRimUrl: string;
   public
     procedure Open;
     procedure Save;
@@ -47,7 +49,7 @@ type
 
 implementation
 
-uses uTokenFactory,udllGlobal,uFnUtil,udataFactory,udllDsUtil;
+uses uTokenFactory,udllGlobal,uFnUtil,udataFactory,udllDsUtil,uDownOrderFactory;
 
 {$R *.dfm}
 
@@ -76,12 +78,22 @@ begin
     vParam.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     vParam.ParamByName('SHOP_ID').AsString := token.shopId;
     vParam.ParamByName('USING_DATE').AsString := useDate;
-    dataFactory.MoveToRemote;
-    try
-      dataFactory.Open(cdsTable, 'TDownOrder', vParam);
-    finally
-      dataFactory.MoveToDefault;
-    end;
+    if downOrderMode = '1' then
+       begin
+         vParam.ParamByName('rimUrl').AsString := rimUrl;
+         vParam.ParamByName('comId').AsString := comId;
+         vParam.ParamByName('custId').AsString := custId;
+         TDownOrderFactory.getOrderInfo(cdsTable,vParam);
+       end
+    else
+       begin
+         dataFactory.MoveToRemote;
+         try
+           dataFactory.Open(cdsTable, 'TDownOrder', vParam);
+         finally
+           dataFactory.MoveToDefault;
+         end;
+       end;
   finally
     vParam.Free;
   end;
@@ -237,6 +249,9 @@ var
   sumAmt,sumMny: real;
 begin
   inherited;
+  btnOk.Caption := '正在执行';
+  btnOk.Enabled := false;
+
   orderList := TZQuery.Create(nil);
   orderDetail := TZQuery.Create(nil);
   cdsHeader := TZQuery.Create(nil);
@@ -254,15 +269,28 @@ begin
       begin
         cdsData := TZQuery.Create(nil);
         vParams := TftParamList.Create(nil);
-        dataFactory.MoveToRemote;
         try
           vParams.ParamByName('ExeType').AsInteger:=2;
           vParams.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
           vParams.ParamByName('INDE_ID').AsString := orderList.FieldByName('INDE_ID').AsString;
-          dataFactory.Open(cdsData, 'TDownIndeData', vParams);
+          if downOrderMode = '1' then
+             begin
+               vParams.ParamByName('rimUrl').AsString := rimUrl;
+               vParams.ParamByName('comId').AsString := comId;
+               vParams.ParamByName('custId').AsString := custId;
+               TDownOrderFactory.getOrderDetail(cdsData,vParams);
+             end
+          else
+             begin
+               dataFactory.MoveToRemote;
+               try
+                 dataFactory.Open(cdsData, 'TDownIndeData', vParams);
+               finally
+                 dataFactory.MoveToDefault;
+               end;
+             end;
           CopyDataSet(cdsData, orderDetail);
         finally
-          dataFactory.MoveToDefault;
           vParams.Free;
           cdsData.Free;
         end;
@@ -402,6 +430,9 @@ begin
     cdsHeader.Free;
     cdsDetail.Free;
   end;
+
+  btnOk.Caption := '立即入库';
+  btnOk.Enabled := true;
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -524,8 +555,29 @@ begin
 end;
 
 procedure TfrmDownStockOrder.showForm;
+var rs:TZQuery;
 begin
   inherited;
+  downOrderMode := GetDownOrderMode;
+  if downOrderMode = '1' then
+     begin
+       rimUrl := GetRimUrl;
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select COM_ID,CUST_ID from RM_CUST a,CA_SHOP_INFO b where a.LICENSE_CODE = b.LICENSE_CODE and b.SHOP_ID = :SHOP_ID';
+         rs.ParamByName('SHOP_ID').AsString := token.shopId;
+         dataFactory.MoveToRemote;
+         try
+           dataFactory.Open(rs);
+         finally
+           dataFactory.MoveToDefault;
+         end;
+         comId := rs.FieldByName('COM_ID').AsString;
+         custId := rs.FieldByName('CUST_ID').AsString;
+       finally
+         rs.Free;
+       end;
+     end;
   Open;
   if cdsTable.Active and (not cdsTable.IsEmpty) then
     begin
@@ -534,6 +586,44 @@ begin
       cdsTable.FieldByName('SELFLAG').AsInteger := 1;
       cdsTable.Post;
     end;
+end;
+
+function TfrmDownStockOrder.GetDownOrderMode: string;
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    result := F.ReadString('soft','downOrderMode','0');
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+end;
+
+function TfrmDownStockOrder.GetRimUrl: string;
+var
+  F:TIniFile;
+  List:TStringList;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  List := TStringList.Create;
+  try
+    result := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
+    List.CommaText := result;
+    result := List.Values['rim'];
+    if result<>'' then
+       begin
+         if result[Length(result)]<>'/' then result := result+'/';
+       end;
+  finally
+    List.free;
+    try
+      F.Free;
+    except
+    end;
+  end;
 end;
 
 initialization

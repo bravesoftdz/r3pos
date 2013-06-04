@@ -539,7 +539,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               end
             end
             object edtBK_SALES_DATE: TRzPanel
-              Left = 822
+              Left = 818
               Top = 0
               Width = 248
               Height = 31

@@ -103,6 +103,8 @@ inherited frmAnlyReport: TfrmAnlyReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -127,14 +129,25 @@ inherited frmAnlyReport: TfrmAnlyReport
                 Height = 260
                 BackWall.Brush.Color = clWhite
                 BackWall.Brush.Style = bsClear
+                Title.Font.Charset = DEFAULT_CHARSET
+                Title.Font.Color = clBlue
+                Title.Font.Height = -13
+                Title.Font.Name = 'Arial'
+                Title.Font.Style = []
                 Title.Text.Strings = (
-                  #26102#27573#20998#26512#34920)
+                  '')
+                BottomAxis.Title.Font.Charset = DEFAULT_CHARSET
+                BottomAxis.Title.Font.Color = clBlack
+                BottomAxis.Title.Font.Height = -12
+                BottomAxis.Title.Font.Name = 'Arial'
+                BottomAxis.Title.Font.Style = []
                 View3D = False
                 Align = alClient
                 BevelOuter = bvNone
                 Color = clWhite
                 TabOrder = 2
                 object BarSeries1: TBarSeries
+                  ColorEachPoint = True
                   Marks.ArrowLength = 20
                   Marks.Style = smsValue
                   Marks.Visible = True

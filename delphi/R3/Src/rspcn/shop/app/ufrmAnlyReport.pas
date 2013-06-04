@@ -77,6 +77,7 @@ type
     procedure OpenReport1;
     procedure showForm;override;
     procedure CreateChart;
+    procedure CreateChartText;
     procedure OpenChart;
     procedure CalcClientNum(var rs:TZQuery;filterStr:string);
     procedure CalcWeek(var rs:TZQuery;filterStr:string);
@@ -321,6 +322,52 @@ begin
 
 end;
 
+procedure TfrmAnlyReport.CreateChartText;
+var i:integer;
+begin
+  if edtReportType.ItemIndex= 0 then
+    i:=1
+  else
+    i:=0;
+
+  if edtChar1Type.Checked then
+    begin
+       Chart2.BottomAxis.Title.Caption:='时 刻 点';
+       case edtDataSource.ItemIndex+i of
+         0:begin
+           Chart2.Title.Text.Text:='时段客流量分析表';
+           Chart2.LeftAxis.Title.Caption:='客流量';
+           end;
+         1:begin
+           Chart2.Title.Text.Text:='时段销售量分析表';
+           Chart2.LeftAxis.Title.Caption:='销售量';
+           end;
+         2:begin
+           Chart2.Title.Text.Text:='时段销售额分析表';
+           Chart2.LeftAxis.Title.Caption:='销售额';
+           end;
+       end;
+    end
+    else
+    begin
+       Chart2.BottomAxis.Title.Caption:='';
+       case edtDataSource.ItemIndex+i of
+         0:begin
+           Chart2.Title.Text.Text:='周客流量分析表';
+           Chart2.LeftAxis.Title.Caption:='客流量';
+           end;
+         1:begin
+           Chart2.Title.Text.Text:='周销售量分析表';
+           Chart2.LeftAxis.Title.Caption:='销售量';
+           end;
+         2:begin
+           Chart2.Title.Text.Text:='周销售额分析表';
+           Chart2.LeftAxis.Title.Caption:='销售额';
+           end;
+       end;
+    end;
+end;
+
 procedure TfrmAnlyReport.CreateChart;
 var
   rs:TZQuery;
@@ -331,18 +378,22 @@ begin
   try
     Chart2.Series[0].Clear;
     if cdsReport1.RecordCOunt=0 then exit;
-    
+
     rs.Data := cdsReport1.Data;
     if edtChar1Type.Checked then
        rs.SortedFields := 'HOUR'
     else
        rs.SortedFields := 'SALES_DATE';
+
     if (edtReportType.ItemIndex=1) and (edtDataSource.ItemIndex=0) then
        CalcClientNum(rs,rs.SortedFields);
 
     if edtChar2Type.Checked then
+    begin
        CalcWeek(rs,rs.SortedFields);
+    end;
 
+    CreateChartText;
     rs.First;
     while not rs.Eof do
       begin
@@ -494,6 +545,8 @@ begin
   rs.Data:=ss.Data;
   ss.Free;
 end;
+
+
 
 initialization
   RegisterClass(TfrmAnlyReport);

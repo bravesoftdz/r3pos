@@ -849,6 +849,8 @@ procedure TfrmBrowerForm.NewWindow3Event(ASender: TObject;
 var
   urlToken:TurlToken;
   curSheet:TTabSheetEx;
+  w:integer;
+  xsmLogined:boolean;
 begin
   curSheet := (PageControl1.ActivePage as TTabSheetEx);
   if assigned(curSheet) and assigned(curSheet.EWB) and ((dwFlags=6) or (dwFlags=262150)) then
@@ -863,7 +865,29 @@ begin
                   case urlToken.appFlag of
                   0:begin
                       Cancel := true;
-                      curSheet.EWB.Go(urlToken.url,15);
+                      if urlToken.appId='xsm-in' then
+                         begin
+                            xsmLogined := false;
+                            if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
+                            w := 0;
+                            while w<3 do
+                            begin
+                              inc(w);
+                              curSheet.EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+UcFactory.xsmSignature,15000);
+                              xsmLogined := UcFactory.chkLogin(curSheet.EWB);
+                              if xsmLogined then break;
+                            end;
+                            if not xsmLogined then
+                               begin
+                                 UcFactory.xsmLogined := false;
+                                 Raise Exception.Create('新商盟认证失败，请点击重试！');
+                               end;
+                           curSheet.EWB.Go(encodeUrl(urlToken),15);
+                         end
+                      else
+                         begin
+                           curSheet.EWB.Go(urlToken.url,15);
+                         end;
                       ppdisp := curSheet.EWB.Application;
                       if curSheet.EWB.CanFocus then curSheet.EWB.SetFocusToDoc;
                     end
@@ -1159,7 +1183,7 @@ begin
                  begin
                    UcFactory.xsmLogined := false;
                    Raise Exception.Create('新商盟认证失败，请点击重试！');
-                 end;  
+                 end;
            end;
         EWB.Go(_url,TimeOut);
         if EWB.CanFocus then EWB.SetFocusToDoc;
@@ -1563,11 +1587,14 @@ end;
 procedure TfrmBrowerForm.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
+  btnClose.Enabled := false;
   try
     dllFactory.Clear;
+    btnClose.Enabled := true;
   except
     on E:Exception do
       begin
+        btnClose.Enabled := true;
         CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
       end;
   end;

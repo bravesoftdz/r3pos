@@ -85,7 +85,9 @@ uses
   ufrmProfitReport in 'app\ufrmProfitReport.pas' {frmProfitReport},
   ufrmSelectGoods in 'app\ufrmSelectGoods.pas' {frmSelectGoods},
   uRtcSyncFactory in 'app\uRtcSyncFactory.pas',
-  udllCtrlUtil in 'utils\udllCtrlUtil.pas';
+  udllCtrlUtil in 'utils\udllCtrlUtil.pas',
+  uRtcLibFactory in 'app\uRtcLibFactory.pas',
+  uDownOrderFactory in 'app\uDownOrderFactory.pas';
 
 {$R *.res}
 exports

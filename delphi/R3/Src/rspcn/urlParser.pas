@@ -17,6 +17,7 @@ function decodeUrl(url:string):TurlToken;
 function encodeUrl(urltoken:TurlToken):string;
 function isRspcn(url:string):boolean;
 implementation
+uses uUcFactory;
 function isRspcn(url:string):boolean;
 begin
   result := pos('rspcn://', LowerCase(url)) = 1;
@@ -34,6 +35,12 @@ begin
     if sl.Count=0 then Raise Exception.Create('无效地址'); 
     result.appId := sl[0];
     if result.appId='built-in' then
+       begin
+         result.appFlag := 0;
+         sl.Delete(0);
+       end
+    else
+    if result.appId='xsm-in' then
        begin
          result.appFlag := 0;
          sl.Delete(0);
@@ -61,9 +68,25 @@ begin
 end;
 function encodeUrl(urltoken:TurlToken):string;
 begin
-  if urltoken.path='/' then
-     result := 'rspcn://'+urltoken.appId+urltoken.path+urltoken.moduname
+  if urlToken.appId='xsm-in' then
+     begin
+        if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有错，');
+        if pos('xsm_r3.html',UcFactory.xsmWB)>0 then
+           result := UcFactory.xsmWB
+        else
+           begin
+              if UcFactory.xsmWB[length(UcFactory.xsmWB)]='/' then
+                 result := 'http://'+UcFactory.xsmWB+urltoken.path+urltoken.moduname
+              else
+                 result := 'http://'+UcFactory.xsmWB+'/'+urltoken.path+'/'+urltoken.moduname;
+           end;
+     end
   else
-     result := 'rspcn://'+urltoken.appId+'/'+urltoken.path+'/'+urltoken.moduname;
+     begin
+        if urltoken.path='/' then
+           result := 'rspcn://'+urltoken.appId+urltoken.path+urltoken.moduname
+        else
+           result := 'rspcn://'+urltoken.appId+'/'+urltoken.path+'/'+urltoken.moduname;
+     end;
 end;
 end.

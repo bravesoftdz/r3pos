@@ -159,6 +159,7 @@ var
   Form:TForm;
 begin
   try
+    if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...');
     mid := dllApplication.getModuId(moduId);
     idx := webForm.IndexOf(mid);
     if idx>=0 then

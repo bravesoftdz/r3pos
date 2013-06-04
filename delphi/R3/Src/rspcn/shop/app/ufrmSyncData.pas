@@ -16,10 +16,7 @@ const
 type
   TfrmSyncData = class(TfrmWebDialogForm)
     RzPanel1: TRzPanel;
-    Image1: TImage;
     ProgressBar1: TProgressBar;
-    RzFormShape1: TRzFormShape;
-    RzBackground2: TRzBackground;
     Image2: TImage;
     label1: TRzLabel;
     procedure FormCreate(Sender: TObject);
@@ -51,8 +48,8 @@ uses
 procedure TfrmSyncData.ajustPostion;
 begin
   inherited;
-  RzPanel1.Top := (self.ClientHeight - RzPanel1.Height) div 2 - 1;
-  RzPanel1.Left := (self.ClientWidth - RzPanel1.Width) div 2 - 1;
+  RzPanel1.Left := (webForm.Width - RzPanel1.Width) div 2 -1;
+  RzPanel1.Top  :=  227;
 end;
 
 procedure TfrmSyncData.SetPosition(const Value: integer);
@@ -95,8 +92,8 @@ begin
   SyncFactory.ProHandle := self.Handle;
   RspSyncFactory.ProHandle := self.Handle;
   RtcSyncFactory.ProHandle := self.Handle;
-  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg') then
-     Image1.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg');
+//  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg') then
+//     Image1.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\flash.jpg');
 end;
 
 procedure TfrmSyncData.WM_SetCaption(var Message: TMessage);

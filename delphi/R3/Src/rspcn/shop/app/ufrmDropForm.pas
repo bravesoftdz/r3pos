@@ -85,7 +85,7 @@ begin
   showForm;
   Fdroped := true;
   try
-    while (ModalResult = mrNone) and Visible do
+    while (ModalResult = mrNone) and Visible and droped do
       begin
         if Application.Terminated then Exit;
         if PeekMessage(Msg, 0, 0, 0, PM_REMOVE) then
@@ -124,11 +124,16 @@ end;
 procedure TfrmDropForm.FormDeactivate(Sender: TObject);
 begin
   close;
+  droped := false;
 end;
 
 procedure TfrmDropForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Key=#27 then Close;
+  if Key=#27 then
+     begin
+       Close;
+       droped := false;
+     end;
 end;
 
 constructor TfrmDropForm.Create(AOwner: TComponent);

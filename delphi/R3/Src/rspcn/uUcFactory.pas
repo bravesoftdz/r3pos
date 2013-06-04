@@ -44,7 +44,9 @@ type
     function chkLogin(EWB:TEmbeddedWB):boolean;
     //读取当前令牌
     function getSignature:boolean;
-    
+
+    //读取新商盟主机
+    function getxsmWBHost:string;
     property xsmUC:string read FxsmUC write SetxsmUC;
     property xsmWB:string read FxsmWB write SetxsmWB;
     property xsmChallenge:string read FxsmChallenge write SetxsmChallenge;
@@ -331,6 +333,19 @@ end;
 procedure TUcFactory.SetxsmUser(const Value: string);
 begin
   FxsmUser := Value;
+end;
+
+function TUcFactory.getxsmWBHost: string;
+var sl:TStringList;
+begin
+  sl := TStringList.Create;
+  try
+    sl.Delimiter := '/';
+    sl.DelimitedText := xsmWB;
+    
+  finally
+    sl.Free;
+  end;
 end;
 
 end.

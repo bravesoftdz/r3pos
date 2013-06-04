@@ -12,7 +12,7 @@ begin
   if url='' then
      result := 0
   else
-  if url='rspcn://shop.dll/tfrmsalesorder' then
+  if url='rspcn://shop.dll/tfrmsaleorder' then
      result := 1
   else
   if url='rspcn://shop.dll/tfrmstockorder' then

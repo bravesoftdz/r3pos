@@ -812,107 +812,137 @@ item: Include Script
   Pathname=%_WISE_%\INCLUDE\uninstal.wse
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\Initial.dat
-  Destination=%MAINDIR%\Initial.dat
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\Tenant.xml
+  Destination=%MAINDIR%\built-in\Tenant.xml
   Flags=0000000010000010
-  File Size=59704
-  File Date=20130323 155500
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.exe
-  Destination=%MAINDIR%\shop.exe
-  Flags=0000000010000010
-  File Size=2706432
-  File Date=20130327 185048
-  EXE Type=32
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\rspFactory.dll
-  Destination=%MAINDIR%\rspFactory.dll
-  Flags=0000000010000011
-  Version String=1.0.0.2
-  Version MS=65536
-  Version LS=2
-  File Size=1064448
-  File Date=20130323 155500
-  EXE Type=32
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\dbfile.dat
-  Destination=%MAINDIR%\dbfile.dat
-  Flags=0000000010000010
-  File Size=6594560
-  File Date=20130325 185815
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite.db
-  Destination=%MAINDIR%\sqlite.db
-  Flags=0000000010000010
-  File Size=6594560
-  File Date=20130325 185815
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.dll
-  Destination=%MAINDIR%\shop.dll
-  Flags=0000000010000010
-  File Size=570947
-  File Date=20130323 155500
-  EXE Type=32
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite3.dll
-  Destination=%MAINDIR%\sqlite3.dll
-  Flags=0000000010000010
-  File Size=570947
-  File Date=20130323 155500
-  EXE Type=32
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\apiTest.htm
-  Destination=%MAINDIR%\built-in\apiTest.htm
-  Flags=0000000010000010
-  File Size=5659
-  File Date=20130327 184443
+  File Size=507
+  File Date=20130410 113523
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\Shop.xml
   Destination=%MAINDIR%\built-in\Shop.xml
   Flags=0000000010000010
-  File Size=5659
-  File Date=20130327 184443
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\Tenant.xml
-  Destination=%MAINDIR%\built-in\Tenant.xml
-  Flags=0000000010000010
-  File Size=5659
-  File Date=20130327 184443
+  File Size=601
+  File Date=20130410 113523
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\report.html
   Destination=%MAINDIR%\built-in\report.html
   Flags=0000000010000010
-  File Size=5659
-  File Date=20130327 184443
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\index.html
-  Destination=%MAINDIR%\built-in\index.html
-  Flags=0000000010000010
-  File Size=11862
-  File Date=20130325 193818
+  File Size=5763
+  File Date=20130527 212246
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\login.html
   Destination=%MAINDIR%\built-in\login.html
   Flags=0000000010000010
-  File Size=4591
-  File Date=20130324 190252
+  File Size=2382
+  File Date=20130527 212246
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\css\*.*
-  Destination=%MAINDIR%\built-in\css
-  Flags=0000000100000010
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\rspcn.js
+  Destination=%MAINDIR%\built-in\js\rspcn.js
+  Flags=0000000010000010
+  File Size=4724
+  File Date=20130410 113338
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\report.js
+  Destination=%MAINDIR%\built-in\js\report.js
+  Flags=0000000010000010
+  File Size=13270
+  File Date=20130327 184443
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\json.js
+  Destination=%MAINDIR%\built-in\js\json.js
+  Flags=0000000010000010
+  File Size=4955
+  File Date=20130410 113338
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\apiTest.htm
+  Destination=%MAINDIR%\built-in\apiTest.htm
+  Flags=0000000010000010
+  File Size=11355
+  File Date=20130410 114910
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\adv01.png
+  Destination=%MAINDIR%\built-in\cache\adv01.png
+  Flags=0000000010000010
+  File Size=84490
+  File Date=20130325 172446
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\adv02.png
+  Destination=%MAINDIR%\built-in\cache\adv02.png
+  Flags=0000000010000010
+  File Size=90290
+  File Date=20130325 172538
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\adv03.png
+  Destination=%MAINDIR%\built-in\cache\adv03.png
+  Flags=0000000010000010
+  File Size=18742
+  File Date=20100908 152924
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\default.png
+  Destination=%MAINDIR%\built-in\cache\default.png
+  Flags=0000000010000010
+  File Size=2337
+  File Date=20100421 092226
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\nulladv.png
+  Destination=%MAINDIR%\built-in\cache\nulladv.png
+  Flags=0000000010000010
+  File Size=37334
+  File Date=20130323 160655
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\nullimage.png
+  Destination=%MAINDIR%\built-in\cache\nullimage.png
+  Flags=0000000010000010
+  File Size=37334
+  File Date=20130323 160655
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\css\base.css
+  Destination=%MAINDIR%\built-in\css\base.css
+  Flags=0000000010000010
+  File Size=2944
+  File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\css\index.css
+  Destination=%MAINDIR%\built-in\css\index.css
+  Flags=0000000010000010
+  File Size=4378
+  File Date=20130603 130620
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\css\login.css
+  Destination=%MAINDIR%\built-in\css\login.css
+  Flags=0000000010000010
+  File Size=2897
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\css\report.css
+  Destination=%MAINDIR%\built-in\css\report.css
+  Flags=0000000010000010
+  File Size=9180
+  File Date=20130520 142510
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\css\style.css
+  Destination=%MAINDIR%\built-in\css\style.css
+  Flags=0000000010000010
+  File Size=2436
+  File Date=20130527 212246
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\flash\Column2D.swf
@@ -948,6 +978,13 @@ item: Install File
   Flags=0000000010000010
   File Size=166313
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\add.jpg
+  Destination=%MAINDIR%\built-in\images\add.jpg
+  Flags=0000000010000010
+  File Size=25102
+  File Date=20130527 212246
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ads1.jpg
@@ -1048,6 +1085,13 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\contentBg.jpg
+  Destination=%MAINDIR%\built-in\images\contentBg.jpg
+  Flags=0000000010000010
+  File Size=34785
+  File Date=20130520 142510
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\day_tab01.png
   Destination=%MAINDIR%\built-in\images\day_tab01.png
   Flags=0000000010000010
@@ -1090,11 +1134,25 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\fyrk.jpg
+  Destination=%MAINDIR%\built-in\images\fyrk.jpg
+  Flags=0000000010000010
+  File Size=28084
+  File Date=20130527 212246
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\gonggao.png
   Destination=%MAINDIR%\built-in\images\gonggao.png
   Flags=0000000010000010
   File Size=2434
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\hygl.jpg
+  Destination=%MAINDIR%\built-in\images\hygl.jpg
+  Flags=0000000010000010
+  File Size=30214
+  File Date=20130527 212245
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ibbtn.gif
@@ -1202,6 +1260,13 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\indexBg.jpg
+  Destination=%MAINDIR%\built-in\images\indexBg.jpg
+  Flags=0000000010000010
+  File Size=169371
+  File Date=20130527 212246
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\input_bg.png
   Destination=%MAINDIR%\built-in\images\input_bg.png
   Flags=0000000010000010
@@ -1230,6 +1295,13 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jyfx.jpg
+  Destination=%MAINDIR%\built-in\images\jyfx.jpg
+  Flags=0000000010000010
+  File Size=29356
+  File Date=20130527 212246
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jypm_01.png
   Destination=%MAINDIR%\built-in\images\jypm_01.png
   Flags=0000000010000010
@@ -1256,6 +1328,13 @@ item: Install File
   Flags=0000000010000010
   File Size=26779
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jyrk.jpg
+  Destination=%MAINDIR%\built-in\images\jyrk.jpg
+  Flags=0000000010000010
+  File Size=34047
+  File Date=20130527 212246
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jy_01.png
@@ -1321,6 +1400,13 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\left.png
+  Destination=%MAINDIR%\built-in\images\left.png
+  Flags=0000000010000010
+  File Size=3420
+  File Date=20130520 142510
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\line.png
   Destination=%MAINDIR%\built-in\images\line.png
   Flags=0000000010000010
@@ -1368,6 +1454,20 @@ item: Install File
   Flags=0000000010000010
   File Size=2104
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\loginBg.png
+  Destination=%MAINDIR%\built-in\images\loginBg.png
+  Flags=0000000010000010
+  File Size=4086
+  File Date=20130520 142510
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\loginBtn.jpg
+  Destination=%MAINDIR%\built-in\images\loginBtn.jpg
+  Flags=0000000010000010
+  File Size=2567
+  File Date=20130520 142510
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\loginbtn.png
@@ -1447,10 +1547,10 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\rspcn.js
-  Destination=%MAINDIR%\built-in\js\rspcn.js
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\pic - 副本.png
+  Destination=%MAINDIR%\built-in\images\pic - 副本.png
   Flags=0000000010000010
-  File Size=4628
+  File Size=195184
   File Date=20130323 155456
 end
 item: Install File
@@ -1552,6 +1652,13 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\right.png
+  Destination=%MAINDIR%\built-in\images\right.png
+  Flags=0000000010000010
+  File Size=3394
+  File Date=20130520 142510
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\search1_btn.png
   Destination=%MAINDIR%\built-in\images\search1_btn.png
   Flags=0000000010000010
@@ -1592,6 +1699,20 @@ item: Install File
   Flags=0000000010000010
   File Size=4919
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\spkc.jpg
+  Destination=%MAINDIR%\built-in\images\spkc.jpg
+  Flags=0000000010000010
+  File Size=31302
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\spxs.jpg
+  Destination=%MAINDIR%\built-in\images\spxs.jpg
+  Flags=0000000010000010
+  File Size=5453
+  File Date=20130527 212246
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\spxs_pic.png
@@ -1776,11 +1897,53 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\userHead.png
+  Destination=%MAINDIR%\built-in\images\userHead.png
+  Flags=0000000010000010
+  File Size=3055
+  File Date=20130520 142510
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\user_bg.png
   Destination=%MAINDIR%\built-in\images\user_bg.png
   Flags=0000000010000010
   File Size=34630
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\wsdh.jpg
+  Destination=%MAINDIR%\built-in\images\wsdh.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\wsph.jpg
+  Destination=%MAINDIR%\built-in\images\wsph.jpg
+  Flags=0000000010000010
+  File Size=31462
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\xtsz.jpg
+  Destination=%MAINDIR%\built-in\images\xtsz.jpg
+  Flags=0000000010000010
+  File Size=34736
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\yxhd.jpg
+  Destination=%MAINDIR%\built-in\images\yxhd.jpg
+  Flags=0000000010000010
+  File Size=30573
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\index.html
+  Destination=%MAINDIR%\built-in\index.html
+  Flags=0000000010000010
+  File Size=5926
+  File Date=20130603 161516
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\datautil.js
@@ -1832,53 +1995,60 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\json.js
-  Destination=%MAINDIR%\built-in\js\json.js
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\Initial.dat
+  Destination=%MAINDIR%\Initial.dat
   Flags=0000000010000010
-  File Size=4955
-  File Date=20130323 155456
+  File Size=59704
+  File Date=20130323 155500
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\js\report.js
-  Destination=%MAINDIR%\built-in\js\report.js
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.exe
+  Destination=%MAINDIR%\shop.exe
   Flags=0000000010000010
-  File Size=13270
-  File Date=20130327 184443
+  File Size=2706432
+  File Date=20130327 185048
+  EXE Type=32
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\nulladv.png
-  Destination=%MAINDIR%\built-in\cache\nulladv.png
-  Flags=0000000010000010
-  File Size=37334
-  File Date=20130323 160655
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\rspFactory.dll
+  Destination=%MAINDIR%\rspFactory.dll
+  Flags=0000000010000011
+  Version String=1.0.0.2
+  Version MS=65536
+  Version LS=2
+  File Size=1064448
+  File Date=20130323 155500
+  EXE Type=32
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\nullimage.png
-  Destination=%MAINDIR%\built-in\cache\nullimage.png
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\dbfile.dat
+  Destination=%MAINDIR%\dbfile.dat
   Flags=0000000010000010
-  File Size=37334
-  File Date=20130323 160655
+  File Size=6594560
+  File Date=20130325 185815
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\adv01.png
-  Destination=%MAINDIR%\built-in\cache\adv01.png
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite.db
+  Destination=%MAINDIR%\sqlite.db
   Flags=0000000010000010
-  File Size=84490
-  File Date=20130325 172446
+  File Size=6594560
+  File Date=20130325 185815
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\adv02.png
-  Destination=%MAINDIR%\built-in\cache\adv02.png
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.dll
+  Destination=%MAINDIR%\shop.dll
   Flags=0000000010000010
-  File Size=90290
-  File Date=20130325 172538
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\cache\adv03.png
-  Destination=%MAINDIR%\built-in\cache\adv03.png
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\sqlite3.dll
+  Destination=%MAINDIR%\sqlite3.dll
   Flags=0000000010000010
-  File Size=18742
-  File Date=20100908 152924
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\测试账号.txt

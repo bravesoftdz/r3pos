@@ -230,7 +230,9 @@ begin
   case upgrade of
   1:UpgradeApplication;
   2:UpgradeDBVersion;
-  3:Close;
+  3:begin
+      Close;
+    end;
   end;
 end;
 

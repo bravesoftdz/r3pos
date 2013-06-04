@@ -25,7 +25,7 @@ type
   //8.读取错误说明
   TsendMsg=function(buf:Pchar;moduId:pchar):boolean;stdcall;
   //9.读取令牌
-  TgetToken=function(buf:Pchar):boolean;stdcall;
+  TgetToken=function():pchar;stdcall;
 
   TDLLPlugin=class
   private
@@ -45,13 +45,12 @@ type
   public
     constructor Create(dllname:string);
     destructor Destroy; override;
-
     procedure Init;
     function getToken:string;
-
     property DLLHandle:THandle read FDLLHandle write SetDLLHandle;
     property appId:string read FappId write SetappId;
   end;
+
   TDLLFactory=class(TComponent,IdbDllHelp)
   private
     FList:TList;
@@ -115,9 +114,11 @@ type
     function getDBHelp:IdbDLLHelp;
     property appWnd:THandle read FappWnd write SetappWnd;
   end;
-var
-  dllFactory:TDLLFactory;
+
+var dllFactory:TDLLFactory;
+
 implementation
+
 uses udataFactory,utokenFactory,encDec;
 
 { TDLLFactory }
@@ -720,13 +721,11 @@ end;
 
 function TDLLPlugin.getToken: string;
 var
-  buf:string;
+  buf:pchar;
 begin
-  setLength(buf,4000);
-  fillchar(buf,4000,0);
-  if not _getToken(pchar(buf)) then
-     Raise Exception.Create(StrPas(getLastError));
-
+  buf := _getToken;
+  if buf=nil then Raise Exception.Create(StrPas(getLastError));
+  result := StrPas(buf);
 end;
 
 procedure TDLLPlugin.Init;

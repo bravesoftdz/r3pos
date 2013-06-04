@@ -505,18 +505,25 @@ begin
   Show;
   OpenHome;
   UpdateControls;
-  if paramStr(1)='-open' then
+  if frmUpdate.CheckDBVersion then
+     frmUpdate.Show
+  else
      begin
-       //调用DLL读取令牌后登录
-       if jsExt.signToken(dllFactory.getToken)
-       then
-          begin
-            OpenHome;
-            if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
-          end
+        if paramStr(1)='-open' then
+           begin
+             //调用DLL读取令牌后登录
+             if jsExt.signToken(dllFactory.getToken) then
+                begin
+                  if token.online then dllFactory.Init(mainPanel.Handle);
+                  Timer1.Tag := 1;
+                  if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
+                end
+           end
+        else
+           begin
+              if token.online then dllFactory.Init(mainPanel.Handle);
+           end;
      end;
-   if frmUpdate.CheckDBVersion then
-      frmUpdate.Show;
 end;
 
 
@@ -1087,19 +1094,15 @@ begin
          Application.Terminate;
          Exit;
        end;
-    if token.logined and (Timer1.Tag=0) then
+{    if token.logined and (Timer1.Tag=0) then
        begin
          try
            if token.online then dllFactory.Init(mainPanel.Handle);
-           //TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(home_down.Picture);
            pageButtonSort;
-           //toolleft.Visible := true;
-           //OpenHome;
            Timer1.Tag := 1;
          except
            token.logined := false;
            Timer1.Tag := 0;
-           //OpenHome;
            Raise;
          end;
        end
@@ -1107,26 +1110,11 @@ begin
     if not token.logined and (Timer1.Tag=1) then
        begin
          try
-           //TTabSheetEx(pageControl1.Pages[0]).button.Bitmaps.Down.Assign(button_active.Picture);
            pageButtonSort;
-           //toolleft.Visible := false;
          finally
            Timer1.Tag :=0;
          end;
-       end;
-{    if token.logined then
-       begin
-         if token.tenantName<>'' then
-            lblUserName.Caption := token.tenantName
-         else
-            lblUserName.Caption := token.username;
-         if token.online then
-            lblUserName.Caption := lblUserName.Caption+'(联机)'
-         else
-            lblUserName.Caption := lblUserName.Caption+'(脱机)';
-       end
-    else
-       lblUserName.Caption := '现代卷烟零售终端';    }
+       end;  }
   finally
     Timer1.Enabled := true;
   end;

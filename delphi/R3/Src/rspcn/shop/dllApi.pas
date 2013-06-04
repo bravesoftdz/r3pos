@@ -34,7 +34,7 @@ function resize:boolean;stdcall;
 
 function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
 
-function getToken(buf:Pchar):boolean;stdcall;
+function getToken:pchar;stdcall;
 
 procedure freeApp(mid:string);
 type
@@ -47,27 +47,33 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-
     function getDllClass(name:string):TPersistentClass;
     function getModuId(name:string):string;
     procedure dllException(Sender: TObject; E: Exception);
     property handle:THandle read Fhandle write Sethandle;
     property mode:string read Fmode write Setmode;
   end;
+
 var
   lastError:string;
   buf:string;
   dbHelp:IdbDllHelp;
   dllApplication:TdllApplication;
+
 implementation
-uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory,uRtcLibFactory;
+
+uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,
+     uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory,uRtcLibFactory;
+
 var
   webForm:TStringList;
   oldHandle:THandle;
+
 procedure Halt0;
 begin
   halt;
 end;
+
 procedure DLLEntryPoint(dwReason: DWord);
 begin
   if (dwReason = DLL_PROCESS_DETACH) Then
@@ -87,6 +93,7 @@ begin
     end; }
   end;
 end;
+
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
 function initApp(appWnd:Thandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
@@ -128,7 +135,6 @@ begin
     if pClass = nil then Raise Exception.Create(mid+'类名没找到.');
     Form := TFormClass(pClass).Create(application) as TfrmWebForm;
     webForm.AddObject(mid,Form);
-
     Form.hWnd := hWnd;
     Form.showForm;
     result := true;
@@ -140,6 +146,7 @@ begin
        end;
   end;
 end;
+
 procedure freeApp(mid:string);
 var
   idx:integer;
@@ -151,6 +158,7 @@ begin
        webForm.Delete(idx);
      end;
 end;
+
 //3.关闭应用
 //说明：关闭应用中打开的模块
 //返回值:false代表不允许关闭，true关闭成功
@@ -223,11 +231,13 @@ begin
        end;
   end;
 end;
+
 //5.读取错误说明
 function getLastError:pchar;stdcall;
 begin
   result := Pchar(lastError);
 end;
+
 //6.获取标题名
 function getModuleName(moduId:Pchar):Pchar;
 var
@@ -252,6 +262,7 @@ begin
        end;
   end;
 end;
+
 function resize:boolean;stdcall;
 var
   i:integer;
@@ -270,6 +281,7 @@ begin
        end;
   end;
 end;
+
 function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
 var
   idx:integer;
@@ -293,21 +305,20 @@ begin
   end;
 end;
 
-function getToken(buf:Pchar):boolean;stdcall;
+function getToken:pchar;stdcall;
 begin
   try
     if RtcLibFactory.GetToken<>0 then Raise Exception.Create('读取令牌失败了');
-    move(pchar(RtcLibFactory.ticket)^,buf^,length(RtcLibFactory.ticket));
-     result := true;
+    buf := RtcLibFactory.ticket;
+    result := pchar(buf);
   except
     on E:Exception do
        begin
-         result := false;
+         result := nil;
          lastError := E.Message;
        end;
   end;
 end;
-{ TdllApplication }
 
 constructor TdllApplication.Create;
 var
@@ -323,7 +334,6 @@ end;
 
 destructor TdllApplication.Destroy;
 begin
-
   inherited;
 end;
 

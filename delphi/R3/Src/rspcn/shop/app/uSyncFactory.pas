@@ -113,7 +113,7 @@ var SyncFactory:TSyncFactory;
 implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,
-     uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory;
+     uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,ufrmStocksCalc;
 
 constructor TSyncFactory.Create;
 begin
@@ -1640,6 +1640,11 @@ var
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  if SyncFlag = 0 then
+     begin
+       if not TfrmStocksCalc.Calc(Application.MainForm,now()) then Exit;
+     end;
 
   tbName := 'RCK_DAYS_CLOSE';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);

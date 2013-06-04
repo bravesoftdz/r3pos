@@ -76,9 +76,9 @@ begin
         else
            begin
               if UcFactory.xsmWB[length(UcFactory.xsmWB)]='/' then
-                 result := 'http://'+UcFactory.xsmWB+urltoken.path+urltoken.moduname
+                 result := UcFactory.xsmWB+urltoken.path+urltoken.moduname
               else
-                 result := 'http://'+UcFactory.xsmWB+'/'+urltoken.path+'/'+urltoken.moduname;
+                 result := UcFactory.xsmWB+'/'+urltoken.path+'/'+urltoken.moduname;
            end;
      end
   else

@@ -20,9 +20,12 @@ type
   TgetLastError=function():pchar;stdcall;
   //6.读取模块名称
   TgetModuleName=function(moduId:pchar):Pchar;stdcall;
-  //5.读取错误说明
+  //7.读取错误说明
   Tresize=function():boolean;stdcall;
+  //8.读取错误说明
   TsendMsg=function(buf:Pchar;moduId:pchar):boolean;stdcall;
+  //9.读取令牌
+  TgetToken=function(buf:Pchar):boolean;stdcall;
 
   TDLLPlugin=class
   private
@@ -35,6 +38,7 @@ type
     getModuleName:TgetModuleName;
     resize:Tresize;
     sendMsg:TsendMsg;
+    _getToken:TgetToken;
     FappId: string;
     procedure SetDLLHandle(const Value: THandle);
     procedure SetappId(const Value: string);
@@ -43,6 +47,7 @@ type
     destructor Destroy; override;
 
     procedure Init;
+    function getToken:string;
 
     property DLLHandle:THandle read FDLLHandle write SetDLLHandle;
     property appId:string read FappId write SetappId;
@@ -103,6 +108,8 @@ type
 
     function erase(idx:integer):boolean;
     function find(appId:string):integer;
+
+    function getToken:string;
 
     procedure resize;
     function getDBHelp:IdbDLLHelp;
@@ -651,6 +658,25 @@ begin
   FList.Clear;
 end;
 
+function TDLLFactory.getToken: string;
+var
+  idx:integer;
+  app:TDLLPlugin;
+begin
+  idx := find('shop.dll');
+  if idx<0 then
+     begin
+       app := TDLLPlugin.Create('shop.dll');
+       app.appId := 'shop.dll';
+       flist.Add(app);
+     end
+  else
+     begin
+       app := TDLLPlugin(flist[idx]);
+     end;
+  result := app.getToken;
+end;
+
 { TDLLPlugin }
 
 constructor TDLLPlugin.Create(dllname:string);
@@ -674,6 +700,8 @@ begin
     if @resize=nil then Raise Exception.Create('resize方法没有实现');
     @sendMsg := GetProcAddress(dllHandle, 'sendMsg');
     if @sendMsg=nil then Raise Exception.Create('sendMsg方法没有实现');
+    @_getToken := GetProcAddress(dllHandle, 'getToken');
+    if @_getToken=nil then Raise Exception.Create('getToken方法没有实现');
   except
     freeLibrary(dllHandle);
     dllHandle := 0;
@@ -688,6 +716,17 @@ begin
        FreeLibrary(dllHandle);
      end;
   inherited;
+end;
+
+function TDLLPlugin.getToken: string;
+var
+  buf:string;
+begin
+  setLength(buf,4000);
+  fillchar(buf,4000,0);
+  if not _getToken(pchar(buf)) then
+     Raise Exception.Create(StrPas(getLastError));
+
 end;
 
 procedure TDLLPlugin.Init;

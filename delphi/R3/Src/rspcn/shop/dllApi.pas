@@ -34,6 +34,8 @@ function resize:boolean;stdcall;
 
 function sendMsg(buf:Pchar;moduId:pchar):boolean;stdcall;
 
+function getToken(buf:Pchar):boolean;stdcall;
+
 procedure freeApp(mid:string);
 type
   TdllApplication=class
@@ -281,6 +283,21 @@ begin
          TfrmWebForm(webForm.Objects[idx]).Buf := StrPas(buf);
          PostMessage(TForm(webForm.Objects[idx]).Handle,WM_SEND_MSG,0,0);
        end;
+     result := true;
+  except
+    on E:Exception do
+       begin
+         result := false;
+         lastError := E.Message;
+       end;
+  end;
+end;
+
+function getToken(buf:Pchar):boolean;stdcall;
+begin
+  try
+    if RtcLibFactory.GetToken<>0 then Raise Exception.Create('∂¡»°¡Ó≈∆ ß∞‹¡À');
+    move(pchar(RtcLibFactory.ticket)^,buf^,length(RtcLibFactory.ticket));
      result := true;
   except
     on E:Exception do

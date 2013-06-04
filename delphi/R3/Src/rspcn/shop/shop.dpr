@@ -91,6 +91,6 @@ uses
 
 {$R *.res}
 exports
-  initApp,openApp,closeApp,eraseApp,getLastError,getModuleName,resize,sendMsg;
+  initApp,openApp,closeApp,eraseApp,getLastError,getModuleName,resize,sendMsg,getToken;
 begin
 end.

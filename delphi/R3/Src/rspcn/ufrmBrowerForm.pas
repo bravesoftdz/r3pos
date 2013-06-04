@@ -240,7 +240,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst,uRtcLibFactory;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -507,9 +507,8 @@ begin
   UpdateControls;
   if paramStr(1)='-open' then
      begin
-       if RtcLibFactory.GetToken<>0 then Raise Exception.Create('∂¡»°»›∆˜¡Ó≈∆ ß∞‹°£'); 
        //µ˜”√DLL∂¡»°¡Ó≈∆∫Ûµ«¬º
-       if jsExt.signToken(RtcLibFactory.ticket)
+       if jsExt.signToken(dllFactory.getToken)
        then
           begin
             OpenHome;

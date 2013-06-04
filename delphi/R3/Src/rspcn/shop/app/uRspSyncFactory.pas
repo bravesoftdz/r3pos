@@ -738,7 +738,7 @@ end;
 
 procedure TRspSyncFactory.SyncAll;
 begin
-  SetProMax(6);
+  SetProMax(5);
   SetProPosition(0);
   ProTitle := '正在下载<企业信息>...';
   downloadTenants;
@@ -755,9 +755,11 @@ begin
   ProTitle := '正在下载<商品分类>...';
   downloadGoodsSort;
   SetProPosition(5);
+{
   ProTitle := '正在下载<功能模块>...';
   downloadModules;
   SetProPosition(6);
+}
 end;
 
 procedure TRspSyncFactory.copyGoodsSort;

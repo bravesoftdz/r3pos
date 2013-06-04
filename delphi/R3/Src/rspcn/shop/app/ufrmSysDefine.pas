@@ -210,16 +210,6 @@ type
     SaveFolderDialog: TSaveDialog;
     OpenImageDialog: TOpenDialog;
     EditPanel: TRzPanel;
-    pnl_left_line: TImage;
-    pnl_right_line: TImage;
-    pnl_top: TRzPanel;
-    pnl_top_left: TImage;
-    pnl_top_right: TImage;
-    pnl_top_line: TImage;
-    pnl_bottom: TRzPanel;
-    barcode_panel_bottom_line: TImage;
-    barcodeb_panel_right_line: TImage;
-    barcodeb_panel_left_line: TImage;
     RzPanel66: TRzPanel;
     RzPanel67: TRzPanel;
     RzBackground30: TRzBackground;

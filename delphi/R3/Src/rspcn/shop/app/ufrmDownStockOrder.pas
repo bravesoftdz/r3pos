@@ -6,17 +6,15 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzButton, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, StdCtrls,
-  RzLabel, Menus, RzBmpBtn, jpeg, RzBckgnd, IniFiles;
+  RzLabel, Menus, RzBmpBtn, jpeg, RzBckgnd, IniFiles, RzTabs;
 
 type
   TfrmDownStockOrder = class(TfrmWebDialogForm)
     RzPanel1: TRzPanel;
     RzPanel2: TRzPanel;
-    RzPanel4: TRzPanel;
     cdsTable: TZQuery;
     OrderDataSource: TDataSource;
     RzLabel1: TRzLabel;
-    RzLabel2: TRzLabel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -26,18 +24,44 @@ type
     Image3: TImage;
     toolNav: TRzPanel;
     lblCaption: TRzLabel;
+    cdsDetail: TZQuery;
+    RzPageControl: TRzPageControl;
+    TabSheet1: TRzTabSheet;
+    TabSheet2: TRzTabSheet;
+    RzPanel4: TRzPanel;
     RzPanel5: TRzPanel;
     DBGridEh1: TDBGridEh;
-    btnOK: TRzBmpButton;
+    rowToolNav: TRzToolbar;
+    toolDetail: TRzToolButton;
+    toolSave: TRzToolButton;
+    toolSpacer: TRzSpacer;
+    RzPanel3: TRzPanel;
+    RzPanel6: TRzPanel;
+    DBGridEh2: TDBGridEh;
+    RzToolbar1: TRzToolbar;
+    RzToolButton1: TRzToolButton;
+    RzToolButton2: TRzToolButton;
+    RzSpacer1: TRzSpacer;
+    DetailDataSource: TDataSource;
+    btnOk: TRzBmpButton;
+    btnReturn: TRzBmpButton;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
+    procedure toolSaveClick(Sender: TObject);
+    procedure cdsTableAfterDelete(DataSet: TDataSet);
+    procedure toolDetailClick(Sender: TObject);
+    procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure btnReturnClick(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
   private
-    comId,custId,rimUrl,downOrderMode:string;
+    licenseCode,comId,custId,rimUrl,downOrderMode:string;
+    procedure ShowHeader;
     function GetDownOrderMode: string;
     function GetRimUrl: string;
   public
@@ -157,7 +181,9 @@ begin
       cdsTable.EnableControls;
     end;
   cdsTable.First;
-  RzLabel2.Caption := inttostr(cdsTable.RecordCount);
+  ShowHeader;
+  rowToolNav.Visible := not cdsTable.IsEmpty;
+  RzPageControl.ActivePageIndex := 0;
 end;
 
 procedure TfrmDownStockOrder.Save;
@@ -239,7 +265,7 @@ procedure TfrmDownStockOrder.Save;
      end;
   end;
 var
-  orderList,orderDetail,cdsData: TZQuery;
+  orderDetail,cdsData: TZQuery;
   cdsHeader,cdsDetail,rs: TZQuery;
   vParams: TftParamList;
   InVoiceFlag: integer;
@@ -249,53 +275,37 @@ var
   sumAmt,sumMny: real;
 begin
   inherited;
-  btnOk.Caption := '正在执行';
-  btnOk.Enabled := false;
-
-  orderList := TZQuery.Create(nil);
   orderDetail := TZQuery.Create(nil);
   cdsHeader := TZQuery.Create(nil);
   cdsDetail := TZQuery.Create(nil);
   try
-    orderList.Data := cdsTable.Data;
-    orderList.Filtered := false;
-    orderList.Filter := 'SELFLAG=1';
-    orderList.Filtered := true;
-
-    if orderList.RecordCount < 1 then Raise Exception.Create('请选择需要入库的订单...');
-
-    orderList.First;
-    while not orderList.Eof do
-      begin
-        cdsData := TZQuery.Create(nil);
-        vParams := TftParamList.Create(nil);
-        try
-          vParams.ParamByName('ExeType').AsInteger:=2;
-          vParams.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-          vParams.ParamByName('INDE_ID').AsString := orderList.FieldByName('INDE_ID').AsString;
-          if downOrderMode = '1' then
-             begin
-               vParams.ParamByName('rimUrl').AsString := rimUrl;
-               vParams.ParamByName('comId').AsString := comId;
-               vParams.ParamByName('custId').AsString := custId;
-               TDownOrderFactory.getOrderDetail(cdsData,vParams);
-             end
-          else
-             begin
-               dataFactory.MoveToRemote;
-               try
-                 dataFactory.Open(cdsData, 'TDownIndeData', vParams);
-               finally
-                 dataFactory.MoveToDefault;
-               end;
-             end;
-          CopyDataSet(cdsData, orderDetail);
-        finally
-          vParams.Free;
-          cdsData.Free;
-        end;
-        orderList.Next;
-      end;
+    cdsData := TZQuery.Create(nil);
+    vParams := TftParamList.Create(nil);
+    try
+      vParams.ParamByName('ExeType').AsInteger:=2;
+      vParams.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      vParams.ParamByName('INDE_ID').AsString := cdsTable.FieldByName('INDE_ID').AsString;
+      if downOrderMode = '1' then
+         begin
+           vParams.ParamByName('rimUrl').AsString := rimUrl;
+           vParams.ParamByName('comId').AsString := comId;
+           vParams.ParamByName('custId').AsString := custId;
+           TDownOrderFactory.getOrderDetail(cdsData,vParams);
+         end
+      else
+         begin
+           dataFactory.MoveToRemote;
+           try
+             dataFactory.Open(cdsData, 'TDownIndeData', vParams);
+           finally
+             dataFactory.MoveToDefault;
+           end;
+         end;
+      CopyDataSet(cdsData, orderDetail);
+    finally
+      vParams.Free;
+      cdsData.Free;
+    end;
 
     vParams := TftParamList.Create(nil);
     try
@@ -329,81 +339,68 @@ begin
     if rs.Locate('USER_ID',token.userId,[]) then
        deptId := rs.FieldbyName('DEPT_ID').AsString;
  
-    orderList.First;
-    while not orderList.Eof do
+    cdsHeader.Append;
+    cdsHeader.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    cdsHeader.FieldByName('SHOP_ID').AsString := token.shopId;
+    cdsHeader.FieldByName('STOCK_ID').AsString := TSequence.NewId;
+    cdsHeader.FieldByName('STOCK_TYPE').AsInteger := 1;
+    cdsHeader.FieldByName('STOCK_DATE').AsInteger := strtoint(FormatDateTime('YYYYMMDD',now()));
+    cdsHeader.FieldByName('GUIDE_USER').AsString := token.userId;
+    cdsHeader.FieldByName('CLIENT_ID').AsString := cdsTable.FieldByName('CLIENT_ID').AsString;
+    cdsHeader.FieldbyName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',now());
+    cdsHeader.FieldByName('CHK_USER').AsString := token.userId;
+    cdsHeader.FieldbyName('ADVA_MNY').AsFloat := 0;
+    cdsHeader.FieldByName('INVOICE_FLAG').AsString := inttostr(InVoiceFlag);
+    cdsHeader.FieldByName('TAX_RATE').AsFloat := taxRate;
+    cdsHeader.FieldByName('REMARK').AsString := '<订单号:'+cdsTable.FieldByName('INDE_ID').AsString+'><订货日期:'+cdsTable.FieldByName('INDE_DATE').AsString+'> 需求量:'+cdsTable.FieldByName('NEED_AMT').AsString+' 审核量:'+cdsTable.FieldByName('INDE_AMT').AsString;
+    cdsHeader.FieldbyName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',now());
+    cdsHeader.FieldByName('CREA_USER').AsString := token.userId;
+    cdsHeader.FieldByName('COMM_ID').AsString := cdsTable.FieldByName('INDE_ID').AsString;
+    cdsHeader.FieldByName('DEPT_ID').AsString := deptId;
+
+    seqNo := 1;
+    sumAmt := 0;
+    sumMny := 0;
+    orderDetail.First;
+    while not orderDetail.Eof do
       begin
-        cdsHeader.Append;
-        cdsHeader.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-        cdsHeader.FieldByName('SHOP_ID').AsString := token.shopId;
-        cdsHeader.FieldByName('STOCK_ID').AsString := TSequence.NewId;
-        cdsHeader.FieldByName('STOCK_TYPE').AsInteger := 1;
-        cdsHeader.FieldByName('STOCK_DATE').AsInteger := strtoint(FormatDateTime('YYYYMMDD',now()));
-        cdsHeader.FieldByName('GUIDE_USER').AsString := token.userId;
-        cdsHeader.FieldByName('CLIENT_ID').AsString := orderList.FieldByName('CLIENT_ID').AsString;
-        cdsHeader.FieldbyName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',now());
-        cdsHeader.FieldByName('CHK_USER').AsString := token.userId;
-        cdsHeader.FieldbyName('ADVA_MNY').AsFloat := 0;
-        cdsHeader.FieldByName('INVOICE_FLAG').AsString := inttostr(InVoiceFlag);
-        cdsHeader.FieldByName('TAX_RATE').AsFloat := taxRate;
-        cdsHeader.FieldByName('REMARK').AsString := '<订单号:'+orderList.FieldByName('INDE_ID').AsString+'><订货日期:'+orderList.FieldByName('INDE_DATE').AsString+'> 需求量:'+orderList.FieldByName('NEED_AMT').AsString+' 审核量:'+orderList.FieldByName('INDE_AMT').AsString;
-        cdsHeader.FieldbyName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',now());
-        cdsHeader.FieldByName('CREA_USER').AsString := token.userId;
-        cdsHeader.FieldByName('COMM_ID').AsString := orderList.FieldByName('INDE_ID').AsString;
-        cdsHeader.FieldByName('DEPT_ID').AsString := deptId;
-
-        orderDetail.Filtered := false;
-        orderDetail.Filter := 'INDE_ID='''+orderList.FieldByName('INDE_ID').AsString+'''';
-        orderDetail.Filtered := true;
-
-        seqNo := 1;
-        sumAmt := 0;
-        sumMny := 0;
-        orderDetail.First;
-        while not orderDetail.Eof do
-          begin
-            cdsDetail.Append;
-            cdsDetail.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-            cdsDetail.FieldByName('SHOP_ID').AsString := token.shopId;
-            cdsDetail.FieldByName('STOCK_ID').AsString := cdsHeader.FieldByName('STOCK_ID').AsString;
-            cdsDetail.FieldByName('SEQNO').AsInteger := seqNo;
-            cdsDetail.FieldByName('GODS_ID').AsString := orderDetail.FieldByName('GODS_ID').AsString;
-            cdsDetail.FieldByName('PROPERTY_01').AsString := '#';
-            cdsDetail.FieldByName('PROPERTY_02').AsString := '#';
-            cdsDetail.FieldByName('BATCH_NO').AsString := '#';
-            cdsDetail.FieldByName('UNIT_ID').AsString := orderDetail.FieldByName('UNIT_ID').AsString;
-            cdsDetail.FieldByName('AMOUNT').AsFloat := orderDetail.FieldByName('AMOUNT').AsFloat;
-            cdsDetail.FieldByName('IS_PRESENT').AsInteger := 0;
-            cdsDetail.FieldByName('TAX_RATE').AsFloat := taxRate;
-            cdsDetail.FieldByName('REMARK').AsString := '<订单号:'+orderDetail.FieldByName('INDE_ID').AsString+'> 需求量:'+orderDetail.FieldByName('NEED_AMT').AsString+' 审核量:'+orderDetail.FieldByName('CHK_AMT').AsString;
-            cdsDetail.Post;
-            AmountToCalc(cdsDetail);
-            InitPrice(cdsDetail);
-            inc(seqNo);
-            sumAmt := sumAmt + cdsDetail.FieldByName('AMOUNT').AsFloat;
-            sumMny := sumMny + cdsDetail.FieldByName('CALC_MONEY').AsFloat;
-            orderDetail.Next;
-          end;
-
-        cdsHeader.FieldbyName('STOCK_AMT').AsFloat := sumAmt;
-        cdsHeader.FieldByName('STOCK_MNY').AsFloat := sumMny;
-        cdsHeader.FieldByName('PAY_ZERO').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_A').AsFloat := cdsHeader.FieldByName('STOCK_MNY').AsFloat;
-        cdsHeader.FieldByName('PAY_B').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_C').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_D').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_E').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_F').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_G').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_H').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_I').AsFloat := 0;
-        cdsHeader.FieldByName('PAY_J').AsFloat := 0;
-
-        cdsHeader.Post;
-        orderList.Next;
+        cdsDetail.Append;
+        cdsDetail.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+        cdsDetail.FieldByName('SHOP_ID').AsString := token.shopId;
+        cdsDetail.FieldByName('STOCK_ID').AsString := cdsHeader.FieldByName('STOCK_ID').AsString;
+        cdsDetail.FieldByName('SEQNO').AsInteger := seqNo;
+        cdsDetail.FieldByName('GODS_ID').AsString := orderDetail.FieldByName('GODS_ID').AsString;
+        cdsDetail.FieldByName('PROPERTY_01').AsString := '#';
+        cdsDetail.FieldByName('PROPERTY_02').AsString := '#';
+        cdsDetail.FieldByName('BATCH_NO').AsString := '#';
+        cdsDetail.FieldByName('UNIT_ID').AsString := orderDetail.FieldByName('UNIT_ID').AsString;
+        cdsDetail.FieldByName('AMOUNT').AsFloat := orderDetail.FieldByName('AMOUNT').AsFloat;
+        cdsDetail.FieldByName('IS_PRESENT').AsInteger := 0;
+        cdsDetail.FieldByName('TAX_RATE').AsFloat := taxRate;
+        cdsDetail.FieldByName('REMARK').AsString := '<订单号:'+orderDetail.FieldByName('INDE_ID').AsString+'> 需求量:'+orderDetail.FieldByName('NEED_AMT').AsString+' 审核量:'+orderDetail.FieldByName('CHK_AMT').AsString;
+        cdsDetail.Post;
+        AmountToCalc(cdsDetail);
+        InitPrice(cdsDetail);
+        inc(seqNo);
+        sumAmt := sumAmt + cdsDetail.FieldByName('AMOUNT').AsFloat;
+        sumMny := sumMny + cdsDetail.FieldByName('CALC_MONEY').AsFloat;
+        orderDetail.Next;
       end;
 
-    cdsHeader.Filtered := false;
-    cdsDetail.Filtered := false;
+    cdsHeader.FieldbyName('STOCK_AMT').AsFloat := sumAmt;
+    cdsHeader.FieldByName('STOCK_MNY').AsFloat := sumMny;
+    cdsHeader.FieldByName('PAY_ZERO').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_A').AsFloat := cdsHeader.FieldByName('STOCK_MNY').AsFloat;
+    cdsHeader.FieldByName('PAY_B').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_C').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_D').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_E').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_F').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_G').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_H').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_I').AsFloat := 0;
+    cdsHeader.FieldByName('PAY_J').AsFloat := 0;
+    cdsHeader.Post;
 
     dataFactory.BeginBatch;
     try
@@ -415,61 +412,57 @@ begin
       Raise;
     end;
 
-    orderList.First;
-    while not orderList.Eof do
-      begin
-        if cdsTable.Locate('INDE_ID',orderList.FieldByName('INDE_ID').AsString,[]) then
-          cdsTable.Delete
-        else
-          orderList.Next;
-      end;
-    RzLabel2.Caption := inttostr(cdsTable.RecordCount);
+    cdsTable.Delete;
+    ShowHeader;
   finally
-    orderList.Free;
     orderDetail.Free;
     cdsHeader.Free;
     cdsDetail.Free;
   end;
-
-  btnOk.Caption := '立即入库';
-  btnOk.Enabled := true;
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
-var ARect:TRect;
+var
+  ARect:TRect;
+  br:TBrush;
+  pn:TPen;
 begin
-  inherited;
+  br := TBrush.Create;
+  br.Assign(DBGridEh1.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh1.Canvas.Pen);
+  try
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
+    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
   begin
-    DBGridEh1.Canvas.Brush.Color := clWhite;
+    if Column.FieldName = 'TOOL_NAV' then
+       begin
+         ARect := Rect;
+         rowToolNav.Visible := true;
+         rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
+       end
+    else
+       begin
+         DBGridEh1.Canvas.Font.Color := clBlack;
+         DBGridEh1.Canvas.Brush.Color := clWhite;
+       end;
   end;
-
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsTable.RecNo)),length(Inttostr(cdsTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DBGridEh1.canvas.Brush.Color := DBGridEh1.FixedColor;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsTable.RecNo)),length(Inttostr(cdsTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
-end;
-
-procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
-begin
-  inherited;
-  if not cdsTable.Active then Exit;
-  Save;
-  if cdsTable.Active and (not cdsTable.IsEmpty) then
-     begin
-       cdsTable.First;
-       cdsTable.Edit;
-       cdsTable.FieldByName('SELFLAG').AsInteger := 1;
-       cdsTable.Post;
-     end;
-  MessageBox(Handle,'卷烟入库成功...','友情提示..',MB_OK);
+  finally
+    DBGridEh1.Canvas.Brush.Assign(br);
+    DBGridEh1.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1TitleClick(Column: TColumnEh);
@@ -555,9 +548,12 @@ begin
 end;
 
 procedure TfrmDownStockOrder.showForm;
-var rs:TZQuery;
+var rs,ss:TZQuery;
 begin
   inherited;
+  ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
+  licenseCode := ss.FieldByName('LICENSE_CODE').AsString;
+  ShowHeader;
   downOrderMode := GetDownOrderMode;
   if downOrderMode = '1' then
      begin
@@ -625,6 +621,153 @@ begin
     except
     end;
   end;
+end;
+
+procedure TfrmDownStockOrder.toolSaveClick(Sender: TObject);
+begin
+  inherited;
+  if not cdsTable.Active then Exit;
+  Save;
+  MessageBox(Handle,'卷烟入库成功...','友情提示..',MB_OK);
+end;
+
+procedure TfrmDownStockOrder.cdsTableAfterDelete(DataSet: TDataSet);
+begin
+  inherited;
+  rowToolNav.Visible := not cdsTable.IsEmpty;
+end;
+
+procedure TfrmDownStockOrder.toolDetailClick(Sender: TObject);
+var
+  rs,us:TZQuery;
+  cdsData:TZQuery;
+  GodsId,UnitId:string;
+  vParams:TftParamList;
+begin
+  inherited;
+  cdsDetail.Close;
+  cdsDetail.FieldDefs.Clear;
+  cdsDetail.FieldDefs.Add('GODS_NAME',ftstring,36,true);
+  cdsDetail.FieldDefs.Add('UNIT_NAME',ftstring,36,true);
+  cdsDetail.FieldDefs.Add('AMOUNT',ftFloat,0,true);
+  cdsDetail.FieldDefs.Add('APRICE',ftFloat,0,true);
+  cdsDetail.FieldDefs.Add('AMONEY',ftFloat,0,true);
+  cdsDetail.CreateDataSet;
+
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  us := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  cdsData := TZQuery.Create(nil);
+  vParams := TftParamList.Create(nil);
+  cdsDetail.DisableControls;
+  try
+    vParams.ParamByName('ExeType').AsInteger:=2;
+    vParams.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    vParams.ParamByName('INDE_ID').AsString := cdsTable.FieldByName('INDE_ID').AsString;
+    if downOrderMode = '1' then
+       begin
+         vParams.ParamByName('rimUrl').AsString := rimUrl;
+         vParams.ParamByName('comId').AsString := comId;
+         vParams.ParamByName('custId').AsString := custId;
+         TDownOrderFactory.getOrderDetail(cdsData,vParams);
+       end
+    else
+       begin
+         dataFactory.MoveToRemote;
+         try
+           dataFactory.Open(cdsData, 'TDownIndeData', vParams);
+         finally
+           dataFactory.MoveToDefault;
+         end;
+       end;
+    cdsData.First;
+    while not cdsData.Eof do
+      begin
+        cdsDetail.Append;
+        GodsId := cdsData.FieldByName('GODS_ID').AsString;
+        UnitId := cdsData.FieldByName('UNIT_ID').AsString;
+        if rs.Locate('GODS_ID',GodsId,[]) then
+           cdsDetail.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString
+        else
+           Raise Exception.Create('订单中存在未经营的卷烟...');
+        if us.Locate('UNIT_ID',UnitId,[]) then
+           cdsDetail.FieldByName('UNIT_NAME').AsString := us.FieldByName('UNIT_NAME').AsString;
+        cdsDetail.FieldByName('AMOUNT').AsFloat := cdsData.FieldByName('AMOUNT').AsFloat;
+        cdsDetail.FieldByName('APRICE').AsFloat := cdsData.FieldByName('APRICE').AsFloat;
+        cdsDetail.FieldByName('AMONEY').AsFloat := cdsData.FieldByName('AMONEY').AsFloat;
+        cdsData.Next;
+      end;
+  finally
+    cdsDetail.First;
+    cdsDetail.EnableControls;
+    cdsData.Free;
+    vParams.Free;
+  end;
+  RzPageControl.ActivePageIndex := 1;
+end;
+
+procedure TfrmDownStockOrder.DBGridEh2DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+  br:TBrush;
+  pn:TPen;
+begin
+  br := TBrush.Create;
+  br.Assign(DBGridEh2.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh2.Canvas.Pen);
+  try
+  if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh2.Focused or (Column.FieldName = 'TOOL_NAV')) then
+  begin
+    DBGridEh2.Canvas.Font.Color := clBlack;
+    DBGridEh2.Canvas.Brush.Color := clWhite;
+  end;
+  DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh2.canvas.Brush.Color := DBGridEh2.FixedColor;
+      DBGridEh2.canvas.FillRect(ARect);
+      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsDetail.RecNo)),length(Inttostr(cdsDetail.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  finally
+    DBGridEh2.Canvas.Brush.Assign(br);
+    DBGridEh2.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
+end;
+
+procedure TfrmDownStockOrder.btnReturnClick(Sender: TObject);
+begin
+  inherited;
+  RzPageControl.ActivePageIndex := 0;
+end;
+
+procedure TfrmDownStockOrder.btnOkClick(Sender: TObject);
+begin
+  inherited;
+  if not cdsTable.Active then Exit;
+  Save;
+  MessageBox(Handle,'卷烟入库成功...','友情提示..',MB_OK);
+  RzPageControl.ActivePageIndex := 0;
+end;
+
+procedure TfrmDownStockOrder.ShowHeader;
+begin
+  if cdsTable.Active then
+     RzLabel1.Caption := '许可证号：'+licenseCode+'，当前有 '+inttostr(cdsTable.RecordCount)+' 张订单'
+  else
+     RzLabel1.Caption := '许可证号：'+licenseCode+'，当前有 0 张订单';
+end;
+
+procedure TfrmDownStockOrder.DBGridEh1DblClick(Sender: TObject);
+begin
+  inherited;
+  if cdsTable.IsEmpty then Exit;
+  toolDetailClick(nil);
 end;
 
 initialization

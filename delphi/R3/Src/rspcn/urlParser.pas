@@ -71,7 +71,7 @@ begin
   if urlToken.appId='xsm-in' then
      begin
         if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有错，');
-        if pos('xsm_r3.html',UcFactory.xsmWB)>0 then
+        if pos('.htm',UcFactory.xsmWB)>0 then
            result := UcFactory.xsmWB
         else
            begin

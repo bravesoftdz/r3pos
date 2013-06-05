@@ -1,10 +1,10 @@
-program rspcn;
+program shop;
 
 uses
   Forms,
   Windows,
   ufrmBrowerForm in 'ufrmBrowerForm.pas' {frmBrowerForm},
-  rspcn_TLB in 'rspcn_TLB.pas',
+  shop_TLB in 'shop_TLB.pas',
   NSHandler in 'NSHandler.pas',
   uUcFactory in 'uUcFactory.pas' {UcFactory: TDataModule},
   uDLLFactory in 'uDLLFactory.pas',
@@ -17,7 +17,7 @@ uses
   uAppMgr in 'uAppMgr.pas',
   ufrmUpdate in 'ufrmUpdate.pas',
   ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
-  uRtcLibFactory in 'shop\app\uRtcLibFactory.pas';
+  rspcn_TLB in 'rspcn_TLB.pas';
 
 {$R *.TLB}
 
@@ -35,6 +35,11 @@ begin
             Application.CreateForm(TUcFactory, UcFactory);
             Application.CreateForm(TrspFactory, rspFactory);
             PostMessage(frmBrowerForm.Handle,WM_BROWSER_INIT,0,0);
+          end
+       else
+          begin
+            frmBrowerForm.Timer1.Interval := 1000*30;
+            frmBrowerForm.Timer1.Enabled := true;
           end;
      end;
   Application.Run;

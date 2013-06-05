@@ -484,6 +484,8 @@ begin
 end;
 
 procedure TfrmBrowerForm.RzInit(var Message: TMessage);
+var
+  s:string;
 begin
   jsExt :=  TjavaScriptExt.Create;
   CoGetClassObject(Class_NSHandler, CLSCTX_SERVER, nil, IClassFactory, Factory);
@@ -511,17 +513,18 @@ begin
      begin
         if paramStr(1)='-open' then
            begin
+             s := dllFactory.getToken;
              //调用DLL读取令牌后登录
-             if jsExt.signToken(dllFactory.getToken) then
+             if (s<>'') and jsExt.signToken(s) then
                 begin
                   if token.online then dllFactory.Init(mainPanel.Handle);
                   Timer1.Tag := 1;
                   if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
-                end
+                end;
            end
         else
            begin
-              if token.online then dllFactory.Init(mainPanel.Handle);
+             if token.online then dllFactory.Init(mainPanel.Handle);
            end;
      end;
 end;

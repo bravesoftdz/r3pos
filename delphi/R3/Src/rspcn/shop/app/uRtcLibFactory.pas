@@ -26,7 +26,7 @@ type
     function  GetXmlHeader(xml:widestring):widestring;
   public
     ticket:string;
-    ticketLength:integer;
+    ticketLength,NetStatus:integer;
     dllLoaded,dllValid,dllAuthed:boolean;
     constructor Create;
     destructor Destroy; override;
@@ -92,9 +92,7 @@ begin
 end;
 
 function TRtcLibFactory.GetToken: integer;
-var
-  rtn:integer;
-  NetStatus:integer;
+var rtn:integer;
 begin
   result := -1;
   if not dllValid then Exit;

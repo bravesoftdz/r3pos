@@ -639,6 +639,7 @@ begin
        app := TDLLPlugin(flist[idx]);
        app.Init;
      end;
+  Inited := true;
 end;
 
 procedure TDLLFactory.SetappWnd(const Value: THandle);

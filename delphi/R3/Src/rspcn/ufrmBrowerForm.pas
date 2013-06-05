@@ -507,25 +507,22 @@ begin
   Show;
   OpenHome;
   UpdateControls;
+  DLLFactory.appWnd := mainPanel.Handle;
   if frmUpdate.CheckDBVersion then
      frmUpdate.Show
   else
      begin
-        if paramStr(1)='-open' then
-           begin
-             s := dllFactory.getToken;
-             //调用DLL读取令牌后登录
-             if (s<>'') and jsExt.signToken(s) then
-                begin
-                  if token.online then dllFactory.Init(mainPanel.Handle);
-                  Timer1.Tag := 1;
-                  if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
-                end;
-           end
-        else
-           begin
-             if token.online then dllFactory.Init(mainPanel.Handle);
-           end;
+       if paramStr(1)='-open' then
+          begin
+            s := dllFactory.getToken;
+            //调用DLL读取令牌后登录
+            if (s<>'') and jsExt.signToken(s) then
+               begin
+                 if token.online then dllFactory.Init(mainPanel.Handle);
+                 Timer1.Tag := 1;
+                 if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
+               end;
+          end;
      end;
 end;
 
@@ -1097,10 +1094,10 @@ begin
          Application.Terminate;
          Exit;
        end;
-{    if token.logined and (Timer1.Tag=0) then
+    if token.logined and (Timer1.Tag=0) and not frmUpdate.Visible then
        begin
          try
-           if token.online then dllFactory.Init(mainPanel.Handle);
+           if token.online and not dllFactory.Inited then dllFactory.Init(mainPanel.Handle);
            pageButtonSort;
            Timer1.Tag := 1;
          except
@@ -1117,7 +1114,7 @@ begin
          finally
            Timer1.Tag :=0;
          end;
-       end;  }
+       end;  
   finally
     Timer1.Enabled := true;
   end;

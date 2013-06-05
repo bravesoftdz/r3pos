@@ -57,7 +57,9 @@ type
     FDataSets:TList;
     FappWnd: THandle;
     lastError:string;
+    FInited: boolean;
     procedure SetappWnd(const Value: THandle);
+    procedure SetInited(const Value: boolean);
   protected
     //开始事务  超时设置 单位秒
     procedure BeginTrans(TimeOut:integer=-1);stdcall;
@@ -113,6 +115,7 @@ type
     procedure resize;
     function getDBHelp:IdbDLLHelp;
     property appWnd:THandle read FappWnd write SetappWnd;
+    property Inited:boolean read FInited write SetInited;
   end;
 
 var dllFactory:TDLLFactory;
@@ -256,6 +259,7 @@ constructor TDLLFactory.Create;
 begin
   FList:=TList.Create;
   FDataSets:=TList.Create;
+  Inited := false;
 end;
 
 destructor TDLLFactory.Destroy;
@@ -358,6 +362,7 @@ var
   idx:integer;
   app:TDLLPlugin;
 begin
+  if not Inited then Init(appWnd);
   try
     if not getTokenInfo then Exit;
     idx := find(urltoken.appId);
@@ -557,7 +562,7 @@ begin
         rs.ParamByName('TENANT_ID').AsInteger := tenantId;
         rs.ParamByName('ACCOUNT').AsString := token.account;
         dataFactory.Open(rs);
-        if rs.IsEmpty then Raise Exception.Create('读取用户信息失败，请重新登录...'); 
+        if rs.IsEmpty then Raise Exception.Create('读取用户信息失败，请重新登录...');
         token.userId := rs.FieldbyName('USER_ID').AsString;
         token.account := rs.FieldbyName('ACCOUNT').AsString;
         token.tenantId := rs.FieldbyName('TENANT_ID').AsString;
@@ -676,6 +681,11 @@ begin
        app := TDLLPlugin(flist[idx]);
      end;
   result := app.getToken;
+end;
+
+procedure TDLLFactory.SetInited(const Value: boolean);
+begin
+  FInited := Value;
 end;
 
 { TDLLPlugin }

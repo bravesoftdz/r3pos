@@ -309,7 +309,10 @@ function getToken:pchar;stdcall;
 begin
   try
     if RtcLibFactory.GetToken<>0 then Raise Exception.Create('∂¡»°¡Ó≈∆ ß∞‹¡À');
-    buf := RtcLibFactory.ticket;
+    if RtcLibFactory.NetStatus = 0 then
+       buf := RtcLibFactory.ticket
+    else
+       buf := '';
     result := pchar(buf);
   except
     on E:Exception do

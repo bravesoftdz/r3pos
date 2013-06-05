@@ -66,7 +66,7 @@ type
 
 implementation
 
-uses ComServ,udataFactory,uUcFactory,uRspFactory,uTokenFactory,ufrmBrowerForm;
+uses ComServ,udataFactory,uUcFactory,uRspFactory,uTokenFactory,ufrmBrowerForm,udllFactory;
 
 function TjavaScriptExt.signIn(const username, password,
   verify: WideString; online: WordBool): WordBool;
@@ -109,6 +109,7 @@ begin
              token.userId := username;
              token.username := username;
              token.Logined := true;
+             DllFactory.Inited := false;
              token.online := online;
              dataFactory.signined := true;
              result := true;
@@ -207,6 +208,7 @@ begin
     token.mobile := rs.FieldbyName('TELEPHONE').AsString;
     if online then SaveTimeStamp else checkTimeStamp;
     token.Logined := true;
+    DllFactory.Inited := false;
     token.online := online;
     dataFactory.signined := true;
     PostMessage(frmBrowerForm.Handle,WM_UPGRADE_CHECK,0,0);
@@ -707,6 +709,7 @@ begin
        token.userId := UcFactory.xsmUser;
        token.username := UcFactory.xsmUser;
        token.Logined := true;
+       DllFactory.Inited := false;
        token.online := true;
        dataFactory.signined := true;
        result := true;
@@ -727,7 +730,7 @@ begin
       'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT in ('''+username+''','''+lowercase(username)+''','''+uppercase(username)+''')';
     rs.ParamByName('TENANT_ID').AsInteger := tenantId;
     dataFactory.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('无效登录名.'); 
+    if rs.IsEmpty then Raise Exception.Create('无效登录名.');
     isXsm := (rs.FieldByName('ROLE_IDS').AsString = 'xsm');
     if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or isXsm) then
         begin
@@ -758,6 +761,7 @@ begin
     token.mobile := rs.FieldbyName('TELEPHONE').AsString;
     if true then SaveTimeStamp else checkTimeStamp;
     token.Logined := true;
+    DllFactory.Inited := false;
     token.online := true;
     dataFactory.signined := true;
     PostMessage(frmBrowerForm.Handle,WM_UPGRADE_CHECK,0,0);

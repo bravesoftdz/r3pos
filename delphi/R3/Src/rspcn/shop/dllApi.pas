@@ -196,6 +196,7 @@ var
   Form:TForm;
 begin
   try
+    result := true;
     if not Assigned(webForm) then Exit;
     if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...');
     if assigned(SyncFactory) then SyncFactory.LogoutSync(dllApplication.handle);
@@ -222,7 +223,6 @@ begin
     dbHelp := nil;
     Application.OnException := nil;
     Application.Handle := oldHandle;
-    result := true;
   except
     on E:Exception do
        begin

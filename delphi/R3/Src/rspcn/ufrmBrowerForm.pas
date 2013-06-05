@@ -518,8 +518,8 @@ begin
             //调用DLL读取令牌后登录
             if (s<>'') and jsExt.signToken(s) then
                begin
+                 OpenHome;
                  if token.online then dllFactory.Init(mainPanel.Handle);
-                 Timer1.Tag := 1;
                  if paramStr(2)<>'' then LoadUrl(paramStr(2),'');
                end;
           end;
@@ -1094,27 +1094,16 @@ begin
          Application.Terminate;
          Exit;
        end;
-    if token.logined and (Timer1.Tag=0) and not frmUpdate.Visible then
+    if token.logined and not dllFactory.Inited and not frmUpdate.Visible then
        begin
          try
-           if token.online and not dllFactory.Inited then dllFactory.Init(mainPanel.Handle);
+           if token.online then dllFactory.Init(mainPanel.Handle);
            pageButtonSort;
-           Timer1.Tag := 1;
          except
            token.logined := false;
-           Timer1.Tag := 0;
            Raise;
          end;
-       end
-    else
-    if not token.logined and (Timer1.Tag=1) then
-       begin
-         try
-           pageButtonSort;
-         finally
-           Timer1.Tag :=0;
-         end;
-       end;  
+       end;
   finally
     Timer1.Enabled := true;
   end;

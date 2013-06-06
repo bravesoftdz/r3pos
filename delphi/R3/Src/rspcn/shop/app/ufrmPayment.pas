@@ -39,13 +39,11 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
-    { Private declarations }
     _totalFee,_payMny:currency;
     _AObj:TRecord_;
     procedure ReadInfo;
     procedure WriteInfo;
   public
-    { Public declarations }
     class function payment(AOwner:TForm;totalFee:currency;AObj:TRecord_):boolean;
   end;
 
@@ -54,8 +52,6 @@ implementation
 uses udllGlobal;
 
 {$R *.dfm}
-
-{ TfrmPayment }
 
 class function TfrmPayment.payment(AOwner:TForm;totalFee: currency;AObj: TRecord_): boolean;
 begin
@@ -69,14 +65,13 @@ begin
         edtInput.SelectAll;
         result := (ShowModal=MROK);
       finally
-        free;
+        Free;
       end;
     end;
 end;
 
 procedure TfrmPayment.ReadInfo;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   edtTable.Close;
   edtTable.CreateDataSet;
@@ -130,7 +125,7 @@ end;
 procedure TfrmPayment.RzBmpButton1Click(Sender: TObject);
 begin
   inherited;
-  close;
+  Close;
 end;
 
 procedure TfrmPayment.btnOkClick(Sender: TObject);
@@ -180,6 +175,20 @@ begin
     MessageBox(Handle,'你输入的金额无效','友情提示..',MB_OK+MB_ICONINFORMATION);
     Exit;
   end;
+  if _AObj.FieldByName('CLIENT_ID').AsString = '' then
+     begin
+       if edtTable.FieldByName('CODE_ID').AsString = 'D' then
+          begin
+            if r <> 0 then
+               begin
+                 r := 0;
+                 Value := 0;
+                 Text := '0';
+                 MessageBox(Handle,'非会员不允许记账...','友情提示..',MB_OK+MB_ICONINFORMATION);
+                 Exit;
+               end;
+         end;
+     end;
   edtTable.Edit;
   edtTable.FieldByName('PAY_MNY').AsFloat := r;
   edtTable.Post;
@@ -198,10 +207,9 @@ begin
 end;
 
 procedure TfrmPayment.FormKeyPress(Sender: TObject; var Key: Char);
-var
-  r:real;
+var r:real;
 begin
-//  inherited;
+  // inherited;
   if Key='+' then
     begin
       Key := #0;
@@ -254,10 +262,8 @@ procedure TfrmPayment.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var
-  ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   br := TBrush.Create;
   br.Assign(DBGridEh1.Canvas.Brush);

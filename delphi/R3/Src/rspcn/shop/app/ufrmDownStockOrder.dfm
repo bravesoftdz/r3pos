@@ -3150,7 +3150,6 @@ inherited frmDownStockOrder: TfrmDownStockOrder
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghHighlightFocus, dghClearSelection]
-                  PopupMenu = PopupMenu1
                   RowHeight = 30
                   SumList.Active = True
                   TabOrder = 0
@@ -4085,30 +4084,6 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     DataSet = cdsTable
     Left = 291
     Top = 423
-  end
-  object PopupMenu1: TPopupMenu
-    AutoHotkeys = maManual
-    Left = 322
-    Top = 424
-    object N1: TMenuItem
-      AutoHotkeys = maManual
-      Caption = #20840#36873
-      ImageIndex = 46
-      ShortCut = 16449
-      OnClick = N1Click
-    end
-    object N2: TMenuItem
-      AutoHotkeys = maManual
-      Caption = #20840#21453#36873
-      ShortCut = 16450
-      OnClick = N2Click
-    end
-    object N3: TMenuItem
-      AutoHotkeys = maManual
-      Caption = #20840#19981#36873
-      ShortCut = 16452
-      OnClick = N3Click
-    end
   end
   object cdsDetail: TZQuery
     FieldDefs = <>

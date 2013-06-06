@@ -15,10 +15,6 @@ type
     cdsTable: TZQuery;
     OrderDataSource: TDataSource;
     RzLabel1: TRzLabel;
-    PopupMenu1: TPopupMenu;
-    N1: TMenuItem;
-    N2: TMenuItem;
-    N3: TMenuItem;
     Image2: TImage;
     Image1: TImage;
     Image3: TImage;

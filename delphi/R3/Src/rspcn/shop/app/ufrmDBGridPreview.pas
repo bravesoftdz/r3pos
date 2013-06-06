@@ -25,16 +25,13 @@ type
   private
     FPrintDBGridEh: TPrintDBGridEh;
     procedure SetPrintDBGridEh(const Value: TPrintDBGridEh);
-    { Private declarations }
   public
-    { Public declarations }
     class procedure Preview(AOwner:TForm;PrintGrid:TPrintDBGridEh);
     class procedure Print(AOwner:TForm;PrintGrid:TPrintDBGridEh);
     property PrintDBGridEh:TPrintDBGridEh read FPrintDBGridEh write SetPrintDBGridEh;
   end;
 
-var
-  frmDBGridPreview: TfrmDBGridPreview;
+var frmDBGridPreview: TfrmDBGridPreview;
 
 implementation
 
@@ -61,7 +58,6 @@ begin
   inherited;
   if PrintDBGridEh.PrinterSetupDialog then
      PrintDBGridEh.PrintTo(PreviewBox1.Printer);
-
 end;
 
 procedure TfrmDBGridPreview.SetPrintDBGridEh(const Value: TPrintDBGridEh);
@@ -73,7 +69,6 @@ procedure TfrmDBGridPreview.RzBmpButton3Click(Sender: TObject);
 begin
   inherited;
   PreviewBox1.PrintDialog;
-
 end;
 
 procedure TfrmDBGridPreview.RzBmpButton2Click(Sender: TObject);
@@ -85,7 +80,7 @@ begin
     if FileExists(SaveDialog1.FileName) then
     begin
       if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-        exit;
+         Exit;
       DeleteFile(SaveDialog1.FileName);
     end;
     Stream := TMemoryStream.Create;
@@ -132,7 +127,7 @@ begin
       BringtoFront;
       PrintDBGridEh :=  PrintGrid;
       PreviewBox1.Printer.PrinterSetupOwner := PrintGrid.DBGridEh;
-//      PreviewBox1.Printer.OnPrinterSetupDialog := actPrintSetupExecute;
+      // PreviewBox1.Printer.OnPrinterSetupDialog := actPrintSetupExecute;
       PrintDBGridEh.PrintTo(PreviewBox1.Printer);
     end;
 end;

@@ -194,7 +194,7 @@ begin
   try
     frmSortDropFrom.RelationId := '0';
     frmSortDropFrom.SelectAll := true;
-    frmSortDropFrom.SelfRoot := true;
+    frmSortDropFrom.ShowSelfRoot := true;
     if frmSortDropFrom.DropForm(edtSUP_SORT_ID, Obj) then
        begin
          if Obj.Count > 0 then

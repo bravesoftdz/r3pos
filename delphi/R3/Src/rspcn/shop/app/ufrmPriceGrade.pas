@@ -264,7 +264,8 @@ begin
   inherited;
   Obj := TRecord_.Create;
   try
-    frmSortDropFrom.ShowNoSort := false;  
+    frmSortDropFrom.ShowNoSort := false;
+    frmSortDropFrom.SelectChildren := true;  
     if frmSortDropFrom.DropForm(edtSORT_ID,Obj) then
     begin
       if Obj.Count > 0 then

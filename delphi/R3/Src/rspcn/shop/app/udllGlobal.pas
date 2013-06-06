@@ -59,7 +59,7 @@ type
     function checkChangePrice(relationId:integer):boolean;
     //创建分类树
     function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowCgtSort:boolean=true;ShowNoSort:boolean=true):boolean;overload;
-    function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false):boolean;overload;
+    function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;ShowSelfRoot:boolean=false):boolean;overload;
   end;
 
 var dllGlobal: TdllGlobal;
@@ -420,7 +420,7 @@ begin
   end;
 end;
 
-function TdllGlobal.CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;SelfRoot:boolean=false): boolean;
+function TdllGlobal.CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;ShowSelfRoot:boolean=false): boolean;
 var IsRoot: Boolean;
     rs:TZQuery;
     i:Integer;
@@ -464,7 +464,7 @@ begin
 
     if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
        rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj)
-    else if SelfRoot then
+    else if ShowSelfRoot then
        begin
          CurObj := TRecord_.Create;
          CurObj.AddField('SORT_ID','#',ftString);

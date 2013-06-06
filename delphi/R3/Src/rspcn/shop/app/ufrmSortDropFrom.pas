@@ -22,8 +22,9 @@ type
     RelationId:string;
     ShowCgtSort:boolean;
     ShowNoSort:boolean;
+    ShowSelfRoot:boolean;
     SelectAll:boolean;
-    SelfRoot:boolean;
+    SelectChildren:boolean;
     function showForm:boolean;override;
   end;
 
@@ -41,7 +42,7 @@ begin
   if RelationId = '' then
     dllGlobal.CreateGoodsSortTree(rzTree,false,ShowCgtSort,ShowNoSort)
   else
-    dllGlobal.CreateGoodsSortTree(rzTree,RelationId,SelfRoot);
+    dllGlobal.CreateGoodsSortTree(rzTree,RelationId,ShowSelfRoot);
 end;
 
 procedure TfrmSortDropFrom.rzTreeClick(Sender: TObject);
@@ -55,6 +56,16 @@ begin
            TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
            ModalResult := MROK;
          end;
+     end
+  else
+  if SelectChildren then
+     begin
+       if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data) and (rzTree.Selected.Parent <> nil) then
+          begin
+            SaveObj.Clear;
+            TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
+            ModalResult := MROK;
+          end;
      end
   else
      begin
@@ -88,8 +99,9 @@ begin
   RelationId := '';
   ShowNoSort := true;
   ShowCgtSort := true;
+  ShowSelfRoot := false;
   SelectAll := false;
-  SelfRoot := false;
+  SelectChildren := false;
 end;
 
 procedure TfrmSortDropFrom.FormCreate(Sender: TObject);
@@ -98,8 +110,9 @@ begin
   RelationId := '';
   ShowNoSort := true;
   ShowCgtSort := true;
+  ShowSelfRoot := false;
   SelectAll := false;
-  SelfRoot := false;
+  SelectChildren := false;
 end;
 
 initialization

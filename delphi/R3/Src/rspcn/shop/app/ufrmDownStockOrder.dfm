@@ -3234,19 +3234,6 @@ inherited frmDownStockOrder: TfrmDownStockOrder
                       Width = 70
                     end
                     item
-                      DisplayFormat = '#0.###'
-                      EditButtons = <>
-                      FieldName = 'NEED_AMT'
-                      Footer.Alignment = taRightJustify
-                      Footer.DisplayFormat = '#0.###'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      ReadOnly = True
-                      Title.Alignment = taCenter
-                      Title.Caption = #38656#27714#25968#37327
-                      Width = 70
-                    end
-                    item
                       EditButtons = <>
                       FieldName = 'TOOL_NAV'
                       Footers = <>

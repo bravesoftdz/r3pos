@@ -14,7 +14,6 @@ type
     RzPanel2: TRzPanel;
     cdsTable: TZQuery;
     OrderDataSource: TDataSource;
-    RzLabel1: TRzLabel;
     Image2: TImage;
     Image1: TImage;
     Image3: TImage;
@@ -41,6 +40,7 @@ type
     DetailDataSource: TDataSource;
     btnOk: TRzBmpButton;
     btnReturn: TRzBmpButton;
+    RzLabel1: TRzLabel;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
@@ -56,7 +56,7 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
   private
-    licenseCode,comId,custId,rimUrl,downOrderMode:string;
+    licenseCode,shopName,comId,custId,rimUrl,downOrderMode:string;
     procedure ShowHeader;
     function GetDownOrderMode: string;
     function GetRimUrl: string;
@@ -177,9 +177,9 @@ begin
       cdsTable.EnableControls;
     end;
   cdsTable.First;
-  ShowHeader;
   rowToolNav.Visible := not cdsTable.IsEmpty;
   RzPageControl.ActivePageIndex := 0;
+  ShowHeader;
 end;
 
 procedure TfrmDownStockOrder.Save;
@@ -549,6 +549,7 @@ begin
   inherited;
   ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
   licenseCode := ss.FieldByName('LICENSE_CODE').AsString;
+  shopName := ss.FieldByName('SHOP_NAME').AsString;
   ShowHeader;
   downOrderMode := GetDownOrderMode;
   if downOrderMode = '1' then
@@ -699,6 +700,7 @@ begin
     vParams.Free;
   end;
   RzPageControl.ActivePageIndex := 1;
+  ShowHeader;
 end;
 
 procedure TfrmDownStockOrder.DBGridEh2DrawColumnCell(Sender: TObject;
@@ -740,6 +742,7 @@ procedure TfrmDownStockOrder.btnReturnClick(Sender: TObject);
 begin
   inherited;
   RzPageControl.ActivePageIndex := 0;
+  ShowHeader;
 end;
 
 procedure TfrmDownStockOrder.btnOkClick(Sender: TObject);
@@ -749,14 +752,25 @@ begin
   Save;
   MessageBox(Handle,'卷烟入库成功...','友情提示..',MB_OK);
   RzPageControl.ActivePageIndex := 0;
+  ShowHeader;
 end;
 
 procedure TfrmDownStockOrder.ShowHeader;
 begin
-  if cdsTable.Active then
-     RzLabel1.Caption := '许可证号：'+licenseCode+'，当前有 '+inttostr(cdsTable.RecordCount)+' 张订单'
+  if RzPageControl.ActivePageIndex = 0 then
+     begin
+       if cdsTable.Active then
+          RzLabel1.Caption := '许可证号：'+licenseCode+'，当前有 '+inttostr(cdsTable.RecordCount)+' 张订单'
+       else
+          RzLabel1.Caption := '许可证号：'+licenseCode+'，当前有 0 张订单';
+     end
   else
-     RzLabel1.Caption := '许可证号：'+licenseCode+'，当前有 0 张订单';
+     begin
+       if cdsTable.Active then
+          RzLabel1.Caption := '订货日期：'+cdsTable.FieldByName('INDE_DATE').AsString+'，送达日期：'+cdsTable.FieldByName('ARR_DATE').AsString
+       else
+          RzLabel1.Caption := '订单明细';
+     end;
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1DblClick(Sender: TObject);

@@ -333,6 +333,7 @@ end;
 
 procedure TfrmPriceGrade.Save;
 var
+  rs:TZQuery;
   tmpObj:TRecord_;
   tmpPriceGrade:TZQuery;
   Params:TftParamList;
@@ -340,6 +341,13 @@ begin
   ClearInvaid;
   CheckInput;
   WriteInfo;
+
+  rs := dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
+  if rs.Locate('PRICE_NAME',cdsPriceGrade.FieldByName('PRICE_NAME').AsString,[]) then
+     begin
+       if rs.FieldByName('PRICE_ID').AsString <> cdsPriceGrade.FieldByName('PRICE_ID').AsString then
+          Raise Exception.Create('该等级已经存在...');
+     end;
 
   try
     dataFactory.UpdateBatch(cdsPriceGrade,'TPriceGradeV60');

@@ -2267,15 +2267,15 @@ end;
 
 procedure TfrmPosOutOrder.AdjustGodsStringGrid;
 begin
-  GodsStringGrid.RowHeights[0] := (GodsStringGrid.Height) * 70 div 400;
-  GodsStringGrid.RowHeights[2] := (GodsStringGrid.Height) * 70 div 400;
-  GodsStringGrid.RowHeights[4] := (GodsStringGrid.Height) * 70 div 400;
-  GodsStringGrid.RowHeights[6] := (GodsStringGrid.Height) * 70 div 400;
+  GodsStringGrid.RowHeights[0] := (GodsStringGrid.Height - 1) * 70 div 400;
+  GodsStringGrid.RowHeights[2] := (GodsStringGrid.Height - 1) * 70 div 400;
+  GodsStringGrid.RowHeights[4] := (GodsStringGrid.Height - 1) * 70 div 400;
+  GodsStringGrid.RowHeights[6] := (GodsStringGrid.Height - 1) * 70 div 400;
 
-  GodsStringGrid.RowHeights[1] := (GodsStringGrid.Height) * 30 div 400;
-  GodsStringGrid.RowHeights[3] := (GodsStringGrid.Height) * 30 div 400;
-  GodsStringGrid.RowHeights[5] := (GodsStringGrid.Height) * 30 div 400;
-  GodsStringGrid.RowHeights[7] := (GodsStringGrid.Height) * 30 div 400;
+  GodsStringGrid.RowHeights[1] := (GodsStringGrid.Height - 1) * 30 div 400;
+  GodsStringGrid.RowHeights[3] := (GodsStringGrid.Height - 1) * 30 div 400;
+  GodsStringGrid.RowHeights[5] := (GodsStringGrid.Height - 1) * 30 div 400;
+  GodsStringGrid.RowHeights[7] := (GodsStringGrid.Height - 1) * 30 div 400;
 
   GodsStringGrid.ColWidths[0] := (GodsStringGrid.Width - 2) div 4;
   GodsStringGrid.ColWidths[1] := (GodsStringGrid.Width - 2) div 4;

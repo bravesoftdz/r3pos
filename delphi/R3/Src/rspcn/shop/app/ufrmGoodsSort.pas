@@ -102,6 +102,7 @@ procedure TfrmGoodsSort.Save;
     end;
   end;
 var
+  rs:TZQuery;
   Params:TftParamList;
   tmpSort:TZQuery;
   tmpObj:TRecord_;
@@ -116,7 +117,6 @@ begin
        if edtSORT_NAME.CanFocus then edtSORT_NAME.SetFocus;
        Raise Exception.Create('请输入分类名称...');
      end;
-
   if cdsSort.IsEmpty then
      begin
        cdsSort.Append;
@@ -130,6 +130,13 @@ begin
   cdsSort.FieldByName('SORT_NAME').AsString := trim(edtSORT_NAME.Text);
   cdsSort.FieldByName('SORT_SPELL').AsString := fnString.GetWordSpell(cdsSort.FieldByName('SORT_NAME').AsString,3);
   cdsSort.Post;
+
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+  if rs.Locate('RELATION_ID,SORT_NAME',VarArrayOf([0,trim(edtSORT_NAME.Text)]),[]) then
+     begin
+       if rs.FieldByName('SORT_ID').AsString <> cdsSort.FieldByName('SORT_ID').AsString then
+          Raise Exception.Create('该分类已经存在...');
+     end;
 
   dataFactory.UpdateBatch(cdsSort,'TGoodsSortV60');
 

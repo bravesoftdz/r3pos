@@ -11,6 +11,8 @@ inherited frmProfitReport: TfrmProfitReport
     Width = 979
     inherited PageControl: TRzPageControl
       Width = 979
+      ActivePage = TabSheet3
+      TabIndex = 2
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet
@@ -544,8 +546,8 @@ inherited frmProfitReport: TfrmProfitReport
               object RzLabel4: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 61
-                Height = 16
+                Width = 102
+                Height = 26
                 Align = alClient
                 Alignment = taCenter
                 Caption = #32479#35745#31867#22411
@@ -622,8 +624,8 @@ inherited frmProfitReport: TfrmProfitReport
               object RzLabel1: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 46
-                Height = 16
+                Width = 102
+                Height = 26
                 Align = alClient
                 Alignment = taCenter
                 Caption = #30408#21033#21069
@@ -688,8 +690,8 @@ inherited frmProfitReport: TfrmProfitReport
               object RzLabel2: TRzLabel
                 Left = 1
                 Top = 0
-                Width = 46
-                Height = 16
+                Width = 102
+                Height = 26
                 Align = alClient
                 Alignment = taCenter
                 Caption = #30340#23458#25143
@@ -798,6 +800,8 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                ToolbarControls = (
+                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -830,6 +834,7 @@ inherited frmProfitReport: TfrmProfitReport
                 Color = clWhite
                 TabOrder = 2
                 object Series1: TBarSeries
+                  ColorEachPoint = True
                   Marks.ArrowLength = 20
                   Marks.Style = smsValue
                   Marks.Visible = True

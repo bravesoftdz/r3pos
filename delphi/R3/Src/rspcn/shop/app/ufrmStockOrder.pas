@@ -368,6 +368,7 @@ begin
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
     Calc;
+    DoShowPayment;
   finally
     Params.Free;
   end;

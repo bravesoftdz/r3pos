@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=-open rspcn://shop.dll/tfrmsaleorder
+RunParams=
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -131,7 +131,7 @@ InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=零售终端
+ProductName=现代卷烟零售终端营销管理系统
 ProductVersion=1.0.0.0
 Comments=
 [HistoryLists\hlUnitAliases]

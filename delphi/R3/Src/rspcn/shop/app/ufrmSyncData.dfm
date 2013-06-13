@@ -1,6 +1,6 @@
 inherited frmSyncData: TfrmSyncData
-  Left = 305
-  Top = 56
+  Left = 313
+  Top = 23
   Caption = #27491#22312#25191#34892#65292#35831#31245#21518'...'
   ClientHeight = 677
   ClientWidth = 770

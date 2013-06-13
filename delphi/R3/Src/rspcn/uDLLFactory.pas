@@ -15,7 +15,7 @@ type
   //返回值:false代表不允许关闭，true关闭成功
   TcloseApp=function(moduId:pchar):boolean;stdcall;
   //4.释放资源
-  TeraseApp=function():boolean;stdcall;
+  TeraseApp=function(synced:boolean):boolean;stdcall;
   //5.读取错误说明
   TgetLastError=function():pchar;stdcall;
   //6.读取模块名称
@@ -96,7 +96,7 @@ type
     destructor Destroy; override;
 
     procedure Init(hWnd:THandle);
-    procedure Clear;
+    procedure Clear(synced:boolean);
 
     //读取令牌信息
     function getTokenInfo:boolean;
@@ -270,7 +270,7 @@ begin
       TObject(FDataSets[i]).Free;
     end;
   FDataSets.Free;
-  Clear;
+  Clear(false);
   FList.Free;
   inherited;
 end;
@@ -652,16 +652,17 @@ begin
   result := pchar(lastError);
 end;
 
-procedure TDLLFactory.Clear;
+procedure TDLLFactory.Clear(synced:boolean);
 var i:integer;
 begin
   for i:=FList.Count-1 downto 0 do
     begin
-      if not TDLLPlugin(FList[i]).eraseApp then
+      if not TDLLPlugin(FList[i]).eraseApp(synced) then
          Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
       TObject(FList[i]).Free;
       FList.Delete(i); 
     end;
+  Inited := false;
   FList.Clear;
 end;
 

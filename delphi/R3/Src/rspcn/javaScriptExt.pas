@@ -223,6 +223,7 @@ procedure TjavaScriptExt.signOut;
 begin
   dataFactory.signined := false;
   UcFactory.xsmLogined := false;
+  token.Logined := false;
 end;
 
 function TjavaScriptExt.getVerify: WideString;

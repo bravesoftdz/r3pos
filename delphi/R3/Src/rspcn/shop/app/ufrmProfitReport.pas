@@ -107,6 +107,8 @@ type
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
     procedure linkToStockClick(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     SumMny,SumPrf:real;
     WTitle1:TStringList;
@@ -948,6 +950,18 @@ procedure TfrmProfitReport.linkToStockClick(Sender: TObject);
 begin
   inherited;
   MessageBox(Handle,'当前版本不支持此功能','友情提示..',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmProfitReport.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  self.pr
+end;
+
+procedure TfrmProfitReport.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  ScrollBox.p
 end;
 
 initialization

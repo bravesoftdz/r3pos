@@ -1,6 +1,6 @@
 inherited frmGoodsStorage: TfrmGoodsStorage
   Left = -8
-  Top = -5
+  Top = 0
   Caption = #21830#21697#24211#23384
   ClientHeight = 738
   ClientWidth = 1280
@@ -2119,29 +2119,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground1: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel6: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #26465' '#22411' '#30721
@@ -2184,29 +2169,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground2: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel1: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #21830#21697#36135#21495
@@ -2249,29 +2219,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground3: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel2: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #21830#21697#21517#31216
@@ -2306,21 +2261,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdRight]
             TabOrder = 2
-            object RzBackground8: TRzBackground
-              Left = 2
-              Top = 0
-              Width = 44
-              Height = 27
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel16: TRzLabel
               Left = 2
               Top = 0
@@ -2370,29 +2310,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground4: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel3: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #21830#21697#31867#21035
@@ -2443,29 +2368,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground5: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel4: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #35745#31639#21333#20301
@@ -2554,29 +2464,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground6: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel5: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #23567#20214#21333#20301
@@ -2601,21 +2496,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdRight]
             TabOrder = 1
-            object RzBackground7: TRzBackground
-              Left = 2
-              Top = 0
-              Width = 35
-              Height = 27
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel7: TRzLabel
               Left = 2
               Top = 0
@@ -2708,29 +2588,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground9: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel8: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #23567#20214#21333#20301
@@ -2755,21 +2620,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdRight]
             TabOrder = 1
-            object RzBackground10: TRzBackground
-              Left = 2
-              Top = 0
-              Width = 33
-              Height = 27
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel9: TRzLabel
               Left = 2
               Top = 0
@@ -2862,29 +2712,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground11: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel10: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #36827' '#36135' '#20215
@@ -2928,29 +2763,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground12: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel11: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #38646' '#21806' '#20215
@@ -2994,29 +2814,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground13: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel12: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #24215#20869#21806#20215
@@ -3060,29 +2865,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground14: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel13: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #24403#21069#24211#23384
@@ -3132,29 +2922,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground15: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel14: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #23433#20840#24211#23384
@@ -3198,29 +2973,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground16: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel15: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #21512#29702#24211#23384

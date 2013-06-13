@@ -17,7 +17,8 @@ uses
   uAppMgr in 'uAppMgr.pas',
   ufrmUpdate in 'ufrmUpdate.pas',
   ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
-  rspcn_TLB in 'rspcn_TLB.pas';
+  rspcn_TLB in 'rspcn_TLB.pas',
+  ufrmLogo in 'ufrmLogo.pas' {frmLogo};
 
 {$R *.TLB}
 
@@ -25,7 +26,9 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := '现代卷烟零售终端营销管理系统';
   Application.CreateForm(TfrmBrowerForm, frmBrowerForm);
+  Application.CreateForm(TfrmLogo, frmLogo);
   if paramStr(1)='-install' then
      frmBrowerForm.Install
   else

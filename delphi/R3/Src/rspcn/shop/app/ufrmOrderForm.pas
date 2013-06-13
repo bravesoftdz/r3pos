@@ -94,6 +94,7 @@ type
     toolReturn: TToolButton;
     mnuReturn: TMenuItem;
     Images: TImageList;
+    toolPresent: TToolButton;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -139,6 +140,7 @@ type
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure edtTableAfterOpen(DataSet: TDataSet);
     procedure fndGODS_IDFindClick(Sender: TObject);
+    procedure toolPresentClick(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -217,6 +219,8 @@ type
     function  DecodeBarcode(BarCode: string):integer;
     procedure DoCustId(s:string);virtual;
     procedure BarcodeInput(_Buf:string);override;
+    
+    procedure Calc;virtual; //2011.06.09判断是否限量
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -445,7 +449,7 @@ begin
           end;
        DBGridEh1.SetFocus;
        FocusNextColumn;
-     end;
+     end; 
 end;
 
 function TfrmOrderForm.FindColumn(FieldName: string): TColumnEh;
@@ -543,6 +547,8 @@ begin
   DBGridEh1.ReadOnly := (Value=dsBrowse);
   Timer1.Enabled := (Value<>dsBrowse);
   toolDelete.Visible := (Value<>dsBrowse);
+  toolReturn.Visible := (Value=dsBrowse);
+  toolPresent.Visible := (Value<>dsBrowse);
   if FindColumn('TOOL_NAV')<>nil then FindColumn('TOOL_NAV').Width := 58;
 
 end;
@@ -1946,7 +1952,7 @@ var AObj:TRecord_;
   pt:boolean;
 begin
   inherited;
-  if not fndGODS_ID.Focused then Exit;
+//  if not fndGODS_ID.Focused then Exit;
   if not edtTable.Active then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then exit;
   edtTable.DisableControls;
@@ -2268,7 +2274,7 @@ begin
   pn.Assign(DBGridEh1.Canvas.Pen);
   try
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and ((not
-    (gdFocused in State) or not DBGridEh1.Focused) or (Column.FieldName = 'TOOL_NAV')) then
+    (gdFocused in State) or not DBGridEh1.Focused) or (Column.FieldName = 'TOOL_NAV')) and (Column.FieldName <> 'GODS_CODE') and (Column.FieldName <> 'BARCODE') then
   begin
     if Column.FieldName = 'TOOL_NAV' then
        begin
@@ -2570,6 +2576,7 @@ begin
           begin
             fndGODS_ID.Visible := false;
             edtTable.Delete;
+            Calc;
             DBGridEh1.SetFocus;
           end;
      end;
@@ -2715,10 +2722,22 @@ begin
        if not PropertyEnabled then
           begin
             edtTable.Edit;
-            edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat+0;
+            edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat+1;
             AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
           end;
      end;
+end;
+
+procedure TfrmOrderForm.toolPresentClick(Sender: TObject);
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  ConvertPresent;
+end;
+
+procedure TfrmOrderForm.Calc;
+begin
+
 end;
 
 end.

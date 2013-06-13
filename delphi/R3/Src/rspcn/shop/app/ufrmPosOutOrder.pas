@@ -32,19 +32,15 @@ type
     RzSpacer1: TRzSpacer;
     edtVBK_SALES_DATE: TRzPanel;
     RzPanel20: TRzPanel;
-    RzBackground2: TRzBackground;
-    RzLabel2: TRzLabel;
     edtSALES_DATE: TcxDateEdit;
     RzPanel3: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel9: TRzPanel;
-    RzBackground7: TRzBackground;
     RzLabel17: TRzLabel;
     dateFlag: TcxComboBox;
     D1: TcxDateEdit;
     RzPanel23: TRzPanel;
     RzPanel22: TRzPanel;
-    RzBackground8: TRzBackground;
     RzLabel16: TRzLabel;
     D2: TcxDateEdit;
     btnFind: TRzBmpButton;
@@ -71,16 +67,13 @@ type
     edtBK_ACCT_MNY: TRzPanel;
     RzLabel6: TRzLabel;
     RzPanel7: TRzPanel;
-    RzBackground4: TRzBackground;
     RzLabel4: TRzLabel;
     edtACCT_MNY: TcxTextEdit;
     edtAGIO_RATE: TcxTextEdit;
     RzPanel8: TRzPanel;
-    RzBackground5: TRzBackground;
     RzLabel5: TRzLabel;
     edtBK_CLIENT_ID: TRzPanel;
     RzPanel21: TRzPanel;
-    RzBackground1: TRzBackground;
     RzLabel1: TRzLabel;
     edtCLIENT_ID: TzrComboBoxList;
     RzPanel19: TRzPanel;
@@ -97,6 +90,13 @@ type
     DeleteShortCut: TMenuItem;
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
+    RzLabel2: TRzLabel;
+    RzPanel10: TRzPanel;
+    intoCustomer: TRzBmpButton;
+    RzLabel3: TRzLabel;
+    edtBK_CARD_NO: TRzPanel;
+    edtCARD_NO: TcxTextEdit;
+    RzToolButton4: TRzToolButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -151,6 +151,9 @@ type
     procedure DeleteShortCutClick(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
+    procedure intoCustomerClick(Sender: TObject);
+    procedure edtCARD_NOKeyPress(Sender: TObject; var Key: Char);
+    procedure RzToolButton4Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -184,7 +187,7 @@ type
     function  checkPayment:boolean;
     function  payCashMny(s:string):boolean;
     procedure DoShowPayment;
-    procedure Calc; //2011.06.09判断是否限量
+    procedure Calc;override; //2011.06.09判断是否限量
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     function GetCostPrice(GODS_ID, BATCH_NO: string): real;
@@ -340,6 +343,7 @@ var
   RsGods,RsRelation,GodsQry,RelQry: TZQuery;
 begin
   result:=False;
+  edtTable.DisableControls;
   try
     GodsQry:=TZQuery.Create(nil);  //本单商品汇总
     GodsQry.Close;
@@ -375,7 +379,7 @@ begin
         GodsQry.FieldByName('CalcSum').AsFloat:=edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
         GodsQry.Post;
       end;
-      
+
       if RsGods.Locate('GODS_ID',GodsID,[]) then
       begin
         RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
@@ -389,7 +393,7 @@ begin
         begin
           RelQry.Append;
           RelQry.FieldByName('RELATION_ID').AsString:=RelationID;
-          if RsRelation.Locate('RELATION_ID',RelationID,[]) then 
+          if RsRelation.Locate('RELATION_ID',RelationID,[]) then
             RelQry.FieldByName('RELATION_NAME').AsString:=trim(RsRelation.fieldbyName('RELATION_NAME').AsString);
           RelQry.FieldByName('CalcSum').AsFloat:=edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
           RelQry.Post;
@@ -433,6 +437,7 @@ begin
     edtTable.RecNo:=CurIdx;
     GodsQry.Free;
     RelQry.Free;
+    edtTable.EnableControls;
   end;
 end;
 
@@ -544,7 +549,8 @@ begin
 end;
 
 procedure TfrmPosOutOrder.Open(id: string);
-var Params:TftParamList;
+var
+  Params:TftParamList;
 begin
   inherited;
   Params := TftParamList.Create(nil);
@@ -566,6 +572,8 @@ begin
     dbState := dsBrowse; 
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
+    RzPanel10.Visible := (AObj.FieldbyName('CLIENT_ID').AsString='');
+    edtCARD_NO.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
     Calc;
     DoShowPayment;
   finally
@@ -1230,9 +1238,10 @@ begin
      end;
   if Key = VK_F6 then
      begin
-       inputMode := 1;
-       inputFlag := 6;
-       edtInput.SetFocus;
+       intoCustomer.OnClick(intoCustomer);
+       //inputMode := 1;
+       //inputFlag := 6;
+       //edtInput.SetFocus;
      end;
   if Key = VK_F7 then
      begin
@@ -1306,6 +1315,7 @@ begin
             begin
                AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
                AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
+               AObj.FieldbyName('CLIENT_CODE').AsString := bs.FieldbyName('CLIENT_CODE').AsString;
                AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
             end;
        end
@@ -1316,13 +1326,15 @@ begin
          AObj.FieldbyName('PRICE_ID').AsString := rs.FieldbyName('UNION_ID').AsString;
          AObj.FieldbyName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
          rs.Close;
-         rs.SQL.Text := 'select CUST_NAME from PUB_CUSTOMER where TENANT_ID in ('+dllGlobal.GetUnionTenantInWhere+') and CUST_ID=:CUST_ID';
+         rs.SQL.Text := 'select CUST_NAME,CUST_CODE from PUB_CUSTOMER where TENANT_ID in ('+dllGlobal.GetUnionTenantInWhere+') and CUST_ID=:CUST_ID';
          rs.ParamByName('CUST_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
          dllGlobal.OpenRemote(rs);
          AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CUST_NAME').AsString;
+         AObj.FieldbyName('CLIENT_CODE').AsString := rs.FieldbyName('CUST_CODE').AsString;
        end;
     edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
     edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+    edtCARD_NO.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
     CalcPrice;
   finally
     rs.Free;
@@ -2180,8 +2192,15 @@ end;
 
 procedure TfrmPosOutOrder.BarcodeInput(_Buf: string);
 begin
+  if edtCARD_NO.Focused then
+     begin
+        if (dbState = dsBrowse) then NewOrder;
+        doCustId(_Buf);
+        RzPanel10.Visible := false;
+     end
+  else
   inherited;
-  
+
 end;
 
 procedure TfrmPosOutOrder.edtACCT_MNYKeyPress(Sender: TObject;
@@ -2557,6 +2576,113 @@ begin
   inherited;
   DoHangUp;
 end; 
+
+procedure TfrmPosOutOrder.intoCustomerClick(Sender: TObject);
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  RzPanel10.Visible := false;
+  edtCARD_NO.Text := '请输入会员卡号或手机号';
+  edtCARD_NO.SelectAll;
+  edtCARD_NO.SetFocus;
+end;
+
+procedure TfrmPosOutOrder.edtCARD_NOKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       try
+         DoCustId(trim(edtCARD_NO.Text));
+       finally
+         edtCARD_NO.Text := '';
+         if edtCARD_NO.CanFocus then edtCARD_NO.SetFocus;
+         if edtInput.CanFocus then edtInput.SetFocus;
+       end;
+     end;
+  if Key=#27 then
+     begin
+       Key := #0;
+       edtCLIENT_ID.KeyValue := '';
+       edtCLIENT_ID.Text := '普通客户';
+       RzPanel10.Visible := true;
+       if edtInput.CanFocus then edtInput.SetFocus;
+     end;
+end;
+
+procedure TfrmPosOutOrder.RzToolButton4Click(Sender: TObject);
+var
+   _obj,hdr:TRecord_;
+   rs,edt:TZQuery;
+begin
+   inherited;
+   Open(cdsList.FieldbyName('SALES_ID').AsString);
+   if (MessageBox(Handle,pchar('是否进行退货或换货操作？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+   _obj := TRecord_.Create;
+   rs := TZQuery.Create(nil);
+   hdr := TRecord_.Create;
+   edt := TZQuery.Create(nil);
+   try
+     _obj.ReadFromDataSet(edtTable);
+     AObj.CopyTo(hdr); 
+     rs.Data := edtProperty.Data;
+     edt.Data := edtTable.Data;
+     NewOrder;
+     edtTable.First;
+     while not edtTable.Eof do edtTable.Delete;
+     AObj.FieldbyName('CLIENT_ID').AsString := hdr.FieldbyName('CLIENT_ID').asString;
+     AObj.FieldbyName('CLIENT_ID_TEXT').AsString := hdr.FieldbyName('CLIENT_ID_TEXT').asString;
+     AObj.FieldbyName('CLIENT_CODE').AsString := hdr.FieldbyName('CLIENT_CODE').asString;
+     AObj.FieldbyName('UNION_ID').AsString := hdr.FieldbyName('UNION_ID').asString;
+     AObj.FieldbyName('PRICE_ID').AsString := hdr.FieldbyName('PRICE_ID').asString;
+     AObj.FieldbyName('PAY_ZERO').AsString := hdr.FieldbyName('PAY_ZERO').asString;
+     edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+     edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
+     edtCARD_NO.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
+     edt.First;
+     while not edt.Eof do
+        begin
+         edtTable.Append;
+         _obj.Clear;
+         _obj.ReadFromDataSet(edt); 
+         _obj.WriteToDataSet(edtTable,false);
+         inc(ROWID);
+         edtTable.FieldByName('SEQNO').AsInteger := ROWID;
+         edtTable.FieldbyName('AMOUNT').asFloat := - edt.FieldbyName('AMOUNT').asFloat;
+         AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+         edtTable.Post;
+         rs.Filtered := false;
+         rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
+         rs.Filtered := true;
+         _obj.Clear;
+         rs.First;
+         while not rs.Eof do
+           begin
+             edtProperty.Append;
+             _obj.ReadFromDataSet(rs);
+             _obj.WriteToDataSet(edtProperty,false);
+             edtProperty.FieldbyName('AMOUNT').asFloat := - edtProperty.FieldbyName('AMOUNT').asFloat;
+             edtProperty.FieldbyName('CALC_AMOUNT').asFloat := - edtProperty.FieldbyName('CALC_AMOUNT').asFloat;
+             edtProperty.Post;
+             rs.Next;
+           end;
+        edt.Next;
+     end;
+     InitRecord;
+     RzPanel10.Visible := (AObj.FieldbyName('CLIENT_ID').AsString='');
+     Calc;
+     DoShowPayment;
+   finally
+     rs.Free;
+     _obj.Free;
+     edt.Free;
+     hdr.Free;
+   end;
+  PageControl.ActivePageIndex := 0;
+  PageControlChange(nil);
+end;
 
 initialization
   RegisterClass(TfrmPosOutOrder);

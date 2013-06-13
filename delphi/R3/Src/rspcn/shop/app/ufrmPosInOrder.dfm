@@ -1,21 +1,21 @@
 inherited frmPosInOrder: TfrmPosInOrder
-  Left = -8
-  Top = -8
+  Left = 60
+  Top = 154
   Caption = #21830#21697#20837#24211
-  ClientHeight = 738
+  ClientHeight = 593
   ClientWidth = 1280
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     Width = 1080
-    Height = 691
+    Height = 546
     inherited webForm: TRzPanel
       Width = 1080
-      Height = 691
+      Height = 546
       inherited PageControl: TRzPageControl
         Width = 1080
-        Height = 691
+        Height = 546
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -421,29 +421,14 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Height = 27
                 Align = alLeft
                 BorderOuter = fsFlat
-                BorderSides = [sdRight, sdBottom]
+                BorderSides = [sdRight]
                 FlatColor = clGray
                 TabOrder = 0
-                object RzBackground1: TRzBackground
-                  Left = 0
-                  Top = 0
-                  Width = 102
-                  Height = 26
-                  Active = True
-                  Align = alClient
-                  FrameColor = 9145227
-                  GradientColorStart = clWhite
-                  GradientColorStop = 14277081
-                  ImageStyle = isStretch
-                  ShowGradient = True
-                  ShowImage = False
-                  ShowTexture = False
-                end
                 object RzLabel6: TRzLabel
                   Left = 0
                   Top = 0
                   Width = 102
-                  Height = 26
+                  Height = 27
                   Align = alClient
                   Alignment = taCenter
                   Caption = #20379' '#24212' '#21830
@@ -554,29 +539,14 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Height = 27
                 Align = alLeft
                 BorderOuter = fsFlat
-                BorderSides = [sdRight, sdBottom]
+                BorderSides = [sdRight]
                 FlatColor = clGray
                 TabOrder = 0
-                object RzBackground2: TRzBackground
-                  Left = 0
-                  Top = 0
-                  Width = 102
-                  Height = 26
-                  Active = True
-                  Align = alClient
-                  FrameColor = 9145227
-                  GradientColorStart = clWhite
-                  GradientColorStop = 14277081
-                  ImageStyle = isStretch
-                  ShowGradient = True
-                  ShowImage = False
-                  ShowTexture = False
-                end
                 object RzLabel7: TRzLabel
                   Left = 0
                   Top = 0
                   Width = 102
-                  Height = 26
+                  Height = 27
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36827#36135#26085#26399
@@ -603,10 +573,10 @@ inherited frmPosInOrder: TfrmPosInOrder
           inherited order_grid: TRzPanel
             Top = 180
             Width = 699
-            Height = 441
+            Height = 296
             inherited DBGridEh1: TDBGridEh
               Width = 677
-              Height = 419
+              Height = 274
               FixedColor = 16448239
               FooterColor = 8643839
               FrozenCols = 1
@@ -727,6 +697,7 @@ inherited frmPosInOrder: TfrmPosInOrder
               Left = 312
               Top = 107
               Style.BorderStyle = ebsFlat
+              Style.Edges = []
               Style.ButtonStyle = btsUltraFlat
             end
             inherited fndUNIT_ID: TcxComboBox
@@ -737,7 +708,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             end
           end
           inherited order_footer: TRzPanel
-            Top = 621
+            Top = 476
             Width = 1080
             Height = 70
             object edtBK_ACCT_MNY: TRzPanel
@@ -777,32 +748,17 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Height = 27
                 Align = alLeft
                 BorderOuter = fsFlat
-                BorderSides = [sdRight, sdBottom]
+                BorderSides = [sdRight]
                 FlatColor = clGray
                 TabOrder = 0
-                object RzBackground4: TRzBackground
-                  Left = 0
-                  Top = 0
-                  Width = 102
-                  Height = 26
-                  Active = True
-                  Align = alClient
-                  FrameColor = 9145227
-                  GradientColorStart = clWhite
-                  GradientColorStop = 14277081
-                  ImageStyle = isStretch
-                  ShowGradient = True
-                  ShowImage = False
-                  ShowTexture = False
-                end
                 object RzLabel10: TRzLabel
                   Left = 0
                   Top = 0
                   Width = 102
-                  Height = 26
+                  Height = 27
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #24212#20184#37329#39069
+                  Caption = #32467#31639#37329#39069
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -844,21 +800,6 @@ inherited frmPosInOrder: TfrmPosInOrder
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdRight]
                 TabOrder = 3
-                object RzBackground5: TRzBackground
-                  Left = 2
-                  Top = 0
-                  Width = 33
-                  Height = 27
-                  Active = True
-                  Align = alClient
-                  FrameColor = 9145227
-                  GradientColorStart = clWhite
-                  GradientColorStop = 14277081
-                  ImageStyle = isStretch
-                  ShowGradient = True
-                  ShowImage = False
-                  ShowTexture = False
-                end
                 object RzLabel11: TRzLabel
                   Left = 2
                   Top = 0
@@ -1903,7 +1844,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             Left = 699
             Top = 180
             Width = 381
-            Height = 441
+            Height = 296
             Align = alRight
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -1917,7 +1858,7 @@ inherited frmPosInOrder: TfrmPosInOrder
               Left = 11
               Top = 11
               Width = 359
-              Height = 419
+              Height = 274
               Align = alClient
               BorderOuter = fsNone
               BorderColor = 16316664
@@ -1959,7 +1900,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Left = 5
                 Top = 26
                 Width = 349
-                Height = 388
+                Height = 243
                 Cursor = crDefault
                 Align = alClient
                 Color = 15724527
@@ -1980,6 +1921,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 ParentCtl3D = False
                 ParentFont = False
                 PopupMenu = DelGodsShortCust
+                ScrollBars = ssNone
                 TabOrder = 1
                 GridLineColor = clSilver
                 ActiveCellShow = False
@@ -2190,29 +2132,14 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Height = 27
                   Align = alLeft
                   BorderOuter = fsFlat
-                  BorderSides = [sdRight, sdBottom]
+                  BorderSides = [sdRight]
                   FlatColor = clGray
                   TabOrder = 0
-                  object RzBackground7: TRzBackground
-                    Left = 0
-                    Top = 0
-                    Width = 62
-                    Height = 26
-                    Active = True
-                    Align = alClient
-                    FrameColor = 9145227
-                    GradientColorStart = clWhite
-                    GradientColorStop = 14277081
-                    ImageStyle = isStretch
-                    ShowGradient = True
-                    ShowImage = False
-                    ShowTexture = False
-                  end
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 31
-                    Height = 16
+                    Width = 62
+                    Height = 27
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -2278,26 +2205,11 @@ inherited frmPosInOrder: TfrmPosInOrder
                   BorderOuter = fsGroove
                   BorderSides = [sdLeft, sdRight]
                   TabOrder = 4
-                  object RzBackground8: TRzBackground
+                  object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
                     Width = 22
                     Height = 27
-                    Active = True
-                    Align = alClient
-                    FrameColor = 9145227
-                    GradientColorStart = clWhite
-                    GradientColorStop = 14277081
-                    ImageStyle = isStretch
-                    ShowGradient = True
-                    ShowImage = False
-                    ShowTexture = False
-                  end
-                  object RzLabel16: TRzLabel
-                    Left = 2
-                    Top = 0
-                    Width = 16
-                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267
@@ -2667,7 +2579,7 @@ inherited frmPosInOrder: TfrmPosInOrder
             Left = 0
             Top = 60
             Width = 1080
-            Height = 631
+            Height = 486
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -2756,8 +2668,8 @@ inherited frmPosInOrder: TfrmPosInOrder
             object DBGridEh2: TDBGridEh
               Left = 11
               Top = 11
-              Width = 680
-              Height = 367
+              Width = 1058
+              Height = 464
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -2891,7 +2803,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #25805#20316
                   Title.Color = 15787416
-                  Width = 146
+                  Width = 165
                 end>
             end
             object rowToolNav: TRzToolbar
@@ -2920,7 +2832,8 @@ inherited frmPosInOrder: TfrmPosInOrder
                 RzToolButton2
                 RzToolButton3
                 RzSpacer1
-                RzToolButton1)
+                RzToolButton1
+                RzToolButton4)
               object RzToolButton1: TRzToolButton
                 Left = 75
                 Top = 0
@@ -2977,6 +2890,21 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Top = 0
                 Width = 5
               end
+              object RzToolButton4: TRzToolButton
+                Left = 110
+                Top = 0
+                Width = 36
+                ShowCaption = True
+                UseToolbarShowCaption = False
+                Caption = #36864#36135
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsUnderline]
+                ParentFont = False
+                OnClick = RzToolButton4Click
+              end
             end
           end
         end
@@ -3011,20 +2939,20 @@ inherited frmPosInOrder: TfrmPosInOrder
   end
   inherited photoPanel: TRzPanel
     Left = 1080
-    Height = 691
+    Height = 546
     inherited adv_photo_left_line: TImage
-      Height = 671
+      Height = 526
     end
     inherited adv_photo_right_line: TImage
-      Height = 671
+      Height = 526
     end
     inherited adv_bottom: TRzPanel
-      Top = 681
+      Top = 536
     end
     inherited RzPanel1: TRzPanel
-      Height = 671
+      Height = 526
       inherited adv02: TImage
-        Height = 415
+        Height = 270
       end
     end
   end

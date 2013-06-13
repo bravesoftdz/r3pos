@@ -23,7 +23,7 @@ function openApp(hWnd:Thandle;moduId:pchar):boolean;stdcall;
 //返回值:false代表不允许关闭，true关闭成功
 function closeApp(moduId:pchar):boolean;stdcall;
 //4.释放资源
-function eraseApp:boolean;stdcall;
+function eraseApp(synced:boolean):boolean;stdcall;
 
 //5.读取错误说明
 function getLastError:pchar;stdcall;
@@ -78,7 +78,7 @@ procedure DLLEntryPoint(dwReason: DWord);
 begin
   if (dwReason = DLL_PROCESS_DETACH) Then
   Begin
-    eraseApp;
+    eraseApp(false);
     {asm
       xor edx, edx
       push ebp
@@ -190,7 +190,7 @@ begin
 end;
 
 //4.释放资源
-function eraseApp:boolean;stdcall;
+function eraseApp(synced:boolean):boolean;stdcall;
 var
   i:integer;
   Form:TForm;
@@ -199,7 +199,7 @@ begin
     result := true;
     if not Assigned(webForm) then Exit;
     if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...');
-    if assigned(SyncFactory) then SyncFactory.LogoutSync(dllApplication.handle);
+    if assigned(SyncFactory) and synced then SyncFactory.LogoutSync(dllApplication.handle);
     while webForm.Count>0 do
        begin
           Form := TfrmWebForm(webForm.Objects[0]);

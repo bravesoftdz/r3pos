@@ -111,6 +111,13 @@ type
     btnSerach: TRzBmpButton;
     RzFormShape1: TRzFormShape;
     Image4: TImage;
+    RzLabel3: TRzLabel;
+    lblUserName: TRzLabel;
+    lblSignOut: TRzLabel;
+    pageButton: TRzPanel;
+    RzBackground3: TRzBackground;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
     Image5: TImage;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
@@ -141,6 +148,9 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure lblSignOutClick(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
   private
     FWindowState: TWindowState;
     FInitialized: boolean;
@@ -223,16 +233,17 @@ type
     function  checkBarcode:boolean;
     procedure ClearKey;
     procedure PushTo;
+    procedure ClearPage;
   public
     { Public declarations }
     hotKeyid:integer;
-
+    PageIndex:integer;
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
     function  Install:boolean;
-    
+
     property Initialized:boolean read FInitialized write SetInitialized;
   end;
 
@@ -240,7 +251,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst,ufrmLogo;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -342,7 +353,7 @@ begin
   TabSheetEx.Caption := '新建页';
   TabSheetEx.button := TrzBmpButton.Create(pageTab);
   TabSheetEx.button.Parent := pageTab;
-  TabSheetEx.button.Top := 2;
+  TabSheetEx.button.Top := 4;
   TabSheetEx.button.AllowAllUp := true;
   TabSheetEx.button.Bitmaps.Up.Assign(button_close.Picture);
   TabSheetEx.button.Bitmaps.Down.Assign(button_active.Picture);
@@ -406,6 +417,12 @@ begin
     end;
   end;
   pagebuttonSort;
+  if (TabSheetEx.button.Left+TabSheetEx.button.Width)>(pageButton.Left-10) then
+     begin
+       PageIndex := TabSheetEx.PageIndex-5;
+       if PageIndex<0 then PageIndex := 0;
+       pagebuttonSort;
+     end;
 end;
 
 procedure TfrmBrowerForm.btnStopClick(Sender: TObject);
@@ -536,13 +553,14 @@ begin
   case tabEx.url.appFlag of
   1:begin
       if not dllFactory.close(tabEx.url) then Exit;
-    end;
+    end
   end;
   if PageControl1.ActivePageIndex>0 then
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex -1 else
   PageControl1.ActivePageIndex := PageControl1.ActivePageIndex +1;
   if assigned(tabEx.button) then freeandNil(tabEx.button);
   tabEx.Free;
+  if (PageIndex>0) then dec(PageIndex);
   pagebuttonSort;
   UpdateControls;
 end;
@@ -663,7 +681,7 @@ destructor TfrmBrowerForm.Destroy;
 begin
   if Initialized then
      begin
-        dllFactory.Clear;
+        dllFactory.Clear(false);
         dllFactory.Free;
         if whKeyboard<>0 then UnhookWindowsHookEx(whKeyboard);
         Timer1.Enabled := false;
@@ -858,74 +876,87 @@ var
   w:integer;
   xsmLogined:boolean;
 begin
-  curSheet := (PageControl1.ActivePage as TTabSheetEx);
-  if assigned(curSheet) and assigned(curSheet.EWB) and ((dwFlags=6) or (dwFlags=262150)) then
-     begin
-        if IsRspcn(bstrUrl) then
-           begin
-             urlToken := decodeUrl(bstrUrl);
-             if CheckUrlExists(urlToken) then Exit;
-             curSheet := CreateNewTabBrowser(urlToken);
-             if Assigned(curSheet) then
-                begin
-                  case urlToken.appFlag of
-                  0:begin
-                      Cancel := true;
-                      if urlToken.appId='xsm-in' then
-                         begin
-                            xsmLogined := false;
-                            if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
-                            w := 0;
-                            while w<3 do
-                            begin
-                              inc(w);
-                              curSheet.EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+UcFactory.xsmSignature,15000);
-                              xsmLogined := UcFactory.chkLogin(curSheet.EWB);
-                              if xsmLogined then break;
-                            end;
-                            if not xsmLogined then
-                               begin
-                                 UcFactory.xsmLogined := false;
-                                 Raise Exception.Create('新商盟认证失败，请点击重试！');
-                               end;
-                           curSheet.EWB.Go(encodeUrl(urlToken),15);
-                         end
-                      else
-                         begin
-                           curSheet.EWB.Go(urlToken.url,15);
-                         end;
-                      ppdisp := curSheet.EWB.Application;
-                      if curSheet.EWB.CanFocus then curSheet.EWB.SetFocusToDoc;
-                    end
-                  else
-                    begin
-                      Cancel := true;
-                      if dllFactory.open(curSheet.url,curSheet.Handle) then
-                         begin
-                           curSheet.LocationName := dllFactory.getTitle(urlToken);
-                         end
-                      else
-                         destroyTabBrowser;
-                      UpdateControls;
+  btnPageClose.Enabled := false;
+  btnClose.Enabled := false;
+  try
+    curSheet := (PageControl1.ActivePage as TTabSheetEx);
+    if assigned(curSheet) and assigned(curSheet.EWB) and ((dwFlags=6) or (dwFlags=262150)) then
+       begin
+          if IsRspcn(bstrUrl) then
+             begin
+               urlToken := decodeUrl(bstrUrl);
+               if CheckUrlExists(urlToken) then Exit;
+               curSheet := CreateNewTabBrowser(urlToken);
+               if Assigned(curSheet) then
+                  begin
+                    case urlToken.appFlag of
+                    0:begin
+                        Cancel := true;
+                        if urlToken.appId='xsm-in' then
+                           begin
+                              frmLogo.hWnd := MainPanel.Handle;
+                              frmLogo.ShowForm;
+                              try
+                                xsmLogined := false;
+                                if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
+                                w := 0;
+                                while w<3 do
+                                begin
+                                  inc(w);
+                                  curSheet.EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+UcFactory.xsmSignature,15000);
+                                  xsmLogined := UcFactory.chkLogin(curSheet.EWB);
+                                  if xsmLogined then break;
+                                end;
+                                if not xsmLogined then
+                                   begin
+                                     UcFactory.xsmLogined := false;
+                                     Raise Exception.Create('新商盟认证失败，请点击重试！');
+                                   end;
+                              finally
+                                frmLogo.Close;
+                              end;
+                             curSheet.EWB.Go(encodeUrl(urlToken),15);
+                           end
+                        else
+                           begin
+                             curSheet.EWB.Go(urlToken.url,15);
+                           end;
+                        ppdisp := curSheet.EWB.Application;
+                        if curSheet.EWB.CanFocus then curSheet.EWB.SetFocusToDoc;
+                      end
+                    else
+                      begin
+                        Cancel := true;
+                        if dllFactory.open(curSheet.url,curSheet.Handle) then
+                           begin
+                             curSheet.LocationName := dllFactory.getTitle(urlToken);
+                           end
+                        else
+                           destroyTabBrowser;
+                        UpdateControls;
+                      end;
                     end;
                   end;
-                end;
-           end
-        else
-           begin
-              urlToken.appFlag := 0;
-              urlToken.url := curSheet.EWB.LocationURL;
-              urlToken.showUrl := curSheet.EWB.LocationURL;
-              curSheet := CreateNewTabBrowser(urlToken);
-              if Assigned(curSheet) then
-                 begin
-                    curSheet.EWB.Go(urlToken.url,15);
-                    ppdisp := curSheet.EWB.Application;
-                 end;
-           end;
-     end
-  else
-     Cancel := true;
+             end
+          else
+             begin
+                urlToken.appFlag := 0;
+                urlToken.url := curSheet.EWB.LocationURL;
+                urlToken.showUrl := curSheet.EWB.LocationURL;
+                curSheet := CreateNewTabBrowser(urlToken);
+                if Assigned(curSheet) then
+                   begin
+                      curSheet.EWB.Go(urlToken.url,15);
+                      ppdisp := curSheet.EWB.Application;
+                   end;
+             end;
+       end
+    else
+       Cancel := true;
+  finally
+    btnPageClose.Enabled := true;
+    btnClose.Enabled := true;
+  end;
 end;
 
 procedure TfrmBrowerForm.OpenHome;
@@ -1025,23 +1056,24 @@ var
 begin
   btnPageClose.Visible := false;
   w := 0;
-  for i:=0 to pageControl1.PageCount-1 do
+  for i:=PageIndex to pageControl1.PageCount-1 do
     begin
       TTabSheetEx(pageControl1.Pages[i]).button.Left := w+2;
       w := w + TTabSheetEx(pageControl1.Pages[i]).button.Width;
       TTabSheetEx(pageControl1.Pages[i]).button.Down := (pageControl1.ActivePageIndex = i);
       if TTabSheetEx(pageControl1.Pages[i]).button.Down then
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite
+         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack
       else
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack;
+         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite;
       if (pageControl1.ActivePageIndex = i) and (i>0) then
          begin
            btnPageClose.Visible := true;
-           btnPageClose.Top := 7;
-           btnPageClose.Left := w - 16;
+           btnPageClose.Top := 10;
+           btnPageClose.Left := w - 19;
            btnPageClose.BringToFront;
          end;
     end;
+  pageButton.BringToFront;
   pageTab.Repaint;
 end;
 
@@ -1094,6 +1126,11 @@ begin
          Application.Terminate;
          Exit;
        end;
+    if token.logined then
+       lblUserName.Caption := '欢迎您！'+token.username
+    else
+       lblUserName.Caption := '';;
+    lblSignOut.Visible := token.logined;
     if token.logined and not dllFactory.Inited and not frmUpdate.Visible then
        begin
          try
@@ -1146,20 +1183,26 @@ begin
     0:begin
         if not xsmLogined then
            begin
-              if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
-              w := 0;
-              while w<3 do
-              begin
-                inc(w);
-                EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+UcFactory.xsmSignature,15000);
-                xsmLogined := UcFactory.chkLogin(EWB);
-                if xsmLogined then break;
-              end;
-              if not xsmLogined then
-                 begin
-                   UcFactory.xsmLogined := false;
-                   Raise Exception.Create('新商盟认证失败，请点击重试！');
-                 end;
+             frmLogo.hWnd := mainPanel.Handle;
+             frmLogo.ShowForm;
+             try
+                if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
+                w := 0;
+                while w<3 do
+                begin
+                  inc(w);
+                  EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+UcFactory.xsmSignature,15000);
+                  xsmLogined := UcFactory.chkLogin(EWB);
+                  if xsmLogined then break;
+                end;
+                if not xsmLogined then
+                   begin
+                     UcFactory.xsmLogined := false;
+                     Raise Exception.Create('新商盟认证失败，请点击重试！');
+                   end;
+             finally
+                frmLogo.Close;
+             end;
            end;
         EWB.Go(_url,TimeOut);
         if EWB.CanFocus then EWB.SetFocusToDoc;
@@ -1453,7 +1496,7 @@ begin
             Exit;
           end;
      end;
-  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+{  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
   while childWnd>0 do
     begin
       windows.SetFocus(childWnd);
@@ -1463,7 +1506,7 @@ begin
       Message.Unused := 0;
       SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
       childWnd := GetWindow(childWnd,GW_HWNDNEXT);
-    end; 
+    end;   }
   while Buf.Count>0 do
     begin
       dllFactory.Send(tabEx.url,Buf[0]);
@@ -1565,7 +1608,7 @@ procedure TfrmBrowerForm.FormCloseQuery(Sender: TObject;
 begin
   btnClose.Enabled := false;
   try
-    dllFactory.Clear;
+    dllFactory.Clear(true);
     btnClose.Enabled := true;
   except
     on E:Exception do
@@ -1611,6 +1654,36 @@ procedure TfrmBrowerForm.upgrade(var Message: TMessage);
 begin
   if frmUpdate.CheckUpgrade then
      frmUpdate.Show;
+end;
+
+procedure TfrmBrowerForm.lblSignOutClick(Sender: TObject);
+begin
+  ClearPage;
+  jsExt.signOut;
+  DLLFactory.Clear(false);
+  OpenHome;
+end;
+
+procedure TfrmBrowerForm.RzBmpButton1Click(Sender: TObject);
+begin
+  if PageIndex>0 then dec(PageIndex);
+  pageButtonSort;
+end;
+
+procedure TfrmBrowerForm.RzBmpButton2Click(Sender: TObject);
+begin
+  if PageIndex<(PageControl1.PageCount-1) then inc(PageIndex);
+  pageButtonSort;
+
+end;
+
+procedure TfrmBrowerForm.ClearPage;
+begin
+  while PageControl1.PageCount>1 do
+     begin
+       PageControl1.ActivePageIndex := 1;
+       destroyTabBrowser;
+     end;
 end;
 
 initialization

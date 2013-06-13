@@ -342,7 +342,6 @@ begin
   try
     sl.Delimiter := '/';
     sl.DelimitedText := xsmWB;
-    
   finally
     sl.Free;
   end;

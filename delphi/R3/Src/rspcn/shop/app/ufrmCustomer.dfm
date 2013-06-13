@@ -2075,29 +2075,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground1: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel6: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #20250#21592#21517#31216
@@ -2132,21 +2117,6 @@ inherited frmCustomer: TfrmCustomer
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdRight]
             TabOrder = 2
-            object RzBackground15: TRzBackground
-              Left = 2
-              Top = 0
-              Width = 44
-              Height = 27
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel16: TRzLabel
               Left = 2
               Top = 0
@@ -2195,29 +2165,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground3: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel2: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #20250#21592#21345#21495
@@ -2261,29 +2216,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground5: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel4: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #25163#26426#21495#30721
@@ -2327,29 +2267,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground4: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel5: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #20986#29983#26085#26399
@@ -2392,29 +2317,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground6: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel7: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #21487#29992#31215#20998
@@ -2461,29 +2371,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground8: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel8: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #21487#29992#20313#39069
@@ -2530,29 +2425,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground9: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel9: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = 'QQ/MSN'
@@ -2596,29 +2476,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground10: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel10: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = 'Email'
@@ -2662,29 +2527,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground11: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel11: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #32852#31995#22320#22336
@@ -2728,29 +2578,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground12: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel1: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #20250#21592#31561#32423
@@ -2910,29 +2745,14 @@ inherited frmCustomer: TfrmCustomer
             Height = 27
             Align = alLeft
             BorderOuter = fsFlat
-            BorderSides = [sdRight, sdBottom]
+            BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzBackground16: TRzBackground
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 26
-              Active = True
-              Align = alClient
-              FrameColor = 9145227
-              GradientColorStart = clWhite
-              GradientColorStop = 14277081
-              ImageStyle = isStretch
-              ShowGradient = True
-              ShowImage = False
-              ShowTexture = False
-            end
             object RzLabel14: TRzLabel
               Left = 0
               Top = 0
               Width = 102
-              Height = 26
+              Height = 27
               Align = alClient
               Alignment = taCenter
               Caption = #20250#21592#24615#21035

@@ -31,46 +31,38 @@ type
     RzSpacer1: TRzSpacer;
     edtBK_CLIENT_ID: TRzPanel;
     RzPanel21: TRzPanel;
-    RzBackground1: TRzBackground;
     RzLabel6: TRzLabel;
     edtCLIENT_ID: TzrComboBoxList;
     edtBK_SALES_DATE: TRzPanel;
     RzPanel20: TRzPanel;
-    RzBackground2: TRzBackground;
     RzLabel7: TRzLabel;
     edtSTOCK_DATE: TcxDateEdit;
     Image2: TImage;
     edtBK_GUIDE_USER: TRzPanel;
     RzPanel4: TRzPanel;
-    RzBackground3: TRzBackground;
     RzLabel8: TRzLabel;
     edtGUIDE_USER: TzrComboBoxList;
     edtREMARK: TcxTextEdit;
     edtBK_ACCT_MNY: TRzPanel;
     RzLabel9: TRzLabel;
     RzPanel7: TRzPanel;
-    RzBackground4: TRzBackground;
     RzLabel10: TRzLabel;
     edtACCT_MNY: TcxTextEdit;
     edtAGIO_RATE: TcxTextEdit;
     RzPanel8: TRzPanel;
-    RzBackground5: TRzBackground;
     RzLabel11: TRzLabel;
     edtBK_PAY_TOTAL: TRzPanel;
     RzPanel10: TRzPanel;
-    RzBackground6: TRzBackground;
     payment: TRzLabel;
     edtPAY_TOTAL: TcxTextEdit;
     RzPanel3: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel9: TRzPanel;
-    RzBackground7: TRzBackground;
     RzLabel17: TRzLabel;
     dateFlag: TcxComboBox;
     D1: TcxDateEdit;
     RzPanel23: TRzPanel;
     RzPanel22: TRzPanel;
-    RzBackground8: TRzBackground;
     RzLabel16: TRzLabel;
     D2: TcxDateEdit;
     RzPanel5: TRzPanel;
@@ -97,6 +89,7 @@ type
     frfStockOrder: TfrReport;
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
+    RzToolButton4: TRzToolButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -138,6 +131,7 @@ type
     procedure edtACCT_MNYKeyPress(Sender: TObject; var Key: Char);
     procedure edtAGIO_RATEKeyPress(Sender: TObject; var Key: Char);
     procedure edtPAY_TOTALKeyPress(Sender: TObject; var Key: Char);
+    procedure RzToolButton4Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -159,7 +153,7 @@ type
     function  checkPayment:boolean;
     function  payCashMny(s:string):boolean;
     procedure DoShowPayment;
-    procedure Calc; //2011.06.09判断是否限量
+    procedure Calc;override; //2011.06.09判断是否限量
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     function  getPaymentTitle(pay:string):string;
 
@@ -1577,6 +1571,73 @@ begin
        AObj.FieldbyName('PAY_J').AsFloat := 0;
        payment.Caption := '现金收款';
      end;
+end;
+
+procedure TfrmStockOrder.RzToolButton4Click(Sender: TObject);
+var
+   _obj,hdr:TRecord_;
+   rs,edt:TZQuery;
+begin
+   inherited;
+   Open(cdsList.FieldbyName('STOCK_ID').AsString);
+   if (MessageBox(Handle,pchar('是否进行退货或换货操作？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+   _obj := TRecord_.Create;
+   rs := TZQuery.Create(nil);
+   hdr := TRecord_.Create;
+   edt := TZQuery.Create(nil);
+   try
+     _obj.ReadFromDataSet(edtTable);
+     AObj.CopyTo(hdr);
+     rs.Data := edtProperty.Data;
+     edt.Data := edtTable.Data;
+     NewOrder;
+     edtTable.First;
+     while not edtTable.Eof do edtTable.Delete;
+     AObj.FieldbyName('CLIENT_ID').AsString := hdr.FieldbyName('CLIENT_ID').asString;
+     AObj.FieldbyName('CLIENT_ID_TEXT').AsString := hdr.FieldbyName('CLIENT_ID_TEXT').asString;
+     AObj.FieldbyName('PAY_ZERO').AsString := hdr.FieldbyName('PAY_ZERO').asString;
+     edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+     edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
+     edt.First;
+     while not edt.Eof do
+        begin
+         edtTable.Append;
+         _obj.Clear;
+         _obj.ReadFromDataSet(edt); 
+         _obj.WriteToDataSet(edtTable,false);
+         inc(ROWID);
+         edtTable.FieldByName('SEQNO').AsInteger := ROWID;
+         edtTable.FieldbyName('AMOUNT').asFloat := - edt.FieldbyName('AMOUNT').asFloat;
+         AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+         edtTable.Post;
+         rs.Filtered := false;
+         rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
+         rs.Filtered := true;
+         _obj.Clear;
+         rs.First;
+         while not rs.Eof do
+           begin
+             edtProperty.Append;
+             _obj.ReadFromDataSet(rs);
+             _obj.WriteToDataSet(edtProperty,false);
+             edtProperty.FieldbyName('AMOUNT').asFloat := - edtProperty.FieldbyName('AMOUNT').asFloat;
+             edtProperty.FieldbyName('CALC_AMOUNT').asFloat := - edtProperty.FieldbyName('CALC_AMOUNT').asFloat;
+             edtProperty.Post;
+             rs.Next;
+           end;
+        edt.Next;
+     end;
+     InitRecord;
+     Calc;
+     DoShowPayment;
+   finally
+     rs.Free;
+     _obj.Free;
+     edt.Free;
+     hdr.Free;
+   end;
+  PageControl.ActivePageIndex := 0;
+  PageControlChange(nil);
 end;
 
 initialization

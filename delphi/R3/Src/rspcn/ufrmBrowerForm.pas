@@ -1672,6 +1672,7 @@ end;
 
 procedure TfrmBrowerForm.RzBmpButton2Click(Sender: TObject);
 begin
+  if PageControl1.PageCount<5 then Exit;
   if PageIndex<(PageControl1.PageCount-1) then inc(PageIndex);
   pageButtonSort;
 

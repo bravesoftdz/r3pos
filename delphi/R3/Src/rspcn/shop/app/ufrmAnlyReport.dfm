@@ -1,5 +1,5 @@
 inherited frmAnlyReport: TfrmAnlyReport
-  Left = 193
+  Left = 264
   Caption = #32463#33829#20998#26512#25253#34920
   ClientWidth = 979
   OnCreate = FormCreate
@@ -103,8 +103,6 @@ inherited frmAnlyReport: TfrmAnlyReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -1349,5 +1347,9 @@ inherited frmAnlyReport: TfrmAnlyReport
     DataSet = cdsReport2
     Left = 254
     Top = 315
+  end
+  object PrintDialog1: TPrintDialog
+    Left = 480
+    Top = 240
   end
 end

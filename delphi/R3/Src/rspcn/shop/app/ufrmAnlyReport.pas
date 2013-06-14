@@ -9,7 +9,7 @@ uses
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, TeeProcs, TeEngine,
   Chart, Series, cxRadioGroup, RzBmpBtn, RzBckgnd, pngimage,udllShopUtil,
-  PrnDbgeh;
+  PrnDbgeh,Clipbrd;
 
 type
   TfrmAnlyReport = class(TfrmReportForm)
@@ -59,6 +59,7 @@ type
     RzBackground4: TRzBackground;
     RzLabel6: TRzLabel;
     edtDataSource: TcxComboBox;
+    PrintDialog1: TPrintDialog;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure btnPriorClick(Sender: TObject);
@@ -69,6 +70,9 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure edtReportTypePropertiesChange(Sender: TObject);
     procedure chartClick(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     { Private declarations }
     WTitle1:TStringList;
@@ -89,7 +93,7 @@ var
   frmAnlyReport: TfrmAnlyReport;
 
 implementation
-uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon;
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,printers;
 {$R *.dfm}
 
 { TfrmSaleReport }
@@ -546,7 +550,92 @@ begin
   ss.Free;
 end;
 
+procedure TfrmAnlyReport.RzBmpButton2Click(Sender: TObject);
+var formImage:TBitmap;
+    myImage:TImage;
+    saveDialog:TSaveDialog;
+begin
+  //inherited;
+  saveDialog1.DefaultExt:='*.bmp';
+  saveDialog1.Filter:='图片格式(*.bmp)';
+  if saveDialog1.Execute then
+  begin
+    if FileExists(SaveDialog1.FileName) then
+    begin
+      if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
+        exit;
+      DeleteFile(SaveDialog1.FileName);
+    end;
+  end;
+  formImage:=GetFormImage;
+  myImage:=TImage.Create(nil);
+  try
+    Clipboard.Assign(formImage);
+    myImage.Picture.Assign(Clipboard);
+    myImage.Picture.SaveToFile(SaveDialog1.FileName);
+  finally
+    formImage.Free;
+    myImage.Free;
+  end;
+end;
 
+procedure TfrmAnlyReport.RzBmpButton3Click(Sender: TObject);
+var formImage:TBitmap;
+    myImage:TImage;
+begin
+  //inherited;
+  formImage:=GetFormImage;
+  myImage:=TImage.Create(nil);
+  try
+    Clipboard.Assign(formImage);
+    myImage.Picture.Assign(Clipboard);
+    myImage.Picture.SaveToFile(ExtractFilePath(ParamStr(0))+'built-in\images\exportImage.bmp');
+    WinExec(Pchar('rundll32.exe C:\WINDOWS\system32\shimgvw.dll,ImageView_Fullscreen   '+ExtractFilePath(ParamStr(0))+'built-in\images\exportImage.bmp'),SW_NORMAL);
+  finally
+    formImage.Free;
+    myImage.Free;
+  end;
+end;
+
+procedure TfrmAnlyReport.RzBmpButton1Click(Sender: TObject);
+var formImage:TBitmap;
+    myImage:TImage;
+    strect:Trect; //定义打印输出矩形框的大小
+    temhi,temwd:integer;
+begin
+  //inherited;
+  formImage:=GetFormImage;
+  myImage:=TImage.Create(nil);
+  try
+    Clipboard.Assign(formImage);
+    myImage.Picture.Assign(Clipboard);
+    myImage.Picture.SaveToFile(ExtractFilePath(ParamStr(0))+'built-in\images\exportImage.bmp');
+    if PrintDialog1.Execute then
+    begin
+      temhi:=myImage.picture.height;
+      temwd:=myImage.picture.width;
+      while (temhi<printer.pageheight div 2) and  (temwd<printer.pagewidth div 2) do
+      begin
+        temhi:=temhi+temhi+temhi;
+        temwd:=temwd+temwd+temwd;
+      end;
+      with strect do //定义图形在页面上的中心位置输出
+      begin
+        left:=(printer.pagewidth -temwd) div 2;
+        top:=(printer.pageheight-temhi) div 2;
+        right:=left+temwd;
+        bottom:=top+temhi;
+      end;
+      printer.BeginDoc;
+      printer.canvas.StretchDraw(strect,myImage.picture.graphic);
+      printer.EndDoc;
+    end;
+  finally
+    formImage.Free;
+    myImage.Free;
+  end;
+
+end;
 
 initialization
   RegisterClass(TfrmAnlyReport);

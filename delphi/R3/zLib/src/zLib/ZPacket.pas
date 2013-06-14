@@ -255,19 +255,20 @@ type
     procedure SetSocket(const Value: TCustomWinSocket);
   protected
     { ITransport }
-    function CheckClientSocket(S: TSocket): Boolean;
     function GetWaitEvent: THandle; stdcall;
     function GetConnected: Boolean; stdcall;
     procedure SetConnected(Value: Boolean); stdcall;
     function Receive(WaitForInput: Boolean; Context: Integer): IDataBlock; stdcall;
     function Send(const Data: IDataBlock): Integer; stdcall;
     function GetSocketHandle:THandle; stdcall;
+    function CheckClientSocket(S: TSocket): Boolean;
 
     procedure Enter;
     procedure Leave;
   public
     constructor Create;
     destructor Destroy; override;
+
 
     property Host: string read FHost write FHost;
     property Address: string read FAddress write FAddress;
@@ -691,7 +692,7 @@ end;
 
 function TZSocketTransport.GetConnected: Boolean;
 begin
-  Result := (FSocket <> nil) and (FSocket.Connected);// and CheckClientSocket(FSocket.SocketHandle);
+  Result := (FSocket <> nil) and (FSocket.Connected) and CheckClientSocket(FSocket.SocketHandle);
 end;
 
 procedure TZSocketTransport.SetConnected(Value: Boolean);
@@ -699,7 +700,7 @@ var
   Addr: TSockAddrIn;
   AddrLen, Ret, ErrCode, opt ,insize,outsize: Integer;
 begin
-  if GetConnected = Value then Exit;
+//  if GetConnected = Value then Exit;
   if Value then
   begin
     if (FAddress = '') and (FHost = '') then
@@ -713,6 +714,7 @@ begin
     else
       FClientSocket.Host := FHost;
     FClientSocket.Open;
+//    FClientSocket.Socket.ASyncStyles := [asClose];
   end else
   begin
     if FSocket <> nil then FSocket.Close;

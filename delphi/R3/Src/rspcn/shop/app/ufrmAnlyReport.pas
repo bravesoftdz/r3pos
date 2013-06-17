@@ -85,6 +85,7 @@ type
     procedure OpenChart;
     procedure CalcClientNum(var rs:TZQuery;filterStr:string);
     procedure CalcWeek(var rs:TZQuery;filterStr:string);
+    function IsProfit:Boolean;
   end;
 
   const
@@ -97,6 +98,13 @@ uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,prin
 {$R *.dfm}
 
 { TfrmSaleReport }
+
+function TfrmAnlyReport.IsProfit:Boolean;
+begin
+  result:=false;
+  if ((edtReportType.ItemIndex=0) and (edtDataSource.ItemIndex=2)) or ((edtReportType.ItemIndex=1) and (edtDataSource.ItemIndex=3)) then
+    result:=true;
+end;
 
 procedure TfrmAnlyReport.OpenReport1;
 var
@@ -112,13 +120,16 @@ begin
   if D2.EditValue = null then Raise Exception.Create('日期条件不能为空!');
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
-  //RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
 
-//  if RckMaxDate < vEndDate then
-//     begin
-       //没有计算，需重计算流水
-       //if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
-//     end;
+  if IsProfit then
+  begin
+    RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
+    //if RckMaxDate < vEndDate then
+    //   begin
+         //没有计算，需重计算流水
+         if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
+    //   end;
+  end;
   cdsReport1.close;
   case edtReportType.ItemIndex of
   0:begin
@@ -127,6 +138,14 @@ begin
       WTitle1.add(edtReportType.Text+'：'+edtCLIENT_ID.Text);
       if edtChar1Type.Checked then
       begin
+        if IsProfit then
+        cdsReport1.SQL.Text :=
+           'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
+           'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
+           'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
+           'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
+           'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 '
+        else
         cdsReport1.SQL.Text :=
            'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
            'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+
@@ -143,6 +162,14 @@ begin
         cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by SO.TENANT_ID,SO.SHOP_ID,SUBSTR(CREA_DATE,12,2) ';
       end else
       begin
+        if IsProfit then
+        cdsReport1.SQL.Text :=
+         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+         'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
+         'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
+         'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
+         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 '
+        else
         cdsReport1.SQL.Text :=
          'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
          'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+
@@ -178,6 +205,14 @@ begin
 
       if edtChar1Type.Checked then
       begin
+      if IsProfit then
+      cdsReport1.SQL.Text :=
+         'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
+         'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
+         'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
+         'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
+         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 '
+      else
       cdsReport1.SQL.Text :=
          'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
          'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+ vStr+
@@ -189,11 +224,19 @@ begin
          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SD.SHOP_ID=:SHOP_ID ';
       if edtGODS_ID.AsString <> '' then
          begin
-           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SD.GODS_ID=:GODS_ID ';
+           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID ';
          end;
       cdsReport1.SQL.Text := cdsReport1.SQL.Text +'GROUP BY SO.TENANT_ID,SO.SHOP_ID,SUBSTR(CREA_DATE,12,2)'+vStr+' ORDER BY SUBSTR(CREA_DATE,12,2) ';
       end else
       begin
+        if IsProfit then
+        cdsReport1.SQL.Text :=
+         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+         'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
+         'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
+         'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
+         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 '
+        else
         cdsReport1.SQL.Text :=
          'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
          'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+vStr+
@@ -205,7 +248,7 @@ begin
          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SD.SHOP_ID=:SHOP_ID ';
       if edtGODS_ID.AsString <> '' then
          begin
-           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SD.GODS_ID=:GODS_ID ';
+           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID ';
          end;
       cdsReport1.SQL.Text := cdsReport1.SQL.Text +'GROUP BY SO.TENANT_ID,SO.SHOP_ID,SO.SALES_DATE'+vStr+' ORDER BY SO.SALES_DATE ';
       end;
@@ -259,7 +302,7 @@ procedure TfrmAnlyReport.showForm;
 begin
   inherited;
   dateFlag.ItemIndex := 1;
-  edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
+  edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   edtGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   edtReportType.ItemIndex := 1; 
 end;
@@ -409,6 +452,7 @@ begin
                0:Chart2.Series[0].Add(rs.FieldbyName('CLIENTNUM').AsFloat,rs.FieldbyName('HOUR').AsString);
                1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,rs.FieldbyName('HOUR').AsString);
                2:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,rs.FieldbyName('HOUR').AsString);
+               3:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,rs.FieldbyName('HOUR').AsString);
              end;
           end
           else
@@ -418,6 +462,7 @@ begin
                0:Chart2.Series[0].Add(rs.FieldbyName('CLIENTNUM').AsFloat,weekList[i-1]);
                1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
                2:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,weekList[i-1]);
+               3:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,weekList[i-1]);
              end;
           end;
           0:
@@ -426,6 +471,7 @@ begin
              case edtDataSource.ItemIndex of
                0:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,rs.FieldbyName('HOUR').AsString);
                1:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,rs.FieldbyName('HOUR').AsString);
+               2:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,rs.FieldbyName('HOUR').AsString);
              end;
           end
           else
@@ -434,6 +480,7 @@ begin
              case edtDataSource.ItemIndex of
                0:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
                1:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,weekList[i-1]);
+               2:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,weekList[i-1]);
              end;
           end;
         end;
@@ -455,6 +502,7 @@ begin
     edtDataSource.Properties.Items.Add('客流量');
   edtDataSource.Properties.Items.Add('销售量');
   edtDataSource.Properties.Items.Add('销售额');
+  edtDataSource.Properties.Items.Add('毛利');
   edtDataSource.ItemIndex:=0;
 end;
 
@@ -516,8 +564,14 @@ var ss:TZQuery;
     i:integer;
 begin
   ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
-         '0 AS SALE_AMOUNT,0 AS SALE_MONEY '+
+  ss.SQL.Text:='SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
+
+  if IsProfit then
+    ss.SQL.Text:=ss.SQL.Text+'0 AS SALE_PRF '
+  else
+    ss.SQL.Text:=ss.SQL.Text+'0 AS SALE_AMOUNT,0 AS SALE_MONEY ';
+
+  ss.SQL.Text:=ss.SQL.Text+
          'FROM SAL_SALESORDER SO '+
          'WHERE  1=2 ';
   dataFactory.Open(ss);
@@ -538,9 +592,13 @@ begin
     else
     begin
       ss.Edit;
-      ss.FieldByName('SALE_AMOUNT').AsFloat:=ss.FieldByName('SALE_AMOUNT').AsFloat+rs.FieldByName('SALE_AMOUNT').AsFloat;
-      ss.FieldByName('SALE_MONEY').AsFloat:=ss.FieldByName('SALE_MONEY').AsFloat+rs.FieldByName('SALE_MONEY').AsFloat;
-      ss.FieldByName('CLIENTNUM').AsFloat:=ss.FieldByName('CLIENTNUM').AsFloat+rs.FieldByName('CLIENTNUM').AsFloat;
+      if IsProfit then
+        ss.FieldByName('SALE_PRF').AsFloat:=ss.FieldByName('SALE_PRF').AsFloat+rs.FieldByName('SALE_PRF').AsFloat
+      else begin
+        ss.FieldByName('SALE_AMOUNT').AsFloat:=ss.FieldByName('SALE_AMOUNT').AsFloat+rs.FieldByName('SALE_AMOUNT').AsFloat;
+        ss.FieldByName('SALE_MONEY').AsFloat:=ss.FieldByName('SALE_MONEY').AsFloat+rs.FieldByName('SALE_MONEY').AsFloat;
+        ss.FieldByName('CLIENTNUM').AsFloat:=ss.FieldByName('CLIENTNUM').AsFloat+rs.FieldByName('CLIENTNUM').AsFloat;
+      end;
       ss.Post;
     end;
     rs.Next;

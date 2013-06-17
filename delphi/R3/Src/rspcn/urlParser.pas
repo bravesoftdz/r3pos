@@ -76,7 +76,12 @@ begin
         else
            begin
               if UcFactory.xsmWB[length(UcFactory.xsmWB)]='/' then
-                 result := UcFactory.xsmWB+urltoken.path+urltoken.moduname
+                 begin
+                   if urltoken.path='/' then
+                      result := UcFactory.xsmWB+urltoken.path+urltoken.moduname
+                   else
+                      result := UcFactory.xsmWB+urltoken.path+'/'+urltoken.moduname;
+                 end
               else
                  result := UcFactory.xsmWB+'/'+urltoken.path+'/'+urltoken.moduname;
            end;

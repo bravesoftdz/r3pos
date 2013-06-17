@@ -3,7 +3,7 @@ unit uUcFactory;
 interface
 
 uses
-  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp,
+  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp, Forms,
   IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB, EncDec, IniFiles, IdCookieManager,IdCookie,WinInet;
 
 type
@@ -21,6 +21,8 @@ type
     FxsmLogined: boolean;
     loginTime:int64;
     FxsmUser: string;
+    FscWeb: string;
+    FecWeb: string;
     { Private declarations }
     function CreateXML(xml:string):IXMLDomDocument;
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
@@ -32,8 +34,12 @@ type
     procedure SetxsmLogined(const Value: boolean);
     function GetxsmLogined: boolean;
     procedure SetxsmUser(const Value: string);
+    procedure SetecWeb(const Value: string);
+    procedure SetscWeb(const Value: string);
   public
     { Public declarations }
+    //读取导航地址
+    function getModule:boolean;
     //读取验校码
     function getChallenge:boolean;
     //用户密码方式登录
@@ -49,6 +55,8 @@ type
     function getxsmWBHost:string;
     property xsmUC:string read FxsmUC write SetxsmUC;
     property xsmWB:string read FxsmWB write SetxsmWB;
+    property ecWeb:string read FecWeb write SetecWeb;
+    property scWeb:string read FscWeb write SetscWeb;
     property xsmChallenge:string read FxsmChallenge write SetxsmChallenge;
     property xsmSignature:string read FxsmSignature write SetxsmSignature;
     property xsmLogined:boolean read GetxsmLogined write SetxsmLogined;
@@ -201,6 +209,7 @@ var
   xml:string;
   url:string;
 begin
+getModule;
 if not getChallenge then Raise Exception.Create('读取令牌失败。');
 try
   result := false;
@@ -296,6 +305,7 @@ var
   xml:string;
   url:string;
 begin
+  getModule;
   try
     result := false;
     Doc := CreateXML(token);
@@ -345,6 +355,46 @@ begin
   finally
     sl.Free;
   end;
+end;
+
+function TUcFactory.getModule: boolean;
+var
+  F:TIniFile;
+  List:TStringList;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  List := TStringList.Create;
+  try
+    xsmUC := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
+    if xsmUC='' then
+       begin
+         xsmUC := 'http://test.xinshangmeng.com/st/';
+         xsmWB := 'http://test.xinshangmeng.com/xsm6/';
+         ecWeb := 'http://test.xinshangmeng.com/ecweb/';
+         scWeb := 'http://test.xinshangmeng.com/scweb/';
+       end
+       else
+       begin
+         List.CommaText := xsmUC;
+         xsmUC := List.Values['xsmc'];
+         xsmWB := List.Values['xsm'];
+         ecWeb := List.Values['ecweb'];
+         scWeb := List.Values['scweb'];
+       end;
+  finally
+    F.Free;
+    List.Free;
+  end;
+end;
+
+procedure TUcFactory.SetecWeb(const Value: string);
+begin
+  FecWeb := Value;
+end;
+
+procedure TUcFactory.SetscWeb(const Value: string);
+begin
+  FscWeb := Value;
 end;
 
 end.

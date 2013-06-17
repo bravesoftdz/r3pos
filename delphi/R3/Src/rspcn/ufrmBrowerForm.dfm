@@ -2481,7 +2481,7 @@ object frmBrowerForm: TfrmBrowerForm
     end
     object RzPanel1: TRzPanel
       Left = 158
-      Top = 50
+      Top = 24
       Width = 272
       Height = 29
       Anchors = [akLeft, akTop, akRight]

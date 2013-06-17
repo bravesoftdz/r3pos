@@ -67,23 +67,31 @@ begin
   end;
 end;
 function encodeUrl(urltoken:TurlToken):string;
+var wb:string;
 begin
   if urlToken.appId='xsm-in' then
      begin
         if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有错，');
-        if pos('.htm',UcFactory.xsmWB)>0 then
+        if pos('xsm.htm',urltoken.moduname)>0 then
            result := UcFactory.xsmWB
         else
            begin
-              if UcFactory.xsmWB[length(UcFactory.xsmWB)]='/' then
+              if pos('ecweb',urltoken.path)>0 then
+                 wb := UcFactory.ecWeb
+              else
+              if pos('scweb',urltoken.path)>0 then
+                 wb := UcFactory.scWeb
+              else
+                 Raise Exception.Create('无效地址'); 
+              if wb[length(wb)]='/' then
                  begin
                    if urltoken.path='/' then
-                      result := UcFactory.xsmWB+urltoken.path+urltoken.moduname
+                      result := wb+urltoken.path+urltoken.moduname
                    else
-                      result := UcFactory.xsmWB+urltoken.path+'/'+urltoken.moduname;
+                      result := wb+urltoken.path+'/'+urltoken.moduname;
                  end
               else
-                 result := UcFactory.xsmWB+'/'+urltoken.path+'/'+urltoken.moduname;
+                 result := wb+'/'+urltoken.path+'/'+urltoken.moduname;
            end;
      end
   else

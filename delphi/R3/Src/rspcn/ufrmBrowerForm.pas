@@ -898,6 +898,7 @@ begin
                               frmLogo.hWnd := MainPanel.Handle;
                               frmLogo.ShowForm;
                               try
+                                UCFactory.getModule;
                                 xsmLogined := false;
                                 if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
                                 w := 0;
@@ -1157,6 +1158,7 @@ var
   urlToken:TurlToken;
   w:integer;
 begin
+  UCFactory.getModule;
   _url := trim(_url);
   IEAddress1.Text := _url;
   RzProgressBar1.Percent := 1;

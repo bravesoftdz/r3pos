@@ -891,6 +891,7 @@ begin
                   begin
                     case urlToken.appFlag of
                     0:begin
+                        ppdisp := curSheet.EWB.Application;
                         Cancel := true;
                         if urlToken.appId='xsm-in' then
                            begin
@@ -915,13 +916,12 @@ begin
                               finally
                                 frmLogo.Close;
                               end;
-                             curSheet.EWB.Go(encodeUrl(urlToken),15);
+                             curSheet.EWB.Go(encodeUrl(urlToken),15000);
                            end
                         else
                            begin
-                             curSheet.EWB.Go(urlToken.url,15);
+                             curSheet.EWB.Go(urlToken.url,15000);
                            end;
-                        ppdisp := curSheet.EWB.Application;
                         if curSheet.EWB.CanFocus then curSheet.EWB.SetFocusToDoc;
                       end
                     else
@@ -946,8 +946,8 @@ begin
                 curSheet := CreateNewTabBrowser(urlToken);
                 if Assigned(curSheet) then
                    begin
-                      curSheet.EWB.Go(urlToken.url,15);
                       ppdisp := curSheet.EWB.Application;
+                      curSheet.EWB.Go(urlToken.url,15000);
                    end;
              end;
        end

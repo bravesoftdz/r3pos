@@ -1062,9 +1062,15 @@ begin
       w := w + TTabSheetEx(pageControl1.Pages[i]).button.Width;
       TTabSheetEx(pageControl1.Pages[i]).button.Down := (pageControl1.ActivePageIndex = i);
       if TTabSheetEx(pageControl1.Pages[i]).button.Down then
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack
+         begin
+           TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clBlack;
+           TTabSheetEx(pageControl1.Pages[i]).button.Top := 4;
+         end
       else
-         TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite;
+         begin
+           TTabSheetEx(pageControl1.Pages[i]).button.Font.Color := clWhite;
+           TTabSheetEx(pageControl1.Pages[i]).button.Top := 4;
+         end;
       if (pageControl1.ActivePageIndex = i) and (i>0) then
          begin
            btnPageClose.Visible := true;

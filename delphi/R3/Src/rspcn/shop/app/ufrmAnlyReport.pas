@@ -336,7 +336,7 @@ begin
 
   if edtChar1Type.Checked then
     begin
-       Chart2.BottomAxis.Title.Caption:='时 刻 点';
+       Chart2.BottomAxis.Title.Caption:='时点(小时)';
        case edtDataSource.ItemIndex+i of
          0:begin
            Chart2.Title.Text.Text:='时段客流量分析表';

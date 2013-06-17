@@ -53,7 +53,7 @@ type
     procedure ClearCostTempTable(TabName:string);
   protected
     //删除本期间的商品日台账表流水
-    function DeleteRckGodsData:Boolean;
+    function DeleteRckGodsData(DelFlag:Boolean=False):Boolean;
     //生成本区间核算临时表数据
     function CreateDataForRck:Boolean;
     //移动平均成本核算<按开单时的平均加计算>
@@ -508,7 +508,7 @@ begin
   //1、创建成本临时表
   CreateCostPriceTable(True);
   //2、删除本区间日台账流水记录
-  DeleteRckGodsData;
+  DeleteRckGodsData(True);
 
   //3、核算成本价(核算一个月成本价)
   SQL:=
@@ -546,7 +546,9 @@ begin
   VIW_GODS_DAYS:=
     'select TENANT_ID,SHOP_ID,CREA_DATE,ORDER_TYPE,A.GODS_ID,A.BATCH_NO,RCK_AMT,RCK_MNY,'+
     '(case when ORDER_TYPE in (12,21,22,23,24,31,32,33,34,35) then round(RCK_AMT*isnull(B.COST_PRICE,0),2) else RCK_CST end) as RCK_CST,'+
-    ' RCK_TAX,RCK_RTL,RCK_PRF,RCK_AGO,A.COST_PRICE '+
+    ' RCK_TAX,RCK_RTL,'+
+    '(case when ORDER_TYPE in (21,23,24) then RCK_MNY - round(RCK_AMT*isnull(B.COST_PRICE,0),2) else RCK_PRF end) as RCK_PRF,'+  //毛利计算
+    ' RCK_AGO,A.COST_PRICE '+
     ' from '+tempTableOrder+' A '+
     ' left outer join '+tempTabCost+' B ON A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO '+
     ' where A.TENANT_ID='+inttostr(TENANT_ID)+' and A.CREA_DATE='+FormatDatetime('YYYYMMDD',RckDate)+' '+
@@ -794,14 +796,14 @@ begin
     'select B.TENANT_ID,B.SHOP_ID,B.STOCK_DATE,(B.STOCK_TYPE+10) as ORDER_TYPE,A.GODS_ID,A.BATCH_NO,'+
     ' round(sum(CALC_AMOUNT),3) as RCK_AMT,'+
     ' round(sum(case when STOCK_TYPE=2 then 0 '+
-                   ' else A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end),2)'+
+                   ' else A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end),2)'+
                    ' end),2)as RCK_MNY,'+
     ' round(sum(case when STOCK_TYPE=2 then A.CALC_MONEY else 0 end),2)as RCK_CST,'+
     ' round(sum(case when STOCK_TYPE=2 then 0 '+
-                   ' else round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end),2)'+
+                   ' else round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end),2)'+
                    ' end),2)as RCK_TAX,'+
     ' 0 as RCK_RTL,'+
-    ' 0 as RCK_PRF,'+             
+    ' 0 as RCK_PRF,'+
     ' 0 as RCK_AGO,'+
     ' 0 as COST_PRICE '+
     ' from STK_STOCKDATA A,STK_STOCKORDER B '+
@@ -819,15 +821,15 @@ begin
     'select B.TENANT_ID,B.SHOP_ID,B.SALES_DATE,(B.SALES_TYPE+20) as ORDER_TYPE,A.GODS_ID,A.BATCH_NO,'+
     ' round(sum(CALC_AMOUNT),3)as RCK_AMT,'+
     ' round(sum(case when SALES_TYPE=2 then 0 '+
-                   ' else A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) '+
+                   ' else A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) '+
                    ' end),2)as RCK_MNY,'+
     ' round(sum(round(A.CALC_AMOUNT*A.COST_PRICE,2)),2)as RCK_CST,'+
     ' round(sum(case when SALES_TYPE=2 then 0 '+
-                   ' else round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) '+
+                   ' else round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) '+
                    ' end),2)as RCK_TAX,'+
     ' round(sum(case when SALES_TYPE=2 then 0 else A.CALC_MONEY+A.AGIO_MONEY end),2)as RCK_RTL,'+
     ' round(sum(case when SALES_TYPE=2 then 0 '+
-                   ' else A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) '+
+                   ' else A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) '+
                    ' -round(A.CALC_AMOUNT*A.COST_PRICE,2) end),2)as RCK_PRF,'+
     ' round(sum(A.AGIO_MONEY),2)as RCK_AGO,'+
     ' 0 as COST_PRICE '+
@@ -860,7 +862,7 @@ begin
   result:=true;
 end;
 
-function TCalcForGodsCost.DeleteRckGodsData: Boolean;
+function TCalcForGodsCost.DeleteRckGodsData(DelFlag:Boolean): Boolean;
 var
   SQL:string;
 begin
@@ -871,6 +873,8 @@ begin
     SQL := ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate)+' and CREA_DATE<='+FormatDatetime('YYYYMMDD',FReckEndDate)+' ';
   FdbHelp.ExecSQL('delete from RCK_GOODS_DAYS '+SQL);
   FdbHelp.ExecSQL('delete from RCK_C_GOODS_DAYS '+SQL);
+  if DelFlag then
+    FdbHelp.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate));
   result:=true;
 end;
 
@@ -899,15 +903,15 @@ begin
               'case when B.CLIENT_ID is null then ''#'' else B.CLIENT_ID end,'+
               'B.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
               'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2))as SALE_MNY,'+
-              'sum(round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)) as SALE_TAX, '+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2))as SALE_MNY,'+
+              'sum(round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)) as SALE_TAX, '+
               'sum(round(A.CALC_AMOUNT*isnull(A.COST_PRICE,0),2)) as SALE_CST,'+
               'round(case when sum(A.CALC_AMOUNT)<>0 then sum(A.CALC_AMOUNT*isnull(A.COST_PRICE,0))*1.0000/sum(A.CALC_AMOUNT) else 0 end,6) as COST_PRICE, '+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)'+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)'+
                   '-round(A.CALC_AMOUNT*isnull(A.COST_PRICE,0),2)) as SALE_PRF, '+
               'sum(case when B.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, '+
-              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
-              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
+              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
+              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
               'sum(case when B.SALES_TYPE=3 then round(A.CALC_AMOUNT*isnull(A.COST_PRICE,0),2) else 0 end) as SALRT_CST, '+
               '''00'','+GetTimeStamp(iDbType)+' '+
           ' from SAL_SALESDATA A,SAL_SALESORDER B '+
@@ -945,15 +949,15 @@ begin
               'case when B.CLIENT_ID is null then ''#'' else B.CLIENT_ID end,'+
               'B.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
               'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2))as SALE_MNY,'+
-              'sum(round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)) as SALE_TAX, '+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2))as SALE_MNY,'+
+              'sum(round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)) as SALE_TAX, '+
               'sum(round(A.CALC_AMOUNT*isnull(C.COST_PRICE,0),2)) as SALE_CST,'+
               'max(C.COST_PRICE) as COST_PRICE, '+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)'+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)'+
                   '-round(A.CALC_AMOUNT*isnull(C.COST_PRICE,0),2)) as SALE_PRF, '+
               'sum(case when B.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, '+
-              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
-              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
+              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
+              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
               'sum(case when B.SALES_TYPE=3 then round(A.CALC_AMOUNT*isnull(C.COST_PRICE,0),2) else 0 end) as SALRT_CST, '+
               '''00'','+GetTimeStamp(iDbType)+' '+
           ' from SAL_SALESDATA A '+

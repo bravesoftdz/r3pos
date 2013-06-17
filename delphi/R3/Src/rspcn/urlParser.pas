@@ -71,18 +71,27 @@ var wb:string;
 begin
   if urlToken.appId='xsm-in' then
      begin
-        if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有错，');
         if pos('xsm.htm',urltoken.moduname)>0 then
-           result := UcFactory.xsmWB
+           begin
+             if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有误...');
+             result := UcFactory.xsmWB
+           end
         else
            begin
               if pos('ecweb',urltoken.path)>0 then
-                 wb := UcFactory.ecWeb
+                 begin
+                   if UcFactory.ecWeb='' then Raise Exception.Create('新商盟ecweb地址配置有误...');
+                   wb := UcFactory.ecWeb;
+                 end
               else
               if pos('scweb',urltoken.path)>0 then
-                 wb := UcFactory.scWeb
+                 begin
+                   if UcFactory.scWeb='' then Raise Exception.Create('新商盟scweb地址配置有误...');
+                   wb := UcFactory.scWeb;
+                 end
               else
-                 Raise Exception.Create('无效地址'); 
+                 Raise Exception.Create('无效的新商盟地址...');
+              delete(urltoken.path,1,6);
               if wb[length(wb)]='/' then
                  begin
                    if urltoken.path='/' then

@@ -46,6 +46,7 @@ type
     procedure SetPrgPercent(const Value: integer);
     procedure SetBegTickCount(const Value: integer);
     function GetDayCloseFlag(flag:integer):Boolean;
+    function CheckAutoClsMthRck:Boolean; //判断是否超过7天并自动月结账
   protected
     procedure CheckCalcReckStatus; //在线版判断是否多人同时在核算
     procedure ClearCalcReckStatus; //在线版清除核算标记
@@ -131,86 +132,87 @@ begin
   rs:= TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+    rs.SQL.Text := 'select max(CREA_DATE)as max_date from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
     Factor.Open(rs);
     isfirst := false;
     if rs.Fields[0].asString<>'' then
-       cDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
+      cDate:=fnTime.fnStrtoDate(rs.Fields[0].asString)
     else
-       begin
-         rs.Close;
-         rs.SQL.Text :=  'select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
-         Factor.Open(rs);
-         if rs.Fields[0].asString<>'' then
-            cDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
-         else
-            cDate := Date()-1;
-         rs.Close;
-         rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',cDate);
-         Factor.Open(rs);
-         if rs.Fields[0].AsString <> '' then
-            Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期'); 
-         isfirst := true;
-       end;
+    begin
+      rs.Close;
+      rs.SQL.Text :=  'select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
+      Factor.Open(rs);
+      if rs.Fields[0].asString<>'' then
+        cDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
+       else
+        cDate := Date()-1;
+      rs.Close;
+      rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',cDate);
+      Factor.Open(rs);
+      if rs.Fields[0].AsString <> '' then
+        Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期');
+      isfirst := true;
+    end;
 
+    //计算上一次月结账日期
     rs.Close;
     rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
     Factor.Open(rs);
-    isfirst := false;
+    isfirst := false;  //是否第一次计算
     if rs.Fields[0].asString<>'' then
-       bDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
+      bDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
     else
-       begin
-         rs.Close;
-         rs.SQL.Text :=  'select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
-         Factor.Open(rs);
-         if rs.Fields[0].asString<>'' then
-            bDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
-         else
-            bDate := Date()-1;
-         isfirst := true;
-       end;
-    if flag=1 then //检测是否日结账
-       begin
-         rs.close;
-         rs.SQL.Text := 'select CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+formatDatetime('YYYYMMDD',eDate);
-         Factor.Open(rs);
-         btnStart.Enabled := rs.IsEmpty;
-         if not rs.IsEmpty then
-            eDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
-       end;
-    if flag=2 then //月结时检测结账月份
-       begin
-         if reck_flag=1 then
-           begin
-             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),1))+'01')-1;
-             if e>date() then //还没到结账日
-                eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
-             else
-                eDate := e;
-           end
-         else
-           begin
-             e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',date())+formatfloat('00',reck_day)));
-             if e>date() then //还没到结账日
-                eDate := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day)))
-             else
-                eDate := e;
-           end;
-         rs.close;
-         rs.SQL.Text := 'select month from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+formatDatetime('YYYYMM',eDate);
-         Factor.Open(rs);
-         btnStart.Enabled := rs.IsEmpty and (eDate>bDate);
-         if eDate<bDate then eDate := bDate;
-       end;
+    begin
+      rs.Close;
+      rs.SQL.Text :=  'select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
+      Factor.Open(rs);
+      if rs.Fields[0].asString<>'' then
+        bDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
+      else
+        bDate := Date()-1;
+      isfirst := true;
+    end;
 
+    case flag of
+     1: //检测是否日结账
+      begin
+        rs.close;
+        rs.SQL.Text := 'select CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+formatDatetime('YYYYMMDD',eDate);
+        Factor.Open(rs);
+        btnStart.Enabled := rs.IsEmpty;
+        if not rs.IsEmpty then
+          eDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
+      end;
+     2: //月结时检测结账月份
+      begin
+        if reck_flag=1 then //月底结账
+        begin
+          e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),1))+'01')-1;
+          if e>date() then //还没到结账日
+            eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
+          else
+            eDate := e;
+        end else  //指定日月结账
+        begin
+          e := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',date())+formatfloat('00',reck_day)));
+          if e>date() then //还没到结账日
+            eDate := fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day)))
+          else
+            eDate := e;
+        end;
+        rs.close;
+        rs.SQL.Text := 'select month from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+formatDatetime('YYYYMM',eDate);
+        Factor.Open(rs);
+        btnStart.Enabled := rs.IsEmpty and (eDate>bDate);
+        if eDate<bDate then eDate := bDate;
+      end;
+    end;
+    
     //判断条件
     myDate := cDate;
     if calc_flag=2 then myDate := bDate;
     rs.close;
-    //rs.SQL.Text := 'select max(CREA_DATE) as HDate,min(CREA_DATE) as LDate from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',myDate)+' ';
-    //从3个表单据中取此日期
-    rs.SQL.Text :=
+    rs.SQL.Text :=  //从3个表单据中取此日期
        'select max(STOCK_DATE) as HDate,min(STOCK_DATE) as LDate from STK_STOCKORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
        ' union all '+
        'select max(SALES_DATE) as HDate,min(SALES_DATE) as LDate from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
@@ -236,7 +238,7 @@ begin
   finally
     rs.free;
   end;
-end;
+end; 
 
 procedure TfrmCostCalc.SetcDate(const Value: TDate);
 begin
@@ -693,7 +695,8 @@ begin
   FOldPrgPercent:=PrgPercent; //循环前的进度
   FAllPrgCount:=MthCount;      //当前循环总个数据
   FSubPrgPercent:=0.70;  //子过程中占整个过程%;
-  DoCalcDayReckByMth(InParams,False);
+  DayClsFlag:=GetDayCloseFlag(self.flag);
+  DoCalcDayReckByMth(InParams,DayClsFlag);
 
   //2、成本核算成功更新最后一天业务库存 (平时试算不更新库存)
   // DoCalcUpdateStorage(InParams);
@@ -832,9 +835,9 @@ begin
       b := b +round(e-(bDate+b))+1;
       Continue;
     end;
-    //[移动加权、日移动加权]
+    //[移动加权、日移动加权] [本次核算日期从最后一次关账日期开始]
     if (Fcflag in [0,1]) and (cDate>=ReckBegDate) then
-      ReckBegDate:=cDate+1; //上次日结账日期+1;
+      ReckBegDate:=cDate+1; //上次日结账日期+1;  
 
     //核算日期提示
     if ReckBegDate = e then
@@ -880,17 +883,20 @@ begin
     if ReMsg<>'RCK_OK' then Raise Exception.Create('核算账户['+ReckMonth+']出错<'+ReMsg+'>');
     DoSetPrgPercent(CurNo,9); //设置进度
 
-    //DDDDDDDDDDDDDDD、日结表头关账
-    if (ClsFalg) and (LockCompanyCheck) and (cDate<e) then //只有日结内时间要生成记录已生成日台账部份
+    //DDDDDDDDDDDDDD、插入日结表头关账
+    if (ClsFalg) and (LockCompanyCheck) and (cDate<=e) then //只有日结内时间要生成记录已生成日台账部份
     begin
       Label11.Caption := '正在生成['+ReckMonth+']日结账';
       Update;
       InParams.ParamByName('CALC_CMD_IDX').AsInteger:=4;
-      InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDateTime('YYYYMMDD',ReckBegDate);  //区间开始日期
-      //2013.03.17只对当前业务日期之前的进行日结关账(日结关账小于当前业务日期)
+      //if (Fcflag=2) and (cDate>=ReckBegDate) then //月移动平均关账日期从最大结账日期开始到核算当天
+      //  InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDateTime('YYYYMMDD',cDate+1)  //区间开始日期
+      //else
+        InParams.ParamByName('RCK_BEG_DATE').AsString:=FormatDateTime('YYYYMMDD',ReckBegDate);  //区间开始日期
+      //2013.03.17只对当前业务日期之前的进行日结关账(日结关账小于当前业务日期) [当天日结]
       if (e>=Global.sysDate) then
       begin
-        e:=Global.sysDate-1;
+        e:=Global.sysDate;
         InParams.ParamByName('RCK_END_DATE').AsString:=FormatDateTime('YYYYMMDD',e); //区间结束日期
         IS_CLS_FLAG:=true;
       end;
@@ -952,7 +958,7 @@ function TfrmCostCalc.DoCalcMonthReck(InParams: TftParamList;CalcFlag:string): B
 var
   i:integer;
   b,bl:integer;
-  RckBegDate,e:TDate;
+  RckBegDate,e,CurEndDate:TDate;
   RckMonth:string;
   ReMsg:string;
 begin
@@ -1007,14 +1013,22 @@ begin
     end;
 
     //计算月台账结账的记录
-    if Copy(CalcFlag,3,1)='1' then
+    if (Copy(CalcFlag,3,1)='1') or CheckAutoClsMthRck then
     begin
-      InParams.ParamByName('CALC_CMD_IDX').AsInteger:=3;
-      ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
-      if ReMsg<>'RCK_OK' then Raise Exception.Create('月结账出错<'+ReMsg+'>');
-      DoSetPrgPercent(i,10); //设置进度
+      //判断当前最大日期是否符合月结账条件 [当前操作系统的日期前一个月结账日期]
+      case reck_flag of
+       1:CurEndDate:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',Date())+'01')-1;
+       2:CurEndDate:=fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day)));
+      end;
+      if (e<=CurEndDate) then
+      begin
+        InParams.ParamByName('CALC_CMD_IDX').AsInteger:=3;
+        ReMsg:=Factor.ExecProc('TCostCalcForMonthReck',InParams);
+        if ReMsg<>'RCK_OK' then Raise Exception.Create('月结账出错<'+ReMsg+'>');
+        DoSetPrgPercent(i,10); //设置进度
+      end;
     end;
-    
+
     if e>=eDate then break; //月份结账
     b := b +round(e-(bDate+b))+1;
     SetBegTickCount(0);
@@ -1058,10 +1072,36 @@ begin
   result:=False;
   if not (flag in [1,2]) then
   begin
+    //(在线版) and (离线模式)
     if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
+    //(检测若是单机版) and (锁定电脑) 
     if not (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and not LockCompanyCheck then Exit;
   end;
   result:=true;
+end;
+
+function TfrmCostCalc.CheckAutoClsMthRck: Boolean;
+var
+  Rs:TZQuery;
+  NearMthDate:TDate;
+begin
+  result:=False;
+  if flag<>2 then //不是月结账
+  begin
+    //根据结账日期判断
+    case reck_flag of
+     1://月底结账
+      begin
+        NearMthDate:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',Global.SysDate)+'01')-1;
+        result:=(Global.SysDate > NearMthDate+7);  //大于7天
+      end;
+     2://指定日结账
+      begin
+        NearMthDate:=fnTime.fnStrtoDate(CheckValidDate(formatDatetime('YYYYMM',IncMonth(Global.SysDate,-1))+FormatFloat('00',reck_day)));
+        result:=(Global.SysDate > NearMthDate+7);  //大于7天
+      end;
+    end;
+  end;
 end;
 
 end.

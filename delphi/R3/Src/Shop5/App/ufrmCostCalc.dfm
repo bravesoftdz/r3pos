@@ -23,7 +23,7 @@ inherited frmCostCalc: TfrmCostCalc
     Height = 12
     Caption = #25191#34892#25104#26412#26680#31639
     Font.Charset = GB2312_CHARSET
-    Font.Color = clLime
+    Font.Color = clBlue
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = []

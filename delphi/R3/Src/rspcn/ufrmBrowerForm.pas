@@ -1114,7 +1114,7 @@ begin
     begin
       if lowercase(TTabSheetEx(PageControl1.Pages[i]).url.appId)=lowercase(_url.appId) then
          begin
-           if (_url.appFlag>0) and (_url.moduname<>TTabSheetEx(PageControl1.Pages[i]).url.moduname) then continue;
+           if ((_url.appFlag>0) or (lowercase(_url.appId)='xsm-in')) and (_url.moduname<>TTabSheetEx(PageControl1.Pages[i]).url.moduname) then continue;
            result := true;
            PageControl1.ActivePageIndex := i;
            pageButtonSort;

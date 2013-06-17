@@ -1,9 +1,10 @@
 object frmLogo: TfrmLogo
   Left = 192
   Top = 160
-  Width = 870
-  Height = 500
+  BorderStyle = bsNone
   Caption = 'frmLogo'
+  ClientHeight = 462
+  ClientWidth = 854
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

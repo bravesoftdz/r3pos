@@ -1,5 +1,6 @@
 inherited frmRckDayReport: TfrmRckDayReport
   Left = 192
+  Top = 103
   Width = 1022
   Height = 611
   Caption = #33829#19994#32467#36134#25253#34920
@@ -14,10 +15,10 @@ inherited frmRckDayReport: TfrmRckDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet5
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -315,28 +316,6 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 78
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32564#38134#37329#39069
-                      Width = 90
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_REST_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#29616#37329
-                      Width = 104
                     end>
                 end
               end
@@ -704,28 +683,6 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32564#38134#37329#39069
-                      Width = 66
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_REST_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#29616#37329
-                      Width = 94
                     end>
                 end
               end
@@ -1133,26 +1090,6 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
-                    end
-                    item
-                      Alignment = taRightJustify
-                      EditButtons = <>
-                      FieldName = 'TRN_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32564#38134#37329#39069
-                      Width = 69
-                    end
-                    item
-                      Alignment = taRightJustify
-                      EditButtons = <>
-                      FieldName = 'TRN_REST_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#29616#37329
-                      Width = 84
                     end>
                 end
               end

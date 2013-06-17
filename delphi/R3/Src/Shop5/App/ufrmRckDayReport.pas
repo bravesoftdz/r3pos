@@ -295,7 +295,7 @@ begin
      ' '+GetDateCnd(P1_D1,P1_D2,'RECV_DATE')+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,B.REGION_ID,A.SHOP_ID ';
-
+  {
   //台账表
   RCKRData:=
     'select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS '+
@@ -307,9 +307,9 @@ begin
     'sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY,sum(TRN_MNY) as TRN_MNY, sum(BAL_MNY) as TRN_REST_MNY from '+
     '('+ViwSql+') j '+
     ' left outer join ('+RCKRData+')c on j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
-    
+  }  
   strSql:=
-    'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
+    'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+ViwSql+') jp '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
     ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID ';
 
@@ -386,7 +386,7 @@ begin
      ' '+GetDateCnd(P2_D1,P2_D2,'RECV_DATE')+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,A.SHOP_ID ';
-
+  {
   //台账表
   RCKRData:=
     'select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS '+
@@ -395,11 +395,11 @@ begin
   strSql:=
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY from ('+ViwSql+') j left outer join ('+RCKRData+')c '+
     ' on j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID ';
-
+  }
   //关联门店
   strSql:=
     'select jp.*,r.SEQ_NO as SHOP_CODE,r.SHOP_NAME as SHOP_NAME '+
-    ' from ('+strSql+')jp left outer join CA_SHOP_INFO r '+
+    ' from ('+ViwSql+')jp left outer join CA_SHOP_INFO r '+
     ' on jp.TENANT_ID=r.TENANT_ID and jp.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
 
   Result := ParseSQL(Factor.iDbType, strSql);    
@@ -418,7 +418,7 @@ begin
   //测试计算日台账:
   CheckCalc(EndDate);
   //按根据条件门店查询:
-  ViwSql:=
+  strSql:=
      'select A.RECV_DATE as RECV_DATE,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight+
@@ -427,6 +427,7 @@ begin
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
      ' group by A.RECV_DATE ';
 
+  {
   //台账表
   RCKRData:=
     'select CREA_DATE,isnull(sum(TRN_OUT_MNY),0)-isnull(sum(TRN_IN_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY '+
@@ -439,7 +440,8 @@ begin
     ' from ('+ViwSql+')j '+
     ' left outer join ('+RCKRData+')c '+
     ' on j.RECV_DATE=c.CREA_DATE order by j.RECV_DATE ';
-    
+  }
+  
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 

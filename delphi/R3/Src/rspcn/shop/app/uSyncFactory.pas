@@ -63,6 +63,7 @@ type
     LoginSyncDate:integer;
     LastLoginSyncDate,LastLogoutSyncDate:integer;
     FLoginId: string;
+    procedure CheckRemoteData(AppHandle:HWnd);
     procedure BackupDBFile;
     procedure InitTenant;
     procedure InitSyncList1;
@@ -1073,7 +1074,9 @@ begin
 end;
 
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
+var firstLogin:boolean;
 begin
+  firstLogin := false;
   if dllApplication.mode = 'demo' then Exit;
   AddLoginLog;
   if not token.online then Exit;
@@ -1087,6 +1090,7 @@ begin
       Application.ProcessMessages;
       if token.tenantId = '' then
          begin
+           firstLogin := true;
            TfrmSysDefine.AutoRegister;
            if token.tenantId = '' then Exit;
            if not CheckNeedLoginSync then Exit;
@@ -1116,6 +1120,7 @@ begin
       Free;
     end;
   end;
+  if firstLogin then SyncFactory.CheckRemoteData(PHWnd);
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
@@ -2157,6 +2162,72 @@ begin
   except
 
   end;
+end;
+
+procedure TSyncFactory.CheckRemoteData(AppHandle:HWnd);
+var
+  rs:TZQuery;
+  sr: TSearchRec;
+  FileAttrs: Integer;
+  NeedRecovery:boolean;
+  Folder,FileName:string;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToRemote;
+  try
+    rs.SQL.Text := 'select 1 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    NeedRecovery := not rs.IsEmpty;
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
+  if not NeedRecovery then Exit;
+
+  // 检测文件恢复
+  try
+    Folder := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId;
+    FileAttrs := 0;
+    FileAttrs := FileAttrs + faAnyFile;
+    if FindFirst(Folder+'\*.db', FileAttrs, sr) = 0 then
+       begin
+         repeat
+           try
+             if (sr.Attr and FileAttrs) = sr.Attr then
+             begin
+               if (Copy(sr.Name,1,3) = 'r3_') and (Length(sr.Name) = 14) then
+                  begin
+                    FileName := sr.Name;
+                    if (FileName = '') or (Copy(sr.Name,4,8) > Copy(FileName,4,8)) then
+                       begin
+                         FileName := sr.Name;
+                       end;
+                  end;
+             end;
+           except
+
+           end;
+         until FindNext(sr) <> 0;
+         FindClose(sr);
+       end;
+  except
+
+  end;
+
+  if FileName <> '' then
+     begin
+       if MessageBox(AppHandle,pchar('系统检测到数据备份文件，是否立即还原?'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then
+          begin
+            TfrmSysDefine.DBFileRecovery(Folder+'\'+FileName,AppHandle);
+          end;
+     end
+  else
+     begin
+       //远程数据还原
+     end;
 end;
 
 initialization

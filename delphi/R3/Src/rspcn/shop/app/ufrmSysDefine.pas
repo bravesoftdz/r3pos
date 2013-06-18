@@ -311,6 +311,7 @@ type
     procedure SetCurUserRoleIds(const Value: string);
     procedure SetUserState(const Value: TDataSetState);
 
+    procedure FileRecovery(src:string;AppHandle:HWnd);
     procedure RemoteRecovery;
 
     procedure RtcSyncClose;
@@ -322,6 +323,7 @@ type
     function checkCanClose:boolean;override;
     class function  AutoRegister:boolean;
     class procedure SaveRegister;
+    class procedure DBFileRecovery(src:string;AppHandle:HWnd);
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
     property CurUserId:string read FCurUserId write SetCurUserId;
     property CurUserName:string read FCurUserName write SetCurUserName;
@@ -1399,7 +1401,7 @@ begin
       cdsUsers.CommitUpdates;
       cdsUsers.Delete;
       dataFactory.UpdateBatch(cdsUsers,'TUsersV60');
-    Except
+    except
       cdsUsers.CancelUpdates;
       Raise;
     end;
@@ -1435,23 +1437,21 @@ begin
      end;
 end;
 
-procedure TfrmSysDefine.btnRecoveryClick(Sender: TObject);
+procedure TfrmSysDefine.FileRecovery(src:string;AppHandle:HWnd);
 var rs:TZQuery;
 begin
-  inherited;
-  if trim(edtBackUpFile.Text) = '' then Raise Exception.Create('请选择要恢复的备份文件...');
   try
     if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),false) then
        begin
-         if CopyFile(pchar(trim(edtBackUpFile.Text)),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+         if CopyFile(pchar(src),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
             begin
               rs := TZQuery.Create(nil);
               dataFactory.MoveToSqlite;
               try
                 rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
                 dataFactory.Open(rs);
-                SyncFactory.RecoverySync(self.Handle);
-                MessageBox(Handle,'数据恢复成功...','友情提示..',MB_OK);
+                SyncFactory.RecoverySync(AppHandle);
+                MessageBox(AppHandle,'数据恢复成功...','友情提示..',MB_OK);
                 RtcSyncClose;
                 if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
                    DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
@@ -1467,7 +1467,7 @@ begin
        end
     else
        begin
-         MessageBox(Handle,'数据恢复失败，原因：文件备份发生错误...','友情提示..',MB_OK);
+         MessageBox(AppHandle,'数据恢复失败，原因：文件备份发生错误...','友情提示..',MB_OK);
        end;
   except
     on E:Exception do
@@ -1480,6 +1480,14 @@ begin
          Raise Exception.Create('数据恢复失败，原因：'+E.Message);
        end;
   end;
+end;
+
+procedure TfrmSysDefine.btnRecoveryClick(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  if trim(edtBackUpFile.Text) = '' then Raise Exception.Create('请选择要恢复的备份文件...');
+  FileRecovery(trim(edtBackUpFile.Text),self.Handle);
 end;
 
 procedure TfrmSysDefine.RzLabel9Click(Sender: TObject);
@@ -1891,6 +1899,18 @@ begin
     end;
   finally
     dataFactory.MoveToDefault;
+  end;
+end;
+
+class procedure TfrmSysDefine.DBFileRecovery(src:string;AppHandle:HWnd);
+begin
+  with TfrmSysDefine.Create(nil) do
+  begin
+    try
+      FileRecovery(src,AppHandle);
+    finally
+      Free;
+    end;
   end;
 end;
 

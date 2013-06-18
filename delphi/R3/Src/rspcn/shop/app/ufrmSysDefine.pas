@@ -380,8 +380,8 @@ begin
   edtSaveFolder.Properties.ReadOnly := true;
   edtBackUpFile.Properties.ReadOnly := true;
 
-  SaveFolderDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup';
-  OpenBackUpDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup';
+  SaveFolderDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId;
+  OpenBackUpDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId;
 
   if (token.userId <> 'admin') and (token.userId <> 'system') and (token.account <> token.xsmCode) then
      Tool_Reset.Visible := false
@@ -853,7 +853,7 @@ begin
   inherited;
   if PageControl.ActivePageIndex <> 3 then
   begin
-    edtSaveFolder.Text := ExtractFilePath(Application.ExeName)+'backup\'+'db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak'; 
+    edtSaveFolder.Text := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId+'\db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak'; 
   end;
   for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
   PageControl.ActivePageIndex := 3;

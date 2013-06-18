@@ -929,7 +929,7 @@ end;
 
 procedure TfrmStockOrder.btnNewClick(Sender: TObject);
 begin
-  if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前销售单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前进货单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   NewOrder;
 end;
 

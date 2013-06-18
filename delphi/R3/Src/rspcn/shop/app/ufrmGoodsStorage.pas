@@ -125,6 +125,8 @@ type
     lower: TRzPanel;
     upper: TRzPanel;
     PrintDBGridEh1: TPrintDBGridEh;
+    PopupMenu1: TPopupMenu;
+    ExcelImport: TMenuItem;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -160,6 +162,7 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
+    procedure ExcelImportClick(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -195,7 +198,8 @@ type
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmDBGridPreview;
+uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,
+     ufrmExcelFactory,ufrmDBGridPreview;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -1917,6 +1921,13 @@ begin
   DBGridEh1.DBGridFooter.Text := ' '+#13+' 操作员:'+token.UserName+'  导出时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+token.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.SetSubstitutes(['%[whr]', '']);
+end;
+
+procedure TfrmGoodsStorage.ExcelImportClick(Sender: TObject);
+begin
+  inherited;
+  if TfrmExcelFactory.ExcelFactory(self) then
+     dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 
 initialization

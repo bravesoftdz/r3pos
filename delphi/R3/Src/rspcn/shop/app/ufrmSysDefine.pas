@@ -1446,6 +1446,7 @@ begin
        begin
          if CopyFile(pchar(src),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
             begin
+              dataFactory.sqlite.Connect;
               rs := TZQuery.Create(nil);
               dataFactory.MoveToSqlite;
               try

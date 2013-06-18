@@ -9,6 +9,7 @@ uses
 
 const
   WM_START=WM_USER+10485;
+
 type
   TfrmStocksCalc = class(TfrmWebDialog)
     RzProgressBar1: TRzProgressBar;
@@ -20,7 +21,6 @@ type
     RzLabel26: TRzLabel;
     procedure btnCalcClick(Sender: TObject);
   private
-    { Private declarations }
     procedure CreateSQLTable(sql:string;tb:string);
     //本月负库存销售清理结账记录
     procedure ClearDays;
@@ -47,7 +47,6 @@ type
   protected
     procedure WMStart(var Message: TMessage); message WM_START;
   public
-    { Public declarations }
     _beginDate:TDate;
     _endDate:TDate;
     usingDate:TDate;
@@ -58,19 +57,17 @@ type
     function getLastDate:integer;
     function getUsingDate:TDate;
     function creaStocks:boolean;
-    class function Calc(AOwner:TForm;endDate:TDate=0):boolean;
+    class function Calc(AOwner:TForm;endDate:TDate=0):boolean;overload;
+    class function Calc(PHWnd:THandle;endDate:TDate=0):boolean;overload;
   end;
 
-var
-  frmStocksCalc: TfrmStocksCalc;
-
 implementation
+
 uses udataFactory,utokenFactory,uFnUtil,objCommon,udllGlobal;
+
 {$R *.dfm}
 
-{ TfrmStocksCalc }
-
-class function TfrmStocksCalc.Calc(AOwner:TForm;endDate: TDate=0): boolean;
+class function TfrmStocksCalc.Calc(AOwner:TForm;endDate:TDate=0): boolean;
 begin
   with TfrmStocksCalc.Create(AOwner) do
     begin
@@ -79,10 +76,27 @@ begin
            eDate := dllGlobal.SysDate
         else
            eDate := endDate;
-        postMessage(handle,WM_START,0,0);
-        result := (ShowModal=mrok);
+        PostMessage(handle,WM_START,0,0);
+        result := (ShowModal=MROK);
       finally
-        free;
+        Free;
+      end;
+    end;
+end;
+
+class function TfrmStocksCalc.Calc(PHWnd:THandle;endDate:TDate): boolean;
+begin
+  with TfrmStocksCalc.CreateParented(PHWnd) do
+    begin
+      try
+        if endDate=0 then
+           eDate := dllGlobal.SysDate
+        else
+           eDate := endDate;
+        PostMessage(handle,WM_START,0,0);
+        result := (ShowModal=MROK);
+      finally
+        Free;
       end;
     end;
 end;

@@ -13,7 +13,6 @@ uses
 
 type
   TfrmSysDefine = class(TfrmWebToolForm)
-    lblCaption: TRzLabel;
     RzPanel1: TRzPanel;
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
@@ -246,6 +245,7 @@ type
     RzPanel53: TRzPanel;
     RzPanel54: TRzPanel;
     RzLabel25: TRzLabel;
+    lblCaption: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);

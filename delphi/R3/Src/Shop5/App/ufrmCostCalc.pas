@@ -213,11 +213,14 @@ begin
     if calc_flag=2 then myDate := bDate;
     rs.close;
     rs.SQL.Text :=  //从3个表单据中取此日期
-       'select max(STOCK_DATE) as HDate,min(STOCK_DATE) as LDate from STK_STOCKORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
-       ' union all '+
-       'select max(SALES_DATE) as HDate,min(SALES_DATE) as LDate from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
-       ' union all '+
-       'select max(CHANGE_DATE) as HDate,min(CHANGE_DATE) as LDate from STO_CHANGEORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CHANGE_DATE>'+formatDatetime('YYYYMMDD',myDate)+' ';
+       'select max(HDate)as HDate,min(LDate)as LDate from '+
+       '('+
+        'select max(STOCK_DATE) as HDate,min(STOCK_DATE) as LDate from STK_STOCKORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
+        ' union all '+
+        'select max(SALES_DATE) as HDate,min(SALES_DATE) as LDate from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
+        ' union all '+
+        'select max(CHANGE_DATE) as HDate,min(CHANGE_DATE) as LDate from STO_CHANGEORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CHANGE_DATE>'+formatDatetime('YYYYMMDD',myDate)+
+       ')TP ';
     Factor.Open(rs);
     if rs.Fields[0].asString<>'' then
     begin

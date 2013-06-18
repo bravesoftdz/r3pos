@@ -2227,7 +2227,7 @@ begin
             except
               on E:Exception do
                  begin
-                   MessageBox(AppHandle,pchar('数据恢复失败，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                   MessageBox(AppHandle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
                  end;
             end;
           end;

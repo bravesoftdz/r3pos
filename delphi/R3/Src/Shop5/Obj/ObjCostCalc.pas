@@ -867,14 +867,14 @@ var
   SQL:string;
 begin
   result:=False;
+  if DelFlag then //月移动先删除表头
+    FdbHelp.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate));
   if FReckBegDate = FReckEndDate then
     SQL := ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE='+FormatDatetime('YYYYMMDD',FReckBegDate)+' '
   else
     SQL := ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate)+' and CREA_DATE<='+FormatDatetime('YYYYMMDD',FReckEndDate)+' ';
   FdbHelp.ExecSQL('delete from RCK_GOODS_DAYS '+SQL);
   FdbHelp.ExecSQL('delete from RCK_C_GOODS_DAYS '+SQL);
-  if DelFlag then
-    FdbHelp.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate));
   result:=true;
 end;
 

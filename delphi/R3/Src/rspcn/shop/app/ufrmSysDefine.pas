@@ -1474,6 +1474,7 @@ begin
        begin
          if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
          begin
+           dataFactory.sqlite.Connect;
            if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
               DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
          end;

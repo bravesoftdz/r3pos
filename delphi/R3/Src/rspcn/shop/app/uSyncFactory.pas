@@ -2219,14 +2219,25 @@ begin
 
   if FileName <> '' then
      begin
+       //本地文件还原
        if MessageBox(AppHandle,pchar('系统检测到数据备份文件，是否立即还原?'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then
           begin
-            TfrmSysDefine.DBFileRecovery(Folder+'\'+FileName,AppHandle);
+            try
+              TfrmSysDefine.DBFileRecovery(Folder+'\'+FileName,AppHandle);
+            except
+              on E:Exception do
+                 begin
+                   MessageBox(AppHandle,pchar('数据恢复失败，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                 end;
+            end;
           end;
      end
   else
      begin
        //远程数据还原
+       if MessageBox(AppHandle,pchar('系统检测到服务端数据，是否立即还原?'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then
+          begin
+          end;
      end;
 end;
 

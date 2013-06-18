@@ -63,6 +63,7 @@ type
     LoginSyncDate:integer;
     LastLoginSyncDate,LastLogoutSyncDate:integer;
     FLoginId: string;
+    procedure BackupDBFile;
     procedure InitTenant;
     procedure InitSyncList1;
     procedure InitSyncList;
@@ -1097,10 +1098,11 @@ begin
       else
          begin
            if not CheckNeedLoginSync then Exit;
+           SyncFactory.BackupDBFile;
            SyncFactory.SyncBasic;
            if CheckNeedLoginSyncBizData then
               begin
-                if MessageBox(PHWnd,'系统检测到上次未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
+                if MessageBox(PHWnd,'系统检测到上次退出未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
                    begin
                      SyncFactory.SyncBizData;
                      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
@@ -2111,6 +2113,48 @@ begin
     end;
   finally
     vParams.Free;
+  end;
+end;
+
+procedure TSyncFactory.BackupDBFile;
+var
+  sr: TSearchRec;
+  FileAttrs: Integer;
+  delTime,Folder,FileName: string;
+begin
+  ProTitle := '正在备份数据文件，请稍候...';
+  try
+    delTime := FormatDateTime('YYYYMMDD',now()-7);
+    Folder := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId; 
+    FileName := Folder+'\r3_'+FormatDateTime('YYYYMMDD',now())+'.db';
+    ForceDirectories(ExtractFileDir(FileName));
+    CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(FileName),false);
+
+    // 删除历史备份文件
+    FileAttrs := 0;
+    FileAttrs := FileAttrs + faAnyFile;
+    if FindFirst(Folder+'\*.db', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        try
+          if (sr.Attr and FileAttrs) = sr.Attr then
+          begin
+            if (Copy(sr.Name,1,3) = 'r3_') and (Length(sr.Name) = 14) then
+               begin
+                 if (Copy(sr.Name,4,8) <= delTime) then
+                    begin
+                      DeleteFile(Folder+'\'+sr.Name);
+                    end;
+               end;
+          end;
+        except
+
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+  except
+
   end;
 end;
 

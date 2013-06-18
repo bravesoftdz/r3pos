@@ -312,7 +312,7 @@ type
     procedure SetUserState(const Value: TDataSetState);
 
     procedure FileRecovery(src:string;AppHandle:HWnd);
-    procedure RemoteRecovery;
+    procedure RemoteRecovery(recType:string;AppHandle:HWnd);
 
     procedure RtcSyncClose;
   public
@@ -324,6 +324,7 @@ type
     class function  AutoRegister:boolean;
     class procedure SaveRegister;
     class procedure DBFileRecovery(src:string;AppHandle:HWnd);
+    class procedure DBRemoteRecovery(recType:string;AppHandle:HWnd);
     property FirstLogin:boolean read FFirstLogin write SetFirstLogin;
     property CurUserId:string read FCurUserId write SetCurUserId;
     property CurUserName:string read FCurUserName write SetCurUserName;
@@ -1740,12 +1741,25 @@ begin
 end;
 
 procedure TfrmSysDefine.btnRecoveryRemoteClick(Sender: TObject);
+var recType:string;
 begin
   inherited;
-  RemoteRecovery;
+  if Recovery_1.Checked then
+     begin
+       recType := '1';
+     end
+  else if Recovery_2.Checked then
+     begin
+       recType := '2';
+     end
+  else if Recovery_3.Checked then
+     begin
+       recType := '3';
+     end;
+  RemoteRecovery(recType,self.Handle);
 end;
 
-procedure TfrmSysDefine.RemoteRecovery;
+procedure TfrmSysDefine.RemoteRecovery(recType:string;AppHandle:HWnd);
 var
   rs:TZQuery;
   str,BeginDate,MaxDate:string;
@@ -1758,20 +1772,20 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.ParamByName('SHOP_ID').AsString := token.shopId;
     dataFactory.Open(rs);
-    if not rs.IsEmpty then Raise Exception.Create('本地存在业务数据，无法进行灾难恢复...');
+    if not rs.IsEmpty then Raise Exception.Create('本地存在业务数据，无法进行数据恢复...');
   finally
     rs.Free;
   end;
 
-  if Recovery_1.Checked then
+  if recType = '1' then
      begin
        BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-1));
      end
-  else if Recovery_2.Checked then
+  else if recType = '2' then
      begin
        BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-2));
      end
-  else if Recovery_3.Checked then
+  else
      begin
        BeginDate := FormatDateTime('YYYYMM',IncMonth(now(),-3));
      end;
@@ -1779,10 +1793,10 @@ begin
 
   try
     // 同步数据
-    SyncFactory.RecoverySync(self.Handle,BeginDate);
+    SyncFactory.RecoverySync(AppHandle,BeginDate);
 
     // 试算台账、矫正库存
-    TfrmStocksCalc.Calc(self);
+    TfrmStocksCalc.Calc(AppHandle);
 
     rs := TZQuery.Create(nil);
     try
@@ -1909,6 +1923,18 @@ begin
   begin
     try
       FileRecovery(src,AppHandle);
+    finally
+      Free;
+    end;
+  end;
+end;
+
+class procedure TfrmSysDefine.DBRemoteRecovery(recType:string;AppHandle:HWnd);
+begin
+  with TfrmSysDefine.Create(nil) do
+  begin
+    try
+      RemoteRecovery(recType,AppHandle);
     finally
       Free;
     end;

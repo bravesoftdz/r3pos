@@ -1084,6 +1084,7 @@ begin
       ShowForm;
       BringToFront;
       Update;
+      Application.ProcessMessages;
       if token.tenantId = '' then
          begin
            TfrmSysDefine.AutoRegister;

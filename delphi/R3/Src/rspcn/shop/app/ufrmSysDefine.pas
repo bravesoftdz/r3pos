@@ -454,6 +454,8 @@ begin
   if cdsShopInfo.IsEmpty then cdsShopInfo.Append
   else cdsShopInfo.Edit;
 
+  if rspFactory.shopId = '' then Raise Exception.Create('门店信息尚未审核...');
+
   if Copy(rspFactory.shopId,Length(rspFactory.shopId)-3,Length(rspFactory.shopId)) = '0001' then
   begin
     cdsShopInfo.FieldByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
@@ -1713,6 +1715,7 @@ begin
         GetShopInfo;
       except
         MessageBox(Handle,'尚未开通门店管理功能，请联系客户经理...','友情提示..',MB_OK);
+        Exit;
       end;
       SaveShopInfo(true);
       result := true;

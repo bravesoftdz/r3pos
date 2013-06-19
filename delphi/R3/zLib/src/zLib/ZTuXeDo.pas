@@ -1,7 +1,7 @@
 unit ZTuXeDo;
                      
 interface
-uses Windows, Messages, SysUtils, Variants, Classes,Dialogs, ZDataSet, ZDbcIntfs,DB,ZdbHelp,ZBase;
+uses Windows, Messages, SysUtils, Variants, Classes,Dialogs, ZDataSet, ZDbcIntfs,DB,ZdbHelp,ZBase,Registry;
   //=========================ATMI 函数 =================================//
   // 资料:http://wenku.baidu.com/view/dae80920af45b307e8719787.html     //
   // 代码:张森荣                  时间:2012-01-06                       //
@@ -170,9 +170,11 @@ type
     FTickCount:integer;  //开始时间点
     FLogMsg:string; //日志内容
     procedure WriteToFile(LogStr:string);
+    procedure SetDefaultLogDir; //设置日志默认目录
+    function GetParamList(InParams:TftParamList):string;
   protected
     procedure RaiseError;
-    function  CheckRaiseError: Boolean; //检查是否网络断开，若是返回True,否则抛异常
+    function  CheckRaiseError(TimeOutCount:integer): Boolean; //检查是否网络断开，若是返回True,否则抛异常
     procedure ClearBuf;
     procedure CheckPackedError(coPacket:PftPacked);
     procedure ClearList(coList:TList);
@@ -810,7 +812,7 @@ begin
     coList.Free;
 
     FTickCount:=GetTickCount-FTickCount;
-    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.OpenBatch('+FLogMsg+')');
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.BCommit('+FLogMsg+')');
   end;
 end;
 
@@ -848,6 +850,7 @@ begin
   recvbuf := nil;
   fiDbType := -1;
   FList := TList.Create;
+  SetDefaultLogDir;
 end;
 
 procedure TZTuXeDo.DBLock(Locked: boolean);
@@ -874,6 +877,7 @@ end;
 function TZTuXeDo.ExecProc(AClassName: String;
   Params: TftParamList): String;
 var
+  ObjName:string;
   coPacket:TftPacked;
 begin
   FTickCount:=GetTickCount;
@@ -893,8 +897,10 @@ begin
     CheckPackedError(@coPacket);
     result := coPacket.Data;
   finally
+    ObjName:=AClassName;
+    ObjName:=ObjName+GetParamList(Params);
     FTickCount:=GetTickCount-FTickCount;
-    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.ExecProc(RuleName='+AClassName+')');
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.ExecProc(RuleName='+ObjName+')');
   end;
 end;
 
@@ -974,7 +980,7 @@ begin
     Port := StrtoIntDef(vList.Values['port'],1024);
   	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port)));
    	tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
-//    dbid := StrtoIntDef(vList.Values['dbid'],1);
+    //dbid := StrtoIntDef(vList.Values['dbid'],1);
   finally
     vList.Free;
   end;
@@ -988,6 +994,7 @@ end;
 function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 var
+  ObjName:string;
   coPacket:TftPacked;
 begin
   FTickCount:=GetTickCount;
@@ -1015,8 +1022,10 @@ begin
     end;
     result:=TZQuery(DataSet).Active;
   finally
+    ObjName:=AClassName;
+    ObjName:=ObjName+GetParamList(Params);
     FTickCount:=GetTickCount-FTickCount;
-    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.GOpen(RuleName='+AClassName+')');
+    WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.GOpen(RuleName='+ObjName+')');
   end;
 end;
 
@@ -1126,7 +1135,7 @@ begin
   Raise Exception.Create(s);
 end;
 
-function TZTuXeDo.CheckRaiseError: Boolean;
+function TZTuXeDo.CheckRaiseError(TimeOutCount:integer): Boolean;
 var
   errno:integer;
   errMsg:string;
@@ -1138,7 +1147,7 @@ begin
   except
     Raise Exception.Create('读取tperrno错误信息失败');
   end;
-  if Pos('Cannot open message catalog LIBWSC_CAT',errMsg)>0 then //判断是否未连接
+  if (Pos('Cannot open message catalog LIBWSC_CAT',errMsg)>0)and(TimeOutCount<500) then //判断是否未连接
   begin
     //先断开
     tpterm();
@@ -1147,7 +1156,7 @@ begin
   	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port)));
    	tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
     //重新连接
-    Connect;    
+    Connect;
     result:=true;
   end else
     Raise Exception.Create(errMsg);
@@ -1162,6 +1171,7 @@ end;
 function TZTuXeDo.UpdateBatch(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 var
+  ObjName:string;
   coPacket:TftPacked;
 begin
   FTickCount:=GetTickCount;
@@ -1181,8 +1191,9 @@ begin
     Recv(@coPacket);
     CheckPackedError(@coPacket);
     result := true;
-
   finally
+    ObjName:=AClassName;
+    ObjName:=ObjName+GetParamList(Params);
     FTickCount:=GetTickCount-FTickCount;
     WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.UpdateBatch(RuleName='+AClassName+')');
   end;
@@ -1216,11 +1227,11 @@ begin
     if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
     begin
       LTickCount:=GetTickCount-LTickCount;
-      if (LTickCount<500) and CheckRaiseError then  
+      if CheckRaiseError(LTickCount) then
       begin
         if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
           RaiseError;
-      end;
+      end
     end;
   finally
     ms.Free;
@@ -1236,6 +1247,7 @@ procedure TZTuXeDo.BSend(coList: TList;SvcName:string);
 var
   ms : TMemoryStream;
   i:integer;
+  LTickCount:integer;
 begin
   ClearBuf;
   ms := TMemoryStream.Create;
@@ -1250,9 +1262,11 @@ begin
     recvlen := sendlen;
     recvbuf := tpalloc('CARRAY', nil, recvlen+1);
     //2012-07-04 xhh第一次执行若是返回连接错误，则重新连接在执行
+    LTickCount:=GetTickCount;
    	if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
     begin
-      if CheckRaiseError then //检测网络断开重连接在执行1次
+      LTickCount:=GetTickCount-LTickCount;
+      if CheckRaiseError(LTickCount) then //检测网络断开重连接在执行1次
       begin
         if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
           RaiseError;
@@ -1348,6 +1362,41 @@ begin
        CloseFile(F);
      end;
   except
+  end;
+end;
+
+function TZTuXeDo.GetParamList(InParams: TftParamList): string;
+var
+  i:integer;
+begin
+  result:='';
+  if (InParams<>nil)and(InParams.Count>0) then
+  begin
+    result:='; ParamList=';
+    for i:=0 to InParams.Count-1 do
+      result:=result+'['+InParams[i].Name+'='+InParams[i].AsString+'],';
+  end;
+end;
+
+procedure TZTuXeDo.SetDefaultLogDir;
+var
+  vReg,RegValue:string;
+  RegObj:TRegistry;
+begin
+  vReg:='SOFTWARE\Oracle\TUXEDO\11.1.1.2.0\Environment';
+  RegObj := TRegistry.Create;
+  try
+    try
+      RegObj.RootKey := HKEY_LOCAL_MACHINE;
+      if not RegObj.KeyExists(vReg) then RegObj.CreateKey(vReg);
+      RegObj.OpenKey(vReg, True);
+      RegValue:=RegObj.ReadString('ULOGDIR');
+      if trim(RegValue)<>Fpath then RegObj.WriteString('ULOGDIR', Fpath+'log');
+    except
+    end;
+    RegObj.CloseKey;
+  finally
+    RegObj.Free;
   end;
 end;
 

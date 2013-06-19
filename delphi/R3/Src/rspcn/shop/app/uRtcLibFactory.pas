@@ -23,7 +23,7 @@ type
     SendDataAsync:TDllSendDataAsync;
     procedure LoadDllFactory;
     procedure FreeDllFactory;
-    function  GetXmlHeader(xml:widestring):widestring;
+    function  GetXmlHeader(xml:widestring):string;
   public
     ticket:string;
     ticketLength,NetStatus:integer;
@@ -138,7 +138,7 @@ end;
 function TRtcLibFactory.SendData(xml: widestring): integer;
 var
   jobId:integer;
-  data:widestring;
+  data:string;
   dataLength:integer;
 begin
   result := -1;
@@ -150,7 +150,7 @@ begin
   result := SendDataAsync(pchar(appId),pchar(ticket),ticketLength,pchar(data),dataLength,3,jobId);
 end;
 
-function TRtcLibFactory.GetXmlHeader(xml: widestring): widestring;
+function TRtcLibFactory.GetXmlHeader(xml: widestring): string;
 begin
   result := '<?xml version="1.0" encoding="UTF-8"?>'+xml;
 end;

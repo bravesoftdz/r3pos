@@ -313,7 +313,6 @@ type
 
     procedure FileRecovery(src:string;AppHandle:HWnd);
     procedure RemoteRecovery(recType:string;AppHandle:HWnd);
-
     procedure RtcSyncClose;
   public
     AObj:TRecord_;
@@ -1797,7 +1796,7 @@ begin
     SyncFactory.RecoverySync(AppHandle,BeginDate);
 
     //  ‘À„Ã®’À°¢Ω√’˝ø‚¥Ê
-    TfrmStocksCalc.Calc(AppHandle);
+    TfrmStocksCalc.Calc(Application.MainForm);
 
     rs := TZQuery.Create(nil);
     try

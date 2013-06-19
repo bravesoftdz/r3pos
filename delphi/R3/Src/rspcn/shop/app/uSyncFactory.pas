@@ -114,8 +114,9 @@ var SyncFactory:TSyncFactory;
 
 implementation
 
-uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,uRspSyncFactory,
-     uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,ufrmStocksCalc;
+uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
+     uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
+     ufrmStocksCalc,ufrmSelectRecType;
 
 constructor TSyncFactory.Create;
 begin
@@ -2168,9 +2169,9 @@ procedure TSyncFactory.CheckRemoteData(AppHandle:HWnd);
 var
   rs:TZQuery;
   sr: TSearchRec;
-  FileAttrs: Integer;
+  FileAttrs: integer;
   NeedRecovery:boolean;
-  Folder,FileName:string;
+  recType,Folder,FileName:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
   rs := TZQuery.Create(nil);
@@ -2237,14 +2238,18 @@ begin
        //远程数据还原
        if MessageBox(AppHandle,pchar('系统检测到服务端存在备份的数据，是否立即还原？'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then
           begin
-            try
-              TfrmSysDefine.DBRemoteRecovery('1',AppHandle);
-            except
-              on E:Exception do
-                 begin
-                   MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+            recType := TfrmSelectRecType.ShowDialog(Application.MainForm);
+            if recType <> '' then
+               begin
+                 try
+                   TfrmSysDefine.DBRemoteRecovery(recType,AppHandle);
+                 except
+                   on E:Exception do
+                      begin
+                        MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                      end;
                  end;
-            end;
+               end;
           end;
      end;
 end;

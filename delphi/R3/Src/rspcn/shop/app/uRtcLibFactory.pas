@@ -96,11 +96,17 @@ var rtn:integer;
 begin
   result := -1;
   if not dllValid then Exit;
+{
   if dllAuthed then
      begin
        result := 0;
        Exit;
      end;
+}
+  dllAuthed := false;
+  ticket := '';
+  ticketLength := 5000;
+  SetLength(ticket,ticketLength);
   result := GetCustAuthen(pchar(appId),NetStatus,pchar(ticket),ticketLength);
   if result = 0 then
      begin

@@ -264,7 +264,7 @@ begin
   SyncTimeStamp := GetSyncTimeStamp(tbName,token.shopId);
   rs_h := TZQuery.Create(nil);
   try
-    rs_h.SQL.Text := 'select SALES_ID,SALES_DATE,CREA_DATE,TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP order by TIME_STAMP asc';
+    rs_h.SQL.Text := 'select SALES_ID,CLIENT_ID,SALES_DATE,CREA_DATE,TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP order by TIME_STAMP asc';
     rs_h.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
     rs_h.ParamByName('SHOP_ID').AsString:=token.shopId;
     rs_h.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
@@ -297,6 +297,7 @@ begin
                Node_1.setAttribute('LICENSE_CODE',LicenseCode);
                Node_1.setAttribute('PUH_DATE',rs_h.FieldByName('SALES_DATE').AsString);
                Node_1.setAttribute('PUH_TIME',Copy(rs_h.FieldByName('CREA_DATE').AsString,12,8));
+               Node_1.setAttribute('CONSUMER_ID',rs_h.FieldByName('CLIENT_ID').AsString);
                rs_d.First;
                while not rs_d.Eof do
                  begin
@@ -320,6 +321,7 @@ begin
                Node_2.setAttribute('LICENSE_CODE',LicenseCode);
                Node_2.setAttribute('PUH_DATE',rs_h.FieldByName('SALES_DATE').AsString);
                Node_2.setAttribute('PUH_TIME',Copy(rs_h.FieldByName('CREA_DATE').AsString,12,8));
+               Node_2.setAttribute('CONSUMER_ID',rs_h.FieldByName('CLIENT_ID').AsString);
                rs_d.First;
                while not rs_d.Eof do
                  begin

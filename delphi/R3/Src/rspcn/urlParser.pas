@@ -100,7 +100,12 @@ begin
                       result := wb+urltoken.path+'/'+urltoken.moduname;
                  end
               else
-                 result := wb+'/'+urltoken.path+'/'+urltoken.moduname;
+                 begin
+                   if urltoken.path='/' then
+                      result := wb+'/'+urltoken.path+urltoken.moduname
+                   else
+                      result := wb+'/'+urltoken.path+'/'+urltoken.moduname;
+                 end;
            end;
      end
   else

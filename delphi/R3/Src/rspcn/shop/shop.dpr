@@ -87,7 +87,8 @@ uses
   uRtcSyncFactory in 'app\uRtcSyncFactory.pas',
   udllCtrlUtil in 'utils\udllCtrlUtil.pas',
   uRtcLibFactory in 'app\uRtcLibFactory.pas',
-  uDownOrderFactory in 'app\uDownOrderFactory.pas';
+  uDownOrderFactory in 'app\uDownOrderFactory.pas',
+  ufrmExcelFactory in 'app\ufrmExcelFactory.pas' {frmExcelFactory};
 
 {$R *.res}
 exports

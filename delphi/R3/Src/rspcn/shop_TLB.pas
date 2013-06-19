@@ -12,7 +12,7 @@ unit shop_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/5/16 17:50:08 from Type Library described below.
+// File generated on 2013/6/19 18:37:39 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\myWork\Delphi\R3\Src\rspcn\shop.tlb (1)
@@ -41,10 +41,10 @@ uses Windows, ActiveX, Classes, Graphics, StdVCL, Variants;
 // *********************************************************************//
 const
   // TypeLibrary Major and minor versions
-  rspcnMajorVersion = 1;
-  rspcnMinorVersion = 0;
+  shopMajorVersion = 1;
+  shopMinorVersion = 0;
 
-  LIBID_rspcn: TGUID = '{0DA3C686-11D6-4090-89BC-FB6E37712AFF}';
+  LIBID_shop: TGUID = '{0DA3C686-11D6-4090-89BC-FB6E37712AFF}';
 
   IID_IjavaScriptExt: TGUID = '{858D01A3-0A92-4F43-8F53-B35EADE2A7BC}';
   CLASS_javaScriptExt: TGUID = '{A8BBED49-81F9-44BF-A65B-EACD663C502A}';

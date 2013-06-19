@@ -999,7 +999,7 @@ inherited frmCustomer: TfrmCustomer
       end
       object RzPanel2: TRzPanel
         Left = 0
-        Top = 390
+        Top = 44
         Width = 927
         Height = 132
         Align = alClient
@@ -1306,10 +1306,10 @@ inherited frmCustomer: TfrmCustomer
       end
       object EditPanel: TRzPanel
         Left = 0
-        Top = 44
+        Top = 176
         Width = 927
         Height = 346
-        Align = alTop
+        Align = alBottom
         BorderInner = fsStatus
         BorderOuter = fsNone
         BorderColor = 15461355

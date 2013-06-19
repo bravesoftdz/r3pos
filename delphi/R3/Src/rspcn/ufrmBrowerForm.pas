@@ -38,7 +38,7 @@ interface
 uses
   Classes, Windows, Controls, Forms, ComCtrls, ExtCtrls, StdCtrls, OleCtrls, SysUtils,
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
-  RzPanel, Messages, MSHTML, IEConst, RzPrgres,rspcn_TLB,EncDec, msxml, ComObj, urlParser,
+  RzPanel, Messages, MSHTML, IEConst, RzPrgres,shop_TLB,EncDec, msxml, ComObj, urlParser,
   Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate;
 const
   WM_BROWSER_INIT =WM_USER+1000;

@@ -5,7 +5,7 @@ unit javaScriptExt;
 interface
 
 uses
-  ComObj, ActiveX, Classes, rspcn_TLB, StdVcl, Forms, Windows, Messages,ZDataSet,SysUtils,ZBase,EncDec;
+  ComObj, ActiveX, Classes, shop_TLB, StdVcl, Forms, Windows, Messages,ZDataSet,SysUtils,ZBase,EncDec;
 
 type
   TjavaScriptExt = class(TAutoObject, IjavaScriptExt)

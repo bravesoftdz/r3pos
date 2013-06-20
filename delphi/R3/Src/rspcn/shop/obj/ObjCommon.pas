@@ -81,7 +81,7 @@ public
 end;
 
 const
-  ComVersion='3.0.2.55';
+  ComVersion='3.0.2.59';
 var
   FldXdict:TZReadonlyQuery;
   NearSyncDate:TDatetime;
@@ -309,9 +309,9 @@ function GetBatchSQL(iDbType:Integer; ViewSQL, SortField: string; SortType: stri
 begin
   case iDbType of
    0,2,3: //2: SYSBASE数据库只支持12.3以上版本
-      result:='select top '+trim(RCount)+' * from ('+ViewSQL+') as tmp  order by '+SortField+' '+SortType;  //（SYSBASE仅仅支持12.3以上版本）
-   1: result:='select * from (select ROWNUM,* From ('+ViewSQL+')as tmp order by '+SortField+' '+SortType+') where rownum<= '+trim(RCount)+' order by '+SortField+' '+SortType;
-   4: result:='select tp.* from (select * From ('+ViewSQL+') as tmp order by '+SortField+' '+SortType+') tp fetch first '+trim(RCount)+' rows only ';
+      result:='select top '+trim(RCount)+' * from ('+ViewSQL+') as tmp order by '+SortField+' '+SortType;  //（SYSBASE仅仅支持12.3以上版本）
+   1: result:='select * from (select * from ('+ViewSQL+') tmp order by '+SortField+' '+SortType+') where rownum <= '+trim(RCount)+' order by '+SortField+' '+SortType;
+   4: result:='select tp.* from (select * from ('+ViewSQL+') as tmp order by '+SortField+' '+SortType+') tp fetch first '+trim(RCount)+' rows only ';
    5: result:='select * from ('+ViewSQL+') as tmp order by '+SortField+' '+SortType+' limit '+RCount;
   end; 
 end;

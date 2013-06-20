@@ -1183,6 +1183,7 @@ begin
       else
          begin
            if not CheckNeedLoginSync then Exit;
+           if not SyncLockCheck then Exit;
            SyncFactory.BackupDBFile;
            SyncFactory.SyncBasic;
            if CheckNeedLoginSyncBizData then
@@ -1217,9 +1218,9 @@ begin
       BringToFront;
       Update;
       SyncFactory.SyncLockDb;
-      SyncFactory.SyncBasic;
       if SyncFactory.SyncLockCheck then
          begin
+           SyncFactory.SyncBasic;
            SyncFactory.SyncBizData;
            SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
          end

@@ -24,6 +24,7 @@ type
     PUB_GOODSSORT: TZQuery;
     PUB_REGION_INFO: TZQuery;
   private
+    QQ,Telephone:string;
     SFVersion: string;
     ProductId: string;
     procedure OpenPubGoodsInfo;
@@ -38,6 +39,8 @@ type
     function getMyDeptId:string;
     function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean;
 
+    function GetQQ:string;
+    function GetTelephone:string;
     function GetProductId:string;
     function GetSFVersion:string;
     function GetVersionFlag:integer;
@@ -209,6 +212,36 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TdllGlobal.GetQQ: string;
+var F:TIniFile;
+begin
+  if QQ = '' then
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+       try
+         QQ := F.ReadString('soft','qq','123456789');
+       finally
+         F.Free;
+       end;
+     end;
+  result := QQ;
+end;
+
+function TdllGlobal.GetTelephone: string;
+var F:TIniFile;
+begin
+  if Telephone = '' then
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+       try
+         Telephone := F.ReadString('soft','telephone','123456789');
+       finally
+         F.Free;
+       end;
+     end;
+  result := Telephone;
 end;
 
 function TdllGlobal.GetProductId: string;

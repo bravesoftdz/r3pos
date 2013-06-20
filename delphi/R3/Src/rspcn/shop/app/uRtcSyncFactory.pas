@@ -616,7 +616,7 @@ var rtn:integer;
 begin
   rtn := RtcLibFactory.GetToken;
   result := (rtn = 0);
-  if rtn <> 0 then
+  if (rtn <> 0) and (rtn <> -1) then
      begin
        AddSyncLogFile('容器认证失败，返回值'+inttostr(rtn));
      end;

@@ -552,6 +552,7 @@ end;
 var
   rs:TZQuery;
 begin
+  dataFactory.sqlite.Connect;
   if (token.tenantId='') and CheckRegister then
      begin
        rs := TZQuery.Create(nil);

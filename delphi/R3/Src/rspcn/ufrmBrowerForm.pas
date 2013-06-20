@@ -1057,7 +1057,13 @@ var
 begin
   btnPageClose.Visible := false;
   w := 0;
-  for i:=PageIndex to pageControl1.PageCount-1 do
+  if pageControl1.PageCount > 0 then
+    begin
+      TTabSheetEx(pageControl1.Pages[0]).button.Left := w+2;
+      w := w + TTabSheetEx(pageControl1.Pages[0]).button.Width;
+      TTabSheetEx(pageControl1.Pages[0]).button.Down := (pageControl1.ActivePageIndex = 0);
+    end;
+  for i:=PageIndex+1 to pageControl1.PageCount-1 do
     begin
       TTabSheetEx(pageControl1.Pages[i]).button.Left := w+2;
       w := w + TTabSheetEx(pageControl1.Pages[i]).button.Width;
@@ -1674,16 +1680,16 @@ end;
 
 procedure TfrmBrowerForm.RzBmpButton1Click(Sender: TObject);
 begin
-  if PageIndex>0 then dec(PageIndex);
+  if PageIndex>0 then
+     dec(PageIndex);
   pageButtonSort;
 end;
 
 procedure TfrmBrowerForm.RzBmpButton2Click(Sender: TObject);
 begin
-  if PageControl1.PageCount<5 then Exit;
+  if (PageControl1.PageCount-PageIndex)<6 then Exit;
   if PageIndex<(PageControl1.PageCount-1) then inc(PageIndex);
   pageButtonSort;
-
 end;
 
 procedure TfrmBrowerForm.ClearPage;

@@ -118,6 +118,85 @@ uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
      ufrmStocksCalc,ufrmSelectRecType;
 
+function GetSystemInfo: string;
+var Reg:TRegistry;
+begin
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey:=HKEY_LOCAL_MACHINE;
+    if Reg.OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion',false) then
+    begin
+      result:=Reg.ReadString('ProductName');
+      Reg.CloseKey;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
+
+function GetComputerName: string;
+var
+  s: array [0..MAX_COMPUTERNAME_LENGTH] of Char;
+  w:dword;
+begin
+  w := MAX_COMPUTERNAME_LENGTH+1;
+  Windows.GetComputerName(s,w);
+  result := string(s);
+end;
+
+function GetMacAddr(idx:integer=0): string;
+var
+  NCB: TNCB;
+  ADAPTER: TADAPTERSTATUS;
+  LANAENUM: TLANAENUM;
+  intIdx: Integer;
+  cRC: Char;
+  strTemp: string;
+begin
+  result := '';
+  ZeroMemory(@NCB, SizeOf(NCB));
+  NCB.ncb_command := Chr(NCBENUM);
+  cRC := NetBios(@NCB);
+  NCB.ncb_buffer := @LANAENUM;
+  NCB.ncb_length := SizeOf(LANAENUM);
+  cRC := NetBios(@NCB);
+  if Ord(cRC) <> 0 then Exit;
+  ZeroMemory(@NCB, SizeOf(NCB));
+  NCB.ncb_command := Chr(NCBRESET);
+  NCB.ncb_lana_num := LANAENUM.lana[idx];
+  cRC := NetBios(@NCB);
+  if Ord(cRC) <> 0 then Exit;
+  ZeroMemory(@NCB, SizeOf(NCB));
+  NCB.ncb_command := Chr(NCBASTAT);
+  NCB.ncb_lana_num := LANAENUM.lana[idx];
+  StrPCopy(NCB.ncb_callname, '*');
+  NCB.ncb_buffer := @ADAPTER;
+  NCB.ncb_length := SizeOf(ADAPTER);
+  cRC := NetBios(@NCB);
+  strTemp := '';
+  for intIdx := 0 to 5 do
+    strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
+  result := strTemp;
+end;
+
+function GetIpAddr:string;
+var
+  WSAData: TWSAData;
+  HostEnt: PHostEnt;
+  s: string;
+  size: Cardinal;
+begin
+  result := '';
+  s := GetComputerName;
+  WSAStartup(2, WSAData);
+  HostEnt := GetHostByName(PChar(s));
+  if HostEnt <> nil then
+  begin
+    with HostEnt^ do result := Format('%d.%d.%d.%d', [Byte(h_addr^[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
+  end;
+  WSACleanup;
+end;
+
 constructor TSyncFactory.Create;
 begin
   CloseAccDate := -1;
@@ -1920,86 +1999,6 @@ begin
 end;
 
 procedure TSyncFactory.AddLoginLog;
-  function GetSystemInfo: string;
-  var Reg:TRegistry;
-  begin
-    Reg := TRegistry.Create;
-    try
-      Reg.RootKey:=HKEY_LOCAL_MACHINE;
-      if Reg.OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion',false) then
-      begin
-        result:=Reg.ReadString('ProductName');
-        Reg.CloseKey;
-      end;
-    finally
-      Reg.Free;
-    end;
-  end;
-
-  function GetComputerName: string;
-  var
-    s: array [0..MAX_COMPUTERNAME_LENGTH] of Char;
-    w:dword;
-  begin
-    w := MAX_COMPUTERNAME_LENGTH+1;
-    Windows.GetComputerName(s,w);
-    result := string(s);
-  end;
-
-  function GetMacAddr: string;
-  var
-    NCB: TNCB;
-    ADAPTER: TADAPTERSTATUS;
-    LANAENUM: TLANAENUM;
-    intIdx: Integer;
-    cRC: Char;
-    strTemp: string;
-    Index:integer;
-  begin
-    Index := 0;
-    result := '';
-    ZeroMemory(@NCB, SizeOf(NCB));
-    NCB.ncb_command := Chr(NCBENUM);
-    cRC := NetBios(@NCB);
-    NCB.ncb_buffer := @LANAENUM;
-    NCB.ncb_length := SizeOf(LANAENUM);
-    cRC := NetBios(@NCB);
-    if Ord(cRC) <> 0 then exit;
-    ZeroMemory(@NCB, SizeOf(NCB));
-    NCB.ncb_command := Chr(NCBRESET);
-    NCB.ncb_lana_num := LANAENUM.lana[index];
-    cRC := NetBios(@NCB);
-    if Ord(cRC) <> 0 then exit;
-    ZeroMemory(@NCB, SizeOf(NCB));
-    NCB.ncb_command := Chr(NCBASTAT);
-    NCB.ncb_lana_num := LANAENUM.lana[index];
-    StrPCopy(NCB.ncb_callname, '*');
-    NCB.ncb_buffer := @ADAPTER;
-    NCB.ncb_length := SizeOf(ADAPTER);
-    cRC := NetBios(@NCB);
-    strTemp := '';
-    for intIdx := 0 to 5 do
-      strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
-    result := strTemp;
-  end;
-
-  function GetIpAddr:string;
-  var
-    WSAData: TWSAData;
-    HostEnt: PHostEnt;
-    s: string;
-    size: Cardinal;
-  begin
-    result := '';
-    s := GetComputerName;
-    WSAStartup(2, WSAData);
-    HostEnt := GetHostByName(PChar(s));
-    if HostEnt <> nil then
-    begin
-      with HostEnt^ do result := Format('%d.%d.%d.%d', [Byte(h_addr^[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
-    end;
-    WSACleanup;
-  end;
 var SQL,Flag,ConnectTo:string;
 begin
   if token.tenantId = '' then Exit;

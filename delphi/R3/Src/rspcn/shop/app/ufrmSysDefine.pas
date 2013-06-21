@@ -1714,7 +1714,7 @@ begin
       try
         GetShopInfo;
       except
-        MessageBox(Handle,'尚未开通门店管理功能，请联系客户经理...','友情提示..',MB_OK);
+        MessageBox(Handle,pchar('尚未开通门店管理功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
         Exit;
       end;
       SaveShopInfo(true);

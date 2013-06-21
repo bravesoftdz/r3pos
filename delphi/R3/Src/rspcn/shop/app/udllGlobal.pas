@@ -41,6 +41,7 @@ type
 
     function GetQQ:string;
     function GetTelephone:string;
+    function GetServiceInfo:string;
     function GetProductId:string;
     function GetSFVersion:string;
     function GetVersionFlag:integer;
@@ -212,6 +213,17 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TdllGlobal.GetServiceInfo:string;
+var qq,tel:string;
+begin
+  qq := GetQQ;
+  tel := GetTelephone;
+  if (trim(qq) <> '') and (trim(qq) <> '123456789')then
+     result := result + #10#13+'客服QQ：'+trim(qq);
+  if (trim(tel) <> '') and (trim(tel) <> '123456789') then
+     result := result + #10#13+'客服电话：'+trim(tel);
 end;
 
 function TdllGlobal.GetQQ: string;

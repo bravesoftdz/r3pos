@@ -1297,7 +1297,7 @@ begin
            SyncFactory.SyncBizData;
            SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
          end
-      else MessageBox(PHWnd,pchar('系统检测到当前使用的电脑不是您常用的电脑，无法上传数据！'+#10#13+'如更换电脑请联系客户经理解除绑定...'),'友情提示',MB_OK+MB_ICONINFORMATION);
+      else MessageBox(PHWnd,pchar('系统检测到当前使用的电脑不是您常用的电脑，无法上传数据！'+#10#13+'如更换电脑请联系客户经理解除绑定...'+dllGlobal.GetServiceInfo),'友情提示',MB_OK+MB_ICONINFORMATION);
       if RtcSyncFactory.GetToken then
          begin
            RtcSyncFactory.RtcLogout;

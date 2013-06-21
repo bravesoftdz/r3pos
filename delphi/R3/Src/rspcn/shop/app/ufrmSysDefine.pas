@@ -53,27 +53,27 @@ type
     RzPanel40: TRzPanel;
     RzBackground1: TRzBackground;
     RzLabel9: TRzLabel;
-    RzPanel77: TRzPanel;
+    edtBK_SHOP_NAME: TRzPanel;
     RzPanel41: TRzPanel;
     RzLabel10: TRzLabel;
     edtSHOP_NAME: TcxTextEdit;
-    RzPanel20: TRzPanel;
+    edtBK_LICENSE_CODE: TRzPanel;
     RzPanel42: TRzPanel;
     RzLabel11: TRzLabel;
     edtLICENSE_CODE: TcxTextEdit;
-    RzPanel4: TRzPanel;
+    edtBK_LINKMAN: TRzPanel;
     RzPanel43: TRzPanel;
     RzLabel12: TRzLabel;
     edtLINKMAN: TcxTextEdit;
-    RzPanel7: TRzPanel;
+    edtBK_TELEPHONE: TRzPanel;
     RzPanel8: TRzPanel;
     RzLabel13: TRzLabel;
     edtTELEPHONE: TcxTextEdit;
-    RzPanel6: TRzPanel;
+    edtBK_ADDRESS: TRzPanel;
     RzPanel44: TRzPanel;
     RzLabel14: TRzLabel;
     edtADDRESS: TcxTextEdit;
-    RzPanel45: TRzPanel;
+    edtBK_REGION_ID: TRzPanel;
     RzPanel46: TRzPanel;
     RzLabel15: TRzLabel;
     edtREGION_ID: TzrComboBoxList;
@@ -218,11 +218,11 @@ type
     edtNEW_PSWD2: TcxTextEdit;
     btnChange: TRzBmpButton;
     btnCancel: TRzBmpButton;
-    RzPanel78: TRzPanel;
+    edtBK_INPUT_MODE: TRzPanel;
     RzPanel79: TRzPanel;
     RzLabel49: TRzLabel;
     edtINPUT_MODE: TcxComboBox;
-    RzPanel80: TRzPanel;
+    edtBK_INDUSTRY_TYPE: TRzPanel;
     RzPanel81: TRzPanel;
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
@@ -246,6 +246,14 @@ type
     RzPanel54: TRzPanel;
     RzLabel25: TRzLabel;
     lblCaption: TRzLabel;
+    edtBK_XSM_PSWD: TRzPanel;
+    RzPanel84: TRzPanel;
+    RzLabel55: TRzLabel;
+    edtBK_XSM_CODE: TRzPanel;
+    RzPanel86: TRzPanel;
+    RzLabel56: TRzLabel;
+    edtXSM_CODE: TcxTextEdit;
+    edtXSM_PSWD: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
@@ -390,6 +398,19 @@ begin
   else
      Tool_Reset.Visible := true;
   PageControl.ActivePageIndex := 0;
+
+  if (token.account = 'admin') or (token.account = 'system') then
+     begin
+       edtXSM_CODE.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert, edtXSM_CODE.Style);
+       edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;
+     end
+  else
+     begin
+       edtXSM_CODE.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse, edtXSM_CODE.Style);
+       edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;
+     end;
 end;
 
 procedure TfrmSysDefine.GetShopInfo;
@@ -472,6 +493,7 @@ begin
        cdsShopInfo.FieldByName('XSM_CODE').AsString := token.xsmCode
     else
        cdsShopInfo.FieldByName('XSM_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'xsmCode');
+    cdsShopInfo.FieldByName('XSM_PSWD').AsString := EncStr(token.xsmPWD,ENC_KEY);
     cdsShopInfo.FieldByName('REGION_ID').AsString := cdsTenant.FieldByName('REGION_ID').AsString;
     cdsShopInfo.FieldByName('SHOP_TYPE').AsString := '#';
     cdsShopInfo.FieldByName('SEQ_NO').AsInteger := 1001;
@@ -499,6 +521,7 @@ begin
        cdsShopInfo.FieldByName('XSM_CODE').AsString := token.xsmCode
     else
        cdsShopInfo.FieldByName('XSM_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'xsmCode');
+    cdsShopInfo.FieldByName('XSM_PSWD').AsString := EncStr(token.xsmPWD,ENC_KEY);
     cdsShopInfo.FieldByName('REGION_ID').AsString := rspFactory.GetNodeValue(caShopInfo,'regionId');
     cdsShopInfo.FieldByName('SHOP_TYPE').AsString := rspFactory.GetNodeValue(caShopInfo,'shopType');
     cdsShopInfo.FieldByName('SEQ_NO').AsInteger := StrtoInt(rspFactory.GetNodeValue(caShopInfo,'seqNo'));
@@ -547,6 +570,7 @@ begin
   begin
     AObj.ReadFromDataSet(cdsShopInfo);
     udllShopUtil.ReadFromObject(AObj,self);
+    edtXSM_PSWD.Text := DecStr(AObj.FieldByName('XSM_PSWD').AsString,ENC_KEY);
     if FirstLogin then
        begin
          edtINPUT_MODE.ItemIndex := 0;
@@ -571,6 +595,7 @@ begin
   if PageControl.ActivePageIndex = 0 then
   begin
     udllShopUtil.WriteToObject(AObj,self);
+    AObj.FieldByName('XSM_PSWD').AsString:=EncStr(edtXSM_PSWD.Text,ENC_KEY);
     AObj.WriteToDataSet(cdsShopInfo);
     if cdsShopInfo.FieldByName('SHOP_ID').AsString = cdsShopInfo.FieldByName('TENANT_ID').AsString + '0001' then
     begin

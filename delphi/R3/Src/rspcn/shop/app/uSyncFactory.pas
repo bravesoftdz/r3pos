@@ -2145,7 +2145,7 @@ begin
            LocalList.Delimiter:= ',';
            for i := 0 to LocalList.Count - 1 do
              begin
-               if pos(LocalList[i],rid) > 0 then
+               if pos(','+LocalList[i]+',', ','+rid+',') > 0 then
                   begin
                     result := true;
                     Exit;
@@ -2154,7 +2154,7 @@ begin
          finally
            LocalList.Free;
          end;
-         if pos(GetComputerName,rid) > 0 then
+         if GetComputerName = rid then
             begin
               result := true;
               Exit;
@@ -2191,6 +2191,7 @@ begin
   end;
   MacAddr := GetMacAddrInfo;
   if MacAddr = '' then MacAddr := GetComputerName;
+  if Length(MacAddr) > 100 then SetLength(MacAddr, 100);
   vParams:=TftParamList.Create(nil);
   try
     try

@@ -1297,7 +1297,7 @@ begin
            SyncFactory.SyncBizData;
            SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
          end
-      else MessageBox(PHWnd,pchar('请联系客户经理解除锁定状态...'),'友情提示',MB_OK+MB_ICONINFORMATION);
+      else MessageBox(PHWnd,pchar('系统检测到当前使用的电脑不是您常用的电脑，无法上传数据，如需解除绑定请联系客户经理...'),'友情提示',MB_OK+MB_ICONINFORMATION);
       if RtcSyncFactory.GetToken then
          begin
            RtcSyncFactory.RtcLogout;

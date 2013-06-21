@@ -12,9 +12,46 @@ const
   MSC_SET_CAPTION=WM_USER+3;
   MSC_SET_CLOSE=WM_USER+4;
 
-type
-  PSynTableInfo=^TSynTableInfo;
+  MAX_HOSTNAME_LEN = 128;
+  MAX_DOMAIN_NAME_LEN = 128;
+  MAX_SCOPE_ID_LEN = 256;
+  MAX_ADAPTER_NAME_LENGTH = 256;
+  MAX_ADAPTER_DESCRIPTION_LENGTH = 128;
+  MAX_ADAPTER_ADDRESS_LENGTH = 8;
 
+type
+  TIPAddressString = array[0..4 * 4 - 1] of Char;
+  PIPAddrString = ^TIPAddrString;
+  TIPAddrString = record
+    Next: PIPAddrString;
+    IPAddress: TIPAddressString;
+    IPMask: TIPAddressString;
+    Context: Integer;
+  end;
+
+  PIPAdapterInfo = ^TIPAdapterInfo;
+  TIPAdapterInfo = record
+    Next: PIPAdapterInfo;
+    ComboIndex: Integer;
+    AdapterName: array[0..MAX_ADAPTER_NAME_LENGTH + 3] of Char;
+    Description: array[0..MAX_ADAPTER_DESCRIPTION_LENGTH + 3] of Char;
+    AddressLength: Integer;
+    Address: array[1..MAX_ADAPTER_ADDRESS_LENGTH] of Byte;
+    Index: Integer;
+    _Type: Integer;
+    DHCPEnabled: Integer;
+    CurrentIPAddress: PIPAddrString;
+    IPAddressList: TIPAddrString;
+    GatewayList: TIPAddrString;
+    DHCPServer: TIPAddrString;
+    HaveWINS: Bool;
+    PrimaryWINSServer: TIPAddrString;
+    SecondaryWINSServer: TIPAddrString;
+    LeaseObtained: Integer;
+    LeaseExpires: Integer;
+  end;
+
+  PSynTableInfo=^TSynTableInfo;
   TSynTableInfo=record
     tbName:string;//表名
     tbTitle:string;//说明
@@ -118,6 +155,42 @@ uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
      ufrmStocksCalc,ufrmSelectRecType;
 
+function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
+
+function GetMacAddrInfo:string;
+var
+  AI, Work: PIPAdapterInfo;
+  Size: Integer;
+  Res: Integer;
+  I: Integer;
+  function MACToStr(ByteArr: PByte; Len: Integer): string;
+  begin
+    result := '';
+    while (Len > 0) do
+    begin
+      result := result + IntToHex(ByteArr^, 2);
+      ByteArr := Pointer(Integer(ByteArr) + SizeOf(Byte));
+      Dec(Len);
+    end;
+  end;
+begin
+  Size := 5120;
+  GetMem(AI, Size);
+  Res := GetAdaptersInfo(AI, Size);
+  if (Res <> ERROR_SUCCESS) then Exit;
+
+  Work := AI;
+  I := 1;
+  repeat
+    if result <> '' then result := result + ',';
+    result := result + MACToStr(@Work^.Address, Work^.AddressLength);
+    Inc(I);
+    Work := Work^.Next;
+  until (Work = nil);
+
+  FreeMem(AI);
+end;
+
 function GetSystemInfo: string;
 var Reg:TRegistry;
 begin
@@ -175,7 +248,7 @@ begin
   cRC := NetBios(@NCB);
   strTemp := '';
   for intIdx := 0 to 5 do
-    strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
+      strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
   result := strTemp;
 end;
 
@@ -2046,23 +2119,15 @@ end;
 
 function TSyncFactory.SyncLockCheck: boolean;
 var
+  i:integer;
   rs:TZQuery;
-  rid,cid:string;
+  rid:string;
+  LocalList:TStringList;
 begin
   result := true;
   if (dllGlobal.GetSFVersion = '.ONL') or (dllGlobal.GetSFVersion = '.NET') then Exit;
   rs := TZQuery.Create(nil);
   try
-    rs.Close;
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
-    dataFactory.MoveToSqlite;
-    try
-      dataFactory.Open(rs);
-    finally
-      dataFactory.MoveToDefault;
-    end;
-    cid := rs.Fields[0].AsString;
-    rs.Close;
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
     dataFactory.MoveToRemote;
     try
@@ -2071,7 +2136,31 @@ begin
       dataFactory.MoveToDefault;
     end;
     rid := rs.Fields[0].AsString;
-    result := (rid=cid) or (rid='');
+    if rid <> '' then
+       begin
+         result := false;
+         LocalList := TStringList.Create;
+         try
+           LocalList.DelimitedText:= GetMacAddrInfo;
+           LocalList.Delimiter:= ',';
+           for i := 0 to LocalList.Count - 1 do
+             begin
+               if pos(LocalList[i],rid) > 0 then
+                  begin
+                    result := true;
+                    Exit;
+                  end;
+             end;
+         finally
+           LocalList.Free;
+         end;
+         if pos(GetComputerName,rid) > 0 then
+            begin
+              result := true;
+              Exit;
+            end;
+       end
+    else result := true;
   finally
     rs.Free;
   end;
@@ -2079,8 +2168,8 @@ end;
 
 function TSyncFactory.SyncLockDb: boolean;
 var
-  id:string;
   rs:TZQuery;
+  MacAddr:string;
   vParams:TftParamList;
 begin
   result := true;
@@ -2100,17 +2189,16 @@ begin
   finally
     rs.Free;
   end;
-  id := TSequence.NewId;
+  MacAddr := GetMacAddrInfo;
+  if MacAddr = '' then MacAddr := GetComputerName;
   vParams:=TftParamList.Create(nil);
   try
     try
       vParams.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
       vParams.ParamByName('DBKEY').AsString:='DBKEY_'+token.shopId;
-      vParams.ParamByName('NEWID').AsString:=id;
+      vParams.ParamByName('NEWID').AsString:=MacAddr;
+      dataFactory.MoveToRemote;
       try
-        dataFactory.MoveToRemote;
-        dataFactory.ExecProc('TDoLockDBKey',vParams);
-        dataFactory.MoveToSqlite;
         dataFactory.ExecProc('TDoLockDBKey',vParams);
       finally
         dataFactory.MoveToDefault;

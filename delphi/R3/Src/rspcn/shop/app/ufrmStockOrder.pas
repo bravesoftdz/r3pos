@@ -132,6 +132,7 @@ type
     procedure edtAGIO_RATEKeyPress(Sender: TObject; var Key: Char);
     procedure edtPAY_TOTALKeyPress(Sender: TObject; var Key: Char);
     procedure RzToolButton4Click(Sender: TObject);
+    procedure edtAGIO_RATEExit(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1549,6 +1550,14 @@ begin
        else
           edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
      end;
+end;
+
+procedure TfrmStockOrder.edtAGIO_RATEExit(Sender: TObject);
+var Key:Char;
+begin
+  inherited;
+  Key := #13;
+  edtAGIO_RATEKeyPress(nil,Key);
 end;
 
 procedure TfrmStockOrder.edtPAY_TOTALKeyPress(Sender: TObject;

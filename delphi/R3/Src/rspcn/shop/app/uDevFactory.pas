@@ -2,7 +2,7 @@ unit uDevFactory;
 
 interface
 
-uses Windows,Classes,spComm,SysUtils,zPrinters,ZDataSet,DB;
+uses Windows,Classes,spComm,SysUtils,zPrinters,ZDataSet,DB,Graphics,Forms;
 
 type
 
@@ -40,7 +40,7 @@ type
     procedure SetPrintFormat(const Value: integer);
     procedure SetSavePrint(const Value: boolean);
   private
-    procedure BeginPrint;
+    procedure BeginPrint(Font:TFont);
     procedure WritePrint(s:string);
     procedure WritePrintNoEnter(s:string);
     procedure EndPrint;
@@ -55,8 +55,8 @@ type
     destructor  Destroy; override;
     procedure   InitComm;
 
-    class procedure OpenCashBox;
-    procedure PrintSaleTicket(tid, sid: string);
+    class procedure OpenCashBox(Font:TFont);
+    procedure PrintSaleTicket(tid,sid:string;Font:TFont);
 
     property Ticket_PrintComm:integer read FTicket_PrintComm write SetTicket_PrintComm;
     property Ticket_Width:integer read FTicket_Width write SetTicket_Width;
@@ -80,7 +80,7 @@ var DevFactory:TDevFactory;
 
 implementation
 
-uses IniFiles,EncDec,Forms,uTokenFactory,udllGlobal,udataFactory;
+uses IniFiles,EncDec,uTokenFactory,udllGlobal,udataFactory;
 
 constructor TDevFactory.Create;
 begin
@@ -175,7 +175,7 @@ begin
   result := s;
 end;
 
-procedure TDevFactory.PrintSaleTicket(tid, sid: string);
+procedure TDevFactory.PrintSaleTicket(tid,sid:string;Font:TFont);
 var PWidth:integer;
   procedure WriteAndEnter(s:string;Len:Integer=0);
   begin
@@ -281,12 +281,12 @@ var
   ls:TStringList;
   printOrgPrice:boolean;
 begin
-  if DevFactory.Ticket_PrintComm <= 0 then Raise Exception.Create('尚未设置小票打印机，无法打印小票...'+#10#13+'请在系统设置中设置小票机参数...'+dllGlobal.GetServiceInfo);
+  if DevFactory.Ticket_PrintComm <= 0 then Raise Exception.Create('尚未设置小票打印机，无法打印小票...'+#10#13+'请在系统设置中设置小票打印机参数...'+dllGlobal.GetServiceInfo);
 
   PWidth := DevFactory.Ticket_Width;
 
   allAmt:=0;
-  DevFactory.BeginPrint;
+  DevFactory.BeginPrint(Font);
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := PrintSaleTicketSql(tid,sid);
@@ -397,7 +397,7 @@ begin
   end;
 end;
 
-procedure TDevFactory.BeginPrint;
+procedure TDevFactory.BeginPrint(Font:TFont);
 begin
   if Ticket_PrintComm < 1 then Raise Exception.Create('没有安装小票打印机不能打小票');
   if DevFactory.Ticket_PrintComm < 5 then
@@ -407,7 +407,7 @@ begin
   else if DevFactory.Ticket_PrintComm in [30] then
      begin
        AssignPrn(F);
-       Printer.Canvas.Font := Application.MainForm.Font;
+       Printer.Canvas.Font := Font;
      end
   else
      AssignFile(F,ExtractFilePath(ParamStr(0))+'debug\prt.txt');
@@ -483,14 +483,14 @@ begin
    ' order by SEQNO ';
 end;
 
-class procedure TDevFactory.OpenCashBox;
+class procedure TDevFactory.OpenCashBox(Font:TFont);
 begin
   if DevFactory.CashBox = 0 then Exit;
   if (GetTickCount-DevFactory.CashBoxStart) < 5000 then Exit;
   DevFactory.CashBoxStart := GetTickCount;
   if DevFactory.CashBox=1 then
      begin
-        DevFactory.BeginPrint;
+        DevFactory.BeginPrint(Font);
         try
           if not (DevFactory.Ticket_PrintComm in [30]) then
              DevFactory.WritePrintNoEnter(CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255))

@@ -146,6 +146,7 @@ type
     procedure RzBmpButton1Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
     procedure RzToolButton4Click(Sender: TObject);
+    procedure edtAGIO_RATEExit(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1609,6 +1610,14 @@ begin
 //          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
      end;
+end;
+
+procedure TfrmPosInOrder.edtAGIO_RATEExit(Sender: TObject);
+var Key:Char;
+begin
+  inherited;
+  Key := #13;
+  edtAGIO_RATEKeyPress(nil,Key);
 end;
 
 procedure TfrmPosInOrder.CheckGodsStringGrid;

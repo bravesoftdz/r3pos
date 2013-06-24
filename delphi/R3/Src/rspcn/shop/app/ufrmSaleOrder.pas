@@ -134,6 +134,7 @@ type
     procedure edtAGIO_RATEKeyPress(Sender: TObject; var Key: Char);
     procedure edtPAY_TOTALKeyPress(Sender: TObject; var Key: Char);
     procedure RzToolButton4Click(Sender: TObject);
+    procedure edtAGIO_RATEExit(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -622,7 +623,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
-  if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString);
+  if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
 end;
 
 procedure TfrmSaleOrder.edtTableAfterPost(DataSet: TDataSet);
@@ -2082,7 +2083,7 @@ begin
   if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
   tid := token.tenantId;
   oid := AObj.FieldbyName('SALES_ID').AsString;
-  DevFactory.PrintSaleTicket(tid,oid);
+  DevFactory.PrintSaleTicket(tid,oid,self.Font);
 end;
 
 procedure TfrmSaleOrder.PrintOrder;
@@ -2177,7 +2178,6 @@ begin
   if (Key=#13) then
      begin
        r := StrtoFloatDef(edtAGIO_RATE.Text,0);
-       MessageBox(handle,pchar(floattostr(r)),'kdfd',MB_OK);
        AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
        edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_ZERO').AsFloat);
        fee :=
@@ -2196,6 +2196,14 @@ begin
           edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
      end;
+end;
+
+procedure TfrmSaleOrder.edtAGIO_RATEExit(Sender: TObject);
+var Key:Char;
+begin
+  inherited;
+  Key := #13;
+  edtAGIO_RATEKeyPress(nil,Key);
 end;
 
 procedure TfrmSaleOrder.edtPAY_TOTALKeyPress(Sender: TObject;

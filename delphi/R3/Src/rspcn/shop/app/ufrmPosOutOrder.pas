@@ -154,6 +154,7 @@ type
     procedure intoCustomerClick(Sender: TObject);
     procedure edtCARD_NOKeyPress(Sender: TObject; var Key: Char);
     procedure RzToolButton4Click(Sender: TObject);
+    procedure edtAGIO_RATEExit(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -633,7 +634,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
-  if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString);
+  if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
 end;
 
 procedure TfrmPosOutOrder.edtTableAfterPost(DataSet: TDataSet);
@@ -2140,7 +2141,7 @@ begin
   if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
   tid := token.tenantId;
   oid := AObj.FieldbyName('SALES_ID').AsString;
-  DevFactory.PrintSaleTicket(tid,oid);
+  DevFactory.PrintSaleTicket(tid,oid,self.Font);
 end;
 
 procedure TfrmPosOutOrder.PrintOrder;
@@ -2260,6 +2261,14 @@ begin
 //          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
        DoShowPayment;
      end;
+end;
+
+procedure TfrmPosOutOrder.edtAGIO_RATEExit(Sender: TObject);
+var Key:Char;
+begin
+  inherited;
+  Key := #13;
+  edtAGIO_RATEKeyPress(nil,Key);
 end;
 
 procedure TfrmPosOutOrder.GodsStringGridGetCellBorder(Sender: TObject;

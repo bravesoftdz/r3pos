@@ -12,7 +12,6 @@ inherited frmStockOrder: TfrmStockOrder
       Width = 865
       inherited PageControl: TRzPageControl
         Width = 865
-        ActivePage = TabSheet2
         FixedDimension = 0
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#24405#20837
@@ -1444,6 +1443,7 @@ inherited frmStockOrder: TfrmStockOrder
                 TabOrder = 2
                 Text = '100.0'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnExit = edtAGIO_RATEExit
                 OnKeyPress = edtAGIO_RATEKeyPress
               end
               object RzPanel8: TRzPanel

@@ -1,6 +1,6 @@
 inherited frmPosInOrder: TfrmPosInOrder
-  Left = 60
-  Top = 154
+  Left = 73
+  Top = 54
   Caption = #21830#21697#20837#24211
   ClientHeight = 593
   ClientWidth = 1280
@@ -790,6 +790,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 TabOrder = 2
                 Text = '100.0'
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                OnExit = edtAGIO_RATEExit
                 OnKeyPress = edtAGIO_RATEKeyPress
               end
               object RzPanel8: TRzPanel
@@ -2138,8 +2139,8 @@ inherited frmPosInOrder: TfrmPosInOrder
                   object RzLabel17: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 62
-                    Height = 27
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26085#26399
@@ -2208,8 +2209,8 @@ inherited frmPosInOrder: TfrmPosInOrder
                   object RzLabel16: TRzLabel
                     Left = 2
                     Top = 0
-                    Width = 22
-                    Height = 27
+                    Width = 16
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #33267

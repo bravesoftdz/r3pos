@@ -103,7 +103,7 @@ begin
      CashBoxRate := F.ReadInteger('SYS_DEFINE','CASHBOXRATE',9600);
 
      Ticket_PrintName := F.ReadInteger('SYS_DEFINE','TICKET_PRINT_NAME',0);
-     Ticket_PrintComm := F.ReadInteger('SYS_DEFINE','PRINTERCOMM',1);
+     Ticket_PrintComm := F.ReadInteger('SYS_DEFINE','PRINTERCOMM',0);
      Ticket_Width := F.ReadInteger('SYS_DEFINE','PRINTERWIDTH',33)-3;
      Ticket_Footer := DecStr(F.ReadString('SYS_DEFINE','FOOTER',EncStr('敬请保留小票,以作售后依据',ENC_KEY)),ENC_KEY);
      Ticket_Title := DecStr(F.ReadString('SYS_DEFINE','TITLE',EncStr('[门店名称]',ENC_KEY)),ENC_KEY);
@@ -281,7 +281,7 @@ var
   ls:TStringList;
   printOrgPrice:boolean;
 begin
-  if DevFactory.Ticket_PrintComm <= 0 then Exit;
+  if DevFactory.Ticket_PrintComm <= 0 then Raise Exception.Create('尚未设置小票打印机，无法打印小票...'+#10#13+'请在系统设置中设置小票机参数...'+dllGlobal.GetServiceInfo);
 
   PWidth := DevFactory.Ticket_Width;
 

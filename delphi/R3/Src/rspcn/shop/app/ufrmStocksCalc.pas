@@ -44,6 +44,8 @@ type
     procedure calcMoney;
     //数据复制
     procedure copyToRck;
+    //检测r3、r6版本
+    procedure CheckAppVersion;
   protected
     procedure WMStart(var Message: TMessage); message WM_START;
   public
@@ -596,11 +598,11 @@ end;
 procedure TfrmStocksCalc.btnCalcClick(Sender: TObject);
 begin
   inherited;
+  CheckAppVersion;
   ClearDays;
   _endDate := 0;
   while _endDate<eDate do creaStocks;
   ModalResult := MROK;
-
 end;
 
 procedure TfrmStocksCalc.WMStart(var Message: TMessage);
@@ -628,6 +630,44 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmStocksCalc.CheckAppVersion;
+var
+  rs:TZQuery;
+  delDaysClose,delMonthClose:string;
+  insertVersion,updateVersion:string;
+  appVersion:string;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('DEFINE').AsString := 'APPVERSION';
+    dataFactory.Open(rs);
+    AppVersion := rs.Fields[0].AsString;
+  finally
+    rs.Free;
+  end;
+  if AppVersion = '' then AppVersion := 'V3';
+  if AppVersion <> 'V6' then
+     begin
+       delDaysClose  := 'delete from RCK_DAYS_CLOSE  where TENANT_ID='+token.tenantId;
+       delMonthClose := 'delete from RCK_MONTH_CLOSE where TENANT_ID='+token.tenantId;
+       updateVersion := 'update SYS_DEFINE set VALUE=''V6'' where TENANT_ID='+token.tenantId+' and DEFINE=''APPVERSION'' ';
+       insertVersion := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values ('+token.tenantId+',''APPVERSION'',''V6'',0,''00'','+GetTimeStamp(dataFactory.iDbType)+') ';
+       dataFactory.BeginTrans;
+       try
+         dataFactory.ExecSQL(delDaysClose);
+         dataFactory.ExecSQL(delMonthClose);
+         if dataFactory.ExecSQL(updateVersion) <= 0 then
+            dataFactory.ExecSQL(insertVersion);
+         dataFactory.CommitTrans;
+       except
+         dataFactory.RollbackTrans;
+         Raise;
+       end;
+     end;
 end;
 
 end.

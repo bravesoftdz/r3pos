@@ -135,7 +135,7 @@ type
     // 灾难恢复时关账
     procedure RecoveryClose(CloseDate:string);
     // 数据库锁定
-    function  SyncLockCheck:boolean;
+    function  SyncLockCheck(PHWnd:THandle):boolean;
     function  SyncLockDb:boolean;
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
@@ -153,7 +153,7 @@ implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
-     ufrmStocksCalc,ufrmSelectRecType;
+     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide;
 
 function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
 
@@ -1256,7 +1256,7 @@ begin
       else
          begin
            if not CheckNeedLoginSync then Exit;
-           if not SyncLockCheck then Exit;
+           if not SyncLockCheck(PHWnd) then Exit;
            SyncFactory.BackupDBFile;
            SyncFactory.SyncBasic;
            if CheckNeedLoginSyncBizData then
@@ -1290,14 +1290,10 @@ begin
       ShowForm;
       BringToFront;
       Update;
-      SyncFactory.SyncLockDb;
-      if SyncFactory.SyncLockCheck then
-         begin
-           SyncFactory.SyncBasic;
-           SyncFactory.SyncBizData;
-           SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
-         end
-      else MessageBox(PHWnd,pchar('系统检测到当前使用的电脑不是您常用的电脑，无法上传数据！'+#10#13+'如更换电脑请联系客户经理解除绑定...'+dllGlobal.GetServiceInfo),'友情提示',MB_OK+MB_ICONINFORMATION);
+      if not SyncFactory.SyncLockCheck(PHWnd) then Exit;
+      SyncFactory.SyncBasic;
+      SyncFactory.SyncBizData;
+      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
       if RtcSyncFactory.GetToken then
          begin
            RtcSyncFactory.RtcLogout;
@@ -2117,7 +2113,7 @@ begin
   FLoginId := Value;
 end;
 
-function TSyncFactory.SyncLockCheck: boolean;
+function TSyncFactory.SyncLockCheck(PHWnd:THandle): boolean;
 var
   i:integer;
   rs:TZQuery;
@@ -2148,22 +2144,30 @@ begin
                if pos(','+LocalList[i]+',', ','+rid+',') > 0 then
                   begin
                     result := true;
-                    Exit;
+                    break;
                   end;
              end;
          finally
            LocalList.Free;
          end;
-         if GetComputerName = rid then
+         if (not result) and (GetComputerName = rid) then
             begin
               result := true;
-              Exit;
             end;
        end
     else result := true;
   finally
     rs.Free;
   end;
+  if not result then
+     begin
+       if MessageBox(PHWnd,'系统检测到当前使用的电脑不是您常用的电脑，无法上传数据...'+#10#13+'是否立即解锁?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
+          begin
+            result := TfrmUnLockGuide.ShowDialog(Application.MainForm);
+          end
+       else result := false;
+     end;
+  if result then SyncLockDb; // 自动锁定 
 end;
 
 function TSyncFactory.SyncLockDb: boolean;

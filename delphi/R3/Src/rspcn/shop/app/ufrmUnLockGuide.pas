@@ -24,6 +24,7 @@ type
     edtLICENSE_CODE: TcxTextEdit;
     Save: TRzBmpButton;
     Cancel: TRzBmpButton;
+    RzLabel3: TRzLabel;
     procedure CancelClick(Sender: TObject);
     procedure SaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);

@@ -502,6 +502,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
   Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
   Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('LAST_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
   Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
   if trim(n^.tableFields) <> '' then

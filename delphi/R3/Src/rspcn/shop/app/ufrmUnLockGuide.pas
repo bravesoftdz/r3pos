@@ -36,7 +36,7 @@ type
 
 implementation
 
-uses uUcFactory,uTokenFactory,udataFactory;
+uses uTokenFactory,udataFactory,EncDec;
 
 {$R *.dfm}
 
@@ -57,6 +57,7 @@ var
   rs:TZQuery;
   ShopName,LicenseCode,XsmCode,XsmPswd:string;
 begin
+  result := false;
   LicenseCode := trim(edtLICENSE_CODE.Text);
   XsmCode := trim(edtXSM_CODE.Text);
   XsmPswd := trim(edtXSM_PSWD.Text);
@@ -78,57 +79,40 @@ begin
         if edtXSM_PSWD.CanFocus then edtXSM_PSWD.SetFocus;
         Exit;
      end;
-  UcFactory := TUcFactory.Create(self);
+  rs := TZQuery.Create(nil);
   try
+    rs.SQL.Text := 'select LICENSE_CODE,SHOP_NAME,XSM_CODE,XSM_PSWD from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    ShopName := rs.FieldByName('SHOP_NAME').AsString;
+    if LicenseCode <> rs.Fields[0].AsString then
+       begin
+         MessageBox(Handle,pchar('经营许可证验证失败，无法解锁...'),'友情提示..',MB_OK);
+         Exit;
+       end; 
+    if not ((XsmCode = rs.FieldByName('XSM_CODE').AsString) and (XsmPswd = DecStr(rs.FieldByName('XSM_PSWD').AsString,ENC_KEY))) then
+       begin
+         MessageBox(Handle,pchar('新商盟账号密码验证失败，无法解锁...'),'友情提示..',MB_OK);
+         Exit;
+       end;
+    if MessageBox(Handle,pchar('确认要解除门店【'+ShopName+'】的锁定状态?'),'友情提醒',MB_YESNO+MB_ICONQUESTION) <> 6 then
+       begin
+         Close;
+         Exit;
+       end;
+    dataFactory.MoveToRemote;
     try
-      result := UcFactory.xsmLogin(XsmCode,XsmPswd);
-    except
-      result := false;
+      dataFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+token.tenantId+' and DEFINE=''DBKEY_'+token.shopId+'''');
+      MessageBox(Handle,pchar('解锁成功...'),'友情提示..',MB_OK);
+      result := true;
+      ModalResult := MROK;
+    finally
+      dataFactory.MoveToDefault;
     end;
   finally
-    UcFactory.Free;
+    rs.Free;
   end;
-  if not result then
-     begin
-       MessageBox(Handle,pchar('新商盟账号密码验证失败，无法解锁...'),'友情提示..',MB_OK);
-       Exit;
-     end
-  else
-     begin
-       rs := TZQuery.Create(nil);
-       try
-         rs.SQL.Text := 'select LICENSE_CODE,SHOP_NAME from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
-         rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-         rs.ParamByName('SHOP_ID').AsString := token.shopId;
-         dataFactory.Open(rs);
-         ShopName := rs.Fields[1].AsString;
-         if LicenseCode <> rs.Fields[0].AsString then
-            begin
-              result := false;
-              MessageBox(Handle,pchar('经营许可证验证失败，无法解锁...'),'友情提示..',MB_OK);
-              Exit;
-            end;
-       finally
-         rs.Free;
-       end;
-     end;
-  if result then
-     begin
-       if MessageBox(Handle,pchar('确认要解除门店【'+ShopName+'】的锁定状态?'),'友情提醒',MB_YESNO+MB_ICONQUESTION) <> 6 then
-          begin
-            result := false;
-            Close;
-            Exit;
-          end;
-       dataFactory.MoveToRemote;
-       try
-         dataFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+token.tenantId+' and DEFINE=''DBKEY_'+token.shopId+'''');
-         MessageBox(Handle,pchar('解锁成功...'),'友情提示..',MB_OK);
-         ModalResult := MROK;
-       finally
-         dataFactory.MoveToDefault;
-       end;
-     end;
 end;
 
 class function TfrmUnLockGuide.ShowDialog(AOwner: TForm): boolean;

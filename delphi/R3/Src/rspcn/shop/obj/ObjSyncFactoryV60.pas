@@ -162,6 +162,8 @@ begin
          end;
       if WasNull then ZQuery.Params[i].Value := null;
     end;
+  if ZQuery.Params.FindParam('LAST_TIME_STAMP') <> nil then
+     ZQuery.Params.FindParam('LAST_TIME_STAMP').Value := ZQuery.Params[TIME_STAMPIdx-1].Value;
 end;
 
 function TSyncSingleTableV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -459,7 +461,7 @@ function TSyncRckDaysCloseV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
   AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE',Params);
   if not Init then Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   FillParams(InsertQuery);
   AGlobal.ExecQuery(InsertQuery);
 end;

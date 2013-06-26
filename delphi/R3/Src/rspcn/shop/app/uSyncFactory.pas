@@ -351,7 +351,7 @@ begin
     finally
       dataFactory.MoveToDefault;
     end;
-    if rs.IsEmpty then result := 5497000 else result := rs.Fields[0].Value;
+    if rs.IsEmpty then result := 0 else result := rs.Fields[0].Value;
   finally
     rs.Free;
   end;
@@ -1207,8 +1207,8 @@ begin
   result := false;
   LastLoginSyncDate  := GetSynTimeStamp(token.tenantId,'LOGIN_SYNC','#');
   LastLogoutSyncDate := GetSynTimeStamp(token.tenantId,'LOGOUT_SYNC','#');
-  if LastLoginSyncDate  = 5497000 then Exit;
-  if LastLogoutSyncDate = 5497000 then Exit;
+  if LastLoginSyncDate  = 0 then Exit;
+  if LastLogoutSyncDate = 0 then Exit;
   if LastLoginSyncDate  = token.lDate then Exit;
   if LastLogoutSyncDate = token.lDate then Exit;
   if LastLogoutSyncDate < LastLoginSyncDate then result := true;

@@ -88,7 +88,8 @@ uses
   udllCtrlUtil in 'utils\udllCtrlUtil.pas',
   uRtcLibFactory in 'app\uRtcLibFactory.pas',
   uDownOrderFactory in 'app\uDownOrderFactory.pas',
-  ufrmExcelFactory in 'app\ufrmExcelFactory.pas' {frmExcelFactory};
+  ufrmExcelFactory in 'app\ufrmExcelFactory.pas' {frmExcelFactory},
+  ufrmSelectRecType in 'app\ufrmSelectRecType.pas' {frmSelectRecType};
 
 {$R *.res}
 exports

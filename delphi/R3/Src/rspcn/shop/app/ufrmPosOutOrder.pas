@@ -155,6 +155,7 @@ type
     procedure edtCARD_NOKeyPress(Sender: TObject; var Key: Char);
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
+    procedure edtCARD_NOEnter(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -2691,6 +2692,12 @@ begin
    end;
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
+end;
+
+procedure TfrmPosOutOrder.edtCARD_NOEnter(Sender: TObject);
+begin
+  inherited;
+  edtCARD_NO.SelectAll;
 end;
 
 initialization

@@ -97,6 +97,7 @@ begin
   if not CheckRegister then //没有注册,先自动注册
      begin
         if not online then Raise Exception.Create('没开通零售终端不支持离线使用');  
+        if not rspFactory.xsmLogin(username,3) then Raise Exception.Create('当前账号没有开通零售终端，请联系客户经理申请。'); 
         if UcFactory.xsmLogin(username,password) then
            begin
              dataFactory.signined := true;

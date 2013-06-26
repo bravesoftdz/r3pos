@@ -487,6 +487,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   TabOrder = 0
                   Text = #35831#36755#20837#20250#21592#21345#21495#25110#25163#26426#21495
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  OnEnter = edtCARD_NOEnter
                   OnKeyPress = edtCARD_NOKeyPress
                 end
               end

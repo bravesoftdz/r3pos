@@ -141,6 +141,7 @@ Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 Count=1
 Item0=$(RMHome)\Source\Components\zlib123
 [HistoryLists\hlOutputDirectorry]
-Count=2
+Count=3
 Item0=..\debug
-Item1=D:\r6
+Item1=D:\ต๗สิ\shop_tuxedo
+Item2=D:\r6

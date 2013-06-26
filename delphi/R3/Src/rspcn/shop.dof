@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=debug
+OutputDir=D:\ต๗สิ\shop_tuxedo
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -138,7 +138,8 @@ Comments=
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
-Count=3
-Item0=debug
-Item1=D:\r6
-Item2=D:\myWork\Delphi\R3\Src\rspcn\debug
+Count=4
+Item0=D:\ต๗สิ\shop_tuxedo
+Item1=debug
+Item2=D:\r6
+Item3=D:\myWork\Delphi\R3\Src\rspcn\debug

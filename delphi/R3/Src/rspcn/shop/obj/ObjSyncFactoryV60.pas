@@ -167,35 +167,44 @@ begin
 end;
 
 function TSyncSingleTableV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+  procedure CheckUsingDate(AGlobal: IdbHelp);
+  var rs:TZQuery;
+  begin
+    if Params.ParamByName('TABLE_NAME').AsString = 'SYS_DEFINE' then
+    begin
+      if (FindField('DEFINE') <> nil) and (FieldbyName('DEFINE').AsString='USING_DATE') then
+         begin
+           rs := TZQuery.Create(nil);
+           try
+             rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+             rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
+             rs.Params[1].AsString := FieldbyName('DEFINE').AsString;
+             AGlobal.Open(rs);
+             if not rs.IsEmpty then
+                begin
+                  if rs.FieldByName('VALUE').AsString<>FieldbyName('VALUE').AsString then
+                     begin
+                       InsertQuery.ParamByName('TIME_STAMP').Value := StrtoInt64(Params.ParambyName('TIME_STAMP').AsString);
+                       UpdateQuery.ParamByName('TIME_STAMP').Value := StrtoInt64(Params.ParambyName('TIME_STAMP').AsString);
+                     end;
+                  if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
+                     begin
+                       InsertQuery.ParamByName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
+                       UpdateQuery.ParamByName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
+                     end;
+                end;
+           finally
+             rs.Free;
+           end;
+         end
+    end;
+  end;
 var
   r:integer;
   WasNull:boolean;
   Comm:string;
   rs:TZQuery;
 begin
-  if Params.ParamByName('TABLE_NAME').AsString = 'SYS_DEFINE' then
-  begin
-    if (FindField('DEFINE') <> nil) and (FieldbyName('DEFINE').AsString='USING_DATE') then
-       begin
-         rs := TZQuery.Create(nil);
-         try
-           rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
-           rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
-           rs.Params[1].AsString := FieldbyName('DEFINE').AsString;
-           AGlobal.Open(rs);
-           if not rs.IsEmpty then
-              begin
-                if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
-                   FieldbyName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
-                if rs.FieldByName('VALUE').AsString<>FieldbyName('VALUE').AsString then
-                   FieldbyName('TIME_STAMP').AsInt64 := StrtoInt64(Params.ParambyName('TIME_STAMP').AsString);
-              end;
-         finally
-           rs.Free;
-         end;
-       end
-  end;
-
   if Params.ParamByName('TABLE_NAME').AsString = 'SYS_SEQUENCE' then
   begin
     rs := TZQuery.Create(nil);
@@ -216,6 +225,7 @@ begin
   if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger in [0,2]) then
      begin
        FillParams(InsertQuery);
+       CheckUsingDate(AGlobal);
        try
          AGlobal.ExecQuery(InsertQuery);
        except
@@ -225,6 +235,7 @@ begin
                  begin
                    if Params.ParamByName('KEY_FLAG').AsInteger=2 then Exit;
                    FillParams(UpdateQuery);
+                   CheckUsingDate(AGlobal);
                    AGlobal.ExecQuery(UpdateQuery);
                  end
               else
@@ -237,12 +248,14 @@ begin
        if (Params.ParamByName('KEY_FLAG').AsInteger in [0,1]) then
        begin
          FillParams(UpdateQuery);
+         CheckUsingDate(AGlobal);
          r := AGlobal.ExecQuery(UpdateQuery);
        end else r := 0;
        if r=0 then
           begin
             if (Comm='02') or (Comm='12') then Exit;
             FillParams(InsertQuery);
+            CheckUsingDate(AGlobal);
             try
               AGlobal.ExecQuery(InsertQuery);
             except

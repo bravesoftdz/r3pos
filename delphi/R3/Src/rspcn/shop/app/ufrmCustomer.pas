@@ -113,6 +113,8 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     PrintDBGridEh1: TPrintDBGridEh;
+    red1: TLabel;
+    red2: TLabel;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure serachTextChange(Sender: TObject);

@@ -1327,6 +1327,34 @@ inherited frmCustomer: TfrmCustomer
           Height = 2
           Anchors = [akLeft, akTop, akRight]
         end
+        object red1: TLabel
+          Left = 384
+          Top = 34
+          Width = 6
+          Height = 12
+          Alignment = taRightJustify
+          Caption = '*'
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+        end
+        object red2: TLabel
+          Left = 569
+          Top = 69
+          Width = 6
+          Height = 12
+          Alignment = taRightJustify
+          Caption = '*'
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+        end
         object btnSave: TRzBmpButton
           Left = 739
           Top = 291

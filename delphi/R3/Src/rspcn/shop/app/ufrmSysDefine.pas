@@ -181,19 +181,19 @@ type
     SaveFolderDialog: TSaveDialog;
     OpenImageDialog: TOpenDialog;
     EditPanel: TRzPanel;
-    RzPanel66: TRzPanel;
+    edtBK_MOBILE: TRzPanel;
     RzPanel67: TRzPanel;
     RzLabel38: TRzLabel;
     edtMOBILE: TcxTextEdit;
-    RzPanel39: TRzPanel;
+    edtBK_ROLE_NAMES: TRzPanel;
     RzPanel68: TRzPanel;
     RzLabel39: TRzLabel;
     edtROLE_NAMES: TcxTextEdit;
-    RzPanel24: TRzPanel;
+    edtBK_ACCOUNT: TRzPanel;
     RzPanel64: TRzPanel;
     RzLabel35: TRzLabel;
     edtACCOUNT: TcxTextEdit;
-    RzPanel36: TRzPanel;
+    edtBK_USER_NAME: TRzPanel;
     RzPanel65: TRzPanel;
     RzLabel36: TRzLabel;
     edtUSER_NAME: TcxTextEdit;
@@ -387,6 +387,8 @@ begin
   dbState := dsInsert;
 
   edtROLE_NAMES.Properties.ReadOnly := true;
+  SetEditStyle(dsBrowse,edtROLE_NAMES.Style);
+  edtBK_ROLE_NAMES.Color := edtROLE_NAMES.Style.Color;
   edtSaveFolder.Properties.ReadOnly := true;
   edtBackUpFile.Properties.ReadOnly := true;
 
@@ -1542,6 +1544,12 @@ begin
        edtACCOUNT.Properties.ReadOnly := false;
        edtUSER_NAME.Properties.ReadOnly := false;
        edtMOBILE.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert,edtACCOUNT.Style);
+       SetEditStyle(dsInsert,edtUSER_NAME.Style);
+       SetEditStyle(dsInsert,edtMOBILE.Style);
+       edtBK_ACCOUNT.Color := edtACCOUNT.Style.Color;
+       edtBK_USER_NAME.Color := edtUSER_NAME.Style.Color;
+       edtBK_MOBILE.Color := edtMOBILE.Style.Color;
        btnSaveUsers.Visible := true
      end
   else
@@ -1549,6 +1557,12 @@ begin
        edtACCOUNT.Properties.ReadOnly := true;
        edtUSER_NAME.Properties.ReadOnly := true;
        edtMOBILE.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse,edtACCOUNT.Style);
+       SetEditStyle(dsBrowse,edtUSER_NAME.Style);
+       SetEditStyle(dsBrowse,edtMOBILE.Style);
+       edtBK_ACCOUNT.Color := edtACCOUNT.Style.Color;
+       edtBK_USER_NAME.Color := edtUSER_NAME.Style.Color;
+       edtBK_MOBILE.Color := edtMOBILE.Style.Color;
        btnSaveUsers.Visible := false;
      end;
 end;
@@ -1566,6 +1580,12 @@ begin
        edtACCOUNT.Properties.ReadOnly := false;
        edtUSER_NAME.Properties.ReadOnly := false;
        edtMOBILE.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert,edtACCOUNT.Style);
+       SetEditStyle(dsInsert,edtUSER_NAME.Style);
+       SetEditStyle(dsInsert,edtMOBILE.Style);
+       edtBK_ACCOUNT.Color := edtACCOUNT.Style.Color;
+       edtBK_USER_NAME.Color := edtUSER_NAME.Style.Color;
+       edtBK_MOBILE.Color := edtMOBILE.Style.Color;
        btnSaveUsers.Visible := true
      end
   else
@@ -1573,6 +1593,12 @@ begin
        edtACCOUNT.Properties.ReadOnly := true;
        edtUSER_NAME.Properties.ReadOnly := true;
        edtMOBILE.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse,edtACCOUNT.Style);
+       SetEditStyle(dsBrowse,edtUSER_NAME.Style);
+       SetEditStyle(dsBrowse,edtMOBILE.Style);
+       edtBK_ACCOUNT.Color := edtACCOUNT.Style.Color;
+       edtBK_USER_NAME.Color := edtUSER_NAME.Style.Color;
+       edtBK_MOBILE.Color := edtMOBILE.Style.Color;
        btnSaveUsers.Visible := false;
      end;
 end;

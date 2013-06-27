@@ -169,8 +169,8 @@ end;
 procedure TfrmUserRights.FormCreate(Sender: TObject);
 begin
   inherited;
-  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp') then
-     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\man.bmp');
+  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
+     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
 end;
 
 end.

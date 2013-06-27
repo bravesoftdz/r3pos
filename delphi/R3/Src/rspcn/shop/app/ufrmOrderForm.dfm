@@ -1748,6 +1748,10 @@ inherited frmOrderForm: TfrmOrderForm
       Caption = #36864#25442#27492#21830#21697
       OnClick = mnuReturnClick
     end
+    object ImportExcel: TMenuItem
+      Caption = 'Excel'#23548#20837'...'
+      OnClick = ImportExcelClick
+    end
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer

@@ -199,7 +199,7 @@ type
 
 implementation
 uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,
-     ufrmExcelFactory,ufrmDBGridPreview;
+     ufrmGoodsExcel,ufrmDBGridPreview;
 {$R *.dfm}
 
 function getTodayId:string;
@@ -1891,10 +1891,12 @@ procedure TfrmGoodsStorage.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
+  {
   if (cdsList.FieldByName('LOWER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat<cdsList.FieldByName('LOWER_AMOUNT').AsFloat) then
      Background := lower.Color;
   if (cdsList.FieldByName('UPPER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat>cdsList.FieldByName('UPPER_AMOUNT').AsFloat) then
      Background := upper.Color;
+     }
 end;
 
 procedure TfrmGoodsStorage.RzBmpButton3Click(Sender: TObject);
@@ -1924,9 +1926,11 @@ begin
 end;
 
 procedure TfrmGoodsStorage.ExcelImportClick(Sender: TObject);
+var rs:TZQuery;
 begin
   inherited;
-  if TfrmExcelFactory.ExcelFactory(self) then
+  rs:=TZQuery.Create(nil);
+  if TfrmGoodsExcel.ExcelFactory(self,rs,'','',true) then
      dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
 end;
 

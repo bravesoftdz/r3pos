@@ -95,6 +95,7 @@ type
     mnuReturn: TMenuItem;
     Images: TImageList;
     toolPresent: TToolButton;
+    ImportExcel: TMenuItem;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -141,6 +142,7 @@ type
     procedure edtTableAfterOpen(DataSet: TDataSet);
     procedure fndGODS_IDFindClick(Sender: TObject);
     procedure toolPresentClick(Sender: TObject);
+    procedure ImportExcelClick(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -186,18 +188,15 @@ type
     function PropertyEnabled:boolean;
     //检测是否是汇总字段
     function CheckSumField(FieldName:string):boolean;virtual;
-    procedure AddRecord(AObj:TRecord_;UNIT_ID:string);virtual;
     procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string);virtual;
     procedure DelRecord(AObj:TRecord_);virtual;
     procedure EraseRecord;virtual;
     procedure InitPrice(GODS_ID,UNIT_ID:string);virtual;
     function CheckRepeat(AObj:TRecord_):boolean;virtual;
 
-    procedure AmountToCalc(Amount:currency);virtual;
     procedure PriceToCalc(APrice:currency);virtual;
     procedure AMoneyToCalc(AMoney:currency);virtual;
     procedure BulkToCalc(AMoney:currency);virtual;
-    procedure AgioToCalc(Agio:currency);virtual;
     procedure PresentToCalc(Present:integer);virtual;
     procedure UnitToCalc(UNIT_ID:string);virtual;
     procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:currency;Appended:boolean=false);virtual;
@@ -225,6 +224,10 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string);virtual;
+    procedure AmountToCalc(Amount:currency);virtual;
+    procedure AgioToCalc(Agio:currency);virtual;
+
     procedure NewOrder;virtual;
     procedure EditOrder;virtual;
     procedure DeleteOrder;virtual;
@@ -247,7 +250,7 @@ var frmOrderForm: TfrmOrderForm;
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,uFnUtil,udllDsUtil,udllShopUtil,
-     udataFactory,uCacheFactory,ufrmInitGoods,ufrmSelectGoods;
+     udataFactory,uCacheFactory,ufrmInitGoods,ufrmSelectGoods,ufrmOrderExcel;
 
 {$R *.dfm}
 
@@ -2738,6 +2741,34 @@ end;
 procedure TfrmOrderForm.Calc;
 begin
 
+end;
+
+procedure TfrmOrderForm.ImportExcelClick(Sender: TObject);
+var i:Integer;
+    rs:TZQuery;
+    FieldsString,FormatString:String;
+begin
+  inherited;
+  if not (dbState in [dsEdit,dsInsert]) then Raise Exception.Create('单据需在新增、修改、录入等状态下,才能使用导入功能！');
+  rs:=TZQuery.Create(nil);
+  rs.Data:=edtTable.Data;
+  rs.EmptyDataSet;
+  for i:=1 to DBGridEh1.Columns.Count-2 do
+  begin
+    if Trim(FieldsString) = '' then
+        FieldsString := DBGridEh1.Columns[i].FieldName + '=' + DBGridEh1.Columns[i].Title.Caption
+      else
+        FieldsString := FieldsString + ',' + DBGridEh1.Columns[i].FieldName + '=' + DBGridEh1.Columns[i].Title.Caption;
+      if Trim(FormatString) = '' then
+        FormatString := IntToStr(i) + '=' + DBGridEh1.Columns[i].FieldName
+      else
+        FormatString := FormatString + ',' + IntToStr(i) + '=' + DBGridEh1.Columns[i].FieldName;
+  end;
+  try
+    TfrmOrderExcel.ExcelFactory(self,rs,FieldsString,FormatString,True);
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

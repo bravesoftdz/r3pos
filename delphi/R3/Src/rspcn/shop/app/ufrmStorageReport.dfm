@@ -831,6 +831,7 @@ inherited frmStorageReport: TfrmStorageReport
             Style.HotTrack = False
             Style.ButtonTransparency = ebtInactive
             TabOrder = 2
+            OnExit = D1Exit
           end
           object RzPanel23: TRzPanel
             Left = 119

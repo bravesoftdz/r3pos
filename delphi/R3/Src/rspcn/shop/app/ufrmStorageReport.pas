@@ -73,8 +73,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure linkToStockClick(Sender: TObject);
+    procedure D1Exit(Sender: TObject);
   private
     FSortId:string;
+    SysBeginDate:string;
     WTitle1:TStringList;
     WTitle2:TStringList;
     procedure DBGridPrint;override;
@@ -280,6 +282,17 @@ begin
       Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       rs.Next;
     end;
+  rs:=TZQuery.Create(nil);
+  try
+    rs.SQL.Text:='select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+    rs.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
+    rs.ParamByName('DEFINE').AsString:='SYS_BEGIN_DATE';
+    dataFactory.Open(rs);
+    if not rs.IsEmpty then
+       SysBeginDate := FormatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[0].AsString));
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmStorageReport.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -519,6 +532,15 @@ procedure TfrmStorageReport.linkToStockClick(Sender: TObject);
 begin
   inherited;
   MessageBox(Handle,'当前版本不支持此功能','友情提示..',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmStorageReport.D1Exit(Sender: TObject);
+begin
+  inherited;
+  if FormatDatetime('YYYYMMDD',D1.Date) < SysBeginDate then
+     begin
+       D1.Date := fnTime.fnStrtoDate(SysBeginDate);
+     end;
 end;
 
 initialization

@@ -2002,6 +2002,9 @@ begin
              ' ('+token.tenantId+',''SYS_BEGIN_DATE'','''+CloseDate+''',0,''00'',0)';
       dataFactory.ExecSQL(str);
 
+      str := 'update SYS_DEFINE set VALUE='''+FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(CloseDate))+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''USING_DATE'' ';
+      dataFactory.ExecSQL(str);
+
       dataFactory.CommitTrans;
     except
       dataFactory.RollbackTrans;

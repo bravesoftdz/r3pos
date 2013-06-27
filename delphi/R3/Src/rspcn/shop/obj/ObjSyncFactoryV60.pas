@@ -167,6 +167,7 @@ begin
 end;
 
 function TSyncSingleTableV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+{
   procedure CheckUsingDate(AGlobal: IdbHelp);
   var rs:TZQuery;
   begin
@@ -199,6 +200,7 @@ function TSyncSingleTableV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
          end
     end;
   end;
+}
 var
   r:integer;
   WasNull:boolean;
@@ -213,11 +215,16 @@ begin
       rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
       rs.Params[1].AsString := FieldbyName('SEQU_ID').AsString;
       AGlobal.Open(rs);
-      if rs.FieldByName('FLAG_TEXT').AsString > FieldbyName('FLAG_TEXT').AsString then Exit;
-      if rs.FieldByName('SEQU_NO').AsInteger > FieldbyName('SEQU_NO').AsInteger then Exit;
+      if rs.FieldByName('FLAG_TEXT').AsString > FieldByName('FLAG_TEXT').AsString then Exit;
+      if rs.FieldByName('SEQU_NO').AsInteger > FieldByName('SEQU_NO').AsInteger then Exit;
     finally
       rs.Free;
     end;
+  end;
+
+  if Params.ParamByName('TABLE_NAME').AsString = 'SYS_DEFINE' then
+  begin
+    if (FindField('DEFINE') <> nil) and (FieldByName('DEFINE').AsString='USING_DATE') then Exit;
   end;
 
   InitSQL(AGlobal);
@@ -225,7 +232,6 @@ begin
   if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger in [0,2]) then
      begin
        FillParams(InsertQuery);
-       CheckUsingDate(AGlobal);
        try
          AGlobal.ExecQuery(InsertQuery);
        except
@@ -235,7 +241,6 @@ begin
                  begin
                    if Params.ParamByName('KEY_FLAG').AsInteger=2 then Exit;
                    FillParams(UpdateQuery);
-                   CheckUsingDate(AGlobal);
                    AGlobal.ExecQuery(UpdateQuery);
                  end
               else
@@ -248,14 +253,12 @@ begin
        if (Params.ParamByName('KEY_FLAG').AsInteger in [0,1]) then
        begin
          FillParams(UpdateQuery);
-         CheckUsingDate(AGlobal);
          r := AGlobal.ExecQuery(UpdateQuery);
        end else r := 0;
        if r=0 then
           begin
             if (Comm='02') or (Comm='12') then Exit;
             FillParams(InsertQuery);
-            CheckUsingDate(AGlobal);
             try
               AGlobal.ExecQuery(InsertQuery);
             except

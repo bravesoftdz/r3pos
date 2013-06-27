@@ -1259,6 +1259,8 @@ begin
            if not CheckNeedLoginSync then Exit;
            if not SyncLockCheck(PHWnd) then Exit;
            SyncFactory.BackupDBFile;
+           RspSyncFactory.SyncAll;
+           RspSyncFactory.copyGoodsSort;
            SyncFactory.SyncBasic;
            if CheckNeedLoginSyncBizData then
               begin

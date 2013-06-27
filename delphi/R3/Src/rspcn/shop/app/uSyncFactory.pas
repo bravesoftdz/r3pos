@@ -1281,6 +1281,7 @@ begin
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
+var rs:TZQuery;
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
@@ -1295,6 +1296,17 @@ begin
       Update;
       if not SyncFactory.SyncLockCheck(PHWnd) then Exit;
       SyncFactory.SyncBasic;
+      rs:=TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select count(1) from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+        rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+        rs.ParamByName('SHOP_ID').AsString := token.shopId;
+        dataFactory.Open(rs);
+        if rs.Fields[0].AsInteger <> 0 then
+           TfrmStocksCalc.Calc(Application.MainForm,now());
+      finally
+        rs.Free;
+      end;
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
       if RtcSyncFactory.GetToken then
@@ -1801,11 +1813,6 @@ var
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
-
-  if SyncFlag = 0 then
-     begin
-       if not TfrmStocksCalc.Calc(Application.MainForm,now()) then Exit;
-     end;
 
   tbName := 'RCK_DAYS_CLOSE';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);

@@ -194,7 +194,6 @@ type
     procedure InitPrice(GODS_ID,UNIT_ID:string);virtual;
     function CheckRepeat(AObj:TRecord_):boolean;virtual;
 
-    procedure PriceToCalc(APrice:currency);virtual;
     procedure AMoneyToCalc(AMoney:currency);virtual;
     procedure BulkToCalc(AMoney:currency);virtual;
     procedure PresentToCalc(Present:integer);virtual;
@@ -227,6 +226,7 @@ type
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string);virtual;
     procedure AmountToCalc(Amount:currency);virtual;
     procedure AgioToCalc(Agio:currency);virtual;
+    procedure PriceToCalc(APrice:currency);virtual;
 
     procedure NewOrder;virtual;
     procedure EditOrder;virtual;

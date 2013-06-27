@@ -107,9 +107,9 @@ begin
         orderForm.edtTable.Edit;
         orderForm.edtTable.FieldByName('APRICE').AsFloat := Field.AsFloat;
         orderForm.edtTable.Post;
-        orderForm.AmountToCalc(Field.AsFloat);
+        orderForm.PriceToCalc(Field.AsFloat);
       end;
-
+      
       Field:=dsExcel.FindField('AGIO_RATE');
       if (Field <> nil) and (Field.AsString <> '') then
       begin

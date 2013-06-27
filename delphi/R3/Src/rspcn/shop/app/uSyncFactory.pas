@@ -2000,14 +2000,10 @@ begin
   try
     dataFactory.BeginTrans;
     try
-      dataFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+token.tenantId+' and DEFINE in (''USED_IMP_ACCDATE'',''CLOSE_IMP_ACCDATE'')');
+      dataFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+token.tenantId+' and DEFINE = ''SYS_BEGIN_DATE'' ');
 
       str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values '+
-           ' ('+token.tenantId+',''USED_IMP_ACCDATE'',''1'',0,''00'',0)';
-      dataFactory.ExecSQL(str);
-
-      str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values '+
-           ' ('+token.tenantId+',''CLOSE_IMP_ACCDATE'','''+CloseDate+''',0,''00'',0)';
+             ' ('+token.tenantId+',''SYS_BEGIN_DATE'','''+CloseDate+''',0,''00'',0)';
       dataFactory.ExecSQL(str);
 
       dataFactory.CommitTrans;

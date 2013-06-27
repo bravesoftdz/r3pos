@@ -542,7 +542,7 @@ begin
            B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
         end;
      Result := (pDate>B);
-     if not Result then Raise Exception.Create('系统已经结帐到'+b+'号，不能对此之前的单据进行操作');
+     if not Result then Raise Exception.Create('系统已经结帐到'+B+'号，不能对此之前的单据进行操作');
      Temp.Close;
      Temp.SQL.Text := 'select max(PRINT_DATE) as END_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and TIME_STAMP>'+timestamp+' ';
      AGlobal.Open(Temp);
@@ -550,23 +550,29 @@ begin
         begin
           B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
           Result := (pDate>B);
-          if not Result then Raise Exception.Create('系统'+b+'号已经盘点，不能对此之前的单据进行操作');
+          if not Result then Raise Exception.Create('系统'+B+'号已经盘点，不能对此之前的单据进行操作');
         end;
-     //2012.12.08增加判断导入财务账的结束日期
+     //2012.12.08增加判断导入财务账的结束日期、数据恢复日期
      Temp.Close;
-     Temp.SQL.Text:='select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE in (''USED_IMP_ACCDATE'',''CLOSE_IMP_ACCDATE'')';
+     Temp.SQL.Text:='select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE in (''USED_IMP_ACCDATE'',''CLOSE_IMP_ACCDATE'',''SYS_BEGIN_DATE'')';
      AGlobal.Open(Temp);
+     if Temp.Locate('DEFINE','SYS_BEGIN_DATE',[]) then
+        begin
+          B := FormatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.FieldByName('VALUE').AsString));
+          Result := (pDate>B);
+          if not Result then Raise Exception.Create('系统数据已经恢复至'+B+'号，不能对此之前的单据进行操作');
+        end;
      if Temp.Locate('DEFINE','USED_IMP_ACCDATE',[]) then
         DefValue:=Trim(Temp.FieldByName('VALUE').AsString);
      if DefValue='1' then
-     begin
-       if Temp.Locate('DEFINE','CLOSE_IMP_ACCDATE',[]) then
-       begin
-         B := FormatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.FieldByName('VALUE').AsString));
-         Result := (pDate>B);
-         if not Result then Raise Exception.Create('系统'+B+'号已经关账，不能对此之前的单据进行操作');
-       end;
-     end;
+        begin
+          if Temp.Locate('DEFINE','CLOSE_IMP_ACCDATE',[]) then
+             begin
+               B := FormatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.FieldByName('VALUE').AsString));
+               Result := (pDate>B);
+               if not Result then Raise Exception.Create('系统'+B+'号已经关账，不能对此之前的单据进行操作');
+             end;
+        end;
      AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);
   finally
      Temp.Free;

@@ -684,13 +684,14 @@ begin
   new(n);
   n^.tbname := 'CA_RELATION';
   n^.keyFields := 'TENANT_ID;RELATION_ID';
-  n^.selectRemoteSQL := ' select i.* from CA_RELATION i,'+
-                        ' ( '+
-                        '  select j.TENANT_ID,s.TIME_STAMP from CA_RELATION j,CA_RELATIONS s '+
-                        '  where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID '+
-                        ' ) r where i.TENANT_ID=r.TENANT_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+
-                        ' union all '+
-                        ' select i.* from CA_RELATION i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+  n^.selectRemoteSQL :=
+    ' select i.* from CA_RELATION i,'+
+    ' ( '+
+    '  select j.TENANT_ID,s.TIME_STAMP from CA_RELATION j,CA_RELATIONS s '+
+    '  where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID '+
+    ' ) r where i.TENANT_ID=r.TENANT_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+
+    ' union all '+
+    ' select i.* from CA_RELATION i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
   n^.synFlag := 2;
   n^.keyFlag := 0;
   n^.tbtitle := '¹©Ó¦Á´';

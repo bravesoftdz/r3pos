@@ -311,7 +311,7 @@ begin
      end;
   F := TIniFile.Create(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'r3.cfg');
   try
-    if F.ReadString('db','SFVersion','.LCL')='.LCL' then
+    if F.ReadString('soft','SFVersion','.LCL')='.LCL' then
        dbFlag := 0
     else
        dbFlag := 1;

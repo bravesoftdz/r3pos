@@ -1309,7 +1309,7 @@ begin
            tmpUsers.FieldByName('PASS_WRD').AsString := EncStr('1234',ENC_KEY);
            tmpUsers.FieldByName('DEPT_ID').AsString := token.tenantId + '001';
            tmpUsers.FieldByName('SEX').AsString := '0';
-           tmpUsers.FieldByName('DEGRESS').AsString := '3';
+           tmpUsers.FieldByName('DEGREES').AsString := '3';
            tmpUsers.FieldByName('IDN_TYPE').AsString := '1';
          end
       else tmpUsers.Edit;

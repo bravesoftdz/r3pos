@@ -1470,7 +1470,7 @@ procedure TfrmSysDefine.FileRecovery(src:string;AppHandle:HWnd);
 var rs:TZQuery;
 begin
   try
-    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),false) then
+    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
        begin
          if CopyFile(pchar(src),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
             begin
@@ -1483,8 +1483,8 @@ begin
                 SyncFactory.RecoverySync(AppHandle);
                 MessageBox(AppHandle,'数据恢复成功...','友情提示..',MB_OK);
                 RtcSyncClose;
-                if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
-                   DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
+                if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+                   DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
               finally
                 dataFactory.MoveToDefault;
                 rs.Free;
@@ -1502,11 +1502,11 @@ begin
   except
     on E:Exception do
        begin
-         if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+         if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
          begin
            dataFactory.sqlite.Connect;
-           if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db') then
-              DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_tmp.db');
+           if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+              DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
          end;
          Raise Exception.Create('数据恢复失败，原因：'+E.Message);
        end;

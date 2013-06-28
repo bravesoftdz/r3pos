@@ -3,8 +3,8 @@ unit uSyncFactory;
 interface
 
 uses
-  Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase, ObjCommon, ZLogFile,
-  Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock;
+  Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
+  ObjCommon, ZLogFile, Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -117,6 +117,8 @@ type
     procedure GetCloseAccDate;
     function  CheckNeedLoginSync:boolean;
     function  CheckNeedLoginSyncBizData:boolean;
+    // 检测数据备份
+    function  CheckBackUpDBFile(PHWnd:THandle):boolean;
     // 登陆日志
     procedure AddLoginLog;
     procedure AddLogoutLog;
@@ -124,6 +126,8 @@ type
   public
     constructor Create;
     destructor  Destroy;override;
+    // 检测文件是否是有效的数据文件
+    function  CheckValidDBFile(src:string):boolean;
     // 登录时同步
     procedure LoginSync(PHWnd:THandle);
     // 退出时同步
@@ -1256,6 +1260,7 @@ begin
          end
       else
          begin
+           CheckBackUpDBFile(PHWnd);
            if not CheckNeedLoginSync then Exit;
            if not SyncLockCheck(PHWnd) then Exit;
            SyncFactory.BackupDBFile;
@@ -2343,6 +2348,54 @@ begin
                end;
           end;
      end;
+end;
+
+function TSyncFactory.CheckBackUpDBFile(PHWnd:THandle): boolean;
+var rs:TZQuery;
+begin
+  if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+     begin
+       if not CheckValidDBFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+          begin
+            DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
+            Exit;
+          end;
+       MessageBox(PHWnd,'系统检测到上次文件还原过程中异常中断，需对数据文件进行还原...','友情提示...',MB_OK+MB_ICONQUESTION);
+       if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+          begin
+            dataFactory.sqlite.Connect;
+            DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
+            MessageBox(PHWnd,'数据文件还原成功...','友情提示..',MB_OK);
+          end
+       else
+          begin
+            Raise Exception.Create('数据文件恢复失败...');
+          end;
+      end;
+end;
+
+function TSyncFactory.CheckValidDBFile(src:string): boolean;
+var
+  rs:TZQuery;
+  sqlite:TdbFactory;
+begin
+  result := false;
+  try
+    sqlite := TdbFactory.Create;
+    rs:=TZQuery.Create(nil);
+    try
+      sqlite.Initialize('provider=sqlite-3;databasename='+src);
+      sqlite.connect;
+      rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
+      sqlite.Open(rs);
+      result := true;
+    finally
+      rs.Free;
+      sqlite.Free;
+    end;
+  except
+    result := false;
+  end;
 end;
 
 initialization

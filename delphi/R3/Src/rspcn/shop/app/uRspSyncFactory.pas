@@ -46,7 +46,7 @@ var
   caTenantDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   outxml:WideString;
-  rs:TZQuery;
+  rs,rs_l:TZQuery;
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
@@ -57,6 +57,7 @@ begin
   Node := rspFactory.FindNode(doc,'body');
 
   rs := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
@@ -143,13 +144,14 @@ begin
           Params := TftParamList.Create(nil);
           dataFactory.MoveToSqlite;
           try
+            rs_l.SyncDelta := rs.SyncDelta;
             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
             Params.ParamByName('TABLE_NAME').AsString := 'CA_TENANT';
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-            dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
+            dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
             Params.Free;
             dataFactory.MoveToDefault;
@@ -158,6 +160,7 @@ begin
       end;
   finally
     rs.Free;
+    rs_l.Free;
   end;
   dllGlobal.GetZQueryFromName('CA_TENANT').Close;
 end;
@@ -168,7 +171,7 @@ var
   caServiceLineDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   outxml:WideString;
-  rs:TZQuery;
+  rs,rs_l:TZQuery;
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
@@ -179,6 +182,7 @@ begin
   Node := rspFactory.FindNode(doc,'body');
 
   rs := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('RELATION_ID',ftInteger,0,true);
@@ -229,13 +233,14 @@ begin
           Params := TftParamList.Create(nil);
           dataFactory.MoveToSqlite;
           try
+            rs_l.SyncDelta := rs.SyncDelta;
             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
             Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATION';
             Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-            dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
+            dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
             Params.Free;
             dataFactory.MoveToDefault;
@@ -244,6 +249,7 @@ begin
       end;
   finally
     rs.Free;
+    rs_l.Free;
   end;
 end;
 
@@ -253,7 +259,7 @@ var
   caRelationDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   outxml:WideString;
-  rs:TZQuery;
+  rs,rs_l:TZQuery;
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
@@ -264,6 +270,7 @@ begin
   Node := rspFactory.FindNode(doc,'body');
 
   rs := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('RELATIONS_ID',ftstring,36,true);
@@ -321,6 +328,7 @@ begin
           Params := TftParamList.Create(nil);
           dataFactory.MoveToSqlite;
           try
+            rs_l.SyncDelta := rs.SyncDelta;
             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
             Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;RELATION_ID;RELATI_ID';
@@ -328,7 +336,7 @@ begin
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timeStamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-            dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
+            dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
             Params.Free;
             dataFactory.MoveToDefault;
@@ -337,6 +345,7 @@ begin
       end;
   finally
     rs.Free;
+    rs_l.Free;
   end;
   dllGlobal.GetZQueryFromName('CA_RELATIONS').Close;
 end;
@@ -360,6 +369,7 @@ var
   Node:IXMLDOMNode;
   outxml:WideString;
   rs,idx,prc:TZQuery;
+  rs_l,idx_l,prc_l:TZQuery;
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
@@ -372,6 +382,9 @@ begin
   rs := TZQuery.Create(nil);
   idx := TZQuery.Create(nil);
   prc := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
+  idx_l := TZQuery.Create(nil);
+  prc_l := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
@@ -516,6 +529,9 @@ begin
           try
             dataFactory.BeginBatch;
             try
+              rs_l.SyncDelta := rs.SyncDelta;
+              idx_l.SyncDelta := idx.SyncDelta;
+              prc_l.SyncDelta := prc.SyncDelta;
               Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
               Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INFO';
               Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID';
@@ -523,14 +539,14 @@ begin
               Params.ParamByName('TIME_STAMP').Value := timestamp;
               Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
               Params.ParamByName('KEY_FLAG').AsString := '1';
-              dataFactory.AddBatch(rs,'TSyncSingleTableV60',Params);
+              dataFactory.AddBatch(rs_l,'TSyncSingleTableV60',Params);
               Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INDEX';
               Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID;INDEX_ID';
-              dataFactory.AddBatch(idx,'TSyncSingleTableV60',Params);
+              dataFactory.AddBatch(idx_l,'TSyncSingleTableV60',Params);
               Params.ParamByName('TABLE_NAME').AsString := 'PUB_PRICEGRADE';
               Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;PRICE_ID';
               Params.ParamByName('KEY_FLAG').AsString := '2';
-              dataFactory.AddBatch(prc,'TSyncSingleTableV60',Params);
+              dataFactory.AddBatch(prc_l,'TSyncSingleTableV60',Params);
               dataFactory.CommitBatch;
             except
               dataFactory.CancelBatch;
@@ -546,6 +562,9 @@ begin
     prc.Free;
     idx.Free;
     rs.Free;
+    prc_l.Free;
+    idx_l.Free;
+    rs_l.Free;
   end;
 end;
 
@@ -555,7 +574,7 @@ var
   listModulesResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   outxml:WideString;
-  rs:TZQuery;
+  rs,rs_l:TZQuery;
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
   ProductId:string;
@@ -568,6 +587,7 @@ begin
   Node := rspFactory.FindNode(doc,'body');
 
   rs := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('PROD_ID',ftstring,10,true);
@@ -626,6 +646,7 @@ begin
           dataFactory.MoveToSqlite;
           Params := TftParamList.Create(nil);
           try
+            rs_l.SyncDelta := rs.SyncDelta;
             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
             Params.ParamByName('TABLE_NAME').AsString := 'CA_MODULE';
             Params.ParamByName('KEY_FIELDS').AsString := 'PROD_ID;MODU_ID';
@@ -633,7 +654,7 @@ begin
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-            dataFactory.UpdateBatch(rs,'TSyncCaModuleV60',Params);
+            dataFactory.UpdateBatch(rs_l,'TSyncCaModuleV60',Params);
           finally
             dataFactory.MoveToDefault;
             Params.Free;
@@ -642,6 +663,7 @@ begin
       end;
   finally
     rs.Free;
+    rs_l.Free;
   end;
 end;
 
@@ -651,7 +673,7 @@ var
   pubGoodsSortDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   outxml:WideString;
-  rs:TZQuery;
+  rs,rs_l:TZQuery;
   Params:TftParamList;
   timestamp,maxtimestamp:int64;
 begin
@@ -662,6 +684,7 @@ begin
   Node := rspFactory.FindNode(doc,'body');
 
   rs := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('SORT_ID',ftstring,36,true);
@@ -717,13 +740,14 @@ begin
           Params := TftParamList.Create(nil);
           dataFactory.MoveToSqlite;
           try
+            rs_l.SyncDelta := rs.SyncDelta;
             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
             Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSSORT';
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := timestamp;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-            dataFactory.UpdateBatch(rs,'TSyncSingleTableV60',Params);
+            dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
             Params.Free;
             dataFactory.MoveToDefault;
@@ -732,6 +756,7 @@ begin
       end;
   finally
     rs.Free;
+    rs_l.Free;
   end;
   dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
 end;
@@ -763,7 +788,7 @@ begin
 end;
 
 procedure TRspSyncFactory.copyGoodsSort;
-var rs,ss:TZQuery;
+var rs,ss,ss_l:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   dataFactory.MoveToRemote;
@@ -778,6 +803,7 @@ begin
 
   rs := TZQuery.Create(nil);
   ss := TZQuery.Create(nil);
+  ss_l := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select * from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID=110000002';
     dataFactory.Open(rs);
@@ -820,13 +846,14 @@ begin
           Params := TftParamList.Create(nil);
           dataFactory.MoveToSqlite;
           try
+            ss_l.SyncDelta := ss.SyncDelta;
             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
             Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSSORT';
             Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
             Params.ParamByName('COMM_LOCK').AsString := '1';
             Params.ParamByName('TIME_STAMP').Value := 0;
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-            dataFactory.UpdateBatch(ss,'TSyncSingleTableV60',Params);
+            dataFactory.UpdateBatch(ss_l,'TSyncSingleTableV60',Params);
           finally
             Params.Free;
             dataFactory.MoveToDefault;
@@ -836,6 +863,7 @@ begin
   finally
     rs.Free;
     ss.Free;
+    ss_l.Free;
   end;
   dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
 end;

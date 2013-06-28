@@ -100,7 +100,7 @@ type
     LoginSyncDate:integer;
     LastLoginSyncDate,LastLogoutSyncDate:integer;
     FLoginId: string;
-    procedure CheckRemoteData(AppHandle:HWnd);
+    function  CheckRemoteData(AppHandle:HWnd):integer;//0:未还原 1:文件还原 2:服务端还原
     procedure BackUpDBFile;
     procedure InitTenant;
     procedure InitSyncList1;
@@ -1232,7 +1232,9 @@ begin
 end;
 
 procedure TSyncFactory.LoginSync(PHWnd: THandle);
-var firstLogin:boolean;
+var
+  flag:integer;
+  firstLogin:boolean;
 begin
   firstLogin := false;
   if dllApplication.mode = 'demo' then Exit;
@@ -1251,12 +1253,23 @@ begin
            firstLogin := true;
            TfrmSysDefine.AutoRegister;
            if token.tenantId = '' then Exit;
-           if not CheckNeedLoginSync then Exit;
-           RspSyncFactory.SyncAll;
-           RspSyncFactory.copyGoodsSort;
-           SyncFactory.InitTenant;
-           SyncFactory.SyncBasic;
-           TfrmSysDefine.SaveRegister;
+           flag := SyncFactory.CheckRemoteData(PHWnd);
+           if flag = 0 then // 没有还原
+              begin
+                RspSyncFactory.SyncAll;
+                RspSyncFactory.copyGoodsSort;
+                SyncFactory.InitTenant;
+                SyncFactory.SyncBasic;
+                TfrmSysDefine.SaveRegister;
+              end
+           else if flag = 1 then // 文件还原
+              begin
+
+              end
+           else if flag = 2 then // 远程数据还原
+              begin
+                TfrmSysDefine.SaveRegister;
+              end;
          end
       else
          begin
@@ -1282,7 +1295,6 @@ begin
       Free;
     end;
   end;
-  if firstLogin then SyncFactory.CheckRemoteData(PHWnd);
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
@@ -1327,6 +1339,7 @@ begin
       ShowForm;
       BringToFront;
       Update;
+      SyncFactory.SyncBasic;
       SyncFactory.SyncBizData(1,BeginDate);
     finally
       Free;
@@ -2264,7 +2277,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.CheckRemoteData(AppHandle:HWnd);
+function TSyncFactory.CheckRemoteData(AppHandle:HWnd):integer;
 var
   rs:TZQuery;
   sr: TSearchRec;
@@ -2272,6 +2285,7 @@ var
   NeedRecovery:boolean;
   recType,Folder,FileName:string;
 begin
+  result := 0;
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
   rs := TZQuery.Create(nil);
   dataFactory.MoveToRemote;
@@ -2324,6 +2338,7 @@ begin
           begin
             try
               TfrmSysDefine.DBFileRecovery(Folder+'\'+FileName,AppHandle);
+              result := 1;
             except
               on E:Exception do
                  begin
@@ -2342,6 +2357,7 @@ begin
                begin
                  try
                    TfrmSysDefine.DBRemoteRecovery(recType,AppHandle);
+                   result := 2;
                  except
                    on E:Exception do
                       begin

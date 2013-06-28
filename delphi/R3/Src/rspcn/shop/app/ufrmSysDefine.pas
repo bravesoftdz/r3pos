@@ -1469,6 +1469,7 @@ end;
 procedure TfrmSysDefine.FileRecovery(src:string;AppHandle:HWnd);
 var rs:TZQuery;
 begin
+  if not SyncFactory.CheckValidDBFile(src) then Raise Exception.Create('所恢复的文件不是有效数据文件，无法进行文件恢复...');
   try
     if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
        begin

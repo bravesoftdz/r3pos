@@ -1300,7 +1300,8 @@ begin
       Update;
       if not SyncFactory.SyncLockCheck(PHWnd) then Exit;
       SyncFactory.SyncBasic;
-      TfrmStocksCalc.Calc(Application.MainForm,now());
+      if dllGlobal.GetSFVersion = '.LCL' then
+         TfrmStocksCalc.Calc(Application.MainForm,now());
       SyncFactory.SyncBizData;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
       if RtcSyncFactory.GetToken then

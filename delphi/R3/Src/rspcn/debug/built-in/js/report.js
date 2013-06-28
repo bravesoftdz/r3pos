@@ -145,7 +145,8 @@
 			var d1 = d.format('yyyyMMdd');		//上个月今天日期
 			
 			ds.createDataSet();	
-			var sql = "select j.TENANT_ID,d.SORT_ID,ifnull(d.SORT_NAME,'无分类') as SORT_NAME,j.CALC_MONEY from (select A.TENANT_ID,substr(C.LEVEL_ID,1,4) as LEVEL_ID,b.RELATION_ID,1 as SORT_TYPE,sum(A.CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID=C.TENANT_ID and B.SORT_ID1=C.SORT_ID  where A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.RELATION_ID<>1000006 group by A.TENANT_ID,substr(C.LEVEL_ID,1,4),b.RELATION_ID) j left outer join VIW_GOODSSORT d on j.TENANT_ID=d.TENANT_ID and j.LEVEL_ID=d.LEVEL_ID and j.RELATION_ID=d.RELATION_ID and j.SORT_TYPE=d.SORT_TYPE order by d.SEQ_NO";
+			// var sql = "select j.TENANT_ID,d.SORT_ID,ifnull(d.SORT_NAME,'无分类') as SORT_NAME,j.CALC_MONEY from (select A.TENANT_ID,substr(C.LEVEL_ID,1,4) as LEVEL_ID,b.RELATION_ID,1 as SORT_TYPE,sum(A.CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID=C.TENANT_ID and B.SORT_ID1=C.SORT_ID  where A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.RELATION_ID<>1000006 group by A.TENANT_ID,substr(C.LEVEL_ID,1,4),b.RELATION_ID) j left outer join VIW_GOODSSORT d on j.TENANT_ID=d.TENANT_ID and j.LEVEL_ID=d.LEVEL_ID and j.RELATION_ID=d.RELATION_ID and j.SORT_TYPE=d.SORT_TYPE order by d.SEQ_NO";
+			var sql = "select A.TENANT_ID,C.SORT_ID,COALESCE(C.SORT_NAME,'无分类') AS SORT_NAME,SUM(A.CALC_MONEY) AS CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID = B.TENANT_ID and A.GODS_ID = B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID = C.TENANT_ID and B.SORT_ID1 = C.SORT_ID and C.SORT_TYPE = 1 where A.TENANT_ID = "+tenant_id+" and A.SALES_DATE >= "+d1+" and A.SALES_DATE <= "+d2+" and B.RELATION_ID <> 1000006 GROUP BY A.TENANT_ID,C.SORT_ID,C.SORT_NAME";
 			sql = rsp.parseSQL(sql);
 			rsp.setLocalJson('fyfltjqk',"非烟分类统计sql:"+sql);
 			ds.setSQL(sql);
@@ -254,7 +255,8 @@
 	function kc_tj(tenant_id){
 		try{
 			ds.createDataSet();	
-			var sql = "select count(distinct b.GODS_ID) as GODS_AMT, count(distinct a.GODS_ID) as STO_AMT,sum(a.AMOUNT ) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from  VIW_GOODSINFO B left outer join STO_STORAGE A on A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id;
+			// var sql = "select count(distinct b.GODS_ID) as GODS_AMT, count(distinct a.GODS_ID) as STO_AMT,sum(a.AMOUNT ) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from  VIW_GOODSINFO B left outer join STO_STORAGE A on A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id;
+			var sql = "select COUNT(DISTINCT B.GODS_ID) AS GODS_AMT,COUNT(DISTINCT A.GODS_ID) AS STO_AMT,SUM(A.AMOUNT) AS AMOUNT,SUM(A.AMOUNT * B.NEW_OUTPRICE) AS AMONEY from VIW_GOODSINFO B left outer join STO_STORAGE A on B.TENANT_ID = A.TENANT_ID and B.GODS_ID = A.GODS_ID where B.COMM NOT IN ('02','12') and B.TENANT_ID = "+tenant_id;
 			ds.setSQL(sql);	
 			rsp.setLocalJson('kc_tj',"库存统计sql:"+sql);
 			var dataset = factor.open(ds);

@@ -13,9 +13,8 @@ const
 type
   TfrmStocksCalc = class(TfrmWebDialog)
     RzProgressBar1: TRzProgressBar;
-    lblInfo: TRzLabel;
     RzBorder1: TRzBorder;
-    RzLabel2: TRzLabel;
+    lblInfo: TRzLabel;
     btnCalc: TRzBmpButton;
     Timer1: TTimer;
     RzLabel26: TRzLabel;
@@ -246,6 +245,7 @@ begin
 end;
 
 function TfrmStocksCalc.creaStocks: boolean;
+var rs:TZQuery;
 begin
    lastDate := getLastDate;
    usingDate := getUsingDate;
@@ -263,6 +263,15 @@ begin
       begin
         _beginDate := usingDate;
         navDate := 19700101;
+        rs := TZQuery.Create(nil);
+        try
+          rs.Close;
+          rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID='+token.tenantId+' and CREA_DATE<'+formatDatetime('YYYYMMDD',usingDate);
+          dataFactory.Open(rs);
+          if rs.Fields[0].AsString <> '' then Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期');
+        finally
+          rs.Free;
+        end;
       end;
    _endDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',incMonth(_beginDate,1)))-1;
    if _endDate>eDate then _endDate := edate;

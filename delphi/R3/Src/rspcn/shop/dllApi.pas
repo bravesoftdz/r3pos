@@ -110,6 +110,7 @@ begin
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
     result := true;
+    dataFactory.MoveToDefault;
     SyncFactory.LoginSync(appWnd);
     result := true;
   except

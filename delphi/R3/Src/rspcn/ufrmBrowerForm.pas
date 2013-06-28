@@ -526,7 +526,9 @@ begin
   UpdateControls;
   DLLFactory.appWnd := mainPanel.Handle;
   if frmUpdate.CheckDBVersion then
-     frmUpdate.Show
+     begin
+       frmUpdate.Show;
+     end
   else
      begin
        if paramStr(1)='-open' then

@@ -89,7 +89,10 @@ uses
   uRtcLibFactory in 'app\uRtcLibFactory.pas',
   uDownOrderFactory in 'app\uDownOrderFactory.pas',
   ufrmExcelFactory in 'app\ufrmExcelFactory.pas' {frmExcelFactory},
-  ufrmSelectRecType in 'app\ufrmSelectRecType.pas' {frmSelectRecType};
+  ufrmSelectRecType in 'app\ufrmSelectRecType.pas' {frmSelectRecType},
+  ufrmUnLockGuide in 'app\ufrmUnLockGuide.pas' {frmUnLockGuide},
+  ufrmOrderExcel in 'app\ufrmOrderExcel.pas' {frmOrderExcel},
+  ufrmGoodsExcel in 'app\ufrmGoodsExcel.pas' {frmGoodsExcel};
 
 {$R *.res}
 exports

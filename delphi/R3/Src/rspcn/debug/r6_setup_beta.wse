@@ -1,7 +1,6 @@
 Document Type: WSE
 item: Global
   Version=8.13
-  Title=现代烟草零售终端营销管理系统
   Flags=00000100
   Languages=65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
   Copy Default=1
@@ -966,122 +965,10 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ad1.png
-  Destination=%MAINDIR%\built-in\images\ad1.png
-  Flags=0000000010000010
-  File Size=164644
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ad2.png
-  Destination=%MAINDIR%\built-in\images\ad2.png
-  Flags=0000000010000010
-  File Size=166313
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\add.jpg
-  Destination=%MAINDIR%\built-in\images\add.jpg
-  Flags=0000000010000010
-  File Size=25102
-  File Date=20130527 212246
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ads1.jpg
-  Destination=%MAINDIR%\built-in\images\ads1.jpg
-  Flags=0000000010000010
-  File Size=46735
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ads10.jpg
-  Destination=%MAINDIR%\built-in\images\ads10.jpg
-  Flags=0000000010000010
-  File Size=85712
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\android.png
-  Destination=%MAINDIR%\built-in\images\android.png
-  Flags=0000000010000010
-  File Size=12764
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\app.png
-  Destination=%MAINDIR%\built-in\images\app.png
-  Flags=0000000010000010
-  File Size=12848
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\app_bg.png
   Destination=%MAINDIR%\built-in\images\app_bg.png
   Flags=0000000010000010
   File Size=2927
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\app_ico.png
-  Destination=%MAINDIR%\built-in\images\app_ico.png
-  Flags=0000000010000010
-  File Size=89103
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\app_left.png
-  Destination=%MAINDIR%\built-in\images\app_left.png
-  Flags=0000000010000010
-  File Size=3317
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\app_right.png
-  Destination=%MAINDIR%\built-in\images\app_right.png
-  Flags=0000000010000010
-  File Size=28515
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\app_titile.png
-  Destination=%MAINDIR%\built-in\images\app_titile.png
-  Flags=0000000010000010
-  File Size=7695
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\bg_dot.png
-  Destination=%MAINDIR%\built-in\images\bg_dot.png
-  Flags=0000000010000010
-  File Size=2905
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\bkg.png
-  Destination=%MAINDIR%\built-in\images\bkg.png
-  Flags=0000000010000010
-  File Size=708544
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\chat_pic.png
-  Destination=%MAINDIR%\built-in\images\chat_pic.png
-  Flags=0000000010000010
-  File Size=34341
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\clear_btn.png
-  Destination=%MAINDIR%\built-in\images\clear_btn.png
-  Flags=0000000010000010
-  File Size=5832
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\close.png
-  Destination=%MAINDIR%\built-in\images\close.png
-  Flags=0000000010000010
-  File Size=3402
   File Date=20130323 155456
 end
 item: Install File
@@ -1092,38 +979,10 @@ item: Install File
   File Date=20130520 142510
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\day_tab01.png
-  Destination=%MAINDIR%\built-in\images\day_tab01.png
-  Flags=0000000010000010
-  File Size=6215
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\day_tab1.png
-  Destination=%MAINDIR%\built-in\images\day_tab1.png
-  Flags=0000000010000010
-  File Size=5783
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\dot1.jpg
   Destination=%MAINDIR%\built-in\images\dot1.jpg
   Flags=0000000010000010
   File Size=863
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\dot1.png
-  Destination=%MAINDIR%\built-in\images\dot1.png
-  Flags=0000000010000010
-  File Size=4146
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\enter_btn.png
-  Destination=%MAINDIR%\built-in\images\enter_btn.png
-  Flags=0000000010000010
-  File Size=6683
   File Date=20130323 155456
 end
 item: Install File
@@ -1141,13 +1000,6 @@ item: Install File
   File Date=20130527 212246
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\gonggao.png
-  Destination=%MAINDIR%\built-in\images\gonggao.png
-  Flags=0000000010000010
-  File Size=2434
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\hygl.jpg
   Destination=%MAINDIR%\built-in\images\hygl.jpg
   Flags=0000000010000010
@@ -1155,144 +1007,11 @@ item: Install File
   File Date=20130527 212245
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ibbtn.gif
-  Destination=%MAINDIR%\built-in\images\ibbtn.gif
-  Flags=0000000010000010
-  File Size=394
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ibhbtn.gif
-  Destination=%MAINDIR%\built-in\images\ibhbtn.gif
-  Flags=0000000010000010
-  File Size=1092
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico1.gif
-  Destination=%MAINDIR%\built-in\images\ico1.gif
-  Flags=0000000010000010
-  File Size=3508
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico1.png
-  Destination=%MAINDIR%\built-in\images\ico1.png
-  Flags=0000000010000010
-  File Size=7909
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico10.png
-  Destination=%MAINDIR%\built-in\images\ico10.png
-  Flags=0000000010000010
-  File Size=8226
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico11.png
-  Destination=%MAINDIR%\built-in\images\ico11.png
-  Flags=0000000010000010
-  File Size=6501
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico12.png
-  Destination=%MAINDIR%\built-in\images\ico12.png
-  Flags=0000000010000010
-  File Size=4083
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico2.png
-  Destination=%MAINDIR%\built-in\images\ico2.png
-  Flags=0000000010000010
-  File Size=7052
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico3.png
-  Destination=%MAINDIR%\built-in\images\ico3.png
-  Flags=0000000010000010
-  File Size=8131
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico4.png
-  Destination=%MAINDIR%\built-in\images\ico4.png
-  Flags=0000000010000010
-  File Size=10806
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico5.png
-  Destination=%MAINDIR%\built-in\images\ico5.png
-  Flags=0000000010000010
-  File Size=8471
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico6.png
-  Destination=%MAINDIR%\built-in\images\ico6.png
-  Flags=0000000010000010
-  File Size=10314
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico7.png
-  Destination=%MAINDIR%\built-in\images\ico7.png
-  Flags=0000000010000010
-  File Size=7912
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico8.png
-  Destination=%MAINDIR%\built-in\images\ico8.png
-  Flags=0000000010000010
-  File Size=8417
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\ico9.png
-  Destination=%MAINDIR%\built-in\images\ico9.png
-  Flags=0000000010000010
-  File Size=9416
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\indexBg.jpg
   Destination=%MAINDIR%\built-in\images\indexBg.jpg
   Flags=0000000010000010
   File Size=169371
   File Date=20130527 212246
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\input_bg.png
-  Destination=%MAINDIR%\built-in\images\input_bg.png
-  Flags=0000000010000010
-  File Size=3340
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\input_bg1.png
-  Destination=%MAINDIR%\built-in\images\input_bg1.png
-  Flags=0000000010000010
-  File Size=3518
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\je_list.PNG
-  Destination=%MAINDIR%\built-in\images\je_list.PNG
-  Flags=0000000010000010
-  File Size=3320
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\je_list1.png
-  Destination=%MAINDIR%\built-in\images\je_list1.png
-  Flags=0000000010000010
-  File Size=3009
-  File Date=20130323 155456
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jyfx.jpg
@@ -1365,95 +1084,11 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jz_bg.png
-  Destination=%MAINDIR%\built-in\images\jz_bg.png
-  Flags=0000000010000010
-  File Size=2882
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jz_btn.png
-  Destination=%MAINDIR%\built-in\images\jz_btn.png
-  Flags=0000000010000010
-  File Size=10538
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jz_left.png
-  Destination=%MAINDIR%\built-in\images\jz_left.png
-  Flags=0000000010000010
-  File Size=3263
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jz_right.PNG
-  Destination=%MAINDIR%\built-in\images\jz_right.PNG
-  Flags=0000000010000010
-  File Size=3408
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\jz_t_l.png
-  Destination=%MAINDIR%\built-in\images\jz_t_l.png
-  Flags=0000000010000010
-  File Size=2947
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\left.png
   Destination=%MAINDIR%\built-in\images\left.png
   Flags=0000000010000010
   File Size=3420
   File Date=20130520 142510
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\line.png
-  Destination=%MAINDIR%\built-in\images\line.png
-  Flags=0000000010000010
-  File Size=2874
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\link_bg.png
-  Destination=%MAINDIR%\built-in\images\link_bg.png
-  Flags=0000000010000010
-  File Size=2872
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\link_left.png
-  Destination=%MAINDIR%\built-in\images\link_left.png
-  Flags=0000000010000010
-  File Size=3149
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\link_pic.png
-  Destination=%MAINDIR%\built-in\images\link_pic.png
-  Flags=0000000010000010
-  File Size=27749
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\link_right.png
-  Destination=%MAINDIR%\built-in\images\link_right.png
-  Flags=0000000010000010
-  File Size=3066
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\link_title.png
-  Destination=%MAINDIR%\built-in\images\link_title.png
-  Flags=0000000010000010
-  File Size=6314
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\login.png
-  Destination=%MAINDIR%\built-in\images\login.png
-  Flags=0000000010000010
-  File Size=2104
-  File Date=20130323 155456
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\loginBg.png
@@ -1470,20 +1105,6 @@ item: Install File
   File Date=20130520 142510
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\loginbtn.png
-  Destination=%MAINDIR%\built-in\images\loginbtn.png
-  Flags=0000000010000010
-  File Size=1836
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\login_bg.png
-  Destination=%MAINDIR%\built-in\images\login_bg.png
-  Flags=0000000010000010
-  File Size=293355
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\main_bg.jpg
   Destination=%MAINDIR%\built-in\images\main_bg.jpg
   Flags=0000000010000010
@@ -1498,129 +1119,10 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\month_tab02.png
-  Destination=%MAINDIR%\built-in\images\month_tab02.png
-  Flags=0000000010000010
-  File Size=6267
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\month_tab2.png
-  Destination=%MAINDIR%\built-in\images\month_tab2.png
-  Flags=0000000010000010
-  File Size=5838
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\mover_r_pic2.png
-  Destination=%MAINDIR%\built-in\images\mover_r_pic2.png
-  Flags=0000000010000010
-  File Size=78931
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\move_r_pic1.png
-  Destination=%MAINDIR%\built-in\images\move_r_pic1.png
-  Flags=0000000010000010
-  File Size=72344
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\name_1.png
-  Destination=%MAINDIR%\built-in\images\name_1.png
-  Flags=0000000010000010
-  File Size=3346
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\name_2.PNG
-  Destination=%MAINDIR%\built-in\images\name_2.PNG
-  Flags=0000000010000010
-  File Size=3271
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\name_btn.PNG
-  Destination=%MAINDIR%\built-in\images\name_btn.PNG
-  Flags=0000000010000010
-  File Size=3313
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\pic - 副本.png
-  Destination=%MAINDIR%\built-in\images\pic - 副本.png
-  Flags=0000000010000010
-  File Size=195184
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\pic.png
-  Destination=%MAINDIR%\built-in\images\pic.png
-  Flags=0000000010000010
-  File Size=496089
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\pic_1.png
-  Destination=%MAINDIR%\built-in\images\pic_1.png
-  Flags=0000000010000010
-  File Size=50011
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\pic_2.png
-  Destination=%MAINDIR%\built-in\images\pic_2.png
-  Flags=0000000010000010
-  File Size=68478
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\pic_3.png
-  Destination=%MAINDIR%\built-in\images\pic_3.png
-  Flags=0000000010000010
-  File Size=76966
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\print_btn.png
   Destination=%MAINDIR%\built-in\images\print_btn.png
   Flags=0000000010000010
   File Size=4218
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\rank_pic.png
-  Destination=%MAINDIR%\built-in\images\rank_pic.png
-  Flags=0000000010000010
-  File Size=46723
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\rank_tab01.png
-  Destination=%MAINDIR%\built-in\images\rank_tab01.png
-  Flags=0000000010000010
-  File Size=27965
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\rank_tab02.png
-  Destination=%MAINDIR%\built-in\images\rank_tab02.png
-  Flags=0000000010000010
-  File Size=29282
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\rank_tab1.png
-  Destination=%MAINDIR%\built-in\images\rank_tab1.png
-  Flags=0000000010000010
-  File Size=6109
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\rank_tab2.png
-  Destination=%MAINDIR%\built-in\images\rank_tab2.png
-  Flags=0000000010000010
-  File Size=6136
   File Date=20130323 155456
 end
 item: Install File
@@ -1659,45 +1161,10 @@ item: Install File
   File Date=20130520 142510
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\search1_btn.png
-  Destination=%MAINDIR%\built-in\images\search1_btn.png
-  Flags=0000000010000010
-  File Size=5134
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\search_btn.png
   Destination=%MAINDIR%\built-in\images\search_btn.png
   Flags=0000000010000010
   File Size=4547
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\select_bg.PNG
-  Destination=%MAINDIR%\built-in\images\select_bg.PNG
-  Flags=0000000010000010
-  File Size=3926
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\select_bg1.PNG
-  Destination=%MAINDIR%\built-in\images\select_bg1.PNG
-  Flags=0000000010000010
-  File Size=3639
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\sm_input.PNG
-  Destination=%MAINDIR%\built-in\images\sm_input.PNG
-  Flags=0000000010000010
-  File Size=3280
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\sm_pic.png
-  Destination=%MAINDIR%\built-in\images\sm_pic.png
-  Flags=0000000010000010
-  File Size=4919
   File Date=20130323 155456
 end
 item: Install File
@@ -1715,20 +1182,6 @@ item: Install File
   File Date=20130527 212246
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\spxs_pic.png
-  Destination=%MAINDIR%\built-in\images\spxs_pic.png
-  Flags=0000000010000010
-  File Size=7210
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\tab_over.png
-  Destination=%MAINDIR%\built-in\images\tab_over.png
-  Flags=0000000010000010
-  File Size=2970
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\title_pic.png
   Destination=%MAINDIR%\built-in\images\title_pic.png
   Flags=0000000010000010
@@ -1736,150 +1189,10 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total.jpg
-  Destination=%MAINDIR%\built-in\images\total.jpg
-  Flags=0000000010000010
-  File Size=38634
-  File Date=20130323 155456
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_bar_bg.png
   Destination=%MAINDIR%\built-in\images\total_bar_bg.png
   Flags=0000000010000010
   File Size=184
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_bg.png
-  Destination=%MAINDIR%\built-in\images\total_bg.png
-  Flags=0000000010000010
-  File Size=2834
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic1.jpg
-  Destination=%MAINDIR%\built-in\images\total_pic1.jpg
-  Flags=0000000010000010
-  File Size=14950
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic1.png
-  Destination=%MAINDIR%\built-in\images\total_pic1.png
-  Flags=0000000010000010
-  File Size=33541
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic2.jpg
-  Destination=%MAINDIR%\built-in\images\total_pic2.jpg
-  Flags=0000000010000010
-  File Size=11515
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic2.png
-  Destination=%MAINDIR%\built-in\images\total_pic2.png
-  Flags=0000000010000010
-  File Size=27850
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic3.jpg
-  Destination=%MAINDIR%\built-in\images\total_pic3.jpg
-  Flags=0000000010000010
-  File Size=10899
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic3.PNG
-  Destination=%MAINDIR%\built-in\images\total_pic3.PNG
-  Flags=0000000010000010
-  File Size=23804
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic4.jpg
-  Destination=%MAINDIR%\built-in\images\total_pic4.jpg
-  Flags=0000000010000010
-  File Size=8460
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic4.png
-  Destination=%MAINDIR%\built-in\images\total_pic4.png
-  Flags=0000000010000010
-  File Size=25030
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic5.jpg
-  Destination=%MAINDIR%\built-in\images\total_pic5.jpg
-  Flags=0000000010000010
-  File Size=13242
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic5.png
-  Destination=%MAINDIR%\built-in\images\total_pic5.png
-  Flags=0000000010000010
-  File Size=31762
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_tab01.png
-  Destination=%MAINDIR%\built-in\images\total_tab01.png
-  Flags=0000000010000010
-  File Size=6540
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_tab02.png
-  Destination=%MAINDIR%\built-in\images\total_tab02.png
-  Flags=0000000010000010
-  File Size=6608
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_tab1.png
-  Destination=%MAINDIR%\built-in\images\total_tab1.png
-  Flags=0000000010000010
-  File Size=6101
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_tab2.png
-  Destination=%MAINDIR%\built-in\images\total_tab2.png
-  Flags=0000000010000010
-  File Size=6168
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_tab2.psd
-  Destination=%MAINDIR%\built-in\images\total_tab2.psd
-  Flags=0000000010000010
-  File Size=455295
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\txm_bg.png
-  Destination=%MAINDIR%\built-in\images\txm_bg.png
-  Flags=0000000010000010
-  File Size=2832
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\txm_left.png
-  Destination=%MAINDIR%\built-in\images\txm_left.png
-  Flags=0000000010000010
-  File Size=3380
-  File Date=20130323 155456
-end
-item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\txm_right.png
-  Destination=%MAINDIR%\built-in\images\txm_right.png
-  Flags=0000000010000010
-  File Size=3314
   File Date=20130323 155456
 end
 item: Install File
@@ -1897,18 +1210,53 @@ item: Install File
   File Date=20130323 155456
 end
 item: Install File
-  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\userHead.png
-  Destination=%MAINDIR%\built-in\images\userHead.png
-  Flags=0000000010000010
-  File Size=3055
-  File Date=20130520 142510
-end
-item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\user_bg.png
   Destination=%MAINDIR%\built-in\images\user_bg.png
   Flags=0000000010000010
   File Size=34630
   File Date=20130323 155456
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\add.jpg
+  Destination=%MAINDIR%\built-in\images\add.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic1.jpg
+  Destination=%MAINDIR%\built-in\images\total_pic1.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic2.jpg
+  Destination=%MAINDIR%\built-in\images\total_pic2.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic3.jpg
+  Destination=%MAINDIR%\built-in\images\total_pic3.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic4.jpg
+  Destination=%MAINDIR%\built-in\images\total_pic4.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\total_pic5.jpg
+  Destination=%MAINDIR%\built-in\images\total_pic5.jpg
+  Flags=0000000010000010
+  File Size=33699
+  File Date=20130527 212246
 end
 item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\built-in\images\wsdh.jpg

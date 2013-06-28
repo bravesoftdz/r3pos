@@ -28,11 +28,11 @@ inherited frmStocksCalc: TfrmStocksCalc
       Width = 353
       Height = 2
     end
-    object RzLabel2: TRzLabel
+    object lblInfo: TRzLabel
       Left = 1
       Top = 1
       Width = 357
-      Height = 16
+      Height = 40
       Align = alTop
       Alignment = taCenter
       Caption = #38144#21806#26085#26399
@@ -360,23 +360,10 @@ inherited frmStocksCalc: TfrmStocksCalc
     inherited Image1: TImage
       Left = 355
     end
-    object lblInfo: TRzLabel [4]
-      Left = 23
-      Top = 32
-      Width = 313
-      Height = 15
-      Alignment = taCenter
-      AutoSize = False
-      Caption = #35831#28857#20987#24320#22987#35745#31639
-      Transparent = True
-      ShadowColor = clWhite
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
     inherited RzFormShape1: TRzFormShape
       Width = 359
     end
-    object RzLabel26: TRzLabel [6]
+    object RzLabel26: TRzLabel [5]
       Left = 10
       Top = 7
       Width = 61

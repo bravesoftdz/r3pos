@@ -1741,6 +1741,9 @@ end;
 procedure TfrmSysDefine.showForm;
 begin
   inherited;
+  if dllGlobal.GetSFVersion <> '.LCL' then
+     RzBmpButton4.Visible := false;
+
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
      Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
 

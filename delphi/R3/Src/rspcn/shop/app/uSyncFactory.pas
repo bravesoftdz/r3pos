@@ -101,7 +101,7 @@ type
     LastLoginSyncDate,LastLogoutSyncDate:integer;
     FLoginId: string;
     procedure CheckRemoteData(AppHandle:HWnd);
-    procedure BackupDBFile;
+    procedure BackUpDBFile;
     procedure InitTenant;
     procedure InitSyncList1;
     procedure InitSyncList;
@@ -1263,7 +1263,7 @@ begin
            CheckBackUpDBFile(PHWnd);
            if not CheckNeedLoginSync then Exit;
            if not SyncLockCheck(PHWnd) then Exit;
-           SyncFactory.BackupDBFile;
+           SyncFactory.BackUpDBFile;
            RspSyncFactory.SyncAll;
            RspSyncFactory.copyGoodsSort;
            SyncFactory.SyncBasic;
@@ -2220,12 +2220,14 @@ begin
   end;
 end;
 
-procedure TSyncFactory.BackupDBFile;
+procedure TSyncFactory.BackUpDBFile;
 var
   sr: TSearchRec;
   FileAttrs: Integer;
   delTime,Folder,FileName: string;
 begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
   ProTitle := '正在备份数据文件，请稍候...';
   try
     delTime := FormatDateTime('YYYYMMDD',now()-7);
@@ -2354,6 +2356,7 @@ end;
 function TSyncFactory.CheckBackUpDBFile(PHWnd:THandle): boolean;
 var rs:TZQuery;
 begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
   if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
      begin
        if not CheckValidDBFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then

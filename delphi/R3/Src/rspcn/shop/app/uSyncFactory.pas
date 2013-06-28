@@ -2025,7 +2025,7 @@ begin
   try
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    rs.ParamByName('DEFINE').AsString := 'CLOSE_IMP_ACCDATE';
+    rs.ParamByName('DEFINE').AsString := 'SYS_BEGIN_DATE';
     dataFactory.Open(rs);
     if rs.IsEmpty then
        CloseAccDate := 0

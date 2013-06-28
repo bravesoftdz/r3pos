@@ -1820,7 +1820,7 @@ end;
 procedure TfrmSysDefine.RemoteRecovery(recType:string;AppHandle:HWnd);
 var
   rs:TZQuery;
-  str,BeginDate,MaxDate:string;
+  UsingDate,str,BeginDate,MaxDate:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
 
@@ -1833,6 +1833,19 @@ begin
     if not rs.IsEmpty then Raise Exception.Create('本地存在业务数据，无法进行数据恢复...');
   finally
     rs.Free;
+  end;
+
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToRemote;
+  try
+    rs.SQL.Text := 'select 1 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('服务器没有检测到业务数据，不需要进行数据恢复...');
+  finally
+    rs.Free;
+    dataFactory.MoveToDefault;
   end;
 
   if recType = '1' then
@@ -1849,7 +1862,24 @@ begin
      end;
   BeginDate := BeginDate + '01';
 
+  rs := TZQuery.Create(nil);
   try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('DEFINE').AsString := 'USING_DATE';
+    dataFactory.Open(rs);
+    if rs.Fields[0].AsString = '' then
+       UsingDate := FormatDateTime('YYYY-MM-DD',now())
+    else
+       UsingDate := rs.Fields[0].AsString;
+  finally
+    rs.Free;
+  end;
+
+  try
+    str := 'update SYS_DEFINE set VALUE='''+FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(BeginDate))+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''USING_DATE'' ';
+    dataFactory.ExecSQL(str);
+
     // 同步数据
     SyncFactory.RecoverySync(AppHandle,BeginDate);
 
@@ -1935,6 +1965,7 @@ begin
     end;
   except
     dataFactory.ExecSQL('delete from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
+    dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+UsingDate+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''USING_DATE''');
     Raise;
   end;
 

@@ -368,8 +368,8 @@ begin
     try
       dataFactory.BeginBatch;
       try
-         Params.ParamByName('TENANT_ID').AsInteger := cdsCustomer.FieldByName('TENANT_ID').AsInteger;
-         Params.ParamByName('CUST_ID').AsString := cdsCustomer.FieldByName('CUST_ID').AsString;
+         Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+         Params.ParamByName('CUST_ID').AsString := custId;
          dataFactory.AddBatch(tmpCustomer,'TCustomerV60',Params);
          dataFactory.OpenBatch;
       except
@@ -770,8 +770,8 @@ begin
     try
       dataFactory.BeginBatch;
       try
-         Params.ParamByName('TENANT_ID').AsInteger := cdsCustomer.FieldByName('TENANT_ID').AsInteger;
-         Params.ParamByName('CUST_ID').AsString := cdsCustomer.FieldByName('CUST_ID').AsString;
+         Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+         Params.ParamByName('CUST_ID').AsString := custId;
          dataFactory.AddBatch(tmpCustomer,'TCustomerV60',Params);
          dataFactory.OpenBatch;
       except

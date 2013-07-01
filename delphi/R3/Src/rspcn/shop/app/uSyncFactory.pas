@@ -2407,7 +2407,7 @@ begin
     sqlite := TdbFactory.Create;
     rs:=TZQuery.Create(nil);
     try
-      sqlite.Initialize('provider=sqlite-3;databasename='+src);
+      sqlite.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(src));
       sqlite.connect;
       rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=:TENANT_ID';
       rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);

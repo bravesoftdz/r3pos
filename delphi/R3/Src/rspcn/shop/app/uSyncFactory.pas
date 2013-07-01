@@ -2409,7 +2409,8 @@ begin
     try
       sqlite.Initialize('provider=sqlite-3;databasename='+src);
       sqlite.connect;
-      rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
+      rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=:TENANT_ID';
+      rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
       sqlite.Open(rs);
       if rs.Fields[0].AsString = token.tenantId then
          result := true

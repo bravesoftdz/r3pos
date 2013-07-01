@@ -2411,7 +2411,10 @@ begin
       sqlite.connect;
       rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
       sqlite.Open(rs);
-      result := true;
+      if rs.Fields[0].AsString = token.tenantId then
+         result := true
+      else
+         result := false;
     finally
       rs.Free;
       sqlite.Free;

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper namespace="caTenant">
+
+	<select id="caTenant">
+		select * from CA_TENANT where TENANT_ID=:TENANT_ID
+	</select>
+	<insert id="caTenantInsert">
+		insert into CA_TENANT(TENANT_ID,TENANT_NAME) values (:TENANT_ID,:TENANT_NAME)
+	</insert>
+	<update id="caTenantUpdate">
+		update CA_TENANT set TENANT_NAME=:TENANT_NAME where TENANT_ID=:TENANT_ID
+	</update>
+	<delete id="caTenantDelete">
+		update CA_TENANT set COMM='02' where TENANT_ID=:TENANT_ID
+	</delete>
+
+</mapper>

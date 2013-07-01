@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper namespace="caShopInfo">
+
+	<select id="caShopInfo">
+		select * from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID
+	</select>
+	<insert id="caShopInfoInsert">
+		insert into CA_SHOP_INFO(TENANT_ID,SHOP_ID,SHOP_NAME) values (:TENANT_ID,:SHOP_ID,:SHOP_NAME)
+	</insert>
+	<update id="caShopInfoUpdate">
+		update CA_SHOP_INFO set SHOP_NAME=:SHOP_NAME where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID
+	</update>
+	<delete id="caShopInfoDelete">
+		update CA_SHOP_INFO set COMM='02' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID
+	</delete>
+
+</mapper>

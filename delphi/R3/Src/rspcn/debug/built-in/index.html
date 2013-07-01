@@ -8,7 +8,15 @@
 <script type="text/javascript">
 $(function() {
 	setLength();
+	trBgColor();
+
 })
+//表给隔行变色
+function trBgColor(){
+	$("#help tr:even").addClass("even");
+	$("#help tr:odd").addClass("odd");
+	}
+
 function setLength() {
 	var remainder = 960;
 	$("#tabXsm").find('li').each(function() {
@@ -20,6 +28,7 @@ function setLength() {
 	lastX.style.width = remainder - 1 + "px";
 }
 var flag = 1;
+var tabs = 3;
 function setTab(name, cursel, n) {
 	flag = cursel;
 	for (i = 1; i <= n; i++) {
@@ -34,7 +43,7 @@ function flowTab(name, n, direction) {
 	if (direction == 'left' && flag > 1) {
 		flag = flag - 1;
 	}
-	if (direction == 'right' && flag < 4) {
+	if (direction == 'right' && flag < tabs) {
 		flag = flag + 1;
 	}
 	setTab(name, flag, n);
@@ -54,9 +63,11 @@ function flowTab(name, n, direction) {
 <ul id="tabXsm">
 	<li id="firstX" class="first"></li>
 	<li id="xsm1" onClick="setTab('xsm',1,4)" class="hover">我的店铺</li>
-	<li id="xsm2" onClick="setTab('xsm',2,4)" class="link">微商圈</li>
-	<li id="xsm3" onClick="setTab('xsm',3,4)" class="link">在线学堂</li>
-	<li id="xsm4" onClick="setTab('xsm',4,4)" class="link">客户服务</li>
+	<li id="xsm2" onClick="setTab('xsm',2,4)" class="link">在线学堂</li>
+	<li id="xsm3" onClick="setTab('xsm',3,4)" class="link">客户服务</li>
+	<!--
+	<li id="xsm4" onClick="setTab('xsm',4,4)" class="link">微商圈</li>
+	-->
 	<li id="lastX" class="last"></li>
 </ul>
 
@@ -65,74 +76,118 @@ function flowTab(name, n, direction) {
 <div class="xsm_Contentbox ">
 <div class="left"><a href="javascript:flowTab('xsm',4,'left');"><img src="images/left.png" /></a></div>
 <div class="middle"><!--con_xsm_1开始-->
-<div id="con_xsm_1">
+<div id="con_xsm_1" class="con_xsm">
+<div id="shop">
+ 	<div class="shopLeft">
+		<div class="shop shop1"><a target="_blank" href="rspcn://shop.dll/TfrmSaleOrder"><img src="images/shop1.jpg"/></a></div>
+		<div class="shop shop2"><a target="_blank" href="rspcn://shop.dll/TfrmDownStockOrder"><img src="images/shop2.jpg"/></a></div>
+		<div class="shop shop3"><a target="_blank" href="rspcn://shop.dll/TfrmGoodsStorage"><img src="images/shop5.jpg"/></a></div>
+		<div class="clearfloat"></div>
+		<div class="shop shop4"><a target="_blank" href="rspcn://local-in/report.html"><img src="images/shop8.jpg"/></a></div>
+		<div class="shop shop5"><a target="_blank" href="rspcn://shop.dll/TfrmStockOrder"><img src="images/shop9.jpg"/></a></div>
+		<div class="shop shop6"><a target="_blank" href="rspcn://shop.dll/TfrmCustomer"><img src="images/shop10.jpg"/></a></div>
+	</div>
+		<div class="shopRight">
+		<div class="shop shop7"><a href="#"><img src="images/shop3.jpg"/></a></div>
+		<div class="shop shop8"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtList.htm"><img src="images/shop4.jpg"/></a></div>
+		<div class="shop shop9"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtTerminal.htm"><img src="images/shop6.jpg"/></a></div>
+		<div class="shop shop10"><a target="_blank" href="rspcn://xsm-in/scweb/taskCenter/taskCenter.htm"><img src="images/shop7.jpg"/></a></div>
+		<div class="shop shop11"><a target="_blank" href="rspcn://shop.dll/TfrmSysDefine"><img src="images/shop11.jpg"/></a></div>
+	</div>
+	</div>
+</div>
+<!--con_xsm_1结束-->
+<!--con_xsm_2开始-->
+<div id="con_xsm_2" class="con_xsm" style="display: none;">
+<div id="school">
 <ul>
-	<li><a href="rspcn://shop.dll/TfrmSaleOrder" target="_blank"><img src="images/spxs.jpg" /></a></li>
-	<li><a href="rspcn://shop.dll/TfrmGoodsStorage" target="_blank"><img src="images/spkc.jpg" /></a></li>
-	<li><a href="rspcn://shop.dll/TfrmDownStockOrder" target="_blank"><img src="images/jyrk.jpg" /></a></li>
-	<li><a href="rspcn://local-in/report.html" target="_blank"><img src="images/jyfx.jpg" /></a></li>
-	<li><a href="rspcn://shop.dll/TfrmCustomer" target="_blank"><img src="images/hygl.jpg" /></a></li>
-	<li><a href="rspcn://shop.dll/TfrmStockOrder" target="_blank"><img src="images/fyrk.jpg" /></a></li>
-	<li><a href="rspcn://xsm-in/ecweb/order/cgtTerminal.htm" target="_blank"><img src="images/wsph.jpg" /></a></li>
-	<li><a href="rspcn://shop.dll/TfrmSysDefine" target="_blank"><img src="images/xtsz.jpg" /></a></li>
-	<li><a href="rspcn://xsm-in/scweb/taskCenter/taskCenter.htm" target="_blank"><img src="images/yxhd.jpg" /></a></li>
-	<li><a href="rspcn://xsm-in/ecweb/order/cgtList.htm" target="_blank"><img src="images/wsdh.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
+	<li><a href="#"><img src="images/school1.png" /></a><div class="sName">如何进行商品销售？</div></li>
+	<li><a href="#"><img src="images/school2.png" /></a><div class="sName">如何初始化库存？</div></li>
+	<li><a href="#"><img src="images/school3.png" /></a><div class="sName">如何入库卷烟商品？</div></li>
+	<li><a href="#"><img src="images/school4.png" /></a><div class="sName">如何入库非烟商品？</div></li>
+	<li><a href="#"><img src="images/school5.png" /></a><div class="sName">如何添加商品档案?</div></li>
+	<li><a href="#"><img src="images/school6.png" /></a><div class="sName">如何添加会员档案？</div></li>
+	<li><a href="#"><img src="images/school7.png" /></a><div class="sName">如何查询库存信息？</div></li>
+	<li><a href="#"><img src="images/school8.png" /></a><div class="sName">如何查询销售信息？</div></li>
+	<li><a href="#"><img src="images/school9.png" /></a><div class="sName">如何查询盈利信息？</div></li>
+	<li><a href="#"><img src="images/school10.png"/></a><div class="sName">如何备份数据？</div></li>
+	<li><a href="#"><img src="images/school11.png"/></a><div class="sName">如何还原备份的数据？</div></li>
+	<li><a href="#"><img src="images/school12.png"/></a><div class="sName">如何联系客服人员？</div></li>
 </ul>
 </div>
-<!--con_xsm_1结束--> <!--con_xsm_2开始-->
-<div id="con_xsm_2" style="display: none;">
+</div>
+<!--con_xsm_2结束-->
+<!--con_xsm_3开始-->
+<div id="con_xsm_3" class="con_xsm" style="display: none;">
+<div id="service">
+ <div class="service1">
+ 	<div class="dt1 indexFont1">在线客服</div>
+	<div class="dd1 indexFont1">
+		<center><a href="#" style="margin:0 auto; text-align:center;"><img align="bottom" src="images/servicehead.png"/>&nbsp;QQ交谈</a></center>
+	</div>
+ </div>
+ <div class="service2">
+	<div class="sTitle indexFont1">在线反馈</div>
+	<div id="feedbackCon"><span class="indexFont2">请输入宝贵意见</span><br/>
+		<textarea style="overflow-x:hidden;overflow-y:hidden"></textarea>
+		<div style="padding:10px 0 0 100px;">
+				<a href="#"><img src="images/serviceBtn1.jpg"/></a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="#"><img src="images/serviceBtn2.jpg"/></a>
+		</div>
+	</div>
+ </div>
+	
+ <div class="clearfloat"></div>
+	
+ <div class="service3">
+ 	<div class="dt3 indexFont1">联系我们</div>
+	<div class="dd3 indexFont1">QQ:132131<br/>
+		联系电话：<br/>
+		投诉电话：
+	</div>
+ </div>
+	
+ <div class="service4">
+	<div class="sTitle indexFont1">服务帮助</div>
+	<div style="padding-top:5px; overflow:hidden;">
+	<table id="help" width="530" border="0">
+				<tr>
+								<td width="160">内容</td>
+								<td width="160">反馈人</td>
+								<td>日期</td>
+				</tr>
+				<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+				</tr>
+				<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+				</tr>
+				<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+				</tr>
+	</table>
+  </div>
+ </div>
+</div>
+</div>
+<!--con_xsm_3结束-->
+<!--con_xsm_4开始-->
+<div id="con_xsm_4" class="con_xsm" style="display: none;">
 <ul>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
+
 </ul>
 </div>
-<!--con_xsm_2结束--> <!--con_xsm_3开始-->
-<div id="con_xsm_3" style="display: none;">
-<ul>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-</ul>
+<!--con_xsm_4结束-->
 </div>
-<!--con_xsm_3结束--> <!--con_xsm_4开始-->
-<div id="con_xsm_4" style="display: none;">
-<ul>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-	<li><a href="#"><img src="images/add.jpg" /></a></li>
-</ul>
-</div>
-<!--con_xsm_4结束--></div>
 <div class="right"><a href="javascript:flowTab('xsm',4,'right');"><img src="images/right.png" /></a></div>
 </div>
 

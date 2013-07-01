@@ -4,8 +4,8 @@ unit javaScriptExt;
 
 interface
 
-uses
-  ComObj, ActiveX, Classes, shop_TLB, StdVcl, Forms, Windows, Messages,ZDataSet,SysUtils,ZBase,EncDec;
+uses ComObj, ActiveX, Classes, shop_TLB, StdVcl, Forms, Windows, Messages,
+     ZDataSet, SysUtils, ZBase, EncDec, IniFiles;
 
 type
   TjavaScriptExt = class(TAutoObject, IjavaScriptExt)
@@ -57,11 +57,12 @@ type
     procedure moveToSqlite;safecall;
     procedure moveToDefault; safecall;
     function parseSQL(const sql: WideString): WideString; safecall;
-
     function getUserInfo: WideString; safecall;
     function getLocalJson(const doMain: WideString): WideString; safecall;
     procedure setLocalJson(const doMain: WideString; const json: WideString); safecall;
     function signToken(const _token: WideString): WordBool; safecall;
+    function getIniInfo(const FileName: WideString; const Section: WideString; 
+                        const ParamName: WideString; const DefaultValue: WideString): WideString; safecall;
   end;
 
 implementation
@@ -774,7 +775,18 @@ begin
   result := true;
 end;
 
+function TjavaScriptExt.getIniInfo(const FileName, Section, ParamName,
+  DefaultValue: WideString): WideString;
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+FileName);
+  try
+    result := F.ReadString(Section,ParamName,DefaultValue);
+  finally
+    F.Free;
+  end;
+end;
+
 initialization
-  TAutoObjectFactory.Create(ComServer, TjavaScriptExt, Class_javaScriptExt,
-    ciMultiInstance, tmApartment);
+  TAutoObjectFactory.Create(ComServer, TjavaScriptExt, Class_javaScriptExt, ciMultiInstance, tmApartment);
 end.

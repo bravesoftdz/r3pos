@@ -916,10 +916,10 @@ begin
                                      UcFactory.xsmLogined := false;
                                      Raise Exception.Create('新商盟认证失败，请点击重试！');
                                    end;
+                                curSheet.EWB.Go(encodeUrl(urlToken),15000);
                               finally
                                 frmLogo.Close;
                               end;
-                             curSheet.EWB.Go(encodeUrl(urlToken),15000);
                            end
                         else
                            begin

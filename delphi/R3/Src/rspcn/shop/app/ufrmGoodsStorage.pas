@@ -977,12 +977,15 @@ begin
       Params.ParamByName('RELATION_ID').AsInteger := Relation;
       dataFactory.BeginBatch;
       try
-        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+        if Relation=0 then
+           Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId)
+        else
+           Params.ParamByName('TENANT_ID').AsInteger := getRelatonTenant(0);
         dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',Params);
         dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',Params);
-        Params.ParamByName('TENANT_ID').AsInteger := cdsGodsRelation.FieldByName('TENANT_ID').AsInteger;
+        Params.ParamByName('TENANT_ID').AsInteger := getRelatonTenant(1);
         dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
-        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+        Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
         dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
         dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',Params);
         dataFactory.OpenBatch;
@@ -1491,12 +1494,15 @@ begin
       Params.ParamByName('RELATION_ID').AsInteger := Relation;
       dataFactory.BeginBatch;
       try
-        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+        if Relation=0 then
+           Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId)
+        else
+           Params.ParamByName('TENANT_ID').AsInteger := getRelatonTenant(0);
         dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',Params);
         dataFactory.AddBatch(tmpBarcode,'TBarCodeV60',Params);
-        Params.ParamByName('TENANT_ID').AsInteger := cdsGodsRelation.FieldByName('TENANT_ID').AsInteger;
+        Params.ParamByName('TENANT_ID').AsInteger := getRelatonTenant(1);
         dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
-        Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
+        Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
         dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
         dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',Params);
         dataFactory.OpenBatch;

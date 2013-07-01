@@ -5,17 +5,27 @@
 <title>首页</title>
 <link rel="stylesheet" type="text/css" href="css/index.css">
 <script type="text/javascript" src="js/jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="js/rspcn.js" ></script>
 <script type="text/javascript">
 $(function() {
 	setLength();
 	trBgColor();
-
+	var qq=rsp.getIniInfo('r3.cfg','soft','qq','');
+	var telephone=rsp.getIniInfo('r3.cfg','soft','telephone','');
+	if (qq != '') {
+		document.getElementById('qq').innerHTML = 'QQ：'+qq;
+		document.getElementById('qqlink').target = '';
+		document.getElementById('qqlink').href = 'tencent://Message/?Uin='+qq+'&websiteName=q-zone.qq.com&Menu=yes';
+	}
+	if (telephone != '') {
+		document.getElementById('telephone').innerHTML = '联系电话：'+telephone;
+	}
 })
 //表给隔行变色
 function trBgColor(){
 	$("#help tr:even").addClass("even");
 	$("#help tr:odd").addClass("odd");
-	}
+}
 
 function setLength() {
 	var remainder = 960;
@@ -27,6 +37,7 @@ function setLength() {
 	var lastX = document.getElementById("lastX");
 	lastX.style.width = remainder - 1 + "px";
 }
+
 var flag = 1;
 var tabs = 3;
 function setTab(name, cursel, n) {
@@ -88,7 +99,7 @@ function flowTab(name, n, direction) {
 		<div class="shop shop6"><a target="_blank" href="rspcn://shop.dll/TfrmCustomer"><img src="images/shop10.jpg"/></a></div>
 	</div>
 		<div class="shopRight">
-		<div class="shop shop7"><a href="#"><img src="images/shop3.jpg"/></a></div>
+		<div class="shop shop7"><img src="images/shop3.jpg"/></div>
 		<div class="shop shop8"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtList.htm"><img src="images/shop4.jpg"/></a></div>
 		<div class="shop shop9"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtTerminal.htm"><img src="images/shop6.jpg"/></a></div>
 		<div class="shop shop10"><a target="_blank" href="rspcn://xsm-in/scweb/taskCenter/taskCenter.htm"><img src="images/shop7.jpg"/></a></div>
@@ -123,7 +134,7 @@ function flowTab(name, n, direction) {
  <div class="service1">
  	<div class="dt1 indexFont1">在线客服</div>
 	<div class="dd1 indexFont1">
-		<center><a href="#" style="margin:0 auto; text-align:center;"><img align="bottom" src="images/servicehead.png"/>&nbsp;QQ交谈</a></center>
+		<center><a id="qqlink" "href="#" style="margin:0 auto; text-align:center;"><img align="bottom" src="images/servicehead.png"/>&nbsp;QQ交谈</a></center>
 	</div>
  </div>
  <div class="service2">
@@ -144,9 +155,11 @@ function flowTab(name, n, direction) {
 	
  <div class="service3">
  	<div class="dt3 indexFont1">联系我们</div>
-	<div class="dd3 indexFont1">QQ:132131<br/>
-		联系电话：<br/>
-		投诉电话：
+	<div class="dd3 indexFont1">
+		<span id='qq'>QQ:</span>
+		<br/><br/><br/><br/>
+		<span id='telephone'>联系电话:</span>
+		<br/>
 	</div>
  </div>
 	

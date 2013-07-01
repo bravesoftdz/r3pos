@@ -63,6 +63,10 @@ var rspcn = function() {
 	this.parseSQL = function(sql) {
 		return window.external.parseSQL(sql);
 	};
+	
+	this.getIniInfo = function(FileName,Section,ParamName,Default) {
+		return window.external.getIniInfo(FileName,Section,ParamName,Default);
+	};
 
 };
 

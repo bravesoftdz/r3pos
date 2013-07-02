@@ -523,7 +523,7 @@ begin
     if n^.isSyncUp = '1' then
        begin
          LogFile.AddLogFile(0,'开始上传<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
-         Params.ParamByName('SYN_COMM').AsBoolean := false;
+         Params.ParamByName('SYN_COMM').AsBoolean := true;
          SetTicket;
          dataFactory.MoveToSqlite;
          try

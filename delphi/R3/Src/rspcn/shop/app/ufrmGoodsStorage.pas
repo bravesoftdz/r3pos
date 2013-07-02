@@ -127,6 +127,9 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     PopupMenu1: TPopupMenu;
     ExcelImport: TMenuItem;
+    RzPanel9: TRzPanel;
+    RzBackground29: TRzBackground;
+    RzLabel37: TRzLabel;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -163,6 +166,7 @@ type
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
     procedure ExcelImportClick(Sender: TObject);
+    procedure RzLabel37Click(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -192,20 +196,23 @@ type
     procedure UpdateSort(godsId:string;Relation:integer=0);
     procedure Open;
     procedure showForm;override;
-
     property dbState:TDataSetState read FdbState write SetdbState;
     property storFlag:integer read FstorFlag write SetstorFlag;
   end;
 
 implementation
-uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,
+
+uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,
+     udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
      ufrmGoodsExcel,ufrmDBGridPreview;
+
 {$R *.dfm}
 
 function getTodayId:string;
 begin
   result := token.shopId+formatDatetime('YYYYMMDD',dllGlobal.SysDate)+'000000000000000';
 end;
+
 procedure TfrmGoodsStorage.sortDropPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 var
@@ -1938,6 +1945,12 @@ begin
   rs:=TZQuery.Create(nil);
   if TfrmGoodsExcel.ExcelFactory(self,rs,'','',true) then
      dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+end;
+
+procedure TfrmGoodsStorage.RzLabel37Click(Sender: TObject);
+begin
+  inherited;
+  TfrmMemberPrice.ShowDialog(self,AObj.FieldByName('GODS_ID').AsString,AObj.FieldByName('GODS_CODE').AsString,AObj.FieldByName('GODS_NAME').AsString);
 end;
 
 initialization

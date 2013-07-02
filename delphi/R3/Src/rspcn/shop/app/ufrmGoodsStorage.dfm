@@ -3008,6 +3008,57 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
+        object RzPanel9: TRzPanel
+          Left = 520
+          Top = 226
+          Width = 100
+          Height = 22
+          BorderOuter = fsFlat
+          FlatColor = clGray
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 15
+          object RzBackground29: TRzBackground
+            Left = 1
+            Top = 1
+            Width = 98
+            Height = 20
+            Active = True
+            Align = alClient
+            FrameColor = 9145227
+            GradientColorStart = clWhite
+            GradientColorStop = 14277081
+            ImageStyle = isStretch
+            ShowGradient = True
+            ShowImage = False
+            ShowTexture = False
+          end
+          object RzLabel37: TRzLabel
+            Left = 1
+            Top = 1
+            Width = 98
+            Height = 20
+            Align = alClient
+            Alignment = taCenter
+            Caption = #35774#32622#20250#21592#20215
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clNavy
+            Font.Height = -13
+            Font.Name = #23435#20307
+            Font.Style = [fsUnderline]
+            ParentFont = False
+            Transparent = True
+            Layout = tlCenter
+            OnClick = RzLabel37Click
+            ShadowColor = 16250871
+            ShadowDepth = 1
+            TextStyle = tsShadow
+          end
+        end
       end
     end
   end

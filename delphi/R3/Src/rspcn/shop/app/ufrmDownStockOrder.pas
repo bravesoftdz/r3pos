@@ -43,10 +43,6 @@ type
     RzLabel1: TRzLabel;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure DBGridEh1TitleClick(Column: TColumnEh);
-    procedure N1Click(Sender: TObject);
-    procedure N2Click(Sender: TObject);
-    procedure N3Click(Sender: TObject);
     procedure toolSaveClick(Sender: TObject);
     procedure cdsTableAfterDelete(DataSet: TDataSet);
     procedure toolDetailClick(Sender: TObject);
@@ -461,81 +457,6 @@ begin
   end;
 end;
 
-procedure TfrmDownStockOrder.DBGridEh1TitleClick(Column: TColumnEh);
-begin
-  inherited;
-  if Column.FieldName='SELFLAG' then
-    begin
-      N1Click(nil);
-    end;
-end;
-
-procedure TfrmDownStockOrder.N1Click(Sender: TObject);
-begin
-  inherited;
-  if not cdsTable.Active then Exit;
-  if cdsTable.IsEmpty then Exit;
-  cdsTable.DisableControls;
-  try
-    cdsTable.First;
-    while not cdsTable.Eof do
-      begin
-        cdsTable.Edit;
-        cdsTable.FieldByName('SELFLAG').AsInteger := 1;
-        cdsTable.Post;
-        cdsTable.Next;
-      end;
-  finally
-    cdsTable.First;
-    cdsTable.EnableControls;
-  end;
-end;
-
-procedure TfrmDownStockOrder.N2Click(Sender: TObject);
-begin
-  inherited;
-  if not cdsTable.Active then Exit;
-  if cdsTable.IsEmpty then Exit;
-  cdsTable.DisableControls;
-  try
-    cdsTable.First;
-    while not cdsTable.Eof do
-    begin
-      cdsTable.Edit;
-      if cdsTable.FieldByName('SELFLAG').AsInteger = 1 then
-        cdsTable.FieldByName('SELFLAG').AsInteger := 0
-      else
-        cdsTable.FieldByName('SELFLAG').AsInteger := 1;
-      cdsTable.Post;
-      cdsTable.Next;
-    end;
-  finally
-    cdsTable.First;
-    cdsTable.EnableControls;
-  end;
-end;
-
-procedure TfrmDownStockOrder.N3Click(Sender: TObject);
-begin
-  inherited;
-  if not cdsTable.Active then Exit;
-  if cdsTable.IsEmpty then Exit;
-  cdsTable.DisableControls;
-  try
-    cdsTable.First;
-    while not cdsTable.Eof do
-      begin
-        cdsTable.Edit;
-        cdsTable.FieldByName('SELFLAG').AsInteger := 0;
-        cdsTable.Post;
-        cdsTable.Next;
-      end;
-  finally
-    cdsTable.First;
-    cdsTable.EnableControls;
-  end;
-end;
-
 procedure TfrmDownStockOrder.ajustPostion;
 begin
   inherited;
@@ -573,13 +494,6 @@ begin
        end;
      end;
   Open;
-  if cdsTable.Active and (not cdsTable.IsEmpty) then
-    begin
-      cdsTable.First;
-      cdsTable.Edit;
-      cdsTable.FieldByName('SELFLAG').AsInteger := 1;
-      cdsTable.Post;
-    end;
 end;
 
 function TfrmDownStockOrder.GetDownOrderMode: string;

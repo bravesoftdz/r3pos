@@ -595,7 +595,11 @@ begin
               fields := fields+ '''#'' as PRICE_ID'
            else
            if list[i]='RELATION_ID' then
-              fields := fields+ 'isnull(B.RELATION_ID,0) as RELATION_ID'
+              fields := fields+
+                        ' case '+
+                        '   when A.TENANT_ID = '+token.tenantId+' then 0 '+
+                        '   else B.RELATION_ID '+
+                        ' end as RELATION_ID'
            else
               fields := fields+ 'isnull(B.'+list[i]+',A.'+list[i]+') as '+list[i]
            end

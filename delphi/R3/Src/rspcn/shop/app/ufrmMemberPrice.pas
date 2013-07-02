@@ -60,7 +60,7 @@ type
   private
     CarryRule,Deci:integer;
     GodsId,GodsCode,GodsName:string;
-    procedure Open;
+    procedure Open(DataSet:TZQuery=nil);
     procedure Save;
     procedure WriteMemberPrice;
     procedure CheckGoodPriceColumnVisible;
@@ -117,9 +117,10 @@ begin
   end;
 end;
 
-procedure TfrmMemberPrice.Open;
+procedure TfrmMemberPrice.Open(DataSet:TZQuery=nil);
 var sql:string;
 begin
+  if DataSet = nil then DataSet := cdsMemberPrice;
   sql := ' select PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2, '+
          '        case when B.PRICE_ID is null then ''insert'' else ''update'' end as STATE,B.COMM '+
          ' from   (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
@@ -130,32 +131,32 @@ begin
          '          where P.TENANT_ID=G.TENANT_ID and P.GODS_ID=G.GODS_ID and P.TENANT_ID=:TENANT_ID and P.SHOP_ID=:SHOP_ID and P.PRICE_ID<>''#'' and P.GODS_ID=:GODS_ID '+
          '        ) B on A.PRICE_ID=B.PRICE_ID '+
          ' order by A.PRICE_ID';
-  cdsMemberPrice.Close;
-  cdsMemberPrice.SQL.Text := sql;
-  cdsMemberPrice.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  cdsMemberPrice.ParamByName('SHOP_ID').AsString := token.shopId;
-  cdsMemberPrice.ParamByName('GODS_ID').AsString := GodsId;
-  dataFactory.Open(cdsMemberPrice);
-  cdsMemberPrice.DisableControls;
+  DataSet.Close;
+  DataSet.SQL.Text := sql;
+  DataSet.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  DataSet.ParamByName('SHOP_ID').AsString := token.shopId;
+  DataSet.ParamByName('GODS_ID').AsString := GodsId;
+  dataFactory.Open(DataSet);
+  DataSet.DisableControls;
   try
-    cdsMemberPrice.First;
-    while not cdsMemberPrice.Eof do
+    DataSet.First;
+    while not DataSet.Eof do
       begin
-        if (cdsMemberPrice.FieldByName('COMM').AsString = '02') or (cdsMemberPrice.FieldByName('COMM').AsString = '12') then
+        if (DataSet.FieldByName('COMM').AsString = '02') or (DataSet.FieldByName('COMM').AsString = '12') then
            begin
-             cdsMemberPrice.Edit;
-             cdsMemberPrice.FieldByName('PROFIT_RATE').Value := null;
-             cdsMemberPrice.FieldByName('NEW_OUTPRICE').Value := null;
-             cdsMemberPrice.FieldByName('NEW_OUTPRICE1').Value := null;
-             cdsMemberPrice.FieldByName('NEW_OUTPRICE2').Value := null;
-             cdsMemberPrice.Post;
+             DataSet.Edit;
+             DataSet.FieldByName('PROFIT_RATE').Value := null;
+             DataSet.FieldByName('NEW_OUTPRICE').Value := null;
+             DataSet.FieldByName('NEW_OUTPRICE1').Value := null;
+             DataSet.FieldByName('NEW_OUTPRICE2').Value := null;
+             DataSet.Post;
            end;
-        cdsMemberPrice.Next;
+        DataSet.Next;
       end;
   finally
-    cdsMemberPrice.EnableControls;
+    DataSet.EnableControls;
   end;
-  CheckGoodPriceColumnVisible;
+  if DataSet = cdsMemberPrice then CheckGoodPriceColumnVisible;
 end;
 
 class function TfrmMemberPrice.ShowDialog(AOwner:TForm;gid,gcode,gname:string): boolean;
@@ -456,9 +457,42 @@ begin
 end;
 
 procedure TfrmMemberPrice.Save;
+var
+  Params:TftParamList;
+  saveMemberPrice,tmpMemberPrice:TZQuery;
 begin
   WriteMemberPrice;
   dataFactory.UpdateBatch(cdsMemberPrice,'TGoodsPriceV60');
+
+  // 本地同步
+  if dataFactory.iDbType <> 5 then
+     begin
+       tmpMemberPrice := TZQuery.Create(nil);
+       saveMemberPrice := TZQuery.Create(nil);
+       Params := TftParamList.Create(nil);
+       try
+         tmpMemberPrice.SQL.Text := ' select TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP '+
+                                    ' from   PUB_GOODSPRICE '+
+                                    ' where  TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and PRICE_ID <> ''#'' ';
+         tmpMemberPrice.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+         tmpMemberPrice.ParamByName('SHOP_ID').AsString := token.shopId;
+         tmpMemberPrice.ParamByName('GODS_ID').AsString := GodsId;
+         dataFactory.Open(tmpMemberPrice);
+         saveMemberPrice.SyncDelta := tmpMemberPrice.SyncDelta;
+         dataFactory.MoveToSqlite;
+         try
+           Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSPRICE';
+           Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;SHOP_ID;PRICE_ID';
+           dataFactory.UpdateBatch(saveMemberPrice,'TSyncSingleTableV60',Params);
+         finally
+           dataFactory.MoveToDefault;
+         end;
+       finally
+         Params.Free;
+         saveMemberPrice.Free;
+         tmpMemberPrice.Free;
+       end;
+     end;
   ModalResult := MROK;
 end;
 

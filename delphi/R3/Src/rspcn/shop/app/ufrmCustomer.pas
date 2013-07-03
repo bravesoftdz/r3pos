@@ -8,7 +8,8 @@ uses
   DBGridEh, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, StdCtrls,
   ComCtrls, RzTreeVw, RzBmpBtn,ZDataSet, DB, ZAbstractRODataset,ZBase,
-  ZAbstractDataset, RzBckgnd, RzBorder, cxRadioGroup, Menus, PrnDbgeh;
+  ZAbstractDataset, RzBckgnd, RzBorder, cxRadioGroup, Menus, PrnDbgeh,
+  pngimage;
 
 type
   TfrmCustomer = class(TfrmWebToolForm)

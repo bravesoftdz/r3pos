@@ -264,7 +264,7 @@ end;
 procedure TfrmInitGoods.FormShow(Sender: TObject);
 begin
   inherited;
-  CacheFactory.getAdvPngImage(adv03.Name,adv03.Picture);
+  // CacheFactory.getAdvPngImage(adv03.Name,adv03.Picture);
   if CanFocus(edtInput) then edtInput.SetFocus
   else if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
 end;

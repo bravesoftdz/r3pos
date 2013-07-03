@@ -5,11 +5,16 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialog, RzBmpBtn, RzForms, StdCtrls, RzLabel, ExtCtrls,
-  RzPanel, cxControls, cxContainer, cxEdit, cxTextEdit, DB, ZDataSet;
+  RzPanel, cxControls, cxContainer, cxEdit, cxTextEdit, DB, ZDataSet, jpeg;
 
 type
   TfrmUnLockGuide = class(TfrmWebDialog)
     RzLabel26: TRzLabel;
+    RzPanel7: TRzPanel;
+    Image4: TImage;
+    RzPanel4: TRzPanel;
+    RzPanel5: TRzPanel;
+    RzLabel3: TRzLabel;
     edtBK_XSM_CODE: TRzPanel;
     RzPanel86: TRzPanel;
     RzLabel56: TRzLabel;
@@ -24,10 +29,10 @@ type
     edtLICENSE_CODE: TcxTextEdit;
     Save: TRzBmpButton;
     Cancel: TRzBmpButton;
-    RzLabel3: TRzLabel;
     procedure CancelClick(Sender: TObject);
     procedure SaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     function DoUnLock:boolean;
   public
@@ -131,6 +136,12 @@ procedure TfrmUnLockGuide.FormCreate(Sender: TObject);
 begin
   inherited;
   dbState := dsInsert;
+end;
+
+procedure TfrmUnLockGuide.FormShow(Sender: TObject);
+begin
+  inherited;
+  if edtLICENSE_CODE.CanFocus then edtLICENSE_CODE.SetFocus;
 end;
 
 end.

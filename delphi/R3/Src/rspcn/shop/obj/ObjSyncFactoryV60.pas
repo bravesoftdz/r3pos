@@ -475,7 +475,8 @@ end;
 
 function TSyncRckDaysCloseV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-  AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE',Params);
+  AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE',Params);
+  AGlobal.ExecSQL('delete from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE=:CREA_DATE',Params);
   if not Init then Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
   InitSQL(AGlobal,false);
   FillParams(InsertQuery);
@@ -500,10 +501,8 @@ begin
 end;
 
 function TSyncRckStocksDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-var str:string;
 begin
-  str := 'delete from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE=:CREA_DATE';
-  AGlobal.ExecSQL(str,Params);
+
 end;
 
 function TSyncRckStocksDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;

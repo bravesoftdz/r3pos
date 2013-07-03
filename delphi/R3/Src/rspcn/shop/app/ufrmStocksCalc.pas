@@ -563,6 +563,7 @@ begin
     ' A.CALC_AMOUNT as OUT_AMOUNT,B.DUTY_USER,B.CREA_USER '+
     'from STO_CHANGEDATA A,STO_CHANGEORDER B where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and '+
     ' B.TENANT_ID='+token.tenantId+' and B.CHANGE_DATE>='+formatDatetime('YYYYMMDD',_beginDate)+' and B.CHANGE_DATE<='+formatDatetime('YYYYMMDD',_endDate)+' '+
+    ' and A.AMOUNT <> 0 '+
     'order by A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,B.CHANGE_DATE,B.CREA_DATE ';
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 45;

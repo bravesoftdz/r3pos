@@ -190,6 +190,7 @@ type
     procedure SetdbState(const Value: TDataSetState);virtual;
     procedure SetstorFlag(const Value: integer);
     procedure DBGridPrint;
+    procedure SaveChangeOrder(rs: TZQuery);
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
@@ -824,10 +825,10 @@ begin
      begin
        rowId := 0;
        cdsDetail.first;
-       while not cdsDetail.eof do
+       while not cdsDetail.Eof do
          begin
-           if cdsDetail.FieldbyName('SEQNO').asInteger>rowId then
-              rowId := cdsDetail.FieldbyName('SEQNO').asInteger;
+           if cdsDetail.FieldbyName('SEQNO').AsInteger > rowId then
+              rowId := cdsDetail.FieldbyName('SEQNO').AsInteger;
            cdsDetail.next;
          end;
        inc(rowId);
@@ -1970,27 +1971,18 @@ begin
   end;
 end;
 
-procedure TfrmGoodsStorage.ClearStorageClick(Sender: TObject);
+procedure TfrmGoodsStorage.SaveChangeOrder(rs: TZQuery);
 var
   rowId:integer;
   Params:TftParamList;
-  gs,rs,cdsOrder,cdsData:TZQuery;
-  curAmt,CHANGE_MNY,CHANGE_AMT:real;
+  CHANGE_MNY,CHANGE_AMT:real;
+  gs,cdsOrder,cdsData:TZQuery;
 begin
-  inherited;
-  if not TfrmClearStorage.ShowDialog(self) then Exit;
   gs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-  rs := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   cdsOrder := TZQuery.Create(nil);
   cdsData := TZQuery.Create(nil);
-  Params := TftParamList.Create(nil);
   try
-    rs.SQL.Text := 'select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and AMOUNT<>0';
-    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    rs.ParamByName('SHOP_ID').AsString := token.shopId;
-    dataFactory.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('当前商品库存全部为零，不需要要清理...');
-
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
     Params.ParamByName('CHANGE_ID').AsString := getTodayId;
@@ -2044,11 +2036,11 @@ begin
       else
          begin
            rowId := 0;
-           cdsData.first;
-           while not cdsData.eof do
+           cdsData.First;
+           while not cdsData.Eof do
              begin
-               if cdsData.FieldbyName('SEQNO').asInteger>rowId then
-                  rowId := cdsData.FieldbyName('SEQNO').asInteger;
+               if cdsData.FieldbyName('SEQNO').AsInteger > rowId then
+                  rowId := cdsData.FieldbyName('SEQNO').AsInteger;
                cdsData.next;
              end;
            inc(rowId);
@@ -2096,14 +2088,30 @@ begin
       dataFactory.CancelBatch;
       Raise;
     end;
+  finally
+    cdsOrder.Free;
+    cdsData.Free;
+    Params.Free;
+  end;
+end;
 
+procedure TfrmGoodsStorage.ClearStorageClick(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  if not TfrmClearStorage.ShowDialog(self) then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and AMOUNT<>0';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('当前商品库存全部为零，不需要要清理...');
+    SaveChangeOrder(rs);
     Open;
     MessageBox(handle,'库存清零成功...','友情提示..',MB_OK+MB_ICONINFORMATION);
   finally
     rs.Free;
-    Params.Free;
-    cdsOrder.Free;
-    cdsData.Free;
   end;
 end;
 

@@ -130,6 +130,8 @@ type
     RzPanel9: TRzPanel;
     RzBackground29: TRzBackground;
     RzLabel37: TRzLabel;
+    ClearStorage: TMenuItem;
+    RzBmpButton4: TRzBmpButton;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -168,8 +170,9 @@ type
     procedure ExcelImportClick(Sender: TObject);
     procedure RzLabel37Click(Sender: TObject);
     procedure VIPPriceImportClick(Sender: TObject);
+    procedure ClearStorageClick(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
   private
-    { Private declarations }
     ESortId:string;
     FSortId:string;
     searchTxt:string;
@@ -179,8 +182,8 @@ type
     storAmt:real;
     FdbState: TDataSetState;
     FstorFlag: integer;
-    function FindColumn(fieldname:string):TColumnEh;
-    function GetOpenWhere:string;
+    function  FindColumn(fieldname:string):TColumnEh;
+    function  GetOpenWhere:string;
     procedure ReadInfo;
     procedure WriteInfo;
     procedure WriteOweOrder;
@@ -188,7 +191,6 @@ type
     procedure SetstorFlag(const Value: integer);
     procedure DBGridPrint;
   public
-    { Public declarations }
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
     procedure SaveLocalInfo;
@@ -197,15 +199,15 @@ type
     procedure UpdateSort(godsId:string;Relation:integer=0);
     procedure Open;
     procedure showForm;override;
-    property dbState:TDataSetState read FdbState write SetdbState;
-    property storFlag:integer read FstorFlag write SetstorFlag;
+    property  dbState:TDataSetState read FdbState write SetdbState;
+    property  storFlag:integer read FstorFlag write SetstorFlag;
   end;
 
 implementation
 
 uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,
      udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
-     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview;
+     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview,ufrmClearStorage;
 
 {$R *.dfm}
 
@@ -624,7 +626,7 @@ begin
 
   if cdsGoodsExt.IsEmpty then cdsGoodsExt.Append else cdsGoodsExt.Edit;
   cdsGoodsExt.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-  cdsGoodsExt.FieldByName('GODS_ID').asString := AObj.FieldbyName('GODS_ID').asString;
+  cdsGoodsExt.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
   cdsGoodsExt.FieldByName('NEW_INPRICE').AsFloat  := StrtoFloatDef(edtNEW_INPRICE.Text,0);
   cdsGoodsExt.FieldByName('NEW_INPRICE1').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
   cdsGoodsExt.FieldByName('NEW_INPRICE2').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
@@ -647,10 +649,10 @@ begin
      begin
        cdsGoodsPrice.Edit;
        cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-       cdsGoodsPrice.FieldByName('PRICE_ID').asString :=  '#';
-       cdsGoodsPrice.FieldByName('SHOP_ID').asString := token.shopId;
-       cdsGoodsPrice.FieldByName('GODS_ID').asString := AObj.FieldbyName('GODS_ID').asString;
-       cdsGoodsPrice.FieldByName('PRICE_METHOD').asString := '1';
+       cdsGoodsPrice.FieldByName('PRICE_ID').AsString :=  '#';
+       cdsGoodsPrice.FieldByName('SHOP_ID').AsString := token.shopId;
+       cdsGoodsPrice.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+       cdsGoodsPrice.FieldByName('PRICE_METHOD').AsString := '1';
        cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
        cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
        cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
@@ -780,8 +782,8 @@ begin
   try
     rs.SQL.Text := 'select AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-    rs.ParamByName('GODS_ID').asString := AObj.FieldbyName('GODS_ID').asString;
-    rs.ParamByName('SHOP_ID').asString := token.shopId;
+    rs.ParamByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
     dataFactory.Open(rs);
     if not rs.IsEmpty then
        begin
@@ -806,9 +808,10 @@ begin
   cdsHeader.FieldByName('CREA_USER').AsString := token.userId;
   cdsHeader.FieldByName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   cdsHeader.FieldByName('DEPT_ID').AsString := dllGlobal.getMyDeptId;
+  cdsHeader.FieldByName('REMARK').AsString := '修改库存';
   cdsHeader.Post;
   
-  if cdsDetail.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').asString,[]) then
+  if cdsDetail.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
      begin
        cdsDetail.Edit;
        cdsDetail.FieldbyName('AMOUNT').AsFloat := cdsDetail.FieldbyName('AMOUNT').AsFloat - (StrtoFloatDef(edtAMOUNT.Text,0)-curAmt);
@@ -832,7 +835,7 @@ begin
        cdsDetail.FieldbyName('TENANT_ID').AsString := cdsHeader.FieldByName('TENANT_ID').AsString;
        cdsDetail.FieldbyName('CHANGE_ID').AsString := cdsHeader.FieldByName('CHANGE_ID').AsString;
        cdsDetail.FieldbyName('SHOP_ID').AsString := cdsHeader.FieldByName('SHOP_ID').AsString;
-       cdsDetail.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').asString;
+       cdsDetail.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
        cdsDetail.FieldbyName('SEQNO').AsInteger := rowId;
        cdsDetail.FieldbyName('UNIT_ID').AsString := edtCALC_UNITS.KeyValue;
        cdsDetail.FieldbyName('IS_PRESENT').AsInteger := 0;
@@ -1905,12 +1908,12 @@ procedure TfrmGoodsStorage.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  {
+{
   if (cdsList.FieldByName('LOWER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat<cdsList.FieldByName('LOWER_AMOUNT').AsFloat) then
      Background := lower.Color;
   if (cdsList.FieldByName('UPPER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat>cdsList.FieldByName('UPPER_AMOUNT').AsFloat) then
      Background := upper.Color;
-     }
+}
 end;
 
 procedure TfrmGoodsStorage.RzBmpButton3Click(Sender: TObject);
@@ -1965,6 +1968,149 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmGoodsStorage.ClearStorageClick(Sender: TObject);
+var
+  rowId:integer;
+  Params:TftParamList;
+  gs,rs,cdsOrder,cdsData:TZQuery;
+  curAmt,CHANGE_MNY,CHANGE_AMT:real;
+begin
+  inherited;
+  if not TfrmClearStorage.ShowDialog(self) then Exit;
+  gs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  rs := TZQuery.Create(nil);
+  cdsOrder := TZQuery.Create(nil);
+  cdsData := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    rs.SQL.Text := 'select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and AMOUNT<>0';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    dataFactory.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('当前商品库存全部为零，不需要要清理...');
+
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('CHANGE_ID').AsString := getTodayId;
+    Params.ParamByName('VIW_GOODSINFO').AsString := dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE',true);
+    dataFactory.BeginBatch;
+    try
+      dataFactory.AddBatch(cdsOrder,'TChangeOrderV60',Params);
+      dataFactory.AddBatch(cdsData,'TChangeDataV60',Params);
+      dataFactory.OpenBatch;
+    except
+      dataFactory.CancelBatch;
+      Raise;
+    end;
+
+    cdsOrder.Edit;
+    cdsOrder.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    cdsOrder.FieldByName('CHANGE_ID').AsString := getTodayId;
+    cdsOrder.FieldByName('SHOP_ID').AsString := token.shopId;
+    cdsOrder.FieldByName('CHANGE_DATE').AsString := formatDatetime('YYYYMMDD',dllGlobal.SysDate);
+    cdsOrder.FieldByName('CHANGE_TYPE').AsString := '2';
+    cdsOrder.FieldByName('CHANGE_CODE').AsString := '1';
+    cdsOrder.FieldByName('DUTY_USER').AsString := token.userId;
+    cdsOrder.FieldByName('CHK_DATE').AsString := formatDatetime('YYYY-MM-DD',dllGlobal.SysDate);
+    cdsOrder.FieldByName('CHK_USER').AsString := token.userId;
+    cdsOrder.FieldByName('CREA_USER').AsString := token.userId;
+    cdsOrder.FieldByName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    cdsOrder.FieldByName('DEPT_ID').AsString := dllGlobal.getMyDeptId;
+    cdsOrder.FieldByName('REMARK').AsString := '库存清零';
+    cdsOrder.Post;
+
+    rs.First;
+    while not rs.Eof do
+    begin
+      if not gs.Locate('GODS_ID',rs.FieldByName('GODS_ID').AsString,[]) then
+         Raise Exception.Create('经营商品中找不到“'+rs.FieldByName('GODS_ID').AsString+'”');
+
+      if cdsData.Locate('GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02',
+                        VarArrayOf([rs.FieldByName('GODS_ID').AsString,
+                                    rs.FieldByName('BATCH_NO').AsString,
+                                    rs.FieldByName('PROPERTY_01').AsString,
+                                    rs.FieldByName('PROPERTY_02').AsString]),[]) then
+         begin
+           cdsData.Edit;
+           cdsData.FieldbyName('AMOUNT').AsFloat := cdsData.FieldbyName('AMOUNT').AsFloat + rs.FieldbyName('AMOUNT').AsFloat;
+           cdsData.FieldbyName('CALC_AMOUNT').AsFloat := cdsData.FieldbyName('AMOUNT').AsFloat;
+           cdsData.FieldbyName('APRICE').AsFloat := gs.FieldByName('NEW_OUTPRICE').AsFloat;
+           cdsData.FieldbyName('AMONEY').AsString := FormatFloat('#0.00',cdsData.FieldbyName('AMOUNT').AsFloat*cdsData.FieldbyName('APRICE').AsFloat);
+           cdsData.FieldbyName('CALC_MONEY').AsString := cdsData.FieldbyName('AMONEY').AsString;
+           cdsData.Post;
+         end
+      else
+         begin
+           rowId := 0;
+           cdsData.first;
+           while not cdsData.eof do
+             begin
+               if cdsData.FieldbyName('SEQNO').asInteger>rowId then
+                  rowId := cdsData.FieldbyName('SEQNO').asInteger;
+               cdsData.next;
+             end;
+           inc(rowId);
+           cdsData.Append;
+           cdsData.FieldbyName('TENANT_ID').AsString := cdsOrder.FieldByName('TENANT_ID').AsString;
+           cdsData.FieldbyName('CHANGE_ID').AsString := cdsOrder.FieldByName('CHANGE_ID').AsString;
+           cdsData.FieldbyName('SHOP_ID').AsString := cdsOrder.FieldByName('SHOP_ID').AsString;
+           cdsData.FieldbyName('GODS_ID').AsString := rs.FieldbyName('GODS_ID').AsString;
+           cdsData.FieldbyName('SEQNO').AsInteger := rowId;
+           cdsData.FieldbyName('UNIT_ID').AsString := gs.FieldByName('CALC_UNITS').AsString;
+           cdsData.FieldbyName('IS_PRESENT').AsInteger := 0;
+           cdsData.FieldbyName('BATCH_NO').AsString := rs.FieldbyName('BATCH_NO').AsString;
+           cdsData.FieldbyName('PROPERTY_01').AsString := rs.FieldbyName('PROPERTY_01').AsString;
+           cdsData.FieldbyName('PROPERTY_02').AsString := rs.FieldbyName('PROPERTY_02').AsString;
+           cdsData.FieldbyName('AMOUNT').AsFloat := rs.FieldbyName('AMOUNT').AsFloat;
+           cdsData.FieldbyName('CALC_AMOUNT').AsFloat := cdsData.FieldbyName('AMOUNT').AsFloat;
+           cdsData.FieldbyName('APRICE').AsFloat := gs.FieldByName('NEW_OUTPRICE').AsFloat;
+           cdsData.FieldbyName('AMONEY').AsString := FormatFloat('#0.00',cdsData.FieldbyName('AMOUNT').AsFloat*cdsData.FieldbyName('APRICE').AsFloat);
+           cdsData.FieldbyName('CALC_MONEY').AsString := cdsData.FieldbyName('AMONEY').AsString;
+           cdsData.Post;
+         end;
+      rs.Next;
+    end;
+
+    CHANGE_MNY := 0;
+    CHANGE_AMT := 0;
+    cdsData.First;
+    while not cdsData.Eof do
+      begin
+        CHANGE_MNY := CHANGE_MNY + cdsData.FieldbyName('CALC_MONEY').AsFloat;
+        CHANGE_AMT := CHANGE_AMT + cdsData.FieldbyName('CALC_AMOUNT').AsFloat;
+        cdsData.Next;
+      end;
+    cdsOrder.Edit;
+    cdsOrder.FieldByName('CHANGE_AMT').AsFloat := CHANGE_AMT;
+    cdsOrder.FieldByName('CHANGE_MNY').AsFloat := CHANGE_MNY;
+    cdsOrder.Post;
+
+    dataFactory.BeginBatch;
+    try
+      dataFactory.AddBatch(cdsOrder,'TChangeOrderV60',nil);
+      dataFactory.AddBatch(cdsData,'TChangeDataV60',nil);
+      dataFactory.CommitBatch;
+    except
+      dataFactory.CancelBatch;
+      Raise;
+    end;
+
+    Open;
+    MessageBox(handle,'库存清零成功...','友情提示..',MB_OK+MB_ICONINFORMATION);
+  finally
+    rs.Free;
+    Params.Free;
+    cdsOrder.Free;
+    cdsData.Free;
+  end;
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton4Click(Sender: TObject);
+begin
+  inherited;
+  ClearStorageClick(nil);
 end;
 
 initialization

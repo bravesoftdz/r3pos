@@ -437,6 +437,11 @@ begin
        if edtCUST_NAME.CanFocus then edtCUST_NAME.SetFocus;
        Raise Exception.Create('会员名称不能为空...');
      end;
+  if trim(cmbPRICE_ID.AsString) = '' then
+     begin
+       if cmbPRICE_ID.CanFocus then cmbPRICE_ID.SetFocus;
+       Raise Exception.Create('会员等级不能为空...');
+     end;
   WriteInfo;
   dataFactory.BeginBatch;
   try

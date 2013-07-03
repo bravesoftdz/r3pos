@@ -50,6 +50,10 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure edtCUST_CODEKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCUST_NAMEKeyPress(Sender: TObject; var Key: Char);
+    procedure cmbPRICE_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCUST_CODEExit(Sender: TObject);
   private
     AObj:TRecord_;
     procedure Open(id:string);
@@ -57,6 +61,7 @@ type
     procedure ReadInfo;
     procedure SaveInfo;
     procedure SaveLocalInfo;
+    procedure InitTele;
   public
     class function ShowDialog(Owner:TForm;id:string;var SObj:TRecord_):boolean;
   end;
@@ -253,6 +258,66 @@ procedure TfrmCustomerDialog.btnCancelClick(Sender: TObject);
 begin
   inherited;
   Close;
+end;
+
+procedure TfrmCustomerDialog.InitTele;
+begin
+  if edtMOVE_TELE.Text <> '' then Exit;
+  if Length(trim(edtCUST_CODE.Text)) <> 11 then Exit;
+  if (Copy(edtCUST_CODE.Text,1,2) = '13')  or
+     (Copy(edtCUST_CODE.Text,1,2) = '15')  or
+     (Copy(edtCUST_CODE.Text,1,2) = '18')  or
+     (Copy(edtCUST_CODE.Text,1,3) = '145') or
+     (Copy(edtCUST_CODE.Text,1,3) = '147') then
+  edtMOVE_TELE.Text := edtCUST_CODE.Text;
+end;
+
+procedure TfrmCustomerDialog.edtCUST_CODEKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if trim(edtCUST_CODE.Text) = '' then
+          begin
+            if edtCUST_CODE.CanFocus then edtCUST_CODE.SetFocus;
+            Key := #0;
+          end;
+     end;
+end;
+
+procedure TfrmCustomerDialog.edtCUST_NAMEKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if trim(edtCUST_NAME.Text) = '' then
+          begin
+            if edtCUST_NAME.CanFocus then edtCUST_NAME.SetFocus;
+            Key := #0;
+          end;
+     end;
+end;
+
+procedure TfrmCustomerDialog.cmbPRICE_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if trim(cmbPRICE_ID.AsString) = '' then
+          begin
+            if cmbPRICE_ID.CanFocus then cmbPRICE_ID.SetFocus;
+            Key := #0;
+          end;
+     end;
+end;
+
+procedure TfrmCustomerDialog.edtCUST_CODEExit(Sender: TObject);
+begin
+  inherited;
+  InitTele;
 end;
 
 end.

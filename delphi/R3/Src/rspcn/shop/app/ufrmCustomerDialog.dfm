@@ -4,6 +4,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
   Caption = 'frmCustomerDialog'
   ClientHeight = 377
   ClientWidth = 424
+  OldCreateOrder = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -102,6 +103,8 @@ inherited frmCustomerDialog: TfrmCustomerDialog
         Properties.MaxLength = 20
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnExit = edtCUST_CODEExit
+        OnKeyPress = edtCUST_CODEKeyPress
       end
     end
     object edtBK_CUST_NAME: TRzPanel
@@ -153,6 +156,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
         Properties.MaxLength = 20
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        OnKeyPress = edtCUST_NAMEKeyPress
       end
     end
     object edtBK_SEX: TRzPanel
@@ -326,6 +330,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
           end>
         Properties.ReadOnly = True
         TabOrder = 1
+        OnKeyPress = cmbPRICE_IDKeyPress
         InGrid = False
         KeyValue = Null
         FilterFields = 'PRICE_ID;PRICE_NAME;PRICE_SPELL'

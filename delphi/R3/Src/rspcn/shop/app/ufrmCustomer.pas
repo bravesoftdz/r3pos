@@ -144,6 +144,7 @@ type
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
     procedure ExcelImportClick(Sender: TObject);
+    procedure edtCUST_CODEExit(Sender: TObject);
   private
     searchTxt:string;
     FdbState: TDataSetState;
@@ -1013,6 +1014,19 @@ begin
     Params.Free;
     rs.Free;
   end;
+end;
+
+procedure TfrmCustomer.edtCUST_CODEExit(Sender: TObject);
+begin
+  inherited;
+  if edtMOVE_TELE.Text <> '' then Exit;
+  if Length(trim(edtCUST_CODE.Text)) <> 11 then Exit;
+  if (Copy(edtCUST_CODE.Text,1,2) = '13')  or
+     (Copy(edtCUST_CODE.Text,1,2) = '15')  or
+     (Copy(edtCUST_CODE.Text,1,2) = '18')  or
+     (Copy(edtCUST_CODE.Text,1,3) = '145') or
+     (Copy(edtCUST_CODE.Text,1,3) = '147') then
+  edtMOVE_TELE.Text := edtCUST_CODE.Text;
 end;
 
 initialization

@@ -2141,6 +2141,7 @@ inherited frmCustomer: TfrmCustomer
             Properties.MaxLength = 20
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            OnExit = edtCUST_CODEExit
           end
         end
         object edtBK_MOVE_TELE: TRzPanel

@@ -2307,6 +2307,8 @@ begin
        begin
          edtCLIENT_ID.KeyValue := SObj.FieldByName('CUST_ID').AsString;
          edtCLIENT_ID.Text := SObj.FieldByName('CUST_NAME').AsString;
+         AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldByName('PRICE_ID').AsString;
+         CalcPrice;
        end;
   finally
     SObj.Free;

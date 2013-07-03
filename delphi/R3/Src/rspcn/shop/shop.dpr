@@ -35,7 +35,6 @@ uses
   udllShopUtil in 'utils\udllShopUtil.pas',
   udllXDictFactory in 'utils\udllXDictFactory.pas',
   ObjSalesOrderV60 in 'obj\ObjSalesOrderV60.pas',
-  ufrmDialogProperty in 'app\ufrmDialogProperty.pas' {frmDialogProperty},
   ObjGetPrice in 'obj\ObjGetPrice.pas',
   ufrmPosOutOrder in 'app\ufrmPosOutOrder.pas' {frmPosOutOrder},
   ObjStockOrderV60 in 'obj\ObjStockOrderV60.pas',
@@ -88,11 +87,21 @@ uses
   udllCtrlUtil in 'utils\udllCtrlUtil.pas',
   uRtcLibFactory in 'app\uRtcLibFactory.pas',
   uDownOrderFactory in 'app\uDownOrderFactory.pas',
-  ufrmExcelFactory in 'app\ufrmExcelFactory.pas' {frmExcelFactory},
+  EncDec in '..\..\..\Pub\EncDec.pas',
+  Des in '..\..\..\Pub\des.pas',
+  uTreeUtil in '..\..\..\Pub\uTreeUtil.pas',
+  zPrinters in '..\..\..\Pub\zPrinters.pas',
+  ufrmSelectFormer in 'app\ufrmSelectFormer.pas' {frmSelectFormer},
   ufrmSelectRecType in 'app\ufrmSelectRecType.pas' {frmSelectRecType},
+  ufrmExcelFactory in 'app\ufrmExcelFactory.pas' {frmExcelFactory},
   ufrmUnLockGuide in 'app\ufrmUnLockGuide.pas' {frmUnLockGuide},
   ufrmOrderExcel in 'app\ufrmOrderExcel.pas' {frmOrderExcel},
-  ufrmGoodsExcel in 'app\ufrmGoodsExcel.pas' {frmGoodsExcel};
+  ufrmGoodsExcel in 'app\ufrmGoodsExcel.pas' {frmGoodsExcel},
+  ufrmMemberPrice in 'app\ufrmMemberPrice.pas' {frmMemberPrice},
+  ufrmClearStorage in 'app\ufrmClearStorage.pas' {frmClearStorage},
+  ufrmPriceExcel in 'app\ufrmPriceExcel.pas' {frmPriceExcel},
+  ufrmCustomerExcel in 'app\ufrmCustomerExcel.pas' {frmCustomerExcel},
+  ufrmCustomerDialog in 'app\ufrmCustomerDialog.pas' {frmCustomerDialog};
 
 {$R *.res}
 exports

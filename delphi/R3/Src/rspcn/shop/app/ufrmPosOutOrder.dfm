@@ -591,9 +591,10 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 DropHeight = 281
                 ShowTitle = True
                 AutoFitColWidth = False
-                ShowButton = False
+                OnAddClick = edtCLIENT_IDAddClick
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew, zbFind]
+                Buttons = [zbNew]
                 DropListStyle = lsFixed
                 OnSaveValue = edtCLIENT_IDSaveValue
                 MultiSelect = False

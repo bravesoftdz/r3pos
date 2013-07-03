@@ -156,6 +156,7 @@ type
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCARD_NOEnter(Sender: TObject);
+    procedure edtCLIENT_IDAddClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -238,16 +239,14 @@ type
     procedure OpenList;
   end;
 
-var frmPosOutOrder: TfrmPosOutOrder;
-
 implementation
 
-uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,uCacheFactory,
-     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,ufrmSelectGoods;
+uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,
+     uCacheFactory,ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,
+     ufrmSelectGoods,ufrmCustomerDialog;
 
 {$R *.dfm}
 
-{ TfrmSaleOrder }
 
 procedure TfrmPosOutOrder.Calc;
 var
@@ -2699,6 +2698,22 @@ procedure TfrmPosOutOrder.edtCARD_NOEnter(Sender: TObject);
 begin
   inherited;
   edtCARD_NO.SelectAll;
+end;
+
+procedure TfrmPosOutOrder.edtCLIENT_IDAddClick(Sender: TObject);
+var SObj:TRecord_;
+begin
+  inherited;
+  SObj := TRecord_.Create;
+  try
+    if TfrmCustomerDialog.ShowDialog(self,'',SObj) then
+       begin
+         edtCLIENT_ID.KeyValue := SObj.FieldByName('CUST_ID').AsString;
+         edtCLIENT_ID.Text := SObj.FieldByName('CUST_NAME').AsString;
+       end;
+  finally
+    SObj.Free;
+  end;
 end;
 
 initialization

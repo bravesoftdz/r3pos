@@ -2719,7 +2719,7 @@ inherited frmCustomer: TfrmCustomer
             Width = 38
             Height = 17
             Caption = #22899
-            TabOrder = 1
+            TabOrder = 2
           end
           object edtSEX3: TcxRadioButton
             Left = 181
@@ -2727,7 +2727,7 @@ inherited frmCustomer: TfrmCustomer
             Width = 49
             Height = 17
             Caption = #20445#23494
-            TabOrder = 2
+            TabOrder = 3
           end
           object edtSEX2: TcxRadioButton
             Left = 108
@@ -2736,7 +2736,7 @@ inherited frmCustomer: TfrmCustomer
             Height = 17
             Caption = #30007
             Checked = True
-            TabOrder = 3
+            TabOrder = 1
             TabStop = True
           end
         end

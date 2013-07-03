@@ -2013,6 +2013,15 @@ begin
     cdsOrder.FieldByName('REMARK').AsString := '¿â´æÅÌµã';
     cdsOrder.Post;
 
+    rowId := 0;
+    cdsData.First;
+    while not cdsData.Eof do
+      begin
+        if cdsData.FieldbyName('SEQNO').AsInteger > rowId then
+           rowId := cdsData.FieldbyName('SEQNO').AsInteger;
+        cdsData.next;
+      end;
+
     rs.First;
     while not rs.Eof do
     begin
@@ -2035,14 +2044,6 @@ begin
          end
       else
          begin
-           rowId := 0;
-           cdsData.First;
-           while not cdsData.Eof do
-             begin
-               if cdsData.FieldbyName('SEQNO').AsInteger > rowId then
-                  rowId := cdsData.FieldbyName('SEQNO').AsInteger;
-               cdsData.next;
-             end;
            inc(rowId);
            cdsData.Append;
            cdsData.FieldbyName('TENANT_ID').AsString := cdsOrder.FieldByName('TENANT_ID').AsString;

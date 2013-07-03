@@ -956,7 +956,7 @@ inherited frmCustomer: TfrmCustomer
             BorderOuter = fsFlat
             Color = clWhite
             TabOrder = 3
-            object fndPRICE_ID: TzrComboBoxList
+            object fnd_PRICE_ID: TzrComboBoxList
               Left = 1
               Top = 3
               Width = 130
@@ -2714,14 +2714,12 @@ inherited frmCustomer: TfrmCustomer
             end
           end
           object edtSEX1: TcxRadioButton
-            Left = 108
+            Left = 145
             Top = 8
             Width = 38
             Height = 17
             Caption = #22899
-            Checked = True
             TabOrder = 1
-            TabStop = True
           end
           object edtSEX3: TcxRadioButton
             Left = 181
@@ -2732,12 +2730,14 @@ inherited frmCustomer: TfrmCustomer
             TabOrder = 2
           end
           object edtSEX2: TcxRadioButton
-            Left = 144
+            Left = 108
             Top = 8
             Width = 38
             Height = 17
             Caption = #30007
+            Checked = True
             TabOrder = 3
+            TabStop = True
           end
         end
       end

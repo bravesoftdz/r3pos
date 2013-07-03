@@ -100,7 +100,7 @@ type
     RzLabel13: TRzLabel;
     cmbPRICE_ID: TzrComboBoxList;
     cdsCustomer: TZQuery;
-    fndPRICE_ID: TzrComboBoxList;
+    fnd_PRICE_ID: TzrComboBoxList;
     RzPanel34: TRzPanel;
     RzLabel16: TRzLabel;
     edtBK_SEX: TRzPanel;
@@ -183,7 +183,7 @@ var
 begin
   rs := dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
   cmbPRICE_ID.DataSet := rs;
-  fndPRICE_ID.DataSet := rs;
+  fnd_PRICE_ID.DataSet := rs;
   CreateParantTree(rs,rzTree,'PRICE_ID','PRICE_NAME','TENANT_ID');
   AddRoot(rzTree,'所有会员');
   Column := FindColumn('PRICE_ID');
@@ -488,7 +488,7 @@ begin
     end;
 
     cdsCustomer.Edit;
-    cdsCustomer.FieldbyName('PRICE_ID').asString := fndPRICE_ID.asString;
+    cdsCustomer.FieldbyName('PRICE_ID').asString := fnd_PRICE_ID.asString;
     cdsCustomer.Post;
 
     dataFactory.BeginBatch;
@@ -615,7 +615,7 @@ begin
     cdsList.EnableControls;
   end;
   if not isSelected then Raise Exception.Create('请选择要变更的记录...');
-  if fndPRICE_ID.asString='' then Raise Exception.Create('请选择更改的目标等级...');
+  if fnd_PRICE_ID.asString='' then Raise Exception.Create('请选择更改的目标等级...');
   if MessageBox(Handle,'是否修改选中的所有会员等级？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   gid := cdsList.FieldbyName('CUST_ID').AsString;
   cdsList.DisableControls;
@@ -627,7 +627,7 @@ begin
            begin
              UpdateGrade(cdsList.FieldbyName('CUST_ID').AsString);
              cdsList.Edit;
-             cdsList.FieldbyName('PRICE_ID').AsString := fndPRICE_ID.AsString;
+             cdsList.FieldbyName('PRICE_ID').AsString := fnd_PRICE_ID.AsString;
              cdsList.Post;
            end;
         cdsList.Next;
@@ -698,7 +698,7 @@ procedure TfrmCustomer.NewInfo;
 begin
   OpenInfo('');
   dbState := dsInsert;
-  edtSEX1.Checked := true;
+  edtSEX2.Checked := true;
   cmbPRICE_ID.KeyValue := cmbPRICE_ID.DataSet.FieldbyName('PRICE_ID').asString;
   cmbPRICE_ID.Text := cmbPRICE_ID.DataSet.FieldbyName('PRICE_NAME').asString;
 end;

@@ -2010,7 +2010,7 @@ begin
     cdsOrder.FieldByName('CREA_USER').AsString := token.userId;
     cdsOrder.FieldByName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
     cdsOrder.FieldByName('DEPT_ID').AsString := dllGlobal.getMyDeptId;
-    cdsOrder.FieldByName('REMARK').AsString := '库存清零';
+    cdsOrder.FieldByName('REMARK').AsString := '库存盘点';
     cdsOrder.Post;
 
     rs.First;
@@ -2106,7 +2106,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.ParamByName('SHOP_ID').AsString := token.shopId;
     dataFactory.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('当前商品库存全部为零，不需要要清理...');
+    if rs.IsEmpty then Raise Exception.Create('当前商品库存全部为零，不需要清零...');
     SaveChangeOrder(rs);
     Open;
     MessageBox(handle,'库存清零成功...','友情提示..',MB_OK+MB_ICONINFORMATION);

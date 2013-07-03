@@ -16,7 +16,10 @@ uses
 type
   TfrmOrderExcel = class(TfrmExcelFactory)
     RzLabel14: TRzLabel;
+    chkPrice: TcxCheckBox;
     procedure Image4Click(Sender: TObject);
+    procedure chkPriceClick(Sender: TObject);
+    procedure btnNextClick(Sender: TObject);
   private
     FBarcode:widestring;
     FGoodsCode:widestring;
@@ -25,8 +28,10 @@ type
     FBarcodeType:integer;
     FGodsCodeType:integer; //0 库中没有文件中的分类；1  库中有文件中的不为空所有分类；2 库中有部分文件中分类
     barCodeList,godsCodeList,unitList,sortList:TStringList;
+    FPriceCount:integer;
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
+    function CheckExcute:Boolean;override;
     function FindColumn(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
@@ -50,7 +55,7 @@ uses uRspFactory,udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSo
 
 procedure TfrmOrderExcel.CreateUseDataSet;
 begin
-  inherited; 
+  inherited;
 
 end;
 
@@ -176,8 +181,9 @@ function TfrmOrderExcel.Check(columnIndex:integer): Boolean;
 var str,fieldName,strError:string;
     num:double;
 begin
+  strError:='';
   fieldName:=cdsColumn.fieldbyName('FieldName').AsString;
-  str:=cdsExcel.Fields[columnIndex].AsString;
+  str:=cdsExcel.fieldByName(cdsColumn.fieldbyName('FileName').AsString).AsString;
   if fieldName='GODS_NAME' then
   begin
     if str='' then
@@ -264,8 +270,10 @@ begin
   begin
     
   end;
-
+  if strError<>'' then
   cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+strError;
+
+  result:=true;
 end;
 
 procedure TfrmOrderExcel.ClearParams;
@@ -324,7 +332,7 @@ end;
 
 function TfrmOrderExcel.OutCheckExcute: Boolean;
 var rs,ss,cs:TZQuery;
-    FieldName,UintField,strCode,strUnit,strError:string;
+    FieldName,UintField,strCode,strUnit,PriceField,strPrice,strError:string;
     i,j:integer;
 begin
   try
@@ -339,7 +347,8 @@ begin
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       rs.SQL.Text:=
-                  'select BARCODE,VM1.UNIT_NAME CALC_UNITS_NAME,VM2.UNIT_NAME SMALL_UNITS_NAME,VM3.UNIT_NAME BIG_UNITS_NAME '+
+                  'select BARCODE,VM1.UNIT_NAME CALC_UNITS_NAME,VM2.UNIT_NAME SMALL_UNITS_NAME,VM3.UNIT_NAME BIG_UNITS_NAME, '+
+                  'NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
                   'from VIW_GOODSPRICEEXT VG '+
                   'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
                   'left join VIW_MEAUNITS VM2 on VG.TENANT_ID=VM2.TENANT_ID and VG.SMALL_UNITS=VM2.UNIT_ID '+
@@ -378,7 +387,7 @@ begin
             TransformtoString(godscodeList,FGoodsCode);
 
             CheckGodsCode(cs,ss);
-          end else //rs中能定位到barcode
+          end else if rs.Locate('barcode',barcodeList[i],[]) then //rs中能定位到barcode
           begin
             ss.Filtered:=false;
             ss.Filter:=FieldName+'='''+barcodeList[i]+'''';
@@ -400,6 +409,43 @@ begin
                       cdsExcel.Edit;
                       cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'商品没有设置该单位;';
                       cdsExcel.Post;
+                  end
+                  else if (rs.Locate('CALC_UNITS_NAME',strUnit,[])) or (rs.Locate('CALC_UNITS_NAME',strUnit,[])) or(rs.Locate('CALC_UNITS_NAME',strUnit,[])) then
+                  begin
+                    if cdsColumn.Locate('FieldName','APRICE',[]) then
+                    begin
+                      rs.Locate('barcode',barcodeList[i],[]);
+                      PriceField:=cdsColumn.fieldByName('FileName').AsString;
+                      strPrice:=ss.fieldByName(PriceField).AsString;
+                      if strPrice<>'' then
+                      begin
+                        cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                        cdsExcel.Edit;
+                        if strUnit=rs.FieldByName('CALC_UNITS_NAME').AsString then
+                        begin
+                          if strPrice<>rs.FieldByName('NEW_OUTPRICE').AsString then
+                          begin
+                            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与库中商品对应单位的单价不一致;';
+                            cdsExcel.FieldByName('STATE').AsInteger:=2;
+                          end;
+                        end else if strUnit=rs.FieldByName('SMALL_UNITS_NAME').AsString then
+                        begin
+                          if strPrice<>rs.FieldByName('NEW_OUTPRICE1').AsString then
+                          begin
+                            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与库中商品对应单位的单价不一致;';
+                            cdsExcel.FieldByName('STATE').AsInteger:=2;
+                          end;
+                        end else if strUnit=rs.FieldByName('BIG_UNITS_NAME').AsString then
+                        begin
+                          if strPrice<>rs.FieldByName('NEW_OUTPRICE2').AsString then
+                          begin
+                            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与库中商品对应单位的单价不一致;';
+                            cdsExcel.FieldByName('STATE').AsInteger:=2;
+                          end;
+                        end;
+                        cdsExcel.Post;
+                      end;
+                    end;
                   end;
                 end;
               end;
@@ -583,6 +629,126 @@ begin
   end;
 end;
 
+function TfrmOrderExcel.CheckExcute: Boolean;
+begin
+  Inherited CheckExcute;
 
+  cdsExcel.Filtered:=false;
+  cdsExcel.Filter:='STATE=''2'' or STATE=''3''';
+  cdsExcel.Filtered:=true;
+  FPriceCount:=cdsExcel.RecordCount;
+  cdsExcel.Filtered:=false;
+
+  RzStatus2.Caption := '异常数据:'+inttostr(ExceptCount)+'条';
+  if FPriceCount>0 then
+  RzStatus2.Caption:=RzStatus2.Caption+'(其中与库中单价不一致:'+inttostr(FPriceCount)+'条)';
+  RzStatus2.Caption:=RzStatus2.Caption+'    总数据:'+inttostr(SumCount)+'条';
+  RzStatus2.Update;
+end;
+
+procedure TfrmOrderExcel.chkPriceClick(Sender: TObject);
+var j:integer;
+    str:string;
+begin
+  inherited;
+  cdsExcel.DisableControls;
+
+  cdsExcel.Filtered:=false;
+  cdsExcel.Filter:='STATE=''2'' or STATE=''3''';
+  cdsExcel.Filtered:=true;
+  if cdsExcel.RecordCount>0 then
+  begin
+    if chkPrice.Checked then
+    begin
+      cdsExcel.First;
+      while not cdsExcel.Eof do
+      begin
+        cdsExcel.Edit;
+        str:=cdsExcel.fieldByName('Msg').asString;
+        j:=pos('与库中商品对应单位的单价不一致;',str);
+        if j>=1 then
+        cdsExcel.FieldByName('Msg').AsString:=copy(str,1,j-1)+copy(str,j+length('与库中商品对应单位的单价不一致;'),length(str)-j-length('与库中商品对应单位的单价不一致;')+1);
+        cdsExcel.Post;
+        cdsExcel.Next;
+      end;
+      ExceptCount:=ExceptCount-FPriceCount;
+      RzStatus2.Caption := '异常数据:'+inttostr(ExceptCount)+'条(其中与库中单价不一致:'+inttostr(FPriceCount)+'条)    总数据:'+inttostr(SumCount)+'条';
+      RzStatus2.Update;
+    end else if not chkPrice.Checked then
+    begin
+      cdsExcel.First;
+      while not cdsExcel.Eof do
+      begin
+        cdsExcel.Edit;
+        cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与库中商品对应单位的单价不一致;';
+        cdsExcel.Post;
+        cdsExcel.Next;
+      end;
+      ExceptCount:=ExceptCount+FPriceCount;
+      RzStatus2.Caption := '异常数据:'+inttostr(ExceptCount)+'条(其中与库中单价不一致:'+inttostr(FPriceCount)+'条)    总数据:'+inttostr(SumCount)+'条';
+      RzStatus2.Update;
+    end;
+  end;
+  cdsExcel.Filtered:=false;
+
+  cdsExcel.EnableControls;
+
+end;
+
+procedure TfrmOrderExcel.btnNextClick(Sender: TObject);
+begin
+  if rzpage.ActivePageIndex=3 then
+  begin
+    cdsExcel.EnableControls;
+    cdsColumn.EnableControls;
+
+    cdsExcel.Filtered:=false;
+    cdsExcel.Filter:='STATE=''2'' or STATE=''3''';
+    cdsExcel.Filtered:=true;
+    cdsExcel.First;
+    while not cdsExcel.Eof do
+    begin
+      if cdsExcel.FieldByName('Msg').AsString='' then
+      begin
+        DataSet.Append;
+        cdsColumn.First;
+        while not cdsColumn.Eof do
+        begin
+          if cdsColumn.FieldbyName('FieldName').AsString <> '' then
+          begin
+           if DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).DataType in [ftString,ftWideString,ftFixedChar] then
+              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := trim(cdsExcel.fieldByName(cdsColumn.FieldbyName('FileName').AsString).AsString)
+           else
+              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.fieldByName(cdsColumn.FieldbyName('FileName').AsString).AsString),0);
+          end;
+          cdsColumn.Next;
+        end;
+        DataSet.Post;
+      end;
+      cdsExcel.Next;
+    end;
+
+    cdsExcel.Filtered:=false;
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
+  end;
+
+  inherited;
+
+  if rzPage.ActivePageIndex=3 then
+  begin
+    if FPriceCount>0 then
+    begin
+      chkPrice.Visible:=true;
+    end else
+    begin
+      chkPrice.Visible:=false;
+      chkignore.Top:=chkignore.Top-11;
+    end;
+  end
+  else
+    chkPrice.Visible:=false;
+
+end;
 
 end.

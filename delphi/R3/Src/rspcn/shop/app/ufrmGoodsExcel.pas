@@ -13,6 +13,9 @@ uses
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
   Menus;
 
+  const
+    FieldCount=20;
+
 type
   TfrmGoodsExcel = class(TfrmExcelFactory)
     RzLabel14: TRzLabel;
@@ -22,7 +25,7 @@ type
     //FGoodsCode:widestring;
     //FUnits:widestring;
     //FSorts:widestring;
-    FieldCheckSet:array[0..20] of string;
+    FieldCheckSet:array[0..FieldCount] of string;
     FSortType:integer; //0 库中没有文件中的分类；1  库中有文件中的所有分类；2 库中有部分文件中分类
     FUnitType:array[0..2] of integer; //同FSortType
     //barCodeList,godsCodeList,unitList,sortList:TStringList;
@@ -276,11 +279,13 @@ begin
 end;
 
 function TfrmGoodsExcel.Check(columnIndex:integer): Boolean;
-var str,strError:string;
+var str,strError,fieldName:string;
     num:double;
 begin
-  str:=cdsExcel.Fields[columnIndex].AsString;
-  case columnIndex-1 of
+  strError:='';
+  fieldName:=cdsColumn.FieldByName('FileName').AsString;
+  str:=cdsExcel.fieldByName(fieldName).AsString;
+  case columnIndex of
     0:begin
          if str='' then
          strError:='条形码为空;';
@@ -426,13 +431,16 @@ begin
          strError:='供应商为空;';
       end;
   end;
+  if strError<>'' then
   cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+strError;
+
+  result:=true;
 end;
 
 procedure TfrmGoodsExcel.ClearParams;
 var i:integer;
 begin
-  for i:=0 to 20 do
+  for i:=0 to FieldCount do
     FieldCheckSet[i]:='';
 end;
 

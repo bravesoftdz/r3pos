@@ -34,7 +34,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Top = 1
           Width = 601
           Height = 340
-          ActivePage = TabSheet3
+          ActivePage = TabSheet4
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -803,7 +803,6 @@ inherited frmExcelFactory: TfrmExcelFactory
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
                 FooterRowCount = 1
-                FrozenCols = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghHighlightFocus, dghClearSelection]
@@ -985,6 +984,78 @@ inherited frmExcelFactory: TfrmExcelFactory
                     FieldName = 'Z'
                     Footers = <>
                     Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AA'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AB'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AC'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AD'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AE'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AF'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AG'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AH'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AI'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AJ'
+                    Footers = <>
+                    Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'Msg'
+                    Footers = <>
+                    Visible = False
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'STATE'
+                    Footers = <>
+                    Visible = False
                   end>
               end
             end
@@ -1185,7 +1256,6 @@ inherited frmExcelFactory: TfrmExcelFactory
                 FooterFont.Height = -15
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
-                FrozenCols = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghHighlightFocus, dghClearSelection]
@@ -1376,6 +1446,62 @@ inherited frmExcelFactory: TfrmExcelFactory
                     FieldName = 'Z'
                     Footers = <>
                     Width = 90
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AA'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AB'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AC'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AD'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AE'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AF'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AG'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AH'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'HI'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'AJ'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'STATE'
+                    Footers = <>
+                    Visible = False
                   end>
               end
             end
@@ -2847,6 +2973,22 @@ inherited frmExcelFactory: TfrmExcelFactory
     Left = 378
     Top = 55
   end
+  object SaveDialog1: TSaveDialog
+    Left = 530
+    Top = 56
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 568
+    Top = 56
+    object Excel1: TMenuItem
+      Caption = 'Excel'#23548#20986'...'
+      OnClick = btnExportClick
+    end
+    object N1: TMenuItem
+      Caption = #28165#38500#24322#24120#25968#25454
+      OnClick = N1Click
+    end
+  end
   object cdsExcel: TZQuery
     FieldDefs = <
       item
@@ -2984,9 +3126,59 @@ inherited frmExcelFactory: TfrmExcelFactory
         Size = 100
       end
       item
+        Name = 'AA'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AB'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AC'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AD'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AE'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AF'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AG'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AH'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AI'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'AJ'
+        DataType = ftString
+        Size = 100
+      end
+      item
         Name = 'Msg'
         DataType = ftString
-        Size = 600
+        Size = 200
       end
       item
         Name = 'STATE'
@@ -2995,23 +3187,7 @@ inherited frmExcelFactory: TfrmExcelFactory
       end>
     CachedUpdates = True
     Params = <>
-    Left = 454
+    Left = 453
     Top = 55
-  end
-  object SaveDialog1: TSaveDialog
-    Left = 530
-    Top = 56
-  end
-  object PopupMenu1: TPopupMenu
-    Left = 568
-    Top = 56
-    object Excel1: TMenuItem
-      Caption = 'Excel'#23548#20986'...'
-      OnClick = btnExportClick
-    end
-    object N1: TMenuItem
-      Caption = #28165#38500#24322#24120#25968#25454
-      OnClick = N1Click
-    end
   end
 end

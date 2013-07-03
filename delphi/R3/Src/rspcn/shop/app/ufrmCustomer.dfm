@@ -1125,6 +1125,7 @@ inherited frmCustomer: TfrmCustomer
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghHighlightFocus, dghClearSelection]
+              PopupMenu = PopupMenu1
               RowHeight = 25
               SumList.Active = True
               TabOrder = 0
@@ -3724,5 +3725,13 @@ inherited frmCustomer: TfrmCustomer
       72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
       615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
       0A5C706172207D0D0A00}
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 64
+    Top = 432
+    object ExcelImport: TMenuItem
+      Caption = 'Excel'#23548#20837'...'
+      OnClick = ExcelImportClick
+    end
   end
 end

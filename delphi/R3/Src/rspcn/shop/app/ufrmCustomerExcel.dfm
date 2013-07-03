@@ -1,4 +1,4 @@
-inherited frmOrderExcel: TfrmOrderExcel
+inherited frmCustomerExcel: TfrmCustomerExcel
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
@@ -76,25 +76,7 @@ inherited frmOrderExcel: TfrmOrderExcel
       end
       inherited RzPanel4: TRzPanel
         inherited chkignore: TcxCheckBox
-          Left = 116
-          Top = 21
           Properties.Caption = #26159#21542#24573#30053#38169#35823#25968#25454
-        end
-        inherited btnExport: TRzBmpButton
-          Left = 20
-        end
-        object chkPrice: TcxCheckBox
-          Left = 116
-          Top = 1
-          Width = 205
-          Height = 23
-          Anchors = [akTop, akRight]
-          Properties.DisplayUnchecked = 'False'
-          Properties.Caption = #26159#21542#24573#30053#19981#19968#33268#21830#21697#21333#20215
-          TabOrder = 4
-          Visible = False
-          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          OnClick = chkPriceClick
         end
       end
     end

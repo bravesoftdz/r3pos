@@ -59,7 +59,6 @@ type
     RzLabel10: TRzLabel;
     RzLabel12: TRzLabel;
     DBGridEh3: TDBGridEh;
-    cdsExcel: TZQuery;
     RzStatus1: TRzStatusPane;
     RzStatus2: TRzStatusPane;
     SaveDialog1: TSaveDialog;
@@ -86,6 +85,7 @@ type
     PopupMenu1: TPopupMenu;
     Excel1: TMenuItem;
     N1: TMenuItem;
+    cdsExcel: TZQuery;
     procedure edtFileNameClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
@@ -112,18 +112,19 @@ type
     procedure CreateColumn;
     procedure CreateDbGridEhTitle;
     procedure OpenExecl(FileName: string);
-    procedure WriteToDataSet(DataSet: TDataSet);
     procedure SetStartRow(value:integer);
     procedure SetSelfCheck(value:Boolean);
     procedure SetDataSet(value:TZQuery);
+    procedure SetExceptCount(value:integer);
     procedure IsHeader;
-    function CheckExcute:Boolean;
     procedure DisplayResult;
  protected
+    procedure WriteToDataSet(DataSet: TDataSet);
     procedure DecodeFields(s: string);
     procedure DecodeFormats(s: string);
     procedure CreateUseDataSet;virtual;
     procedure CreateParams;virtual;
+    function CheckExcute:Boolean;virtual;
     function FindColumn(vStr:string):Boolean;virtual;
     function SelfCheckExcute:Boolean;virtual;
     function Check(columnIndex:integer):Boolean;virtual;
@@ -136,6 +137,8 @@ type
     property DataSet:TZQuery read FDataSet write SetDataSet;
     property StartRow:integer read FStartRow write SetStartRow;
     property SelfCheck:Boolean read FSelfCheck write SetSelfCheck;
+    property ExceptCount:integer read FExceptCount write SetExceptCount;
+    property SumCount:integer read FSumCount;
   end;
 
 implementation
@@ -191,9 +194,9 @@ begin
           if Check(cdsColumn.FieldbyName('ID').AsInteger) then
           begin
            if DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).DataType in [ftString,ftWideString,ftFixedChar] then
-              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := trim(cdsExcel.Fields[cdsColumn.FieldbyName('ID').AsInteger].AsString)
+              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := trim(cdsExcel.fieldByName(cdsColumn.FieldbyName('FileName').AsString).AsString)
            else
-              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.Fields[cdsColumn.FieldbyName('ID').AsInteger].asString),0);
+              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.fieldByName(cdsColumn.FieldbyName('FileName').AsString).AsString),0);
          end;
         end;
       cdsColumn.Next;
@@ -274,7 +277,7 @@ begin
     if cdsExcel.IsEmpty then Exit;
     for i:=1 to mxCol do
       begin
-        DBGridEh1.Columns[i].Title.Caption := cdsExcel.FieldbyName(Char(64+i)).AsString;
+        DBGridEh1.Columns[i].Title.Caption := cdsExcel.Fields[i].AsString;
       end;
     cdsExcel.Delete;
   end;
@@ -382,8 +385,11 @@ begin
     btnNext.Visible:=True;
     btnNext.Caption:='完成';
     rzPage.ActivePageIndex:=4;
-    SaveExcel(FDataSet);
-    DisplayResult;
+    try
+      SaveExcel(FDataSet);
+    finally
+      DisplayResult;
+    end;
   end
   else if rzPage.ActivePageIndex=4 then
   begin
@@ -478,7 +484,7 @@ begin
       if DBGridEh1.Columns[i+1].Visible then
          begin
            cdsColumn.Append;
-           cdsColumn.FieldByName('ID').AsInteger := i+1;
+           //cdsColumn.FieldByName('ID').AsInteger := i+1;
            cdsColumn.FieldByName('FileTitle').AsString := DBGridEh1.Columns[i+1].Title.Caption;
            cdsColumn.FieldByName('FileName').AsString:=DBGridEh1.Columns[i+1].FieldName;
            if not chkHeader.Checked then
@@ -491,6 +497,7 @@ begin
                       begin
                         if Integer(cdsDropColumn.Properties.Items.Objects[n])=index then
                            begin
+                             cdsColumn.FieldByName('ID').AsInteger := index;
                              cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Properties.Items[n];
                              Break;
                            end;
@@ -503,6 +510,7 @@ begin
                   begin
                     if cdsColumn.FieldByName('FileTitle').AsString = cdsDropColumn.Properties.Items[n] then
                       begin
+                        cdsColumn.FieldByName('ID').AsInteger := n;
                         cdsDropColumn.ItemIndex := n;
                         cdsColumn.FieldByName('FieldName').AsString := DataSet.Fields[Integer(cdsDropColumn.Properties.Items.Objects[cdsDropColumn.ItemIndex])].FieldName;
                         cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Text;
@@ -524,6 +532,7 @@ begin
        if cdsDropColumn.ItemIndex >=0 then
        begin
          cdsColumn.Edit;
+         cdsColumn.FieldByName('ID').AsInteger :=cdsDropColumn.ItemIndex;
          cdsColumn.FieldByName('FieldName').AsString := DataSet.Fields[Integer(cdsDropColumn.Properties.Items.Objects[cdsDropColumn.ItemIndex])].FieldName;
          cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Text;
          cdsColumn.Post;
@@ -567,8 +576,8 @@ begin
   cdsColumn.DisableControls;
   cdsExcel.DisableControls;
 
-  if not isFirstCheck then
-  begin
+ // if not isFirstCheck then
+ // begin
     cdsExcel.First;
     while not cdsExcel.Eof do
     begin
@@ -578,7 +587,7 @@ begin
       cdsExcel.Post;
       cdsExcel.Next;
     end;
-  end;
+ // end;
 
   if selfCheck then
      SelfCheckExcute;
@@ -594,11 +603,17 @@ begin
     WriteToDataSet(DataSet);
     if cdsExcel.FieldByName('Msg').AsString<>'' then
     begin
-      cdsExcel.FieldByName('STATE').AsString:='1';
+      if cdsExcel.FieldByName('STATE').AsString='2' then
+        cdsExcel.FieldByName('STATE').AsString:='3'
+      else
+        cdsExcel.FieldByName('STATE').AsString:='1';
       DataSet.Delete;
     end else
     begin
-      cdsExcel.FieldByName('STATE').AsString:='0';
+      //if cdsExcel.FieldByName('STATE').AsString='2' then
+      //  cdsExcel.FieldByName('STATE').AsString:='2'
+      // else
+      //cdsExcel.FieldByName('STATE').AsString:='0';
       DataSet.Post;
     end;
     cdsExcel.Post;
@@ -609,9 +624,10 @@ begin
   cdsExcel.EnableControls;
 
   cdsExcel.Filtered:=False;
-  cdsExcel.Filter:='STATE=''1''';
+  cdsExcel.Filter:='STATE=''1'' or STATE=''3''';  // or STATE=''3''
   cdsExcel.Filtered:=True;
   FExceptCount:=cdsExcel.RecordCount;
+
   RzStatus2.Caption := '异常数据:'+inttostr(FExceptCount)+'条    总数据:'+inttostr(FSumCount)+'条';
   RzStatus2.Update;
   cdsExcel.Filtered:=False;
@@ -622,7 +638,7 @@ procedure TfrmExcelFactory.CreateDbGridEhTitle;
 var i:integer;
     FieldName:string;
 begin
-  for i:=1 to DBGridEh1.Columns.Count-1 do
+  for i:=1 to DBGridEh1.Columns.Count-2 do
   begin
     DBGridEh3.Columns[i+1].Title:=DBGridEh1.Columns[i].Title;
   end;
@@ -636,6 +652,11 @@ end;
 procedure TfrmExcelFactory.SetDataSet(value: TZQuery);
 begin
   FDataSet:=value;
+end;
+
+procedure TfrmExcelFactory.SetExceptCount(value: integer);
+begin
+  FExceptCount:=value;
 end;
 
 procedure TfrmExcelFactory.DBGridEh2Columns2BeforeShowControl(

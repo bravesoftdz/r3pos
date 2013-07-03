@@ -167,6 +167,7 @@ type
     procedure RzBmpButton1Click(Sender: TObject);
     procedure ExcelImportClick(Sender: TObject);
     procedure RzLabel37Click(Sender: TObject);
+    procedure VIPPriceImportClick(Sender: TObject);
   private
     { Private declarations }
     ESortId:string;
@@ -204,7 +205,7 @@ implementation
 
 uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,
      udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
-     ufrmGoodsExcel,ufrmDBGridPreview;
+     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview;
 
 {$R *.dfm}
 
@@ -1951,6 +1952,19 @@ procedure TfrmGoodsStorage.RzLabel37Click(Sender: TObject);
 begin
   inherited;
   TfrmMemberPrice.ShowDialog(self,AObj.FieldByName('GODS_ID').AsString,AObj.FieldByName('GODS_CODE').AsString,AObj.FieldByName('GODS_NAME').AsString);
+end;
+
+procedure TfrmGoodsStorage.VIPPriceImportClick(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  try
+    rs:=TZQuery.Create(nil);
+    if TfrmPriceExcel.ExcelFactory(self,rs,'','',true) then
+       dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  finally
+    rs.Free;
+  end;
 end;
 
 initialization

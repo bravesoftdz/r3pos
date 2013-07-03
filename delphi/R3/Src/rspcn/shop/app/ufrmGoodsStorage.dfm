@@ -4010,8 +4010,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     Left = 64
     Top = 432
     object ExcelImport: TMenuItem
-      Caption = 'Excel'#23548#20837'...'
+      Caption = #21830#21697'Excel'#23548#20837'...'
       OnClick = ExcelImportClick
+    end
+    object VIPPriceImport: TMenuItem
+      Caption = #20250#21592#20215'Excel'#23548#20837'...'
+      OnClick = VIPPriceImportClick
     end
   end
 end

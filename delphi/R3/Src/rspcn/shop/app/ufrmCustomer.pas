@@ -142,6 +142,7 @@ type
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
+    procedure ExcelImportClick(Sender: TObject);
   private
     searchTxt:string;
     FdbState: TDataSetState;
@@ -169,7 +170,8 @@ var frmCustomer: TfrmCustomer;
 
 implementation
 
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,ufrmDBGridPreview;
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,
+     ufrmDBGridPreview,ufrmCustomerExcel;
 
 {$R *.dfm}
 
@@ -977,6 +979,34 @@ begin
   inherited;
   DBGridPrint;
   TfrmDBGridPreview.Print(self,PrintDBGridEh1);
+end;
+
+procedure TfrmCustomer.ExcelImportClick(Sender: TObject);
+var Params:TftParamList;
+    rs:TZQuery;
+begin
+  inherited;
+  Params := TftParamList.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    dataFactory.BeginBatch;
+    try
+       Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+       Params.ParamByName('CUST_ID').AsString := '';
+       dataFactory.AddBatch(rs,'TCustomerV60',Params);
+       dataFactory.OpenBatch;
+    except
+       dataFactory.CancelBatch;
+       Raise;
+    end;
+
+    if TfrmCustomerExcel.ExcelFactory(self,rs,'','',true) then
+      dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+
+  finally
+    Params.Free;
+    rs.Free;
+  end;
 end;
 
 initialization

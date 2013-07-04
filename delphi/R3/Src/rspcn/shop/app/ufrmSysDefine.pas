@@ -263,7 +263,6 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure btnSaveSysDefineClick(Sender: TObject);
     procedure btnDefaultClick(Sender: TObject);
-    procedure btnSyncClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnSaveUsersClick(Sender: TObject);
@@ -282,7 +281,6 @@ type
     procedure Tool_RightClick(Sender: TObject);
     procedure btnRecoveryRemoteClick(Sender: TObject);
   private
-    SyncDataing:boolean;
     FCurUserId:string;
     FCurUserName:string;
     FCurUserPswd:string;
@@ -327,7 +325,6 @@ type
     procedure GetShopInfo;
     procedure SaveShopInfo(Auto:boolean=false);
     procedure showForm;override;
-    function checkCanClose:boolean;override;
     class function  AutoRegister:boolean;
     class procedure SaveRegister;
     class procedure DBFileRecovery(src:string;AppHandle:HWnd);
@@ -348,22 +345,6 @@ uses udllGlobal,udataFactory,uTokenFactory,uRspFactory,udllShopUtil,EncDec,ufrmS
      uDevFactory,ufrmStocksCalc;
 
 {$R *.dfm}
-
-function TfrmSysDefine.CheckRegister: boolean;
-var
-  rs:TZQuery;
-begin
-  rs := TZQuery.Create(nil);
-  dataFactory.MoveToSqlite;
-  try
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
-    dataFactory.Open(rs);
-    result := (rs.Fields[0].AsString <> '');
-  finally
-    dataFactory.MoveToDefault;
-    rs.Free;
-  end;
-end;
 
 procedure TfrmSysDefine.FormCreate(Sender: TObject);
 var i:integer;
@@ -413,6 +394,99 @@ begin
        SetEditStyle(dsBrowse, edtXSM_CODE.Style);
        edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;
      end;
+end;
+
+procedure TfrmSysDefine.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  AObj.Free;
+end;
+
+procedure TfrmSysDefine.showForm;
+begin
+  inherited;
+  if dllGlobal.GetSFVersion <> '.LCL' then
+     RzBmpButton4.Visible := false;
+
+  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
+     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
+
+  if FirstLogin then
+     GetShopInfo
+  else
+     OpenShopInfo;
+
+  ReadFromObject(0);
+end;
+
+procedure TfrmSysDefine.RzBmpButton1Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  if PageControl.ActivePageIndex <> 0 then
+  begin
+    if FirstLogin then
+       GetShopInfo
+    else
+       OpenShopInfo;
+    ReadFromObject(0);
+  end;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 0;
+end;
+
+procedure TfrmSysDefine.RzBmpButton2Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  if PageControl.ActivePageIndex <> 1 then
+  begin
+    OpenSysDefine;
+    ReadFromObject(1);
+  end;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 1;
+end;  
+
+procedure TfrmSysDefine.RzBmpButton3Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  if PageControl.ActivePageIndex <> 2 then
+  begin
+    pnl_changepswd.Visible := false;
+    OpenUsers;
+    InitCurrentUser;
+  end;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 2;
+end;
+
+procedure TfrmSysDefine.RzBmpButton4Click(Sender: TObject);
+var i:integer;
+begin
+  inherited;
+  if PageControl.ActivePageIndex <> 3 then
+  begin
+    edtSaveFolder.Text := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId+'\db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak'; 
+  end;
+  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
+  PageControl.ActivePageIndex := 3;
+end;
+
+function TfrmSysDefine.CheckRegister: boolean;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToSqlite;
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
+    dataFactory.Open(rs);
+    result := (rs.Fields[0].AsString <> '');
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
 end;
 
 procedure TfrmSysDefine.GetShopInfo;
@@ -559,12 +633,6 @@ begin
   end;
 end;
 
-procedure TfrmSysDefine.FormDestroy(Sender: TObject);
-begin
-  inherited;
-  AObj.Free;
-end;
-
 procedure TfrmSysDefine.ReadFromObject(PageIndex:integer);
 var i:integer;
 begin
@@ -613,21 +681,13 @@ begin
   end;
 end;
 
-procedure TfrmSysDefine.btnSaveShopInfoClick(Sender: TObject);
-begin
-  inherited;
-  WriteToObject;
-  SaveShopInfo;
-  MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
-end;
-
 procedure TfrmSysDefine.SaveShopInfo(Auto:boolean=false);
   procedure SetValue(rs:TZQuery;name,value: string);
   begin
     if rs.Locate('DEFINE', name, []) then
-      rs.Edit
+       rs.Edit
     else
-      rs.Append;
+       rs.Append;
     rs.FieldByName('DEFINE').AsString := name;
     rs.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.FieldByName('VALUE').AsString := value;
@@ -807,96 +867,33 @@ begin
   end;
 end;
 
-procedure TfrmSysDefine.RzBmpButton1Click(Sender: TObject);
-var i:integer;
+procedure TfrmSysDefine.btnSaveShopInfoClick(Sender: TObject);
 begin
   inherited;
-  if PageControl.ActivePageIndex <> 0 then
-  begin
-    if FirstLogin then
-      GetShopInfo
-    else
-      OpenShopInfo;
-    ReadFromObject(0);
-  end;
-  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
-  PageControl.ActivePageIndex := 0;
+  WriteToObject;
+  SaveShopInfo;
+  MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
 
-procedure TfrmSysDefine.RzBmpButton2Click(Sender: TObject);
-var i:integer;
+procedure TfrmSysDefine.OpenSysDefine;
+var Params:TftParamList;
 begin
-  inherited;
-  if PageControl.ActivePageIndex <> 1 then
-  begin
-    OpenSysDefine;
-    ReadFromObject(1);
-  end;
-  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
-  PageControl.ActivePageIndex := 1;
-end;
-
-procedure TfrmSysDefine.InitCurrentUser;
-begin
-  UserState := dsBrowse;
-  edtACCOUNT.Text := token.account;
-  edtUSER_NAME.Text := token.username;
-  edtMOBILE.Text := token.mobile;
-  cdsUsers.DisableControls;
+  Params := TftParamList.Create(nil);
   try
-    CurUserId := token.userId;
-    CurUserName := token.username;
-    CurUserAccount := token.account;
-    if cdsUsers.Locate('USER_ID',token.userId,[]) then
-       begin
-         edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
-         CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
-         CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
-       end
-    else
-       begin
-         edtROLE_NAMES.Text := '管理员';
-         CurUserPswd := '';
-         CurUserRoleIds := '';
-       end;
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.Open(cdsSysDefine, 'TSysDefineV60', Params);
   finally
-    cdsUsers.EnableControls;
+    Params.Free;
   end;
-end;
-
-procedure TfrmSysDefine.RzBmpButton3Click(Sender: TObject);
-var i:integer;
-begin
-  inherited;
-  if PageControl.ActivePageIndex <> 2 then
-  begin
-    pnl_changepswd.Visible := false;
-    OpenUsers;
-    InitCurrentUser;
-  end;
-  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
-  PageControl.ActivePageIndex := 2;
-end;
-
-procedure TfrmSysDefine.RzBmpButton4Click(Sender: TObject);
-var i:integer;
-begin
-  inherited;
-  if PageControl.ActivePageIndex <> 3 then
-  begin
-    edtSaveFolder.Text := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId+'\db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak'; 
-  end;
-  for i:=0 to PageControl.PageCount-1 do PageControl.Pages[i].TabVisible := false;
-  PageControl.ActivePageIndex := 3;
 end;
 
 procedure TfrmSysDefine.SaveSysDefine;
   procedure SetValue(rs:TZQuery;name,value: string);
   begin
     if rs.Locate('DEFINE', name, []) then
-      rs.Edit
+       rs.Edit
     else
-      rs.Append;
+       rs.Append;
     rs.FieldByName('DEFINE').AsString := name;
     rs.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.FieldByName('VALUE').AsString := value;
@@ -1016,24 +1013,6 @@ begin
   DevFactory.InitComm;
 
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
-end;
-
-procedure TfrmSysDefine.OpenSysDefine;
-var Params:TftParamList;
-begin
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    dataFactory.Open(cdsSysDefine, 'TSysDefineV60', Params);
-  finally
-    Params.Free;
-  end;
-end;
-
-procedure TfrmSysDefine.btnSaveSysDefineClick(Sender: TObject);
-begin
-  inherited;
-  SaveSysDefine;
 end;
 
 procedure TfrmSysDefine.ReadSysDefine;
@@ -1164,10 +1143,10 @@ begin
   cxCashBoxRate.ItemIndex := -1;
 end;
 
-procedure TfrmSysDefine.btnSyncClick(Sender: TObject);
+procedure TfrmSysDefine.btnSaveSysDefineClick(Sender: TObject);
 begin
   inherited;
-  SyncData;
+  SaveSysDefine;
 end;
 
 procedure TfrmSysDefine.SetFirstLogin(const Value: boolean);
@@ -1185,6 +1164,34 @@ begin
   end;
 end;
 
+procedure TfrmSysDefine.InitCurrentUser;
+begin
+  UserState := dsBrowse;
+  edtACCOUNT.Text := token.account;
+  edtUSER_NAME.Text := token.username;
+  edtMOBILE.Text := token.mobile;
+  cdsUsers.DisableControls;
+  try
+    CurUserId := token.userId;
+    CurUserName := token.username;
+    CurUserAccount := token.account;
+    if cdsUsers.Locate('USER_ID',token.userId,[]) then
+       begin
+         edtROLE_NAMES.Text := cdsUsers.FieldByName('ROLE_IDS_TEXT').AsString;
+         CurUserPswd := cdsUsers.FieldByName('PASS_WRD').AsString;
+         CurUserRoleIds := cdsUsers.FieldByName('ROLE_IDS').AsString;
+       end
+    else
+       begin
+         edtROLE_NAMES.Text := '管理员';
+         CurUserPswd := '';
+         CurUserRoleIds := '';
+       end;
+  finally
+    cdsUsers.EnableControls;
+  end;
+end;
+
 procedure TfrmSysDefine.OpenUsers;
 begin
   cdsUsers.Close;
@@ -1196,48 +1203,6 @@ begin
     '       and a.TENANT_ID='+token.tenantId+' '+
     'order by a.USER_ID';
   dataFactory.Open(cdsUsers);
-end;
-
-procedure TfrmSysDefine.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-var
-  ARect:TRect;
-  br:TBrush;
-  pn:TPen;
-begin
-  rowToolNav.Visible := not cdsUsers.IsEmpty;
-  br := TBrush.Create;
-  br.Assign(DBGridEh1.Canvas.Brush);
-  pn := TPen.Create;
-  pn.Assign(DBGridEh1.Canvas.Pen);
-  try
-  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
-  begin
-    if Column.FieldName = 'TOOL_NAV' then
-       begin
-         ARect := Rect;
-         rowToolNav.Visible := true;
-         rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
-       end
-    else
-       DBGridEh1.Canvas.Brush.Color := clWhite;
-  end;
-  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-  if Column.FieldName = 'SEQNO' then
-    begin
-      ARect := Rect;
-      DBGridEh1.canvas.Brush.Color := DBGridEh1.FixedColor;
-      DBGridEh1.canvas.FillRect(ARect);
-      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsUsers.RecNo)),length(Inttostr(cdsUsers.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  finally
-    DBGridEh1.Canvas.Brush.Assign(br);
-    DBGridEh1.Canvas.Pen.Assign(pn);
-    br.Free;
-    pn.Free;
-  end;
 end;
 
 procedure TfrmSysDefine.SaveUsers;
@@ -1341,6 +1306,48 @@ begin
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
 
+procedure TfrmSysDefine.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+  br:TBrush;
+  pn:TPen;
+begin
+  rowToolNav.Visible := not cdsUsers.IsEmpty;
+  br := TBrush.Create;
+  br.Assign(DBGridEh1.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh1.Canvas.Pen);
+  try
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused or (Column.FieldName = 'TOOL_NAV')) then
+  begin
+    if Column.FieldName = 'TOOL_NAV' then
+       begin
+         ARect := Rect;
+         rowToolNav.Visible := true;
+         rowToolNav.SetBounds(ARect.Left+1,ARect.Top+1,ARect.Right-ARect.Left,ARect.Bottom-ARect.Top);
+       end
+    else
+       DBGridEh1.Canvas.Brush.Color := clWhite;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := DBGridEh1.FixedColor;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsUsers.RecNo)),length(Inttostr(cdsUsers.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  finally
+    DBGridEh1.Canvas.Brush.Assign(br);
+    DBGridEh1.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
+end;
+
 procedure TfrmSysDefine.btnSaveUsersClick(Sender: TObject);
 begin
   inherited;
@@ -1435,91 +1442,6 @@ begin
       Raise;
     end;
   end;
-end;
-
-procedure TfrmSysDefine.RzLabel40Click(Sender: TObject);
-begin
-  inherited;
-  SaveFolderDialog.FileName := 'db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak';
-  if SaveFolderDialog.Execute then
-     begin
-       edtSaveFolder.Text := SaveFolderDialog.FileName;
-     end;
-end;
-
-procedure TfrmSysDefine.btnBackUpClick(Sender: TObject);
-begin
-  inherited;
-  if trim(edtSaveFolder.Text) = '' then Raise Exception.Create('请选择数据存储位置...');
-  ForceDirectories(ExtractFileDir(trim(edtSaveFolder.Text))); 
-  if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(trim(edtSaveFolder.Text)),false) then
-     MessageBox(Handle,'数据备份成功...','友情提示..',MB_OK)
-  else MessageBox(Handle,'数据备份失败...','友情提示..',MB_OK);
-end;
-
-procedure TfrmSysDefine.RzLabel41Click(Sender: TObject);
-begin
-  inherited;
-  if OpenBackUpDialog.Execute then
-     begin
-       edtBackUpFile.Text := OpenBackUpDialog.FileName;
-     end;
-end;
-
-procedure TfrmSysDefine.FileRecovery(src:string;AppHandle:HWnd);
-var rs:TZQuery;
-begin
-  if not SyncFactory.CheckValidDBFile(src) then Raise Exception.Create('所恢复的文件不是有效数据文件，无法进行文件恢复...');
-  try
-    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
-       begin
-         if CopyFile(pchar(src),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
-            begin
-              dataFactory.sqlite.Connect;
-              rs := TZQuery.Create(nil);
-              dataFactory.MoveToSqlite;
-              try
-                rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
-                dataFactory.Open(rs);
-                SyncFactory.RecoverySync(AppHandle);
-                MessageBox(AppHandle,'数据恢复成功...','友情提示..',MB_OK);
-                RtcSyncClose;
-                if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
-                   DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
-              finally
-                dataFactory.MoveToDefault;
-                rs.Free;
-              end;
-            end
-         else
-            begin
-              Raise Exception.Create('数据恢复失败...');
-            end;
-       end
-    else
-       begin
-         MessageBox(AppHandle,'数据恢复失败，原因：文件备份发生错误...','友情提示..',MB_OK);
-       end;
-  except
-    on E:Exception do
-       begin
-         if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
-         begin
-           dataFactory.sqlite.Connect;
-           if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
-              DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
-         end;
-         Raise Exception.Create('数据恢复失败，原因：'+E.Message);
-       end;
-  end;
-end;
-
-procedure TfrmSysDefine.btnRecoveryClick(Sender: TObject);
-var rs:TZQuery;
-begin
-  inherited;
-  if trim(edtBackUpFile.Text) = '' then Raise Exception.Create('请选择要恢复的备份文件...');
-  FileRecovery(trim(edtBackUpFile.Text),self.Handle);
 end;
 
 procedure TfrmSysDefine.RzLabel9Click(Sender: TObject);
@@ -1637,9 +1559,9 @@ begin
   begin
     str := 'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where USER_ID='''+cdsUsers.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+token.tenantId;
     if dataFactory.ExecSQL(str) > 0 then
-      MessageBox(handle,Pchar('提示:密码重置成功...'),Pchar(Caption),MB_OK)
+       MessageBox(handle,Pchar('提示:密码重置成功...'),Pchar(Caption),MB_OK)
     else
-      MessageBox(handle,Pchar('提示:密码重置失败...'),Pchar(Caption),MB_OK);
+       MessageBox(handle,Pchar('提示:密码重置失败...'),Pchar(Caption),MB_OK);
   end;
 end;
 
@@ -1722,80 +1644,97 @@ end;
 
 procedure TfrmSysDefine.SyncData;
 begin
-  SyncDataing := true;
-  try
-    SyncFactory.RegisterSync(self.Handle);
-  finally
-    SyncDataing := false;
-  end;
-end;
-
-function TfrmSysDefine.checkCanClose: boolean;
-begin
-  if SyncDataing then
-     result := false
-  else
-     result := true;
-end;
-
-procedure TfrmSysDefine.showForm;
-begin
-  inherited;
-  if dllGlobal.GetSFVersion <> '.LCL' then
-     RzBmpButton4.Visible := false;
-
-  if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
-     Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
-
-  if FirstLogin then
-    GetShopInfo
-  else
-    OpenShopInfo;
-
-  ReadFromObject(0);
-end;
-
-class function TfrmSysDefine.AutoRegister: boolean;
-begin
-  result := false;
-  if token.tenantId <> '' then
-     begin
-       result := true;
-       Exit;
-     end;
-  with TfrmSysDefine.Create(nil) do
-  begin
-    try
-      try
-        GetShopInfo;
-      except
-        MessageBox(Handle,pchar('尚未开通门店管理功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
-        Exit;
-      end;
-      SaveShopInfo(true);
-      result := true;
-    finally
-      Free;
-    end;
-  end;
-end;
-
-class procedure TfrmSysDefine.SaveRegister;
-begin
-  with TfrmSysDefine.Create(nil) do
-  begin
-    try
-      SaveRegisterParams;
-    finally
-      Free;
-    end;
-  end;
+  SyncFactory.RegisterSync(self.Handle);
 end;
 
 procedure TfrmSysDefine.Tool_RightClick(Sender: TObject);
 begin
   inherited;
   GrantRights;
+end;
+
+procedure TfrmSysDefine.RzLabel40Click(Sender: TObject);
+begin
+  inherited;
+  SaveFolderDialog.FileName := 'db_'+FormatDateTime('YYYYMMDDHHMMSSZZZ',now())+'.bak';
+  if SaveFolderDialog.Execute then
+     begin
+       edtSaveFolder.Text := SaveFolderDialog.FileName;
+     end;
+end;
+
+procedure TfrmSysDefine.btnBackUpClick(Sender: TObject);
+begin
+  inherited;
+  if trim(edtSaveFolder.Text) = '' then Raise Exception.Create('请选择数据存储位置...');
+  ForceDirectories(ExtractFileDir(trim(edtSaveFolder.Text))); 
+  if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(trim(edtSaveFolder.Text)),false) then
+     MessageBox(Handle,'数据备份成功...','友情提示..',MB_OK)
+  else MessageBox(Handle,'数据备份失败...','友情提示..',MB_OK);
+end;
+
+procedure TfrmSysDefine.RzLabel41Click(Sender: TObject);
+begin
+  inherited;
+  if OpenBackUpDialog.Execute then
+     begin
+       edtBackUpFile.Text := OpenBackUpDialog.FileName;
+     end;
+end;
+
+procedure TfrmSysDefine.FileRecovery(src:string;AppHandle:HWnd);
+var rs:TZQuery;
+begin
+  if not SyncFactory.CheckValidDBFile(src) then Raise Exception.Create('所恢复的文件不是有效数据文件，无法进行文件恢复...');
+  try
+    if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
+       begin
+         if CopyFile(pchar(src),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+            begin
+              dataFactory.sqlite.Connect;
+              rs := TZQuery.Create(nil);
+              dataFactory.MoveToSqlite;
+              try
+                rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
+                dataFactory.Open(rs);
+                SyncFactory.RecoverySync(AppHandle);
+                MessageBox(AppHandle,'数据恢复成功...','友情提示..',MB_OK);
+                RtcSyncClose;
+                if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+                   DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
+              finally
+                dataFactory.MoveToDefault;
+                rs.Free;
+              end;
+            end
+         else
+            begin
+              Raise Exception.Create('数据恢复失败...');
+            end;
+       end
+    else
+       begin
+         MessageBox(AppHandle,'数据恢复失败，原因：文件备份发生错误...','友情提示..',MB_OK);
+       end;
+  except
+    on E:Exception do
+       begin
+         if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+         begin
+           dataFactory.sqlite.Connect;
+           if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+              DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
+         end;
+         Raise Exception.Create('数据恢复失败，原因：'+E.Message);
+       end;
+  end;
+end;
+
+procedure TfrmSysDefine.btnRecoveryClick(Sender: TObject);
+begin
+  inherited;
+  if trim(edtBackUpFile.Text) = '' then Raise Exception.Create('请选择要恢复的备份文件...');
+  FileRecovery(trim(edtBackUpFile.Text),self.Handle);
 end;
 
 procedure TfrmSysDefine.btnRecoveryRemoteClick(Sender: TObject);
@@ -2003,6 +1942,43 @@ begin
     end;
   finally
     dataFactory.MoveToDefault;
+  end;
+end;
+
+class function TfrmSysDefine.AutoRegister: boolean;
+begin
+  result := false;
+  if token.tenantId <> '' then
+     begin
+       result := true;
+       Exit;
+     end;
+  with TfrmSysDefine.Create(nil) do
+  begin
+    try
+      try
+        GetShopInfo;
+      except
+        MessageBox(Handle,pchar('尚未开通门店管理功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
+        Exit;
+      end;
+      SaveShopInfo(true);
+      result := true;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+class procedure TfrmSysDefine.SaveRegister;
+begin
+  with TfrmSysDefine.Create(nil) do
+  begin
+    try
+      SaveRegisterParams;
+    finally
+      Free;
+    end;
   end;
 end;
 

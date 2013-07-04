@@ -21,15 +21,16 @@ $(function() {
 		document.getElementById('telephone').innerHTML = '联系电话：'+telephone;
 	}
 })
+
 //表给隔行变色
 function trBgColor(){
-	$("#help tr:even").addClass("even");
-	$("#help tr:odd").addClass("odd");
+	$("#service4_content tr:even").addClass("even");
+	$("#service4_content tr:odd").addClass("odd");
 }
 
 function setLength() {
 	var remainder = 960;
-	$("#tabXsm").find('li').each(function() {
+	$("#tabTitle").find('li').each(function() {
 		if ($(this).attr("id") != 'lastX') {
 			remainder = remainder - this.offsetWidth;
 		}
@@ -40,175 +41,192 @@ function setLength() {
 
 var flag = 1;
 var tabs = 3;
-function setTab(name, cursel, n) {
+
+function setTab(name, cursel) {
 	flag = cursel;
-	for (i = 1; i <= n; i++) {
+	for (i = 1; i <= tabs; i++) {
 		var menu = document.getElementById(name + i);
-		var con = document.getElementById("con_" + name + "_" + i);
+		var content = document.getElementById("content_" + name + "_" + i);
 		menu.className = i == cursel ? "hover" : "link";
-		con.style.display = i == cursel ? "block" : "none";
+		content.style.display = i == cursel ? "block" : "none";
 	}
 	setLength();
 }
-function flowTab(name, n, direction) {
+
+function flowTab(name, direction) {
 	if (direction == 'left' && flag > 1) {
 		flag = flag - 1;
 	}
 	if (direction == 'right' && flag < tabs) {
 		flag = flag + 1;
 	}
-	setTab(name, flag, n);
+	setTab(name, flag);
+}
+
+function service_submit() {
+	alert('该功能尚未开通！');
+}
+
+function service_clear() {
+	document.getElementById('feedback_content').value = '';
 }
 </script>
-
 </head>
-
 <body>
-<div id="xsm"><br>
-<div id="xsmIndex">
+<div id="main"><br>
+<div id="mainIndex">
 
 <div class="content">
 
-<div class="xsm_Menubox">
+	<div class="mainTitle">
+		<ul id="tabTitle">
+			<li id="firstX" class="first"></li>
+			<li id="rspcn1" onClick="setTab('rspcn',1)" class="hover">我的店铺</li>
+			<li id="rspcn2" onClick="setTab('rspcn',2)" class="link">在线学堂</li>
+			<li id="rspcn3" onClick="setTab('rspcn',3)" class="link">客户服务</li>
+			<li id="lastX" class="last"></li>
+		</ul>
+	</div>
+	
+	<div class="mainContent ">
+		
+		<div class="left"><a href="javascript:flowTab('rspcn','left');"><img src="images/left.png" /></a></div>
+		
+		<div class="middle">
+			<div id="content_rspcn_1" class="content_rspcn">
+				<div id="shop">
+				 	<div class="shopLeft">
+						<div class="shop shop_spxs"><a target="_blank" href="rspcn://shop.dll/TfrmSaleOrder"><img src="images/shop_spxs.jpg"/></a></div>
+						<div class="shop shop_jyrk"><a target="_blank" href="rspcn://shop.dll/TfrmDownStockOrder"><img src="images/shop_jyrk.jpg"/></a></div>
+						<div class="shop shop_spkc"><a target="_blank" href="rspcn://shop.dll/TfrmGoodsStorage"><img src="images/shop_spkc.jpg"/></a></div>
+						<div class="clearfloat"></div>
+						<div class="shop shop_jyfx"><a target="_blank" href="rspcn://local-in/report.html"><img src="images/shop_jyfx.jpg"/></a></div>
+						<div class="shop shop_fyrk"><a target="_blank" href="rspcn://shop.dll/TfrmStockOrder"><img src="images/shop_fyrk.jpg"/></a></div>
+						<div class="shop shop_hygl"><a target="_blank" href="rspcn://shop.dll/TfrmCustomer"><img src="images/shop_hygl.jpg"/></a></div>
+					</div>
+					<div class="shopRight">
+						<div class="shop shop_xsm_title"><img src="images/shop_xsm_title.jpg"/></div>
+						<div class="shop shop_wsdh"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtList.htm"><img src="images/shop_wsdh.jpg"/></a></div>
+						<div class="shop shop_wsph"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtTerminal.htm"><img src="images/shop_wsph.jpg"/></a></div>
+						<div class="shop shop_yxhd"><a target="_blank" href="rspcn://xsm-in/scweb/taskCenter/taskCenter.htm"><img src="images/shop_yxhd.jpg"/></a></div>
+						<div class="shop shop_xtsz"><a target="_blank" href="rspcn://shop.dll/TfrmSysDefine"><img src="images/shop_xtsz.jpg"/></a></div>
+					</div>
+				</div>
+			</div>
 
-<ul id="tabXsm">
-	<li id="firstX" class="first"></li>
-	<li id="xsm1" onClick="setTab('xsm',1,4)" class="hover">我的店铺</li>
-	<li id="xsm2" onClick="setTab('xsm',2,4)" class="link">在线学堂</li>
-	<li id="xsm3" onClick="setTab('xsm',3,4)" class="link">客户服务</li>
-	<!--
-	<li id="xsm4" onClick="setTab('xsm',4,4)" class="link">微商圈</li>
-	-->
-	<li id="lastX" class="last"></li>
-</ul>
+			<div id="content_rspcn_2" class="content_rspcn" style="display: none;">
+				<div id="school">
+					<ul>
+						<li><a href="#"><img src="images/school1.png" /></a><div class="sName">如何进行商品销售？</div></li>
+						<li><a href="#"><img src="images/school2.png" /></a><div class="sName">如何初始化库存？</div></li>
+						<li><a href="#"><img src="images/school3.png" /></a><div class="sName">如何入库卷烟商品？</div></li>
+						<li><a href="#"><img src="images/school4.png" /></a><div class="sName">如何入库非烟商品？</div></li>
+						<li><a href="#"><img src="images/school5.png" /></a><div class="sName">如何添加商品档案?</div></li>
+						<li><a href="#"><img src="images/school6.png" /></a><div class="sName">如何添加会员档案？</div></li>
+						<li><a href="#"><img src="images/school7.png" /></a><div class="sName">如何查询库存信息？</div></li>
+						<li><a href="#"><img src="images/school8.png" /></a><div class="sName">如何查询销售信息？</div></li>
+						<li><a href="#"><img src="images/school9.png" /></a><div class="sName">如何查询盈利信息？</div></li>
+						<li><a href="#"><img src="images/school10.png"/></a><div class="sName">如何备份数据？</div></li>
+						<li><a href="#"><img src="images/school11.png"/></a><div class="sName">如何还原备份的数据？</div></li>
+						<li><a href="#"><img src="images/school12.png"/></a><div class="sName">如何联系客服人员？</div></li>
+					</ul>
+				</div>
+			</div>
 
-</div>
+			<div id="content_rspcn_3" class="content_rspcn" style="display: none;">
+				<div id="service">
 
-<div class="xsm_Contentbox ">
-<div class="left"><a href="javascript:flowTab('xsm',4,'left');"><img src="images/left.png" /></a></div>
-<div class="middle"><!--con_xsm_1开始-->
-<div id="con_xsm_1" class="con_xsm">
-<div id="shop">
- 	<div class="shopLeft">
-		<div class="shop shop1"><a target="_blank" href="rspcn://shop.dll/TfrmSaleOrder"><img src="images/shop1.jpg"/></a></div>
-		<div class="shop shop2"><a target="_blank" href="rspcn://shop.dll/TfrmDownStockOrder"><img src="images/shop2.jpg"/></a></div>
-		<div class="shop shop3"><a target="_blank" href="rspcn://shop.dll/TfrmGoodsStorage"><img src="images/shop5.jpg"/></a></div>
-		<div class="clearfloat"></div>
-		<div class="shop shop4"><a target="_blank" href="rspcn://local-in/report.html"><img src="images/shop8.jpg"/></a></div>
-		<div class="shop shop5"><a target="_blank" href="rspcn://shop.dll/TfrmStockOrder"><img src="images/shop9.jpg"/></a></div>
-		<div class="shop shop6"><a target="_blank" href="rspcn://shop.dll/TfrmCustomer"><img src="images/shop10.jpg"/></a></div>
-	</div>
-		<div class="shopRight">
-		<div class="shop shop7"><img src="images/shop3.jpg"/></div>
-		<div class="shop shop8"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtList.htm"><img src="images/shop4.jpg"/></a></div>
-		<div class="shop shop9"><a target="_blank" href="rspcn://xsm-in/ecweb/order/cgtTerminal.htm"><img src="images/shop6.jpg"/></a></div>
-		<div class="shop shop10"><a target="_blank" href="rspcn://xsm-in/scweb/taskCenter/taskCenter.htm"><img src="images/shop7.jpg"/></a></div>
-		<div class="shop shop11"><a target="_blank" href="rspcn://shop.dll/TfrmSysDefine"><img src="images/shop11.jpg"/></a></div>
-	</div>
-	</div>
-</div>
-<!--con_xsm_1结束-->
-<!--con_xsm_2开始-->
-<div id="con_xsm_2" class="con_xsm" style="display: none;">
-<div id="school">
-<ul>
-	<li><a href="#"><img src="images/school1.png" /></a><div class="sName">如何进行商品销售？</div></li>
-	<li><a href="#"><img src="images/school2.png" /></a><div class="sName">如何初始化库存？</div></li>
-	<li><a href="#"><img src="images/school3.png" /></a><div class="sName">如何入库卷烟商品？</div></li>
-	<li><a href="#"><img src="images/school4.png" /></a><div class="sName">如何入库非烟商品？</div></li>
-	<li><a href="#"><img src="images/school5.png" /></a><div class="sName">如何添加商品档案?</div></li>
-	<li><a href="#"><img src="images/school6.png" /></a><div class="sName">如何添加会员档案？</div></li>
-	<li><a href="#"><img src="images/school7.png" /></a><div class="sName">如何查询库存信息？</div></li>
-	<li><a href="#"><img src="images/school8.png" /></a><div class="sName">如何查询销售信息？</div></li>
-	<li><a href="#"><img src="images/school9.png" /></a><div class="sName">如何查询盈利信息？</div></li>
-	<li><a href="#"><img src="images/school10.png"/></a><div class="sName">如何备份数据？</div></li>
-	<li><a href="#"><img src="images/school11.png"/></a><div class="sName">如何还原备份的数据？</div></li>
-	<li><a href="#"><img src="images/school12.png"/></a><div class="sName">如何联系客服人员？</div></li>
-</ul>
-</div>
-</div>
-<!--con_xsm_2结束-->
-<!--con_xsm_3开始-->
-<div id="con_xsm_3" class="con_xsm" style="display: none;">
-<div id="service">
- <div class="service1">
- 	<div class="dt1 indexFont1">在线客服</div>
-	<div class="dd1 indexFont1">
-		<center><a id="qqlink" "href="#" style="margin:0 auto; text-align:center;"><img align="bottom" src="images/servicehead.png"/>&nbsp;QQ交谈</a></center>
-	</div>
- </div>
- <div class="service2">
-	<div class="sTitle indexFont1">在线反馈</div>
-	<div id="feedbackCon"><span class="indexFont2">请输入宝贵意见</span><br/>
-		<textarea style="overflow-x:hidden;overflow-y:hidden"></textarea>
-		<div style="padding:10px 0 0 100px;">
-				<a href="#"><img src="images/serviceBtn1.jpg"/></a>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="#"><img src="images/serviceBtn2.jpg"/></a>
+				 <div class="service1">
+				 	<div class="service1_title indexFont1">在线客服</div>
+					<div class="service1_content indexFont1">
+						<center>
+							<a id="qqlink" "href="#" style="margin:0 auto; text-align:center;"><img align="bottom" src="images/service_qq.png"/>&nbsp;QQ交谈</a>
+						</center>
+					</div>
+				 </div>
+
+				 <div class="service2">
+					<div class="service2_title indexFont1">在线反馈</div>
+					<div id="feedbackContent">
+						<span class="indexFont2">请输入宝贵意见</span>
+						<br/>
+						<textarea id="feedback_content" style="overflow-x:hidden;overflow-y:hidden"></textarea>
+						<div style="padding:10px 0 0 100px;">
+							<a href="javascript:service_submit()"><img src="images/service_submit.jpg"/></a>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="javascript:service_clear()"><img src="images/service_clear.jpg"/></a>
+						</div>
+					</div>
+				 </div>
+					
+				 <div class="clearfloat"></div>
+					
+				 <div class="service3">
+				 	<div class="service3_title indexFont1">联系我们</div>
+					<div class="service3_content indexFont1">
+						<span id='qq'>QQ:</span>
+						<br/><br/><br/><br/>
+						<span id='telephone'>联系电话:</span>
+						<br/>
+					</div>
+				 </div>
+					
+				 <div class="service4">
+					<div class="service4_title indexFont1">服务帮助</div>
+					<div style="padding-top:5px; overflow:hidden;">
+					<table id="service4_content" width="530" border="0">
+						<tr>
+							<td width="160">内容</td>
+							<td width="160">反馈人</td>
+							<td>日期</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</table>
+				  </div>
+				 </div>
+				</div>
+			</div>
 		</div>
-	</div>
- </div>
-	
- <div class="clearfloat"></div>
-	
- <div class="service3">
- 	<div class="dt3 indexFont1">联系我们</div>
-	<div class="dd3 indexFont1">
-		<span id='qq'>QQ:</span>
-		<br/><br/><br/><br/>
-		<span id='telephone'>联系电话:</span>
-		<br/>
-	</div>
- </div>
-	
- <div class="service4">
-	<div class="sTitle indexFont1">服务帮助</div>
-	<div style="padding-top:5px; overflow:hidden;">
-	<table id="help" width="530" border="0">
-				<tr>
-								<td width="160">内容</td>
-								<td width="160">反馈人</td>
-								<td>日期</td>
-				</tr>
-				<tr>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-				</tr>
-				<tr>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-				</tr>
-				<tr>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-				</tr>
-	</table>
-  </div>
- </div>
-</div>
-</div>
-<!--con_xsm_3结束-->
-<!--con_xsm_4开始-->
-<div id="con_xsm_4" class="con_xsm" style="display: none;">
-<ul>
 
-</ul>
-</div>
-<!--con_xsm_4结束-->
-</div>
-<div class="right"><a href="javascript:flowTab('xsm',4,'right');"><img src="images/right.png" /></a></div>
-</div>
+		<div class="right"><a href="javascript:flowTab('rspcn','right');"><img src="images/right.png" /></a></div>
+	</div>
 
 </div>
 
 <div class="friendLinks">
-<div class="dt">常用链接</div>
-<div class="dd">
+<div class="tt">常用链接</div>
+<div class="link">
 <ul>
 	<li><a target="_blank" href="http://www.google.com.hk/">Google谷歌</a></li>
 	<li><a target="_blank" href="http://weibo.sina.com.cn/">新浪·微博</a></li>

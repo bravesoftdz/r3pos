@@ -1,5 +1,5 @@
 inherited frmGoodsStorage: TfrmGoodsStorage
-  Left = -8
+  Left = 0
   Top = 0
   Caption = #21830#21697#24211#23384
   ClientHeight = 738
@@ -4324,6 +4324,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     object ClearStorage: TMenuItem
       Caption = #28165#31354#24403#21069#24211#23384
       OnClick = ClearStorageClick
+    end
+    object ChangeImport: TMenuItem
+      Caption = #25439#30410#21333'Excel'#23548#20837'...'
+      OnClick = ChangeImportClick
     end
   end
 end

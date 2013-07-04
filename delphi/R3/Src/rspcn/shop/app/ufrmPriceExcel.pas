@@ -427,6 +427,7 @@ begin
   with TfrmPriceExcel.Create(Owner) do
     begin
       try
+        RzLabel26.Caption:=RzLabel26.Caption+'--ª·‘±º€';
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields(FieldsString);

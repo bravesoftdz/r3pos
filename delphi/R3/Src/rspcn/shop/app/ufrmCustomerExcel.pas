@@ -855,6 +855,7 @@ begin
   with TfrmCustomerExcel.Create(Owner) do
     begin
       try
+        RzLabel26.Caption:=RzLabel26.Caption+'--ª·‘±µµ∞∏';
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields(FieldsString);

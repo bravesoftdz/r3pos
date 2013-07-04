@@ -21,19 +21,13 @@ type
     RzLabel14: TRzLabel;
     procedure Image4Click(Sender: TObject);
   private
-    //FBarcode:widestring;
-    //FGoodsCode:widestring;
-    //FUnits:widestring;
-    //FSorts:widestring;
     FieldCheckSet:array[0..FieldCount] of string;
     FSortType:integer; //0 库中没有文件中的分类；1  库中有文件中的所有分类；2 库中有部分文件中分类
     FUnitType:array[0..2] of integer; //同FSortType
-    //barCodeList,godsCodeList,unitList,sortList:TStringList;
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
     function FindColumn(vStr:string):Boolean;override;
-    function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
-    function SelfCheckExcute2:Boolean;
+    function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复 
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
@@ -173,7 +167,7 @@ begin
           DsGoods.FieldByName('GODS_SPELL').AsString := dsExcel.FieldByName('GODS_SPELL').AsString
         else
           DsGoods.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(Trim(Name),3);
-        DsGoods.FieldByName('GODS_TYPE').AsString :='';
+        DsGoods.FieldByName('GODS_TYPE').AsString :='1';
         if ss.Locate('SORT_NAME',dsExcel.FieldByName('SORT_ID1').AsString,[]) then
           DsGoods.FieldByName('SORT_ID1').AsString := ss.FieldByName('SORT_ID').AsString;
         DsGoods.FieldByName('SORT_ID3').AsString := dsExcel.FieldByName('SORT_ID3').AsString;
@@ -218,13 +212,10 @@ begin
 
         DsGoods.FieldByName('USING_PRICE').AsInteger := 1;
         DsGoods.FieldByName('HAS_INTEGRAL').AsInteger := 1;
-        //DsGoods.FieldByName('INTEGRAL_RATE').AsFloat := 1;
         DsGoods.FieldByName('USING_BATCH_NO').AsInteger := 2;
         DsGoods.FieldByName('USING_BARTER').AsInteger := 1;
         DsGoods.FieldByName('USING_LOCUS_NO').AsInteger := 2;
         DsGoods.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
-        //DsGoods.FieldByName('USING_IN_TAX_RATE').AsString := '0';
-        //DsGoods.FieldByName('USING_OUT_TAX_RATE').AsString := '0';
 
         DsGoods.Post;
         dsExcel.Next;
@@ -442,80 +433,7 @@ var i:integer;
 begin
   for i:=0 to FieldCount do
     FieldCheckSet[i]:='';
-end;
-
-function TfrmGoodsExcel.SelfCheckExcute2: Boolean;
-var rs:TZQuery;
-    strPre,strNext:string;
-    fieldBarcode,fieldGodscode,fieldUnit,fieldSort:string;
-    preID:integer;
-begin
-  {
-  CreateStringList(barCodeList);
-  CreateStringList(godsCodeList);
-  CreateStringList(unitList);
-  CreateStringList(sortList);
-  //条码
-  if cdsColumn.Locate('FieldName','BARCODE1',[]) then
-      fieldBarcode:=cdsColumn.fieldByName('FileName').AsString;
-  if fieldBarcode='' then
-    raise exception.Create('查询的字段不存在！');
-  //货号
-  if cdsColumn.Locate('FieldName','GODS_CODE',[]) then
-      fieldGodscode:=cdsColumn.fieldByName('FileName').AsString;
-  //计量单位
-  if cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
-      fieldUnit:=cdsColumn.fieldByName('FileName').AsString;
-  //分类
-  if cdsColumn.Locate('FieldName','SORT_ID1',[]) then
-      fieldSort:=cdsColumn.fieldByName('FileName').AsString;
-  rs:=TZQuery.Create(nil);
-  rs.Data:=cdsExcel.Data;
-  rs.SortedFields:=fieldBarcode;
-  rs.First;
-  strPre:=rs.fieldByName(fieldBarcode).AsString;
-  preId:=rs.fieldByName('ID').AsInteger;
-  if strPre<> '' then
-    barCodeList.Add(strPre);
-  if rs.fieldbyName(fieldGodscode).AsString<>''then
-    godsCodeList.Add(rs.fieldbyName(fieldGodscode).AsString);
-  if rs.fieldbyName(fieldUnit).AsString<>'' then
-    unitList.Add(rs.fieldbyName(fieldUnit).AsString);
-  if rs.fieldbyName(fieldSort).AsString<>'' then
-    sortList.Add(rs.fieldbyName(fieldSort).AsString);
-  rs.Next;
-  while not rs.Eof do
-  begin
-    strNext:=rs.fieldByName(fieldBarcode).AsString;
-    if strPre=strNext then
-    begin
-      cdsExcel.Locate('ID',rs.fieldByName('ID').AsInteger,[]);
-      cdsExcel.Edit;
-      cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据条形码重复;';
-      cdsExcel.Post;
-    end;
-    strPre:=strNext;
-    preID:=rs.fieldByName('ID').AsInteger;
-
-    if strNext<> '' then
-    barCodeList.Add(strNext);
-    if rs.fieldbyName(fieldGodscode).AsString<>'' then
-    godsCodeList.Add(rs.fieldbyName(fieldGodscode).AsString);
-    if rs.fieldbyName(fieldUnit).AsString<>'' then
-    unitList.Add(rs.fieldbyName(fieldUnit).AsString);
-    if rs.fieldbyName(fieldSort).AsString<>'' then
-    sortList.Add(rs.fieldbyName(fieldSort).AsString);
-    rs.Next;
-  end;
-
-  TransformtoString(barCodeList,FBarcode);
-  TransformtoString(godsCodeList,FGoodsCode);
-  TransformtoString(unitList,FUnits);
-  TransformtoString(sortList,FSorts);
-
-  OutCheckExcute;
-  }
-end;
+end; 
 
 function TfrmGoodsExcel.SelfCheckExcute: Boolean;
 var isSort:Boolean;
@@ -560,7 +478,7 @@ begin
             while not rs.Eof do
             begin
               strNext:=rs.fieldByName(FileName).AsString;
-              if strPre=strNext then
+              if (strPre=strNext) then
               begin
                 cdsExcel.Locate('ID',rs.fieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
@@ -788,6 +706,7 @@ begin
   with TfrmGoodsExcel.Create(Owner) do
     begin
       try
+        RzLabel26.Caption:=RzLabel26.Caption+'--商品档案';
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields(FieldsString);

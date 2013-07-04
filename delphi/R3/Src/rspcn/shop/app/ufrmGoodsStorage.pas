@@ -132,6 +132,7 @@ type
     RzLabel37: TRzLabel;
     ClearStorage: TMenuItem;
     RzBmpButton4: TRzBmpButton;
+    ChangeImport: TMenuItem;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -172,6 +173,7 @@ type
     procedure VIPPriceImportClick(Sender: TObject);
     procedure ClearStorageClick(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
+    procedure ChangeImportClick(Sender: TObject);
   private
     ESortId:string;
     FSortId:string;
@@ -208,7 +210,7 @@ implementation
 
 uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,
      udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
-     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview,ufrmClearStorage;
+     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview,ufrmClearStorage,ufrmStorageExcel;
 
 {$R *.dfm}
 
@@ -587,7 +589,10 @@ begin
   edtUPPER_AMOUNT.Text := formatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat);
   edtUNIT_ID_USING.Checked := (AObj.FieldbyName('SMALL_UNITS').AsString<>'') or (AObj.FieldbyName('BIG_UNITS').AsString<>'');
 
-  storAmt := cdsList.FieldbyName('AMOUNT').AsFloat;
+  if cdsList.FieldbyName('AMOUNT').AsString<>'' then
+    storAmt := cdsList.FieldbyName('AMOUNT').AsFloat
+  else
+    storAmt:=0;
   edtAMOUNT.Text := formatFloat('#0.###',storAmt);
 end;
 
@@ -2120,6 +2125,19 @@ procedure TfrmGoodsStorage.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
   ClearStorageClick(nil);
+end;
+
+procedure TfrmGoodsStorage.ChangeImportClick(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  try
+    rs:=TZQuery.Create(nil);
+    if TfrmStorageExcel.ExcelFactory(self,rs,'','',true) then
+      SaveChangeOrder(rs);
+  finally
+    rs.Free;
+  end;
 end;
 
 initialization

@@ -393,7 +393,8 @@ begin
   end
   else if rzPage.ActivePageIndex=4 then
   begin
-    Close;
+    //Close;
+    ModalResult := mrOK;
   end;
 end;
 

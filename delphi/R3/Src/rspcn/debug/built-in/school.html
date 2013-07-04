@@ -11,7 +11,7 @@ $(function() {
 	var src = request.getParameter("src");
 	var title = request.getParameter("title");
 	document.getElementById('player').setAttribute('url',src);
-	if (title != '') {
+	if (title != undefined && title != '') {
 		document.getElementById('school').innerHTML = '在线学堂（'+title+'）';
 	}
 })
@@ -53,20 +53,20 @@ request = function() {
 </script>
 </head>
 <body>
-<div id="xsm"><br>
-<div id="xsmIndex">
+<div id="main"><br>
+<div id="mainIndex">
 
 	<div class="content">
 	
-		<div class="xsm_Menubox">
-			<ul id="tabXsm">
+		<div class="schoolTitle">
+			<ul>
 				<li id="school" class="link">在线学堂</li>
 			</ul>
 		</div>
 	
-		<div class="xsm_Contentbox ">
+		<div class="schoolContent ">
 		<div class="middle">
-			<div id="con_xsm_1" class="con_xsm">
+			<div class="schoolPlayer">
 				<center>
 				<br/>
 				<object id="player" height="400" width="600" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6"> 
@@ -98,8 +98,8 @@ request = function() {
 	</div>
 
 	<div class="friendLinks">
-		<div class="dt">常用链接</div>
-		<div class="dd">
+		<div class="title">常用链接</div>
+		<div class="link">
 		<ul>
 			<li><a target="_blank" href="http://www.google.com.hk/">Google谷歌</a></li>
 			<li><a target="_blank" href="http://weibo.sina.com.cn/">新浪·微博</a></li>

@@ -31,7 +31,7 @@ a {
 
 /*main*/
 
-#xsm {
+#main {
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -40,35 +40,35 @@ a {
 	background: url(../images/indexBg.jpg) no-repeat center top;
 }
 
-#xsm #xsmIndex {
+#main #mainIndex {
 	padding: 10px 0 50px 0;
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
 }
 
-#xsm #xsmIndex .content {
+#main #mainIndex .content {
 	width: 960px;
 	overflow: hidden;
 }
 
 /*title*/
 
-.xsm_Menubox {
+.schoolTitle {
 	height: 30px;
 	line-height: 30px;
 	vertical-align: middle;
 	overflow: hidden;
 }
 
-.xsm_Menubox ul {
+.schoolTitle ul {
 	list-style: none;
 	height: 30px;
 	text-align: center;
 	width: 960px;
 }
 
-.xsm_Menubox li.link {
+.schoolTitle li.link {
 	width: 960px;
 	float: left;
 	cursor: pointer;
@@ -85,42 +85,42 @@ a {
 
 /*content*/
 
-.xsm_Contentbox {
+.schoolContent {
 	width: 960px;
 	overflow: hidden;
 	padding-top: 10px;
 	padding-bottom: 35px;
 }
 
-.xsm_Contentbox .left {
+.schoolContent .left {
 	width: 22px;
 	overflow: hidden;
 	float: left;
 	padding-top: 180px;
 }
 
-.xsm_Contentbox .right {
+.schoolContent .right {
 	width: 22px;
 	overflow: hidden;
 	float: left;
 	padding-top: 180px;
 }
 
-.xsm_Contentbox .middle {
+.schoolContent .middle {
 	width: 901px;
 	overflow: hidden;
 	float: left;
 	padding:5px 6px 0 6px;
 }
 
-.con_xsm{
+.schoolPlayer{
 	overflow:hidden;
 	height: 420px;
 }
 
 /*friendLink*/
 
-#xsm #xsmIndex .friendLinks {
+#main #mainIndex .friendLinks {
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
@@ -128,7 +128,7 @@ a {
 	padding: 5px 0;
 }
 
-#xsm #xsmIndex .friendLinks .dt {
+#main #mainIndex .friendLinks .title {
 	width: 100px;
 	padding-left: 15px;
 	overflow: hidden;
@@ -142,7 +142,7 @@ a {
 	float: left;
 }
 
-#xsm #xsmIndex .friendLinks .dd {
+#main #mainIndex .friendLinks .link {
 	line-height: 25px;
 	width: 840px;
 	float: left;
@@ -155,12 +155,12 @@ a {
 	height: 25px;
 }
 
-#xsm #xsmIndex .friendLinks .dd li {
+#main #mainIndex .friendLinks .link li {
 	float: left;
 	padding: 0 10px;
 	overflow: hidden;
 }
 
-#xsm #xsmIndex .friendLinks .dd li a {
+#main #mainIndex .friendLinks .link li a {
 	color: #ffffff;
 }

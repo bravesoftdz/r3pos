@@ -40,14 +40,14 @@ a {
 	background: url(../images/indexBg.jpg) no-repeat center top;
 }
 
-#main #mainIndex {
+#main #mainSchool {
 	padding: 10px 0 50px 0;
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
 }
 
-#main #mainIndex .content {
+#main #mainSchool .content {
 	width: 960px;
 	overflow: hidden;
 }
@@ -120,7 +120,7 @@ a {
 
 /*friendLink*/
 
-#main #mainIndex .friendLinks {
+#main #mainSchool .friendLinks {
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
@@ -128,7 +128,7 @@ a {
 	padding: 5px 0;
 }
 
-#main #mainIndex .friendLinks .title {
+#main #mainSchool .friendLinks .title {
 	width: 100px;
 	padding-left: 15px;
 	overflow: hidden;
@@ -142,7 +142,7 @@ a {
 	float: left;
 }
 
-#main #mainIndex .friendLinks .link {
+#main #mainSchool .friendLinks .link {
 	line-height: 25px;
 	width: 840px;
 	float: left;
@@ -155,12 +155,12 @@ a {
 	height: 25px;
 }
 
-#main #mainIndex .friendLinks .link li {
+#main #mainSchool .friendLinks .link li {
 	float: left;
 	padding: 0 10px;
 	overflow: hidden;
 }
 
-#main #mainIndex .friendLinks .link li a {
+#main #mainSchool .friendLinks .link li a {
 	color: #ffffff;
 }

@@ -26,39 +26,44 @@ a {
 	text-decoration: none;
 }
 
-.loginFont1 {
+.FontTitle {
 	font-size: 17px;
 	font-family: "\9ED1\4F53 ", "SimHei";
 	color: #424040;
 }
 
-.loginFont2 {
-	font-size: 14px;
-	font-family: "\5B8B\4F53", "SimSun";
-	color: #555555;
-	font-weight: bold;
+.FontUserName {
+	font-size: 17px;
+	font-family: "\9ED1\4F53 ", "SimHei";
+	color: #424040;
 }
 
-.loginFont3 {
+.FontPassword {
+	font-size: 17px;
+	font-family: "\9ED1\4F53 ", "SimHei";
+	color: #424040;
+}
+
+.FontCheckBox {
 	font-size: 14px;
 	font-family: "\9ED1\4F53 ", "SimHei";
 	color: #555555;
 }
 
-#xsm {
+#main {
 	width: 100%;
 	overflow: hidden;
 	margin: 0 auto;
 	background-color: #FFF;
 }
 
-#xsm #xsmLogin {
+#main #mainLogin {
 	width: 960px;
 	overflow: hidden;
 	margin: 0 auto;
 }
 
-#xsm #xsmLogin .title {
+#main #mainLogin .title {
 	height: 45px;
 	line-height: 45px;
 	width: 930px;
@@ -73,14 +78,14 @@ a {
 	font-weight: bold;
 }
 
-#xsm #xsmLogin .content {
+#main #mainLogin .content {
 	width: 960px;
 	overflow: hidden;
 	background: url(../images/contentBg.jpg) no-repeat center top;
 	padding: 45px 20px 60px 0;
 }
 
-#xsm #xsmLogin .content .login {
+#main #mainLogin .content .login {
 	width: 300px;
 	height: 320px;
 	overflow: hidden;
@@ -88,7 +93,7 @@ a {
 	float: right;
 }
 
-#xsmLogin .content .login	.lTitle {
+#main #mainLogin .content .login	.loginTitle {
 	height: 35px;
 	width: 300px;
 	text-align: center;
@@ -97,14 +102,14 @@ a {
 	letter-spacing: 1px;
 }
 
-#xsmLogin .content .login	.lCon {
+#main #mainLogin .content .login	.loginContent {
 	letter-spacing: 1px;
 	line-height: 35px;
 	padding: 15px 0 30px 25px;
 	overflow: hidden;
 }
 
-#xsmLogin .content .login	.lCon .input {
+#main #mainLogin .content .login	.loginContent .input {
 	display: block;
 	width: 230px;
 	height: 23px;
@@ -114,48 +119,4 @@ a {
 	font-size: 14px;
 	font-family: "\9ED1\4F53 ", "SimHei";
 	color: #555555;
-}
-
-#xsm #xsmLogin .friendLinks {
-	width: 960px;
-	overflow: hidden;
-	margin: 0 auto;
-	background-color: #1E2223;
-	padding: 5px 0;
-}
-
-#xsm #xsmLogin .friendLinks .dt {
-	width: 100px;
-	padding-left: 15px;
-	overflow: hidden;
-	line-height: 40px;
-	vertical-align: middle;
-	font-size: 14px;
-	font-family: "Microsoft YaHei";
-	color: #ffffff;
-	font-weight: bold;
-	letter-spacing: 1px;
-	float: left;
-}
-
-#xsm #xsmLogin .friendLinks .dd {
-	line-height: 20px;
-	width: 840px;
-	float: left;
-	overflow: hidden;
-	font-size: 12px;
-	font-family: "Microsoft YaHei";
-	color: #ffffff;
-	letter-spacing: 1px;
-	font-weight: bold;
-}
-
-#xsm #xsmLogin .friendLinks .dd li {
-	float: left;
-	padding: 0 10px;
-	overflow: hidden;
-}
-
-#xsm #xsmLogin .friendLinks .dd li a {
-	color: #ffffff;
 }

@@ -238,12 +238,13 @@ a {
 
 .con_xsm{
 	overflow:hidden;
+	height: 420px;
 }
 
 /*我的店铺start*/
 #shop{
 	overflow:hidden;
-	}
+}
 #shop .shopLeft .shop{
 	float:left;
 	overflow:hidden;

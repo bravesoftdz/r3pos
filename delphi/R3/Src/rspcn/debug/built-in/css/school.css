@@ -1,0 +1,166 @@
+@charset "utf-8";
+
+/* CSS Document */
+body,div,address,blockquote,iframe,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,h5,h6,p,pre,table,caption,th,td,form,legend,fieldset,input,button,select,textarea
+	{
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 100%;
+	font-family: inherit;
+}
+
+/*去除float的类*/
+.clearfloat {clear:both;height:0 !important;font-size: 1px;line-height: 0px;}
+
+ol,ul,li {
+	list-style: none;
+}
+
+img {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/*main*/
+
+#xsm {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	overflow: hidden;
+	margin: 0 auto;
+	background: url(../images/indexBg.jpg) no-repeat center top;
+}
+
+#xsm #xsmIndex {
+	padding: 10px 0 50px 0;
+	width: 960px;
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+#xsm #xsmIndex .content {
+	width: 960px;
+	overflow: hidden;
+}
+
+/*title*/
+
+.xsm_Menubox {
+	height: 30px;
+	line-height: 30px;
+	vertical-align: middle;
+	overflow: hidden;
+}
+
+.xsm_Menubox ul {
+	list-style: none;
+	height: 30px;
+	text-align: center;
+	width: 960px;
+}
+
+.xsm_Menubox li.link {
+	width: 960px;
+	float: left;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: "Microsoft YaHei";
+	font-size: 18px;
+	height: 30px;
+	line-height: 30px;
+	letter-spacing: 20px;
+	font-weight: bold;
+	background-color: #293031;
+	text-align: center;
+}
+
+/*content*/
+
+.xsm_Contentbox {
+	width: 960px;
+	overflow: hidden;
+	padding-top: 10px;
+	padding-bottom: 35px;
+}
+
+.xsm_Contentbox .left {
+	width: 22px;
+	overflow: hidden;
+	float: left;
+	padding-top: 180px;
+}
+
+.xsm_Contentbox .right {
+	width: 22px;
+	overflow: hidden;
+	float: left;
+	padding-top: 180px;
+}
+
+.xsm_Contentbox .middle {
+	width: 901px;
+	overflow: hidden;
+	float: left;
+	padding:5px 6px 0 6px;
+}
+
+.con_xsm{
+	overflow:hidden;
+	height: 420px;
+}
+
+/*friendLink*/
+
+#xsm #xsmIndex .friendLinks {
+	width: 960px;
+	overflow: hidden;
+	margin: 0 auto;
+	background-color: #293031;
+	padding: 5px 0;
+}
+
+#xsm #xsmIndex .friendLinks .dt {
+	width: 100px;
+	padding-left: 15px;
+	overflow: hidden;
+	line-height: 25px;
+	vertical-align: middle;
+	font-size: 14px;
+	font-family: "Microsoft YaHei";
+	color: #ffffff;
+	font-weight: bold;
+	letter-spacing: 1px;
+	float: left;
+}
+
+#xsm #xsmIndex .friendLinks .dd {
+	line-height: 25px;
+	width: 840px;
+	float: left;
+	overflow: hidden;
+	font-size: 12px;
+	font-family: "Microsoft YaHei";
+	color: #ffffff;
+	letter-spacing: 1px;
+	font-weight: bold;
+	height: 25px;
+}
+
+#xsm #xsmIndex .friendLinks .dd li {
+	float: left;
+	padding: 0 10px;
+	overflow: hidden;
+}
+
+#xsm #xsmIndex .friendLinks .dd li a {
+	color: #ffffff;
+}

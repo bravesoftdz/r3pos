@@ -1357,7 +1357,7 @@ procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
-  if not CheckNeedLoginSync then Exit;
+  // if not CheckNeedLoginSync then Exit;
   with TfrmSyncData.Create(nil) do
   begin
     try

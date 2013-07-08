@@ -2903,7 +2903,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Height = 27
               Align = alClient
               Alignment = taCenter
-              Caption = #23567#20214#21333#20301
+              Caption = #22823#20214#21333#20301
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
               Font.Height = -15

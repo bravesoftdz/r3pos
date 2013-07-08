@@ -22,6 +22,7 @@ type
     procedure Image4Click(Sender: TObject);
   private
     FieldCheckSet:array[0..FieldCount] of string;
+    FieldType:array [0..FieldCount] of integer;
     FSortType:integer; //0 库中没有文件中的分类；1  库中有文件中的所有分类；2 库中有部分文件中分类
     FUnitType:array[0..2] of integer; //同FSortType
     procedure CreateUseDataSet;override;
@@ -31,10 +32,6 @@ type
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
-    procedure CreateStringList(var vList:TStringList);
-    procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
-    procedure TransformtoString(var vList:string;vStr:string);overload;
-    function DeleteDuplicateString(vStr:string;var vStrList:TStringList):string;
     procedure ClearParams;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
@@ -241,24 +238,74 @@ begin
 end;
 
 function TfrmGoodsExcel.FindColumn(vStr:string):Boolean;
+var strError:string;
 begin
    Result := True;
+   strError:='';
+  if not cdsColumn.Locate('FieldName','BARCODE1',[]) then
+  begin
+    Result := False;
+    strError:='条形码';
+  end;
+  if not cdsColumn.Locate('FieldName','GODS_CODE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
   if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+    strError:='商品名称';
+  end;
   if not cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'计量单位'
+    else
+    strError:='计量单位';
+  end;
   if not cdsColumn.Locate('FieldName','SORT_ID1',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品分类'
+    else
+    strError:='商品分类';
+  end;
   if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'标准售价'
+    else
+    strError:='标准售价';
+  end;
+  if not cdsColumn.Locate('FieldName','NEW_INPRICE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'最新进价'
+    else
+    strError:='最新进价';
+  end;
+  if not cdsColumn.Locate('FieldName','MY_OUTPRICE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'本店售价'
+    else
+    strError:='本店售价';
+  end;
+  
+  if (strError<>'') then
+    Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
 end;
 
 procedure TfrmGoodsExcel.CreateParams;
@@ -419,7 +466,11 @@ begin
       end;
     20:begin
         if str='' then
-         strError:='供应商为空;';
+         strError:='供应商为空;'
+        else begin
+          if FieldType[20]=0 then
+            strError:='供应商不存在;';
+        end;
       end;
   end;
   if strError<>'' then
@@ -457,7 +508,8 @@ begin
         if (fieldName='BARCODE1') or (fieldName='BARCODE2') or
            (fieldName='BARCODE3') or (fieldName='GODS_CODE') or
            (fieldName='CALC_UNITS') or (fieldName='SMALL_UNITS') or
-           (fieldName='BIG_UNITS') or (fieldName='SORT_ID1') then
+           (fieldName='BIG_UNITS') or (fieldName='SORT_ID1') or
+           (fieldName='SORT_ID3') then
         begin
           if (fieldName='BARCODE1') or (fieldName='BARCODE2') or
              (fieldName='BARCODE3') or (fieldName='GODS_CODE') then
@@ -472,13 +524,13 @@ begin
             rs.First;
             strPre:=rs.fieldByName(FileName).AsString;
             preId:=rs.fieldByName('ID').AsInteger;
-            if strPre<>'' then
-              TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
+            //if strPre<>'' then
+            TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
             rs.Next;
             while not rs.Eof do
             begin
               strNext:=rs.fieldByName(FileName).AsString;
-              if (strPre=strNext) then
+              if (strPre<>'') and (strPre=strNext) then        //非空情况时不做重复判定
               begin
                 cdsExcel.Locate('ID',rs.fieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
@@ -487,7 +539,7 @@ begin
               end;
               strPre:=strNext;
               preID:=rs.fieldByName('ID').AsInteger;
-              if strNext<>'' then
+              //if strNext<>'' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
             end;
@@ -515,7 +567,7 @@ end;
 function TfrmGoodsExcel.OutCheckExcute: Boolean;
 var rs,ss:TZQuery;
     FieldName,tempField,strError:string;
-    i,c:integer;
+    i,c,FieldIndex:integer;
     strWhere:string;
     strList:TStringList;
 begin
@@ -680,7 +732,7 @@ begin
               begin
                 cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'商品分类不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -693,7 +745,52 @@ begin
         FSortType:=0;
     end;
 
-    //*********************颜色、尺码、供应商*****************************
+    //*********************供应商*****************************
+    FieldName:='';
+    if cdsColumn.Locate('FieldName','SORT_ID3',[]) then
+    begin
+      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+      rs.Close;
+      rs.SQL.Text:='select distinct CLIENT_NAME from VIW_CLIENTINFO where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and CLIENT_NAME in ('+strWhere+')';
+      dataFactory.Open(rs);
+      if not rs.IsEmpty then
+      begin
+        if rs.RecordCount=strList.Count then  //所有的分类都在库中
+        begin
+          FieldType[FieldIndex]:=1;
+        end
+        else if rs.RecordCount<strList.Count then  //部分分类在库中
+        begin
+          FieldType[FieldIndex]:=2;
+          for i:=0 to strList.Count-1 do
+          begin
+            if not rs.Locate('CLIENT_NAME',strList[i],[]) then
+            begin
+              ss.Filtered:=false;
+              ss.Filter:=FieldName+'='''+strList[i]+'''';
+              ss.Filtered:=true;
+              ss.First;
+              while not ss.Eof do
+              begin
+                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Edit;
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.Post;
+                ss.Next;
+              end;
+              ss.Filtered:=false;
+            end;
+          end;
+        end
+      end
+      else                                  //库中没有文件中分类
+        FieldType[FieldIndex]:=0;
+    end;
+
+    //*********************颜色、尺码*****************************
+
   finally
     rs.Free;
     ss.Free;
@@ -719,39 +816,10 @@ begin
     end;
 end;
 
-//Duplicates 有3个可选值:
-//dupIgnore: 放弃; 
-//dupAccept: 结束;
-//dupError: 提示错误
-procedure TfrmGoodsExcel.CreateStringList(var vList: TStringList);
-begin
-  if vList=nil then
-  begin
-    vList:=TStringList.Create;
-    vList.Sorted:=true;
-    vList.Duplicates:=dupIgnore;
-  end
-  else
-    vList.Clear;
-end;
-
-procedure TfrmGoodsExcel.TransformtoString(vList: TStringList;var vStr:wideString);
-var i:integer;
-begin
-  vStr:='';
-  for i:=0 to vList.Count-1 do
-  begin
-    if vStr='' then
-      vStr:=''''+vList[i]+''''
-    else
-      vStr:=vStr+','+''''+vList[i]+'''';;
-  end;
-end;
-
 procedure TfrmGoodsExcel.Image4Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -766,45 +834,11 @@ begin
       if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品信息导入表.xls') then
         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品信息导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
-        MessageBox(Handle, Pchar('没有找到导入模板！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+        MessageBox(Handle, Pchar('没有找到导入模板！'),'友情提示..', MB_OK + MB_ICONQUESTION);
     except
-      MessageBox(Handle, Pchar('下载导入模板失败！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+      MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
-end;
-
-function TfrmGoodsExcel.DeleteDuplicateString(vStr: string;var vStrList:TStringList): string;
-var i:integer;
-    strResult:string;
-begin
-  strResult:='';
-  if vStrList=nil then
-  begin
-    vStrList:=TStringList.Create;
-    vStrList.Sorted:=true;
-    vStrList.Duplicates:= dupIgnore;
-  end
-  else
-    vStrList.Clear;
-
-  vStrList.DelimitedText:=vStr;
-  for i:=0 to vStrList.Count-1 do
-  begin
-    if strResult='' then
-      strResult:=''''+vStrList[i]+''''
-    else
-    strResult:=strResult+','+''''+vStrList[i]+'''';
-  end; 
-  result:=strResult;
-end;
-
-procedure TfrmGoodsExcel.TransformtoString(var vList: string;
-  vStr: string);
-begin
-  if vList='' then
-    vList:=vStr
-  else
-    vList:=vList+','+vStr;
-end;
+end; 
 
 end.

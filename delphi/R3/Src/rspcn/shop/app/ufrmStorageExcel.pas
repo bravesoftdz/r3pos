@@ -31,10 +31,6 @@ type
     function Check(columnIndex:integer):Boolean;override;
     function CheckGodsCode(cs,ss:TZQuery;strList:TStringList;codeField:string;index:integer): Boolean;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
-    procedure CreateStringList(var vList:TStringList);
-    procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
-    procedure TransformtoString(var vList:string;vStr:string);overload;
-    function DeleteDuplicateString(vStr:string;var vStrList:TStringList):string;
     procedure ClearParams;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
@@ -146,24 +142,50 @@ begin
 end;
 
 function TfrmStorageExcel.FindColumn(vStr:string):Boolean;
+var strError:string;
 begin
    Result := True;
+   strError:='';
+  if not cdsColumn.Locate('FieldName','BARCODE',[]) then
+  begin
+    Result := False;
+    strError:='条形码';
+  end;
+  if not cdsColumn.Locate('FieldName','GODS_CODE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
   if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+    strError:='商品名称';
+  end;
   if not cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','SORT_ID1',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'计量单位'
+    else
+    strError:='计量单位';
+  end;
+  if not cdsColumn.Locate('FieldName','AMOUNT',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'数量'
+    else
+    strError:='数量';
+  end;
+
+  if (strError<>'') then
+    Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
 end;
 
 procedure TfrmStorageExcel.CreateParams;
@@ -699,7 +721,7 @@ begin
   with TfrmStorageExcel.Create(Owner) do
     begin
       try
-        RzLabel26.Caption:=RzLabel26.Caption+'--损益单';
+        RzLabel26.Caption:=RzLabel26.Caption+'--损益单转库存';
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields(FieldsString);
@@ -712,39 +734,10 @@ begin
     end;
 end;
 
-//Duplicates 有3个可选值:
-//dupIgnore: 放弃; 
-//dupAccept: 结束;
-//dupError: 提示错误
-procedure TfrmStorageExcel.CreateStringList(var vList: TStringList);
-begin
-  if vList=nil then
-  begin
-    vList:=TStringList.Create;
-    vList.Sorted:=true;
-    vList.Duplicates:=dupIgnore;
-  end
-  else
-    vList.Clear;
-end;
-
-procedure TfrmStorageExcel.TransformtoString(vList: TStringList;var vStr:wideString);
-var i:integer;
-begin
-  vStr:='';
-  for i:=0 to vList.Count-1 do
-  begin
-    if vStr='' then
-      vStr:=''''+vList[i]+''''
-    else
-      vStr:=vStr+','+''''+vList[i]+'''';;
-  end;
-end;
-
 procedure TfrmStorageExcel.Image4Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载损益单转库存导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -756,51 +749,14 @@ begin
       DeleteFile(SaveDialog1.FileName);
     end;
     try
-      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品库存导入表.xls') then
-        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品库存导入表.xls'),pchar(SaveDialog1.FileName),false)
+      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\损益单转库存导入表.xls') then
+        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\损益单转库存导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
-        MessageBox(Handle, Pchar('没有找到导入模板！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+        MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     except
-      MessageBox(Handle, Pchar('下载导入模板失败！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+      MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
-end;
-
-function TfrmStorageExcel.DeleteDuplicateString(vStr: string;var vStrList:TStringList): string;
-var i:integer;
-    strResult:string;
-begin
-  strResult:='';
-  if vStrList=nil then
-  begin
-    vStrList:=TStringList.Create;
-    vStrList.Sorted:=true;
-    vStrList.Duplicates:= dupIgnore;
-  end
-  else
-    vStrList.Clear;
-
-  vStrList.DelimitedText:=vStr;
-  for i:=0 to vStrList.Count-1 do
-  begin
-    if strResult='' then
-      strResult:=''''+vStrList[i]+''''
-    else
-    strResult:=strResult+','+''''+vStrList[i]+'''';
-  end; 
-  result:=strResult;
-end;
-
-procedure TfrmStorageExcel.TransformtoString(var vList: string;
-  vStr: string);
-begin
-  if (vList='')  then
-    if ((vList='') and (vStr='')) then
-      vList:=vList+','
-    else
-      vList:=vStr
-  else
-    vList:=vList+','+vStr;
 end;
 
 end.

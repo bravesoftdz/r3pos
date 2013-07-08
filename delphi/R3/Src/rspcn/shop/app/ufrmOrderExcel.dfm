@@ -75,17 +75,12 @@ inherited frmOrderExcel: TfrmOrderExcel
         end
       end
       inherited RzPanel4: TRzPanel
-        inherited chkignore: TcxCheckBox
-          Left = 116
-          Top = 21
-          Properties.Caption = #26159#21542#24573#30053#38169#35823#25968#25454
-        end
-        inherited btnExport: TRzBmpButton
+        inherited btnExport: TRzBmpButton [2]
           Left = 20
         end
-        object chkPrice: TcxCheckBox
-          Left = 116
-          Top = 1
+        object chkPrice: TcxCheckBox [3]
+          Left = 114
+          Top = 13
           Width = 205
           Height = 23
           Anchors = [akTop, akRight]
@@ -95,6 +90,11 @@ inherited frmOrderExcel: TfrmOrderExcel
           Visible = False
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnClick = chkPriceClick
+        end
+        inherited chkignore: TcxCheckBox [4]
+          Left = 114
+          Top = 12
+          Properties.Caption = #26159#21542#24573#30053#38169#35823#25968#25454
         end
       end
     end

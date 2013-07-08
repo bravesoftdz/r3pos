@@ -22,7 +22,6 @@ type
   private
     FieldCheckSet:array[0..FieldCount] of string;
     FieldType:array [0..FieldCount] of integer;
-    FShopIdType,FPriceIdType,FRegionIdType:integer; //0 库中没有文件中的；1  库中有文件中的所有；2 库中有部分文件中
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
     function FindColumn(vStr:string):Boolean;override;
@@ -30,10 +29,6 @@ type
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
-    procedure CreateStringList(var vList:TStringList);
-    procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
-    procedure TransformtoString(var vList:string;vStr:string);overload;
-    function DeleteDuplicateString(vStr:string;var vStrList:TStringList):string;
     procedure ClearParams;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
@@ -111,7 +106,7 @@ begin
       dsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
       dsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
       dsExcel.FieldByName('CREA_USER').AsString := token.userId;
-      dsExcel.FieldByName('PASSWRD').AsString := '1234';
+      dsExcel.FieldByName('PASSWRD').AsString := '79415A40';
       dsExcel.Post;
 
       Field:=dsExcel.FindField('CUST_SPELL');
@@ -281,24 +276,34 @@ begin
 end;
 
 function TfrmCustomerExcel.FindColumn(vStr:string):Boolean;
+var strError:string;
 begin
    Result := True;
-  if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','SORT_ID1',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
-    begin
-      Result := False;
-    end;
+   strError:='';
+  if not cdsColumn.Locate('FieldName','CUST_CODE',[]) then
+  begin
+    Result := False;
+    strError:='会员卡号';
+  end;
+  if not cdsColumn.Locate('FieldName','CUST_NAME',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'会员名称'
+    else
+      strError:='会员名称';
+  end;
+  if not cdsColumn.Locate('FieldName','SHOP_ID',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'入会门店'
+    else
+    strError:='入会门店';
+  end;
+
+  if (strError<>'') then
+    Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
 end;
 
 procedure TfrmCustomerExcel.CreateParams;
@@ -491,13 +496,13 @@ begin
             rs.First;
             strPre:=rs.fieldByName(FileName).AsString;
             preId:=rs.fieldByName('ID').AsInteger;
-            if strPre<>'' then
-              TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
+            //if strPre<>'' then
+            TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
             rs.Next;
             while not rs.Eof do
             begin
               strNext:=rs.fieldByName(FileName).AsString;
-              if strPre=strNext then
+              if (strPre<>'') and (strPre=strNext) then
               begin
                 cdsExcel.Locate('ID',rs.fieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
@@ -506,7 +511,7 @@ begin
               end;
               strPre:=strNext;
               preID:=rs.fieldByName('ID').AsInteger;
-              if strNext<>'' then
+              //if strNext<>'' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
             end;
@@ -868,39 +873,10 @@ begin
     end;
 end;
 
-//Duplicates 有3个可选值:
-//dupIgnore: 放弃; 
-//dupAccept: 结束;
-//dupError: 提示错误
-procedure TfrmCustomerExcel.CreateStringList(var vList: TStringList);
-begin
-  if vList=nil then
-  begin
-    vList:=TStringList.Create;
-    vList.Sorted:=true;
-    vList.Duplicates:=dupIgnore;
-  end
-  else
-    vList.Clear;
-end;
-
-procedure TfrmCustomerExcel.TransformtoString(vList: TStringList;var vStr:wideString);
-var i:integer;
-begin
-  vStr:='';
-  for i:=0 to vList.Count-1 do
-  begin
-    if vStr='' then
-      vStr:=''''+vList[i]+''''
-    else
-      vStr:=vStr+','+''''+vList[i]+'''';;
-  end;
-end;
-
 procedure TfrmCustomerExcel.Image4Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载会员信息导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -915,45 +891,11 @@ begin
       if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls') then
         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
-        MessageBox(Handle, Pchar('没有找到导入模板！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+        MessageBox(Handle, Pchar('没有找到导入模板！'),'友情提示..', MB_OK + MB_ICONQUESTION);
     except
-      MessageBox(Handle, Pchar('下载导入模板失败！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+      MessageBox(Handle, Pchar('下载导入模板失败！'),'友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
-end;
-
-function TfrmCustomerExcel.DeleteDuplicateString(vStr: string;var vStrList:TStringList): string;
-var i:integer;
-    strResult:string;
-begin
-  strResult:='';
-  if vStrList=nil then
-  begin
-    vStrList:=TStringList.Create;
-    vStrList.Sorted:=true;
-    vStrList.Duplicates:= dupIgnore;
-  end
-  else
-    vStrList.Clear;
-
-  vStrList.DelimitedText:=vStr;
-  for i:=0 to vStrList.Count-1 do
-  begin
-    if strResult='' then
-      strResult:=''''+vStrList[i]+''''
-    else
-    strResult:=strResult+','+''''+vStrList[i]+'''';
-  end; 
-  result:=strResult;
-end;
-
-procedure TfrmCustomerExcel.TransformtoString(var vList: string;
-  vStr: string);
-begin
-  if vList='' then
-    vList:=vStr
-  else
-    vList:=vList+','+vStr;
 end;
 
 end.

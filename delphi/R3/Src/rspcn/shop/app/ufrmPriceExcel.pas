@@ -30,10 +30,6 @@ type
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
-    procedure CreateStringList(var vList:TStringList);
-    procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
-    procedure TransformtoString(var vList:string;vStr:string);overload;
-    function DeleteDuplicateString(vStr:string;var vStrList:TStringList):string;
     procedure ClearParams;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
@@ -159,24 +155,34 @@ begin
 end;
 
 function TfrmPriceExcel.FindColumn(vStr:string):Boolean;
+var strError:string;
 begin
    Result := True;
-  if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','SORT_ID1',[]) then
-    begin
-      Result := False;
-    end;
+   strError:='';
+  if not cdsColumn.Locate('FieldName','PRICE_ID',[]) then
+  begin
+    Result := False;
+    strError:='会员等级';
+  end;
+  if not cdsColumn.Locate('FieldName','BARCODE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'条形码'
+    else
+      strError:='条形码';
+  end;
   if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'计量单位售价'
+    else
+    strError:='计量单位售价';
+  end;
+
+  if (strError<>'') then
+    Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
 end;
 
 procedure TfrmPriceExcel.CreateParams;
@@ -292,17 +298,18 @@ begin
 end;
 
 function TfrmPriceExcel.OutCheckExcute: Boolean;
-var rs,ss,gs:TZQuery;
+var rs,ss,gs,cs:TZQuery;
     FieldName,barField,strError:string;
     i,j,c,FieldIndex,preId:integer;
     strWhere,barWhere:string;
     strList,barList:TStringList;
-    preBarcode,nextBarcode:string;
+    preBarcode,nextBarcode,priceId:string;
 begin
   try
     rs:=TZQuery.Create(nil);
     ss:=TZQuery.Create(nil);
     gs:=TZQuery.Create(nil);
+    cs:=TZQuery.Create(nil);
     ss.Data:=cdsExcel.Data;
 
     //*********************会员等级*****************************
@@ -338,6 +345,7 @@ begin
               ss.Filtered:=false;
             end else
             begin
+              priceId:=rs.fieldByName('PRICE_ID').AsString;
               DeleteDuplicateString('',barList);
               if cdsColumn.Locate('FieldName','BARCODE',[]) then
               begin
@@ -358,7 +366,7 @@ begin
                 ss.Filtered:=false;
                 barWhere:=DeleteDuplicateString(FieldCheckSet[c],barList);
                 gs.Close;
-                gs.SQL.Text:='select distinct barcode from VIW_BARCODE where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and barcode in ('+barWhere+')';
+                gs.SQL.Text:='select distinct barcode,GODS_ID from VIW_BARCODE where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and barcode in ('+barWhere+')';
                 dataFactory.Open(gs);
                 if not gs.IsEmpty then
                 begin
@@ -366,6 +374,15 @@ begin
                   begin
                     for j:=0 to barList.Count-1 do
                     begin
+                      // 检测库中是否存在等级对应的定价
+                      if gs.Locate('barcode',barList[j],[]) then
+                      begin
+                        cs.Close;
+                        cs.SQL.Text:='select PRICE_ID,GODS_ID from PUB_GOODSPRICE where tenant_id='+token.tenantId+
+                                     ' and comm not in(''02'',''12'') and PRICE_ID='''+priceId+''' and GODS_ID='''+gs.fieldByName('GODS_ID').AsString+'''';
+                        dataFactory.Open(cs);
+                      end;
+                      //
                       ss.Filtered:=false;
                       ss.Filter:=FieldName+'='''+strList[i]+''' and '+barField+'='''+barList[j]+'''';
                       ss.Filtered:=true;
@@ -379,6 +396,13 @@ begin
                         cdsExcel.Edit;
                         cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
                         cdsExcel.Post;
+                      end else
+                      begin
+                        cdsExcel.Locate('ID',preId,[]);
+                        cdsExcel.Edit;
+                        if not cs.IsEmpty then
+                          cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'该等级的存在此商品的会员价;';
+                        cdsExcel.Post;
                       end;
                       ss.Next;
                       while not ss.Eof do
@@ -389,6 +413,13 @@ begin
                           cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
                           cdsExcel.Edit;
                           cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                          cdsExcel.Post;
+                        end else
+                        begin
+                          cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                          cdsExcel.Edit;
+                          if (not cs.IsEmpty) and (preBarcode<>nextBarcode) then
+                            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'该等级的存在此商品的会员价;';
                           cdsExcel.Post;
                         end;
                         if preBarcode=nextBarcode then
@@ -440,39 +471,10 @@ begin
     end;
 end;
 
-//Duplicates 有3个可选值:
-//dupIgnore: 放弃; 
-//dupAccept: 结束;
-//dupError: 提示错误
-procedure TfrmPriceExcel.CreateStringList(var vList: TStringList);
-begin
-  if vList=nil then
-  begin
-    vList:=TStringList.Create;
-    vList.Sorted:=true;
-    vList.Duplicates:=dupIgnore;
-  end
-  else
-    vList.Clear;
-end;
-
-procedure TfrmPriceExcel.TransformtoString(vList: TStringList;var vStr:wideString);
-var i:integer;
-begin
-  vStr:='';
-  for i:=0 to vList.Count-1 do
-  begin
-    if vStr='' then
-      vStr:=''''+vList[i]+''''
-    else
-      vStr:=vStr+','+''''+vList[i]+'''';;
-  end;
-end;
-
 procedure TfrmPriceExcel.Image4Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载会员价格导入模板？'),'友情提示..',MB_YESNO+ MB_ICONQUESTION)<>6 then exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -487,45 +489,11 @@ begin
       if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员价格导入表.xls') then
         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员价格导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
-        MessageBox(Handle, Pchar('没有找到导入模板！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+        MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     except
-      MessageBox(Handle, Pchar('下载导入模板失败！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+      MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
-end;
-
-function TfrmPriceExcel.DeleteDuplicateString(vStr: string;var vStrList:TStringList): string;
-var i:integer;
-    strResult:string;
-begin
-  strResult:='';
-  if vStrList=nil then
-  begin
-    vStrList:=TStringList.Create;
-    vStrList.Sorted:=true;
-    vStrList.Duplicates:= dupIgnore;
-  end
-  else
-    vStrList.Clear;
-
-  vStrList.DelimitedText:=vStr;
-  for i:=0 to vStrList.Count-1 do
-  begin
-    if strResult='' then
-      strResult:=''''+vStrList[i]+''''
-    else
-    strResult:=strResult+','+''''+vStrList[i]+'''';
-  end; 
-  result:=strResult;
-end;
-
-procedure TfrmPriceExcel.TransformtoString(var vList: string;
-  vStr: string);
-begin
-  if vList='' then
-    vList:=vStr
-  else
-    vList:=vList+','+vStr;
 end;
 
 end.

@@ -38,8 +38,6 @@ type
     function CheckGodsCode(cs,ss:TZQuery):Boolean;
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
-    procedure CreateStringList(var vList:TStringList);
-    procedure TransformtoString(vList:TStringList;var vStr:widestring);
     procedure ClearParams;
   public
     orderForm:TfrmOrderForm;
@@ -149,24 +147,42 @@ begin
 end;
 
 function TfrmOrderExcel.FindColumn(vStr:string):Boolean;
+var strError:string;
 begin
    Result := True;
+   strError:='';
+  if not cdsColumn.Locate('FieldName','BARCODE',[]) then
+  begin
+    Result := False;
+    strError:='条形码';
+  end;
+  if not cdsColumn.Locate('FieldName','GODS_CODE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
   if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','SORT_ID1',[]) then
-    begin
-      Result := False;
-    end;
-  if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
-    begin
-      Result := False;
-    end;
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+    strError:='商品名称';
+  end;
+  if not cdsColumn.Locate('FieldName','UNIT_ID',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'单位'
+    else
+    strError:='单位';
+  end;
+
+  if (strError<>'') then
+    Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
 end;
 
 procedure TfrmOrderExcel.CreateParams;
@@ -409,7 +425,8 @@ begin
                       cdsExcel.Edit;
                       cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'商品没有设置该单位;';
                       cdsExcel.Post;
-                  end
+                  end;
+                  {
                   else if (rs.Locate('CALC_UNITS_NAME',strUnit,[])) or (rs.Locate('CALC_UNITS_NAME',strUnit,[])) or(rs.Locate('CALC_UNITS_NAME',strUnit,[])) then
                   begin
                     if cdsColumn.Locate('FieldName','APRICE',[]) then
@@ -447,6 +464,7 @@ begin
                       end;
                     end;
                   end;
+                  }
                 end;
               end;
               ss.Next;
@@ -563,6 +581,7 @@ begin
     begin
       try
         orderForm:=TfrmOrderForm(Owner);
+        RzLabel26.Caption:=RzLabel26.Caption+'--'+orderForm.Caption;
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields(Fields);
@@ -575,39 +594,10 @@ begin
     end;
 end;
 
-//Duplicates 有3个可选值:
-//dupIgnore: 放弃; 
-//dupAccept: 结束;
-//dupError: 提示错误
-procedure TfrmOrderExcel.CreateStringList(var vList: TStringList);
-begin
-  if vList=nil then
-  begin
-    vList:=TStringList.Create;
-    vList.Sorted:=true;
-    vList.Duplicates:=dupIgnore;
-  end
-  else
-    vList.Clear;
-end;
-
-procedure TfrmOrderExcel.TransformtoString(vList: TStringList;var vStr:wideString);
-var i:integer;
-begin
-  vStr:='';
-  for i:=0 to vList.Count-1 do
-  begin
-    if vStr='' then
-      vStr:=''''+vList[i]+''''
-    else
-      vStr:=vStr+','+''''+vList[i]+'''';;
-  end;
-end;
-
 procedure TfrmOrderExcel.Image4Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载商品单据导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -622,9 +612,9 @@ begin
       if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls') then
         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
-        MessageBox(Handle, Pchar('没有找到导入模板！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+        MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     except
-      MessageBox(Handle, Pchar('下载导入模板失败！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+      MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
 end;
@@ -632,7 +622,7 @@ end;
 function TfrmOrderExcel.CheckExcute: Boolean;
 begin
   Inherited CheckExcute;
-
+  {
   cdsExcel.Filtered:=false;
   cdsExcel.Filter:='STATE=''2'' or STATE=''3''';
   cdsExcel.Filtered:=true;
@@ -644,6 +634,7 @@ begin
   RzStatus2.Caption:=RzStatus2.Caption+'(其中与库中单价不一致:'+inttostr(FPriceCount)+'条)';
   RzStatus2.Caption:=RzStatus2.Caption+'    总数据:'+inttostr(SumCount)+'条';
   RzStatus2.Update;
+  }
 end;
 
 procedure TfrmOrderExcel.chkPriceClick(Sender: TObject);
@@ -651,6 +642,7 @@ var j:integer;
     str:string;
 begin
   inherited;
+  {
   cdsExcel.DisableControls;
 
   cdsExcel.Filtered:=false;
@@ -692,11 +684,12 @@ begin
   cdsExcel.Filtered:=false;
 
   cdsExcel.EnableControls;
-
+  }
 end;
 
 procedure TfrmOrderExcel.btnNextClick(Sender: TObject);
 begin
+{
   if rzpage.ActivePageIndex=3 then
   begin
     cdsExcel.EnableControls;
@@ -732,9 +725,10 @@ begin
     cdsColumn.EnableControls;
     cdsExcel.EnableControls;
   end;
-
+  }
   inherited;
 
+  {
   if rzPage.ActivePageIndex=3 then
   begin
     if FPriceCount>0 then
@@ -748,7 +742,7 @@ begin
   end
   else
     chkPrice.Visible:=false;
-
+  }
 end;
 
 end.

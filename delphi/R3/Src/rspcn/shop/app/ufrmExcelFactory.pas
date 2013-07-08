@@ -122,6 +122,11 @@ type
     procedure WriteToDataSet(DataSet: TDataSet);
     procedure DecodeFields(s: string);
     procedure DecodeFormats(s: string);
+    procedure CreateStringList(var vList: TStringList);
+    procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
+    procedure TransformtoString(var vList:string;vStr:string);overload;
+    function DeleteDuplicateString(vStr:string;var vStrList:TStringList):string;
+
     procedure CreateUseDataSet;virtual;
     procedure CreateParams;virtual;
     function CheckExcute:Boolean;virtual;
@@ -577,8 +582,8 @@ begin
   cdsColumn.DisableControls;
   cdsExcel.DisableControls;
 
- // if not isFirstCheck then
- // begin
+  if not isFirstCheck then
+  begin
     cdsExcel.First;
     while not cdsExcel.Eof do
     begin
@@ -588,7 +593,9 @@ begin
       cdsExcel.Post;
       cdsExcel.Next;
     end;
- // end;
+  end
+  else
+    FindColumn('');
 
   if selfCheck then
      SelfCheckExcute;
@@ -611,10 +618,7 @@ begin
       DataSet.Delete;
     end else
     begin
-      //if cdsExcel.FieldByName('STATE').AsString='2' then
-      //  cdsExcel.FieldByName('STATE').AsString:='2'
-      // else
-      //cdsExcel.FieldByName('STATE').AsString:='0';
+      cdsExcel.FieldByName('STATE').AsString:='0';
       DataSet.Post;
     end;
     cdsExcel.Post;
@@ -625,7 +629,7 @@ begin
   cdsExcel.EnableControls;
 
   cdsExcel.Filtered:=False;
-  cdsExcel.Filter:='STATE=''1'' or STATE=''3''';  // or STATE=''3''
+  cdsExcel.Filter:='STATE=''1'' or STATE=''3''';  
   cdsExcel.Filtered:=True;
   FExceptCount:=cdsExcel.RecordCount;
 
@@ -772,6 +776,72 @@ begin
   cdsExcel.Filter:='STATE=''0''';          
   cdsExcel.Filtered:=true;
   cdsExcel.EnableControls;
+end;
+
+//Duplicates 有3个可选值:
+//dupIgnore: 放弃;
+//dupAccept: 结束;
+//dupError: 提示错误
+procedure TfrmExcelFactory.CreateStringList(var vList: TStringList);
+begin
+  if vList=nil then
+  begin
+    vList:=TStringList.Create;
+    vList.Sorted:=true;
+    vList.Duplicates:=dupIgnore;
+  end
+  else
+    vList.Clear;
+end;
+
+function TfrmExcelFactory.DeleteDuplicateString(vStr: string;var vStrList: TStringList): string;
+var i:integer;
+    strResult:string;
+begin
+  strResult:='';
+  if vStrList=nil then
+  begin
+    vStrList:=TStringList.Create;
+    vStrList.Sorted:=true;
+    vStrList.Duplicates:= dupIgnore;
+  end
+  else
+    vStrList.Clear;
+
+  vStrList.DelimitedText:=vStr;
+  for i:=0 to vStrList.Count-1 do
+  begin
+    if strResult='' then
+      strResult:=''''+vStrList[i]+''''
+    else
+    strResult:=strResult+','+''''+vStrList[i]+'''';
+  end;
+  result:=strResult;
+end;
+
+procedure TfrmExcelFactory.TransformtoString(vList: TStringList;
+  var vStr: widestring);
+var i:integer;
+begin
+  vStr:='';
+  for i:=0 to vList.Count-1 do
+  begin
+    if vStr='' then
+      vStr:=''''+vList[i]+''''
+    else
+      vStr:=vStr+','+''''+vList[i]+'''';;
+  end;
+end;
+
+procedure TfrmExcelFactory.TransformtoString(var vList: string;vStr: string);
+begin
+  if (vList='')  then
+    if ((vList='') and (vStr='')) then
+      vList:=vList+','
+    else
+      vList:=vStr
+  else
+    vList:=vList+','+vStr;
 end;
 
 end.

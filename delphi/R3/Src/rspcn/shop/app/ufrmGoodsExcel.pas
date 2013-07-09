@@ -113,10 +113,11 @@ procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode,BarcodeType:St
     Data_Price.FieldByName('NEW_OUTPRICE2').AsString:=floattostr(OutPrice2);
     Data_Price.Post;
   end;
-var DsGoods,DsBarcode,DsGoodsPrice,rs,us,ss:TZQuery;
+var DsGoods,DsBarcode,DsGoodsPrice,rs,us,ss,cs:TZQuery;
     GodsId,Bar,Code,Name,Error_Info:String;
     SumBarcode,SumCode,SumName:Integer;
     Params:TftParamList;
+    cl,sl:TZQuery;
 begin
   //显示进度条？？？
   if dsExcel.RecordCount=0 then exit;
@@ -125,12 +126,24 @@ begin
   DsGoods := TZQuery.Create(nil);
   DsBarcode := TZQuery.Create(nil);
   DsGoodsPrice:=TZQuery.Create(nil);
+  cl:=TZQuery.Create(nil);
+  sl:=TZQuery.Create(nil);
 
   rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   us:=dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   ss:=dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
+  cs:=dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
 
   try
+    cl.Close;
+    cl.SQL.Text:='select COLOR_ID,COLOR_NAME,SORT_ID7S from VIW_COLOR_INFO where tenant_id='+token.tenantId+
+                 ' and comm not in(''02'',''12'') ';
+    dataFactory.Open(cl);
+    sl.Close;
+    sl.SQL.Text:='select SIZE_ID,SIZE_NAME,SORT_ID8S from VIW_SIZE_INFO where tenant_id='+token.tenantId+
+                 ' and comm not in(''02'',''12'') ';
+    dataFactory.Open(sl);
+
     Params := TftParamList.Create(nil);
     Params.ParamByName('TENANT_ID').asInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString :=token.shopId;
@@ -160,27 +173,32 @@ begin
         //DsGoods.FieldByName('SHOP_ID').AsString :=token.shopId;  
         DsGoods.FieldByName('GODS_CODE').AsString := Code;
         DsGoods.FieldByName('GODS_NAME').AsString := Name;
+        DsGoods.FieldByName('GODS_TYPE').AsString :='1';
+
         if dsExcel.FieldByName('GODS_SPELL').AsString <> '' then
           DsGoods.FieldByName('GODS_SPELL').AsString := dsExcel.FieldByName('GODS_SPELL').AsString
         else
           DsGoods.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(Trim(Name),3);
-        DsGoods.FieldByName('GODS_TYPE').AsString :='1';
+
         if ss.Locate('SORT_NAME',dsExcel.FieldByName('SORT_ID1').AsString,[]) then
           DsGoods.FieldByName('SORT_ID1').AsString := ss.FieldByName('SORT_ID').AsString;
-        DsGoods.FieldByName('SORT_ID3').AsString := dsExcel.FieldByName('SORT_ID3').AsString;
-        DsGoods.FieldByName('SORT_ID7').AsString := dsExcel.FieldByName('SORT_ID7').AsString;
-        DsGoods.FieldByName('SORT_ID8').AsString := dsExcel.FieldByName('SORT_ID8').AsString;
+        if cs.Locate('CLIENT_NAME',dsExcel.FieldByName('SORT_ID3').AsString,[]) then
+          DsGoods.FieldByName('SORT_ID3').AsString := cs.FieldByName('CLIENT_ID').AsString;
+        if cl.Locate('COLOR_NAME',dsExcel.FieldByName('SORT_ID7').AsString,[]) then
+          DsGoods.FieldByName('SORT_ID7').AsString :=cl.fieldByName('COLOR_ID').AsString ;
+        if sl.Locate('SIZE_NAME',dsExcel.FieldByName('SORT_ID8').AsString,[]) then
+          DsGoods.FieldByName('SORT_ID8').AsString := sl.fieldByName('SIZE_ID').AsString;
         if us.Locate('UNIT_NAME',dsExcel.FieldByName('CALC_UNITS').AsString,[]) then
         begin
           DsGoods.FieldByName('UNIT_ID').AsString := us.fieldByName('UNIT_ID').AsString;
           DsGoods.FieldByName('CALC_UNITS').AsString := us.fieldByName('UNIT_ID').AsString;
         end;
 
-        //2011.08.25加判断条码是否为空:
         if Bar <> '' then
         begin
           DsGoods.FieldByName('BARCODE').AsString := Bar;
-          WriteToBarcode(DsBarcode,GodsId,dsExcel.FieldByName('CALC_UNITS').AsString,dsExcel.FieldByName('BARCODE1').AsString,'0');
+          if us.Locate('UNIT_NAME',dsExcel.FieldByName('CALC_UNITS').AsString,[]) then
+          WriteToBarcode(DsBarcode,GodsId,us.fieldByName('UNIT_ID').AsString,dsExcel.FieldByName('BARCODE1').AsString,'0');
         end;
 
         if dsExcel.FieldByName('BARCODE2').AsString <> '' then
@@ -188,7 +206,7 @@ begin
             if us.Locate('UNIT_NAME',dsExcel.FieldByName('SMALL_UNITS').AsString,[]) then
             DsGoods.FieldByName('SMALL_UNITS').AsString := us.FieldByName('UNIT_ID').AsString;
             DsGoods.FieldByName('SMALLTO_CALC').AsString := dsExcel.FieldByName('SMALLTO_CALC').AsString;
-            WriteToBarcode(DsBarcode,GodsId,dsExcel.FieldByName('SMALL_UNITS').AsString,dsExcel.FieldByName('BARCODE2').AsString,'1');
+            WriteToBarcode(DsBarcode,GodsId,DsGoods.FieldByName('SMALL_UNITS').AsString,dsExcel.FieldByName('BARCODE2').AsString,'1');
           end;
 
         if dsExcel.FieldByName('BARCODE3').AsString <> '' then
@@ -196,7 +214,7 @@ begin
             if us.Locate('UNIT_NAME',dsExcel.FieldByName('BIG_UNITS').AsString,[]) then
             DsGoods.FieldByName('BIG_UNITS').AsString := us.FieldByName('UNIT_ID').AsString;
             DsGoods.FieldByName('BIGTO_CALC').AsString := dsExcel.FieldByName('BIGTO_CALC').AsString;
-            WriteToBarcode(DsBarcode,GodsId,dsExcel.FieldByName('BIG_UNITS').AsString,dsExcel.FieldByName('BARCODE3').AsString,'2');
+            WriteToBarcode(DsBarcode,GodsId,DsGoods.FieldByName('BIG_UNITS').AsString,dsExcel.FieldByName('BARCODE3').AsString,'2');
           end;
 
         DsGoods.FieldByName('NEW_INPRICE').AsFloat := dsExcel.FieldByName('NEW_INPRICE').AsFloat;
@@ -220,9 +238,9 @@ begin
 
       dataFactory.BeginBatch;
       try
-        dataFactory.AddBatch(DsGoods,'TGoodsInfoV60',Params);
-        dataFactory.AddBatch(DsBarcode,'TBarCodeV60',Params);
-        dataFactory.AddBatch(DsGoodsPrice,'TGoodsPriceV60',Params);
+        dataFactory.AddBatch(DsGoods,'TGoodsInfoV60',nil);
+        dataFactory.AddBatch(DsBarcode,'TBarCodeV60',nil);
+        dataFactory.AddBatch(DsGoodsPrice,'TGoodsPriceV60',nil);
         dataFactory.CommitBatch;
       except
         dataFactory.CancelBatch;
@@ -232,6 +250,8 @@ begin
     DsGoods.Free;
     DsBarcode.Free;
     DsGoodsPrice.Free;
+    sl.Free;
+    cl.Free;
     Params.Free;
   end;
   Result := True;

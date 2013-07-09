@@ -363,12 +363,9 @@ begin
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       rs.SQL.Text:=
-                  'select BARCODE,VM1.UNIT_NAME CALC_UNITS_NAME,VM2.UNIT_NAME SMALL_UNITS_NAME,VM3.UNIT_NAME BIG_UNITS_NAME, '+
-                  'NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
-                  'from VIW_GOODSPRICEEXT VG '+
-                  'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
-                  'left join VIW_MEAUNITS VM2 on VG.TENANT_ID=VM2.TENANT_ID and VG.SMALL_UNITS=VM2.UNIT_ID '+
-                  'left join VIW_MEAUNITS VM3 on VG.TENANT_ID=VM3.TENANT_ID and VG.BIG_UNITS=VM3.UNIT_ID '+
+                  'select BARCODE,BARCODE_TYPE,VM1.UNIT_NAME '+
+                  'from VIW_BARCODE VG '+
+                  'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.UNIT_ID=VM1.UNIT_ID '+
                   'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.barcode in ('+FBarcode+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
@@ -417,9 +414,7 @@ begin
                 strUnit:=ss.fieldByName(UintField).AsString;
                 if strUnit<> '' then
                 begin
-                  if (not rs.Locate('CALC_UNITS_NAME',strUnit,[])) and
-                     (not rs.Locate('SMALL_UNITS_NAME',strUnit,[])) and
-                     (not rs.Locate('BIG_UNITS_NAME',strUnit,[])) then
+                  if (not rs.Locate('UNIT_NAME',strUnit,[])) then
                   begin
                       cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
                       cdsExcel.Edit;

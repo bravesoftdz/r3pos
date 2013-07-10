@@ -521,8 +521,8 @@ begin
   AObj.ReadFromDataSet(cdsCustomer);
   ReadFromObject(AObj,self);
   case AObj.FieldbyName('SEX').AsInteger of
-  1:edtSEX1.Checked := true;
-  2:edtSEX2.Checked := true;
+  0:edtSEX1.Checked := true;
+  1:edtSEX2.Checked := true;
   else
     edtSEX3.Checked := true;
   end;
@@ -532,9 +532,9 @@ procedure TfrmCustomer.WriteInfo;
 var rs:TZQuery;
 begin
   WriteToObject(AObj,self);
-  if edtSEX1.Checked then AObj.FieldbyName('SEX').AsInteger := 1;
-  if edtSEX2.Checked then AObj.FieldbyName('SEX').AsInteger := 2;
-  if edtSEX3.Checked then AObj.FieldbyName('SEX').AsInteger := 3;
+  if edtSEX1.Checked then AObj.FieldbyName('SEX').AsInteger := 0;
+  if edtSEX2.Checked then AObj.FieldbyName('SEX').AsInteger := 1;
+  if edtSEX3.Checked then AObj.FieldbyName('SEX').AsInteger := 2;
   AObj.FieldbyName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   if AObj.FieldbyName('REGION_ID').AsString='' then
      begin

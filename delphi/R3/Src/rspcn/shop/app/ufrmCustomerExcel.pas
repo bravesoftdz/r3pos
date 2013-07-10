@@ -50,7 +50,7 @@ type
 implementation
 
 uses uRspFactory,udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,EncDec;
 
 {$R *.dfm}
 
@@ -106,7 +106,7 @@ begin
       dsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
       dsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
       dsExcel.FieldByName('CREA_USER').AsString := token.userId;
-      dsExcel.FieldByName('PASSWRD').AsString := '79415A40';
+      dsExcel.FieldByName('PASSWRD').AsString := EncStr('1234',ENC_KEY);     //'79415A40'
       dsExcel.Post;
 
       Field:=dsExcel.FindField('CUST_SPELL');

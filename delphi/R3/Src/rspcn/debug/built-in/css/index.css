@@ -417,10 +417,11 @@ a {
 	width: 310px;
 	height: 95px;
 	background-color: #9cda0c;
-	padding-top: 20px;
+	padding-top: 15px;
 	padding-bottom: 20px;
 	letter-spacing: 2px;
 	color: #ffffff;
+	line-height: 35px;
 }
 
 #service .service1_content a {
@@ -490,8 +491,8 @@ a {
 	letter-spacing: 2px;
 	color: #ffffff;
 	font-size: 14px;
-	line-height: 20px;
-	padding: 30px 10px 10px 20px;
+	line-height: 25px;
+	padding: 15px 20px 30px 30px;
 }
 
 #service .service4 {

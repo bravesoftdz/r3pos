@@ -12,13 +12,41 @@ $(function() {
 	trBgColor();
 	var qq=rsp.getIniInfo('r3.cfg','soft','qq','');
 	var telephone=rsp.getIniInfo('r3.cfg','soft','telephone','');
+	var serviceinfo=rsp.getIniInfo('r3.cfg','soft','serviceinfo','');
 	if (qq != '') {
-		document.getElementById('qq').innerHTML = 'QQ：'+qq;
-		document.getElementById('qqlink').target = '';
-		document.getElementById('qqlink').href = 'tencent://Message/?Uin='+qq+'&websiteName=q-zone.qq.com&Menu=yes';
+		var qqs = qq.split(',');
+		if (qqs[0] != '' && qqs[0] != undefined) {
+			document.getElementById('qq0').style.display = '';
+			document.getElementById('qq0').innerHTML = 'QQ1：'+qqs[0];
+			document.getElementById('qqlink0').target = '';
+			document.getElementById('qqlink0').href = 'tencent://Message/?Uin='+qqs[0]+'&websiteName=q-zone.qq.com&Menu=yes';
+			document.getElementById('qqimg0').src = 'http://wpa.qq.com/pa?p=2:'+qqs[0]+':42';
+			document.getElementById('qqimg0').alt = '在线咨询';
+		}
+		if (qqs[1] != '' && qqs[1] != undefined) {
+			document.getElementById('qq1').style.display = '';
+			document.getElementById('qq1').innerHTML = 'QQ2：'+qqs[1];
+			document.getElementById('qqlink1').target = '';
+			document.getElementById('qqlink1').href = 'tencent://Message/?Uin='+qqs[1]+'&websiteName=q-zone.qq.com&Menu=yes';
+			document.getElementById('qqimg1').src = 'http://wpa.qq.com/pa?p=2:'+qqs[1]+':42';
+			document.getElementById('qqimg1').alt = '在线咨询';
+		}
+		if (qqs[1] != '' && qqs[2] != undefined) {
+			document.getElementById('qq2').style.display = '';
+			document.getElementById('qq2').innerHTML = 'QQ3：'+qqs[2];
+			document.getElementById('qqlink2').target = '';
+			document.getElementById('qqlink2').href = 'tencent://Message/?Uin='+qqs[2]+'&websiteName=q-zone.qq.com&Menu=yes';
+			document.getElementById('qqimg2').src = 'http://wpa.qq.com/pa?p=2:'+qqs[2]+':42';
+			document.getElementById('qqimg2').alt = '在线咨询';
+		}
 	}
 	if (telephone != '') {
+		document.getElementById('telephone').style.display = '';
 		document.getElementById('telephone').innerHTML = '联系电话：'+telephone;
+	}
+	if (serviceinfo != '') {
+		document.getElementById('serviceinfo').style.display = '';
+		document.getElementById('serviceinfo').innerHTML = serviceinfo;
 	}
 })
 
@@ -140,7 +168,11 @@ function service_clear() {
 				 	<div class="service1_title indexFont1">在线客服</div>
 					<div class="service1_content indexFont1">
 						<center>
-							<a id="qqlink" "href="#" style="margin:0 auto; text-align:center;"><img align="bottom" src="images/service_qq.png"/>&nbsp;QQ交谈</a>
+							<a id="qqlink0" href="#"><img id="qqimg0" border="0"></a>
+							<br/><br/>
+							<a id="qqlink1" href="#"><img id="qqimg1" border="0"></a>
+							<br/><br/>
+							<a id="qqlink2" href="#"><img id="qqimg2" border="0"></a>
 						</center>
 					</div>
 				 </div>
@@ -166,10 +198,15 @@ function service_clear() {
 				 <div class="service3">
 				 	<div class="service3_title indexFont1">联系我们</div>
 					<div class="service3_content indexFont1">
-						<span id='qq'>QQ:</span>
-						<br/><br/><br/><br/>
-						<span id='telephone'>联系电话:</span>
-						<br/>
+						<span id="qq0" style="display:none">QQ1:</span>
+						<br/><br/>
+						<span id="qq1" style="display:none">QQ2:</span>
+						<br/><br/>
+						<span id="qq2" style="display:none">QQ3:</span>
+						<br/><br/>
+						<span id="telephone" style="display:none">联系电话:</span>
+						<br/><br/>
+						<span id="serviceinfo" style="display:none">服务时间:</span>
 					</div>
 				 </div>
 					

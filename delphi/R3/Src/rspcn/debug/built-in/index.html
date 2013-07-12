@@ -20,6 +20,7 @@ $(function() {
 			document.getElementById('qq0').innerHTML = 'QQ1：'+qqs[0];
 			document.getElementById('qqlink0').target = '';
 			document.getElementById('qqlink0').href = 'tencent://Message/?Uin='+qqs[0]+'&websiteName=q-zone.qq.com&Menu=yes';
+			document.getElementById('qqimg0').style.display = '';
 			document.getElementById('qqimg0').src = 'http://wpa.qq.com/pa?p=2:'+qqs[0]+':42';
 			document.getElementById('qqimg0').alt = '在线咨询';
 		}
@@ -28,6 +29,7 @@ $(function() {
 			document.getElementById('qq1').innerHTML = 'QQ2：'+qqs[1];
 			document.getElementById('qqlink1').target = '';
 			document.getElementById('qqlink1').href = 'tencent://Message/?Uin='+qqs[1]+'&websiteName=q-zone.qq.com&Menu=yes';
+			document.getElementById('qqimg1').style.display = '';
 			document.getElementById('qqimg1').src = 'http://wpa.qq.com/pa?p=2:'+qqs[1]+':42';
 			document.getElementById('qqimg1').alt = '在线咨询';
 		}
@@ -36,6 +38,7 @@ $(function() {
 			document.getElementById('qq2').innerHTML = 'QQ3：'+qqs[2];
 			document.getElementById('qqlink2').target = '';
 			document.getElementById('qqlink2').href = 'tencent://Message/?Uin='+qqs[2]+'&websiteName=q-zone.qq.com&Menu=yes';
+			document.getElementById('qqimg2').style.display = '';
 			document.getElementById('qqimg2').src = 'http://wpa.qq.com/pa?p=2:'+qqs[2]+':42';
 			document.getElementById('qqimg2').alt = '在线咨询';
 		}
@@ -168,11 +171,11 @@ function service_clear() {
 				 	<div class="service1_title indexFont1">在线客服</div>
 					<div class="service1_content indexFont1">
 						<center>
-							<a id="qqlink0" href="#"><img id="qqimg0" border="0"></a>
+							<a id="qqlink0" href="#"><img id="qqimg0" border="0" style="display:none"></a>
 							<br/><br/>
-							<a id="qqlink1" href="#"><img id="qqimg1" border="0"></a>
+							<a id="qqlink1" href="#"><img id="qqimg1" border="0" style="display:none"></a>
 							<br/><br/>
-							<a id="qqlink2" href="#"><img id="qqimg2" border="0"></a>
+							<a id="qqlink2" href="#"><img id="qqimg2" border="0" style="display:none"></a>
 						</center>
 					</div>
 				 </div>

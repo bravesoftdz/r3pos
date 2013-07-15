@@ -819,9 +819,9 @@ begin
     end;
   end;
 
-  dllGlobal.GetZQueryFromName('CA_TENANT').Close;
-  dllGlobal.GetZQueryFromName('CA_SHOP_INFO').Close;
-  dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
+  dllGlobal.Refresh('CA_TENANT');
+  dllGlobal.Refresh('CA_SHOP_INFO');
+  dllGlobal.Refresh('SYS_DEFINE');
 end;
 
 procedure TfrmSysDefine.InitToken;
@@ -1009,7 +1009,7 @@ begin
     end;
   end;
 
-  dllGlobal.GetZQueryFromName('SYS_DEFINE').Close;
+  dllGlobal.Refresh('SYS_DEFINE');
   DevFactory.InitComm;
 
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
@@ -1302,7 +1302,7 @@ begin
      end;
   OpenUsers;
   InitCurrentUser;
-  dllGlobal.GetZQueryFromName('CA_USERS').Close;
+  dllGlobal.Refresh('CA_USERS');
   MessageBox(Handle,'保存成功...','友情提示..',MB_OK);
 end;
 
@@ -1687,6 +1687,8 @@ var rs:TZQuery;
 begin
   if not SyncFactory.CheckValidDBFile(src) then Raise Exception.Create('所恢复的文件不是有效数据文件，无法进行文件恢复...');
   try
+    //zhangsr add 2013-07-10 文件恢复时，先断开连接。
+    dataFactory.sqlite.DisConnect;
     if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
        begin
          if CopyFile(pchar(src),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then

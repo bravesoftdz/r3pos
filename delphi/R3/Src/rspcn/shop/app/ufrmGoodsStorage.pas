@@ -532,7 +532,7 @@ begin
   end;
 
   SaveLocalInfo;
-  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  dllGlobal.Refresh('PUB_GOODSINFO');
 
   if cdsList.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
      begin
@@ -1050,7 +1050,7 @@ begin
       tmpGoodsExt.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  dllGlobal.Refresh('PUB_GOODSINFO');
 end;
 
 procedure TfrmGoodsStorage.toolDeleteClick(Sender: TObject);
@@ -1174,7 +1174,7 @@ begin
       Params.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  dllGlobal.Refresh('PUB_GOODSINFO');
 end;
 
 procedure TfrmGoodsStorage.btnNewSortClick(Sender: TObject);
@@ -1614,7 +1614,7 @@ begin
       tmpGoodsExt.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  dllGlobal.Refresh('PUB_GOODSINFO');
 end;
 
 procedure TfrmGoodsStorage.N3Click(Sender: TObject);
@@ -1734,7 +1734,7 @@ begin
       Params.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
+  dllGlobal.Refresh('PUB_GOODSSORT');
   rzTree.OnChange := nil;
   dllGlobal.CreateGoodsSortTree(rzTree,true);
   rzTree.Items.Add(nil,'ªÿ ’’æ');
@@ -1954,7 +1954,7 @@ begin
   inherited;
   rs:=TZQuery.Create(nil);
   if TfrmGoodsExcel.ExcelFactory(self,rs,'','',true) then
-     dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+     dllGlobal.Refresh('PUB_GOODSINFO');
 end;
 
 procedure TfrmGoodsStorage.RzLabel37Click(Sender: TObject);
@@ -1970,7 +1970,7 @@ begin
   try
     rs:=TZQuery.Create(nil);
     if TfrmPriceExcel.ExcelFactory(self,rs,'','',true) then
-       dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+       dllGlobal.Refresh('PUB_GOODSINFO');
   finally
     rs.Free;
   end;

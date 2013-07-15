@@ -385,7 +385,7 @@ begin
     end;
   end;
   
-  dllGlobal.GetZQueryFromName('PUB_PRICEGRADE').Close;
+  dllGlobal.Refresh('PUB_PRICEGRADE');
   ModalResult := MROK;
 end;
 

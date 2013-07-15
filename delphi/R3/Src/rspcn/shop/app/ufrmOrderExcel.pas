@@ -63,9 +63,7 @@ var us,gs:TZQuery;
     RecordObj:TRecord_;
 begin
   Result:=false;
-  dllGlobal.GetZQueryFromName('PUB_MEAUNITS').Close;
   us:=dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
   gs:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   RecordObj:=TRecord_.Create;
   try

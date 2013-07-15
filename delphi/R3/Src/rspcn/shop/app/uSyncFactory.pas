@@ -649,7 +649,7 @@ begin
   try
     InitSyncList1;
     SyncList;
-    dllGlobal.GetZQueryFromName('CA_RELATIONS').Close;
+    dllGlobal.Refresh('CA_RELATIONS');
 
     InitSyncList;
     SyncList;
@@ -2141,6 +2141,7 @@ var
   LocalList:TStringList;
 begin
   result := true;
+  Exit;
   if (dllGlobal.GetSFVersion = '.ONL') or (dllGlobal.GetSFVersion = '.NET') then Exit;
   rs := TZQuery.Create(nil);
   try

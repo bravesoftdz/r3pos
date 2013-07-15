@@ -186,8 +186,7 @@ begin
 
   SaveLocalInfo;
 
-  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
-  dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
+  dllGlobal.Refresh('PUB_CUSTOMER');
 
   ModalResult := MROK;
 end;

@@ -110,21 +110,31 @@ end;
 
 procedure TdataFactory.BeginTrans(TimeOut: integer);
 begin
+  if dbFlag=0 then Raise Exception.Create('不支持客户端事务');
   db.BeginTrans(TimeOut);
 end;
 
 function TdataFactory.CancelBatch: Boolean;
 begin
-  result := db.CancelBatch;
+  try
+    result := db.CancelBatch;
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.CommitBatch: Boolean;
 begin
-  result := db.CommitBatch;
+  try
+    result := db.CommitBatch;
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 procedure TdataFactory.CommitTrans;
 begin
+  if dbFlag=0 then Raise Exception.Create('不支持客户端事务');
   db.CommitTrans;
 end;
 
@@ -138,6 +148,7 @@ begin
          CopyFile(pchar(ExtractFilePath(Application.ExeName)+'\sqlite.db'),pchar(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\r3.db'),false);
       sqlite.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\r3.db');
       sqlite.connect;
+      sqlite.DisConnect;
     end;
   else
     begin
@@ -185,7 +196,11 @@ end;
 
 procedure TdataFactory.DBLock(Locked: boolean);
 begin
-  db.DBLock(Locked); 
+  try
+    db.DBLock(Locked);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 destructor TdataFactory.Destroy;
@@ -236,13 +251,21 @@ end;
 function TdataFactory.ExecProc(AClassName: String;
   Params: TftParamList): String;
 begin
-  result := db.ExecProc(AClassName,Params); 
+  try
+    result := db.ExecProc(AClassName,Params);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.ExecSQL(const SQL: WideString;
   ObjectFactory: TZFactory): Integer;
 begin
-  result := db.ExecSQL(SQL,ObjectFactory); 
+  try
+    result := db.ExecSQL(SQL,ObjectFactory);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.findDataSet(handle: THandle): TZQuery;
@@ -273,7 +296,11 @@ end;
 
 procedure TdataFactory.GqqLogin(UserId, UserName: string);
 begin
-  db.GqqLogin(UserId,UserName); 
+  try
+    db.GqqLogin(UserId,UserName);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.iDbType: Integer;
@@ -304,7 +331,7 @@ begin
   finally
     F.Free;
   end;
-  if not db.Connected then connect;
+  if not db.Connected and (dbFlag=1) then connect;
 end;
 
 procedure TdataFactory.MoveToRemote;
@@ -316,32 +343,49 @@ end;
 procedure TdataFactory.MoveToSqlite;
 begin
   dbFlag := 0;
-  if not db.Connected then connect;
+  //if not db.Connected then connect;
 end;
 
 function TdataFactory.Open(DataSet: TDataSet): Boolean;
 begin
-  result := db.Open(DataSet); 
+  try
+    result := db.Open(DataSet);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.Open(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 begin
-  result := db.Open(DataSet,AClassName,Params);
+  try
+    result := db.Open(DataSet,AClassName,Params);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.Open(DataSet: TDataSet; AClassName: String): Boolean;
 begin
-  result := db.Open(DataSet,AClassName);
+  try
+    result := db.Open(DataSet,AClassName);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.OpenBatch: Boolean;
 begin
-  result := db.OpenBatch;
+  try
+    result := db.OpenBatch;
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 procedure TdataFactory.RollbackTrans;
 begin
+  if dbFlag=0 then Raise Exception.Create('不支持客户端事务');
   db.RollbackTrans;
 end;
 
@@ -377,19 +421,31 @@ end;
 
 function TdataFactory.UpdateBatch(DataSet: TDataSet): Boolean;
 begin
-  result := db.UpdateBatch(DataSet);
+  try
+    result := db.UpdateBatch(DataSet);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.UpdateBatch(DataSet: TDataSet;
   AClassName: String): Boolean;
 begin
-  result := db.UpdateBatch(DataSet,AClassName);
+  try
+    result := db.UpdateBatch(DataSet,AClassName);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.UpdateBatch(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 begin
-  result := db.UpdateBatch(DataSet,AClassName,Params);
+  try
+    result := db.UpdateBatch(DataSet,AClassName,Params);
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 initialization

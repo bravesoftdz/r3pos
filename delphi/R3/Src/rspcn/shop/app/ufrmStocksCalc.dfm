@@ -5,6 +5,7 @@ inherited frmStocksCalc: TfrmStocksCalc
   ClientHeight = 190
   ClientWidth = 359
   OldCreateOrder = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
@@ -32,7 +33,7 @@ inherited frmStocksCalc: TfrmStocksCalc
       Left = 1
       Top = 1
       Width = 357
-      Height = 40
+      Height = 16
       Align = alTop
       Alignment = taCenter
       Caption = #38144#21806#26085#26399

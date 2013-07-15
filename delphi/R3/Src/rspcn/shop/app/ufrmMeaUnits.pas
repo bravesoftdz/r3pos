@@ -136,7 +136,7 @@ begin
      end;
   end;
 
-  dllGlobal.GetZQueryFromName('PUB_MEAUNITS').Close;
+  dllGlobal.Refresh('PUB_MEAUNITS');
   ModalResult := MROK;
 end;
 

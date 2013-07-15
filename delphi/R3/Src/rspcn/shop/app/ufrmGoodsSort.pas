@@ -167,7 +167,7 @@ begin
      end;
   end;
 
-  dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
+  dllGlobal.Refresh('PUB_GOODSSORT');
   ModalResult := MROK;
 end;
 

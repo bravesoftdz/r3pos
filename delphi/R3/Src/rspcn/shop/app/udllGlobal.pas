@@ -636,6 +636,7 @@ begin
     begin
        if UpperCase(TComponent(Components[i]).Name) = UpperCase(Name) then
           begin
+            if not TZQuery(Components[i]).Active then Exit;
             TZQuery(Components[i]).Close;
             break;
           end;

@@ -162,7 +162,7 @@ begin
     rs.Free;
     rs_l.Free;
   end;
-  dllGlobal.GetZQueryFromName('CA_TENANT').Close;
+  dllGlobal.Refresh('CA_TENANT');
 end;
 
 procedure TRspSyncFactory.downloadServiceLines;
@@ -347,7 +347,7 @@ begin
     rs.Free;
     rs_l.Free;
   end;
-  dllGlobal.GetZQueryFromName('CA_RELATIONS').Close;
+  dllGlobal.Refresh('CA_RELATIONS');
 end;
 
 procedure TRspSyncFactory.downloadUnion;
@@ -758,7 +758,7 @@ begin
     rs.Free;
     rs_l.Free;
   end;
-  dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
+  dllGlobal.Refresh('PUB_GOODSSORT');
 end;
 
 procedure TRspSyncFactory.SyncAll;
@@ -865,7 +865,7 @@ begin
     ss.Free;
     ss_l.Free;
   end;
-  dllGlobal.GetZQueryFromName('PUB_GOODSSORT').Close;
+  dllGlobal.Refresh('PUB_GOODSSORT');
 end;
 
 procedure TRspSyncFactory.SetProTitle(const Value: string);

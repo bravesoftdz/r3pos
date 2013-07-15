@@ -19,8 +19,11 @@ type
     Timer1: TTimer;
     RzLabel26: TRzLabel;
     procedure btnCalcClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
+    tmpTable,seqTable:string;
     procedure CreateSQLTable(sql:string;tb:string);
+    procedure DropSQLTable(tb:string);
     //本月负库存销售清理结账记录
     procedure ClearDays;
     //清除数据
@@ -107,14 +110,14 @@ var
   sql:string;
 begin
   sql :=
-    'update TMP_STOCKS_DATA set '+
+    'update '+tmpTable+' set '+
     'BAL_AMOUNT=(select ifnull(max(B.BAL_AMOUNT),0) '+
-    'from TMP_STOCKS_DATA B '+
+    'from '+tmpTable+' B '+
     'where '+
-    '  B.SHOP_ID=TMP_STOCKS_DATA.SHOP_ID and '+
-    '  B.GODS_ID=TMP_STOCKS_DATA.GODS_ID and '+
-    '  B.BATCH_NO=TMP_STOCKS_DATA.BATCH_NO and '+
-    '  B.SEQNO=TMP_STOCKS_DATA.SEQNO-2 '+
+    '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+    '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
+    '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+    '  B.SEQNO='+tmpTable+'.SEQNO-2 '+
     ') + IN_AMOUNT - OUT_AMOUNT where BILL_TYPE>1 ';
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
@@ -123,25 +126,32 @@ end;
 procedure TfrmStocksCalc.calcLast;
 var
   sql:string;
+  id,seqIdValue,tmpIdValue:string;
 begin
+  if dataFactory.iDbType = 1 then
+     begin
+       id := 'id,';
+       seqIdValue := 'seqId.nextVal,';
+       tmpIdValue := 'tmpId.nextVal,';
+     end;
   sql :=
-      'insert into TMP_STOCKS_DATA '+
-      '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+      'insert into '+tmpTable+' '+
+      '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
       ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
       ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
-      'select j.TENANT_ID,''#'' as SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''期初'',19700101,1,'+
+      'select '+tmpIdValue+'j.TENANT_ID,''#'' as SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''期初'',19700101,1,'+
       ' j.GODS_ID,''#'' as CLIENT_ID,''#'' as UNIT_ID,1 as CONV_RATE,''#'' as BATCH_NO,''#'' as PROPERTY_01,''#'' as PROPERTY_02, '+
       ' 0,j.NEW_INPRICE,0 from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,NEW_INPRICE',true)+') j '+
       'left outer join PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID ';
   dataFactory.ExecSQL(sql);
   if formatDatetime('DD',_beginDate)<>'01' then
     sql:=
-      'insert into TMP_STOCKS_DATA '+
-      '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+      'insert into '+tmpTable+' '+
+      '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
       ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
       ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
       'select '+
-      '  A.TENANT_ID,A.SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''期初'',A.BILL_DATE,A.SEQNO,A.GODS_ID,''#'' as CLIENT_ID,A.UNIT_ID,A.CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
+      '  '+tmpIdValue+'A.TENANT_ID,A.SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''期初'',A.BILL_DATE,A.SEQNO,A.GODS_ID,''#'' as CLIENT_ID,A.UNIT_ID,A.CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
       '  A.BAL_AMOUNT,A.BAL_PRICE,A.BAL_MONEY '+
       'from RCK_STOCKS_DATA A, '+
       '  (select max(SEQNO) as SEQNO,SHOP_ID,GODS_ID,BATCH_NO '+
@@ -156,12 +166,12 @@ begin
       '  A.TENANT_ID='+token.tenantId+' and A.BILL_DATE>='+inttostr(navDate)+' and A.BILL_DATE<='+inttostr(lastDate)+''
   else
     sql:=
-      'insert into TMP_STOCKS_DATA '+
-      '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+      'insert into '+tmpTable+' '+
+      '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
       ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
       ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
       'select '+
-      '  A.TENANT_ID,A.SHOP_ID,''#'' as BILL_ID,1 as BILL_TYPE,''期初'','+formatDatetime('YYYYMMDD',_beginDate)+' as BILL_DATE,A.SEQNO+2,A.GODS_ID,''#'' as CLIENT_ID,A.UNIT_ID,A.CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
+      '  '+tmpIdValue+'A.TENANT_ID,A.SHOP_ID,''#'' as BILL_ID,1 as BILL_TYPE,''期初'','+formatDatetime('YYYYMMDD',_beginDate)+' as BILL_DATE,A.SEQNO+2,A.GODS_ID,''#'' as CLIENT_ID,A.UNIT_ID,A.CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
       '  A.BAL_AMOUNT,A.BAL_PRICE,A.BAL_MONEY '+
       'from RCK_STOCKS_DATA A, '+
       '  (select max(SEQNO) as SEQNO,SHOP_ID,GODS_ID,BATCH_NO '+
@@ -181,7 +191,7 @@ procedure TfrmStocksCalc.calcMoney;
 var
   sql:string;
 begin
-  sql:= 'update TMP_STOCKS_DATA set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where (SEQNO % 2)<>0 and BILL_TYPE>1';
+  sql:= 'update '+tmpTable+' set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where (SEQNO % 2)<>0 and BILL_TYPE>1';
   dataFactory.ExecSQL(sql);
 end;
 
@@ -190,15 +200,15 @@ var
   sql:string;
 begin
   sql:=
-    'update TMP_STOCKS_DATA set BAL_PRICE=( '+
+    'update '+tmpTable+' set BAL_PRICE=( '+
     'select ifnull(case when sum(A.BAL_AMOUNT)<>0 then round(sum(A.BAL_AMOUNT*A.BAL_PRICE)/sum(A.BAL_AMOUNT),6) else max(BAL_PRICE) end,0) '+
-    'from TMP_STOCKS_DATA A '+
+    'from '+tmpTable+' A '+
     'where '+
-    ' (A.SHOP_ID=TMP_STOCKS_DATA.SHOP_ID and '+
-    '  A.GODS_ID=TMP_STOCKS_DATA.GODS_ID and '+
-    '  A.BATCH_NO=TMP_STOCKS_DATA.BATCH_NO and '+
-    '  A.SEQNO in (TMP_STOCKS_DATA.SEQNO-2,TMP_STOCKS_DATA.SEQNO-1)'+
-    ' ) or (A.SHOP_ID=''#'' and A.GODS_ID=TMP_STOCKS_DATA.GODS_ID and A.BATCH_NO=''#'' and A.SEQNO=1 and A.BILL_DATE=19700101) '+
+    ' (A.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+    '  A.GODS_ID='+tmpTable+'.GODS_ID and '+
+    '  A.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+    '  A.SEQNO in ('+tmpTable+'.SEQNO-2,'+tmpTable+'.SEQNO-1)'+
+    ' ) or (A.SHOP_ID=''#'' and A.GODS_ID='+tmpTable+'.GODS_ID and A.BATCH_NO=''#'' and A.SEQNO=1 and A.BILL_DATE=19700101) '+
     ') where (SEQNO % 2)<>0 and BILL_TYPE>1';
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
@@ -218,7 +228,7 @@ begin
     ' A.GODS_ID,ifnull(A.CLIENT_ID,''#''),A.UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02,'+
     ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX,BAL_AMOUNT,BAL_PRICE,BAL_MONEY,'+
     ' GUIDE_USER,CREA_USER,B.RELATION_ID,B.GODS_NAME,B.GODS_CODE,B.BARCODE,B.SORT_ID1,C.SORT_NAME,D.CLIENT_CODE,D.CLIENT_NAME,E.UNIT_NAME,F.USER_NAME,G.USER_NAME,''00'','+GetTimeStamp(dataFactory.iDbType)+'  '+
-    'from TMP_STOCKS_DATA A '+
+    'from '+tmpTable+' A '+
     ' left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1',true)+') B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
     ' left outer join (select SORT_ID,SORT_NAME from PUB_GOODSSORT where TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+')) C on B.SORT_ID1=C.SORT_ID '+
     ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
@@ -278,114 +288,74 @@ begin
    lblInfo.Caption := '计算区间:'+formatDatetime('YYYY-MM-DD',_beginDate)+'至'+formatDatetime('YYYY-MM-DD',_endDate);
    //创建临时表
    Init;
-//   if dataFactory.iDbType=5 then dataFactory.BeginTrans;
    try
-     RzProgressBar1.Percent := 5;
-     ClearRck;
-     RzProgressBar1.Percent := 15;
-     calcLast;
-     RzProgressBar1.Percent := 20;
-     InitData;
-     RzProgressBar1.Percent := 50;
-     prepare;
-     RzProgressBar1.Percent := 55;
-     calcBalAmt;
-     RzProgressBar1.Percent := 60;
-     deficit;
-     RzProgressBar1.Percent := 70;
-     calcPrice;
-     RzProgressBar1.Percent := 80;
-     calcMoney;
-     RzProgressBar1.Percent := 90;
-//     if dataFactory.iDbType=5 then dataFactory.CommitTrans;
-   except
-//     if dataFactory.iDbType=5 then dataFactory.RollbackTrans;
-     raise;
+     if dataFactory.iDbType=5 then dataFactory.BeginTrans;
+     try
+       RzProgressBar1.Percent := 5;
+       ClearRck;
+       RzProgressBar1.Percent := 15;
+       calcLast;
+       RzProgressBar1.Percent := 20;
+       InitData;
+       RzProgressBar1.Percent := 50;
+       prepare;
+       RzProgressBar1.Percent := 55;
+       calcBalAmt;
+       RzProgressBar1.Percent := 60;
+       deficit;
+       RzProgressBar1.Percent := 70;
+       calcPrice;
+       RzProgressBar1.Percent := 80;
+       calcMoney;
+       RzProgressBar1.Percent := 90;
+       if dataFactory.iDbType=5 then dataFactory.CommitTrans;
+     except
+       if dataFactory.iDbType=5 then dataFactory.RollbackTrans;
+       Raise;
+     end;
+     copyToRck;
+     RzProgressBar1.Percent := 100;
+   finally
+     dropSQLTable(tmpTable);
+     dropSQLTable(seqTable);
    end;
-   copyToRck;
-   RzProgressBar1.Percent := 100;
 end;
 
 procedure TfrmStocksCalc.CreateSQLTable(sql: string;tb:string);
-var
-  rs:TZQuery;
 begin
-  case dataFactory.iDbType of
-   0:
-    begin
-      rs := TZQuery.Create(nil);
-      try
-        rs.SQL.Text := 'select OBJECT_ID(N''tempdb..'+tb+''')';
-        dataFactory.Open(rs);
-        if rs.Fields[0].AsString = '' then
-        begin
-          dataFactory.ExecSQL(sql);
-        end;
-      finally
-        rs.Free;
-      end;
-    end;
-  1:
-    begin
-      rs := TZQuery.Create(nil);
-      try
-        rs.SQL.Text := 'select count(*) from user_tables where table_name='''+tb+'''';
-        dataFactory.Open(rs);
-        if rs.Fields[0].asInteger = 0 then
-        begin
-          dataFactory.ExecSQL(sql);
-        end;
-      finally
-        rs.Free;
-      end;
-    end;
-  4:
-    begin
-      dataFactory.ExecSQL(sql);
-    end;
-  5:
-    begin
-      rs := TZQuery.Create(nil);
-      try
-        rs.SQL.Text := 'select count(*) from sqlite_master where type=''table'' and name='''+tb+'''';
-        dataFactory.Open(rs);
-        if rs.Fields[0].asInteger > 0 then
-           dataFactory.ExecSQL('drop table '+tb); 
-        dataFactory.ExecSQL(sql);
-      finally
-        rs.Free;
-      end;
-    end;
-  end;
-  case dataFactory.iDbType of
-   0,1:dataFactory.ExecSQL('truncate table '+tb);
-   5:dataFactory.ExecSQL('delete from '+tb);
-  end;
+  dataFactory.ExecSQL(sql);
 end;
 
 procedure TfrmStocksCalc.deficit;
 var
   sql:string;
+  id,seqIdValue,tmpIdValue:string;
 begin
+  if dataFactory.iDbType = 1 then
+     begin
+       id := 'id,';
+       seqIdValue := 'seqId.nextVal,';
+       tmpIdValue := 'tmpId.nextVal,';
+     end;
   sql :=
-    'insert into TMP_STOCKS_DATA '+
-    '(TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+    'insert into '+tmpTable+' '+
+    '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
     ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
-    'select TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO-1, '+
+    'select '+tmpIdValue+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO-1, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
     ' IN_AMOUNT,IN_PRICE,IN_MONEY '+
-    'from TMP_STOCKS_DATA where BILL_TYPE in (11,12,13) ';
+    'from '+tmpTable+' where BILL_TYPE in (11,12,13) ';
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 65;
   sql :=
-    'update TMP_STOCKS_DATA set SEQNO= '+
+    'update '+tmpTable+' set SEQNO= '+
     '( '+
-    ' select ifnull(max(SEQNO),1)+1 from TMP_STOCKS_DATA B where '+
-    '  B.SHOP_ID=TMP_STOCKS_DATA.SHOP_ID and '+
-    '  B.GODS_ID=TMP_STOCKS_DATA.GODS_ID and '+
-    '  B.BATCH_NO=TMP_STOCKS_DATA.BATCH_NO and '+
-    '  B.BAL_AMOUNT>0 and (B.SEQNO % 2)<>0 and B.SEQNO<TMP_STOCKS_DATA.SEQNO '+
+    ' select ifnull(max(SEQNO),1)+1 from '+tmpTable+' B where '+
+    '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+    '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
+    '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+    '  B.BAL_AMOUNT>0 and (B.SEQNO % 2)<>0 and B.SEQNO<'+tmpTable+'.SEQNO '+
     ') where (SEQNO % 2)=0 ';
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
@@ -426,67 +396,51 @@ end;
 procedure TfrmStocksCalc.Init;
 var
   sql:string;
+  varchar,int,null:string;
+  id:string;
 begin
-  sql :=
-    'CREATE TABLE TMP_STOCKS_DATA '+
-    '( '+
-    '	ID integer PRIMARY KEY autoincrement , '+
-    '	TENANT_ID int NOT NULL , '+
-    '	SHOP_ID varchar (13) NOT NULL , '+
-    '	BILL_ID char (36) NOT NULL , '+
-    '	BILL_CODE varchar (20) NULL , '+
-    '	BILL_TYPE int NOT NULL , '+
-    '	BILL_NAME varchar (10) NULL , '+
-    '	BILL_DATE int NOT NULL , '+
-    '	SEQNO int NOT NULL , '+
-    '	GODS_ID char (36) NOT NULL , '+
-    '	CLIENT_ID varchar (36) NULL , '+
-    '	UNIT_ID varchar (36) NOT NULL , '+
-    '	CONV_RATE decimal(18, 3) NOT NULL , '+
-    ' BATCH_NO varchar (36) NOT NULL , '+
-    ' PROPERTY_01 varchar (36) NOT NULL , '+
-    ' PROPERTY_02 varchar (36) NOT NULL , '+
-    '	IN_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	IN_PRICE  decimal(18, 6) NOT NULL DEFAULT 0, '+
-    '	IN_MONEY  decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	IN_TAX  decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' OUT_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' OUT_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' OUT_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' SALE_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' SALE_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' SALE_TAX decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	GUIDE_USER varchar (36) NULL , '+
-    '	CREA_USER varchar (36) NULL '+
-    ')';
   case dataFactory.iDbType of
-  5:begin
-      createSQLTable(sql,'TMP_STOCKS_DATA');
-      dataFactory.ExecSQL('create index IX_TMP_STOCKS_DATA on TMP_STOCKS_DATA(SHOP_ID,GODS_ID,BATCH_NO,SEQNO)');
-    end;
+  1:varchar := ' varchar2';
+  else
+    varchar := ' varchar';
+  end;
+  case dataFactory.iDbType of
+  0,5:null := ' null ';
+   else
+    null := ' ';
+  end;
+  case dataFactory.iDbType of
+  1:int := ' number(18,0) ';
+  4:int := ' integer ';
+  else
+    int := ' int ';
+  end;
+  dropSQLTable(tmpTable);
+  case dataFactory.iDbType of
+  0:id := 'ID bigint identity(1,1) PRIMARY KEY,';
+  1:id := 'ID number(18,0),';
+  4:id := 'ID bigint NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1 ),';
+  5:id := 'ID INTEGER PRIMARY KEY autoincrement,';
   end;
   sql :=
-    'CREATE TABLE SEQ_STOCKS_DATA '+
+    'CREATE TABLE '+tmpTable+' '+
     '( '+
-    '	ID integer PRIMARY KEY autoincrement , '+
-    '	TENANT_ID int NOT NULL , '+
-    '	SHOP_ID varchar (13) NOT NULL , '+
+    id+
+    '	TENANT_ID'+int+'NOT NULL , '+
+    '	SHOP_ID'+varchar+'(13) NOT NULL , '+
     '	BILL_ID char (36) NOT NULL , '+
-    '	BILL_CODE varchar (20) NULL , '+
-    '	BILL_TYPE int NOT NULL , '+
-    '	BILL_NAME varchar (10) NULL , '+
-    '	BILL_DATE int NOT NULL , '+
-    '	SEQNO int NOT NULL , '+
+    '	BILL_CODE'+varchar+'(20) '+null+' , '+
+    '	BILL_TYPE'+int+'NOT NULL , '+
+    '	BILL_NAME'+varchar+'(10) '+null+' , '+
+    '	BILL_DATE'+int+'NOT NULL , '+
+    '	SEQNO'+int+'NOT NULL , '+
     '	GODS_ID char (36) NOT NULL , '+
-    '	CLIENT_ID varchar (36) NULL , '+
-    '	UNIT_ID varchar (36) NOT NULL , '+
+    '	CLIENT_ID'+varchar+'(36) NULL , '+
+    '	UNIT_ID'+varchar+'(36) NOT NULL , '+
     '	CONV_RATE decimal(18, 3) NOT NULL , '+
-    ' BATCH_NO varchar (36) NOT NULL , '+
-    ' PROPERTY_01 varchar (36) NOT NULL , '+
-    ' PROPERTY_02 varchar (36) NOT NULL , '+
+    ' BATCH_NO'+varchar+'(36) NOT NULL , '+
+    ' PROPERTY_01'+varchar+'(36) NOT NULL , '+
+    ' PROPERTY_02'+varchar+'(36) NOT NULL , '+
     '	IN_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
     '	IN_PRICE  decimal(18, 6) NOT NULL DEFAULT 0, '+
     '	IN_MONEY  decimal(18, 3) NOT NULL DEFAULT 0, '+
@@ -500,26 +454,75 @@ begin
     ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
     ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
     ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	GUIDE_USER varchar (36) NULL , '+
-    '	CREA_USER varchar (36) NULL '+
+    '	GUIDE_USER'+varchar+'(36) '+null+', '+
+    '	CREA_USER'+varchar+'(36) '+null+''+
     ')';
-  case dataFactory.iDbType of
-  5:begin
-      createSQLTable(sql,'SEQ_STOCKS_DATA');
+  createSQLTable(sql,tmpTable);
+  dropSQLTable(seqTable);
+  sql :=
+    'CREATE TABLE '+seqTable+' '+
+    '( '+
+    id+
+    '	TENANT_ID'+int+'NOT NULL , '+
+    '	SHOP_ID'+varchar+'(13) NOT NULL , '+
+    '	BILL_ID char (36) NOT NULL , '+
+    '	BILL_CODE'+varchar+'(20) '+null+' , '+
+    '	BILL_TYPE'+int+'NOT NULL , '+
+    '	BILL_NAME'+varchar+'(10) '+null+' , '+
+    '	BILL_DATE'+int+'NOT NULL , '+
+    '	SEQNO'+int+'NOT NULL , '+
+    '	GODS_ID char (36) NOT NULL , '+
+    '	CLIENT_ID'+varchar+'(36) NULL , '+
+    '	UNIT_ID'+varchar+'(36) NOT NULL , '+
+    '	CONV_RATE decimal(18, 3) NOT NULL , '+
+    ' BATCH_NO'+varchar+'(36) NOT NULL , '+
+    ' PROPERTY_01'+varchar+'(36) NOT NULL , '+
+    ' PROPERTY_02'+varchar+'(36) NOT NULL , '+
+    '	IN_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	IN_PRICE  decimal(18, 6) NOT NULL DEFAULT 0, '+
+    '	IN_MONEY  decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	IN_TAX  decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' OUT_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' OUT_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
+    ' OUT_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' SALE_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
+    ' SALE_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' SALE_TAX decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
+    ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	GUIDE_USER'+varchar+'(36) '+null+', '+
+    '	CREA_USER'+varchar+'(36) '+null+''+
+    ')';
+  createSQLTable(sql,seqTable);
+  try
+    case dataFactory.iDbType of
+    1:begin
+      dataFactory.ExecSQL('create sequence seqId minvalue 1 maxvalue 99999999999 startwith 1 incrementby 1 nocache order');
+      dataFactory.ExecSQL('create sequence tmpId minvalue 1 maxvalue 99999999999 startwith 1 incrementby 1 nocache order');
+      end;
     end;
+  except
   end;
 end;
 
 procedure TfrmStocksCalc.InitData;
 var
   sql:string;
+  id,seqIdValue,tmpIdValue:string;
 begin
+  if dataFactory.iDbType = 1 then
+     begin
+       id := 'id,';
+       seqIdValue := 'seqId.nextVal,';
+       tmpIdValue := 'tmpId.nextVal,';
+     end;
   sql :=
-    'insert into SEQ_STOCKS_DATA '+
-    '(TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+    'insert into '+seqTable+' '+
+    '('+ID+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
     ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,GUIDE_USER,CREA_USER) '+
-    'select A.TENANT_ID,A.SHOP_ID,A.STOCK_ID,B.GLIDE_NO,B.STOCK_TYPE+10, '+
+    'select '+seqIdValue+'A.TENANT_ID,A.SHOP_ID,A.STOCK_ID,B.GLIDE_NO,B.STOCK_TYPE+10, '+
     ' case when B.STOCK_TYPE=1 then ''进货'' when B.STOCK_TYPE=2 then ''调入'' when B.STOCK_TYPE=3 then ''退出'' else ''入库'' end as BILL_NAME,B.STOCK_DATE,1 as SEQNO, '+
     ' A.GODS_ID,B.CLIENT_ID,A.UNIT_ID,cast(A.CALC_AMOUNT as decimal(18,3)) / cast(A.AMOUNT as decimal(18,3)) as CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
     ' A.CALC_AMOUNT as IN_AMOUNT,'+
@@ -533,12 +536,12 @@ begin
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 30;
   sql :=
-    'insert into SEQ_STOCKS_DATA '+
-    '(TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+    'insert into '+seqTable+' '+
+    '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
     ' OUT_AMOUNT,SALE_PRICE,SALE_MONEY,SALE_TAX, '+
     ' GUIDE_USER,CREA_USER) '+
-    'select A.TENANT_ID,A.SHOP_ID,A.SALES_ID,B.GLIDE_NO,B.SALES_TYPE+20, '+
+    'select '+seqIdValue+'A.TENANT_ID,A.SHOP_ID,A.SALES_ID,B.GLIDE_NO,B.SALES_TYPE+20, '+
     ' case when B.SALES_TYPE in (1,4) then ''销售'' when B.SALES_TYPE=2 then ''调出'' when B.SALES_TYPE=3 then ''退入'' else ''出库'' end as BILL_NAME,B.SALES_DATE,1 as SEQNO, '+
     ' A.GODS_ID,B.CLIENT_ID,A.UNIT_ID,cast(A.CALC_AMOUNT as decimal(18,3)) / cast(A.AMOUNT as decimal(18,3)) as CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
     ' A.CALC_AMOUNT as OUT_AMOUNT,'+
@@ -553,11 +556,11 @@ begin
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 40;
   sql :=
-    'insert into SEQ_STOCKS_DATA '+
-    '(TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+    'insert into '+seqTable+' '+
+    '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
     ' OUT_AMOUNT,GUIDE_USER,CREA_USER) '+
-    'select A.TENANT_ID,A.SHOP_ID,A.CHANGE_ID,B.GLIDE_NO,cast(B.CHANGE_CODE as int)+30, '+
+    'select '+seqIdValue+'A.TENANT_ID,A.SHOP_ID,A.CHANGE_ID,B.GLIDE_NO,cast(B.CHANGE_CODE as int)+30, '+
     ' case when B.CHANGE_CODE=''1'' then ''损益'' when B.CHANGE_CODE=''2'' then ''领用'' else ''出库'' end as BILL_NAME,B.CHANGE_DATE,1 as SEQNO, '+
     ' A.GODS_ID,''#'',A.UNIT_ID,cast(A.CALC_AMOUNT as decimal(18,3)) / cast(A.AMOUNT as decimal(18,3)) as CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
     ' A.CALC_AMOUNT as OUT_AMOUNT,B.DUTY_USER,B.CREA_USER '+
@@ -568,17 +571,17 @@ begin
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 45;
   sql :=
-    'insert into TMP_STOCKS_DATA '+
-    ' (TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
+    'insert into '+tmpTable+' '+
+    ' ('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02,'+
     ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX,BAL_AMOUNT,BAL_PRICE,BAL_MONEY,'+
     ' GUIDE_USER,CREA_USER) '+
     'select '+
-    ' TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
+    ' '+tmpIdValue+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02,'+
     ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX,BAL_AMOUNT,BAL_PRICE,BAL_MONEY,'+
     ' GUIDE_USER,CREA_USER '+
-    'from SEQ_STOCKS_DATA order by GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,BILL_DATE,ID';
+    'from '+seqTable+' order by GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,BILL_DATE,ID';
   dataFactory.ExecSQL(sql);
 end;
 
@@ -587,13 +590,13 @@ var
   sql:string;
 begin
   sql :=
-    'update TMP_STOCKS_DATA set '+
-    'SEQNO=(select ifnull(max(SEQNO),1) from TMP_STOCKS_DATA B '+
+    'update '+tmpTable+' set '+
+    'SEQNO=(select ifnull(max(SEQNO),1) from '+tmpTable+' B '+
     'where '+
-    '  B.SHOP_ID=TMP_STOCKS_DATA.SHOP_ID and  '+
-    '  B.GODS_ID=TMP_STOCKS_DATA.GODS_ID and  '+
-    '  B.BATCH_NO=TMP_STOCKS_DATA.BATCH_NO and '+
-    '  B.ID<TMP_STOCKS_DATA.ID '+
+    '  B.SHOP_ID='+tmpTable+'.SHOP_ID and  '+
+    '  B.GODS_ID='+tmpTable+'.GODS_ID and  '+
+    '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+    '  B.ID<'+tmpTable+'.ID '+
     ')+2 '+
     'where BILL_TYPE>1 ';
   sql := parseSQL(dataFactory.iDbType,sql);
@@ -678,6 +681,65 @@ begin
          Raise;
        end;
      end;
+end;
+
+procedure TfrmStocksCalc.FormCreate(Sender: TObject);
+begin
+  inherited;
+  tmpTable := 'TMP_SC_'+token.tenantId;
+  seqTable := 'SEQ_SC_'+token.tenantId;
+end;
+
+procedure TfrmStocksCalc.DropSQLTable(tb:string);
+var
+  rs:TZQuery;
+begin
+  case dataFactory.iDbType of
+   0:
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select OBJECT_ID(N''tempdb..'+tb+''')';
+        dataFactory.Open(rs);
+        if rs.Fields[0].AsString <> '' then dataFactory.ExecSQL('drop table '+tb);
+      finally
+        rs.Free;
+      end;
+    end;
+  1:
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select count(*) from user_tables where table_name='''+tb+'''';
+        dataFactory.Open(rs);
+        if rs.Fields[0].asInteger <> 0 then dataFactory.ExecSQL('drop table '+tb);
+      finally
+        rs.Free;
+      end;
+    end;
+  4:
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select count(*) from syscat.tables where tabname='''+tb+'''';
+        dataFactory.Open(rs);
+        if rs.Fields[0].asInteger <> 0 then dataFactory.ExecSQL('drop table '+tb);
+      finally
+        rs.Free;
+      end;
+    end;
+  5:
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select count(*) from sqlite_master where type=''table'' and name='''+tb+'''';
+        dataFactory.Open(rs);
+        if rs.Fields[0].asInteger > 0 then dataFactory.ExecSQL('drop table '+tb);
+      finally
+        rs.Free;
+      end;
+    end;
+  end;
 end;
 
 end.

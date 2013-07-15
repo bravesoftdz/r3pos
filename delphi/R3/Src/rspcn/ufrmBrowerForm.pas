@@ -1624,7 +1624,7 @@ procedure TfrmBrowerForm.FormCloseQuery(Sender: TObject;
 begin
   btnClose.Enabled := false;
   try
-    dllFactory.Clear(true);
+    if not frmUpdate.Visible then dllFactory.Clear(true);
     btnClose.Enabled := true;
   except
     on E:Exception do

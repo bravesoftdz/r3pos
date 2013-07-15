@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebDialog, RzPanel, RzBmpBtn, RzForms, StdCtrls, RzLabel,
-  ExtCtrls, AppWebUpdater, ComCtrls, RzEdit, uRspFactory,ZdbFactory,udbUtil;
+  ExtCtrls, AppWebUpdater, ComCtrls, RzEdit, uRspFactory,ZdbFactory,udbUtil,
+  RzStatus;
 
 type
   TfrmUpdate = class(TfrmWebDialog)
@@ -14,6 +15,7 @@ type
     RzLabel2: TRzLabel;
     RzPanel1: TRzPanel;
     btn24hsc: TRzBmpButton;
+    RzVersionInfo1: TRzVersionInfo;
     procedure WebUpdater1Success(Sender: TObject;
       SuccessCode: TSuccessMessage; Parameter, SuccessMessage: String);
     procedure WebUpdater1Error(Sender: TObject; ErrorCode: TErrorMessage;
@@ -152,13 +154,20 @@ begin
   end
   else
      CaUpgrade.UpGrade := 3;    }
-  if CaUpgrade.URL='' then Exit; 
+  if CaUpgrade.URL='' then Exit;
+  RzVersionInfo1.FilePath := ExtractFilePath(ParamStr(0))+'shop.dll';
   url := TStringList.Create;
   try
     url.Delimiter := '/';
     url.DelimitedText := CaUpgrade.URL;
-    if lowercase(copy(url[url.Count-1],length(url[url.Count-1])-3,4))='.exe' then url.Delete(url.Count-1); 
+    if lowercase(copy(url[url.Count-1],length(url[url.Count-1])-3,4))='.exe' then url.Delete(url.Count-1);
     WebUpdater1.WebUrl := url.DelimitedText;
+    url.Delimiter := '.';
+    url.DelimitedText := RzVersionInfo1.FileVersion;
+    WebUpdater1.ApplicationVersion.MajorVersion := StrtoInt(url[0]);
+    WebUpdater1.ApplicationVersion.MinorVersion := StrtoInt(url[1]);
+    WebUpdater1.ApplicationVersion.ReleaseVersion := StrtoInt(url[2]);
+    WebUpdater1.ApplicationVersion.BuildVersion := StrtoInt(url[3]);
   finally
     url.Free;
   end;
@@ -227,10 +236,16 @@ end;
 procedure TfrmUpdate.btn24hscClick(Sender: TObject);
 begin
   inherited;
-  case upgrade of
-  1:UpgradeApplication;
-  2:UpgradeDBVersion;
-  3:Close;
+  btn24hsc.caption := 'ÇëÉÔºò..';
+  try
+    case upgrade of
+    1:UpgradeApplication;
+    2:UpgradeDBVersion;
+    3:Close;
+    end;
+  except
+    btn24hsc.caption := 'Á¢¼´Éý¼¶';
+    Raise;
   end;
 end;
 

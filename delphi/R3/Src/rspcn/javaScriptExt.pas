@@ -436,11 +436,13 @@ end;
 procedure TjavaScriptExt.moveToSqlite;
 begin
   dataFactory.MoveToSqlite;
+  dataFactory.connect;
 end;
 
 procedure TjavaScriptExt.moveToRemote;
 begin
   dataFactory.MoveToRemote;
+  dataFactory.connect;
 end;
 
 procedure TjavaScriptExt.openBatch;
@@ -508,6 +510,7 @@ end;
 procedure TjavaScriptExt.moveToDefault;
 begin
   dataFactory.MoveToDefault;
+  dataFactory.connect;
 end;
 
 function TjavaScriptExt.parseSQL(const sql: WideString): WideString;

@@ -395,7 +395,7 @@ begin
       Params.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+  dllGlobal.Refresh('PUB_CUSTOMER');
 end;
 
 procedure TfrmCustomer.OpenInfo(custId: string);
@@ -455,7 +455,7 @@ begin
 
   SaveLocalInfo;
 
-  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+  dllGlobal.Refresh('PUB_CUSTOMER');
 
   if cdsList.Locate('CUST_ID',AObj.FieldbyName('CUST_ID').AsString,[]) then
      begin
@@ -506,7 +506,7 @@ begin
 
   SaveLocalInfo;
 
-  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+  dllGlobal.Refresh('PUB_CUSTOMER');
 end;
 
 procedure TfrmCustomer.SetdbState(const Value: TDataSetState);
@@ -809,7 +809,7 @@ begin
       Params.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+  dllGlobal.Refresh('PUB_CUSTOMER');
 end;
 
 procedure TfrmCustomer.toolDeleteClick(Sender: TObject);
@@ -906,7 +906,7 @@ begin
       Params.Free;
     end;
   end;
-  dllGlobal.GetZQueryFromName('PUB_PRICEGRADE').Close;
+  dllGlobal.Refresh('PUB_PRICEGRADE');
   rzTree.OnChange := nil;
   CreatePriceGrade;
   rzTree.OnChange := rzTreeChange;
@@ -1008,7 +1008,7 @@ begin
     end;
 
     if TfrmCustomerExcel.ExcelFactory(self,rs,'','',true) then
-      dllGlobal.GetZQueryFromName('PUB_CUSTOMER').Close;
+      dllGlobal.Refresh('PUB_CUSTOMER');
 
   finally
     Params.Free;

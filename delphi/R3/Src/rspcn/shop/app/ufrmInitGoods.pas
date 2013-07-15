@@ -1791,7 +1791,7 @@ begin
   RemoteFinded := false;
   RspFinded := false;
   edtInput.Text := '';
-  dllGlobal.GetZQueryFromName('PUB_GOODSINFO').Close;
+  dllGlobal.Refresh('PUB_GOODSINFO');
   ModalResult := MROK;
 end;
 
@@ -1993,7 +1993,7 @@ end;
 
 procedure TfrmInitGoods.RefreshUnits;
 begin
-  dllGlobal.GetZQueryFromName('PUB_MEAUNITS').Close;
+  dllGlobal.Refresh('PUB_MEAUNITS');
   RefreshUnitsList;
 end;
 

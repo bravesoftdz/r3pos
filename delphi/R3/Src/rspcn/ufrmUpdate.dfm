@@ -396,7 +396,7 @@ inherited frmUpdate: TfrmUpdate
   inherited WebUpdater1: TWebUpdater
     ApplicationName = 'shop'
     Author = 'rspcn'
-    AutoGetExeVersion = True
+    DeleteBatchFileOnComplete = False
     MatchDetails = False
     MailErrorReport = False
     OnChangeText = WebUpdater1ChangeText
@@ -404,5 +404,9 @@ inherited frmUpdate: TfrmUpdate
     OnSuccess = WebUpdater1Success
     ProgressBar = ProgressBar1
     ShowUpdateFilesList = True
+  end
+  object RzVersionInfo1: TRzVersionInfo
+    Left = 160
+    Top = 52
   end
 end

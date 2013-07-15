@@ -101,7 +101,8 @@ uses
   ufrmClearStorage in 'app\ufrmClearStorage.pas' {frmClearStorage},
   ufrmPriceExcel in 'app\ufrmPriceExcel.pas' {frmPriceExcel},
   ufrmCustomerExcel in 'app\ufrmCustomerExcel.pas' {frmCustomerExcel},
-  ufrmCustomerDialog in 'app\ufrmCustomerDialog.pas' {frmCustomerDialog};
+  ufrmCustomerDialog in 'app\ufrmCustomerDialog.pas' {frmCustomerDialog},
+  ufrmStorageExcel in 'app\ufrmStorageExcel.pas' {frmStorageExcel};
 
 {$R *.res}
 exports

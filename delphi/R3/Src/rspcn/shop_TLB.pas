@@ -12,10 +12,10 @@ unit shop_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/7/1 18:32:08 from Type Library described below.
+// File generated on 2013/7/15 18:19:43 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: D:\r3pos\R3\Src\rspcn\shop.tlb (1)
+// Type Lib: D:\myWork\Delphi\R3\Src\rspcn\shop.tlb (1)
 // LIBID: {0DA3C686-11D6-4090-89BC-FB6E37712AFF}
 // LCID: 0
 // Helpfile: 
@@ -115,8 +115,6 @@ type
     procedure moveToDefault; safecall;
     function parseSQL(const SQL: WideString): WideString; safecall;
     function signToken(const _token: WideString): WordBool; safecall;
-    function getIniInfo(const FileName: WideString; const Section: WideString; 
-                        const ParamName: WideString; const DefaultValue: WideString): WideString; safecall;
   end;
 
 // *********************************************************************//
@@ -171,8 +169,6 @@ type
     procedure moveToDefault; dispid 242;
     function parseSQL(const SQL: WideString): WideString; dispid 243;
     function signToken(const _token: WideString): WordBool; dispid 244;
-    function getIniInfo(const FileName: WideString; const Section: WideString; 
-                        const ParamName: WideString; const DefaultValue: WideString): WideString; dispid 245;
   end;
 
 // *********************************************************************//

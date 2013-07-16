@@ -147,6 +147,7 @@ type
     procedure RzBmpButton2Click(Sender: TObject);
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
+    procedure edtCLIENT_IDAddClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -218,7 +219,7 @@ var frmPosInOrder: TfrmPosInOrder;
 implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,uCacheFactory,
-     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,ufrmSelectGoods;
+     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,ufrmSelectGoods,ufrmSupplierDialog;
 
 {$R *.dfm}
 
@@ -2006,6 +2007,23 @@ begin
    end;
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
+end;
+
+procedure TfrmPosInOrder.edtCLIENT_IDAddClick(Sender: TObject);
+var SObj:TRecord_;
+begin
+  inherited;
+  SObj := TRecord_.Create;
+  try
+    if TfrmSupplierDialog.ShowDialog(self,'',SObj) then
+       begin
+         edtCLIENT_ID.KeyValue := SObj.FieldByName('CLIENT_ID').AsString;
+         edtCLIENT_ID.Text := SObj.FieldByName('CLIENT_NAME').AsString;
+         AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CLIENT_ID').AsString;
+       end;
+  finally
+    SObj.Free;
+  end;
 end;
 
 initialization

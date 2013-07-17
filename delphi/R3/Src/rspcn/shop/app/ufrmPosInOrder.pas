@@ -91,6 +91,7 @@ type
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
     RzToolButton4: TRzToolButton;
+    RzBmpButton3: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -148,6 +149,7 @@ type
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -2024,6 +2026,12 @@ begin
   finally
     SObj.Free;
   end;
+end;
+
+procedure TfrmPosInOrder.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  ImportExcelClick(nil);
 end;
 
 initialization

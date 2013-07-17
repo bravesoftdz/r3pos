@@ -133,6 +133,8 @@ type
     ClearStorage: TMenuItem;
     RzBmpButton4: TRzBmpButton;
     ChangeImport: TMenuItem;
+    RzBmpButton8: TRzBmpButton;
+    N1: TMenuItem;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -174,6 +176,7 @@ type
     procedure ClearStorageClick(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure ChangeImportClick(Sender: TObject);
+    procedure RzBmpButton8Click(Sender: TObject);
   private
     ESortId:string;
     FSortId:string;
@@ -454,7 +457,6 @@ begin
   rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
   if rs.Locate('RELATION_ID',relation,[]) then
      begin
-       relationId := relation;
        relationType := rs.FieldbyName('RELATION_TYPE').AsInteger;
        case flag of
        0:result := rs.FieldbyName('TENANT_ID').AsInteger;
@@ -501,6 +503,7 @@ begin
        dataFactory.CancelBatch;
        Raise;
     end;
+    relationId := relation;
     ReadInfo;
     if not cdsGoodsInfo.IsEmpty and (cdsGoodsInfo.FieldByName('COMM').AsString[2]='2') then
        dbState := dsBrowse
@@ -774,6 +777,9 @@ begin
   inherited;
   if cdsList.IsEmpty then Exit;
   openinfo(cdsList.FieldbyName('GODS_ID').AsString,cdsList.FieldbyName('RELATION_ID').AsInteger);
+  if (DBGridEh1.Col>=0) and (DBGridEh1.Columns[DBGridEh1.Col].FieldName='AMOUNT') then edtAMOUNT.SetFocus;
+  if (DBGridEh1.Col>=0) and (DBGridEh1.Columns[DBGridEh1.Col].FieldName='NEW_INPRICE') then edtNEW_INPRICE.SetFocus;
+  if (DBGridEh1.Col>=0) and (DBGridEh1.Columns[DBGridEh1.Col].FieldName='NEW_OUTPRICE') then edtSHOP_NEW_OUTPRICE.SetFocus;
 end;
 
 procedure TfrmGoodsStorage.WriteOweOrder;
@@ -2138,6 +2144,17 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmGoodsStorage.RzBmpButton8Click(Sender: TObject);
+var
+  x,x1:TPoint;
+begin
+  inherited;
+  x1.X := RzBmpButton8.Left+2;
+  x1.Y := RzBmpButton8.Top+RzBmpButton8.Height+1;
+  x := RzPanel13.ClientToScreen(x1);
+  PopupMenu1.Popup(x.X,x.Y);
 end;
 
 initialization

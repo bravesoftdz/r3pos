@@ -58,8 +58,10 @@ type
     FappWnd: THandle;
     lastError:string;
     FInited: boolean;
+    FisBusy: boolean;
     procedure SetappWnd(const Value: THandle);
     procedure SetInited(const Value: boolean);
+    procedure SetisBusy(const Value: boolean);
   protected
     //开始事务  超时设置 单位秒
     procedure BeginTrans(TimeOut:integer=-1);stdcall;
@@ -116,6 +118,7 @@ type
     function getDBHelp:IdbDLLHelp;
     property appWnd:THandle read FappWnd write SetappWnd;
     property Inited:boolean read FInited write SetInited;
+    property isBusy:boolean read FisBusy write SetisBusy;
   end;
 
 var dllFactory:TDLLFactory;
@@ -552,7 +555,6 @@ end;
 var
   rs:TZQuery;
 begin
-  dataFactory.sqlite.Connect;
   if (token.tenantId='') and CheckRegister then
      begin
        rs := TZQuery.Create(nil);
@@ -625,6 +627,8 @@ var
   idx:integer;
   app:TDLLPlugin;
 begin
+  isBusy := true;
+  try
   appWnd := hWnd;
   if not getTokenInfo then Exit;
   idx := find('shop.dll');
@@ -641,6 +645,9 @@ begin
        app.Init;
      end;
   Inited := true;
+  finally
+    isBusy := false;
+  end;
 end;
 
 procedure TDLLFactory.SetappWnd(const Value: THandle);
@@ -656,6 +663,8 @@ end;
 procedure TDLLFactory.Clear(synced:boolean);
 var i:integer;
 begin
+  isBusy := true;
+  try
   for i:=FList.Count-1 downto 0 do
     begin
       if not TDLLPlugin(FList[i]).eraseApp(synced) then
@@ -665,6 +674,9 @@ begin
     end;
   Inited := false;
   FList.Clear;
+  finally
+    isBusy := false;
+  end;
 end;
 
 function TDLLFactory.getToken: string;
@@ -689,6 +701,11 @@ end;
 procedure TDLLFactory.SetInited(const Value: boolean);
 begin
   FInited := Value;
+end;
+
+procedure TDLLFactory.SetisBusy(const Value: boolean);
+begin
+  FisBusy := Value;
 end;
 
 { TDLLPlugin }

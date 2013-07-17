@@ -97,6 +97,7 @@ type
     edtBK_CARD_NO: TRzPanel;
     edtCARD_NO: TcxTextEdit;
     RzToolButton4: TRzToolButton;
+    RzBmpButton3: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -157,6 +158,7 @@ type
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCARD_NOEnter(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -2718,6 +2720,13 @@ begin
   finally
     SObj.Free;
   end;
+end;
+
+procedure TfrmPosOutOrder.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  ImportExcelClick(nil);
+
 end;
 
 initialization

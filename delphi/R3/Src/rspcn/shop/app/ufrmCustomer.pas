@@ -116,6 +116,7 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     red1: TLabel;
     red2: TLabel;
+    RzBmpButton8: TRzBmpButton;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure serachTextChange(Sender: TObject);
@@ -145,6 +146,7 @@ type
     procedure RzBmpButton1Click(Sender: TObject);
     procedure ExcelImportClick(Sender: TObject);
     procedure edtCUST_CODEExit(Sender: TObject);
+    procedure RzBmpButton8Click(Sender: TObject);
   private
     searchTxt:string;
     FdbState: TDataSetState;
@@ -1027,6 +1029,12 @@ begin
      (Copy(edtCUST_CODE.Text,1,3) = '145') or
      (Copy(edtCUST_CODE.Text,1,3) = '147') then
   edtMOVE_TELE.Text := edtCUST_CODE.Text;
+end;
+
+procedure TfrmCustomer.RzBmpButton8Click(Sender: TObject);
+begin
+  inherited;
+  ExcelImportClick(nil);
 end;
 
 initialization

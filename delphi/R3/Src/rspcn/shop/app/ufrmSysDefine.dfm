@@ -5813,7 +5813,7 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 0
         Width = 752
         Height = 610
-        ActivePage = TabSheet1
+        ActivePage = TabSheet4
         Align = alClient
         Color = 15461355
         UseColoredTabs = True
@@ -10223,8 +10223,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel40: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 31
-                Height = 16
+                Width = 51
+                Height = 26
                 Align = alClient
                 Alignment = taCenter
                 Caption = #27983#35272
@@ -10598,8 +10598,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel41: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 31
-                Height = 16
+                Width = 52
+                Height = 26
                 Align = alClient
                 Alignment = taCenter
                 Caption = #27983#35272

@@ -171,6 +171,7 @@ begin
   try
     url := xsmUC+'users/gettoken';
     xml := IdHTTP1.Get(url);
+    xsmSignature := xml;
     xml := Utf8ToAnsi(xml);
     Doc := CreateXML(xml);
     if not Assigned(doc) then Raise Exception.Create('请求令牌失败...');
@@ -178,7 +179,6 @@ begin
     if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
     if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
-    xsmSignature := xml;
     loginTime := getTickCount;
     result := true;
   except
@@ -215,6 +215,7 @@ try
   result := false;
   url := xsmUC+'users/dologin/up?j_username='+username+'&j_password='+md5(md5(password)+xsmChallenge);
   xml := IdHTTP1.Get(url);
+  xsmSignature := xml;
   xml := Utf8ToAnsi(xml);
   Doc := CreateXML(xml);
   if not Assigned(doc) then Raise Exception.Create('请求登录失败...');
@@ -222,7 +223,6 @@ try
   if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
-  xsmSignature := xml;
   xsmLogined := true;
   xsmUser := username;
   loginTime := getTickCount;

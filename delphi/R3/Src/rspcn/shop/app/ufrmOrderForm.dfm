@@ -540,9 +540,10 @@ inherited frmOrderForm: TfrmOrderForm
               ShowTitle = True
               AutoFitColWidth = True
               OnFindClick = fndGODS_IDFindClick
+              OnAddClick = fndGODS_IDAddClick
               ShowButton = True
               LocateStyle = lsDark
-              Buttons = [zbFind]
+              Buttons = [zbNew, zbFind]
               DropListStyle = lsFixed
               OnSaveValue = fndGODS_IDSaveValue
               MultiSelect = False

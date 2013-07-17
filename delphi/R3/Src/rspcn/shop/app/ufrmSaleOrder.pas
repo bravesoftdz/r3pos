@@ -91,6 +91,7 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     frfSalesOrder: TfrReport;
     RzToolButton4: TRzToolButton;
+    RzBmpButton1: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -136,6 +137,7 @@ type
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -156,7 +158,7 @@ type
     CarryRule:integer;
     //保留小数位
     Deci:integer;
-    
+
     searchTxt:string;
   protected
     procedure SetdbState(const Value: TDataSetState);override;
@@ -2315,6 +2317,13 @@ begin
   finally
     SObj.Free;
   end;
+end;
+
+procedure TfrmSaleOrder.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  ImportExcelClick(nil);
+
 end;
 
 initialization

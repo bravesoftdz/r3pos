@@ -305,12 +305,20 @@ end;
 
 function TdataFactory.iDbType: Integer;
 begin
-  result := db.iDbType;
+  try
+    result := db.iDbType;
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 function TdataFactory.InTransaction: boolean;
 begin
-  result := db.InTransaction;
+  try
+    result := db.InTransaction;
+  finally
+    if dbFlag=0 then db.DisConnect;
+  end;
 end;
 
 procedure TdataFactory.MoveToDefault;

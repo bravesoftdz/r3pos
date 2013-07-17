@@ -78,8 +78,9 @@ procedure DLLEntryPoint(dwReason: DWord);
 begin
   if (dwReason = DLL_PROCESS_DETACH) Then
   Begin
+    Application.Handle := oldHandle;
     eraseApp(false);
-    {asm
+    asm
       xor edx, edx
       push ebp
       push OFFSET @@safecode
@@ -90,7 +91,7 @@ begin
       @@safecode:
       call Halt0;
       @@exit:
-    end; }
+    end; 
   end;
 end;
 
@@ -105,7 +106,7 @@ begin
     oldHandle := Application.Handle;
     dllApplication.handle := appWnd;
     Application.OnException := dllApplication.dllException;
-    //Application.Handle := appWnd;
+    Application.Handle := appWnd;
     token.decode(strpas(_token));
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
@@ -175,7 +176,7 @@ begin
     idx := webForm.IndexOf(mid);
     if idx>=0 then
        begin
-         if not TfrmWebForm(webForm.Objects[idx]).checkCanClose then Raise Exception.Create('系统正在运行中，不能关闭。');
+         if not TfrmWebForm(webForm.Objects[idx]).checkCanClose then Raise Exception.Create('正在业务中，不能关闭。');
          Form := TForm(webForm.Objects[idx]);
          webForm.Delete(idx);
          Form.Free;

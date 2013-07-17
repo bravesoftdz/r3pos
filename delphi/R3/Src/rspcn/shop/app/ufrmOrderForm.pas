@@ -143,6 +143,7 @@ type
     procedure fndGODS_IDFindClick(Sender: TObject);
     procedure toolPresentClick(Sender: TObject);
     procedure ImportExcelClick(Sender: TObject);
+    procedure fndGODS_IDAddClick(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -2769,6 +2770,31 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmOrderForm.fndGODS_IDAddClick(Sender: TObject);
+var
+  gid:string;
+  AObj:TRecord_;
+  rs:TZQuery;
+begin
+  inherited;
+  if TfrmInitGoods.ShowDialog(self,'',gid) then
+     begin
+        AObj := TRecord_.Create;
+        try
+          rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+          if rs.Locate('GODS_ID',gid,[]) then
+          begin
+            AObj.ReadFromDataSet(rs);
+            AddFromDialog(AObj);
+          end
+          else
+            Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
+        finally
+          AObj.Free;
+        end;
+     end;
 end;
 
 end.

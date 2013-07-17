@@ -208,7 +208,6 @@ begin
              dataFactory.sqlite.DisConnect;
              if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
              if not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
-             dataFactory.sqlite.Connect;
            end;
       end;
    try
@@ -222,7 +221,6 @@ begin
            dataFactory.sqlite.DisConnect;
            if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
            if not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
-           dataFactory.sqlite.Connect;
            Raise Exception.Create('升级数据库出错了,错误:'+E.Message);
         end;
    end;

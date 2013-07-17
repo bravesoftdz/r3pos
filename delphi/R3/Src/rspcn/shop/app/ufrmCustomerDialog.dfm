@@ -2,16 +2,16 @@ inherited frmCustomerDialog: TfrmCustomerDialog
   Left = 372
   Top = 182
   Caption = 'frmCustomerDialog'
-  ClientHeight = 377
-  ClientWidth = 424
+  ClientHeight = 367
+  ClientWidth = 508
   OldCreateOrder = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
-    Width = 424
-    Height = 349
+    Width = 508
+    Height = 339
     object red1: TLabel
       Left = 389
       Top = 35
@@ -27,8 +27,8 @@ inherited frmCustomerDialog: TfrmCustomerDialog
       ParentFont = False
     end
     object Label1: TLabel
-      Left = 389
-      Top = 80
+      Left = 461
+      Top = 75
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -42,7 +42,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object Label2: TLabel
       Left = 389
-      Top = 125
+      Top = 115
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -109,8 +109,8 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object edtBK_CUST_NAME: TRzPanel
       Left = 150
-      Top = 70
-      Width = 235
+      Top = 65
+      Width = 299
       Height = 31
       BorderOuter = fsStatus
       BorderWidth = 1
@@ -151,7 +151,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
       object edtCUST_NAME: TcxTextEdit
         Left = 105
         Top = 4
-        Width = 127
+        Width = 192
         Height = 23
         Properties.MaxLength = 20
         TabOrder = 1
@@ -161,7 +161,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object edtBK_SEX: TRzPanel
       Left = 150
-      Top = 205
+      Top = 189
       Width = 235
       Height = 31
       BorderOuter = fsStatus
@@ -229,7 +229,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object edtBK_BIRTHDAY: TRzPanel
       Left = 150
-      Top = 250
+      Top = 231
       Width = 235
       Height = 31
       BorderOuter = fsStatus
@@ -279,7 +279,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object edtBK_PRICE_ID: TRzPanel
       Left = 150
-      Top = 115
+      Top = 105
       Width = 235
       Height = 31
       BorderOuter = fsStatus
@@ -357,7 +357,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object edtBK_MOVE_TELE: TRzPanel
       Left = 150
-      Top = 160
+      Top = 147
       Width = 235
       Height = 31
       BorderOuter = fsStatus
@@ -408,7 +408,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object btnSave: TRzBmpButton
       Left = 218
-      Top = 303
+      Top = 284
       Width = 72
       Bitmaps.TransparentColor = clFuchsia
       Bitmaps.Up.Data = {
@@ -624,7 +624,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
     object btnCancel: TRzBmpButton
       Left = 314
-      Top = 303
+      Top = 284
       Width = 72
       Bitmaps.TransparentColor = clFuchsia
       Bitmaps.Up.Data = {
@@ -839,7 +839,7 @@ inherited frmCustomerDialog: TfrmCustomerDialog
       OnClick = btnCancelClick
     end
     object RzPanel10: TRzPanel
-      Left = 31
+      Left = 29
       Top = 24
       Width = 89
       Height = 107
@@ -1007,16 +1007,16 @@ inherited frmCustomerDialog: TfrmCustomerDialog
     end
   end
   inherited pnlAddressBar: TPanel
-    Width = 424
+    Width = 508
     inherited Image3: TImage
-      Width = 416
+      Width = 500
     end
     inherited RzLabel1: TRzLabel
       Width = 7
       Caption = ''
     end
     inherited Image1: TImage
-      Left = 420
+      Left = 504
     end
     object RzLabel26: TRzLabel [5]
       Left = 10
@@ -1032,14 +1032,14 @@ inherited frmCustomerDialog: TfrmCustomerDialog
       TextStyle = tsShadow
     end
     inherited btnClose: TRzBmpButton
-      Left = 392
+      Left = 476
     end
     inherited RzBmpButton4: TRzBmpButton
-      Left = 340
+      Left = 424
       Visible = False
     end
     inherited btnWindow: TRzBmpButton
-      Left = 366
+      Left = 450
       Visible = False
     end
   end

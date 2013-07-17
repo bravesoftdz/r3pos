@@ -90,6 +90,7 @@ type
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
     RzToolButton4: TRzToolButton;
+    RzBmpButton1: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -133,6 +134,8 @@ type
     procedure edtPAY_TOTALKeyPress(Sender: TObject; var Key: Char);
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
+    procedure edtCLIENT_IDAddClick(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -195,7 +198,7 @@ var frmStockOrder: TfrmStockOrder;
 implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,ufrmPayment,
-     ufrmOrderPreview,ufrmSaveDesigner;
+     ufrmOrderPreview,ufrmSaveDesigner,ufrmSupplierDialog;
 
 {$R *.dfm}
 
@@ -1648,6 +1651,30 @@ begin
    end;
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
+end;
+
+procedure TfrmStockOrder.edtCLIENT_IDAddClick(Sender: TObject);
+var
+  _Obj:TRecord_;
+begin
+  inherited;
+  _Obj := TRecord_.Create;
+  try
+     if TfrmSupplierDialog.ShowDialog(self,'',_Obj) then
+        begin
+          edtCLIENT_ID.KeyValue := _Obj.FieldbyName('CLIENT_ID').AsString;
+          edtCLIENT_ID.Text := _Obj.FieldbyName('CLIENT_NAME').AsString;
+        end;
+  finally
+     _Obj.Free;
+  end;
+end;
+
+procedure TfrmStockOrder.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  ImportExcelClick(nil);
+
 end;
 
 initialization

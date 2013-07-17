@@ -39,7 +39,7 @@ uses
   Classes, Windows, Controls, Forms, ComCtrls, ExtCtrls, StdCtrls, OleCtrls, SysUtils,
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
   RzPanel, Messages, MSHTML, IEConst, RzPrgres,shop_TLB,EncDec, msxml, ComObj, urlParser,
-  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate;
+  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate,HTTPApp;
 const
   WM_BROWSER_INIT =WM_USER+1000;
   WM_SEND_INPUT =WM_USER+9001;
@@ -907,7 +907,7 @@ begin
                                 while w<3 do
                                 begin
                                   inc(w);
-                                  curSheet.EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+UcFactory.xsmSignature,15000);
+                                  curSheet.EWB.Go(UcFactory.xsmUC+'tokenconsumer?xmlStr='+HttpEncode(UcFactory.xsmSignature),15000);
                                   xsmLogined := UcFactory.chkLogin(curSheet.EWB);
                                   if xsmLogined then break;
                                 end;
@@ -1622,9 +1622,11 @@ end;
 procedure TfrmBrowerForm.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
+  if frmUpdate.Visible then Exit; 
+  if DLLFactory.isBusy then Exit;
   btnClose.Enabled := false;
   try
-    if not frmUpdate.Visible then dllFactory.Clear(true);
+    dllFactory.Clear(true);
     btnClose.Enabled := true;
   except
     on E:Exception do
@@ -1668,8 +1670,13 @@ end;
 
 procedure TfrmBrowerForm.upgrade(var Message: TMessage);
 begin
-  if frmUpdate.CheckUpgrade then
+  btnClose.Enabled := false;
+  try
+  if token.online and frmUpdate.CheckUpgrade then
      frmUpdate.Show;
+  finally
+     btnClose.Enabled := true;
+  end;
 end;
 
 procedure TfrmBrowerForm.lblSignOutClick(Sender: TObject);

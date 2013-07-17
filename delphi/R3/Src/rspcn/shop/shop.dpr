@@ -102,7 +102,9 @@ uses
   ufrmPriceExcel in 'app\ufrmPriceExcel.pas' {frmPriceExcel},
   ufrmCustomerExcel in 'app\ufrmCustomerExcel.pas' {frmCustomerExcel},
   ufrmCustomerDialog in 'app\ufrmCustomerDialog.pas' {frmCustomerDialog},
-  ufrmStorageExcel in 'app\ufrmStorageExcel.pas' {frmStorageExcel};
+  ufrmStorageExcel in 'app\ufrmStorageExcel.pas' {frmStorageExcel},
+  ufrmSupplierDialog in 'app\ufrmSupplierDialog.pas' {frmSupplierDialog},
+  ObjSupplierV60 in 'obj\ObjSupplierV60.pas';
 
 {$R *.res}
 exports

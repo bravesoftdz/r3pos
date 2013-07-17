@@ -812,6 +812,41 @@ item: Include Script
   Pathname=%_WISE_%\INCLUDE\uninstal.wse
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\ExcelTemplate\库存导入表.xls
+  Destination=%MAINDIR%\ExcelTemplate\库存导入表.xls
+  Flags=0000000010000010
+  File Size=26112
+  File Date=20130716 090034
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\ExcelTemplate\商品单据导入表.xls
+  Destination=%MAINDIR%\ExcelTemplate\商品单据导入表.xls
+  Flags=0000000010000010
+  File Size=25088
+  File Date=20130716 090034
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\ExcelTemplate\商品信息导入表.xls
+  Destination=%MAINDIR%\ExcelTemplate\商品信息导入表.xls
+  Flags=0000000010000010
+  File Size=25600
+  File Date=20130716 090034
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\ExcelTemplate\会员信息导入表.xls
+  Destination=%MAINDIR%\ExcelTemplate\会员信息导入表.xls
+  Flags=0000000010000010
+  File Size=25088
+  File Date=20130716 090034
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\ExcelTemplate\会员价格导入表.xls
+  Destination=%MAINDIR%\ExcelTemplate\会员价格导入表.xls
+  Flags=0000000010000010
+  File Size=25088
+  File Date=20130716 091325
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\debug\tuxedo11\udataobj\System.rdp
   Destination=%MAINDIR%\debug\tuxedo11\udataobj\System.rdp
   Flags=0000000010000010

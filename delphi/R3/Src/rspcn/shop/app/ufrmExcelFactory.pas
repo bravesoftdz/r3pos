@@ -88,6 +88,8 @@ type
     RzLabel16: TRzLabel;
     RzLabel17: TRzLabel;
     Image5: TImage;
+    RzPanel14: TRzPanel;
+    Image6: TImage;
     procedure edtFileNameClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);

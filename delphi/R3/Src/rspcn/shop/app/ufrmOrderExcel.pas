@@ -180,7 +180,11 @@ begin
   end;
 
   if (strError<>'') then
+  begin
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
     Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
+  end;
 end;
 
 procedure TfrmOrderExcel.CreateParams;

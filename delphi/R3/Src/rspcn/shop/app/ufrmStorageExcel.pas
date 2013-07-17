@@ -204,7 +204,11 @@ begin
   end;
 
   if (strError<>'') then
+  begin
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
     Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
+  end;
 end;
 
 procedure TfrmStorageExcel.CreateParams;
@@ -315,9 +319,12 @@ begin
                 cdsExcel.Edit;
                 cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据'+cdsColumn.fieldByName('DestTitle').asstring+'重复;';
                 cdsExcel.Post;
+              end
+              else if (strPre<>strNext) then
+              begin
+                strPre:=strNext;
+                preID:=rs.fieldByName('ID').AsInteger;
               end;
-              strPre:=strNext;
-              preID:=rs.fieldByName('ID').AsInteger;
               //if strNext<>'' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
@@ -752,6 +759,7 @@ function TfrmStorageExcel.DuplicateCheckExcute: Boolean;
 var strPre,strNext:string;
     strIndex:integer;
 begin
+  result:=false;
   cdsExcel.DisableControls;
   //只判断写CODE的数据条
   cdsExcel.Filtered:=false;
@@ -782,6 +790,7 @@ begin
   cdsExcel.SortedFields:='ID';
   cdsExcel.Filtered:=false;
   cdsExcel.EnableControls;
+  result:=true;
 end;
 
 class function TfrmStorageExcel.ExcelFactory(Owner: TForm; vDataSet: TZQuery;Fields,Formats:string;

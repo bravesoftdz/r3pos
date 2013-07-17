@@ -188,7 +188,7 @@ end;
 
 procedure TfrmExcelFactory.DecodeFormats(s: string);
 begin
-  if s='' then Raise Exception.Create('没有定义要导入的字段');  
+  if s='' then Raise Exception.Create('没有定义要导入的字段');
   vList.CommaText := s;
   if s<>'' then
      mxCol := StrtoInt(vList.Names[vList.Count-1])+1
@@ -391,6 +391,7 @@ begin
   else if rzPage.ActivePageIndex=1 then
   begin
     CreateColumn;
+    cdsColumn.First;
     btnPrev.Visible:=True;
     btnPrev.Caption:='上一步';
     btnNext.Visible:=True;
@@ -480,6 +481,7 @@ begin
   end
   else if rzPage.ActivePageIndex=3 then
   begin
+    cdsColumn.First;
     btnPrev.Visible:=True;
     btnPrev.Caption:='上一步';
     btnNext.Visible:=True;
@@ -571,7 +573,7 @@ begin
          end;
     end;
   cdsColumn.First;
-end; 
+end;
 
 procedure TfrmExcelFactory.cdsDropColumnPropertiesChange(Sender: TObject);
 begin
@@ -635,12 +637,13 @@ begin
     cdsExcel.Post;
     cdsExcel.Next;
   end;
-  if not isFirstCheck then
+  {if not isFirstCheck then
   begin
 
   end
   else
-    FindColumn('');
+  }
+  FindColumn('');
 
   if selfCheck then
      SelfCheckExcute;
@@ -893,10 +896,12 @@ end;
 procedure TfrmExcelFactory.RzLabel41Click(Sender: TObject);
 begin
   inherited;
-  OpenDialog1.Execute;
-  edtFileName.Text := OpenDialog1.FileName;
-  FilePath := Trim(edtFileName.Text);
-  isFirstCheck:=true;
+  if OpenDialog1.Execute then
+  begin
+    edtFileName.Text := OpenDialog1.FileName;
+    FilePath := Trim(edtFileName.Text);
+    isFirstCheck:=true;
+  end;
 end;
 
 procedure TfrmExcelFactory.chkHeaderClick(Sender: TObject);

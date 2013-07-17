@@ -18,8 +18,7 @@ uses
 
 type
   TfrmStorageExcel = class(TfrmExcelFactory)
-    RzLabel14: TRzLabel;
-    procedure Image4Click(Sender: TObject);
+    procedure RzLabel17Click(Sender: TObject);
   private
     FieldCheckSet:array[0..FieldCount] of string;
     FieldType:array [0..FieldCount] of integer;
@@ -28,6 +27,7 @@ type
     function FindColumn(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
+    function DuplicateCheckExcute:Boolean;
     function Check(columnIndex:integer):Boolean;override;
     function CheckGodsCode(cs,ss:TZQuery;strList:TStringList;codeField:string;index:integer): Boolean;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
@@ -69,7 +69,7 @@ begin
 end;
 
 function TfrmStorageExcel.SaveExcel(dsExcel:TZQuery):Boolean;
-var DsGoods,rs,cs,ss:TZQuery;
+var rs,cs,ss:TZQuery;
     GodsId,Bar,Code,Name:String;
     Field:TField;
     strWhere:string;
@@ -77,6 +77,11 @@ begin
   try
     rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
     cs:=TZQuery.Create(nil);
+    ss:=TZQuery.Create(nil);
+
+    ss.Close;
+    ss.SQL.Text:='select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''';
+    dataFactory.Open(ss);
 
     strWhere:='';
 
@@ -95,7 +100,20 @@ begin
       begin
         dsExcel.Edit;
         if rs.Locate('BARCODE',dsExcel.fieldByName('BARCODE').AsString,[]) then
+        begin
           dsExcel.FieldByName('GODS_ID').AsString:=rs.fieldByName('GODS_ID').AsString;
+        end;
+        dsExcel.Post;
+      end;
+
+      Field:=dsExcel.FindField('AMOUNT');
+      if (Field <> nil) and (Field.AsString <> '') then
+      begin
+        dsExcel.Edit;
+        if ss.Locate('GODS_ID',dsExcel.fieldByName('GODS_ID').AsString,[]) then
+        begin
+          dsExcel.FieldByName('AMOUNT').AsFloat:=ss.fieldByName('AMOUNT').AsFloat-dsExcel.FieldByName('AMOUNT').AsFloat;
+        end;
         dsExcel.Post;
       end;
 
@@ -137,6 +155,7 @@ begin
       dsExcel.Next;
     end;
   finally
+    cs.Free;
   end;
   Result := True;
 end;
@@ -206,11 +225,12 @@ begin
   case columnIndex of
     0:begin
          if str='' then
-         strError:='条形码为空;';
+          isNull:=true;
+         //strError:='条形码为空;';
        end;
     1:begin
-         if str='' then
-         strError:='货号为空;';
+         if (isNull) and (str='') then
+         strError:='条形码、货号为空;';
        end;
     2:begin
        if str='' then
@@ -318,6 +338,7 @@ begin
       cdsColumn.Next;
     end;
     OutCheckExcute;
+    DuplicateCheckExcute;
   finally
     rs.Free;
   end;
@@ -382,7 +403,7 @@ begin
               ss.Next;
             end;
             ss.Filtered:=false;
-            DeleteDuplicateString(FieldCheckSet[c],codeList);
+            FieldCheckSet[c]:=DeleteDuplicateString(FieldCheckSet[c],codeList);
 
             CheckGodsCode(cs,ss,codeList,CodeField,c);
           end else //if rs.Locate('barcode',strList[i],[]) then rs中能定位到barcode
@@ -393,6 +414,11 @@ begin
             ss.First;
             while not ss.Eof do
             begin
+              //用GODS_ID来写CODE是为了数据唯一性判断
+              cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+              cdsExcel.Edit;
+              cdsExcel.FieldByName('CODE').AsString:=rs.fieldbyName('GODS_ID').AsString;
+              cdsExcel.Post;
               //计量单位
               if cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
               begin
@@ -516,7 +542,7 @@ begin
       end
       else begin
         FieldType[FieldIndex]:=0;
-        DeleteDuplicateString(FieldCheckSet[c],codeList);
+        FieldCheckSet[c]:=DeleteDuplicateString(FieldCheckSet[c],codeList);
         cdsColumn.Locate('FieldName','GODS_CODE',[]);
         CodeField:=cdsColumn.fieldByName('FileName').AsString;
         c:=cdsColumn.FieldByName('ID').AsInteger;
@@ -536,12 +562,13 @@ var strCode,strUnit,UintField:string;
     FieldName2:string;
     isHas:Boolean;
     gs:TZQuery;
+    strLog:TStringList;
 begin
   gs:=TZQuery.Create(nil);
   //***********************货号***********************
   cs.Close;
   cs.SQL.Text:=
-              'select distinct GODS_CODE,GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VG.USING_BATCH_NO,VG.SORT_ID7,VG.SORT_ID8 '+
+              'select distinct VG.GODS_CODE,VG.GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VG.USING_BATCH_NO,VG.SORT_ID7,VG.SORT_ID8 '+
               'from VIW_GOODSPRICEEXT VG '+
               'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
               'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_CODE in ('+FieldCheckSet[index]+')';
@@ -576,6 +603,11 @@ begin
         ss.First;
         while not ss.Eof do
         begin
+          //用GODS_ID来写CODE是为了数据唯一性判断
+          cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+          cdsExcel.Edit;
+          cdsExcel.FieldByName('CODE').AsString:=cs.fieldbyName('GODS_ID').AsString;
+          cdsExcel.Post;
           if cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
           begin
             UintField:=cdsColumn.fieldByName('FileName').AsString;
@@ -716,13 +748,49 @@ begin
   end;
 end;
 
+function TfrmStorageExcel.DuplicateCheckExcute: Boolean;
+var strPre,strNext:string;
+    strIndex:integer;
+begin
+  cdsExcel.DisableControls;
+  //只判断写CODE的数据条
+  cdsExcel.Filtered:=false;
+  cdsExcel.Filter:='CODE<>''''';
+  cdsExcel.Filtered:=true;
+  //按CODE字段排序
+  cdsExcel.SortedFields:='CODE';
+
+  cdsExcel.First;
+  strPre:=cdsExcel.fieldByName('CODE').AsString;
+  strIndex:=cdsExcel.fieldByName('ID').AsInteger;
+  cdsExcel.Next;
+  while not cdsExcel.Eof do
+  begin
+    strNext:=cdsExcel.fieldByName('CODE').AsString;
+    if strPre=strNext then
+    begin
+      cdsExcel.Edit;
+      cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(strIndex)+'条数据指向同一商品，请确认条码、货号是否统一;';
+      cdsExcel.Post;
+    end else
+    begin
+      strPre:=strNext;
+      strIndex:=cdsExcel.fieldByName('ID').AsInteger;
+    end;
+    cdsExcel.Next;
+  end;
+  cdsExcel.SortedFields:='ID';
+  cdsExcel.Filtered:=false;
+  cdsExcel.EnableControls;
+end;
+
 class function TfrmStorageExcel.ExcelFactory(Owner: TForm; vDataSet: TZQuery;Fields,Formats:string;
   isSelfCheck: Boolean): Boolean;
 begin
   with TfrmStorageExcel.Create(Owner) do
     begin
       try
-        RzLabel26.Caption:=RzLabel26.Caption+'--损益单转库存';
+        RzLabel26.Caption:=RzLabel26.Caption+'--库存';
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields(FieldsString);
@@ -735,10 +803,10 @@ begin
     end;
 end;
 
-procedure TfrmStorageExcel.Image4Click(Sender: TObject);
+procedure TfrmStorageExcel.RzLabel17Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载损益单转库存导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+   if MessageBox(Handle,pchar('是否要下载库存导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -750,8 +818,8 @@ begin
       DeleteFile(SaveDialog1.FileName);
     end;
     try
-      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\损益单转库存导入表.xls') then
-        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\损益单转库存导入表.xls'),pchar(SaveDialog1.FileName),false)
+      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\库存导入表.xls') then
+        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\库存导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
         MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     except

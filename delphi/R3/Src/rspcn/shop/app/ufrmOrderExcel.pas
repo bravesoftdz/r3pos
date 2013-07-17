@@ -15,11 +15,10 @@ uses
 
 type
   TfrmOrderExcel = class(TfrmExcelFactory)
-    RzLabel14: TRzLabel;
     chkPrice: TcxCheckBox;
-    procedure Image4Click(Sender: TObject);
     procedure chkPriceClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
+    procedure RzLabel17Click(Sender: TObject);
   private
     FBarcode:widestring;
     FGoodsCode:widestring;
@@ -81,7 +80,8 @@ begin
       else
         raise exception.Create('没有找到对应的单位！');
 
-      if gs.Locate('BARCODE',dsExcel.fieldByName('BARCODE').AsString,[]) then
+      if (gs.Locate('BARCODE',dsExcel.fieldByName('BARCODE').AsString,[])) or
+         (gs.Locate('GODS_CODE',dsExcel.fieldByName('GODS_CODE').AsString,[])) then
       begin
         dsExcel.Edit;
         dsExcel.FieldByName('GODS_ID').AsString:=gs.fieldByName('GODS_ID').AsString;
@@ -206,7 +206,7 @@ begin
   if fieldName='BARCODE' then
   begin
     if str='' then
-      strError:='条码为空;'
+      isNull:=true
     else begin
       if FBarcodeType=0 then
         strError:='条码不存在;'
@@ -217,8 +217,8 @@ begin
   end;
   if fieldName='GODS_CODE' then
   begin
-    if str='' then
-      strError:='货号为空;';
+    if (isNull) and (str='') then
+      strError:='条码、货号为空;'; 
   end;
   if fieldName='UNIT_ID' then
   begin
@@ -239,9 +239,7 @@ begin
   if fieldName='APRICE' then
   begin
     try
-    if str='' then
-      strError:='单价为空;'
-    else
+    if str<>'' then
       num:=strtofloat(str);
     except
       strError:='无效的单价值;'
@@ -250,9 +248,7 @@ begin
   if fieldName='AMONEY' then
   begin
     try
-    if str='' then
-      strError:='金额为空;'
-    else
+    if str<>'' then
       num:=strtofloat(str);
     except
       strError:='无效的金额值;'
@@ -261,9 +257,7 @@ begin
   if fieldName='AGIO_RATE' then
   begin
     try
-    if str='' then
-      strError:='折扣为空;'
-    else
+    if str<>'' then
       num:=strtofloat(str);
     except
       strError:='无效的折扣值;'
@@ -272,9 +266,7 @@ begin
   if fieldName='AGIO_MONEY' then
   begin
     try
-    if str='' then
-      strError:='让利为空;'
-    else
+    if str<>'' then
       num:=strtofloat(str);
     except
       strError:='无效的让利值;'
@@ -361,7 +353,7 @@ begin
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       rs.SQL.Text:=
-                  'select BARCODE,BARCODE_TYPE,VM1.UNIT_NAME '+
+                  'select BARCODE,GODS_ID,BARCODE_TYPE,VM1.UNIT_NAME '+
                   'from VIW_BARCODE VG '+
                   'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.UNIT_ID=VM1.UNIT_ID '+
                   'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.barcode in ('+FBarcode+')';
@@ -406,6 +398,11 @@ begin
             ss.First;
             while not ss.Eof do
             begin
+              //用GODS_ID来写CODE是为了数据唯一性判断
+              cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+              cdsExcel.Edit;
+              cdsExcel.FieldByName('CODE').AsString:=rs.fieldbyName('GODS_ID').AsString;
+              cdsExcel.Post;
               if cdsColumn.Locate('FieldName','UNIT_ID',[]) then
               begin
                 UintField:=cdsColumn.fieldByName('FileName').AsString;
@@ -485,7 +482,7 @@ begin
   //***********************货号***********************
   cs.Close;
   cs.SQL.Text:=
-              'select distinct GODS_CODE,VM1.UNIT_NAME CALC_UNITS_NAME,VM2.UNIT_NAME SMALL_UNITS_NAME,VM3.UNIT_NAME BIG_UNITS_NAME '+
+              'select distinct GODS_CODE,GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VM2.UNIT_NAME SMALL_UNITS_NAME,VM3.UNIT_NAME BIG_UNITS_NAME '+
               'from VIW_GOODSPRICEEXT VG '+
               'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
               'left join VIW_MEAUNITS VM2 on VG.TENANT_ID=VM2.TENANT_ID and VG.SMALL_UNITS=VM2.UNIT_ID '+
@@ -524,6 +521,11 @@ begin
         ss.First;
         while not ss.Eof do
         begin
+          //用GODS_ID来写CODE是为了数据唯一性判断
+          cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+          cdsExcel.Edit;
+          cdsExcel.FieldByName('CODE').AsString:=cs.fieldbyName('GODS_ID').AsString;
+          cdsExcel.Post;
           if cdsColumn.Locate('FieldName','UNIT_ID',[]) then
           begin
             UintField:=cdsColumn.fieldByName('FileName').AsString;
@@ -585,31 +587,6 @@ begin
         free;
       end;
     end;
-end;
-
-procedure TfrmOrderExcel.Image4Click(Sender: TObject);
-begin
-  inherited;
-  if MessageBox(Handle,pchar('是否要下载商品单据导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
-  saveDialog1.DefaultExt:='*.xls';
-  saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
-  if saveDialog1.Execute then
-  begin
-    if FileExists(SaveDialog1.FileName) then
-    begin
-      if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-        exit;
-      DeleteFile(SaveDialog1.FileName);
-    end;
-    try
-      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls') then
-        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls'),pchar(SaveDialog1.FileName),false)
-      else
-        MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
-    except
-      MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
-    end;
-  end;
 end;
 
 function TfrmOrderExcel.CheckExcute: Boolean;
@@ -736,6 +713,31 @@ begin
   else
     chkPrice.Visible:=false;
   }
+end;
+
+procedure TfrmOrderExcel.RzLabel17Click(Sender: TObject);
+begin
+  inherited;
+  if MessageBox(Handle,pchar('是否要下载商品单据导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  saveDialog1.DefaultExt:='*.xls';
+  saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
+  if saveDialog1.Execute then
+  begin
+    if FileExists(SaveDialog1.FileName) then
+    begin
+      if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
+        exit;
+      DeleteFile(SaveDialog1.FileName);
+    end;
+    try
+      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls') then
+        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls'),pchar(SaveDialog1.FileName),false)
+      else
+        MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
+    except
+      MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
+    end;
+  end;
 end;
 
 end.

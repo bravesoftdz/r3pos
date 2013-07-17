@@ -4326,7 +4326,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       OnClick = ClearStorageClick
     end
     object ChangeImport: TMenuItem
-      Caption = #25439#30410#21333'Excel'#23548#20837'...'
+      Caption = #24211#23384'Excel'#23548#20837'...'
       OnClick = ChangeImportClick
     end
   end

@@ -17,8 +17,7 @@ uses
     FieldCount=26;
 type
   TfrmCustomerExcel = class(TfrmExcelFactory)
-    RzLabel14: TRzLabel;
-    procedure Image4Click(Sender: TObject);
+    procedure RzLabel17Click(Sender: TObject);
   private
     FieldCheckSet:array[0..FieldCount] of string;
     FieldType:array [0..FieldCount] of integer;
@@ -873,7 +872,7 @@ begin
     end;
 end;
 
-procedure TfrmCustomerExcel.Image4Click(Sender: TObject);
+procedure TfrmCustomerExcel.RzLabel17Click(Sender: TObject);
 begin
   inherited;
   if MessageBox(Handle,pchar('是否要下载会员信息导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;

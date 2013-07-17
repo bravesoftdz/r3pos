@@ -18,8 +18,7 @@ uses
 
 type
   TfrmPriceExcel = class(TfrmExcelFactory)
-    RzLabel14: TRzLabel;
-    procedure Image4Click(Sender: TObject);
+    procedure RzLabel17Click(Sender: TObject);
   private
     FieldCheckSet:array[0..FieldCount] of string;
     FieldType:array [0..FieldCount] of integer;
@@ -28,6 +27,7 @@ type
     function FindColumn(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
+    function CheckGodsCode(ss:TZQuery;strList:TStringList;codeField:string;index:integer): Boolean;
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
     procedure ClearParams;
@@ -36,11 +36,17 @@ type
   end;
 
   const
-    FieldsString =
-    'PRICE_ID=会员等级,BARCODE=条形码,NEW_OUTPRICE=计量单位售价,NEW_OUTPRICE1=小包装售价,NEW_OUTPRICE2=大包装售价';   //PRICE_METHOD=定价方式,
+    {FieldsString =
+    'PRICE_ID=会员等级,BARCODE=条形码,GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=本店售价,NEW_OUTPRICE1=本店售价-小包装,NEW_OUTPRICE2=本店售价-大包装';   //PRICE_METHOD=定价方式,
 
     FormatString =
-    '0=PRICE_ID,1=BARCODE,2=NEW_OUTPRICE,3=NEW_OUTPRICE1,4=NEW_OUTPRICE2';   //2=PRICE_METHOD,
+    '0=PRICE_ID,1=BARCODE,2=GODS_CODE,3=GODS_NAME,4=NEW_OUTPRICE,5=NEW_OUTPRICE1,6=NEW_OUTPRICE2';   //2=PRICE_METHOD,
+    }
+    FieldsString =
+    'PRICE_ID=会员等级,BARCODE=条形码,GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=计量单位售价,NEW_OUTPRICE1=小包装售价,NEW_OUTPRICE2=大包装售价';   //PRICE_METHOD=定价方式,
+
+    FormatString =
+    '0=PRICE_ID,1=BARCODE,2=GODS_CODE,3=GODS_NAME,4=NEW_OUTPRICE,5=NEW_OUTPRICE1,6=NEW_OUTPRICE2';   //2=PRICE_METHOD,
 
 implementation
 
@@ -55,7 +61,8 @@ begin
     begin
       Add('PRICE_ID',ftString,30,False);
       Add('BARCODE',ftString,30,False);
-      //Add('PRICE_METHOD',ftString,50,False);
+      Add('GODS_CODE',ftString,20,False);
+      Add('GODS_NAME',ftString,50,False);
       Add('NEW_OUTPRICE',ftFloat,0,False);
       Add('NEW_OUTPRICE1',ftFloat,0,False);
       Add('NEW_OUTPRICE2',ftFloat,0,False);
@@ -172,6 +179,22 @@ begin
     else
       strError:='条形码';
   end;
+  if not cdsColumn.Locate('FieldName','GODS_CODE',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
+  if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+      strError:='商品名称';
+  end;
   if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
   begin
     Result := False;
@@ -207,12 +230,16 @@ begin
     end;
     1:begin
       if str='' then
-        strError:='条码为空;';
+        isNull:=true;
     end;
-    2:begin     //定价方式
+    2:begin     
+      if (isNull) and (str='') then
+        strError:='条形码、货号为空;';
+    end;
+    3:begin   //商品名称
 
     end;
-    3:begin
+    4:begin
         try
           if str<>'' then
             num:=strtofloat(str)
@@ -222,22 +249,18 @@ begin
           strError:='无效的计量单位售价;'
         end;
     end;
-    4:begin
+    5:begin
         try
           if str<>'' then
-            num:=strtofloat(str)
-          else
-            strError:='小包装售价为空;';
+            num:=strtofloat(str);
          except
           strError:='无效的小包装售价;'
         end;
     end;
-    5:begin
+    6:begin
         try
           if str<>'' then
-            num:=strtofloat(str)
-          else
-            strError:='大包装售价为空;';
+            num:=strtofloat(str);
          except
           strError:='无效的大包装售价;'
         end;
@@ -298,18 +321,19 @@ begin
 end;
 
 function TfrmPriceExcel.OutCheckExcute: Boolean;
-var rs,ss,gs,cs:TZQuery;
-    FieldName,barField,strError:string;
-    i,j,c,FieldIndex,preId:integer;
-    strWhere,barWhere:string;
-    strList,barList:TStringList;
-    preBarcode,nextBarcode,priceId:string;
+var rs,ss,gs,cs,ds:TZQuery;
+    FieldName,barField,strError,codeField:string;
+    i,j,c,FieldIndex,preId,codeIndex:integer;
+    strWhere,barWhere,codeWhere:string;
+    strList,barList,codeList:TStringList;
+    preBarcode,nextBarcode,priceId,strcode:string;
 begin
   try
     rs:=TZQuery.Create(nil);
     ss:=TZQuery.Create(nil);
     gs:=TZQuery.Create(nil);
     cs:=TZQuery.Create(nil);
+    ds:=TZQuery.Create(nil);
     ss.Data:=cdsExcel.Data;
 
     //*********************会员等级*****************************
@@ -374,7 +398,7 @@ begin
                   begin
                     for j:=0 to barList.Count-1 do
                     begin
-                      // 检测库中是否存在等级对应的定价
+                      // add 检测库中是否存在等级对应的定价
                       if gs.Locate('barcode',barList[j],[]) then
                       begin
                         cs.Close;
@@ -383,6 +407,14 @@ begin
                         dataFactory.Open(cs);
                       end;
                       //
+                      //add 货号
+                      DeleteDuplicateString('',codeList);
+                      cdsColumn.Locate('FieldName','GODS_CODE',[]);
+                      CodeField:=cdsColumn.fieldByName('FileName').AsString;
+                      codeIndex:=cdsColumn.FieldByName('ID').AsInteger;
+                      FieldCheckSet[codeIndex]:='';
+                      //
+                      cdsColumn.Locate('FieldName','BARCODE',[]);
                       ss.Filtered:=false;
                       ss.Filter:=FieldName+'='''+strList[i]+''' and '+barField+'='''+barList[j]+'''';
                       ss.Filtered:=true;
@@ -390,16 +422,20 @@ begin
                       ss.First;
                       preBarcode:=ss.fieldByName(barField).AsString;
                       preId:=ss.fieldByName('ID').AsInteger;
+                      strCode:=ss.fieldByName(CodeField).AsString;
                       if not gs.Locate('barcode',preBarcode,[]) then
                       begin
                         cdsExcel.Locate('ID',preId,[]);
                         cdsExcel.Edit;
                         cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
                         cdsExcel.Post;
+                        if strCode<>'' then
+                          TransformtoString(FieldCheckSet[codeIndex],strCode);
                       end else
                       begin
                         cdsExcel.Locate('ID',preId,[]);
                         cdsExcel.Edit;
+                        cdsExcel.FieldByName('CODE').AsString:=gs.fieldByName('GODS_ID').AsString;
                         if not cs.IsEmpty then
                           cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'该等级的存在此商品的会员价;';
                         cdsExcel.Post;
@@ -414,10 +450,13 @@ begin
                           cdsExcel.Edit;
                           cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
                           cdsExcel.Post;
+                          if ss.fieldByName(CodeField).AsString<>'' then
+                            TransformtoString(FieldCheckSet[codeIndex],ss.fieldByName(CodeField).AsString);
                         end else
                         begin
                           cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
                           cdsExcel.Edit;
+                          cdsExcel.FieldByName('CODE').AsString:=gs.fieldByName('GODS_ID').AsString;
                           if (not cs.IsEmpty) and (preBarcode<>nextBarcode) then
                             cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'该等级的存在此商品的会员价;';
                           cdsExcel.Post;
@@ -433,6 +472,13 @@ begin
                         preId:=ss.fieldByName('ID').AsInteger;
                         ss.Next;
                       end;
+                      if FieldCheckSet[codeIndex]<>'' then
+                      begin
+                        ds.Data:=ss.Data;
+                        FieldCheckSet[codeIndex]:=DeleteDuplicateString(FieldCheckSet[codeIndex],codeList);
+                        CheckGodsCode(ss,codeList,CodeField,codeIndex);
+                      end;
+                      ss.Filtered:=false;
                     end;
                   end;
                 end;
@@ -443,11 +489,112 @@ begin
       end
       else
         FieldType[FieldIndex]:=0;
-    end; 
+    end;
 
   finally
     rs.Free;
     ss.Free;
+    gs.Free;
+  end;
+end;
+
+function TfrmPriceExcel.CheckGodsCode(ss:TZQuery;strList:TStringList;codeField:string;index:integer): Boolean;
+var strCode,preCode,nextCode:string;
+    j,preIndex:integer;
+    FieldName2:string;
+    isHas:Boolean;
+    gs,cs:TZQuery;
+    strLog:TStringList;
+begin
+  strLog:=TStringlist.Create;
+  cs:=TZQuery.Create(nil);
+  gs:=TZQuery.Create(nil);
+  try
+    ss.SortedFields:=codeField;
+    ss.First;
+    preCode:=ss.fieldByName(codeField).AsString;
+    preIndex:=ss.fieldByName('ID').AsInteger;
+    ss.Next;
+    while not ss.Eof do
+    begin
+      nextCode:=ss.fieldByName(codeField).AsString;
+      if (preCode=nextCode) then
+      begin
+        cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+        cdsExcel.Edit;
+        cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preIndex)+'条数据货号重复;';
+        cdsExcel.Post;
+        ss.Next;
+      end else
+      begin
+        preCode:=nextCode;
+        preIndex:=ss.fieldByName('ID').AsInteger;
+      end;
+      ss.Next;
+    end;
+    //***********************货号***********************
+    cs.Close;
+    cs.SQL.Text:=
+                'select distinct VG.GODS_CODE,VG.GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VG.USING_BATCH_NO,VG.SORT_ID7,VG.SORT_ID8 '+
+                'from VIW_GOODSPRICEEXT VG '+
+                'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
+                'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_CODE in ('+FieldCheckSet[index]+')';
+    dataFactory.Open(cs);
+
+    strCode:=codeField;
+    if not cs.IsEmpty then   //通过货号都在库中找到
+    begin
+      FieldType[index]:=1;
+      for j:=0 to strList.Count-1 do
+      begin
+        ss.Filtered:=false;
+        ss.Filter:=strCode+'='''+strList[j]+'''';
+        ss.Filtered:=true;
+        ss.First;
+        if not cs.Locate('GODS_CODE',strList[j],[]) then
+        begin
+          while not ss.Eof do
+          begin
+            cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+            cdsExcel.Edit;
+            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'货号不存在;';
+            cdsExcel.Post;
+            ss.Next;
+          end;
+        end else
+        begin
+          while not ss.Eof do
+          begin
+            cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+            cdsExcel.Edit;
+            cdsExcel.FieldByName('CODE').AsString:=cs.fieldByName('GODS_ID').AsString;
+            cdsExcel.Post;
+            ss.Next;
+          end;
+        end;
+        ss.Filtered:=false;
+      end;
+    end else
+    begin
+      for j:=0 to strList.Count-1 do
+      begin
+        ss.Filtered:=false;
+        ss.Filter:=strCode+'='''+strList[j]+'''';
+        ss.Filtered:=true;
+        ss.First;
+        while not ss.Eof do
+        begin
+          cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+          cdsExcel.Edit;
+          cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'货号不存在;';
+          cdsExcel.Post;
+          ss.Next;
+        end;
+        ss.Filtered:=false;
+      end
+    end;
+  finally
+    cs.Free;
     gs.Free;
   end;
 end;
@@ -471,7 +618,7 @@ begin
     end;
 end;
 
-procedure TfrmPriceExcel.Image4Click(Sender: TObject);
+procedure TfrmPriceExcel.RzLabel17Click(Sender: TObject);
 begin
   inherited;
   if MessageBox(Handle,pchar('是否要下载会员价格导入模板？'),'友情提示..',MB_YESNO+ MB_ICONQUESTION)<>6 then exit;

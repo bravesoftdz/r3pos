@@ -65,27 +65,29 @@ type
     chkignore: TcxCheckBox;
     btnExport: TRzBmpButton;
     RzPanel12: TRzPanel;
-    edtBK_Input: TRzPanel;
-    RzPanel24: TRzPanel;
-    RzBackground4: TRzBackground;
-    RzLabel11: TRzLabel;
-    edtFileName: TcxButtonEdit;
     RzPanel5: TRzPanel;
     RzLabel8: TRzLabel;
     edtNum: TcxSpinEdit;
     chkHeader: TcxCheckBox;
     RzPanel7: TRzPanel;
-    Image4: TImage;
-    RzLabel7: TRzLabel;
     RzStatus: TRzStatusPane;
     RzPanel13: TRzPanel;
-    RzLabel13: TRzLabel;
-    Image5: TImage;
     labResult: TRzLabel;
     PopupMenu1: TPopupMenu;
     Excel1: TMenuItem;
     N1: TMenuItem;
     cdsExcel: TZQuery;
+    Image4: TImage;
+    RzLabel7: TRzLabel;
+    RzPanel70: TRzPanel;
+    RzPanel71: TRzPanel;
+    RzBackground33: TRzBackground;
+    RzLabel41: TRzLabel;
+    edtFileName: TcxTextEdit;
+    RzLabel15: TRzLabel;
+    RzLabel16: TRzLabel;
+    RzLabel17: TRzLabel;
+    Image5: TImage;
     procedure edtFileNameClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
@@ -104,6 +106,8 @@ type
     procedure chkignoreClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
+    procedure RzLabel41Click(Sender: TObject);
+    procedure chkHeaderClick(Sender: TObject);
   private
     FDataSet: TZQuery;
     FStartRow: Integer;
@@ -138,6 +142,7 @@ type
     vList:TStringList;
     mxCol,ErrorSum:Integer;
     FilePath: String;
+    isNull:Boolean;
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;virtual;
     property DataSet:TZQuery read FDataSet write SetDataSet;
     property StartRow:integer read FStartRow write SetStartRow;
@@ -214,6 +219,13 @@ begin
 end;
 
 procedure TfrmExcelFactory.OpenExecl(FileName: string);
+function CheckNull(V:array of string):Boolean;
+var i:integer;
+begin
+  result := true;
+  for i:=0 to 3 do
+    result := result and (trim(V[i])='');
+end;
 var Excel,excelWorkBook: Variant;
   r,n,i:Integer;
   excelRow,excelCol:integer;
@@ -236,6 +248,33 @@ begin
       excelRow:=excelWorkBook.WorkSheets[1].UsedRange.Rows.Count;
       FSumCol:=excelWorkBook.WorkSheets[1].UsedRange.Columns.Count;
       r := 0;
+      n := 0;
+      //遇到两条空行之后才认为结束
+      while true do
+      begin
+        inc(r);
+        if r<StartRow then Continue;
+        if (r mod 10)=0 then
+        begin
+          RzStatus.Caption := '打开'+inttostr(r)+'行...';
+          RzStatus.Update;
+        end;
+        for i:= 1 to mxCol do
+          V[i] := Excel.Cells.Item[r, i].Value;
+        if CheckNull(v) then
+        begin
+          inc(n);
+          if n>=2 then Exit;
+          Continue;
+        end;
+        cdsExcel.Append;
+
+        cdsExcel.FieldByName('ID').AsInteger := r;
+        for i:=1 to mxCol do
+          cdsExcel.Fields[i].AsString := trim(V[i]);
+        cdsExcel.Post;
+      end;
+      {直接获取Excel行
       while r< excelRow do
       begin
         inc(r);
@@ -252,7 +291,7 @@ begin
           cdsExcel.Fields[i].AsString := Excel.Cells[r,i].Value;
         cdsExcel.Post;
       end;
-
+      }
     finally
       excelWorkBook.close;
       Excel.quit;
@@ -473,10 +512,12 @@ end;
 procedure TfrmExcelFactory.FormShow(Sender: TObject);
 begin
   inherited;
+  // CacheFactory.getAdvPngImage(adv03.Name,adv03.Picture);
   rzPage.ActivePageIndex:=5;
   btnPrev.Visible:=False;
   btnNext.Visible:=True;
   btnNext.Caption:='开始';
+  dbState:=dsEdit;
 end;
 
 procedure TfrmExcelFactory.CreateColumn;
@@ -582,17 +623,19 @@ begin
   cdsColumn.DisableControls;
   cdsExcel.DisableControls;
 
+  cdsExcel.First;
+  while not cdsExcel.Eof do
+  begin
+    cdsExcel.Edit;
+    cdsExcel.FieldByName('Msg').AsString:='';
+    cdsExcel.FieldByName('STATE').AsString:='0';
+    cdsExcel.FieldByName('CODE').AsString:='';
+    cdsExcel.Post;
+    cdsExcel.Next;
+  end;
   if not isFirstCheck then
   begin
-    cdsExcel.First;
-    while not cdsExcel.Eof do
-    begin
-      cdsExcel.Edit;
-      cdsExcel.FieldByName('Msg').AsString:='';
-      cdsExcel.FieldByName('STATE').AsString:='0';
-      cdsExcel.Post;
-      cdsExcel.Next;
-    end;
+
   end
   else
     FindColumn('');
@@ -604,6 +647,7 @@ begin
   cdsExcel.First;
   while not cdsExcel.Eof do
   begin
+    isNull:=false;
     cdsExcel.Edit;
     RzStatus1.Caption := '数据检测:'+InttoStr(cdsExcel.RecNo)+'/'+InttoStr(cdsExcel.RecordCount);
     RzStatus1.Update;
@@ -611,7 +655,7 @@ begin
     WriteToDataSet(DataSet);
     if cdsExcel.FieldByName('Msg').AsString<>'' then
     begin
-      if cdsExcel.FieldByName('STATE').AsString='2' then
+      if cdsExcel.FieldByName('STATE').AsString='2' then      //STATE：0 默认；1 异常
         cdsExcel.FieldByName('STATE').AsString:='3'
       else
         cdsExcel.FieldByName('STATE').AsString:='1';
@@ -842,6 +886,24 @@ begin
       vList:=vStr
   else
     vList:=vList+','+vStr;
+end;
+
+procedure TfrmExcelFactory.RzLabel41Click(Sender: TObject);
+begin
+  inherited;
+  OpenDialog1.Execute;
+  edtFileName.Text := OpenDialog1.FileName;
+  FilePath := Trim(edtFileName.Text);
+  isFirstCheck:=true;
+end;
+
+procedure TfrmExcelFactory.chkHeaderClick(Sender: TObject);
+begin
+  inherited;
+  if chkHeader.Checked then
+    RzPanel5.Enabled:=true
+  else
+    RzPanel5.Enabled:=false;
 end;
 
 end.

@@ -18,8 +18,7 @@ uses
 
 type
   TfrmGoodsExcel = class(TfrmExcelFactory)
-    RzLabel14: TRzLabel;
-    procedure Image4Click(Sender: TObject);
+    procedure RzLabel17Click(Sender: TObject);
   private
     FieldCheckSet:array[0..FieldCount] of string;
     FieldType:array [0..FieldCount] of integer;
@@ -28,11 +27,12 @@ type
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
     function FindColumn(vStr:string):Boolean;override;
-    function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复 
+    function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
     procedure ClearParams;
+    function AddUnits:Boolean;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
   end;
@@ -399,9 +399,7 @@ begin
     8:begin
         try
           if str<>'' then
-            num:=strtofloat(str)
-          else
-            strError:='最低售价为空;';
+            num:=strtofloat(str);
         except
           strError:='无效的最低售价;'
         end;
@@ -422,7 +420,7 @@ begin
       end;
     12:begin
          if str='' then
-          strError:='小包装单位为空;'
+          //strError:='小包装单位为空;'
         else begin
           if FUnitType[1]=0 then
             strError:='小包装单位不存在;';
@@ -431,30 +429,26 @@ begin
     13:begin
         try
           if str<>''then
-            num:=strtofloat(str)
-          else
-            strError:='小包装换算系数为空;'
+            num:=strtofloat(str);
         except
           strError:='无效的小包装换算系数;'
         end;
       end;
     14:begin
-         if str='' then
-         strError:='小包装条形码为空;';
+        // if str='' then
+        // strError:='小包装条形码为空;';
       end;
     15:begin
         try
           if str<> '' then
-            num:=strtofloat(str)
-          else
-            strError:='小包装本店售价为空;';
+            num:=strtofloat(str);
         except
           strError:='无效的小包装本店售价;'
         end;
       end;
     16:begin
          if str='' then
-          strError:='大包装单位为空;'
+          //strError:='大包装单位为空;'
         else begin
           if FUnitType[2]=0 then
             strError:='大包装单位不存在;';
@@ -463,30 +457,26 @@ begin
     17:begin
         try
           if str<> '' then
-            num:=strtofloat(str)
-          else
-            strError:='大包装换算系数为空;';
+            num:=strtofloat(str);
         except
           strError:='无效的大包装换算系数;'
         end;
       end;
     18:begin
-        if str='' then
-         strError:='大包装条形码为空;';
+        //if str='' then
+        // strError:='大包装条形码为空;';
       end;
     19:begin
         try
           if str<> '' then
-           num:=strtofloat(str)
-          else
-           strError:='大包装本店售价为空;'; 
+           num:=strtofloat(str);
         except
           strError:='无效的大包装本店售价;'
         end;
       end;
     20:begin
         if str='' then
-         strError:='供应商为空;'
+         //strError:='供应商为空;'
         else begin
           if FieldType[20]=0 then
             strError:='供应商不存在;';
@@ -542,23 +532,26 @@ begin
           if isSort then
           begin
             rs.First;
-            strPre:=rs.fieldByName(FileName).AsString;
+            strPre:=trim(rs.fieldByName(FileName).AsString);
             preId:=rs.fieldByName('ID').AsInteger;
             //if strPre<>'' then
             TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
             rs.Next;
             while not rs.Eof do
             begin
-              strNext:=rs.fieldByName(FileName).AsString;
+              strNext:=trim(rs.fieldByName(FileName).AsString);
               if (strPre<>'') and (strPre=strNext) then        //非空情况时不做重复判定
               begin
                 cdsExcel.Locate('ID',rs.fieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
                 cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据'+cdsColumn.fieldByName('DestTitle').asstring+'重复;';
                 cdsExcel.Post;
+              end
+              else if strPre<>strNext then
+              begin
+                strPre:=strNext;
+                preID:=rs.fieldByName('ID').AsInteger;
               end;
-              strPre:=strNext;
-              preID:=rs.fieldByName('ID').AsInteger;
               //if strNext<>'' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
@@ -568,7 +561,7 @@ begin
             rs.First;
             while not rs.Eof do
             begin
-              strNext:=rs.fieldByName(FileName).AsString;
+              strNext:=trim(rs.fieldByName(FileName).AsString);
               if strNext<> '' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
@@ -578,6 +571,7 @@ begin
       end;
       cdsColumn.Next;
     end;
+    AddUnits;
     OutCheckExcute;
   finally
     rs.Free;
@@ -836,7 +830,7 @@ begin
     end;
 end;
 
-procedure TfrmGoodsExcel.Image4Click(Sender: TObject);
+procedure TfrmGoodsExcel.RzLabel17Click(Sender: TObject);
 begin
   inherited;
   if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
@@ -859,6 +853,180 @@ begin
       MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
-end; 
+end;
+
+function TfrmGoodsExcel.AddUnits: Boolean;
+  function GetSeqNo(tenantId:string):integer;
+  var rs:TZQuery;
+  begin
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select MAX(SEQ_NO) from PUB_MEAUNITS where TENANT_ID='+tenantId;
+      dataFactory.Open(rs);
+      if rs.Fields[0].AsString = '' then
+         result := 1
+      else
+         result := rs.Fields[0].AsInteger + 1;
+    finally
+      rs.Free;
+    end;
+  end;
+var unitField,tempField,strWhere,strUnits:string;
+    unitList,tmpList:TStringlist;
+    c,i:integer;
+    rs,cdsUnits,tmpUnits:TZQuery;
+    Params:TftParamList;
+    tmpObj:TRecord_;
+begin
+  result:=false;
+  try
+    rs:=TZQuery.Create(nil);
+    CreateStringList(unitList);
+    tmpList:=TStringList.Create;
+
+    //计量单位、小包装单位、大包装单位
+    for c:=0 to 2 do
+    begin
+      if c=0 then
+        tempField:='CALC_UNITS'
+      else if c=1 then
+        tempField:='SMALL_UNITS'
+      else if c=2 then
+        tempField:='BIG_UNITS';
+
+      unitField:='';
+      if cdsColumn.Locate('FieldName',tempField,[]) then
+      begin
+        tmpList.CommaText:=FieldCheckSet[cdsColumn.fieldByName('ID').asInteger];
+        for i:=0 to tmpList.Count-1 do
+        begin
+          if tmpList[i]<>'' then
+            unitList.Add(tmpList[i]);
+        end;
+      end;
+    end;
+
+    //处理可以用于检索
+    for i:=0 to unitList.Count-1 do
+    begin
+      if strWhere='' then
+        strWhere:=''''+unitList[i]+''''
+      else
+      strWhere:=strWhere+','+''''+unitList[i]+'''';
+    end;
+
+    if unitList.Count>0 then
+    begin
+      rs.Close;
+      rs.SQL.Text:='select distinct UNIT_NAME from VIW_MEAUNITS where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and UNIT_NAME in ('+strWhere+')';
+      dataFactory.Open(rs);
+      if (rs.IsEmpty) then
+      begin
+        strUnits:=unitList.Text;
+      end else
+      begin
+        for i:=0 to unitList.Count-1 do
+        begin
+          if not rs.Locate('UNIT_NAME',unitList[i],[]) then
+          begin
+            if strUnits='' then
+              strUnits:=unitList[i]
+            else
+              strunits:=strUnits+','+unitList[i];
+          end;
+        end;
+      end;
+    end;
+
+    if strUnits<>'' then
+    begin
+      try
+        if MessageBox(Handle,pchar('检索到系统中没有以下单位：'+strUnits+'，是否导入？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)=6 then
+        begin
+          tmpList.Clear;
+          tmpList.CommaText:=strUnits;
+
+          cdsUnits:=TZQuery.Create(nil);
+          Params := TftParamList.Create(nil);
+          cdsUnits.Close;
+          try
+            Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+            Params.ParamByName('UNIT_ID').AsString := '';
+            dataFactory.Open(cdsUnits,'TMeaUnitsV60',Params);
+          finally
+            Params.Free;
+          end;
+
+          for i:=0 to tmpList.Count-1 do
+          begin
+            cdsUnits.Append;
+            cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+            cdsUnits.FieldByName('UNIT_ID').AsString := TSequence.NewId;
+            cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(token.tenantId)+i;
+            cdsUnits.FieldByName('UNIT_NAME').AsString := trim(tmpList[i]);
+            cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(tmpList[i],3);
+            cdsUnits.Post;
+          end;
+
+          dataFactory.BeginBatch;
+          try
+            dataFactory.AddBatch(cdsUnits,'TMeaUnitsV60');
+            dataFactory.CommitBatch;
+          except
+            dataFactory.CancelBatch;
+            Raise;
+          end;
+        end;
+
+        // 本地保存
+        if dataFactory.iDbType <> 5 then
+        begin
+           dataFactory.MoveToSqlite;
+           tmpUnits := TZQuery.Create(nil);
+           Params := TftParamList.Create(nil);
+           tmpObj := TRecord_.Create;
+           try
+             cdsUnits.First;
+             while not cdsUnits.Eof do
+             begin
+               Params.ParamByName('TENANT_ID').AsInteger := cdsUnits.FieldByName('TENANT_ID').AsInteger;
+               Params.ParamByName('UNIT_ID').AsString := cdsUnits.FieldByName('UNIT_ID').AsString;
+               dataFactory.Open(tmpUnits,'TMeaUnitsV60',Params);
+
+               if tmpUnits.IsEmpty then tmpUnits.Append else tmpUnits.Edit;
+
+               tmpObj.ReadFromDataSet(cdsUnits);
+               tmpObj.WriteToDataSet(tmpUnits);
+               cdsUnits.Next;
+             end;
+
+             dataFactory.BeginBatch;
+             try
+              dataFactory.AddBatch(tmpUnits,'TMeaUnitsV60');
+              dataFactory.CommitBatch;
+             except
+              dataFactory.CancelBatch;
+              Raise;
+             end;
+           finally
+             dataFactory.MoveToDefault;
+             tmpUnits.Free;
+             Params.Free;
+             tmpObj.Free;
+           end;
+        end;
+      finally
+        cdsUnits.Free;
+      end;
+      dllGlobal.Refresh('PUB_MEAUNITS');
+    end;
+
+  finally
+    rs.Free;
+    unitList.Free;
+    tmpList.Free;
+  end;
+  result:=true;
+end;
 
 end.

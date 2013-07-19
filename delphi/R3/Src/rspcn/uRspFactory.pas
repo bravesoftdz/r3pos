@@ -252,6 +252,10 @@ begin
   Node.text := DesEncode(username,pubpwd);
   FindNode(doc,'body\caTenant').appendChild(Node);
 
+  Node := doc.createElement('appVersion');
+  Node.text := 'V6';
+  FindNode(doc,'body\caTenant').appendChild(Node);
+
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   doc := CreateXML(RspLogin(inxml,rspUrl,1));

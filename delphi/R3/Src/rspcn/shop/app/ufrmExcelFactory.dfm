@@ -34,7 +34,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Top = 1
           Width = 601
           Height = 340
-          ActivePage = TabSheet6
+          ActivePage = TabSheet2
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -913,8 +913,8 @@ inherited frmExcelFactory: TfrmExcelFactory
                   object RzLabel41: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 52
-                    Height = 26
+                    Width = 31
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #27983#35272
@@ -969,7 +969,7 @@ inherited frmExcelFactory: TfrmExcelFactory
               Top = 28
               Width = 96
               Height = 15
-              Caption = #23548#20837#25991#20214#26597#30475
+              Caption = #23548#20837#25991#20214#39044#35272
               Font.Charset = GB2312_CHARSET
               Font.Color = clWhite
               Font.Height = -15
@@ -4012,22 +4012,22 @@ inherited frmExcelFactory: TfrmExcelFactory
       item
         Name = 'FileTitle'
         DataType = ftString
-        Size = 20
+        Size = 100
       end
       item
         Name = 'FileName'
         DataType = ftString
-        Size = 20
+        Size = 50
       end
       item
         Name = 'FieldName'
         DataType = ftString
-        Size = 20
+        Size = 100
       end
       item
         Name = 'DestTitle'
         DataType = ftString
-        Size = 20
+        Size = 50
       end>
     CachedUpdates = True
     Params = <>
@@ -4254,7 +4254,7 @@ inherited frmExcelFactory: TfrmExcelFactory
       item
         Name = 'CODE'
         DataType = ftString
-        Size = 20
+        Size = 50
       end>
     CachedUpdates = True
     Params = <>

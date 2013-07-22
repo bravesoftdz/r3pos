@@ -4535,7 +4535,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     end
     object VIPPriceImport: TMenuItem
       Caption = #21830#21697#20215#26684#23548#20837'...'
-      Visible = False
       OnClick = VIPPriceImportClick
     end
     object ChangeImport: TMenuItem

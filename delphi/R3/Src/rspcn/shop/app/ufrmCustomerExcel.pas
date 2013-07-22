@@ -259,14 +259,12 @@ begin
       dsExcel.Next;
     end;
 
-    dataFactory.BeginBatch;
     try
-      dataFactory.AddBatch(dsExcel,'TCustomerV60',nil);
-      dataFactory.CommitBatch;
+      dataFactory.UpdateBatch(dsExcel,'TCustomerV60');
     except
-      dataFactory.CancelBatch;
       Raise;
-    end;
+    end; 
+
   finally
     cs.Free;
   end;
@@ -303,9 +301,10 @@ begin
 
   if (strError<>'') then
   begin
+    cdsColumn.RecNo:=LastcdsColumnIndex;
     cdsColumn.EnableControls;
     cdsExcel.EnableControls;
-    Raise Exception.Create('缺少'+strError+'字段，请检查字段对应关系或导入文件！');
+    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
   end;
 end;
 

@@ -14,14 +14,6 @@ inherited frmCustomerExcel: TfrmCustomerExcel
               inherited chkHeader: TcxCheckBox
                 Properties.Caption = #21551#29992#26631#39064#34892
               end
-              inherited RzPanel70: TRzPanel
-                inherited RzPanel71: TRzPanel
-                  inherited RzLabel41: TRzLabel
-                    Width = 31
-                    Height = 16
-                  end
-                end
-              end
             end
           end
           inherited TabSheet3: TRzTabSheet

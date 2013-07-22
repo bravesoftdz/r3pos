@@ -1010,7 +1010,10 @@ begin
     end;
 
     if TfrmCustomerExcel.ExcelFactory(self,rs,'','',true) then
+    begin
       dllGlobal.Refresh('PUB_CUSTOMER');
+      Open;
+    end;
 
   finally
     Params.Free;

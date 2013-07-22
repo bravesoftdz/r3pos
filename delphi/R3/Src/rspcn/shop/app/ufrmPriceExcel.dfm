@@ -1,4 +1,7 @@
 inherited frmPriceExcel: TfrmPriceExcel
+  Left = 846
+  Top = 282
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
@@ -13,14 +16,6 @@ inherited frmPriceExcel: TfrmPriceExcel
               end
               inherited chkHeader: TcxCheckBox
                 Properties.Caption = #21551#29992#26631#39064#34892
-              end
-              inherited RzPanel70: TRzPanel
-                inherited RzPanel71: TRzPanel
-                  inherited RzLabel41: TRzLabel
-                    Width = 31
-                    Height = 16
-                  end
-                end
               end
             end
           end

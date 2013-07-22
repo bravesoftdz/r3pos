@@ -145,6 +145,7 @@ type
     mxCol,ErrorSum:Integer;
     FilePath: String;
     isNull:Boolean;
+    LastcdsColumnIndex:integer;
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;virtual;
     property DataSet:TZQuery read FDataSet write SetDataSet;
     property StartRow:integer read FStartRow write SetStartRow;
@@ -348,10 +349,12 @@ end;
 procedure TfrmExcelFactory.edtFileNameClick(Sender: TObject);
 begin
   inherited;
-  OpenDialog1.Execute;
-  edtFileName.Text := OpenDialog1.FileName;
-  FilePath := Trim(edtFileName.Text);
-  isFirstCheck:=true;
+  if OpenDialog1.Execute then
+  begin
+    edtFileName.Text := OpenDialog1.FileName;
+    FilePath := Trim(edtFileName.Text);
+    isFirstCheck:=true;
+  end;
 end;
 
 procedure TfrmExcelFactory.FormCreate(Sender: TObject);
@@ -391,7 +394,6 @@ begin
   else if rzPage.ActivePageIndex=1 then
   begin
     CreateColumn;
-    cdsColumn.First;
     btnPrev.Visible:=True;
     btnPrev.Caption:='上一步';
     btnNext.Visible:=True;
@@ -400,6 +402,7 @@ begin
   end
   else if rzPage.ActivePageIndex=2 then
   begin
+    LastcdsColumnIndex:=cdsColumn.RecNo;
     CheckExcute;
     CreateDbGridEhTitle;
     btnPrev.Visible:=True;
@@ -481,7 +484,7 @@ begin
   end
   else if rzPage.ActivePageIndex=3 then
   begin
-    cdsColumn.First;
+    cdsColumn.RecNo:=lastcdsColumnIndex;
     btnPrev.Visible:=True;
     btnPrev.Caption:='上一步';
     btnNext.Visible:=True;
@@ -580,7 +583,7 @@ begin
   inherited;
   if cdsDropColumn.Visible and cdsDropColumn.Focused then
      begin
-       if cdsDropColumn.ItemIndex >=0 then
+       if (cdsDropColumn.Text<>'') and (cdsDropColumn.ItemIndex >=0) then
        begin
          cdsColumn.Edit;
          cdsColumn.FieldByName('ID').AsInteger :=cdsDropColumn.ItemIndex;

@@ -9,7 +9,7 @@ type
   //台账计算基类
   TBaseCalc = class
   private
-    dbHelp:IdbHelp; //数据库访问接口
+    dbHelp:IdbHelp;  //数据库访问接口
     FParams:TftParamList; //参数集对象
     FTENANT_ID:integer;   //企业ID
     FLastMth_Date:TDate;  //上一个结账日期

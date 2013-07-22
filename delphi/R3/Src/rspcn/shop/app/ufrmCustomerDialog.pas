@@ -40,12 +40,13 @@ type
     RzPanel32: TRzPanel;
     RzLabel6: TRzLabel;
     edtMOVE_TELE: TcxTextEdit;
-    btnSave: TRzBmpButton;
-    btnCancel: TRzBmpButton;
     Label2: TLabel;
     cdsCustomer: TZQuery;
     RzPanel10: TRzPanel;
     Image4: TImage;
+    RzPanel2: TRzPanel;
+    btnSave: TRzBmpButton;
+    btnCancel: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);

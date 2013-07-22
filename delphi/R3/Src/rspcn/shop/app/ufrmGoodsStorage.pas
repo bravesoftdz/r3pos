@@ -196,6 +196,7 @@ type
     procedure SetstorFlag(const Value: integer);
     procedure DBGridPrint;
     procedure SaveChangeOrder(rs: TZQuery);
+    procedure RefreshMeaUnits;
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
@@ -1209,6 +1210,7 @@ begin
   if TfrmInitGoods.ShowDialog(self,'',gid) then
      begin
        editPanel.Visible := false;
+       RefreshMeaUnits;
        open;
        cdsList.Locate('GODS_ID',gid,[]); 
      end; 
@@ -1960,7 +1962,10 @@ begin
   inherited;
   rs:=TZQuery.Create(nil);
   if TfrmGoodsExcel.ExcelFactory(self,rs,'','',true) then
+  begin
      dllGlobal.Refresh('PUB_GOODSINFO');
+     RefreshMeaUnits;
+  end;
 end;
 
 procedure TfrmGoodsStorage.RzLabel37Click(Sender: TObject);
@@ -1976,7 +1981,10 @@ begin
   try
     rs:=TZQuery.Create(nil);
     if TfrmPriceExcel.ExcelFactory(self,rs,'','',true) then
+    begin
        dllGlobal.Refresh('PUB_GOODSINFO');
+       Open;
+    end;
   finally
     rs.Free;
   end;
@@ -2155,6 +2163,24 @@ begin
   x1.Y := RzBmpButton8.Top+RzBmpButton8.Height+1;
   x := RzPanel13.ClientToScreen(x1);
   PopupMenu1.Popup(x.X,x.Y);
+end;
+
+procedure TfrmGoodsStorage.RefreshMeaUnits;
+var rs:TZQuery;
+    column:TColumnEh;
+begin
+  dllGlobal.Refresh('PUB_MEAUNITS');
+  rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  column := FindColumn('CALC_UNITS');
+  column.KeyList.Clear;
+  column.PickList.Clear;
+  rs.First;
+  while not rs.Eof do
+    begin
+      column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      rs.Next;
+    end;
 end;
 
 initialization

@@ -164,6 +164,7 @@ type
     procedure SetdefUnit(const Value: integer);
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
+    procedure RefreshMeaUnits;
   protected
     RowID:integer;
     FinputMode: integer;
@@ -2794,7 +2795,26 @@ begin
         finally
           AObj.Free;
         end;
+        RefreshMeaUnits;
      end;
+end;
+
+procedure TfrmOrderForm.RefreshMeaUnits;
+var rs:TZQuery;
+    column:TColumnEh;
+begin
+  dllGlobal.Refresh('PUB_MEAUNITS');
+  rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  column := FindColumn('UNIT_ID');
+  column.KeyList.Clear;
+  column.PickList.Clear;
+  rs.First;
+  while not rs.Eof do
+    begin
+      column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      rs.Next;
+    end;
 end;
 
 end.

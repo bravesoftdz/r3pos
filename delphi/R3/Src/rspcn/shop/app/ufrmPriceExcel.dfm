@@ -1,7 +1,6 @@
 inherited frmPriceExcel: TfrmPriceExcel
   Left = 846
   Top = 282
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
@@ -32,17 +31,17 @@ inherited frmPriceExcel: TfrmPriceExcel
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'FileTitle'
-                    Footers = <>
-                    Title.Caption = #25991#20214#23383#27573
-                    Width = 195
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'DestTitle'
                     Footers = <>
                     Title.Caption = #30446#26631#23383#27573
                     Width = 204
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'FileTitle'
+                    Footers = <>
+                    Title.Caption = #25991#20214#23383#27573
+                    Width = 195
                     Control = cdsDropColumn
                     OnBeforeShowControl = DBGridEh2Columns2BeforeShowControl
                   end>

@@ -90,6 +90,7 @@ type
     Image5: TImage;
     RzPanel14: TRzPanel;
     Image6: TImage;
+    RzLabel11: TRzLabel;
     procedure edtFileNameClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
@@ -110,12 +111,16 @@ type
     procedure N1Click(Sender: TObject);
     procedure RzLabel41Click(Sender: TObject);
     procedure chkHeaderClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     FDataSet: TZQuery;
     FStartRow: Integer;
     FSumCount,FExceptCount,FSumCol:integer;
     FSelfCheck,isFirstCheck: Boolean;
     procedure CreateColumn;
+    procedure CreateColumn2;
     procedure CreateDbGridEhTitle;
     procedure OpenExecl(FileName: string);
     procedure SetStartRow(value:integer);
@@ -127,7 +132,9 @@ type
  protected
     procedure WriteToDataSet(DataSet: TDataSet);
     procedure DecodeFields(s: string);
+    procedure DecodeFields2(s: string);
     procedure DecodeFormats(s: string);
+    procedure DecodeFormats2(s: string);
     procedure CreateStringList(var vList: TStringList);
     procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
     procedure TransformtoString(var vList:string;vStr:string);overload;
@@ -137,11 +144,13 @@ type
     procedure CreateParams;virtual;
     function CheckExcute:Boolean;virtual;
     function FindColumn(vStr:string):Boolean;virtual;
+    function FindColumn2(vStr:string):Boolean;virtual;
     function SelfCheckExcute:Boolean;virtual;
     function Check(columnIndex:integer):Boolean;virtual;
     function SaveExcel(dsExcel:TZQuery):Boolean;virtual;
+    function IsRequiredFiled(strFiled:string):Boolean;virtual;
   public
-    vList:TStringList;
+    vList,vColumnList:TStringList;
     mxCol,ErrorSum:Integer;
     FilePath: String;
     isNull:Boolean;
@@ -152,6 +161,7 @@ type
     property SelfCheck:Boolean read FSelfCheck write SetSelfCheck;
     property ExceptCount:integer read FExceptCount write SetExceptCount;
     property SumCount:integer read FSumCount;
+    property SumCol:integer read FSumCol;
   end;
 
 implementation
@@ -187,6 +197,29 @@ begin
   end;
 end;
 
+//解析程序中需要的固定的字段
+procedure TfrmExcelFactory.DecodeFields2(s: string);
+var i:integer;
+begin
+  if s='' then Raise Exception.Create('没有定义要导入的字段');
+  vList.CommaText := s;
+  mxCol:=vList.Count+5;
+end;
+
+//组织文件的表头信息
+procedure TfrmExcelFactory.DecodeFormats2(s: string);
+var i:integer;
+begin
+  cdsDropColumn.Properties.Items.Clear;
+  vColumnList.Clear;
+  for i:=1 to DBGridEh1.Columns.Count-1 do
+  begin
+    if i>FSumCol then exit;
+    vColumnList.Add(DBGridEh1.Columns[i].FieldName+'='+DBGridEh1.Columns[i].Title.Caption);
+    cdsDropColumn.Properties.Items.Add(DBGridEh1.Columns[i].Title.Caption);
+  end;
+end;
+
 procedure TfrmExcelFactory.DecodeFormats(s: string);
 begin
   if s='' then Raise Exception.Create('没有定义要导入的字段');
@@ -202,7 +235,7 @@ begin
   cdsColumn.First;
   while not cdsColumn.Eof do
     begin
-        if cdsColumn.FieldbyName('FieldName').AsString <> '' then
+        if cdsColumn.FieldbyName('FileName').AsString <> '' then
         begin
           if Check(cdsColumn.FieldbyName('ID').AsInteger) then
           begin
@@ -346,6 +379,11 @@ begin
 
 end;
 
+function TfrmExcelFactory.FindColumn2(vStr: string): Boolean;
+begin
+
+end;
+
 procedure TfrmExcelFactory.edtFileNameClick(Sender: TObject);
 begin
   inherited;
@@ -361,7 +399,15 @@ procedure TfrmExcelFactory.FormCreate(Sender: TObject);
 begin
   inherited;
   vList := TStringList.Create;
+  vColumnList:=TStringList.Create;
   StartRow := 1;
+end;
+
+procedure TfrmExcelFactory.FormDestroy(Sender: TObject);
+begin
+  vList.Free;
+  vColumnList.Free;
+  inherited; 
 end;
 
 procedure TfrmExcelFactory.btnNextClick(Sender: TObject);
@@ -393,7 +439,8 @@ begin
   end
   else if rzPage.ActivePageIndex=1 then
   begin
-    CreateColumn;
+    DecodeFormats2('');
+    CreateColumn2;
     btnPrev.Visible:=True;
     btnPrev.Caption:='上一步';
     btnNext.Visible:=True;
@@ -444,7 +491,7 @@ begin
   else if rzPage.ActivePageIndex=4 then
   begin
     //Close;
-    ModalResult := mrOK;
+    ModalResult := MROK;
   end;
 end;
 
@@ -578,12 +625,51 @@ begin
   cdsColumn.First;
 end;
 
+procedure TfrmExcelFactory.CreateColumn2;
+var i,n,index:integer;
+  FieldName:string;
+begin
+  cdsColumn.Close;
+  cdsColumn.CreateDataSet;
+  for i:=0 to vList.Count-1 do
+  begin
+    cdsColumn.Append;
+    cdsColumn.FieldByName('ID').AsInteger := i;
+    cdsColumn.FieldByName('FieldName').AsString:=vList.Names[i];
+    cdsColumn.FieldByName('DestTitle').AsString:=vList.ValueFromIndex[i];
+    if chkHeader.Checked then
+    begin
+      for n:=0 to vColumnList.Count-1 do
+      begin
+        if vList.ValueFromIndex[i]=vColumnList.ValueFromIndex[n] then
+        begin
+          cdsDropColumn.ItemIndex := n;
+          cdsColumn.FieldByName('FileName').AsString:=vColumnList.Names[n];
+          cdsColumn.FieldByName('FileTitle').AsString:=vColumnList.ValueFromIndex[n];
+          break;
+        end;
+      end;
+    end else
+    begin
+      if i<vColumnList.Count-1 then
+      begin
+        cdsDropColumn.ItemIndex := i;
+        cdsColumn.FieldByName('FileName').AsString:=vColumnList.Names[i];
+        cdsColumn.FieldByName('FileTitle').AsString:=vColumnList.ValueFromIndex[i];
+      end;
+    end;
+    cdsColumn.Post;
+  end;
+  cdsDropColumn.ItemIndex:=-1;
+  cdsColumn.First;
+end;
+
 procedure TfrmExcelFactory.cdsDropColumnPropertiesChange(Sender: TObject);
 begin
   inherited;
-  if cdsDropColumn.Visible and cdsDropColumn.Focused then
+  {if cdsDropColumn.Visible and cdsDropColumn.Focused then
      begin
-       if (cdsDropColumn.Text<>'') and (cdsDropColumn.ItemIndex >=0) then
+       if cdsDropColumn.ItemIndex >=0 then
        begin
          cdsColumn.Edit;
          cdsColumn.FieldByName('ID').AsInteger :=cdsDropColumn.ItemIndex;
@@ -596,6 +682,24 @@ begin
          cdsColumn.Edit;
          cdsColumn.FieldByName('FieldName').AsString := '';
          cdsColumn.FieldByName('DestTitle').AsString := '';
+         cdsColumn.Post;
+       end;
+     end;
+    }
+    if cdsDropColumn.Visible and cdsDropColumn.Focused then
+     begin
+       if (cdsDropColumn.Text<>'') and (cdsDropColumn.ItemIndex >=0) then
+       begin
+         cdsColumn.Edit;
+         cdsColumn.FieldByName('FileName').AsString :=vColumnList.Names[cdsDropColumn.ItemIndex];
+         cdsColumn.FieldByName('FileTitle').AsString := cdsDropColumn.Text;
+         cdsColumn.Post;
+       end
+       else
+       begin
+         cdsColumn.Edit;
+         cdsColumn.FieldByName('FileName').AsString := '';
+         cdsColumn.FieldByName('FileTitle').AsString := '';
          cdsColumn.Post;
        end;
      end;
@@ -640,13 +744,8 @@ begin
     cdsExcel.Post;
     cdsExcel.Next;
   end;
-  {if not isFirstCheck then
-  begin
 
-  end
-  else
-  }
-  FindColumn('');
+  FindColumn2('');
 
   if selfCheck then
      SelfCheckExcute;
@@ -721,21 +820,20 @@ procedure TfrmExcelFactory.DBGridEh2Columns2BeforeShowControl(
 var i:integer;
 begin
   inherited;
-  if cdsColumn.FieldByName('FieldName').AsString = '' then
-     begin
-       cdsDropColumn.ItemIndex := -1;
-     end
-  else
-     begin
-       for i:=0 to cdsDropColumn.Properties.Items.Count -1 do
-         begin
-           if Integer(cdsDropColumn.Properties.Items.Objects[i])=DataSet.FieldbyName(cdsColumn.FieldByName('FieldName').AsString).Index then
-             begin
-              cdsDropColumn.ItemIndex := i;
-              Exit;
-             end;
-         end;
-     end;
+  if cdsColumn.FieldByName('FileName').AsString='' then
+  begin
+    cdsDropColumn.ItemIndex:=-1;
+  end
+  else begin
+    for i:=0 to vColumnList.Count-1 do
+    begin
+      if vColumnList.ValueFromIndex[i]=cdsColumn.FieldByName('DestTitle').AsString then
+      begin
+        cdsDropColumn.ItemIndex:=i;
+        exit;
+      end;
+    end;
+  end;
 end;
 
 function TfrmExcelFactory.Check(columnIndex:integer): Boolean;
@@ -914,6 +1012,27 @@ begin
     RzPanel5.Enabled:=true
   else
     RzPanel5.Enabled:=false;
+end;
+
+
+procedure TfrmExcelFactory.DBGridEh2DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (Column.FieldName = 'DestTitle') then
+  begin
+    if IsRequiredFiled(cdsColumn.FieldByName('FieldName').AsString) then
+    begin
+      DBGridEh2.Canvas.Font.Color := clred;
+      DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    end;
+  end;
+end;
+
+function TfrmExcelFactory.IsRequiredFiled(strFiled: string): Boolean;
+begin
+
 end;
 
 end.

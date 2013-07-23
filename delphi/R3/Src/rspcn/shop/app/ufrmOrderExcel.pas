@@ -32,11 +32,13 @@ type
     procedure CreateParams;override;
     function CheckExcute:Boolean;override;
     function FindColumn(vStr:string):Boolean;override;
+    function FindColumn2(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function CheckGodsCode(cs,ss:TZQuery):Boolean;
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
+    function IsRequiredFiled(strFiled:string):Boolean;override;
     procedure ClearParams;
   public
     orderForm:TfrmOrderForm;
@@ -188,6 +190,50 @@ begin
   end;
 end;
 
+function TfrmOrderExcel.FindColumn2(vStr:string):Boolean;
+var strError:string;
+begin
+   Result := True;
+   strError:='';
+  if (cdsColumn.Locate('FieldName','BARCODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    strError:='条形码';
+  end;
+  if (cdsColumn.Locate('FieldName','GODS_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
+  if (cdsColumn.Locate('FieldName','GODS_NAME',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+    strError:='商品名称';
+  end;
+  if (cdsColumn.Locate('FieldName','UNIT_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'单位'
+    else
+    strError:='单位';
+  end;
+
+  if (strError<>'') then
+  begin
+    cdsColumn.RecNo:=LastcdsColumnIndex;
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
+    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
+  end;
+end;
+
 procedure TfrmOrderExcel.CreateParams;
 var rs:TZQuery;
     str:string;
@@ -210,8 +256,8 @@ begin
   end;
   if fieldName='BARCODE' then
   begin
-    if str='' then
-      isNull:=true
+    if (isNull) and (str='') then
+      strError:='货号、条码为空;'
     else begin
       if FBarcodeType=0 then
         strError:='条码不存在;'
@@ -222,8 +268,8 @@ begin
   end;
   if fieldName='GODS_CODE' then
   begin
-    if (isNull) and (str='') then
-      strError:='条码、货号为空;'; 
+    if (str='') then
+      isNull:=true;
   end;
   if fieldName='UNIT_ID' then
   begin
@@ -304,15 +350,13 @@ begin
     CreateStringList(unitList);
 
     //条码
-    if cdsColumn.Locate('FieldName','BARCODE',[]) then
+    if (cdsColumn.Locate('FieldName','BARCODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'')  then
         fieldBarcode:=cdsColumn.fieldByName('FileName').AsString;
-    if fieldBarcode='' then
-      raise exception.Create('查询的字段不存在！');
     //货号
-    if cdsColumn.Locate('FieldName','GODS_CODE',[]) then
+    if (cdsColumn.Locate('FieldName','GODS_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
         fieldGodscode:=cdsColumn.fieldByName('FileName').AsString;
     //单位
-    if cdsColumn.Locate('FieldName','UNIT_ID',[]) then
+    if (cdsColumn.Locate('FieldName','UNIT_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
         fieldUnit:=cdsColumn.fieldByName('FileName').AsString;
 
     rs:=TZQuery.Create(nil);
@@ -354,7 +398,7 @@ begin
 
     //*********************条码*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','BARCODE',[]) then
+    if (cdsColumn.Locate('FieldName','BARCODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       rs.SQL.Text:=
@@ -408,7 +452,7 @@ begin
               cdsExcel.Edit;
               cdsExcel.FieldByName('CODE').AsString:=rs.fieldbyName('GODS_ID').AsString;
               cdsExcel.Post;
-              if cdsColumn.Locate('FieldName','UNIT_ID',[]) then
+              if (cdsColumn.Locate('FieldName','UNIT_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
               begin
                 UintField:=cdsColumn.fieldByName('FileName').AsString;
                 strUnit:=ss.fieldByName(UintField).AsString;
@@ -531,7 +575,7 @@ begin
           cdsExcel.Edit;
           cdsExcel.FieldByName('CODE').AsString:=cs.fieldbyName('GODS_ID').AsString;
           cdsExcel.Post;
-          if cdsColumn.Locate('FieldName','UNIT_ID',[]) then
+          if (cdsColumn.Locate('FieldName','UNIT_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
           begin
             UintField:=cdsColumn.fieldByName('FileName').AsString;
             strUnit:=ss.fieldByName(UintField).AsString;
@@ -584,8 +628,8 @@ begin
         RzLabel26.Caption:=RzLabel26.Caption+'--'+orderForm.Caption;
         DataSet:=vDataSet;
         CreateUseDataSet;
-        DecodeFields(Fields);
-        DecodeFormats(Formats);
+        DecodeFields2(Fields);
+        //DecodeFormats(Formats);
         SelfCheck:=isSelfCheck;
         result := (ShowModal=MROK);
       finally
@@ -743,6 +787,14 @@ begin
       MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
+end;
+
+function TfrmOrderExcel.IsRequiredFiled(strFiled: string): Boolean;
+begin
+    result:=false;
+  if (strFiled='BARCODE') or (strFiled='GODS_CODE') or
+     (strFiled='GODS_NAME') or (strFiled='UNIT_ID') then
+    result:=true;
 end;
 
 end.

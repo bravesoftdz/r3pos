@@ -24,10 +24,12 @@ type
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
     function FindColumn(vStr:string):Boolean;override;
+    function FindColumn2(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
+    function IsRequiredFiled(strFiled:string):Boolean;override;
     procedure ClearParams;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
@@ -298,6 +300,30 @@ begin
     else
     strError:='入会门店';
   end;
+  if not cdsColumn.Locate('FieldName','SEX',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'性别'
+    else
+    strError:='性别';
+  end;
+  if not cdsColumn.Locate('FieldName','PRICE_ID',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'会员等级'
+    else
+    strError:='会员等级';
+  end;
+  if not cdsColumn.Locate('FieldName','REGION_ID',[]) then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'地区'
+    else
+    strError:='地区';
+  end;
 
   if (strError<>'') then
   begin
@@ -307,6 +333,67 @@ begin
     Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
   end;
 end;
+
+function TfrmCustomerExcel.FindColumn2(vStr:string):Boolean;
+var strError:string;
+begin
+   Result := True;
+   strError:='';
+  if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    strError:='会员卡号';
+  end;
+  if (cdsColumn.Locate('FieldName','CUST_NAME',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'会员名称'
+    else
+      strError:='会员名称';
+  end;
+  if (cdsColumn.Locate('FieldName','SHOP_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'入会门店'
+    else
+    strError:='入会门店';
+  end;
+  if (cdsColumn.Locate('FieldName','SEX',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'性别'
+    else
+    strError:='性别';
+  end;
+  if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'会员等级'
+    else
+    strError:='会员等级';
+  end;
+  if (cdsColumn.Locate('FieldName','REGION_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'地区'
+    else
+    strError:='地区';
+  end;
+
+  if (strError<>'') then
+  begin
+    cdsColumn.RecNo:=LastcdsColumnIndex;
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
+    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
+  end;
+end;
+
 
 procedure TfrmCustomerExcel.CreateParams;
 var rs:TZQuery;
@@ -479,7 +566,8 @@ begin
     begin
       isSort:=false;
       fieldName:=cdsColumn.FieldbyName('FieldName').AsString;
-      if fieldName <> '' then
+      FileName:=cdsColumn.fieldByName('FileName').AsString;
+      if (fieldName <> '') and (FileName<>'') then
       begin
         if (fieldName='CUST_CODE') or (fieldName='SHOP_ID') or
            (fieldName='SORT_ID') or (fieldName='PRICE_ID') or
@@ -492,7 +580,6 @@ begin
             rs.SortedFields:=cdsColumn.fieldByName('FileName').AsString;
           end;
 
-          FileName:=cdsColumn.fieldByName('FileName').AsString;
           if isSort then
           begin
             rs.First;
@@ -555,7 +642,7 @@ begin
 
     //*********************会员卡号*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','CUST_CODE',[]) then
+    if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -587,7 +674,7 @@ begin
 
     //*********************入会门店*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','SHOP_ID',[]) then
+    if (cdsColumn.Locate('FieldName','SHOP_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -632,7 +719,7 @@ begin
 
     //*********************会员等级*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','PRICE_ID',[]) then
+    if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -679,7 +766,7 @@ begin
 
     //*********************地区*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','REGION_ID',[]) then
+    if (cdsColumn.Locate('FieldName','REGION_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -723,7 +810,7 @@ begin
 
     //*********************证件类型*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','IDN_TYPE',[]) then
+    if (cdsColumn.Locate('FieldName','IDN_TYPE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -767,7 +854,7 @@ begin
 
     //*********************学历*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','DEGREES',[]) then
+    if (cdsColumn.Locate('FieldName','DEGREES',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -811,7 +898,7 @@ begin
 
     //*********************职业*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','OCCUPATION',[]) then
+    if (cdsColumn.Locate('FieldName','OCCUPATION',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -868,8 +955,8 @@ begin
         RzLabel26.Caption:=RzLabel26.Caption+'--会员档案';
         DataSet:=vDataSet;
         CreateUseDataSet;
-        DecodeFields(FieldsString);
-        DecodeFormats(FormatString);
+        DecodeFields2(FieldsString);
+        //DecodeFormats(FormatString);
         SelfCheck:=isSelfCheck;
         result := (ShowModal=MROK);
       finally
@@ -901,6 +988,14 @@ begin
       MessageBox(Handle, Pchar('下载导入模板失败！'),'友情提示..', MB_OK + MB_ICONQUESTION);
     end;
   end;
+end;
+
+function TfrmCustomerExcel.IsRequiredFiled(strFiled: string): Boolean;
+begin
+  result:=false;
+  if (strFiled='CUST_CODE') or (strFiled='CUST_NAME') or (strFiled='SHOP_ID') or
+     (strFiled='SEX') or (strFiled='PRICE_ID') or (strFiled='REGION_ID')then
+    result:=true;
 end;
 
 end.

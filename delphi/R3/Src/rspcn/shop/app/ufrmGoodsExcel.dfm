@@ -29,17 +29,17 @@ inherited frmGoodsExcel: TfrmGoodsExcel
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'FileTitle'
-                    Footers = <>
-                    Title.Caption = #25991#20214#23383#27573
-                    Width = 195
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'DestTitle'
                     Footers = <>
                     Title.Caption = #30446#26631#23383#27573
                     Width = 204
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'FileTitle'
+                    Footers = <>
+                    Title.Caption = #25991#20214#23383#27573
+                    Width = 195
                     Control = cdsDropColumn
                     OnBeforeShowControl = DBGridEh2Columns2BeforeShowControl
                   end>

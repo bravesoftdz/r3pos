@@ -27,12 +27,14 @@ type
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
     function FindColumn(vStr:string):Boolean;override;
+    function FindColumn2(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function Check(columnIndex:integer):Boolean;override;
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
     procedure ClearParams;
     function AddUnits:Boolean;
+    function IsRequiredFiled(strFiled:string):Boolean;override;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
   end;
@@ -50,7 +52,7 @@ type
 implementation
 
 uses uRspFactory,udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,ufrmProgressBar;
 
 {$R *.dfm}
 
@@ -118,11 +120,13 @@ var DsGoods,DsBarcode,DsGoodsPrice,rs,us,ss,cs:TZQuery;
     SumBarcode,SumCode,SumName:Integer;
     Params:TftParamList;
     cl,sl:TZQuery;
+    progressBar:TfrmProgressBar;
 begin
-  //显示进度条？？？
+  progressBar:=TfrmProgressBar.Create(self);
+  progressBar.Show;
   if dsExcel.RecordCount=0 then exit;
   Result := False;
-  
+
   DsGoods := TZQuery.Create(nil);
   DsBarcode := TZQuery.Create(nil);
   DsGoodsPrice:=TZQuery.Create(nil);
@@ -162,6 +166,7 @@ begin
     dsExcel.First;
     while not dsExcel.Eof do
       begin
+        progressBar.Position:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
         Bar := dsExcel.FieldByName('BARCODE1').AsString;
         Code := dsExcel.FieldByName('GODS_CODE').AsString;
         Name := dsExcel.FieldByName('GODS_NAME').AsString;
@@ -246,6 +251,8 @@ begin
         dataFactory.CancelBatch;
         Raise;
       end;
+
+      progressBar.Close;
   finally
     DsGoods.Free;
     DsBarcode.Free;
@@ -253,6 +260,7 @@ begin
     sl.Free;
     cl.Free;
     Params.Free;
+    progressBar:=nil;
   end;
   Result := True;
 end;
@@ -324,6 +332,82 @@ begin
     strError:='本店售价';
   end;
   
+  if (strError<>'') then
+  begin
+    cdsColumn.RecNo:=LastcdsColumnIndex;
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
+    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
+  end;
+end;
+
+function TfrmGoodsExcel.FindColumn2(vStr:string):Boolean;
+var strError:string;
+begin
+   Result := True;
+   strError:='';
+  if (cdsColumn.Locate('FieldName','BARCODE1',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    strError:='条形码';
+  end;
+  if (cdsColumn.Locate('FieldName','GODS_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
+  if (cdsColumn.Locate('FieldName','GODS_NAME',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+    strError:='商品名称';
+  end;
+  if (cdsColumn.Locate('FieldName','CALC_UNITS',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'计量单位'
+    else
+    strError:='计量单位';
+  end;
+  if (cdsColumn.Locate('FieldName','SORT_ID1',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品分类'
+    else
+    strError:='商品分类';
+  end;
+  if (cdsColumn.Locate('FieldName','NEW_OUTPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'标准售价'
+    else
+    strError:='标准售价';
+  end;
+  if (cdsColumn.Locate('FieldName','NEW_INPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'最新进价'
+    else
+    strError:='最新进价';
+  end;
+  if (cdsColumn.Locate('FieldName','MY_OUTPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'本店售价'
+    else
+    strError:='本店售价';
+  end;
+
   if (strError<>'') then
   begin
     cdsColumn.RecNo:=LastcdsColumnIndex;
@@ -518,7 +602,8 @@ begin
     begin
       isSort:=false;
       fieldName:=cdsColumn.FieldbyName('FieldName').AsString;
-      if fieldName <> '' then
+      FileName:=cdsColumn.fieldByName('FileName').AsString;
+      if (fieldName<>'') and (FileName <> '') then
       begin
         if (fieldName='BARCODE1') or (fieldName='BARCODE2') or
            (fieldName='BARCODE3') or (fieldName='GODS_CODE') or
@@ -533,7 +618,6 @@ begin
             rs.SortedFields:=cdsColumn.fieldByName('FileName').AsString;
           end;
 
-          FileName:=cdsColumn.fieldByName('FileName').AsString;
           if isSort then
           begin
             rs.First;
@@ -606,7 +690,7 @@ begin
         tempField:='BARCODE3';
 
       FieldName:='';
-      if cdsColumn.Locate('FieldName',tempField,[]) then
+      if (cdsColumn.Locate('FieldName',tempField,[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
       begin
         FieldName:=cdsColumn.fieldByName('FileName').AsString;
         strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
@@ -638,7 +722,7 @@ begin
 
     //*********************货号*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','GODS_CODE',[]) then
+    if (cdsColumn.Locate('FieldName','GODS_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
@@ -679,7 +763,7 @@ begin
         tempField:='BIG_UNITS';
 
       FieldName:='';
-      if cdsColumn.Locate('FieldName',tempField,[]) then
+      if (cdsColumn.Locate('FieldName',tempField,[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
       begin
         FieldName:=cdsColumn.fieldByName('FileName').AsString;
         strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
@@ -723,7 +807,7 @@ begin
 
     //*********************商品分类*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','SORT_ID1',[]) then
+    if (cdsColumn.Locate('FieldName','SORT_ID1',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
@@ -766,7 +850,7 @@ begin
 
     //*********************供应商*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','SORT_ID3',[]) then
+    if (cdsColumn.Locate('FieldName','SORT_ID3',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -825,8 +909,8 @@ begin
         RzLabel26.Caption:=RzLabel26.Caption+'--商品档案';
         DataSet:=vDataSet;
         CreateUseDataSet;
-        DecodeFields(FieldsString);
-        DecodeFormats(FormatString);
+        DecodeFields2(FieldsString);
+        //DecodeFormats(FormatString);
         SelfCheck:=isSelfCheck;
         result := (ShowModal=MROK);
       finally
@@ -900,7 +984,7 @@ begin
         tempField:='BIG_UNITS';
 
       unitField:='';
-      if cdsColumn.Locate('FieldName',tempField,[]) then
+      if (cdsColumn.Locate('FieldName',tempField,[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
       begin
         tmpList.CommaText:=FieldCheckSet[cdsColumn.fieldByName('ID').asInteger];
         for i:=0 to tmpList.Count-1 do
@@ -1032,6 +1116,16 @@ begin
     tmpList.Free;
   end;
   result:=true;
+end;
+
+function TfrmGoodsExcel.IsRequiredFiled(strFiled:string):Boolean;
+begin
+  result:=false;
+  if (strFiled='BARCODE1') or (strFiled='GODS_CODE') or (strFiled='GODS_NAME') or
+     (strFiled='CALC_UNITS') or (strFiled='SORT_ID1') or (strFiled='NEW_OUTPRICE') or
+     (strFiled='NEW_INPRICE') or (strFiled='MY_OUTPRICE')then
+    result:=true;
+
 end;
 
 end.

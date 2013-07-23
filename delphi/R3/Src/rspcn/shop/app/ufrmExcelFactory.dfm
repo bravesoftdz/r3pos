@@ -6,6 +6,7 @@ inherited frmExcelFactory: TfrmExcelFactory
   ClientWidth = 613
   OldCreateOrder = True
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
@@ -34,7 +35,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Top = 1
           Width = 601
           Height = 340
-          ActivePage = TabSheet2
+          ActivePage = TabSheet3
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -1285,14 +1286,30 @@ inherited frmExcelFactory: TfrmExcelFactory
             object RzLabel4: TRzLabel
               Left = 22
               Top = 28
-              Width = 128
+              Width = 146
               Height = 15
-              Caption = #35774#32622#23383#27573#23545#24212#20851#31995
+              Caption = #35774#32622#23383#27573#23545#24212#20851#31995'--'
               Font.Charset = GB2312_CHARSET
               Font.Color = clWhite
               Font.Height = -15
               Font.Name = #23435#20307
               Font.Style = [fsBold]
+              ParentFont = False
+              Transparent = True
+            end
+            object RzLabel11: TRzLabel
+              Left = 170
+              Top = 28
+              Width = 90
+              Height = 15
+              Caption = #32418#33394#23383#27573#24517#36873
+              Color = clBlue
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentColor = False
               ParentFont = False
               Transparent = True
             end
@@ -1317,6 +1334,7 @@ inherited frmExcelFactory: TfrmExcelFactory
                 Top = 2
                 Width = 581
                 Height = 246
+                Hint = #30446#26631#23383#27573#26159#31243#24207#25152#38656#23383#27573#65307#25991#20214#23383#27573#26159#23548#20837#25991#20214#20013#25152#21015#23383#27573
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 BorderStyle = bsNone
@@ -1332,7 +1350,9 @@ inherited frmExcelFactory: TfrmExcelFactory
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghHighlightFocus, dghClearSelection]
+                ParentShowHint = False
                 RowHeight = 25
+                ShowHint = True
                 SumList.Active = True
                 TabOrder = 0
                 TitleFont.Charset = GB2312_CHARSET
@@ -1341,10 +1361,12 @@ inherited frmExcelFactory: TfrmExcelFactory
                 TitleFont.Name = #23435#20307
                 TitleFont.Style = []
                 TitleHeight = 20
+                VertScrollBar.VisibleMode = sbAlwaysShowEh
                 IsDrawNullRow = False
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
+                OnDrawColumnCell = DBGridEh2DrawColumnCell
                 Columns = <
                   item
                     EditButtons = <>
@@ -1355,17 +1377,17 @@ inherited frmExcelFactory: TfrmExcelFactory
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'FileTitle'
-                    Footers = <>
-                    Title.Caption = #25991#20214#23383#27573
-                    Width = 195
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'DestTitle'
                     Footers = <>
                     Title.Caption = #30446#26631#23383#27573
                     Width = 204
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'FileTitle'
+                    Footers = <>
+                    Title.Caption = #25991#20214#23383#27573
+                    Width = 195
                     Control = cdsDropColumn
                     OnBeforeShowControl = DBGridEh2Columns2BeforeShowControl
                   end>

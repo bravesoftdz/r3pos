@@ -21,6 +21,7 @@ type
   public
       priceId:string;
       priceName:string;
+      PriceField:string;
       priceIndex:integer;
   end;
 
@@ -28,6 +29,7 @@ type
     procedure RzLabel17Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnNextClick(Sender: TObject);
   private
     FieldCheckSet:array[0..FieldCount] of string;
     FieldType:array [0..FieldCount] of integer;
@@ -38,6 +40,7 @@ type
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
     function FindColumn(vStr:string):Boolean;override;
+    function FindColumn2(vStr:string):Boolean;override;
     function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
     function OutCheckExcute:Boolean;             //导入文件与库中数据对比
     function OutCheckExcute2:Boolean;
@@ -47,6 +50,8 @@ type
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
     procedure ClearParams;
     function ReWriteExcelTemplate(rs:TZQuery):Boolean;
+    function ConfirmPriceGrade:Boolean;
+    function IsRequiredFiled(strFiled:string):Boolean;override;
   public
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
   end;
@@ -170,10 +175,8 @@ var Params: TftParamList;
     godsId,str:string;
     i:integer;
     priceGrade:TPriceGrade;
-    strLog:TStringList;
 begin
   try
-    strLog:=TstringList.Create;
     priceList:=TZQuery.Create(nil);
     Params := TftParamList.Create(nil);
     gs:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
@@ -184,8 +187,6 @@ begin
       priceList.SQL.Text:='select TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP '+
                    'from   PUB_GOODSPRICE '+
                    'where tenant_id='+token.tenantId+' and SHOP_ID in('''+token.shopId+''','''+token.tenantId+'0001'+''') and comm not in(''02'',''12'') ';
-      strlog.Add(priceList.SQL.Text);
-      strlog.SaveToFile(ExtractFilePath(Application.ExeName)+'strlog.cfg');
       dataFactory.Open(priceList);
     except
       raise;
@@ -277,11 +278,11 @@ begin
         end;
 
         Field:=dsExcel.FindField('NEW_OUTPRICE1');
-        if (Field <> nil) and (dsExcel.FieldByName(str+'1').AsString<> '0') then
+        if (Field <> nil) and (dsExcel.FieldByName(str+'1').AsString<> '') then
         begin
           priceList.FieldByName('NEW_OUTPRICE1').AsFloat:=dsExcel.FieldByName(str+'1').AsFloat;
         end
-        else if (dsExcel.FieldByName(str+'1').AsString='0') then
+        else if (dsExcel.FieldByName(str+'1').AsString='') then
         begin
           if (gs.FieldByName('SMALL_UNITS').AsString<>'') and (gs.FieldByName('SMALLTO_CALC').AsString<>'') then
             priceList.FieldByName('NEW_OUTPRICE1').AsFloat:=priceList.FieldByName('NEW_OUTPRICE').AsFloat* gs.fieldByName('SMALLTO_CALC').AsFloat
@@ -290,11 +291,11 @@ begin
         end;
 
         Field:=dsExcel.FindField('NEW_OUTPRICE2');
-        if (Field <> nil) and (dsExcel.FieldByName(str+'2').AsString<> '0') then
+        if (Field <> nil) and (dsExcel.FieldByName(str+'2').AsString<> '') then
         begin
           priceList.FieldByName('NEW_OUTPRICE2').AsFloat:=dsExcel.FieldByName(str+'2').AsFloat;
         end;
-        if (dsExcel.FieldByName(str+'2').AsString='0') then
+        if (dsExcel.FieldByName(str+'2').AsString='') then
         begin
           if (gs.FieldByName('BIG_UNITS').AsString<>'') and (gs.FieldByName('BIGTO_CALC').AsString<>'') then
             priceList.FieldByName('NEW_OUTPRICE2').AsFloat:=priceList.FieldByName('NEW_OUTPRICE').AsFloat* gs.fieldByName('BIGTO_CALC').AsFloat
@@ -368,6 +369,70 @@ begin
   end;
 end;
 
+function TfrmPriceExcel.FindColumn2(vStr: string): Boolean;
+var strError:string;
+    i:integer;
+    priceGrade:TPriceGrade;
+begin
+   Result := True;
+   strError:='';
+  if (cdsColumn.Locate('FieldName','BARCODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'条形码'
+    else
+      strError:='条形码';
+  end;
+  if (cdsColumn.Locate('FieldName','GODS_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'货号'
+    else
+      strError:='货号';
+  end;
+  if (cdsColumn.Locate('FieldName','GODS_NAME',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'商品名称'
+    else
+      strError:='商品名称';
+  end;
+  if (cdsColumn.Locate('FieldName','NEW_OUTPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
+  begin
+    Result := False;
+    if strError<>'' then
+      strError:=strError+'、'+'本店售价'
+    else
+    strError:='本店售价';
+  end;
+
+  for i:=0 to ValidPriceIdList.Count-1 do
+  begin
+    priceGrade:=TPriceGrade(ValidPriceIdList.Objects[i]);
+    cdsColumn.Locate('FieldName',priceGrade.priceField,[]);
+    if cdsColumn.FieldByName('FileName').AsString='' then
+    begin
+      Result := False;
+      if strError<>'' then
+        strError:=strError+'、'+priceGrade.priceName+'-售价'
+      else
+       strError:=priceGrade.priceName+'-售价';
+    end;
+  end;
+
+  if (strError<>'') then
+  begin
+    cdsColumn.RecNo:=LastcdsColumnIndex;
+    cdsColumn.EnableControls;
+    cdsExcel.EnableControls;
+    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
+  end;
+
+end;
+
 procedure TfrmPriceExcel.CreateParams;
 var rs:TZQuery;
     str:string;
@@ -387,7 +452,11 @@ begin
   case columnIndex of
     0:begin
       if str='' then
-        isNull:=true;
+        isNull:=true
+      else if FieldType[0]=0 then
+      begin
+        strError:='条形码不存在;'
+      end;
     end;
     1:begin
       if (isNull) and (str='') then
@@ -483,7 +552,8 @@ begin
     begin
       isSort:=false;
       fieldName:=cdsColumn.FieldbyName('FieldName').AsString;
-      if fieldName <> '' then
+      FileName:=cdsColumn.fieldByName('FileName').AsString;
+      if (fieldName <> '') and (FileName<>'') then
       begin
         if (fieldName='BARCODE') or (fieldName='GODS_CODE') then
         begin
@@ -493,7 +563,6 @@ begin
             rs.SortedFields:=cdsColumn.fieldByName('FileName').AsString;
           end;
 
-          FileName:=cdsColumn.fieldByName('FileName').AsString;
           if isSort then
           begin
             rs.First;
@@ -562,7 +631,7 @@ begin
 
     //*********************会员等级*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','PRICE_ID',[]) then
+    if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -595,7 +664,7 @@ begin
             begin
               priceId:=rs.fieldByName('PRICE_ID').AsString;
               DeleteDuplicateString('',barList);
-              if cdsColumn.Locate('FieldName','BARCODE',[]) then
+              if (cdsColumn.Locate('FieldName','BARCODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
               begin
                 barField:=cdsColumn.fieldByName('FileName').AsString;
                 c:=cdsColumn.FieldByName('ID').AsInteger;
@@ -742,7 +811,7 @@ begin
 
     //*********************条码*****************************
     FieldName:='';
-    if cdsColumn.Locate('FieldName','BARCODE',[]) then
+    if (cdsColumn.Locate('FieldName','BARCODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
@@ -788,7 +857,7 @@ begin
             FieldCheckSet[c]:=DeleteDuplicateString(FieldCheckSet[c],codeList);
 
             CheckGodsCode(ss,codeList,CodeField,c);
-          end else //if rs.Locate('barcode',strList[i],[]) then rs中能定位到barcode
+          end else 
           begin
             ss.Filtered:=false;
             ss.Filter:=FieldName+'='''+strList[i]+'''';
@@ -809,22 +878,22 @@ begin
       end
       else begin
         FieldType[FieldIndex]:=0;
-        FieldCheckSet[c]:=DeleteDuplicateString(FieldCheckSet[c],codeList);
         cdsColumn.Locate('FieldName','GODS_CODE',[]);
         CodeField:=cdsColumn.fieldByName('FileName').AsString;
         c:=cdsColumn.FieldByName('ID').AsInteger;
+        FieldCheckSet[c]:=DeleteDuplicateString(FieldCheckSet[c],codeList);
         CheckGodsCode(ss,codeList,CodeField,c);
       end;
     end;
-
-    for i:=1 to FPriceCount do
+    {
+    for i:=0 to FPriceCount-1 do
     begin
-      priceId_C:='PRICE_ID'+inttostr(i)+'_OUTPRICE';
-      priceId_S:='PRICE_ID'+inttostr(i)+'_OUTPRICE1';
-      priceId_B:='PRICE_ID'+inttostr(i)+'_OUTPRICE2';
+      priceId_C:='PRICE_ID'+inttostr(i+1)+'_OUTPRICE';
+      priceId_S:='PRICE_ID'+inttostr(i+1)+'_OUTPRICE1';
+      priceId_B:='PRICE_ID'+inttostr(i+1)+'_OUTPRICE2';
 
       FieldName:='';
-      if cdsColumn.Locate('FieldName',priceId_C,[]) then
+      if (cdsColumn.Locate('FieldName',priceId_C,[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
       begin
         strWhere:=cdsColumn.FieldByName('DestTitle').asString;
         strWhere:=copy(strWhere,1,length(strWhere)-length('-售价'));  //copy(strWhere,1,pos('-',strWhere)-1)
@@ -836,13 +905,14 @@ begin
           priceGrade:=TPriceGrade.Create;
           priceGrade.priceId:=rs.fieldByName('PRICE_ID').AsString;
           priceGrade.priceName:=rs.fieldByName('PRICE_NAME').AsString;
+          priceGrade.PriceField:=priceId_C;
           priceGrade.priceIndex:=cdsColumn.FieldByName('ID').AsInteger;
           ValidPriceIdList.AddObject(priceGrade.priceId,priceGrade);
           FieldType[cdsColumn.FieldByName('ID').AsInteger]:=1;
         end;
       end;
     end;
-
+    }
   finally
     ds.Free;
     cs.Free;
@@ -1038,8 +1108,8 @@ begin
         DataSet:=vDataSet;
         CreateUseDataSet;
         if ModalResult=MrCancel then exit;
-        DecodeFields(FieldsString);
-        DecodeFormats(FormatString);
+        DecodeFields2(FieldsString);
+        //DecodeFormats(FormatString);
         SelfCheck:=isSelfCheck;
         result := (ShowModal=MROK);
       finally
@@ -1087,5 +1157,64 @@ begin
   inherited;
 end;
 
+function TfrmPriceExcel.IsRequiredFiled(strFiled: string): Boolean;
+function CheckPriceID(vField:string):Boolean;
+var i:integer;
+    priceGrade:TPriceGrade;
+begin
+  result:=false;
+  for i:=0 to ValidPriceIdList.Count-1 do
+  begin
+    priceGrade:=TPriceGrade(ValidPriceIdList.Objects[i]);
+    if priceGrade.PriceField=vField then
+    begin
+      result:=true;
+      break;
+    end;
+  end;
+end;
+begin
+  result:=false;
+  if (strFiled='BARCODE') or (strFiled='GODS_CODE') or (strFiled='GODS_NAME') or
+      (strFiled='NEW_OUTPRICE') or CheckPriceID(strFiled) then
+    result:=true;
+end;
+
+procedure TfrmPriceExcel.btnNextClick(Sender: TObject);
+begin
+  inherited;
+  if rzPage.ActivePageIndex=2 then
+  begin
+    ConfirmPriceGrade;
+  end;
+end;
+
+function TfrmPriceExcel.ConfirmPriceGrade: Boolean;
+var i,n:integer;
+    rs:TZQuery;
+    fileTitle,priceName:string;
+    priceGrade:TPriceGrade;
+begin
+  n:=0;
+  rs:=dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
+  for i:=0 to DBGridEh1.Columns.Count-1 do
+  begin
+    if i>SumCol then exit;
+    fileTitle:=DBGridEh1.Columns[i].Title.Caption;
+    if copy(fileTitle,length(fileTitle)-length('-售价')+1,length('-售价'))='-售价' then
+    begin
+      priceName:=copy(fileTitle,1,length(fileTitle)-length('-售价'));
+      if rs.Locate('PRICE_NAME',priceName,[]) then
+      begin
+        inc(n);
+        priceGrade:=TPriceGrade.Create;
+        priceGrade.priceId:=rs.fieldByName('PRICE_ID').AsString;
+        priceGrade.priceName:=priceName;
+        priceGrade.PriceField:='PRICE_ID'+inttostr(n)+'_OUTPRICE';
+        ValidPriceIdList.AddObject(priceGrade.priceId,priceGrade);
+      end;
+    end;
+  end;
+end;
 
 end.

@@ -71,7 +71,7 @@ begin
 end;
 
 function TfrmStorageExcel.SaveExcel(dsExcel:TZQuery):Boolean;
-var rs,cs,ss:TZQuery;
+var rs,cs,ss,bs:TZQuery;
     GodsId,Bar,Code,Name:String;
     Field:TField;
     strWhere:string;
@@ -80,13 +80,21 @@ begin
     rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
     cs:=TZQuery.Create(nil);
     ss:=TZQuery.Create(nil);
+    bs:=TZQuery.Create(nil);
 
     ss.Close;
     ss.SQL.Text:='select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''';
     dataFactory.Open(ss);
 
-    strWhere:='';
+    //ÅúºÅ
+    if (cdsColumn.Locate('FieldName','BATCH_NO',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
+    begin
+      bs.Close;
+      bs.SQL.Text:='select BATCH_NO,BATCH_NAME from PUB_BATCH_NO where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') ';
+      dataFactory.Open(cs);
+    end;
 
+    strWhere:='';
     if strWhere <> '' then
     begin
       cs.Close;
@@ -115,6 +123,9 @@ begin
         if ss.Locate('GODS_ID',dsExcel.fieldByName('GODS_ID').AsString,[]) then
         begin
           dsExcel.FieldByName('AMOUNT').AsFloat:=ss.fieldByName('AMOUNT').AsFloat-dsExcel.FieldByName('AMOUNT').AsFloat;
+        end else
+        begin
+          dsExcel.FieldByName('AMOUNT').AsFloat:=-dsExcel.FieldByName('AMOUNT').AsFloat;
         end;
         dsExcel.Post;
       end;
@@ -126,7 +137,8 @@ begin
         if Field.AsString='' then
           dsExcel.FieldByName('BATCH_NO').AsString:='#'
         else begin
-
+          if bs.Locate('GODS_ID',dsExcel.fieldByName('GODS_ID').AsString,[]) then
+            dsExcel.FieldByName('BATCH_NO').AsString:=bs.fieldByName('BATCH_NO').AsString;
         end;
         dsExcel.Post;
       end;
@@ -158,6 +170,8 @@ begin
     end;
   finally
     cs.Free;
+    ss.Free;
+    bs.Free;
   end;
   Result := True;
 end;

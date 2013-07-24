@@ -17,7 +17,7 @@ type
     FxsmUC: string;
     FxsmWB: string;
     FxsmChallenge: string;
-    FxsmSignature: string;
+    FxsmSignature: UTF8String;
     FxsmLogined: boolean;
     loginTime:int64;
     FxsmUser: string;
@@ -30,7 +30,7 @@ type
     procedure SetxsmUC(const Value: string);
     procedure SetxsmWB(const Value: string);
     procedure SetxsmChallenge(const Value: string);
-    procedure SetxsmSignature(const Value: string);
+    procedure SetxsmSignature(const Value: UTF8String);
     procedure SetxsmLogined(const Value: boolean);
     function GetxsmLogined: boolean;
     procedure SetxsmUser(const Value: string);
@@ -58,7 +58,7 @@ type
     property ecWeb:string read FecWeb write SetecWeb;
     property scWeb:string read FscWeb write SetscWeb;
     property xsmChallenge:string read FxsmChallenge write SetxsmChallenge;
-    property xsmSignature:string read FxsmSignature write SetxsmSignature;
+    property xsmSignature:UTF8String read FxsmSignature write SetxsmSignature;
     property xsmLogined:boolean read GetxsmLogined write SetxsmLogined;
 
     property xsmUser:string read FxsmUser write SetxsmUser;
@@ -170,9 +170,9 @@ var
 begin
   try
     url := xsmUC+'users/gettoken';
-    xml := IdHTTP1.Get(url);
-    xsmSignature := xml;
-    xml := Utf8ToAnsi(xml);
+    xsmSignature := IdHTTP1.Get(url);
+    xml := Utf8ToAnsi(xsmSignature);
+    xsmSignature := StringReplace(xml,'"utf-8"','"GBK"',[rfReplaceAll]);
     Doc := CreateXML(xml);
     if not Assigned(doc) then Raise Exception.Create('ÇëÇóÁîÅÆÊ§°Ü...');
     Root :=  doc.DocumentElement;
@@ -214,9 +214,9 @@ if not getChallenge then Raise Exception.Create('¶ÁÈ¡ÁîÅÆÊ§°Ü¡£');
 try
   result := false;
   url := xsmUC+'users/dologin/up?j_username='+username+'&j_password='+md5(md5(password)+xsmChallenge);
-  xml := IdHTTP1.Get(url);
-  xsmSignature := xml;
-  xml := Utf8ToAnsi(xml);
+  xsmSignature := IdHTTP1.Get(url);
+  xml := Utf8ToAnsi(xsmSignature);
+  xsmSignature := StringReplace(xml,'"utf-8"','"GBK"',[rfReplaceAll]);
   Doc := CreateXML(xml);
   if not Assigned(doc) then Raise Exception.Create('ÇëÇóµÇÂ¼Ê§°Ü...');
   Root :=  doc.DocumentElement;
@@ -268,7 +268,7 @@ begin
   FxsmChallenge := Value;
 end;
 
-procedure TUcFactory.SetxsmSignature(const Value: string);
+procedure TUcFactory.SetxsmSignature(const Value: UTF8String);
 begin
   FxsmSignature := Value;
 end;
@@ -312,11 +312,15 @@ begin
     if not Assigned(doc) then Raise Exception.Create('ÑéÖ¤ÁîÅÆÊ§°Ü...');
     Root :=  doc.DocumentElement;
     xsmUser := Root.selectSingleNode('/xsm/userId').text;
-
+    if pos(token,'"utf-8"')>0 then
+       begin
+         token := Utf8ToAnsi(token);
+         token := StringReplace(token,'"utf-8"','"GBK"',[rfReplaceAll]);
+       end;
     url := xsmUC+'tokenconsumer?xmlStr='+HttpEncode(token);
     xml := IdHTTP1.Get(url);
-    xml := Utf8ToAnsi(xml);
     Doc := CreateXML(xml);
+    xml := Utf8ToAnsi(xml);
     if not Assigned(doc) then Raise Exception.Create('ÇëÇóµÇÂ¼Ê§°Ü...');
     Root :=  doc.DocumentElement;
     if not Assigned(Root) then Raise Exception.Create('UrlµØÖ··µ»ØÎÞÐ§XMLÎÄµµ£¬ÇëÇóµÇÂ¼Ê§°Ü...');

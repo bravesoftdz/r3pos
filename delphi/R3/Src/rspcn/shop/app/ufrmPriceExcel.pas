@@ -278,11 +278,11 @@ begin
         end;
 
         Field:=dsExcel.FindField('NEW_OUTPRICE1');
-        if (Field <> nil) and (dsExcel.FieldByName(str+'1').AsString<> '') then
+        if (Field <> nil) and (dsExcel.FieldByName(str+'1').AsString<> '0') then
         begin
           priceList.FieldByName('NEW_OUTPRICE1').AsFloat:=dsExcel.FieldByName(str+'1').AsFloat;
         end
-        else if (dsExcel.FieldByName(str+'1').AsString='') then
+        else if (dsExcel.FieldByName(str+'1').AsString='0') then
         begin
           if (gs.FieldByName('SMALL_UNITS').AsString<>'') and (gs.FieldByName('SMALLTO_CALC').AsString<>'') then
             priceList.FieldByName('NEW_OUTPRICE1').AsFloat:=priceList.FieldByName('NEW_OUTPRICE').AsFloat* gs.fieldByName('SMALLTO_CALC').AsFloat
@@ -291,11 +291,11 @@ begin
         end;
 
         Field:=dsExcel.FindField('NEW_OUTPRICE2');
-        if (Field <> nil) and (dsExcel.FieldByName(str+'2').AsString<> '') then
+        if (Field <> nil) and (dsExcel.FieldByName(str+'2').AsString<> '0') then
         begin
           priceList.FieldByName('NEW_OUTPRICE2').AsFloat:=dsExcel.FieldByName(str+'2').AsFloat;
         end;
-        if (dsExcel.FieldByName(str+'2').AsString='') then
+        if (dsExcel.FieldByName(str+'2').AsString='0') then
         begin
           if (gs.FieldByName('BIG_UNITS').AsString<>'') and (gs.FieldByName('BIGTO_CALC').AsString<>'') then
             priceList.FieldByName('NEW_OUTPRICE2').AsFloat:=priceList.FieldByName('NEW_OUTPRICE').AsFloat* gs.fieldByName('BIGTO_CALC').AsFloat
@@ -821,7 +821,7 @@ begin
                   'from VIW_BARCODE VB '+
                   'left join VIW_GOODSPRICEEXT VG on VB.TENANT_ID=VG.TENANT_ID and VB.GODS_ID=VG.GODS_ID '+
                   'left join VIW_MEAUNITS VM1 on VB.TENANT_ID=VM1.TENANT_ID and VB.UNIT_ID=VM1.UNIT_ID '+
-                  'where VB.tenant_id='+token.tenantId+' and VB.comm not in(''02'',''12'') and VG.comm not in(''02'',''12'') and VB.BARCODE_TYPE=0 and VB.barcode in ('+strWhere+')';
+                  'where VB.tenant_id='+token.tenantId+' and VB.comm not in(''02'',''12'') and VG.comm not in(''02'',''12'') and VB.BARCODE_TYPE=''0'' and VB.barcode in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
       begin

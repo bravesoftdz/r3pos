@@ -129,6 +129,7 @@ type
     procedure SetExceptCount(value:integer);
     procedure IsHeader;
     procedure DisplayResult;
+    function IsChoosed(vIndex:integer):Boolean;
  protected
     procedure WriteToDataSet(DataSet: TDataSet);
     procedure DecodeFields(s: string);
@@ -685,7 +686,7 @@ begin
          cdsColumn.Post;
        end;
      end;
-    }
+    } 
     if cdsDropColumn.Visible and cdsDropColumn.Focused then
      begin
        if (cdsDropColumn.Text<>'') and (cdsDropColumn.ItemIndex >=0) then
@@ -703,6 +704,26 @@ begin
          cdsColumn.Post;
        end;
      end;
+end;
+
+function TfrmExcelFactory.IsChoosed(vIndex: integer): Boolean;
+var n:integer;
+begin
+  result:=false;
+  cdsColumn.DisableControls;
+  n:=cdsColumn.RecNo;
+  cdsColumn.First;
+  while not cdsColumn.Eof do
+  begin
+    if cdsColumn.FieldByName('FileName').AsString=vColumnList.Names[vIndex] then
+    begin
+      result:=true;
+      break;
+    end;
+    cdsColumn.Next;
+  end;
+  cdsColumn.RecNo:=n;
+  cdsColumn.EnableControls;
 end;
 
 
@@ -949,6 +970,9 @@ var i:integer;
     strResult:string;
 begin
   strResult:='';
+  if vStr='' then
+    strResult:='''''';
+    
   if vStrList=nil then
   begin
     vStrList:=TStringList.Create;

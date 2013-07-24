@@ -106,7 +106,7 @@ type
     procedure InitSyncList1;
     procedure InitSyncList;
     procedure SyncList;
-    procedure SyncBasic;
+
     procedure SyncBizData(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
     procedure BeforeSyncBiz(DataSet:TZQuery;FieldName:string;SyncFlag:integer);
@@ -126,6 +126,8 @@ type
   public
     constructor Create;
     destructor  Destroy;override;
+
+    procedure SyncBasic;
     // 检测文件是否是有效的数据文件
     function  CheckValidDBFile(src:string):boolean;
     // 登录时同步

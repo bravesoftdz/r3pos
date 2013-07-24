@@ -152,6 +152,7 @@ begin
     Params.ParamByName('TENANT_ID').asInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString :=token.shopId;
     Params.ParamByName('GODS_ID').asString :='';
+    Params.ParamByName('PRICE_ID').asString :='';
     dataFactory.BeginBatch;
     try
       dataFactory.AddBatch(DsGoods,'TGoodsInfoV60',Params);

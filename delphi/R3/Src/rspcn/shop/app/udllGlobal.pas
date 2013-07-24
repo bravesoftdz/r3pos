@@ -104,7 +104,7 @@ end;
 function TdllGlobal.GetGodsFromGodsCode(ds: TZQuery; godsCode: string): boolean;
 begin
   ds.Close;
-  ds.SQL.Text := 'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE and COMM not in (''02'',''12'')';
+  ds.SQL.Text := 'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE,UNIT_ID from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE and COMM not in (''02'',''12'')';
   ds.ParamByName('TENANT_ID').AsString := token.tenantId;
   ds.ParamByName('GODS_CODE').AsString := godsCode;
   OpenSqlite(ds);

@@ -213,7 +213,7 @@ type
 implementation
 
 uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,
-     udllShopUtil,utokenFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
+     udllShopUtil,utokenFactory,uSyncFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
      ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview,ufrmClearStorage,ufrmStorageExcel;
 
 {$R *.dfm}
@@ -1963,6 +1963,10 @@ begin
   rs:=TZQuery.Create(nil);
   if TfrmGoodsExcel.ExcelFactory(self,rs,'','',true) then
   begin
+     if dataFactory.iDbType <> 5 then
+     begin
+       SyncFactory.SyncBasic;
+     end;
      dllGlobal.Refresh('PUB_GOODSINFO');
      RefreshMeaUnits;
   end;

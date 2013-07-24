@@ -134,7 +134,6 @@ begin
 end;
 
 procedure TfrmSupplierDialog.WriteInfo;
-var rs:TZQuery;
 begin
   WriteToObject(AObj,self);
 
@@ -202,8 +201,7 @@ begin
 
   SaveLocalInfo;
 
-  dllGlobal.GetZQueryFromName('PUB_CLIENTINFO').Close;
-  dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
+  dllGlobal.Refresh('PUB_CLIENTINFO');
 
   ModalResult := MROK;
 end;

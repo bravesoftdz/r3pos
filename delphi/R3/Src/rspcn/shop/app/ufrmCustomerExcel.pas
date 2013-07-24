@@ -680,8 +680,9 @@ begin
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
-      rs.SQL.Text:='select distinct CS.SHOP_NAME from VIW_CUSTOMER VC,CA_SHOP_INFO CS where VC.TENANT_ID=CS.TENANT_ID and VC.SHOP_ID=CS.SHOP_ID and VC.tenant_id='+token.tenantId+
-                   ' and VC.comm not in(''02'',''12'') and CS.SHOP_NAME in ('+strWhere+')';
+      //rs.SQL.Text:='select distinct CS.SHOP_NAME from VIW_CUSTOMER VC,CA_SHOP_INFO CS where VC.TENANT_ID=CS.TENANT_ID and VC.SHOP_ID=CS.SHOP_ID and VC.tenant_id='+token.tenantId+
+      //             ' and VC.comm not in(''02'',''12'') and CS.SHOP_NAME in ('+strWhere+')';
+      rs.SQL.Text:='select SHOP_NAME from CA_SHOP_INFO where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and SHOP_NAME in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
       begin

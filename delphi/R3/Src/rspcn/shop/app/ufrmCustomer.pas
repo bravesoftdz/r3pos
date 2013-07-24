@@ -175,7 +175,7 @@ var frmCustomer: TfrmCustomer;
 implementation
 
 uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,
-     ufrmDBGridPreview,ufrmCustomerExcel;
+     ufrmDBGridPreview,ufrmCustomerExcel,uSyncFactory;
 
 {$R *.dfm}
 
@@ -1011,6 +1011,10 @@ begin
 
     if TfrmCustomerExcel.ExcelFactory(self,rs,'','',true) then
     begin
+      if dataFactory.iDbType <> 5 then
+       begin
+         SyncFactory.SyncBasic;
+       end;
       dllGlobal.Refresh('PUB_CUSTOMER');
       Open;
     end;

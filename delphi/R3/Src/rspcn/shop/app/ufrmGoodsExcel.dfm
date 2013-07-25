@@ -1,4 +1,6 @@
 inherited frmGoodsExcel: TfrmGoodsExcel
+  Left = 403
+  Top = 220
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel

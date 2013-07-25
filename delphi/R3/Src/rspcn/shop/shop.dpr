@@ -104,7 +104,8 @@ uses
   ufrmCustomerDialog in 'app\ufrmCustomerDialog.pas' {frmCustomerDialog},
   ufrmStorageExcel in 'app\ufrmStorageExcel.pas' {frmStorageExcel},
   ufrmSupplierDialog in 'app\ufrmSupplierDialog.pas' {frmSupplierDialog},
-  ObjSupplierV60 in 'obj\ObjSupplierV60.pas';
+  ObjSupplierV60 in 'obj\ObjSupplierV60.pas',
+  ufrmProgressBar in 'app\ufrmProgressBar.pas' {frmProgressBar};
 
 {$R *.res}
 exports

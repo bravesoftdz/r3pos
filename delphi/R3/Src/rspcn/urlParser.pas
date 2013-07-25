@@ -74,7 +74,7 @@ begin
         if pos('xsm.htm',urltoken.moduname)>0 then
            begin
              if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有误...');
-             result := UcFactory.xsmWB
+             result := UcFactory.xsmWB+'?v='+formatDatetime('YYYYMMDDHHNNSS',now());
            end
         else
            begin

@@ -1,26 +1,26 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 175
-  Top = 130
+  Left = -8
+  Top = -8
   Caption = #20250#21592#31649#29702
-  ClientHeight = 569
-  ClientWidth = 927
+  ClientHeight = 738
+  ClientWidth = 1280
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 927
-    Height = 522
+    Width = 1280
+    Height = 691
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 927
-      Height = 522
+      Width = 1280
+      Height = 691
       Align = alClient
       object RzPanel11: TRzPanel
         Left = 0
         Top = 0
-        Width = 927
+        Width = 1280
         Height = 44
         Align = alTop
         BorderOuter = fsNone
@@ -30,7 +30,7 @@ inherited frmCustomer: TfrmCustomer
         object RzPanel13: TRzPanel
           Left = 0
           Top = 0
-          Width = 927
+          Width = 1280
           Height = 44
           Align = alClient
           BorderOuter = fsNone
@@ -1216,8 +1216,8 @@ inherited frmCustomer: TfrmCustomer
       object RzPanel2: TRzPanel
         Left = 0
         Top = 44
-        Width = 927
-        Height = 132
+        Width = 1280
+        Height = 301
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1227,8 +1227,8 @@ inherited frmCustomer: TfrmCustomer
         object RzPanel3: TRzPanel
           Left = 10
           Top = 10
-          Width = 907
-          Height = 112
+          Width = 1260
+          Height = 281
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1236,7 +1236,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 1
             Top = 1
             Width = 172
-            Height = 110
+            Height = 279
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1244,7 +1244,7 @@ inherited frmCustomer: TfrmCustomer
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = 82
+              Top = 251
               Width = 171
               Height = 27
               Align = alBottom
@@ -1285,7 +1285,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 0
               Top = 0
               Width = 171
-              Height = 82
+              Height = 251
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1301,7 +1301,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 173
             Top = 1
             Width = 10
-            Height = 110
+            Height = 279
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1311,8 +1311,8 @@ inherited frmCustomer: TfrmCustomer
           object RzPanel7: TRzPanel
             Left = 183
             Top = 1
-            Width = 723
-            Height = 110
+            Width = 1076
+            Height = 279
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1321,8 +1321,8 @@ inherited frmCustomer: TfrmCustomer
               Tag = -1
               Left = 1
               Top = 0
-              Width = 722
-              Height = 110
+              Width = 1075
+              Height = 279
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -1523,8 +1523,8 @@ inherited frmCustomer: TfrmCustomer
       end
       object EditPanel: TRzPanel
         Left = 0
-        Top = 176
-        Width = 927
+        Top = 345
+        Width = 1280
         Height = 346
         Align = alBottom
         BorderInner = fsStatus
@@ -1535,12 +1535,12 @@ inherited frmCustomer: TfrmCustomer
         TabOrder = 2
         Visible = False
         DesignSize = (
-          927
+          1280
           346)
         object RzBorder1: TRzBorder
           Left = 139
           Top = 173
-          Width = 759
+          Width = 1112
           Height = 2
           Anchors = [akLeft, akTop, akRight]
         end
@@ -1573,7 +1573,7 @@ inherited frmCustomer: TfrmCustomer
           ParentFont = False
         end
         object btnSave: TRzBmpButton
-          Left = 739
+          Left = 1092
           Top = 291
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1790,7 +1790,7 @@ inherited frmCustomer: TfrmCustomer
           OnClick = btnSaveClick
         end
         object RzBmpButton5: TRzBmpButton
-          Left = 825
+          Left = 1178
           Top = 291
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -2961,11 +2961,11 @@ inherited frmCustomer: TfrmCustomer
     end
   end
   inherited toolNav: TRzPanel
-    Width = 927
+    Width = 1280
     object lblCaption: TRzLabel
       Left = 0
       Top = 0
-      Width = 375
+      Width = 728
       Height = 47
       Align = alClient
       Alignment = taCenter
@@ -2985,7 +2985,7 @@ inherited frmCustomer: TfrmCustomer
       TextStyle = tsShadow
     end
     object RzPanel8: TRzPanel
-      Left = 375
+      Left = 728
       Top = 0
       Width = 552
       Height = 47

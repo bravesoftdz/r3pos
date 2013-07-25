@@ -187,8 +187,8 @@ begin
   WTitle2.add('分类：'+sortDrop.Text);
   WTitle2.add('商品：'+edtGODS_ID.Text);
   cdsReport2.SQL.Text :=
-     'select A.TENANT_ID,A.SHOP_ID,''期初'' as BILL_O_NAME,null as BILL_DATE,''期初结存'' as CLIENT_NAME,0 as SEQNO,2 as flag,BAL_AMOUNT as IN_AMOUNT,BAL_PRICE as IN_PRICE,BAL_MONEY as IN_MONEY,null as OUT_AMOUNT,null as OUT_PRICE,null as OUT_MONEY,'+
-     'null as BAL_AMOUNT,null as BAL_PRICE,null as BAL_MONEY '+
+     'select A.TENANT_ID,A.SHOP_ID,''期初'' as BILL_O_NAME,0 as BILL_DATE,''期初结存'' as CLIENT_NAME,0 as SEQNO,2 as flag,BAL_AMOUNT as IN_AMOUNT,BAL_PRICE as IN_PRICE,BAL_MONEY as IN_MONEY,0.00 as OUT_AMOUNT,0.000 as OUT_PRICE,0.00 as OUT_MONEY,'+
+     '0.00 as BAL_AMOUNT,0.000 as BAL_PRICE,0.00 as BAL_MONEY '+
      'from RCK_STOCKS_DATA A,(select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,max(SEQNO) as SEQNO '+
      'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>='+formatDatetime('YYYYMM01',D1.Date)+' and BILL_DATE<:D1 and GODS_ID=:GODS_ID '+
      'group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO) B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO and A.SEQNO=B.SEQNO ';
@@ -203,9 +203,9 @@ begin
      'case when BILL_TYPE in (11,12,13) then IN_AMOUNT else null end as IN_AMOUNT,'+
      'case when BILL_TYPE in (11,12,13) then IN_PRICE else null end as IN_PRICE,'+
      'case when BILL_TYPE in (11,12,13) then IN_MONEY else null end as IN_MONEY,'+
-     'case when BILL_TYPE in (11,12,13) then null else OUT_AMOUNT end as OUT_AMOUNT,'+
-     'case when BILL_TYPE in (11,12,13) then null else OUT_PRICE end as OUT_PRICE,'+
-     'case when BILL_TYPE in (11,12,13) then null else OUT_MONEY end as OUT_MONEY,'+
+     'case when BILL_TYPE in (11,12,13) then 0.00 else OUT_AMOUNT end as OUT_AMOUNT,'+
+     'case when BILL_TYPE in (11,12,13) then 0.000 else OUT_PRICE end as OUT_PRICE,'+
+     'case when BILL_TYPE in (11,12,13) then 0.00 else OUT_MONEY end as OUT_MONEY,'+
      'BAL_AMOUNT,BAL_PRICE,BAL_MONEY '+
      'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE not in (1) ';
      

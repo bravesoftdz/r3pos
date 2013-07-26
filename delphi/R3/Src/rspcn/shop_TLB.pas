@@ -12,7 +12,7 @@ unit shop_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/7/24 10:56:23 from Type Library described below.
+// File generated on 2013/7/26 13:55:06 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\myWork\Delphi\R3\Src\rspcn\shop.tlb (1)

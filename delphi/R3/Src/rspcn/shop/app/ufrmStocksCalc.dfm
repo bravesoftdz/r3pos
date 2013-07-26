@@ -33,9 +33,10 @@ inherited frmStocksCalc: TfrmStocksCalc
       Left = 1
       Top = 1
       Width = 357
-      Height = 16
+      Height = 48
       Align = alTop
       Alignment = taCenter
+      AutoSize = False
       Caption = #38144#21806#26085#26399
       Transparent = True
       Layout = tlCenter

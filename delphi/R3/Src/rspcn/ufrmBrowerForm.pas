@@ -251,7 +251,7 @@ var
   frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst,ufrmLogo;
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst,ufrmLogo,uResFactory;
 {$R *.dfm}
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
@@ -1622,7 +1622,7 @@ end;
 procedure TfrmBrowerForm.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
-  if frmUpdate.Visible then Exit; 
+  if frmUpdate.Visible then Exit;
   if DLLFactory.isBusy then Exit;
   btnClose.Enabled := false;
   try
@@ -1671,11 +1671,18 @@ end;
 procedure TfrmBrowerForm.upgrade(var Message: TMessage);
 begin
   btnClose.Enabled := false;
+  frmLogo.hWnd := MainPanel.Handle;
+  frmLogo.ShowForm;
   try
+  frmLogo.showCaption := '正在检测资源包..';
+  if token.online then resFactory.checkAndDownRes;
+  frmLogo.showCaption := '正在检测新版本..';
   if token.online and frmUpdate.CheckUpgrade then
      frmUpdate.Show;
   finally
+     sleep(1000);
      btnClose.Enabled := true;
+     frmLogo.Close;
   end;
 end;
 

@@ -15,13 +15,16 @@ type
     label1: TRzLabel;
   private
     FhWnd: THandle;
+    FshowCaption: string;
     procedure SethWnd(const Value: THandle);
+    procedure SetshowCaption(const Value: string);
     { Private declarations }
   public
     { Public declarations }
     procedure ajustPostion;virtual;
     procedure ShowForm;virtual;
     property hWnd:THandle read FhWnd write SethWnd;
+    property showCaption:string read FshowCaption write SetshowCaption;
   end;
 
 var
@@ -48,10 +51,18 @@ begin
   windows.SetParent(Handle,Value);
 end;
 
+procedure TfrmLogo.SetshowCaption(const Value: string);
+begin
+  FshowCaption := Value;
+  label1.Caption := Value;
+  label1.Update;
+end;
+
 procedure TfrmLogo.ShowForm;
 begin
   show;
   ajustPostion;
+  Update;
 end;
 
 end.

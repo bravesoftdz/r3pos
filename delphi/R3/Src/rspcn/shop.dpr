@@ -17,7 +17,8 @@ uses
   uAppMgr in 'uAppMgr.pas',
   ufrmUpdate in 'ufrmUpdate.pas',
   ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
-  ufrmLogo in 'ufrmLogo.pas' {frmLogo};
+  ufrmLogo in 'ufrmLogo.pas' {frmLogo},
+  uResFactory in 'uResFactory.pas';
 
 {$R *.TLB}
 

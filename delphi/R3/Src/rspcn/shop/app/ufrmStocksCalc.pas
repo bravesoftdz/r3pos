@@ -21,7 +21,7 @@ type
     procedure btnCalcClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    tmpTable,seqTable:string;
+    tmpTable,seqTable,prcTable:string;
     procedure CreateSQLTable(sql:string;tb:string);
     procedure DropSQLTable(tb:string);
     //本月负库存销售清理结账记录
@@ -109,16 +109,29 @@ procedure TfrmStocksCalc.calcBalAmt;
 var
   sql:string;
 begin
-  sql :=
-    'update '+tmpTable+' set '+
-    'BAL_AMOUNT=(select ifnull(max(B.BAL_AMOUNT),0) '+
-    'from '+tmpTable+' B '+
-    'where '+
-    '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
-    '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
-    '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
-    '  B.SEQNO='+tmpTable+'.SEQNO-2 '+
-    ') + IN_AMOUNT - OUT_AMOUNT where BILL_TYPE>1 ';
+  case dataFactory.iDbType of
+  5:sql :=
+      'update '+tmpTable+' set '+
+      'BAL_AMOUNT=(select ifnull(max(B.BAL_AMOUNT),0) '+
+      'from '+tmpTable+' B '+
+      'where '+
+      '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+      '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
+      '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+      '  B.SEQNO='+tmpTable+'.SEQNO-2 '+
+      ') + IN_AMOUNT - OUT_AMOUNT where BILL_TYPE>1 ';
+  else
+    sql :=
+      'update '+tmpTable+' set '+
+      'BAL_AMOUNT=(select sum(B.IN_AMOUNT-B.OUT_AMOUNT) '+
+      'from '+tmpTable+' B '+
+      'where '+
+      '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+      '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
+      '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+      '  B.SEQNO<='+tmpTable+'.SEQNO '+
+      ') where BILL_TYPE>1 ';
+  end;
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
 end;
@@ -191,7 +204,11 @@ procedure TfrmStocksCalc.calcMoney;
 var
   sql:string;
 begin
-  sql:= 'update '+tmpTable+' set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where (SEQNO % 2)<>0 and BILL_TYPE>1';
+  case dataFactory.iDbType of
+  5:sql:= 'update '+tmpTable+' set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where SEQNO % 2 <>0 and BILL_TYPE>1';
+  4:sql:= 'update '+tmpTable+' a set (OUT_PRICE,OUT_MONEY,BAL_MONEY,BAL_PRICE)=(select b.BAL_PRICE,round(a.OUT_AMOUNT*b.BAL_PRICE,3),round(a.BAL_AMOUNT*b.BAL_PRICE,3),b.BAL_PRICE '+
+  'from '+prcTable+' b where a.ID=b.ID) where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) and BILL_TYPE>1';
+  end;
   dataFactory.ExecSQL(sql);
 end;
 
@@ -199,17 +216,38 @@ procedure TfrmStocksCalc.calcPrice;
 var
   sql:string;
 begin
-  sql:=
-    'update '+tmpTable+' set BAL_PRICE=( '+
-    'select ifnull(case when sum(A.BAL_AMOUNT)<>0 then round(sum(A.BAL_AMOUNT*A.BAL_PRICE)/sum(A.BAL_AMOUNT),6) else max(BAL_PRICE) end,0) '+
-    'from '+tmpTable+' A '+
-    'where '+
-    ' (A.SHOP_ID='+tmpTable+'.SHOP_ID and '+
-    '  A.GODS_ID='+tmpTable+'.GODS_ID and '+
-    '  A.BATCH_NO='+tmpTable+'.BATCH_NO and '+
-    '  A.SEQNO in ('+tmpTable+'.SEQNO-2,'+tmpTable+'.SEQNO-1)'+
-    ' ) or (A.SHOP_ID=''#'' and A.GODS_ID='+tmpTable+'.GODS_ID and A.BATCH_NO=''#'' and A.SEQNO=1 and A.BILL_DATE=19700101) '+
-    ') where (SEQNO % 2)<>0 and BILL_TYPE>1';
+  case dataFactory.iDbType of
+  5:
+    sql:=
+      'update '+tmpTable+' set BAL_PRICE=( '+
+      'select ifnull(case when sum(A.BAL_AMOUNT)<>0 then round(sum(A.BAL_AMOUNT*A.BAL_PRICE)/sum(A.BAL_AMOUNT),6) else max(BAL_PRICE) end,0) '+
+      'from '+tmpTable+' A '+
+      'where '+
+      ' (A.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+      '  A.GODS_ID='+tmpTable+'.GODS_ID and '+
+      '  A.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+      '  A.SEQNO in ('+tmpTable+'.SEQNO-2,'+tmpTable+'.SEQNO-1)'+
+      ' ) or (A.SHOP_ID=''#'' and A.GODS_ID='+tmpTable+'.GODS_ID and A.BATCH_NO=''#'' and A.SEQNO=1 and A.BILL_DATE=19700101) '+
+      ') where (SEQNO % 2)<>0 and BILL_TYPE>1';
+  4:
+    sql:=
+      'insert into '+prcTable+' '+
+      'with report(id,shop_id,gods_id,batch_no,seqno,bal_amount,bal_price) as '+
+      '( '+
+      'select c.id,c.shop_id,c.gods_id,c.batch_no,c.seqno,bal_amount,case when bal_amount<>0 and bal_price=0 then ('+
+      'select coalesce(max(bal_price),0) from '+tmpTable+' where gods_id=c.gods_id and shop_id=''#'' and BILL_DATE=19700101'+
+      ') else bal_price end as bal_price from '+tmpTable+' c,'+
+      '(select min(seqno) as seqno,gods_id,batch_no,shop_id from '+tmpTable+' where shop_id<>''#'' and round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) '+
+      'group by gods_id,batch_no,shop_id) c1 '+
+      'where c.seqno=c1.seqno and c.shop_id=c1.shop_id and c.gods_id=c1.gods_id and c.batch_no=c1.batch_no and c.shop_id<>''#'' and round(c.SEQNO / 2.0,0)<>round(c.SEQNO / 2.0,2) '+
+      'union all '+
+      'select a.id,a.shop_id,a.gods_id,a.batch_no,a.seqno,a.bal_amount, '+
+      'case when (b.bal_amount + a.var1)=0 then b.bal_price else (b.bal_amount*b.bal_price+var2) / (b.bal_amount + var1) end as bal_price '+
+      'from '+tmpTable+' a,report b '+
+      'where a.seqno=b.seqno+2 and a.shop_id=b.shop_id and a.gods_id=b.gods_id and a.batch_no=b.batch_no '+
+      ') '+
+      'select id,bal_price from report';
+  end;
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
 end;
@@ -218,6 +256,7 @@ procedure TfrmStocksCalc.copyToRck;
 var
   sql:string;
 begin
+  //奇数行为有效数据
   sql:=
     'insert into RCK_STOCKS_DATA'+
     '(TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
@@ -235,7 +274,7 @@ begin
     ' left outer join (select UNIT_ID,UNIT_NAME from PUB_MEAUNITS where TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') ) E on A.UNIT_ID=E.UNIT_ID '+
     ' left outer join VIW_USERS F on A.TENANT_ID=F.TENANT_ID and A.GUIDE_USER=F.USER_ID '+
     ' left outer join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CREA_USER=G.USER_ID '+
-    'where (A.SEQNO % 2)<>0 and BILL_TYPE>0 ';
+    'where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) and BILL_TYPE>0 ';
   dataFactory.BeginTrans;
   try
     dataFactory.ExecSQL(ParseSQL(dataFactory.iDbType,sql));
@@ -316,8 +355,8 @@ begin
      copyToRck;
      RzProgressBar1.Percent := 100;
    finally
-     dropSQLTable(tmpTable);
-     dropSQLTable(seqTable);
+//     dropSQLTable(tmpTable)
+//     dropSQLTable(seqTable);
    end;
 end;
 
@@ -348,19 +387,37 @@ begin
     'from '+tmpTable+' where BILL_TYPE in (11,12,13) ';
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 65;
-  sql :=
-    'update '+tmpTable+' set SEQNO= '+
-    '( '+
-    ' select ifnull(max(SEQNO),1)+1 from '+tmpTable+' B where '+
-    '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
-    '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
-    '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
-    '  B.BAL_AMOUNT>0 and (B.SEQNO % 2)<>0 and B.SEQNO<'+tmpTable+'.SEQNO '+
-    ') where (SEQNO % 2)=0 ';
+  case dataFactory.iDbType of
+  5:
+    sql :=
+      'update '+tmpTable+' set SEQNO= '+
+      '( '+
+      ' select ifnull(max(SEQNO),1)+1 from '+tmpTable+' B where '+
+      '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+      '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
+      '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+      '  B.BAL_AMOUNT>0 and (B.SEQNO % 2)<>0 and B.SEQNO<'+tmpTable+'.SEQNO '+
+      ') where (SEQNO % 2)=0 ';
+  else
+    sql :=
+      'update '+tmpTable+' set SEQNO= '+
+      '( '+
+      ' select ifnull(max(SEQNO),1)+1 from '+tmpTable+' B where '+
+      '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
+      '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
+      '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+      '  B.BAL_AMOUNT>0 and (round(B.SEQNO / 2.0,0)<>round(B.SEQNO / 2.0,2)) and B.SEQNO<'+tmpTable+'.SEQNO '+
+      ') where round(SEQNO / 2.0,0)=round(SEQNO / 2.0,2) ';
+  end;
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
-
-end;                                  
+  case dataFactory.iDbType of //不是
+  4:begin
+      sql := 'update '+tmpTable+' a set (VAR1,VAR2)=(select coalesce(sum(BAL_AMOUNT),0),coalesce(sum(BAL_MONEY),0) from '+tmpTable+' where SHOP_ID=a.SHOP_ID and GODS_ID=a.GODS_ID and BATCH_NO=a.BATCH_NO and SEQNO=a.SEQNO-1) where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2)';
+      dataFactory.ExecSQL(sql);
+    end;
+  end;
+end;
 
 function TfrmStocksCalc.getLastDate: integer;
 var
@@ -435,7 +492,7 @@ begin
     '	BILL_DATE'+int+'NOT NULL , '+
     '	SEQNO'+int+'NOT NULL , '+
     '	GODS_ID char (36) NOT NULL , '+
-    '	CLIENT_ID'+varchar+'(36) NULL , '+
+    '	CLIENT_ID'+varchar+'(36) '+null+' , '+
     '	UNIT_ID'+varchar+'(36) NOT NULL , '+
     '	CONV_RATE decimal(18, 3) NOT NULL , '+
     ' BATCH_NO'+varchar+'(36) NOT NULL , '+
@@ -454,6 +511,8 @@ begin
     ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
     ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
     ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' VAR1 decimal(18, 3) NOT NULL DEFAULT 0, '+
+    ' VAR2 decimal(18, 3) NOT NULL DEFAULT 0, '+
     '	GUIDE_USER'+varchar+'(36) '+null+', '+
     '	CREA_USER'+varchar+'(36) '+null+''+
     ')';
@@ -472,7 +531,7 @@ begin
     '	BILL_DATE'+int+'NOT NULL , '+
     '	SEQNO'+int+'NOT NULL , '+
     '	GODS_ID char (36) NOT NULL , '+
-    '	CLIENT_ID'+varchar+'(36) NULL , '+
+    '	CLIENT_ID'+varchar+'(36) '+null+' , '+
     '	UNIT_ID'+varchar+'(36) NOT NULL , '+
     '	CONV_RATE decimal(18, 3) NOT NULL , '+
     ' BATCH_NO'+varchar+'(36) NOT NULL , '+
@@ -495,14 +554,16 @@ begin
     '	CREA_USER'+varchar+'(36) '+null+''+
     ')';
   createSQLTable(sql,seqTable);
-  try
-    case dataFactory.iDbType of
-    1:begin
-      dataFactory.ExecSQL('create sequence seqId minvalue 1 maxvalue 99999999999 startwith 1 incrementby 1 nocache order');
-      dataFactory.ExecSQL('create sequence tmpId minvalue 1 maxvalue 99999999999 startwith 1 incrementby 1 nocache order');
-      end;
-    end;
-  except
+  if dataFactory.iDbType <> 5 then
+  begin
+    dropSQLTable(prcTable);
+    sql :=
+      'CREATE TABLE '+prcTable+' '+
+      '( '+
+      '	ID'+int+'NOT NULL , '+
+      ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0 '+
+      ')';
+    createSQLTable(sql,prcTable);
   end;
 end;
 
@@ -589,16 +650,33 @@ procedure TfrmStocksCalc.Prepare;
 var
   sql:string;
 begin
-  sql :=
-    'update '+tmpTable+' set '+
-    'SEQNO=(select ifnull(max(SEQNO),1) from '+tmpTable+' B '+
-    'where '+
-    '  B.SHOP_ID='+tmpTable+'.SHOP_ID and  '+
-    '  B.GODS_ID='+tmpTable+'.GODS_ID and  '+
-    '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
-    '  B.ID<'+tmpTable+'.ID '+
-    ')+2 '+
-    'where BILL_TYPE>1 ';
+  case dataFactory.iDbType of
+  5:begin
+      sql :=
+        'update '+tmpTable+' set '+
+        'SEQNO=(select ifnull(max(SEQNO),1) from '+tmpTable+' B '+
+        'where '+
+        '  B.SHOP_ID='+tmpTable+'.SHOP_ID and  '+
+        '  B.GODS_ID='+tmpTable+'.GODS_ID and  '+
+        '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+        '  B.ID<'+tmpTable+'.ID '+
+        ')+2 '+
+        'where BILL_TYPE>1 ';
+    end;
+  else
+    begin
+      sql :=
+        'update '+tmpTable+' set '+
+        'SEQNO=(select ifnull(max(SEQNO),1)+count(*)*2 from '+tmpTable+' B '+
+        'where '+
+        '  B.SHOP_ID='+tmpTable+'.SHOP_ID and  '+
+        '  B.GODS_ID='+tmpTable+'.GODS_ID and  '+
+        '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
+        '  B.ID<'+tmpTable+'.ID '+
+        ') '+
+        'where BILL_TYPE>1 ';
+    end;
+  end;
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
 end;
@@ -688,6 +766,7 @@ begin
   inherited;
   tmpTable := 'TMP_SC_'+token.tenantId;
   seqTable := 'SEQ_SC_'+token.tenantId;
+  prcTable := 'PRC_SC_'+token.tenantId;
 end;
 
 procedure TfrmStocksCalc.DropSQLTable(tb:string);

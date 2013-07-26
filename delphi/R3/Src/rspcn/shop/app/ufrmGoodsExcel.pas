@@ -11,7 +11,7 @@ uses
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
-  Menus;
+  Menus, RzPrgres;
 
   const
     FieldCount=20;
@@ -120,11 +120,9 @@ var DsGoods,DsBarcode,DsGoodsPrice,rs,us,ss,cs:TZQuery;
     SumBarcode,SumCode,SumName:Integer;
     Params:TftParamList;
     cl,sl:TZQuery;
-    progressBar:TfrmProgressBar;
 begin
-  progressBar:=TfrmProgressBar.Create(self);
-  progressBar.Show;
   if dsExcel.RecordCount=0 then exit;
+  ProgressBar1.Visible:=true;
   Result := False;
 
   DsGoods := TZQuery.Create(nil);
@@ -167,7 +165,8 @@ begin
     dsExcel.First;
     while not dsExcel.Eof do
       begin
-        progressBar.Position:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
+        ProgressBar1.Percent:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
+        ProgressBar1.Update;
         Bar := dsExcel.FieldByName('BARCODE1').AsString;
         Code := dsExcel.FieldByName('GODS_CODE').AsString;
         Name := dsExcel.FieldByName('GODS_NAME').AsString;
@@ -250,10 +249,10 @@ begin
         dataFactory.CommitBatch;
       except
         dataFactory.CancelBatch;
+        ProgressBar1.Visible:=false;
         Raise;
       end;
 
-      progressBar.Close;
   finally
     DsGoods.Free;
     DsBarcode.Free;
@@ -261,7 +260,7 @@ begin
     sl.Free;
     cl.Free;
     Params.Free;
-    progressBar:=nil;
+    ProgressBar1.Visible:=false;
   end;
   Result := True;
 end;

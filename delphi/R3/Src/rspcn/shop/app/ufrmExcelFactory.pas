@@ -10,7 +10,8 @@ uses
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
-  Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles,DBGridEhImpExp, Menus;
+  Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles,DBGridEhImpExp, Menus,
+  RzPrgres;
 
 type
   TfrmExcelFactory = class(TfrmWebDialog)
@@ -91,6 +92,7 @@ type
     RzPanel14: TRzPanel;
     Image6: TImage;
     RzLabel11: TRzLabel;
+    ProgressBar1: TRzProgressBar;
     procedure edtFileNameClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnNextClick(Sender: TObject);

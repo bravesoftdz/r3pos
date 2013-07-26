@@ -11,7 +11,7 @@ uses
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
-  Menus;
+  Menus, RzPrgres;
 
   const
     FieldCount=9;
@@ -77,6 +77,8 @@ var rs,cs,ss,bs:TZQuery;
     strWhere:string;
 begin
   try
+    if dsExcel.RecordCount=0 then exit;
+    ProgressBar1.Visible:=true;
     rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
     cs:=TZQuery.Create(nil);
     ss:=TZQuery.Create(nil);
@@ -105,6 +107,8 @@ begin
     dsExcel.First;
     while not dsExcel.Eof do
     begin
+      ProgressBar1.Percent:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
+      ProgressBar1.Update;
       Field:=dsExcel.FindField('BARCODE');
       if (Field <> nil) and (Field.AsString <> '') then
       begin
@@ -172,6 +176,7 @@ begin
     cs.Free;
     ss.Free;
     bs.Free;
+    ProgressBar1.Visible:=false;
   end;
   Result := True;
 end;

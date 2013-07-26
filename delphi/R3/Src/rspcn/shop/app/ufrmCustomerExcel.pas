@@ -11,7 +11,7 @@ uses
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
-  Menus;
+  Menus, RzPrgres;
 
   const
     FieldCount=26;
@@ -69,6 +69,8 @@ var Field:TField;
     strWhere:string;
     num:double;
 begin
+  if dsExcel.RecordCount=0 then exit;
+  ProgressBar1.Visible:=true;
   cs:=TZQuery.Create(nil);
   ss:=dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
   ps:=dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
@@ -102,6 +104,8 @@ begin
     dsExcel.First;
     while not dsExcel.Eof do
     begin
+      ProgressBar1.Percent:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
+      ProgressBar1.Update;
       dsExcel.Edit;
       dsExcel.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
       dsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
@@ -264,11 +268,13 @@ begin
     try
       dataFactory.UpdateBatch(dsExcel,'TCustomerV60');
     except
+      ProgressBar1.Visible:=false;
       Raise;
     end; 
 
   finally
     cs.Free;
+    ProgressBar1.Visible:=false;
   end;
 
   Result := True;

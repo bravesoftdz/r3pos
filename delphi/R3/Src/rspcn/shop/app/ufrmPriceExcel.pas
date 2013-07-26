@@ -11,7 +11,7 @@ uses
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
-  Menus;
+  Menus, RzPrgres;
 
   const
     FieldCount=20;
@@ -177,6 +177,8 @@ var Params: TftParamList;
     priceGrade:TPriceGrade;
 begin
   try
+    if dsExcel.RecordCount=0 then exit;
+    ProgressBar1.Visible:=true;
     priceList:=TZQuery.Create(nil);
     Params := TftParamList.Create(nil);
     gs:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
@@ -189,12 +191,15 @@ begin
                    'where tenant_id='+token.tenantId+' and SHOP_ID in('''+token.shopId+''','''+token.tenantId+'0001'+''') and comm not in(''02'',''12'') ';
       dataFactory.Open(priceList);
     except
+      ProgressBar1.Visible:=false;
       raise;
     end;
 
     dsExcel.First;
     while not dsExcel.Eof do
     begin
+      ProgressBar1.Percent:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
+      ProgressBar1.Update;
       Field:=dsExcel.FindField('BARCODE');
       if (Field <> nil) and (dsExcel.FieldByName('BARCODE').AsString<> '') then
       begin
@@ -311,12 +316,14 @@ begin
     try
       dataFactory.UpdateBatch(priceList,'TGoodsPriceV60');
     except
+      ProgressBar1.Visible:=false;
       Raise;
     end;
 
   finally
     Params.Free;
     priceList.Free;
+    ProgressBar1.Visible:=false;
   end;
 
   Result := True;

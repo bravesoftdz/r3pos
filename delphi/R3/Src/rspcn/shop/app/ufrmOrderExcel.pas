@@ -11,7 +11,7 @@ uses
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles,ufrmOrderForm,ufrmExcelFactory,
-  Menus;
+  Menus, RzPrgres;
 
 type
   TfrmOrderExcel = class(TfrmExcelFactory)
@@ -63,6 +63,8 @@ var us,gs:TZQuery;
     Field:TField;
     RecordObj:TRecord_;
 begin
+  if dsExcel.RecordCount=0 then exit;
+  ProgressBar1.Visible:=true;
   Result:=false;
   us:=dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   gs:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
@@ -71,6 +73,8 @@ begin
     dsExcel.First;
     while not dsExcel.Eof do
     begin
+      ProgressBar1.Percent:=round(dsExcel.RecNo/dsExcel.RecordCount*100);
+      ProgressBar1.Update;
       Field:=dsExcel.FindField('UNIT_ID');
       if (Field <> nil) and (Field.AsString <> '') then
       begin
@@ -141,8 +145,10 @@ begin
       dsExcel.Next;
     end;
   except
+    ProgressBar1.Visible:=false;
     raise;
   end;
+  ProgressBar1.Visible:=false;
   Result := True;
 end;
 

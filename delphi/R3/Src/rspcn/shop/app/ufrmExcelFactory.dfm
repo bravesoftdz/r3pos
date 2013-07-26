@@ -35,7 +35,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Top = 1
           Width = 601
           Height = 340
-          ActivePage = TabSheet3
+          ActivePage = TabSheet5
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -1784,6 +1784,19 @@ inherited frmExcelFactory: TfrmExcelFactory
                 Font.Name = #23435#20307
                 Font.Style = [fsBold]
                 ParentFont = False
+              end
+              object ProgressBar1: TRzProgressBar
+                Left = 136
+                Top = 121
+                Width = 433
+                BorderInner = fsFlat
+                BorderOuter = fsFlatRounded
+                BorderWidth = 0
+                InteriorOffset = 0
+                PartsComplete = 0
+                Percent = 0
+                TotalParts = 0
+                Visible = False
               end
               object RzPanel13: TRzPanel
                 Left = 2

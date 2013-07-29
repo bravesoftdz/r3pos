@@ -63,7 +63,8 @@ var
 implementation
 
 uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,
-     uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory,uRtcLibFactory;
+     uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory,uRtcLibFactory,
+     uCodePrinterFactory;
 
 var
   webForm:TStringList;
@@ -210,6 +211,7 @@ begin
        end;
     //if assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
     if assigned(DevFactory) then FreeAndNil(DevFactory);
+    if assigned(CodePrinterFactory) then FreeAndNil(CodePrinterFactory);
     if assigned(RightsFactory) then FreeAndNil(RightsFactory);
     if assigned(RtcLibFactory) then FreeAndNil(RtcLibFactory);
     if assigned(RtcSyncFactory) then FreeAndNil(RtcSyncFactory);

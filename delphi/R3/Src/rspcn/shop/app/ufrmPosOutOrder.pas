@@ -245,7 +245,7 @@ implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,
      uCacheFactory,ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,
-     ufrmSelectGoods,ufrmCustomerDialog;
+     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory;
 
 {$R *.dfm}
 
@@ -636,6 +636,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
+  if DevFactory.SaveCodePrint then CodePrinterFactory.PrintCode(cdsDetail.Data,self.Handle);
   if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
 end;
 

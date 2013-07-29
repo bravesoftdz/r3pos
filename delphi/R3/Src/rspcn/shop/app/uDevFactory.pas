@@ -24,6 +24,7 @@ type
     FTicket_PrintName: integer;
     FSavePrint: boolean;
     FPrintFormat: integer;
+    FSaveCodePrint: Boolean;
 
     procedure SetTicket_PrintComm(const Value: integer);
     procedure SetTicket_Width(const Value: integer);
@@ -39,6 +40,7 @@ type
     function  GetTitle: string;
     procedure SetPrintFormat(const Value: integer);
     procedure SetSavePrint(const Value: boolean);
+    procedure SetSaveCodePrint(const Value: Boolean);
   private
     procedure BeginPrint(Font:TFont);
     procedure WritePrint(s:string);
@@ -66,6 +68,7 @@ type
     property Ticket_Copy:integer read FTicket_Copy write SetTicket_Copy;
     property Ticket_PrintName:integer read FTicket_PrintName write SetTicket_PrintName;
 
+    property SaveCodePrint:Boolean read FSaveCodePrint write SetSaveCodePrint;
     property SavePrint:boolean read FSavePrint write SetSavePrint;
     property PrintFormat:integer read FPrintFormat write SetPrintFormat;
 
@@ -110,6 +113,7 @@ begin
      Ticket_NullRow :=  F.ReadInteger('SYS_DEFINE','PRINTNULL',0);
      Ticket_Copy := F.ReadInteger('SYS_DEFINE','TICKETCOPY',1);
 
+     SaveCodePrint := F.ReadString('SYS_DEFINE','SAVECODEPRINT','0')='1';
      SavePrint := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
      PrintFormat := F.ReadInteger('SYS_DEFINE','PRINTFORMAT',0);
   finally
@@ -530,9 +534,14 @@ begin
   FSavePrint := Value;
 end;
 
+procedure TDevFactory.SetSaveCodePrint(const Value: Boolean);
+begin
+  FSaveCodePrint := Value;
+end;
+
 initialization
   DevFactory := TDevFactory.Create;
   DevFactory.InitComm;
 finalization
-  if assigned(DevFactory) then FreeAndNil(DevFactory);
+  if Assigned(DevFactory) then FreeAndNil(DevFactory);
 end.

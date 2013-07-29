@@ -254,6 +254,7 @@ type
     RzLabel56: TRzLabel;
     edtXSM_CODE: TcxTextEdit;
     edtXSM_PSWD: TcxTextEdit;
+    cxSaveCodePrint: TcxCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
@@ -407,6 +408,9 @@ begin
   inherited;
   if dllGlobal.GetSFVersion <> '.LCL' then
      RzBmpButton4.Visible := false;
+
+  if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
+     cxSaveCodePrint.Visible := true;
 
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
      Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
@@ -917,10 +921,16 @@ begin
        F.WriteString('SYS_DEFINE','PRINTERWIDTH','38')
     else
        F.WriteString('SYS_DEFINE','PRINTERWIDTH','33');
+
     if cxSavePrint.Checked then
        F.WriteString('SYS_DEFINE','SAVEPRINT','1')
     else
        F.WriteString('SYS_DEFINE','SAVEPRINT','0');
+
+    if cxSaveCodePrint.Checked then
+       F.WriteString('SYS_DEFINE','SAVECODEPRINT','1')
+    else
+       F.WriteString('SYS_DEFINE','SAVECODEPRINT','0');
     F.WriteString('SYS_DEFINE','PRINTFORMAT',Inttostr(cxPrintFormat.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOX',Inttostr(cxCashBox.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOXRATE',cxCashBoxRate.Text);
@@ -1064,6 +1074,7 @@ begin
     else
        edtPRINTERWIDTH.ItemIndex := 0;
     cxSavePrint.Checked := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
+    cxSaveCodePrint.Checked := F.ReadString('SYS_DEFINE','SAVECODEPRINT','0')='1';
     cxPrintFormat.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTFORMAT','0'),0);
     cxCashBox.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','CASHBOX','0'),0);
     cxCashBoxRate.ItemIndex := cxCashBoxRate.Properties.Items.IndexOf(F.ReadString('SYS_DEFINE','CASHBOXRATE','0'));
@@ -1137,6 +1148,7 @@ begin
   edtTITLE.Text := '[企业简称]';
   edtFOOTER.Text := '敬请保留小票,以作售后依据';
   cxSavePrint.checked := false;
+  cxSaveCodePrint.checked := false;
   cxPrintFormat.ItemIndex := 0;
 
   cxCashBox.ItemIndex := 0;

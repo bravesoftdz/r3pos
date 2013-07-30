@@ -22,6 +22,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     tmpTable,seqTable,prcTable:string;
+    rw:integer;
     procedure CreateSQLTable(sql:string;tb:string);
     procedure DropSQLTable(tb:string);
     //本月负库存销售清理结账记录
@@ -123,7 +124,7 @@ begin
   else
     sql :=
       'update '+tmpTable+' set '+
-      'BAL_AMOUNT=(select sum(B.IN_AMOUNT-B.OUT_AMOUNT) '+
+      'BAL_AMOUNT=(select sum(case when B.BILL_TYPE in (0,1) then B.BAL_AMOUNT else B.IN_AMOUNT-B.OUT_AMOUNT end) '+
       'from '+tmpTable+' B '+
       'where '+
       '  B.SHOP_ID='+tmpTable+'.SHOP_ID and '+
@@ -139,13 +140,13 @@ end;
 procedure TfrmStocksCalc.calcLast;
 var
   sql:string;
-  id,seqIdValue,tmpIdValue:string;
+  id,tmpIdValue:string;
+  n:integer;
 begin
-  if dataFactory.iDbType = 1 then
+  if dataFactory.iDbType=1 then
      begin
        id := 'id,';
-       seqIdValue := 'seqId.nextVal,';
-       tmpIdValue := 'tmpId.nextVal,';
+       tmpIdValue := 'rownum,';
      end;
   sql :=
       'insert into '+tmpTable+' '+
@@ -156,11 +157,16 @@ begin
       ' j.GODS_ID,''#'' as CLIENT_ID,''#'' as UNIT_ID,1 as CONV_RATE,''#'' as BATCH_NO,''#'' as PROPERTY_01,''#'' as PROPERTY_02, '+
       ' 0,j.NEW_INPRICE,0 from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,NEW_INPRICE',true)+') j '+
       'left outer join PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID ';
-  dataFactory.ExecSQL(sql);
+  n := dataFactory.ExecSQL(sql);
+  if dataFactory.iDbType=1 then
+     begin
+       id := 'id,';
+       tmpIdValue := 'rownum+'+inttostr(n)+',';
+     end;
   if formatDatetime('DD',_beginDate)<>'01' then
     sql:=
       'insert into '+tmpTable+' '+
-      '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
+      ' ('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
       ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
       ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
       'select '+
@@ -197,7 +203,7 @@ begin
       '  A.BATCH_NO=B.BATCH_NO and '+
       '  A.SEQNO=B.SEQNO and '+
       '  A.TENANT_ID='+token.tenantId+' and A.BILL_DATE>='+inttostr(navDate)+' and A.BILL_DATE<='+inttostr(lastDate)+'';
-  dataFactory.ExecSQL(sql);
+  rw := n+dataFactory.ExecSQL(sql);
 end;
 
 procedure TfrmStocksCalc.calcMoney;
@@ -206,7 +212,7 @@ var
 begin
   case dataFactory.iDbType of
   5:sql:= 'update '+tmpTable+' set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where SEQNO % 2 <>0 and BILL_TYPE>1';
-  4:sql:= 'update '+tmpTable+' a set (OUT_PRICE,OUT_MONEY,BAL_MONEY,BAL_PRICE)=(select b.BAL_PRICE,round(a.OUT_AMOUNT*b.BAL_PRICE,3),round(a.BAL_AMOUNT*b.BAL_PRICE,3),b.BAL_PRICE '+
+  4,1:sql:= 'update '+tmpTable+' a set (OUT_PRICE,OUT_MONEY,BAL_MONEY,BAL_PRICE)=(select b.BAL_PRICE,round(a.OUT_AMOUNT*b.BAL_PRICE,3),round(a.BAL_AMOUNT*b.BAL_PRICE,3),b.BAL_PRICE '+
   'from '+prcTable+' b where a.ID=b.ID) where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) and BILL_TYPE>1';
   end;
   dataFactory.ExecSQL(sql);
@@ -247,6 +253,24 @@ begin
       'where a.seqno=b.seqno+2 and a.shop_id=b.shop_id and a.gods_id=b.gods_id and a.batch_no=b.batch_no '+
       ') '+
       'select id,bal_price from report';
+  1:
+    sql:=
+      'insert into '+prcTable+' '+
+      'with report(id,shop_id,gods_id,batch_no,seqno,bal_amount,bal_price) as '+
+      '( '+
+      'select c.id,c.shop_id,c.gods_id,c.batch_no,c.seqno,bal_amount,case when bal_amount<>0 and bal_price=0 then ('+
+      'select coalesce(max(bal_price),0) from '+tmpTable+' where gods_id=c.gods_id and shop_id=''#'' and BILL_DATE=19700101'+
+      ') else bal_price end as bal_price from '+tmpTable+' c,'+
+      '(select min(seqno) as seqno,gods_id,batch_no,shop_id from '+tmpTable+' where shop_id<>''#'' and round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) '+
+      'group by gods_id,batch_no,shop_id) c1 '+
+      'where c.seqno=c1.seqno and c.shop_id=c1.shop_id and c.gods_id=c1.gods_id and c.batch_no=c1.batch_no and c.shop_id<>''#'' and round(c.SEQNO / 2.0,0)<>round(c.SEQNO / 2.0,2) '+
+      'union all '+
+      'select a.id,a.shop_id,a.gods_id,a.batch_no,a.seqno,a.bal_amount, '+
+      'case when (b.bal_amount + a.var1)=0 then b.bal_price else (b.bal_amount*b.bal_price+var2) / (b.bal_amount + var1) end as bal_price '+
+      'from '+tmpTable+' a,report b '+
+      'where a.seqno=b.seqno+2 and a.shop_id=b.shop_id and a.gods_id=b.gods_id and a.batch_no=b.batch_no '+
+      ') '+
+      'select id,bal_price from report';
   end;
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
@@ -254,7 +278,7 @@ end;
 
 procedure TfrmStocksCalc.copyToRck;
 var
-  sql:string;
+  sql,sql1:string;
 begin
   //奇数行为有效数据
   sql:=
@@ -275,20 +299,26 @@ begin
     ' left outer join VIW_USERS F on A.TENANT_ID=F.TENANT_ID and A.GUIDE_USER=F.USER_ID '+
     ' left outer join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CREA_USER=G.USER_ID '+
     'where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) and BILL_TYPE>0 ';
-  dataFactory.BeginTrans;
+//  dataFactory.BeginTrans;
   try
     dataFactory.ExecSQL(ParseSQL(dataFactory.iDbType,sql));
+    sql:='insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) ';
+    sql1 := '';
     while _beginDate<=_endDate do
       begin
-        sql:=
-        'insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP)'+
+        if sql1<>'' then sql1 := sql1 + ' union all ';
+        sql1:=sql1+
         'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',_beginDate)+','''+token.userId+''',''00'','+GetTimeStamp(dataFactory.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+token.tenantId;
-        dataFactory.ExecSQL(ParseSQL(dataFactory.iDbType,sql));
         _beginDate := _beginDate+1;
       end;
-    dataFactory.CommitTrans;
+    if sql1<>'' then
+    begin
+      sql := sql + ' '+sql1+'';
+      dataFactory.ExecSQL(ParseSQL(dataFactory.iDbType,sql));
+    end;
+//    dataFactory.CommitTrans;
   except
-    dataFactory.RollbackTrans;
+//    dataFactory.RollbackTrans;
     Raise;
   end;
 end;
@@ -355,8 +385,9 @@ begin
      copyToRck;
      RzProgressBar1.Percent := 100;
    finally
-//     dropSQLTable(tmpTable)
+//     dropSQLTable(tmpTable);
 //     dropSQLTable(seqTable);
+//     dropSQLTable(prcTable);
    end;
 end;
 
@@ -373,8 +404,7 @@ begin
   if dataFactory.iDbType = 1 then
      begin
        id := 'id,';
-       seqIdValue := 'seqId.nextVal,';
-       tmpIdValue := 'tmpId.nextVal,';
+       tmpIdValue := 'rownum+'+inttostr(rw)+',';
      end;
   sql :=
     'insert into '+tmpTable+' '+
@@ -412,8 +442,9 @@ begin
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
   case dataFactory.iDbType of //不是
-  4:begin
+  4,1:begin
       sql := 'update '+tmpTable+' a set (VAR1,VAR2)=(select coalesce(sum(BAL_AMOUNT),0),coalesce(sum(BAL_MONEY),0) from '+tmpTable+' where SHOP_ID=a.SHOP_ID and GODS_ID=a.GODS_ID and BATCH_NO=a.BATCH_NO and SEQNO=a.SEQNO-1) where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2)';
+      sql := parseSQL(dataFactory.iDbType,sql);
       dataFactory.ExecSQL(sql);
     end;
   end;
@@ -453,7 +484,7 @@ end;
 procedure TfrmStocksCalc.Init;
 var
   sql:string;
-  varchar,int,null:string;
+  varchar,int,null,priKey,default:string;
   id:string;
 begin
   case dataFactory.iDbType of
@@ -467,56 +498,63 @@ begin
     null := ' ';
   end;
   case dataFactory.iDbType of
-  1:int := ' number(18,0) ';
+  1:default := 'DEFAULT 0 NOT NULL';
+  else
+    default := 'NOT NULL DEFAULT 0 ';
+  end;
+  case dataFactory.iDbType of
+  1:int := ' number(22,0) ';
   4:int := ' integer ';
   else
     int := ' int ';
   end;
   dropSQLTable(tmpTable);
   case dataFactory.iDbType of
-  0:id := 'ID bigint identity(1,1) PRIMARY KEY,';
-  1:id := 'ID number(18,0),';
+  0:id := 'ID bigint PRIMARY KEY identity(1,1),';
+  1:id := 'ID number(22,0) NOT NULL,';
   4:id := 'ID bigint NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1 ),';
   5:id := 'ID INTEGER PRIMARY KEY autoincrement,';
   end;
+  if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK_'+tmpTable+' PRIMARY KEY (ID)';
   sql :=
     'CREATE TABLE '+tmpTable+' '+
-    '( '+
+    '('+
     id+
-    '	TENANT_ID'+int+'NOT NULL , '+
-    '	SHOP_ID'+varchar+'(13) NOT NULL , '+
-    '	BILL_ID char (36) NOT NULL , '+
-    '	BILL_CODE'+varchar+'(20) '+null+' , '+
-    '	BILL_TYPE'+int+'NOT NULL , '+
-    '	BILL_NAME'+varchar+'(10) '+null+' , '+
-    '	BILL_DATE'+int+'NOT NULL , '+
-    '	SEQNO'+int+'NOT NULL , '+
-    '	GODS_ID char (36) NOT NULL , '+
-    '	CLIENT_ID'+varchar+'(36) '+null+' , '+
-    '	UNIT_ID'+varchar+'(36) NOT NULL , '+
-    '	CONV_RATE decimal(18, 3) NOT NULL , '+
-    ' BATCH_NO'+varchar+'(36) NOT NULL , '+
-    ' PROPERTY_01'+varchar+'(36) NOT NULL , '+
-    ' PROPERTY_02'+varchar+'(36) NOT NULL , '+
-    '	IN_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	IN_PRICE  decimal(18, 6) NOT NULL DEFAULT 0, '+
-    '	IN_MONEY  decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	IN_TAX  decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' OUT_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' OUT_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' OUT_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' SALE_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' SALE_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' SALE_TAX decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' VAR1 decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' VAR2 decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	GUIDE_USER'+varchar+'(36) '+null+', '+
-    '	CREA_USER'+varchar+'(36) '+null+''+
+    'TENANT_ID'+int+'NOT NULL , '+
+    'SHOP_ID'+varchar+'(13) NOT NULL , '+
+    'BILL_ID char (36) NOT NULL , '+
+    'BILL_CODE'+varchar+'(20) '+null+' , '+
+    'BILL_TYPE'+int+'NOT NULL , '+
+    'BILL_NAME'+varchar+'(10) '+null+' , '+
+    'BILL_DATE'+int+'NOT NULL , '+
+    'SEQNO'+int+'NOT NULL , '+
+    'GODS_ID char (36) NOT NULL , '+
+    'CLIENT_ID'+varchar+'(36) '+null+' , '+
+    'UNIT_ID'+varchar+'(36) NOT NULL , '+
+    'CONV_RATE decimal(18, 3) NOT NULL , '+
+    'BATCH_NO'+varchar+'(36) NOT NULL , '+
+    'PROPERTY_01'+varchar+'(36) NOT NULL , '+
+    'PROPERTY_02'+varchar+'(36) NOT NULL , '+
+    'IN_AMOUNT decimal(18, 3) '+default+', '+
+    'IN_PRICE  decimal(18, 6) '+default+', '+
+    'IN_MONEY  decimal(18, 3) '+default+', '+
+    'IN_TAX  decimal(18, 3) '+default+', '+
+    'OUT_AMOUNT decimal(18, 3) '+default+', '+
+    'OUT_PRICE decimal(18, 6) '+default+', '+
+    'OUT_MONEY decimal(18, 3) '+default+', '+
+    'SALE_PRICE decimal(18, 6) '+default+', '+
+    'SALE_MONEY decimal(18, 3) '+default+', '+
+    'SALE_TAX decimal(18, 3) '+default+', '+
+    'BAL_AMOUNT decimal(18, 3) '+default+', '+
+    'BAL_PRICE decimal(18, 6) '+default+', '+
+    'BAL_MONEY decimal(18, 3) '+default+', '+
+    'VAR1 decimal(18, 3) '+default+', '+
+    'VAR2 decimal(18, 3) '+default+', '+
+    'GUIDE_USER'+varchar+'(36) '+null+', '+
+    'CREA_USER'+varchar+'(36) '+null+' '+  priKey +
     ')';
   createSQLTable(sql,tmpTable);
+  if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK_'+seqTable+' PRIMARY KEY (ID)';
   dropSQLTable(seqTable);
   sql :=
     'CREATE TABLE '+seqTable+' '+
@@ -537,31 +575,32 @@ begin
     ' BATCH_NO'+varchar+'(36) NOT NULL , '+
     ' PROPERTY_01'+varchar+'(36) NOT NULL , '+
     ' PROPERTY_02'+varchar+'(36) NOT NULL , '+
-    '	IN_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	IN_PRICE  decimal(18, 6) NOT NULL DEFAULT 0, '+
-    '	IN_MONEY  decimal(18, 3) NOT NULL DEFAULT 0, '+
-    '	IN_TAX  decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' OUT_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' OUT_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' OUT_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' SALE_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' SALE_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' SALE_TAX decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' BAL_AMOUNT decimal(18, 3) NOT NULL DEFAULT 0, '+
-    ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0, '+
-    ' BAL_MONEY decimal(18, 3) NOT NULL DEFAULT 0, '+
+    '	IN_AMOUNT decimal(18, 3) '+default+', '+
+    '	IN_PRICE  decimal(18, 6) '+default+', '+
+    '	IN_MONEY  decimal(18, 3) '+default+', '+
+    '	IN_TAX  decimal(18, 3) '+default+', '+
+    ' OUT_AMOUNT decimal(18, 3) '+default+', '+
+    ' OUT_PRICE decimal(18, 6) '+default+', '+
+    ' OUT_MONEY decimal(18, 3) '+default+', '+
+    ' SALE_PRICE decimal(18, 6) '+default+', '+
+    ' SALE_MONEY decimal(18, 3) '+default+', '+
+    ' SALE_TAX decimal(18, 3) '+default+', '+
+    ' BAL_AMOUNT decimal(18, 3) '+default+', '+
+    ' BAL_PRICE decimal(18, 6) '+default+', '+
+    ' BAL_MONEY decimal(18, 3) '+default+', '+
     '	GUIDE_USER'+varchar+'(36) '+null+', '+
-    '	CREA_USER'+varchar+'(36) '+null+''+
+    '	CREA_USER'+varchar+'(36) '+null+' '+  priKey +
     ')';
   createSQLTable(sql,seqTable);
   if dataFactory.iDbType <> 5 then
   begin
+    if dataFactory.iDbType in [1,4] then priKey := ' ,CONSTRAINT PK_'+prcTable+' PRIMARY KEY (ID)';
     dropSQLTable(prcTable);
     sql :=
       'CREATE TABLE '+prcTable+' '+
       '( '+
       '	ID'+int+'NOT NULL , '+
-      ' BAL_PRICE decimal(18, 6) NOT NULL DEFAULT 0 '+
+      ' BAL_PRICE decimal(18, 6) '+default+' '+  priKey +
       ')';
     createSQLTable(sql,prcTable);
   end;
@@ -571,12 +610,12 @@ procedure TfrmStocksCalc.InitData;
 var
   sql:string;
   id,seqIdValue,tmpIdValue:string;
+  n:integer;
 begin
-  if dataFactory.iDbType = 1 then
+  if dataFactory.iDbType=1 then
      begin
        id := 'id,';
-       seqIdValue := 'seqId.nextVal,';
-       tmpIdValue := 'tmpId.nextVal,';
+       seqIdValue := 'rownum,';
      end;
   sql :=
     'insert into '+seqTable+' '+
@@ -594,7 +633,11 @@ begin
     'from STK_STOCKDATA A,STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and '+
     ' B.TENANT_ID='+token.tenantId+' and B.STOCK_DATE>='+formatDatetime('YYYYMMDD',_beginDate)+' and B.STOCK_DATE<='+formatDatetime('YYYYMMDD',_endDate)+' '+
     'order by A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,B.STOCK_DATE,B.CREA_DATE ';
-  dataFactory.ExecSQL(sql);
+  n := dataFactory.ExecSQL(sql);
+  if dataFactory.iDbType=1 then
+     begin
+       seqIdValue := 'rownum+'+inttostr(n)+',';
+     end;
   RzProgressBar1.Percent := 30;
   sql :=
     'insert into '+seqTable+' '+
@@ -614,8 +657,12 @@ begin
     'from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and '+
     ' B.TENANT_ID='+token.tenantId+' and B.SALES_DATE>='+formatDatetime('YYYYMMDD',_beginDate)+' and B.SALES_DATE<='+formatDatetime('YYYYMMDD',_endDate)+' '+
     'order by A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,B.SALES_DATE,B.CREA_DATE ';
-  dataFactory.ExecSQL(sql);
+  n := n + dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 40;
+  if dataFactory.iDbType=1 then
+     begin
+       seqIdValue := 'rownum+'+inttostr(n)+',';
+     end;
   sql :=
     'insert into '+seqTable+' '+
     '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
@@ -631,6 +678,10 @@ begin
     'order by A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,B.CHANGE_DATE,B.CREA_DATE ';
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 45;
+  if dataFactory.iDbType=1 then
+     begin
+       tmpIdValue := 'rownum+'+inttostr(rw)+',';
+     end;
   sql :=
     'insert into '+tmpTable+' '+
     ' ('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
@@ -643,7 +694,7 @@ begin
     ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX,BAL_AMOUNT,BAL_PRICE,BAL_MONEY,'+
     ' GUIDE_USER,CREA_USER '+
     'from '+seqTable+' order by GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,BILL_DATE,ID';
-  dataFactory.ExecSQL(sql);
+  rw := rw + dataFactory.ExecSQL(sql);
 end;
 
 procedure TfrmStocksCalc.Prepare;
@@ -698,6 +749,7 @@ end;
 
 procedure TfrmStocksCalc.WMStart(var Message: TMessage);
 begin
+  Update;
   btnCalc.OnClick(nil);
 end;
 

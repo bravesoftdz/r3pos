@@ -323,6 +323,7 @@ end;
 procedure TSyncFactory.ReadTimeStamp;
 var Params:TftParamList;
 begin
+  if token.tenantId='' then Exit;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
@@ -1245,6 +1246,7 @@ var
   firstLogin:boolean;
 begin
   firstLogin := false;
+  ReadTimeStamp;
   if dllApplication.mode = 'demo' then Exit;
   AddLoginLog;
   if not token.online then Exit;

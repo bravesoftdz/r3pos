@@ -524,10 +524,10 @@ procedure TfrmAnlyReport.CalcClientNum(var rs: TZQuery;filterStr:string);
 var ss:TZQuery;
     item:TRecord_;
 begin
-  
+
   if cdsReport1.IsEmpty then exit;
   ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
+  ss.SQL.Text:='SELECT 0 as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
          '0 AS SALE_AMOUNT,0 AS SALE_MONEY '+
          'FROM SAL_SALESORDER SO '+
          'WHERE  1=2 ';
@@ -565,7 +565,7 @@ var ss:TZQuery;
     i:integer;
 begin
   ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT '''' as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
+  ss.SQL.Text:='SELECT 0 as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
 
   if IsProfit then
     ss.SQL.Text:=ss.SQL.Text+'0 AS SALE_PRF '
@@ -604,8 +604,8 @@ begin
     end;
     rs.Next;
   end;
+  rs.Close;
   ss.SortedFields:='WEEK';
-  rs.EmptyDataSet;
   rs.Data:=ss.Data;
   ss.Free;
 end;

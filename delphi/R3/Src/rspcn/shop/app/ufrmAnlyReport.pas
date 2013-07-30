@@ -476,7 +476,8 @@ begin
           end
           else
           begin
-             i:=DayofWeek(FnTime.fnStrtoDate(rs.FieldbyName('SALES_DATE').AsString));
+             //i:=DayofWeek(FnTime.fnStrtoDate(rs.FieldbyName('SALES_DATE').AsString));
+             i:=rs.FieldbyName('WEEK').AsInteger;
              case edtDataSource.ItemIndex of
                0:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
                1:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,weekList[i-1]);
@@ -564,7 +565,7 @@ var ss:TZQuery;
     i:integer;
 begin
   ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
+  ss.SQL.Text:='SELECT '''' as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
 
   if IsProfit then
     ss.SQL.Text:=ss.SQL.Text+'0 AS SALE_PRF '
@@ -603,7 +604,8 @@ begin
     end;
     rs.Next;
   end;
-  rs.Close;
+  ss.SortedFields:='WEEK';
+  rs.EmptyDataSet;
   rs.Data:=ss.Data;
   ss.Free;
 end;

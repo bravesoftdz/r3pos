@@ -105,7 +105,9 @@ uses
   ufrmStorageExcel in 'app\ufrmStorageExcel.pas' {frmStorageExcel},
   ufrmSupplierDialog in 'app\ufrmSupplierDialog.pas' {frmSupplierDialog},
   ObjSupplierV60 in 'obj\ObjSupplierV60.pas',
-  ufrmProgressBar in 'app\ufrmProgressBar.pas' {frmProgressBar};
+  ufrmProgressBar in 'app\ufrmProgressBar.pas' {frmProgressBar},
+  ObjUtilsV60 in 'obj\ObjUtilsV60.pas',
+  uCodePrinterFactory in 'app\uCodePrinterFactory.pas';
 
 {$R *.res}
 exports

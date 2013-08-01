@@ -2019,23 +2019,17 @@ begin
 end;
 
 procedure TSyncFactory.RecoveryClose(CloseDate: string);
-var str:string;
+var
+  str:string;
 begin
   dataFactory.MoveToSqlite;
   try
-    dataFactory.BeginTrans;
-    try
-      dataFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+token.tenantId+' and DEFINE = ''SYS_BEGIN_DATE'' ');
-
-      str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values '+
-             ' ('+token.tenantId+',''SYS_BEGIN_DATE'','''+CloseDate+''',0,''00'',0)';
-      dataFactory.ExecSQL(str);
-
-      dataFactory.CommitTrans;
-    except
-      dataFactory.RollbackTrans;
-      Raise;
-    end;
+    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+CloseDate+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''SYS_BEGIN_DATE'' ')=0 then
+      begin
+        str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values '+
+               ' ('+token.tenantId+',''SYS_BEGIN_DATE'','''+CloseDate+''',0,''00'',0)';
+        dataFactory.ExecSQL(str);
+      end;
   finally
     dataFactory.MoveToDefault;
   end;

@@ -534,7 +534,6 @@ begin
      dataFactory.CancelBatch;
      Raise;
   end;
-
   SaveLocalInfo;
   dllGlobal.Refresh('PUB_GOODSINFO');
 
@@ -616,7 +615,7 @@ begin
           begin
             cdsBarcode.Edit;
             cdsBarcode.FieldbyName('BARCODE').AsString := edtBARCODE.Text;
-            cdsBarcode.Post; 
+            cdsBarcode.Post;
           end;
      end
   else
@@ -643,7 +642,7 @@ begin
   cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0);
   cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat := StrtoFloatDef(edtUPPER_AMOUNT.Text,0);
   cdsGoodsExt.Post;
-  
+
   isDel := false;
   if FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))=0 then
      begin
@@ -655,7 +654,7 @@ begin
            isDel := true;
         if IsDel and cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then cdsGoodsPrice.Delete;
      end;
-  if not isDel then
+  if not isDel and (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))<>0) then
      begin
        cdsGoodsPrice.Edit;
        cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);

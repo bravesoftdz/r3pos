@@ -11,6 +11,8 @@ inherited frmStorageReport: TfrmStorageReport
     Width = 979
     inherited PageControl: TRzPageControl
       Width = 979
+      ActivePage = TabSheet2
+      TabIndex = 1
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet
@@ -382,7 +384,7 @@ inherited frmStorageReport: TfrmStorageReport
                     EditButtons = <>
                     FieldName = 'CLIENT_NAME'
                     Footers = <>
-                    Title.Caption = #20132#26131#21333#20301
+                    Title.Caption = #23458#25143#21517#31216
                     Width = 149
                   end
                   item

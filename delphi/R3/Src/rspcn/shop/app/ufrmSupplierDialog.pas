@@ -222,7 +222,7 @@ begin
       dataFactory.BeginBatch;
       try
         Params.ParamByName('TENANT_ID').AsInteger := cdsSupplier.FieldByName('TENANT_ID').AsInteger;
-        Params.ParamByName('CUST_ID').AsString := cdsSupplier.FieldByName('CUST_ID').AsString;;
+        Params.ParamByName('CLIENT_ID').AsString := cdsSupplier.FieldByName('CLIENT_ID').AsString;;
         dataFactory.AddBatch(tmpQuery,'TSupplierV60',Params);
         dataFactory.OpenBatch;
       except

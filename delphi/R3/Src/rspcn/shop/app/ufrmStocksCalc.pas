@@ -211,8 +211,8 @@ var
   sql:string;
 begin
   case dataFactory.iDbType of
-  5:sql:= 'update '+tmpTable+' set OUT_PRICE=BAL_PRICE,OUT_MONEY=round(OUT_AMOUNT*BAL_PRICE,3),BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,3) where SEQNO % 2 <>0 and BILL_TYPE>1';
-  4,1:sql:= 'update '+tmpTable+' a set (OUT_PRICE,OUT_MONEY,BAL_MONEY,BAL_PRICE)=(select b.BAL_PRICE,round(a.OUT_AMOUNT*b.BAL_PRICE,3),round(a.BAL_AMOUNT*b.BAL_PRICE,3),b.BAL_PRICE '+
+  5:sql:= 'update '+tmpTable+' set OUT_PRICE=case when BILL_TYPE=22 then OUT_PRICE else BAL_PRICE and,OUT_MONEY=case when BILL_TYPE=22 then OUT_MONEY else round(OUT_AMOUNT*BAL_PRICE,2) end,BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,2) where SEQNO % 2 <>0 and BILL_TYPE>1';
+  4,1:sql:= 'update '+tmpTable+' a set (OUT_PRICE,OUT_MONEY,BAL_MONEY,BAL_PRICE)=(select case when a.BILL_TYPE=22 then b.BAL_PRICE else a.OUT_PRICE end,case when a.BILL_TYPE=22 then a.OUT_MONEY else round(a.OUT_AMOUNT*b.BAL_PRICE,2) end,round(a.BAL_AMOUNT*b.BAL_PRICE,2),b.BAL_PRICE '+
   'from '+prcTable+' b where a.ID=b.ID) where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) and BILL_TYPE>1';
   end;
   dataFactory.ExecSQL(sql);
@@ -413,8 +413,10 @@ begin
     ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
     'select '+tmpIdValue+'TENANT_ID,SHOP_ID,BILL_ID,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO-1, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
-    ' IN_AMOUNT,IN_PRICE,IN_MONEY '+
-    'from '+tmpTable+' where BILL_TYPE in (11,12,13) ';
+    ' case when BILL_TYPE=22 then OUT_AMOUNT else IN_AMOUNT end,'+
+    ' case when BILL_TYPE=22 then OUT_PRICE else IN_PRICE end,'+
+    ' case when BILL_TYPE=22 then OUT_MONEY else IN_MONEY end '+
+    'from '+tmpTable+' where BILL_TYPE in (11,12,13,22) ';
   dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 65;
   case dataFactory.iDbType of
@@ -427,7 +429,7 @@ begin
       '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
       '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
       '  B.BAL_AMOUNT>0 and (B.SEQNO % 2)<>0 and B.SEQNO<'+tmpTable+'.SEQNO '+
-      ') where (SEQNO % 2)=0 ';
+      ') where (SEQNO % 2)=0 and BILL_TYPE in (11,12) ';
   else
     sql :=
       'update '+tmpTable+' set SEQNO= '+
@@ -437,7 +439,7 @@ begin
       '  B.GODS_ID='+tmpTable+'.GODS_ID and '+
       '  B.BATCH_NO='+tmpTable+'.BATCH_NO and '+
       '  B.BAL_AMOUNT>0 and (round(B.SEQNO / 2.0,0)<>round(B.SEQNO / 2.0,2)) and B.SEQNO<'+tmpTable+'.SEQNO '+
-      ') where round(SEQNO / 2.0,0)=round(SEQNO / 2.0,2) ';
+      ') where round(SEQNO / 2.0,0)=round(SEQNO / 2.0,2) and BILL_TYPE in (11,12) ';
   end;
   sql := parseSQL(dataFactory.iDbType,sql);
   dataFactory.ExecSQL(sql);
@@ -643,12 +645,12 @@ begin
     'insert into '+seqTable+' '+
     '('+id+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO, '+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02, '+
-    ' OUT_AMOUNT,SALE_PRICE,SALE_MONEY,SALE_TAX, '+
+    ' OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX, '+
     ' GUIDE_USER,CREA_USER) '+
     'select '+seqIdValue+'A.TENANT_ID,A.SHOP_ID,A.SALES_ID,B.GLIDE_NO,B.SALES_TYPE+20, '+
     ' case when B.SALES_TYPE in (1,4) then ''销售'' when B.SALES_TYPE=2 then ''调出'' when B.SALES_TYPE=3 then ''退入'' else ''出库'' end as BILL_NAME,B.SALES_DATE,1 as SEQNO, '+
     ' A.GODS_ID,B.CLIENT_ID,A.UNIT_ID,cast(A.CALC_AMOUNT as decimal(18,3)) / cast(A.AMOUNT as decimal(18,3)) as CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
-    ' A.CALC_AMOUNT as OUT_AMOUNT,'+
+    ' A.CALC_AMOUNT as OUT_AMOUNT,A.COST_PRICE,round(A.CALC_AMOUNT*A.COST_PRICE,2),'+
     ' round((A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2)) / cast(A.CALC_AMOUNT as decimal(18,3))'+
     ' ,6) as SALE_PRICE,'+
     ' A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as SALE_MONEY, '+
@@ -778,39 +780,26 @@ end;
 procedure TfrmStocksCalc.CheckAppVersion;
 var
   rs:TZQuery;
-  delDaysClose,delMonthClose:string;
-  insertVersion,updateVersion:string;
   appVersion:string;
+  params:TftParamList;
 begin
   rs := TZQuery.Create(nil);
+  params := TftParamList.Create;
   try
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.ParamByName('DEFINE').AsString := 'APPVERSION';
     dataFactory.Open(rs);
     AppVersion := rs.Fields[0].AsString;
+    if AppVersion = '' then AppVersion := 'V3';
+    if AppVersion <> 'V6' then
+       begin
+         dataFactory.ExecProc('TCheckAppVersion',params);
+       end;
   finally
+    params.Free;
     rs.Free;
   end;
-  if AppVersion = '' then AppVersion := 'V3';
-  if AppVersion <> 'V6' then
-     begin
-       delDaysClose  := 'delete from RCK_DAYS_CLOSE  where TENANT_ID='+token.tenantId;
-       delMonthClose := 'delete from RCK_MONTH_CLOSE where TENANT_ID='+token.tenantId;
-       updateVersion := 'update SYS_DEFINE set VALUE=''V6'' where TENANT_ID='+token.tenantId+' and DEFINE=''APPVERSION'' ';
-       insertVersion := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values ('+token.tenantId+',''APPVERSION'',''V6'',0,''00'','+GetTimeStamp(dataFactory.iDbType)+') ';
-       dataFactory.BeginTrans;
-       try
-         dataFactory.ExecSQL(delDaysClose);
-         dataFactory.ExecSQL(delMonthClose);
-         if dataFactory.ExecSQL(updateVersion) <= 0 then
-            dataFactory.ExecSQL(insertVersion);
-         dataFactory.CommitTrans;
-       except
-         dataFactory.RollbackTrans;
-         Raise;
-       end;
-     end;
 end;
 
 procedure TfrmStocksCalc.FormCreate(Sender: TObject);

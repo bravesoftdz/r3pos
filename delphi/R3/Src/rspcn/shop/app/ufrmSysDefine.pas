@@ -1931,31 +1931,16 @@ end;
 
 procedure TfrmSysDefine.RtcSyncClose;
 var
-  rs:TZQuery;
-  timeStamp:string;
+  vParams:TftParamList;
 begin
   dataFactory.MoveToSqlite;
+  vParams:=TftParamList.Create(nil);
   try
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select max(TIME_STAMP) TIME_STAMP from SYS_SYNC_CTRL';
-      dataFactory.Open(rs);
-      timeStamp := rs.Fields[0].AsString;
-    finally
-      rs.Free;
-    end;
-    dataFactory.BeginTrans;
-    try
-      dataFactory.ExecSQL('delete from SYS_SYNC_CTRL where TENANT_ID='+token.tenantId+' and SHOP_ID = '''+token.shopId+''' and TABLE_NAME in (''RTC_STK_STOCKORDER'',''RTC_SAL_SALESORDER'',''RTC_PUB_CUSTOMER'') ');
-      dataFactory.ExecSQL('insert into SYS_SYNC_CTRL (TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+token.tenantId+','''+token.shopId+''',''RTC_STK_STOCKORDER'','+timeStamp+') ');
-      dataFactory.ExecSQL('insert into SYS_SYNC_CTRL (TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+token.tenantId+','''+token.shopId+''',''RTC_SAL_SALESORDER'','+timeStamp+') ');
-      dataFactory.ExecSQL('insert into SYS_SYNC_CTRL (TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+token.tenantId+','''+token.shopId+''',''RTC_PUB_CUSTOMER'','+timeStamp+') ');
-      dataFactory.CommitTrans;
-    except
-      dataFactory.RollbackTrans;
-      Raise;
-    end;
+    vParams.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
+    vParams.ParamByName('SHOP_ID').AsString:=token.shopId;
+    dataFactory.ExecProc('TRtcSyncClose',vParams);
   finally
+    vParams.Free;
     dataFactory.MoveToDefault;
   end;
 end;

@@ -32,8 +32,8 @@ object dllGlobal: TdllGlobal
     SQL.Strings = (
       
         'select SHOP_ID,SHOP_NAME,LICENSE_CODE,SHOP_SPELL,SEQ_NO,REGION_I' +
-        'D from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (' +
-        #39'02'#39','#39'12'#39') order by SEQ_NO')
+        'D,LINKMAN from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM ' +
+        'not in ('#39'02'#39','#39'12'#39') order by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown

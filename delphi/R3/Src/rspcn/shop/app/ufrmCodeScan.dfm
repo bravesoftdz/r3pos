@@ -4,6 +4,7 @@ inherited frmCodeScan: TfrmCodeScan
   Caption = 'frmCodeScan'
   ClientHeight = 373
   ClientWidth = 307
+  OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
@@ -85,13 +86,13 @@ inherited frmCodeScan: TfrmCodeScan
         Height = 46
         Align = alBottom
         Anchors = []
-        BorderOuter = fsNone
-        BorderSides = [sdLeft, sdRight, sdBottom]
+        BorderOuter = fsFlat
+        BorderSides = [sdTop]
         Color = 15461355
         TabOrder = 0
         object Cancel: TRzBmpButton
-          Left = 214
-          Top = 7
+          Left = 222
+          Top = 9
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
           Bitmaps.Up.Data = {

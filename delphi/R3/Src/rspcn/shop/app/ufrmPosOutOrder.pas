@@ -98,6 +98,7 @@ type
     edtCARD_NO: TcxTextEdit;
     RzToolButton4: TRzToolButton;
     RzBmpButton3: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -159,6 +160,7 @@ type
     procedure edtCARD_NOEnter(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -245,7 +247,7 @@ implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,
      uCacheFactory,ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,
-     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory;
+     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory,ufrmCodeScan;
 
 {$R *.dfm}
 
@@ -655,6 +657,8 @@ begin
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   NewOrder;
   InitGodsStringGrid;
+  if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
+     RzBmpButton4.Visible := true;
 end;
 
 procedure TfrmPosOutOrder.DBGridEh1Columns1BeforeShowControl(
@@ -2728,6 +2732,12 @@ begin
   inherited;
   ImportExcelClick(nil);
 
+end;
+
+procedure TfrmPosOutOrder.RzBmpButton4Click(Sender: TObject);
+begin
+  inherited;
+  TfrmCodeScan.ShowDialog(self);
 end;
 
 initialization

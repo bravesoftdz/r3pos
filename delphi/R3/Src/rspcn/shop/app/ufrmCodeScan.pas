@@ -26,6 +26,7 @@ type
     edtInput: TcxTextEdit;
     procedure CancelClick(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
   public
     procedure CodeScan(code: string);
     class function ShowDialog(Owner:TForm):boolean;
@@ -134,6 +135,12 @@ begin
         Free;
       end;
     end;
+end;
+
+procedure TfrmCodeScan.FormShow(Sender: TObject);
+begin
+  inherited;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 end.

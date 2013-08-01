@@ -5,6 +5,7 @@ inherited frmCodeScan: TfrmCodeScan
   ClientHeight = 373
   ClientWidth = 307
   OldCreateOrder = True
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel

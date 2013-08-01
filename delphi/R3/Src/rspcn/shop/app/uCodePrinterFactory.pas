@@ -101,6 +101,7 @@ end;
 procedure TCodePrinterFactory.FreeCodePrinterFactory;
 begin
   if not FileExists(ExtractFilePath(ParamStr(0)) + dllname) then Exit;
+  if not dllLoaded then Exit;
   dllLoaded := false;
   dllValid := false;
   FreeLibrary(CodePrinterHandle);

@@ -52,7 +52,7 @@ begin
   cfgFile := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'r3.cfg');
   try
     localVersion := cfgFile.ReadString(cfgFile.ReadString('soft', 'ProductID', 'default'), 'resVersion', ''); // 获取本地版本
-    if checkResVersion(remoteVersion, localVersion) then
+    if (remoteVersion<>'') and checkResVersion(remoteVersion, localVersion) then
       begin
         if downloadFile(src, filename) and unZipFiles(filename, path) then // 下载资源包并解压
           begin

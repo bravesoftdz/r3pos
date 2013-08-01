@@ -20,7 +20,8 @@ TCodePrinterWindowsFont = function(X,Y,FontHeight,Rotation,FontStyle,FontUnderli
 
 TCodePrinterFactory=class
   private
-    Loaded: boolean;
+    dllLoaded: boolean;
+    dllValid: boolean;
   protected
     CodePrinterHandle: THandle;
     CodePrinterOpenPort: TCodePrinterOpenPort;
@@ -65,37 +66,43 @@ end;
 
 procedure TCodePrinterFactory.LoadCodePrinterFactory;
 begin
-  Loaded := false;
+  dllLoaded := false;
+  dllValid := false;
+
   if not FileExists(ExtractFilePath(ParamStr(0)) + dllname) then Exit;
   CodePrinterHandle := LoadLibrary(Pchar(ExtractFilePath(ParamStr(0)) + dllname));
   if CodePrinterHandle = 0 then Exit;
-  Loaded := true;
+  dllLoaded := true;
   
   @CodePrinterOpenPort := GetProcAddress(CodePrinterHandle, 'openport');
-  if @CodePrinterOpenPort = nil then Raise Exception.Create('无效打印机插件，没有实现openport方法');
+  if @CodePrinterOpenPort = nil then Exit;
 
   @CodePrinterClosePort := GetProcAddress(CodePrinterHandle, 'closeport');
-  if @CodePrinterClosePort = nil then Raise Exception.Create('无效打印机插件，没有实现closeport方法');
+  if @CodePrinterClosePort = nil then Exit;
 
   @CodePrinterSendCommand := GetProcAddress(CodePrinterHandle, 'sendcommand');
-  if @CodePrinterSendCommand = nil then Raise Exception.Create('无效打印机插件，没有实现sendcommand方法');
+  if @CodePrinterSendCommand = nil then Exit;
 
   @CodePrinterSetup := GetProcAddress(CodePrinterHandle, 'setup');
-  if @CodePrinterSetup = nil then Raise Exception.Create('无效打印机插件，没有实现setup方法');
+  if @CodePrinterSetup = nil then Exit;
 
   @CodePrinterClearBuffer := GetProcAddress(CodePrinterHandle, 'clearbuffer');
-  if @CodePrinterClearBuffer = nil then Raise Exception.Create('无效打印机插件，没有实现clearbuffer方法');
+  if @CodePrinterClearBuffer = nil then Exit;
 
   @CodePrinterPrintLabel := GetProcAddress(CodePrinterHandle, 'printlabel');
-  if @CodePrinterPrintLabel = nil then Raise Exception.Create('无效打印机插件，没有实现printlabel方法');
+  if @CodePrinterPrintLabel = nil then Exit;
 
   @CodePrinterWindowsFont := GetProcAddress(CodePrinterHandle, 'windowsfont');
-  if @CodePrinterWindowsFont = nil then Raise Exception.Create('无效打印机插件，没有实现windowsfont方法');
+  if @CodePrinterWindowsFont = nil then Exit;
+
+  dllValid := true;
 end;
 
 procedure TCodePrinterFactory.FreeCodePrinterFactory;
 begin
   if not FileExists(ExtractFilePath(ParamStr(0)) + dllname) then Exit;
+  dllLoaded := false;
+  dllValid := false;
   FreeLibrary(CodePrinterHandle);
 end;
 
@@ -165,7 +172,7 @@ var
 begin
   result := false;
 
-  if not Loaded then Exit;
+  if not dllValid then Exit;
 
   cs := dllGlobal.GetZQueryFromName('CA_TENANT');
   ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');

@@ -1439,7 +1439,7 @@ begin
   rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
   
   Node := doc.CreateElement('usingBatchNo');
-  Node.text := '1';
+  Node.text := '2';
   rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
   
   Node := doc.CreateElement('usingBarter');

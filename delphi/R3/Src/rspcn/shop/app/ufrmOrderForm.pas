@@ -1594,7 +1594,7 @@ begin
     try
       if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then
         begin
-          if length(fndStr)=13 then //是13位条码
+          if (length(fndStr)>7) and (fnString.IsNumberChar(fndStr)) then //是13位条码
              begin
                if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
                   begin

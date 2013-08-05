@@ -107,7 +107,8 @@ uses
   ObjSupplierV60 in 'obj\ObjSupplierV60.pas',
   ufrmProgressBar in 'app\ufrmProgressBar.pas' {frmProgressBar},
   ObjUtilsV60 in 'obj\ObjUtilsV60.pas',
-  uCodePrinterFactory in 'app\uCodePrinterFactory.pas';
+  uCodePrinterFactory in 'app\uCodePrinterFactory.pas',
+  ufrmCodeScan in 'app\ufrmCodeScan.pas' {frmCodeScan};
 
 {$R *.res}
 exports

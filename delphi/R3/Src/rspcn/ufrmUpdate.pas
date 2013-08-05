@@ -199,7 +199,7 @@ begin
    //备份数据库
    if not fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext)) then
       begin
-        if not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),false) then Raise Exception.Create('升级时备份数据库失败');
+        if fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) and not Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.'+ext),false) then Raise Exception.Create('升级时备份数据库失败');
       end
    else
       begin

@@ -724,10 +724,12 @@ begin
   inherited;
   AObj := TRecord_.Create;
   TDbGridEhSort.InitForm(self);
+  TDbGridEhExport.InitForm(self);
 end;
 
 procedure TfrmGoodsStorage.FormDestroy(Sender: TObject);
 begin
+  TDbGridEhExport.FreeForm(self);
   TDbGridEhSort.FreeForm(self);
   AObj.Free;
   inherited;
@@ -1921,12 +1923,10 @@ procedure TfrmGoodsStorage.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-{
   if (cdsList.FieldByName('LOWER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat<cdsList.FieldByName('LOWER_AMOUNT').AsFloat) then
      Background := lower.Color;
   if (cdsList.FieldByName('UPPER_AMOUNT').AsFloat<>0) and (cdsList.FieldbyName('AMOUNT').AsFloat>cdsList.FieldByName('UPPER_AMOUNT').AsFloat) then
      Background := upper.Color;
-}
 end;
 
 procedure TfrmGoodsStorage.RzBmpButton3Click(Sender: TObject);

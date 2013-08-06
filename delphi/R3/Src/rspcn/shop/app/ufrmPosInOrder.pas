@@ -2000,6 +2000,7 @@ begin
      end;
      InitRecord;
      Calc;
+     AObj.FieldbyName('PAY_ZERO').AsFloat := -hdr.FieldbyName('PAY_ZERO').AsFloat;
      DoShowPayment;
    finally
      rs.Free;

@@ -2690,6 +2690,7 @@ begin
      InitRecord;
      RzPanel10.Visible := (AObj.FieldbyName('CLIENT_ID').AsString='');
      Calc;
+     AObj.FieldbyName('PAY_ZERO').AsFloat := -hdr.FieldbyName('PAY_ZERO').AsFloat;
      DoShowPayment;
    finally
      rs.Free;

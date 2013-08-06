@@ -1297,7 +1297,7 @@ begin
       Field := edtTable.FindField('CALC_AMOUNT');
       if Field<>nil then
          begin
-            Field.AsFloat := edtTable.FindField('AMOUNT').AsInteger * SourceScale;
+            Field.AsFloat := edtTable.FindField('AMOUNT').AsFloat * SourceScale;
          end;
       
 

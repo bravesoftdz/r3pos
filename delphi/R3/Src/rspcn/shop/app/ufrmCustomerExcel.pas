@@ -434,8 +434,8 @@ begin
          strError:='性别为空;';
       end;
     4:begin
-        if str='' then
-          strError:='会员类别为空;';
+        //if str='' then
+         // strError:='会员类别为空;';
       end;
     5:begin
       {

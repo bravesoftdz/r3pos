@@ -147,6 +147,14 @@ begin
         end;
       end;
 
+      Field:=dsExcel.FindField('SORT_ID');
+      if (Field <> nil) and (Field.AsString = '') then
+      begin
+        dsExcel.Edit;
+        dsExcel.fieldByName('SORT_ID').AsString:='#';
+        dsExcel.Post;
+      end;
+
       Field:=dsExcel.FindField('PRICE_ID');
       if (Field <> nil) and (Field.AsString <> '') then
       begin
@@ -438,12 +446,8 @@ begin
          // strError:='会员类别为空;';
       end;
     5:begin
-      {
-        if str='' then
-          strError:='会员等级为空;'
-        else if FieldType[5]=0 then
+         if (str<>'') and (FieldType[5]=0) then
           strError:='会员等级不存在;';
-      }
       end;
     6:begin
         if str='' then

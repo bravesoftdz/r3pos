@@ -1,6 +1,6 @@
 object frmBrowerForm: TfrmBrowerForm
-  Left = 290
-  Top = 174
+  Left = 58
+  Top = 232
   BorderStyle = bsNone
   Caption = #28010#28526#27983#35272#22120
   ClientHeight = 487
@@ -2211,6 +2211,7 @@ object frmBrowerForm: TfrmBrowerForm
       Color = clBtnFace
       Anchors = [akTop, akRight]
       TabOrder = 0
+      TabStop = False
       OnClick = btnCloseClick
     end
     object btnWindow: TRzBmpButton
@@ -2344,6 +2345,7 @@ object frmBrowerForm: TfrmBrowerForm
       Color = clBtnFace
       Anchors = [akTop, akRight]
       TabOrder = 1
+      TabStop = False
       OnClick = btnWindowClick
     end
     object RzBmpButton4: TRzBmpButton
@@ -2477,6 +2479,7 @@ object frmBrowerForm: TfrmBrowerForm
       Color = clBtnFace
       Anchors = [akTop, akRight]
       TabOrder = 2
+      TabStop = False
       OnClick = RzBmpButton4Click
     end
     object RzPanel1: TRzPanel
@@ -4339,6 +4342,7 @@ object frmBrowerForm: TfrmBrowerForm
         F8F5F3FAF8F6FAF8F6FAF8F6FAF8F6FAF8F6F0EDE8FAF8F60000}
       Color = clBtnFace
       TabOrder = 0
+      TabStop = False
       Visible = False
       OnClick = btnPageCloseClick
     end
@@ -4455,6 +4459,7 @@ object frmBrowerForm: TfrmBrowerForm
           E8DBCDE8DBCDE9DCCEEADDCFE5D9C7000000}
         Color = clBtnFace
         TabOrder = 0
+        TabStop = False
         OnClick = RzBmpButton1Click
       end
       object RzBmpButton2: TRzBmpButton
@@ -4520,6 +4525,7 @@ object frmBrowerForm: TfrmBrowerForm
           E9DCCEE9DCCEE9DCCEE9DCCEE4DAC8000000}
         Color = clBtnFace
         TabOrder = 1
+        TabStop = False
         OnClick = RzBmpButton2Click
       end
     end

@@ -62,10 +62,12 @@ begin
 end;
 
 procedure TfrmSyncData.SetShowTitle(const Value: string);
+var s:string;
 begin
   if not Visible then Exit;
-  FShowTitle := Value;
-  Label1.Caption := Value;
+  s := '为了保障您的数据安全，系统正在备份...'+Value;
+  FShowTitle := s;
+  Label1.Caption := s;
   Label1.Update;
   Update;
 end;

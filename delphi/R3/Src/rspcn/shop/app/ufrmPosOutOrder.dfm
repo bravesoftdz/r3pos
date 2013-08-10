@@ -300,10 +300,10 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Stretch = True
                 end
                 object MarqueeStatus: TRzMarqueeStatus
-                  Left = 37
-                  Top = 18
+                  Left = 5
+                  Top = 5
                   Width = 315
-                  Height = 30
+                  Height = 46
                   FrameStyle = fsNone
                   Anchors = [akLeft, akTop, akRight]
                   Color = 15461355

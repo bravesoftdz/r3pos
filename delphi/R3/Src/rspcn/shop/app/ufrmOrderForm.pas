@@ -170,7 +170,7 @@ type
     FinputMode: integer;
     FdbState: TDataSetState;
     FinputFlag: integer;
-
+    CodeLisenter:boolean;
     procedure SetinputMode(const Value: integer);virtual;
     procedure SetdbState(const Value: TDataSetState);virtual;
     procedure SetinputFlag(const Value: integer);virtual;
@@ -219,7 +219,7 @@ type
     function  DecodeBarcode(BarCode: string):integer;
     procedure DoCustId(s:string);virtual;
     procedure BarcodeInput(_Buf:string);override;
-    
+
     procedure Calc;virtual; //2011.06.09≈–∂œ «∑Òœﬁ¡ø
   public
     constructor Create(AOwner: TComponent); override;
@@ -310,6 +310,7 @@ var
   Column:TColumnEh;
 begin
   inherited;
+  CodeLisenter := true;
   inputMode := 1;
   defUnit := 0;
   dbState := dsBrowse;
@@ -1883,8 +1884,7 @@ begin
         Key := #0;
       end;
   finally
-     if edtInput.CanFocus and not edtInput.Focused then
-        if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
+    if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 
@@ -2520,6 +2520,7 @@ end;
 procedure TfrmOrderForm.BarcodeInput(_Buf: string);
 begin
   inherited;
+  if not CodeLisenter then Exit;
   fndGODS_ID.Visible := false;
   try
     case inputFlag of
@@ -2537,6 +2538,8 @@ begin
     edtInput.Text := '';
     edtInput.SelectAll;
     if edtInput.CanFocus then edtInput.SetFocus;
+    showwindow(Handle,1);
+    setwindowpos(Handle,0,0,0,0,0,3);
   end;
 end;
 

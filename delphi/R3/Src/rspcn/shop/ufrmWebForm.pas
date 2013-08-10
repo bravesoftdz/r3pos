@@ -128,7 +128,6 @@ end;
 
 procedure TfrmWebForm.BarcodeInput(_Buf:string);
 begin
-
 end;
 
 end.

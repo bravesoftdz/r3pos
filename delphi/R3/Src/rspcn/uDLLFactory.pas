@@ -92,6 +92,7 @@ type
 
     //执行远程方式，返回结果
     function ExecProc(NS:String;Params:WideString):pchar;stdcall;
+    function DBLock(locked:boolean):boolean;stdcall;
 
   public
     constructor Create;
@@ -706,6 +707,21 @@ end;
 procedure TDLLFactory.SetisBusy(const Value: boolean);
 begin
   FisBusy := Value;
+end;
+
+function TDLLFactory.DBLock(locked: boolean): boolean;
+begin
+  try
+    if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
+    dataFactory.DBLock(locked);
+    result := true;
+  except
+    on E:Exception do
+       begin
+         lastError := E.Message;
+         raise;
+       end;
+  end;
 end;
 
 { TDLLPlugin }

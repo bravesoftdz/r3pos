@@ -638,7 +638,7 @@ begin
     case PSynTableInfo(FList[i])^.synFlag of
     0,1,2,3,4,10,20,21,22,23,29:
       begin
-        ProTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+        ProTitle := '<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
         SyncSingleTable(FList[i]);
         inc(FinishIndex);
         SetProPosition(FinishIndex * 100);
@@ -1253,6 +1253,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
+      dataFactory.remote.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1302,6 +1303,7 @@ begin
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
+      dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1316,6 +1318,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
+      dataFactory.remote.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1332,6 +1335,7 @@ begin
            RtcSyncFactory.SyncRtcData;
          end;
     finally
+      dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1345,6 +1349,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
+      dataFactory.remote.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1352,6 +1357,7 @@ begin
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData(1,BeginDate);
     finally
+      dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1365,6 +1371,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
+      dataFactory.remote.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1376,6 +1383,7 @@ begin
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
+      dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1432,7 +1440,7 @@ begin
     ls.First;
     while not ls.Eof do
     begin
-      ProTitle := '正在同步<进货单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
+      ProTitle := '<进货单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100 div ls.RecordCount * ls.RecNo);
 
       // 小于关账日期的单据不下载
@@ -1574,7 +1582,7 @@ begin
     ls.First;
     while not ls.Eof do
     begin
-      ProTitle := '正在同步<销售单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
+      ProTitle := '<销售单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
 
       // 小于关账日期的单据不下载
@@ -1735,7 +1743,7 @@ begin
     ls.First;
     while not ls.Eof do
     begin
-      ProTitle := '正在同步<损益单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
+      ProTitle := '<损益单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
 
       // 小于关账日期的单据不下载
@@ -1874,7 +1882,7 @@ begin
     ls.First;
     while not ls.Eof do
     begin
-      ProTitle := '正在同步<日台账>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
+      ProTitle := '<日台账>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
 
       // 小于关账日期的数据不下载
@@ -1968,16 +1976,16 @@ begin
     SetProMax(400);
     ProTitle := '正在准备数据...';
     GetCloseAccDate;
-    ProTitle := '正在同步<进货单>...';
+    ProTitle := '<进货单>...';
     SyncStockOrder(SyncFlag,BeginDate);
     SetProPosition(100);
-    ProTitle := '正在同步<销售单>...';
+    ProTitle := '<销售单>...';
     SyncSalesOrder(SyncFlag,BeginDate);
     SetProPosition(200);
-    ProTitle := '正在同步<损益单>...';
+    ProTitle := '<损益单>...';
     SyncChangeOrder(SyncFlag,BeginDate);
     SetProPosition(300);
-    ProTitle := '正在同步<日台账>...';
+    ProTitle := '<日台账>...';
     SyncRckDays(SyncFlag,BeginDate);
     SetProPosition(400);
   finally
@@ -2139,7 +2147,6 @@ var
   LocalList:TStringList;
 begin
   result := true;
-  Exit;
   if (dllGlobal.GetSFVersion = '.ONL') or (dllGlobal.GetSFVersion = '.NET') then Exit;
   rs := TZQuery.Create(nil);
   try

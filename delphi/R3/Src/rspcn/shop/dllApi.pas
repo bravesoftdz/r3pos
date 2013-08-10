@@ -42,8 +42,10 @@ type
   private
     Fhandle: THandle;
     Fmode: string;
+    Finited: boolean;
     procedure Sethandle(const Value: THandle);
     procedure Setmode(const Value: string);
+    procedure Setinited(const Value: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -52,6 +54,7 @@ type
     procedure dllException(Sender: TObject; E: Exception);
     property handle:THandle read Fhandle write Sethandle;
     property mode:string read Fmode write Setmode;
+    property inited:boolean read Finited write Setinited;
   end;
 
 var
@@ -114,6 +117,7 @@ begin
     result := true;
     dataFactory.MoveToDefault;
     SyncFactory.LoginSync(appWnd);
+    dllApplication.inited := true;
     result := true;
   except
     on E:Exception do
@@ -386,6 +390,11 @@ end;
 procedure TdllApplication.Sethandle(const Value: THandle);
 begin
   Fhandle := Value;
+end;
+
+procedure TdllApplication.Setinited(const Value: boolean);
+begin
+  Finited := Value;
 end;
 
 procedure TdllApplication.Setmode(const Value: string);

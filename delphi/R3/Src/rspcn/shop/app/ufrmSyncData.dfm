@@ -1,21 +1,12 @@
 inherited frmSyncData: TfrmSyncData
-  Left = 313
-  Top = 23
   Caption = #27491#22312#25191#34892#65292#35831#31245#21518'...'
-  ClientHeight = 677
-  ClientWidth = 770
   Color = 12693109
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 770
-    Height = 677
     inherited webForm: TRzPanel
-      Width = 770
-      Height = 677
       Color = 12693109
       inherited RzBackground1: TRzBackground
-        Width = 770
         Height = 337
         Align = alTop
         Image.Data = {
@@ -6449,9 +6440,9 @@ inherited frmSyncData: TfrmSyncData
             FFFFFFFFFF00}
         end
         object label1: TRzLabel
-          Left = 48
+          Left = 0
           Top = 131
-          Width = 369
+          Width = 465
           Height = 26
           Alignment = taCenter
           AutoSize = False

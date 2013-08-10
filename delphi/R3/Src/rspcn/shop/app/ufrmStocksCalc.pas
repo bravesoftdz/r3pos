@@ -517,7 +517,7 @@ begin
   4:id := 'ID bigint NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1 ),';
   5:id := 'ID INTEGER PRIMARY KEY autoincrement,';
   end;
-  if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK_'+tmpTable+' PRIMARY KEY (ID)';
+  if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK'+tmpTable+' PRIMARY KEY (ID)';
   sql :=
     'CREATE TABLE '+tmpTable+' '+
     '('+
@@ -556,7 +556,7 @@ begin
     'CREA_USER'+varchar+'(36) '+null+' '+  priKey +
     ')';
   createSQLTable(sql,tmpTable);
-  if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK_'+seqTable+' PRIMARY KEY (ID)';
+  if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK'+seqTable+' PRIMARY KEY (ID)';
   dropSQLTable(seqTable);
   sql :=
     'CREATE TABLE '+seqTable+' '+
@@ -596,7 +596,7 @@ begin
   createSQLTable(sql,seqTable);
   if dataFactory.iDbType <> 5 then
   begin
-    if dataFactory.iDbType in [1,4] then priKey := ' ,CONSTRAINT PK_'+prcTable+' PRIMARY KEY (ID)';
+    if dataFactory.iDbType in [1,4] then priKey := ' ,CONSTRAINT PK'+prcTable+' PRIMARY KEY (ID)';
     dropSQLTable(prcTable);
     sql :=
       'CREATE TABLE '+prcTable+' '+
@@ -742,10 +742,15 @@ end;
 procedure TfrmStocksCalc.btnCalcClick(Sender: TObject);
 begin
   inherited;
-  CheckAppVersion;
-  ClearDays;
-  _endDate := 0;
-  while _endDate<eDate do creaStocks;
+  dataFactory.remote.DBLock(true);
+  try
+    CheckAppVersion;
+    ClearDays;
+    _endDate := 0;
+    while _endDate<eDate do creaStocks;
+  finally
+    dataFactory.remote.DBLock(false);
+  end;
   ModalResult := MROK;
 end;
 

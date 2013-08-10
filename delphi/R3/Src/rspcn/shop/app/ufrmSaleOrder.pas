@@ -2335,7 +2335,12 @@ end;
 procedure TfrmSaleOrder.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
-  TfrmCodeScan.ShowDialog(self);
+  CodeLisenter := false;
+  try
+    TfrmCodeScan.ShowDialog(self);
+  finally
+    CodeLisenter := true;
+  end;
 end;
 
 initialization

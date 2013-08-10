@@ -227,11 +227,11 @@ begin
           for i:=1 to Trunc(Amt) do //处理整数部分
             begin
               ClearBuffer;
-              WindowsFont(75,  8, 14, 0, 0, 0, 'Arial', '店名:'+ShopName);
-              WindowsFont(75, 28, 14, 0, 0, 0, 'Arial', '卷烟:'+GodsName);
-              WindowsFont(75, 48, 14, 0, 0, 0, 'Arial', '价格:'+FormatFloat('#0.00',Aprice)+'元');
-              WindowsFont(75, 68, 14, 0, 0, 0, 'Arial', '时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
-              SendCommand('DMATRIX 17,17,40,40,x2.5,26,26,"'+EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime)+'"');
+              WindowsFont(85,  4, 14, 0, 0, 0, 'Arial', '店名:'+ShopName);
+              WindowsFont(85, 24, 14, 0, 0, 0, 'Arial', '卷烟:'+GodsName);
+              WindowsFont(85, 44, 14, 0, 0, 0, 'Arial', '价格:'+FormatFloat('#0.00',Aprice)+'元');
+              WindowsFont(85, 64, 14, 0, 0, 0, 'Arial', '时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
+              SendCommand('DMATRIX 27,13,40,40,x2.5,26,26,"'+EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime)+'"');
               PrintLabel('1', '1');
             end;
 
@@ -247,11 +247,11 @@ begin
                   for i:=1 to Trunc(Amt) do
                     begin
                       ClearBuffer;
-                      WindowsFont(75,  8, 14, 0, 0, 0, 'Arial', '店名:'+ShopName);
-                      WindowsFont(75, 28, 14, 0, 0, 0, 'Arial', '卷烟:'+GodsName);
-                      WindowsFont(75, 48, 14, 0, 0, 0, 'Arial', '价格:'+FormatFloat('#0.00',Aprice/UnitRate)+'元');
-                      WindowsFont(75, 68, 14, 0, 0, 0, 'Arial', '时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
-                      SendCommand('DMATRIX 17,17,40,40,x2.5,26,26,"'+EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice/UnitRate)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime)+'"');
+                      WindowsFont(85,  4, 14, 0, 0, 0, 'Arial', '店名:'+ShopName);
+                      WindowsFont(85, 24, 14, 0, 0, 0, 'Arial', '卷烟:'+GodsName);
+                      WindowsFont(85, 44, 14, 0, 0, 0, 'Arial', '价格:'+FormatFloat('#0.00',Aprice/UnitRate)+'元');
+                      WindowsFont(85, 64, 14, 0, 0, 0, 'Arial', '时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
+                      SendCommand('DMATRIX 27,13,40,40,x2.5,26,26,"'+EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice/UnitRate)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime)+'"');
                       PrintLabel('1', '1');
                     end;
                   if (Amt - Trunc(Amt)) <> 0 then MessageBox(FHandle,pchar('第'+IntToStr(SeqNo)+'行商品【'+GodsName+'】数量不是有效数量！'),'友情提示..',MB_OK);

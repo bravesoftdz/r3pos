@@ -46,6 +46,7 @@ const
   WM_CLOSE_WINDOW = WM_USER+9002;
   WM_BROWSER_RUNED = WM_USER+9003;
   WM_UPGRADE_CHECK = WM_USER+9004;
+  WM_PAUSE_KEY = WM_USER+9005;
   WH_KEYBOARD_LL = 13;
 
 type
@@ -207,6 +208,8 @@ type
     //É¨ÃèÇ¹¼à¿Ø
     arr:array [1..13] of char;
     time:array [1..13] of int64;
+    KeyTime:int64;
+    KeyLong:integer;
     buf:TStringList;
     frmUpdate:TfrmUpdate;
     procedure UpdateControls(_EWB:TEmbeddedWB=nil);
@@ -221,6 +224,7 @@ type
     procedure RzInit(var Message: TMessage); message WM_BROWSER_INIT;
     procedure RzRuned(var Message: TMessage); message WM_BROWSER_RUNED;
     procedure closeWindow(var Message: TMessage); message WM_CLOSE_WINDOW;
+    procedure PauseKey(var Message: TMessage); message WM_PAUSE_KEY;
     procedure upgrade(var Message: TMessage); message WM_UPGRADE_CHECK;
     procedure WMDisplayChange(var Message: TMessage); message WM_DISPLAYCHANGE;
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
@@ -359,6 +363,7 @@ begin
   TabSheetEx.button.Bitmaps.Down.Assign(button_active.Picture);
   TabSheetEx.button.GroupIndex := 1;
   TabSheetEx.button.OnClick := PageButtonClick;
+  TabSheetEx.button.TabStop := false;
   TabSheetEx.TabVisible := false;
   TabSheetEx.xsmLogined := false;
   with TabSheetEx do
@@ -1149,7 +1154,7 @@ begin
     if token.logined and not dllFactory.Inited and not frmUpdate.Visible then
        begin
          try
-           if token.online then dllFactory.Init(mainPanel.Handle);
+           dllFactory.Init(mainPanel.Handle);
            pageButtonSort;
          except
            token.logined := false;
@@ -1488,6 +1493,11 @@ var
   childWnd:THandle;
   Message: TWMKeyDown;
 begin
+  if not dllFactory.Inited then
+     begin
+       Buf.Clear;
+       Exit;
+     end;
   isIcon := false;
   if IsIconic(Application.Handle) then
      begin
@@ -1512,22 +1522,12 @@ begin
             Exit;
           end;
      end;
-{  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
-  while childWnd>0 do
-    begin
-      windows.SetFocus(childWnd);
-      Message.Msg := WM_KEYDOWN;
-      Message.KeyData := 0;
-      Message.CharCode := VK_PAUSE;
-      Message.Unused := 0;
-      SendMessage(childWnd,Message.Msg,TMessage(Message).WParam,Message.KeyData);
-      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
-    end;   }
   while Buf.Count>0 do
     begin
       dllFactory.Send(tabEx.url,Buf[0]);
-      Buf.Delete(0); 
+      Buf.Delete(0);
     end;
+  PostMessage(handle,WM_PAUSE_KEY,0,0);
 end;
 
 function TfrmBrowerForm.AddKey(scanCode: DWORD):boolean;
@@ -1549,12 +1549,13 @@ begin
   time[13] := getTickCount;
   case scanCode of
   13:begin
-       if checkBarcode then
+       if checkBarcode and (KeyLong=13) then
           begin
             PushTo;
             result := true;
           end;
        ClearKey;
+       KeyLong := 0;
      end;
   48:arr[13] := '0';
   49:arr[13] := '1';
@@ -1578,7 +1579,7 @@ begin
     begin
       if arr[i] = #0 then Exit;
     end;
-  if (getTickCount-time[1])<2000 then
+  if (getTickCount-time[1])<1000 then
     result := true;
 end;
 
@@ -1605,10 +1606,15 @@ begin
                       begin
                         result := true;
                       end;
+                    if (getTickCount-KeyTime)>200 then KeyLong := 0;
+                    KeyTime := getTickCount;
+                    inc(KeyLong);
                  end;
             end
          else
-            ClearKey;
+            begin
+               ClearKey;
+            end;
        end;
   end;
 end;
@@ -1715,6 +1721,26 @@ begin
        PageControl1.ActivePageIndex := 1;
        destroyTabBrowser;
      end;
+end;
+
+procedure TfrmBrowerForm.PauseKey(var Message: TMessage);
+var
+  childWnd:THandle;
+  msg: TWMKeyDown;
+  tabEx:TTabSheetEx;
+begin
+  tabEx := PageControl1.ActivePage as TTabSheetEx;
+  childWnd := GetWindow(tabEx.Handle,GW_CHILD);
+  while childWnd>0 do
+    begin
+      windows.SetFocus(childWnd);
+      msg.Msg := WM_KEYDOWN;
+      msg.KeyData := 0;
+      msg.CharCode := VK_PAUSE;
+      msg.Unused := 0;
+      SendMessage(childWnd,msg.Msg,TMessage(msg).WParam,msg.KeyData);
+      childWnd := GetWindow(childWnd,GW_HWNDNEXT);
+    end;
 end;
 
 initialization

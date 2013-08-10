@@ -174,7 +174,7 @@ var frmCustomer: TfrmCustomer;
 
 implementation
 
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,uCtrlUtil,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,
      ufrmDBGridPreview,ufrmCustomerExcel,uSyncFactory;
 
 {$R *.dfm}
@@ -559,10 +559,14 @@ procedure TfrmCustomer.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj := TRecord_.Create;
+  TDbGridEhSort.InitForm(self);
+  TDbGridEhExport.InitForm(self);
 end;
 
 procedure TfrmCustomer.FormDestroy(Sender: TObject);
 begin
+  TDbGridEhExport.FreeForm(self);
+  TDbGridEhSort.FreeForm(self);
   AObj.Free;
   inherited;
 end;

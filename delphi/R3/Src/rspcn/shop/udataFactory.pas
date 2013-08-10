@@ -56,6 +56,7 @@ type
     procedure MoveToDefault;
     procedure MoveToRemote;
     procedure MoveToSqlite;
+    function DBLock(locked:boolean):boolean;
 
     property sqlite:TdbFactory read Fsqlite write Setsqlite;
     property remote:IdbDllHelp read getRemote;
@@ -433,6 +434,20 @@ end;
 procedure TdataFactory.Setonline(const Value: boolean);
 begin
   Fonline := Value;
+end;
+
+function TdataFactory.DBLock(locked: boolean): boolean;
+begin
+  case dbFlag of
+  0:begin
+       sqlite.DBLock(locked);
+       result := true;
+    end
+  else
+    begin
+      dbHelp.DBLock(locked);
+    end;
+  end;
 end;
 
 initialization

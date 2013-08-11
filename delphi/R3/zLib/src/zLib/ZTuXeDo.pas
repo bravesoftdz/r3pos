@@ -173,6 +173,7 @@ type
     procedure SetDefaultLogDir; //设置日志默认目录
     function GetParamList(InParams:TftParamList):string;
   protected
+    _dbLock:boolean;
     procedure RaiseError;
     function  CheckRaiseError(TimeOutCount:integer): Boolean; //检查是否网络断开，若是返回True,否则抛异常
     procedure ClearBuf;
@@ -827,9 +828,9 @@ begin
   FTickCount:=GetTickCount;
   try
     fConnected := false;
-    if (tpinit(nil) = -1) then
-        RaiseError;
+    if (tpinit(nil) = -1) then RaiseError;
     fConnected := true;
+    DisConnect;
     fiDbType := -1;
   finally
     FTickCount:=GetTickCount-FTickCount;
@@ -845,18 +846,26 @@ end;
 constructor TZTuXeDo.Create;
 begin
   Fpath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
+  FList := TList.Create;
   loadTuxedo;
   sendbuf := nil;
   recvbuf := nil;
   fiDbType := -1;
-  FList := TList.Create;
+  _dbLock := false;
   SetDefaultLogDir;
 end;
 
 procedure TZTuXeDo.DBLock(Locked: boolean);
 begin
   inherited;
-
+  _dbLock := Locked;
+  if not connected then Exit;
+  if not Locked then
+     tpterm()
+  else
+     begin
+       if not _dbLock and (tpinit(nil) = -1) then RaiseError;
+     end;
 end;
 
 destructor TZTuXeDo.Destroy;
@@ -872,6 +881,7 @@ end;
 function TZTuXeDo.DisConnect: boolean;
 begin
   tpterm();
+  fConnected := false;
 end;
 
 function TZTuXeDo.ExecProc(AClassName: String;
@@ -1153,7 +1163,7 @@ begin
     tpterm();
     //初始化连接
     loadTuxedo;
-  	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port)));
+  	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port) ));
    	tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
     //重新连接
     Connect;
@@ -1213,6 +1223,7 @@ begin
   ClearBuf;
   ms := TMemoryStream.Create;
   try
+    if not _dbLock and (tpinit(nil) = -1) then RaiseError;
     coEncode(coPacket,ms);
     sendlen := ms.Size;
     sendbuf := tpalloc('CARRAY', nil, sendlen+1);
@@ -1226,21 +1237,22 @@ begin
     LTickCount:=GetTickCount;
     if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
     begin
-      LTickCount:=GetTickCount-LTickCount;
-      if CheckRaiseError(LTickCount) then
-      begin
-        if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
+      //LTickCount:=GetTickCount-LTickCount;
+      //if CheckRaiseError(LTickCount) then
+      //begin
+      //  if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
           RaiseError;
-      end
+      //end
     end;
   finally
+    if not _dbLock then tpterm();
     ms.Free;
   end;
 end;
 
 function TZTuXeDo.UpdateBatch(DataSet: TDataSet): Boolean;
 begin
-  Raise Exception.Create('不支持此项功能'); 
+  Raise Exception.Create('不支持此项功能');
 end;
 
 procedure TZTuXeDo.BSend(coList: TList;SvcName:string);
@@ -1252,6 +1264,7 @@ begin
   ClearBuf;
   ms := TMemoryStream.Create;
   try
+    if not _dbLock and (tpinit(nil) = -1) then RaiseError;
     for i:=0 to coList.Count -1 do
         coEncode(PftPacked(coList[i]),ms);
     sendlen := ms.Size;
@@ -1265,14 +1278,15 @@ begin
     LTickCount:=GetTickCount;
    	if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
     begin
-      LTickCount:=GetTickCount-LTickCount;
-      if CheckRaiseError(LTickCount) then //检测网络断开重连接在执行1次
-      begin
-        if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
+      //LTickCount:=GetTickCount-LTickCount;
+      //if CheckRaiseError(LTickCount) then //检测网络断开重连接在执行1次
+      //begin
+      //  if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
           RaiseError;
-      end;
+      //end;
     end;
   finally
+    if not _dbLock then tpterm();
     ms.Free;
   end;
 end;

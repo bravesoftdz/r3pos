@@ -79,6 +79,8 @@ IdbDllHelp = Interface(IUnknown)
     procedure MoveToDefault; stdcall;
 
     function getLastError:pchar;stdcall;
+
+    function DBLock(locked:boolean):boolean;stdcall;
    end;
 
 IZFactory= interface(IUnknown)

@@ -1505,7 +1505,7 @@ begin
            Raise Exception.Create('不支持的数据参数类型'); 
         end;
       end;
-    result := EncodeString(ss.DataString);
+    result := encddecd.EncodeString(ss.DataString);
   finally
     ss.free;
   end;

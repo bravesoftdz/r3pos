@@ -319,7 +319,10 @@ begin
             end;
       except
         on E:Exception do
-           LogFile.AddLogFile(0,E.Message,'DispatcherThread','Listen');
+           begin
+             if not assigned(ASocket) then
+                LogFile.AddLogFile(0,E.Message,'DispatcherThread','Listen');
+           end;
       end;
     end;
 end;

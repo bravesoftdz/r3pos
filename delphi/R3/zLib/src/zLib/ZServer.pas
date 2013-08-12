@@ -971,6 +971,7 @@ begin
     ZDataBlock^.TimeStamp := GetTickCount;
     FList.Add(ZDataBlock);
     inc(DataBlockCount);
+    if DataBlockCount>10000000000 then  DataBlockCount := 0;
     inc(WaitDataBlockCount);
   finally
     Leave;
@@ -1108,6 +1109,7 @@ procedure TZConnCache.Push(Conn: TdbResolver);
 begin
   Enter;
   try
+    Conn.DBLock(false);
     if not Conn.Connected then
        begin
          Clear;

@@ -385,6 +385,7 @@ end;
 
 function TdbFactory.BeginBatch: Boolean;
 begin
+  if dbResolver=nil then Connect;
   Enter;
   try
     result := dbResolver.BeginBatch;

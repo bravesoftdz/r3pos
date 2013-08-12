@@ -1895,7 +1895,7 @@ object frmBrowerForm: TfrmBrowerForm
       TextStyle = tsShadow
     end
     object lblUserName: TRzLabel
-      Left = 517
+      Left = 496
       Top = 35
       Width = 211
       Height = 16
@@ -1914,14 +1914,14 @@ object frmBrowerForm: TfrmBrowerForm
       TextStyle = tsShadow
     end
     object lblSignOut: TRzLabel
-      Left = 746
+      Left = 716
       Top = 35
-      Width = 31
+      Width = 61
       Height = 16
       Cursor = crHandPoint
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
-      Caption = #27880#38144
+      Caption = #20999#25442#29992#25143
       Font.Charset = GB2312_CHARSET
       Font.Color = clNavy
       Font.Height = -15

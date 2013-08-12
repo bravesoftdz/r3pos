@@ -704,6 +704,7 @@ begin
         rs.FieldByName('SORT_ID').AsString := rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'sortId');
         rs.FieldByName('TENANT_ID').AsInteger := StrtoInt(rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'tenantId'));
         rs.FieldByName('LEVEL_ID').AsString := rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'levelId');
+        rs.FieldByName('LEVEL_ID').AsString := StringReplace(rs.FieldByName('LEVEL_ID').AsString,'#','',[rfReplaceAll]);
         rs.FieldByName('SORT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'sortName');
         rs.FieldByName('SORT_TYPE').AsInteger := StrtoInt(rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'sortType'));
         rs.FieldByName('SORT_SPELL').AsString := rspFactory.GetNodeValue(pubGoodsSortDownloadResp,'sortSpell');

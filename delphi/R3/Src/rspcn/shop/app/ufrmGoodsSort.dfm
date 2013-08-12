@@ -1,6 +1,6 @@
 inherited frmGoodsSort: TfrmGoodsSort
-  Left = 521
-  Top = 272
+  Left = 800
+  Top = 238
   Caption = #21830#21697#20998#31867
   ClientHeight = 185
   ClientWidth = 339

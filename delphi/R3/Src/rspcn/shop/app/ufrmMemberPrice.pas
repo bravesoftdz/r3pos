@@ -121,7 +121,7 @@ procedure TfrmMemberPrice.Open(DataSet:TZQuery=nil);
 var sql:string;
 begin
   if DataSet = nil then DataSet := cdsMemberPrice;
-  sql := ' select PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2, '+
+  sql := 'select PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2, '+
          '        case when B.PRICE_ID is null then ''insert'' else ''update'' end as STATE,B.COMM '+
          ' from   (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
          '        left join '+

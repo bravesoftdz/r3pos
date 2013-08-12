@@ -2538,8 +2538,6 @@ begin
     edtInput.Text := '';
     edtInput.SelectAll;
     if edtInput.CanFocus then edtInput.SetFocus;
-    showwindow(Handle,1);
-    setwindowpos(Handle,0,0,0,0,0,3);
   end;
 end;
 

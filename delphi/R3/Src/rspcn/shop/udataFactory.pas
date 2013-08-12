@@ -299,11 +299,11 @@ procedure TdataFactory.MoveToDefault;
 var
   f:TIniFile;
 begin
-  try
-    remote.MoveToDefault;
-  except
-    raise Exception.Create(StrPas(dbHelp.getLastError));
-  end;
+  //try
+  //  remote.MoveToDefault;
+  //except
+  //  raise Exception.Create(StrPas(dbHelp.getLastError));
+  //end;
 
   if not token.online then
      begin

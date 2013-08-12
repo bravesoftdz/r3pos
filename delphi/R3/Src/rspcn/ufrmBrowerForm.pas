@@ -927,6 +927,19 @@ begin
                               end;
                            end
                         else
+                        if urlToken.appId='rim-in' then
+                           begin
+                              frmLogo.hWnd := MainPanel.Handle;
+                              frmLogo.ShowForm;
+                              try
+                                UCFactory.getModule;
+                                if UCFactory.rimLogin then
+                                   curSheet.EWB.Go(encodeUrl(urlToken),15000);
+                              finally
+                                frmLogo.Close;
+                              end;
+                           end
+                        else
                            begin
                              curSheet.EWB.Go(urlToken.url,15000);
                            end;
@@ -1128,7 +1141,7 @@ begin
     begin
       if lowercase(TTabSheetEx(PageControl1.Pages[i]).url.appId)=lowercase(_url.appId) then
          begin
-           if ((_url.appFlag>0) or (lowercase(_url.appId)='xsm-in')) and (_url.moduname<>TTabSheetEx(PageControl1.Pages[i]).url.moduname) then continue;
+           if ((_url.appFlag>0) or (lowercase(_url.appId)='xsm-in') or (lowercase(_url.appId)='rim-in')) and (_url.moduname<>TTabSheetEx(PageControl1.Pages[i]).url.moduname) then continue;
            result := true;
            PageControl1.ActivePageIndex := i;
            pageButtonSort;
@@ -1548,6 +1561,10 @@ begin
   end;
   time[13] := getTickCount;
   case scanCode of
+  10:
+     begin
+       result := true;
+     end;
   13:begin
        if checkBarcode and (KeyLong=13) then
           begin
@@ -1598,7 +1615,7 @@ begin
   begin
     if ((1 shl 31)and lParam=0) then
        begin
-         if PBDLLHOOKSTRUCT(lParam)^.vkCode in [13,48..57] then
+         if PBDLLHOOKSTRUCT(lParam)^.vkCode in [13,48..57,10,9] then
             begin
               if (PBDLLHOOKSTRUCT(lParam)^.flags in [0]) then
                  begin

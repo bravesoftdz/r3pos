@@ -37,9 +37,14 @@ begin
      if AGlobal.ExecSQL(updateVersion) <= 0 then
         AGlobal.ExecSQL(insertVersion);
      AGlobal.CommitTrans;
+     result := true;
    except
-     AGlobal.RollbackTrans;
-     Raise;
+     on E:Exception do
+        begin
+          AGlobal.RollbackTrans;
+          Msg := E.Message;
+          Raise;
+        end;
    end;
 end;
 
@@ -48,7 +53,7 @@ end;
 function TCalcNewStorage.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 begin
-
+  result := true;
 end;
 
 { TRtcSyncClose }
@@ -74,9 +79,14 @@ begin
     AGlobal.ExecSQL('insert into SYS_SYNC_CTRL (TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+Params.ParambyName('TENANT_ID').AsString+','''+Params.ParambyName('SHOP_ID').AsString+''',''RTC_SAL_SALESORDER'','+timeStamp+') ');
     AGlobal.ExecSQL('insert into SYS_SYNC_CTRL (TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+Params.ParambyName('TENANT_ID').AsString+','''+Params.ParambyName('SHOP_ID').AsString+''',''RTC_PUB_CUSTOMER'','+timeStamp+') ');
     AGlobal.CommitTrans;
+    result := true;
   except
-    AGlobal.RollbackTrans;
-    Raise;
+    on E:Exception do
+       begin
+         AGlobal.RollbackTrans;
+         Msg := E.Message;
+         Raise;
+       end;
   end;
 end;
 

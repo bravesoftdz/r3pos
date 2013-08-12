@@ -46,6 +46,12 @@ begin
          sl.Delete(0);
        end
     else
+    if result.appId='rim-in' then
+       begin
+         result.appFlag := 0;
+         sl.Delete(0);
+       end
+    else
     if result.appId='local-in' then
        begin
          sl.Delete(0); 
@@ -67,14 +73,23 @@ begin
   end;
 end;
 function encodeUrl(urltoken:TurlToken):string;
-var wb:string;
+var
+  wb:string;
+  w:integer;
 begin
   if urlToken.appId='xsm-in' then
      begin
         if pos('xsm.htm',urltoken.moduname)>0 then
            begin
              if UcFactory.xsmWB='' then Raise Exception.Create('新商盟地址配置有误...');
-             result := UcFactory.xsmWB+'?v='+formatDatetime('YYYYMMDDHHNNSS',now());
+             w := pos('xsm_r3',UcFactory.xsmWB);
+             wb:= UcFactory.xsmWB;
+             if w>0 then
+                begin
+                  delete(wb,w,255);
+                  if wb[length(wb)]='/' then wb := wb + 'xsm.html';
+                end;
+             result := wb+'?v='+formatDatetime('YYYYMMDDHHNNSS',now());
            end
         else
            begin
@@ -107,6 +122,29 @@ begin
                       result := wb+'/'+urltoken.path+'/'+urltoken.moduname;
                  end;
            end;
+     end
+  else
+  if urlToken.appId='rim-in' then
+     begin
+        if UcFactory.rimWB='' then Raise Exception.Create('RIM地址配置有误...');
+        wb := UcFactory.rimWB;
+        delete(urltoken.path,1,6);
+        if wb[length(wb)]='/' then
+           begin
+             if urltoken.path='/' then
+                result := wb+urltoken.path+urltoken.moduname
+             else
+                result := wb+urltoken.path+'/'+urltoken.moduname;
+           end
+        else
+           begin
+             if urltoken.path='/' then
+                result := wb+'/'+urltoken.path+urltoken.moduname
+             else
+                result := wb+'/'+urltoken.path+'/'+urltoken.moduname;
+           end;
+        result := StringReplace(result,'[comId]',UcFactory.rimComId,[rfReplaceAll]);
+        result := StringReplace(result,'[custId]',UcFactory.rimCustId,[rfReplaceAll]);
      end
   else
      begin

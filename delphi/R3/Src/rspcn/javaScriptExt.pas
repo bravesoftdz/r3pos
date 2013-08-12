@@ -113,6 +113,8 @@ begin
              token.Logined := true;
              DllFactory.Inited := false;
              token.online := online;
+             dataFactory.MoveToDefault;
+             dataFactory.connect;
              dataFactory.signined := true;
              result := true;
              Exit;
@@ -247,6 +249,7 @@ end;
 function TjavaScriptExt.connect: WordBool;
 begin
   try
+    dataFactory.MoveToDefault;
     dataFactory.connect;
     result := true;
   except
@@ -262,6 +265,7 @@ end;
 
 procedure TjavaScriptExt.disconnet;
 begin
+  dataFactory.MoveToDefault;
   dataFactory.disConnect;
 end;
 
@@ -331,6 +335,7 @@ var
   prms:TftParamList;
 begin
   if not dataFactory.signined then Raise Exception.Create('没有登录认证，您不能使用此功能');
+  dataFactory.MoveToDefault;
   prms:=TftParamList.Create;
   try
     TftParamList.DecodeJson(prms,params);
@@ -396,6 +401,7 @@ var
   rs:TZQuery;
   prms:TftParamList;
 begin
+  dataFactory.MoveToDefault;
   prms:=TftParamList.Create;
   try
     TftParamList.DecodeJson(prms,params);
@@ -408,28 +414,33 @@ end;
 
 procedure TjavaScriptExt.beginbatch;
 begin
+  dataFactory.MoveToDefault;
   dataFactory.BeginBatch;
 end;
 
 procedure TjavaScriptExt.cancelBatch;
 begin
+  dataFactory.MoveToDefault;
   dataFactory.CancelBatch;
 end;
 
 procedure TjavaScriptExt.commitBatch;
 begin
   if not dataFactory.signined then Raise Exception.Create('没有登录认证，您不能使用此功能');
+  dataFactory.MoveToDefault;
   dataFactory.CommitBatch;
 end;
 
 function TjavaScriptExt.execSQL(const SQL: WideString): Integer;
 begin
   if not dataFactory.signined then Raise Exception.Create('没有登录认证，您不能使用此功能');
+  dataFactory.MoveToDefault;
   result := dataFactory.ExecSQL(SQL); 
 end;
 
 function TjavaScriptExt.iDbType: Integer;
 begin
+  dataFactory.MoveToDefault;
   result := dataFactory.iDbType;
 end;
 
@@ -447,6 +458,7 @@ end;
 procedure TjavaScriptExt.openBatch;
 begin
   if not dataFactory.signined then Raise Exception.Create('没有登录认证，您不能使用此功能');
+  dataFactory.MoveToDefault;
   dataFactory.OpenBatch;
 end;
 
@@ -456,6 +468,7 @@ var
   prms:TftParamList;
 begin
   if not dataFactory.signined then Raise Exception.Create('没有登录认证，您不能使用此功能');
+  dataFactory.MoveToDefault;
   prms:=TftParamList.Create;
   try
     TftParamList.DecodeJson(prms,params);
@@ -745,7 +758,6 @@ begin
           if us.IsEmpty then Raise Exception.Create(username+'用户账号不存在,不能登录。');
           if (us.FieldbyName('DIMI_DATE').AsString<>'') and (us.FieldbyName('DIMI_DATE').AsString<=FormatDateTime('YYYY-MM-DD',Date())) then Raise Exception.Create(username+'用户账号已经离职,不能登录。');
         end;
-
     token.userId := rs.FieldbyName('USER_ID').AsString;
     token.account := rs.FieldbyName('ACCOUNT').AsString;
     token.tenantId := rs.FieldbyName('TENANT_ID').AsString;

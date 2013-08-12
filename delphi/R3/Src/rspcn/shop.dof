@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=D:\r6
+OutputDir=debug
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -104,7 +104,7 @@ RunParams=
 HostApplication=
 Launcher=
 UseLauncher=0
-DebugCWD=
+DebugCWD=C:\Users\IBM\Desktop
 [Language]
 ActiveLang=
 ProjectLang=
@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=6
 MinorVer=0
 Release=0
-Build=4
+Build=6
 Debug=0
 PreRelease=0
 Special=0
@@ -126,20 +126,20 @@ CodePage=936
 [Version Info Keys]
 CompanyName=浪潮软件
 FileDescription=
-FileVersion=6.0.0.4
+FileVersion=6.0.0.6
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=现代卷烟零售终端营销管理系统
-ProductVersion=1.0.0.0
+ProductVersion=6.0.0.0
 Comments=
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
 Count=4
-Item0=D:\r6
-Item1=debug
+Item0=debug
+Item1=D:\r6
 Item2=D:\调试\shop_tuxedo
 Item3=D:\myWork\Delphi\R3\Src\rspcn\debug

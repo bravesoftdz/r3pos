@@ -183,7 +183,7 @@
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
 			
-			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(case when (b.RELATION_ID=1000006) then A.CALC_AMOUNT else 0 end) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE)";
+			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(case when (b.RELATION_ID=1000006) then A.CALC_AMOUNT else 0 end) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE) j";
 			rsp.setLocalJson('xstjqk',"销售统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);

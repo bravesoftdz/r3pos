@@ -211,7 +211,7 @@ var
   sql:string;
 begin
   case dataFactory.iDbType of
-  5:sql:= 'update '+tmpTable+' set OUT_PRICE=case when BILL_TYPE=22 then OUT_PRICE else BAL_PRICE and,OUT_MONEY=case when BILL_TYPE=22 then OUT_MONEY else round(OUT_AMOUNT*BAL_PRICE,2) end,BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,2) where SEQNO % 2 <>0 and BILL_TYPE>1';
+  5:sql:= 'update '+tmpTable+' set OUT_PRICE=case when BILL_TYPE=22 then OUT_PRICE else BAL_PRICE end,OUT_MONEY=case when BILL_TYPE=22 then OUT_MONEY else round(OUT_AMOUNT*BAL_PRICE,2) end,BAL_MONEY=round(BAL_AMOUNT*BAL_PRICE,2) where (SEQNO % 2) <>0 and BILL_TYPE>1';
   4,1:sql:= 'update '+tmpTable+' a set (OUT_PRICE,OUT_MONEY,BAL_MONEY,BAL_PRICE)=(select case when a.BILL_TYPE=22 then b.BAL_PRICE else a.OUT_PRICE end,case when a.BILL_TYPE=22 then a.OUT_MONEY else round(a.OUT_AMOUNT*b.BAL_PRICE,2) end,round(a.BAL_AMOUNT*b.BAL_PRICE,2),b.BAL_PRICE '+
   'from '+prcTable+' b where a.ID=b.ID) where round(SEQNO / 2.0,0)<>round(SEQNO / 2.0,2) and BILL_TYPE>1';
   end;
@@ -292,7 +292,7 @@ begin
     ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX,BAL_AMOUNT,BAL_PRICE,BAL_MONEY,'+
     ' GUIDE_USER,CREA_USER,B.RELATION_ID,B.GODS_NAME,B.GODS_CODE,B.BARCODE,B.SORT_ID1,C.SORT_NAME,D.CLIENT_CODE,D.CLIENT_NAME,E.UNIT_NAME,F.USER_NAME,G.USER_NAME,''00'','+GetTimeStamp(dataFactory.iDbType)+'  '+
     'from '+tmpTable+' A '+
-    ' left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1',true)+') B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
+    ' inner join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1',true)+') B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
     ' left outer join (select SORT_ID,SORT_NAME from PUB_GOODSSORT where TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+')) C on B.SORT_ID1=C.SORT_ID '+
     ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
     ' left outer join (select UNIT_ID,UNIT_NAME from PUB_MEAUNITS where TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') ) E on A.UNIT_ID=E.UNIT_ID '+
@@ -386,8 +386,8 @@ begin
      RzProgressBar1.Percent := 100;
    finally
 //     dropSQLTable(tmpTable);
-//     dropSQLTable(seqTable);
-//     dropSQLTable(prcTable);
+     dropSQLTable(seqTable);
+     dropSQLTable(prcTable);
    end;
 end;
 

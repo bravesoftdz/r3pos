@@ -955,7 +955,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-  if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');  
+  if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('CarryRule').asInteger := CarryRule;
@@ -968,11 +968,16 @@ begin
     Params.ParamByName('PRICE_ID').asString := '#' else
     Params.ParamByName('PRICE_ID').asString := AObj.FieldbyName('PRICE_ID').AsString;
     Params.ParamByName('UNIT_ID').asString := UNIT_ID;
-    dataFactory.Open(rs,'TGetSalesPrice',Params);
+    dataFactory.MoveToSqlite;
+    try
+      dataFactory.Open(rs,'TGetSalesPrice',Params);
+    finally
+      dataFactory.MoveToDefault;
+    end;
     if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
     edtTable.FieldByName('APRICE').AsFloat := rs.FieldbyName('V_APRICE').AsFloat;
     edtTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('V_ORG_PRICE').AsFloat;
-    edtTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(GODS_ID,edtTable.FieldbyName('BATCH_NO').AsString);
+    edtTable.FieldbyName('COST_PRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;// GetCostPrice(GODS_ID,edtTable.FieldbyName('BATCH_NO').AsString);
     edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
     edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
     //看是否换购商品

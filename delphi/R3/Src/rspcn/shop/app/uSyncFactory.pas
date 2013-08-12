@@ -159,7 +159,7 @@ implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
-     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide;
+     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand;
 
 function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
 
@@ -1250,6 +1250,7 @@ begin
   if dllApplication.mode = 'demo' then Exit;
   AddLoginLog;
   if not token.online then Exit;
+  CommandPush.ExecuteCommand;
   with TfrmSyncData.Create(nil) do
   begin
     try

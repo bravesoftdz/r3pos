@@ -108,7 +108,8 @@ uses
   ufrmProgressBar in 'app\ufrmProgressBar.pas' {frmProgressBar},
   ObjUtilsV60 in 'obj\ObjUtilsV60.pas',
   uCodePrinterFactory in 'app\uCodePrinterFactory.pas',
-  ufrmCodeScan in 'app\ufrmCodeScan.pas' {frmCodeScan};
+  ufrmCodeScan in 'app\ufrmCodeScan.pas' {frmCodeScan},
+  uCommand in 'app\uCommand.pas';
 
 {$R *.res}
 exports

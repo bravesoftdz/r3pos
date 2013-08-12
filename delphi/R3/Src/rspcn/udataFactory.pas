@@ -339,7 +339,7 @@ begin
   finally
     F.Free;
   end;
-  if not db.Connected and (dbFlag=1) then connect;
+  //if not db.Connected and (dbFlag=1) then connect;
 end;
 
 procedure TdataFactory.MoveToRemote;

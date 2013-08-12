@@ -3,7 +3,7 @@ unit uUcFactory;
 interface
 
 uses
-  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp, Forms,
+  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp, Forms,ZBase,
   IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB, EncDec, IniFiles, IdCookieManager,IdCookie,WinInet;
 
 type
@@ -23,6 +23,9 @@ type
     FxsmUser: string;
     FscWeb: string;
     FecWeb: string;
+    FrimWB: string;
+    FrimCustId: string;
+    FrimComId: string;
     { Private declarations }
     function CreateXML(xml:string):IXMLDomDocument;
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
@@ -36,6 +39,9 @@ type
     procedure SetxsmUser(const Value: string);
     procedure SetecWeb(const Value: string);
     procedure SetscWeb(const Value: string);
+    procedure SetrimWB(const Value: string);
+    procedure SetrimComId(const Value: string);
+    procedure SetrimCustId(const Value: string);
   public
     { Public declarations }
     //读取导航地址
@@ -44,6 +50,8 @@ type
     function getChallenge:boolean;
     //用户密码方式登录
     function xsmLogin(username,password:string):boolean;
+    //登录RIM
+    function rimLogin:boolean;
     //用令牌登录
     function xsmLoginForToken(token:string):boolean;
     //检测登录状态
@@ -55,6 +63,7 @@ type
     function getxsmWBHost:string;
     property xsmUC:string read FxsmUC write SetxsmUC;
     property xsmWB:string read FxsmWB write SetxsmWB;
+    property rimWB:string read FrimWB write SetrimWB;
     property ecWeb:string read FecWeb write SetecWeb;
     property scWeb:string read FscWeb write SetscWeb;
     property xsmChallenge:string read FxsmChallenge write SetxsmChallenge;
@@ -62,13 +71,15 @@ type
     property xsmLogined:boolean read GetxsmLogined write SetxsmLogined;
 
     property xsmUser:string read FxsmUser write SetxsmUser;
+    property rimComId:string read FrimComId write SetrimComId;
+    property rimCustId:string read FrimCustId write SetrimCustId;
   end;
 
 var
   UcFactory: TUcFactory;
 
 implementation
-
+uses udataFactory,uTokenFactory;
 {$R *.dfm}
 
 { TUcFactory }
@@ -374,6 +385,7 @@ begin
        begin
          xsmUC := 'http://test.xinshangmeng.com/st/';
          xsmWB := 'http://test.xinshangmeng.com/xsm6/';
+         rimWB := 'http://test.xinshangmeng.com/rimweb';
          ecWeb := 'http://test.xinshangmeng.com/ecweb/';
          scWeb := 'http://test.xinshangmeng.com/scweb/';
        end
@@ -382,6 +394,7 @@ begin
          List.CommaText := xsmUC;
          xsmUC := List.Values['xsmc'];
          xsmWB := List.Values['xsm'];
+         rimWB := List.Values['rim'];
          ecWeb := List.Values['ecweb'];
          scWeb := List.Values['scweb'];
        end;
@@ -399,6 +412,42 @@ end;
 procedure TUcFactory.SetscWeb(const Value: string);
 begin
   FscWeb := Value;
+end;
+
+procedure TUcFactory.SetrimWB(const Value: string);
+begin
+  FrimWB := Value;
+end;
+
+procedure TUcFactory.SetrimComId(const Value: string);
+begin
+  FrimComId := Value;
+end;
+
+procedure TUcFactory.SetrimCustId(const Value: string);
+begin
+  FrimCustId := Value;
+end;
+
+function TUcFactory.rimLogin: boolean;
+var
+  Params:TftParamList;
+  msg:string;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Msg := dataFactory.Remote.ExecProc('TRimWsdlService',Params);
+    Params.Decode(Params,Msg);
+    rimComId := Params.ParambyName('rimcid').AsString;
+    rimCustId := Params.ParambyName('xsmuid').AsString;
+    if rimCustId='' then rimCustId := Params.ParambyName('rimuid').AsString;
+    if rimCustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
+    result := true;
+  finally
+    Params.Free;
+  end;
 end;
 
 end.

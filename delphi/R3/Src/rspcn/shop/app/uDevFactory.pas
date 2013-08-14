@@ -25,6 +25,7 @@ type
     FSavePrint: boolean;
     FPrintFormat: integer;
     FSaveCodePrint: Boolean;
+    FCloseDayPrintFlag: integer;
 
     procedure SetTicket_PrintComm(const Value: integer);
     procedure SetTicket_Width(const Value: integer);
@@ -41,6 +42,13 @@ type
     procedure SetPrintFormat(const Value: integer);
     procedure SetSavePrint(const Value: boolean);
     procedure SetSaveCodePrint(const Value: Boolean);
+    function FormatText(s:string;pWidth:Integer):string;
+    function FormatTitle(s:string):string;
+    function GetPayText(id: string): string;
+    function GetTicketGodsName(DataSet: TDataSet): string;
+    function RepeatCharacter(Str: char; L: Integer): String;
+    procedure FormatGoodsAndMoney(Goods, Num,Unit_Name, Money: String);
+    procedure SetCloseDayPrintFlag(const Value: integer);
   private
     procedure BeginPrint(Font:TFont);
     procedure WritePrint(s:string);
@@ -48,8 +56,8 @@ type
     procedure EndPrint;
     function  EncodeDivStr:string;
     function  PrintSaleTicketSQL(tenantId,id:string):string;
-
     procedure OpenCashBoxComm;
+    
   public
     F:TextFile;
 
@@ -59,6 +67,7 @@ type
 
     class procedure OpenCashBox(Font:TFont);
     procedure PrintSaleTicket(tid,sid:string;Font:TFont);
+    procedure PrintCloseForDay(SelectType:Integer;ClsDay:string;Font:TFont); //打印交班结账
 
     property Ticket_PrintComm:integer read FTicket_PrintComm write SetTicket_PrintComm;
     property Ticket_Width:integer read FTicket_Width write SetTicket_Width;
@@ -71,6 +80,8 @@ type
     property SaveCodePrint:Boolean read FSaveCodePrint write SetSaveCodePrint;
     property SavePrint:boolean read FSavePrint write SetSavePrint;
     property PrintFormat:integer read FPrintFormat write SetPrintFormat;
+    //交班关账时打印类型 0只打金额 1打商品明细
+    property CloseDayPrintFlag:integer read FCloseDayPrintFlag write SetCloseDayPrintFlag;
 
     property CashComm:TComm read FCashComm;
     property CashBox:integer read FCashBox write SetCashBox;
@@ -83,7 +94,7 @@ var DevFactory:TDevFactory;
 
 implementation
 
-uses IniFiles,EncDec,uTokenFactory,udllGlobal,udataFactory;
+uses IniFiles,EncDec,uTokenFactory,udllGlobal,udataFactory,ObjCommon;
 
 constructor TDevFactory.Create;
 begin
@@ -114,6 +125,7 @@ begin
      Ticket_Copy := F.ReadInteger('SYS_DEFINE','TICKETCOPY',1);
 
      SaveCodePrint := F.ReadString('SYS_DEFINE','SAVECODEPRINT','0')='1';
+     CloseDayPrintFlag :=  F.ReadInteger('SYS_DEFINE','CLOSEDAYPRINTFLAG',0);
      SavePrint := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
      PrintFormat := F.ReadInteger('SYS_DEFINE','PRINTFORMAT',0);
   finally
@@ -193,15 +205,7 @@ var PWidth:integer;
     for i:=1 to (pWidth - Length(s)) do result := ' '+result;
     result := result + s;
   end;
-
-  function FormatText(s:string;pWidth:Integer):string;
-  var i:Integer;
-  begin
-    result := '';
-    for i:=1 to (pWidth - Length(s)) do result := result +' ';
-    result := s+ result ;
-  end;
-
+  
   procedure WirteGodsAndEnter(mc:string;sl,dj,je,org:string);
   var s,vmc:string;
       n,l:integer;
@@ -241,40 +245,6 @@ var PWidth:integer;
        begin
          WriteAndEnter(FormatText(vmc,PWidth-n-1)+s);
        end;
-  end;
-
-  function FormatTitle(s:string):string;
-  var i:Integer;
-      n:integer;
-  begin
-    n := (PWidth - length(s)) div 2;
-    result := '';
-    for i:=1 to n do result := result + ' ';
-        result := result + s;
-    end;
-
-  function GetPayText(id:string):string;
-  var rs:TZQuery;
-  begin
-    rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
-    if rs.Locate('CODE_ID',id,[]) then
-       result := rs.FieldbyName('CODE_NAME').AsString
-    else
-       result := 'id';
-    if length(result)<5 then result := result + '支付';
-  end;
-
-  function GetTicketGodsName(DataSet:TDataSet):string;
-  begin
-    case DevFactory.Ticket_PrintName of
-      0:result := DataSet.FieldbyName('GODS_NAME').AsString;
-      1:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString;
-      2:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString;
-      3:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
-      4:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
-      5:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
-      else result := DataSet.FieldbyName('GODS_NAME').AsString;
-    end;
   end;
 var
   allAmt:real;
@@ -524,6 +494,92 @@ begin
   end;
 end;
 
+function TDevFactory.FormatText(s:string;pWidth:Integer):string;
+var i:Integer;
+begin
+  result := '';
+  for i:=1 to (pWidth - Length(s)) do result := result +' ';
+  result := s+ result ;
+end;
+
+function TDevFactory.FormatTitle(s:string):string;
+var
+  i:Integer;
+  n:integer;
+begin
+  n := (Ticket_Width - length(s)) div 2;
+  result := '';
+  for i:=1 to n do result := result + ' ';
+    result := result + s;
+end;
+
+function TDevFactory.GetPayText(id:string):string;
+var
+  rs:TZQuery;
+begin
+  rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
+  if rs.Locate('CODE_ID',id,[]) then
+     result := rs.FieldbyName('CODE_NAME').AsString
+  else
+     result := 'id';
+  if length(result)<5 then result := result + '支付';
+end;
+  
+function TDevFactory.GetTicketGodsName(DataSet:TDataSet):string;
+begin
+  case DevFactory.Ticket_PrintName of
+    0:result := DataSet.FieldbyName('GODS_NAME').AsString;
+    1:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString;
+    2:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString;
+    3:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+    4:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+    5:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+    else result := DataSet.FieldbyName('GODS_NAME').AsString;
+  end;
+end;
+
+function TDevFactory.RepeatCharacter(Str: char; L: Integer): String;
+var i:Integer;
+begin
+  for i:=1 to L do
+    Result := Result + Str;
+end;
+
+procedure TDevFactory.FormatGoodsAndMoney(Goods, Num,Unit_Name, Money: String);
+var
+  F_Num,F_Money,F_Goods:String;
+  F_N,F_M,F_G,i,j:Integer;
+begin
+  F_M := 8;
+  F_Num := ' '+Num+Unit_Name;
+
+  if Length(Money) > F_M then
+    F_Num :=F_Num+' '+FormatText(Money,length(Money))
+  else
+    F_Num :=F_Num+FormatText(Money,F_M+1);
+
+  F_Goods := StringReplace(Goods,'（','(',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'）',')',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'！','!',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'，',',',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'？','?',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'。','.',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'，',':',[rfReplaceAll]);
+  F_Goods := StringReplace(F_Goods,'；',';',[rfReplaceAll]);
+
+  i := length(F_Num);    //数量、金额长度
+  j := length(F_Goods);       //商品名称长度
+
+  if (i+j) > Ticket_Width then
+  begin
+    DevFactory.WritePrint(F_Goods);
+    DevFactory.WritePrint(FormatText(F_Num,Ticket_Width-1));
+  end else
+  begin
+    DevFactory.WritePrint(FormatText(F_Goods,Ticket_Width-i-1)+F_Num);
+  end;
+end; 
+
 procedure TDevFactory.SetPrintFormat(const Value: integer);
 begin
   FPrintFormat := Value;
@@ -537,6 +593,170 @@ end;
 procedure TDevFactory.SetSaveCodePrint(const Value: Boolean);
 begin
   FSaveCodePrint := Value;
+end;
+
+procedure TDevFactory.PrintCloseForDay(SelectType:Integer;ClsDay:string;Font:TFont);
+var
+  rs,sale_rs,ForDay_rs:TZQuery;
+  WhereStr:String;
+  i:Integer;
+  Sum_Goods,Sum_Money:Double;
+begin
+  if DevFactory.Ticket_PrintComm < 0 then Exit;
+  case SelectType of
+   1:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER';
+   2:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by SHOP_ID';
+   else
+     WhereStr := ' TENANT_ID=:TENANT_ID group by TENANT_ID';
+  end;
+  try
+    ForDay_rs := TZQuery.Create(nil);
+    ForDay_rs.SQL.Text :=
+      'select sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,'+
+        'sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J '+
+      ' from ACC_CLOSE_FORDAY where CLSE_DATE=:CLSE_DATE and '+WhereStr; 
+    ForDay_rs.ParamByName('TENANT_ID').AsInteger := StrToIntDef(token.tenantId,0);
+    ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(ClsDay);
+    if ForDay_rs.Params.FindParam('SHOP_ID')<>nil then ForDay_rs.ParamByName('SHOP_ID').AsString := token.shopId;
+    if ForDay_rs.Params.FindParam('CREA_USER')<>nil then ForDay_rs.ParamByName('CREA_USER').AsString := token.userId;
+    dataFactory.Open(ForDay_rs);
+
+    //开始打印小票
+    DevFactory.BeginPrint(Font);      
+    DevFactory.WritePrint(FormatTitle(DevFactory.GetTitle));
+    case SelectType of
+      1:begin
+      DevFactory.WritePrint('');
+      DevFactory.WritePrint('店名:'+Token.shopName);
+      DevFactory.WritePrint(FormatText('收银:'+Token.username,DevFactory.Ticket_Width-13)+' 日期:'+Copy(ClsDay,1,4)+'-'+Copy(ClsDay,5,2)+'-'+Copy(ClsDay,7,2));
+      WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
+      end;
+      2:begin
+      DevFactory.WritePrint('');
+      DevFactory.WritePrint('店名:'+Token.shopName);
+      DevFactory.WritePrint('日期:'+Copy(ClsDay,1,4)+'-'+Copy(ClsDay,5,2)+'-'+Copy(ClsDay,7,2));
+      WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID ';
+      end;
+      else begin
+      DevFactory.WritePrint('');
+      DevFactory.WritePrint('日期:'+Copy(ClsDay,1,4)+'-'+Copy(ClsDay,5,2)+'-'+Copy(ClsDay,7,2));
+      WhereStr := ' B.TENANT_ID=:TENANT_ID ';
+      end;
+    end;                                       
+    DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Ticket_Width-1));
+
+    if DevFactory.CloseDayPrintFlag = 1 then
+      begin
+        rs := TZQuery.Create(nil);
+        rs.SQL.Text :=
+          ParseSQL(dataFactory.iDbType,
+              'select je.*,isnull(e.BARCODE,je.CALC_BARCODE) as BARCODE from ('+
+              'select jd.*,d.COLOR_NAME as PROPERTY_02_TEXT from ('+
+              'select jc.*,c.SIZE_NAME as PROPERTY_01_TEXT from ('+
+              'select jb.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE as CALC_BARCODE from('+ 
+              'select ja.*,a.UNIT_NAME from('+
+              'select A.TENANT_ID,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02,sum(A.AMOUNT) as AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
+              'from SAL_SALESDATA A,SAL_SALESORDER B where A.SALES_ID=B.SALES_ID and A.TENANT_ID=B.TENANT_ID '+
+              'and B.SALES_TYPE=4 and SALES_DATE=:SALES_DATE and '+WhereStr+' group by A.TENANT_ID,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02) ja '+
+              'left outer join VIW_MEAUNITS a on a.UNIT_ID=ja.UNIT_ID and a.TENANT_ID=ja.TENANT_ID) jb '+
+              'left outer join VIW_GOODSINFO b on  jb.GODS_ID=b.GODS_ID  and jb.TENANT_ID=b.TENANT_ID) jc '+
+              'left outer join VIW_SIZE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.PROPERTY_01=c.SIZE_ID) jd '+
+              'left outer join VIW_COLOR_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.PROPERTY_02=d.COLOR_ID ) je '+
+              'left outer join (select * from VIW_BARCODE where TENANT_ID='+Token.tenantId+' and BARCODE_TYPE in (''0'',''1'',''2'')) e '+
+              ' on je.TENANT_ID=e.TENANT_ID and je.PROPERTY_02=e.PROPERTY_02 and je.PROPERTY_01=e.PROPERTY_01 and je.GODS_ID=e.GODS_ID and je.UNIT_ID=e.UNIT_ID ');
+
+        rs.ParamByName('SALES_DATE').AsString := ClsDay;
+        rs.ParamByName('TENANT_ID').AsInteger :=StrToIntDef(Token.tenantId,0);
+        if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString := Token.shopId;
+        if rs.Params.FindParam('CREA_USER')<>nil then rs.ParamByName('CREA_USER').AsString := Token.userId;
+        dataFactory.Open(rs);
+        if DevFactory.Ticket_Width = 35 then
+          DevFactory.WritePrint('商品名称             数量     金额')
+        else
+          DevFactory.WritePrint('商品名称        数量     金额');
+        DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Ticket_Width-1));
+        Sum_Goods := 0;
+        Sum_Money := 0;
+        rs.First;
+        while not rs.Eof do
+          begin
+            Sum_Goods := Sum_Goods + rs.FieldbyName('AMOUNT').AsFloat;
+            Sum_Money := Sum_Money + rs.FieldbyName('CALC_MONEY').AsFloat;
+            FormatGoodsAndMoney(GetTicketGodsName(rs),rs.FieldbyName('AMOUNT').AsString,rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('CALC_MONEY').AsString);
+            rs.Next;
+          end;
+        DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Ticket_Width-1));
+
+        if DevFactory.Ticket_Width = 35 then
+          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',10)+FormatText(FloatToStr(Sum_Goods),8)+' '+FormatText(FloatToStr(Sum_Money),8))
+        else
+          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',8)+FormatText(FloatToStr(Sum_Goods),7)+' '+FormatText(FloatToStr(Sum_Money),8));
+        DevFactory.WritePrint('');
+        DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Ticket_Width-1));
+      end;
+
+    DevFactory.WritePrint('营业额:'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_B').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_C').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_D').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_E').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_F').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_G').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_H').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_I').AsFloat+
+                                                        ForDay_rs.FieldbyName('PAY_J').AsFloat));
+
+    DevFactory.WritePrint('');
+    if ForDay_rs.FieldByName('PAY_A').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('A')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat));
+    if ForDay_rs.FieldByName('PAY_B').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('B')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_B').AsFloat));
+    if ForDay_rs.FieldByName('PAY_C').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('C')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_C').AsFloat));
+    if ForDay_rs.FieldByName('PAY_D').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('D')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_D').AsFloat));
+    if ForDay_rs.FieldByName('PAY_E').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('E')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_E').AsFloat));
+    if ForDay_rs.FieldByName('PAY_F').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('F')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_F').AsFloat));
+    if ForDay_rs.FieldByName('PAY_G').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('G')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_G').AsFloat));
+    if ForDay_rs.FieldByName('PAY_H').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('H')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_H').AsFloat));
+    if ForDay_rs.FieldByName('PAY_I').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('I')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_I').AsFloat));
+    if ForDay_rs.FieldByName('PAY_J').AsFloat <> 0 then
+      DevFactory.WritePrint(GetPayText('J')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_J').AsFloat));
+
+    // 增加打印当日未税金额、税额
+    sale_rs := TZQuery.Create(nil);
+    sale_rs.SQL.Text := ParseSQL(dataFactory.iDbType,
+                        ' select  sum(ifnull(TAX_MONEY,0)) as TAX_MONEY,sum(ifnull(NOTAX_MONEY,0)) as NOTAX_MONEY '+
+                        ' from    VIW_SALESDATA '+
+                        ' where   TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE=:SALES_DATE and SALES_TYPE=4');
+    sale_rs.ParamByName('TENANT_ID').AsInteger := StrToIntDef(Token.tenantId,0);
+    sale_rs.ParamByName('SHOP_ID').AsString := Token.shopId;
+    sale_rs.ParamByName('SALES_DATE').AsInteger := StrToInt(ClsDay);
+    dataFactory.Open(sale_rs);
+    DevFactory.WritePrint('未税金额:'+FormatFloat('#0.00',sale_rs.FieldbyName('NOTAX_MONEY').AsFloat));
+    DevFactory.WritePrint('销项税额:'+FormatFloat('#0.00',sale_rs.FieldbyName('TAX_MONEY').AsFloat));
+
+    DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Ticket_Width-1));
+
+    DevFactory.WritePrint('打印时间:'+FormatDateTime('YYYY-MM-DD HH:NN:SS',Now));
+    For i:= 0 to DevFactory.Ticket_NullRow-1 do
+      DevFactory.WritePrint(' ');
+  finally
+    DevFactory.EndPrint;
+    ForDay_rs.Free;
+    rs.Free;
+    sale_rs.Free;
+  end;
+end;
+
+procedure TDevFactory.SetCloseDayPrintFlag(const Value: integer);
+begin
+  FCloseDayPrintFlag := Value;
 end;
 
 initialization

@@ -10,7 +10,9 @@
 $(function() {
 	var src = request.getParameter("src");
 	var title = request.getParameter("title");
-	document.getElementById('player').setAttribute('url',src);
+        player = document.getElementById("player"); 
+        player.URL = src;
+	player.controls.play(); 
 	if (title != undefined && title != '') {
 		document.getElementById('school').innerHTML = '在线学堂（'+title+'）';
 	}
@@ -70,8 +72,8 @@ request = function() {
 				<center>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<object id="player" height="400" width="920" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6"> 
-					<param name="url" value=""> <!--播放的文件地址--> 
-					<param name="autostart" value="1"> <!--是否自动播放--> 
+					<param name="URL" value=""> <!--播放的文件地址--> 
+					<param name="autoStart" value="true"> <!--是否自动播放--> 
 					<param name="balance" value="0"> <!--调整左右声道平衡,同上面旧播放器代码--> 
 					<param name="enabled" value="-1"> <!--播放器是否可人为控制--> 
 					<param name="EnableContextMenu" value="1"> <!--是否启用上下文菜单--> 
@@ -101,10 +103,20 @@ request = function() {
 		<div class="title">常用链接</div>
 		<div class="link">
 		<ul>
-			<li><a target="_blank" href="http://www.google.com.hk/">Google谷歌</a></li>
-			<li><a target="_blank" href="http://weibo.sina.com.cn/">新浪·微博</a></li>
-			<li><a target="_blank" href="http://qzone.qq.com/">腾讯·空间</a></li>
-			<li><a target="_blank" href="http://www.baidu.com/">百度</a></li>
+	<li><a target="_blank" href="http://www.163.com/">新闻</a></li>
+	<li><a target="_blank" href="http://www.baidu.com/">百度</a></li>
+	<li><a target="_blank" href="http://www.iqiyi.com/">视频</a></li>
+	<li><a target="_blank" href="http://www.kugou.com/">音乐</a></li>
+	<li><a target="_blank" href="http://www.taobao.com/">购物</a></li>
+	<li><a target="_blank" href="http://www.4399.com/">游戏</a></li>
+	<li><a target="_blank" href="http://news.ifeng.com/mil/">军事</a></li>
+	<li><a target="_blank" href="http://www.4399.com/">游戏</a></li>
+	<li><a target="_blank" href="http://www.tianya.cn/">社区</a></li>
+	<li><a target="_blank" href="http://www.jiayuan.com/">交友</a></li>
+	<li><a target="_blank" href="http://jn.ganji.com/">生活</a></li>
+	<li><a target="_blank" href="http://www.autohome.com.cn/">汽车</a></li>
+	<li><a target="_blank" href="http://www.ctrip.com/">旅游</a></li>
+	<li><a target="_blank" href="http://www.hao123.com/">更多...</a></li>
 		</ul>
 		</div>
 	</div>

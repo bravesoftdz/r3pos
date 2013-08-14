@@ -40,8 +40,6 @@ type
     RzPanel20: TRzPanel;
     RzLabel2: TRzLabel;
     edtSALES_DATE: TcxDateEdit;
-    btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
     Image2: TImage;
     edtREMARK: TcxTextEdit;
     edtBK_GUIDE_USER: TRzPanel;
@@ -91,8 +89,9 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     frfSalesOrder: TfrReport;
     RzToolButton4: TRzToolButton;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton4: TRzBmpButton;
+    btnSave: TRzBmpButton;
+    btnNew: TRzBmpButton;
+    btnImport: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -138,8 +137,8 @@ type
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
-    procedure RzBmpButton1Click(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
+    procedure btnImportClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -644,8 +643,8 @@ begin
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   edtGUIDE_USER.DataSet := dllGlobal.GetZQueryFromName('CA_USERS');
   NewOrder;
-  if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
-     RzBmpButton4.Visible := true;
+//  if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
+//     RzBmpButton4.Visible := true;
 end;
 
 procedure TfrmSaleOrder.DBGridEh1Columns1BeforeShowControl(
@@ -2331,13 +2330,6 @@ begin
   end;
 end;
 
-procedure TfrmSaleOrder.RzBmpButton1Click(Sender: TObject);
-begin
-  inherited;
-  ImportExcelClick(nil);
-
-end;
-
 procedure TfrmSaleOrder.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
@@ -2347,6 +2339,13 @@ begin
   finally
     CodeLisenter := true;
   end;
+end;
+
+procedure TfrmSaleOrder.btnImportClick(Sender: TObject);
+begin
+  inherited;
+  ImportExcelClick(nil);
+
 end;
 
 initialization

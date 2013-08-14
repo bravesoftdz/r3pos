@@ -86,12 +86,12 @@ type
     edtAGIO_RATE: TcxTextEdit;
     RzPanel8: TRzPanel;
     RzLabel11: TRzLabel;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
     btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
     RzToolButton4: TRzToolButton;
-    RzBmpButton3: TRzBmpButton;
+    btnHangup: TRzBmpButton;
+    btnPickUp: TRzBmpButton;
+    RzBmpButton6: TRzBmpButton;
+    btnNew: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -149,7 +149,9 @@ type
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
-    procedure RzBmpButton3Click(Sender: TObject);
+    procedure RzBmpButton6Click(Sender: TObject);
+    procedure btnHangupClick(Sender: TObject);
+    procedure btnPickUpClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1136,7 +1138,7 @@ begin
   else
      begin
       if TotalFee<>0 then
-         MarqueeStatus.Caption := '合计:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
+         MarqueeStatus.Caption := '应收:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
       else
          MarqueeStatus.Caption := '';
      end;
@@ -1974,7 +1976,7 @@ begin
         begin
          edtTable.Append;
          _obj.Clear;
-         _obj.ReadFromDataSet(edt); 
+         _obj.ReadFromDataSet(edt);
          _obj.WriteToDataSet(edtTable,false);
          inc(ROWID);
          edtTable.FieldByName('SEQNO').AsInteger := ROWID;
@@ -2029,10 +2031,24 @@ begin
   end;
 end;
 
-procedure TfrmPosInOrder.RzBmpButton3Click(Sender: TObject);
+procedure TfrmPosInOrder.RzBmpButton6Click(Sender: TObject);
 begin
   inherited;
   ImportExcelClick(nil);
+end;
+
+procedure TfrmPosInOrder.btnHangupClick(Sender: TObject);
+begin
+  inherited;
+  DoHangUp;
+  
+end;
+
+procedure TfrmPosInOrder.btnPickUpClick(Sender: TObject);
+begin
+  inherited;
+  DoPickUp;
+
 end;
 
 initialization

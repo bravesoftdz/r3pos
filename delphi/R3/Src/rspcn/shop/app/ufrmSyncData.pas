@@ -65,7 +65,7 @@ procedure TfrmSyncData.SetShowTitle(const Value: string);
 var s:string;
 begin
   if not Visible then Exit;
-  s := '为了保障您的数据安全，系统正在备份...'+Value;
+  s := '为了保障您的数据安全，系统正在备份...';//+Value;
   FShowTitle := s;
   Label1.Caption := s;
   Label1.Update;

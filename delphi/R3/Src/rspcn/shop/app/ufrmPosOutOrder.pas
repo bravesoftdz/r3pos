@@ -62,25 +62,10 @@ type
     RzLabel15: TRzLabel;
     PrintDBGridEh1: TPrintDBGridEh;
     frfSalesOrder: TfrReport;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
-    edtBK_ACCT_MNY: TRzPanel;
-    RzLabel6: TRzLabel;
-    RzPanel7: TRzPanel;
-    RzLabel4: TRzLabel;
-    edtACCT_MNY: TcxTextEdit;
-    edtAGIO_RATE: TcxTextEdit;
-    RzPanel8: TRzPanel;
-    RzLabel5: TRzLabel;
     edtBK_CLIENT_ID: TRzPanel;
     RzPanel21: TRzPanel;
     RzLabel1: TRzLabel;
     edtCLIENT_ID: TzrComboBoxList;
-    RzPanel19: TRzPanel;
-    Image5: TImage;
-    MarqueeStatus: TRzMarqueeStatus;
-    Image3: TImage;
-    Image4: TImage;
     GodsRzPageControl: TRzPageControl;
     GodsGrid_1: TRzTabSheet;
     GodsGrid_2: TRzTabSheet;
@@ -89,7 +74,7 @@ type
     DelGodsShortCust: TPopupMenu;
     DeleteShortCut: TMenuItem;
     btnSave: TRzBmpButton;
-    btnNew: TRzBmpButton;
+    btnHangup: TRzBmpButton;
     RzLabel2: TRzLabel;
     RzPanel10: TRzPanel;
     intoCustomer: TRzBmpButton;
@@ -97,7 +82,22 @@ type
     edtBK_CARD_NO: TRzPanel;
     edtCARD_NO: TcxTextEdit;
     RzToolButton4: TRzToolButton;
-    RzBmpButton3: TRzBmpButton;
+    btnNew: TRzBmpButton;
+    btnPickUp: TRzBmpButton;
+    RzBmpButton6: TRzBmpButton;
+    RzPanel19: TRzPanel;
+    Image5: TImage;
+    MarqueeStatus: TRzMarqueeStatus;
+    Image3: TImage;
+    Image4: TImage;
+    edtBK_ACCT_MNY: TRzPanel;
+    RzLabel6: TRzLabel;
+    RzPanel7: TRzPanel;
+    RzLabel4: TRzLabel;
+    edtACCT_MNY: TcxTextEdit;
+    edtAGIO_RATE: TcxTextEdit;
+    RzPanel8: TRzPanel;
+    RzLabel5: TRzLabel;
     RzBmpButton4: TRzBmpButton;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
@@ -122,7 +122,7 @@ type
     procedure RzToolButton2Click(Sender: TObject);
     procedure RzToolButton3Click(Sender: TObject);
     procedure RzToolButton1Click(Sender: TObject);
-    procedure btnNewClick(Sender: TObject);
+    procedure btnHangupClick(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure serachTextEnter(Sender: TObject);
     procedure serachTextExit(Sender: TObject);
@@ -151,16 +151,16 @@ type
     procedure GodsStringGridClickCell(Sender: TObject; ARow,
       ACol: Integer);
     procedure DeleteShortCutClick(Sender: TObject);
-    procedure RzBmpButton2Click(Sender: TObject);
-    procedure RzBmpButton1Click(Sender: TObject);
     procedure intoCustomerClick(Sender: TObject);
     procedure edtCARD_NOKeyPress(Sender: TObject; var Key: Char);
     procedure RzToolButton4Click(Sender: TObject);
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCARD_NOEnter(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
-    procedure RzBmpButton3Click(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
+    procedure RzBmpButton6Click(Sender: TObject);
+    procedure btnPickUpClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1045,7 +1045,7 @@ begin
 
        AObj.FieldbyName('PAY_DIBS').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
        
-       MarqueeStatus.Caption := '实收:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_DIBS').AsFloat);
+       MarqueeStatus.Caption := '实收现金:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_DIBS').AsFloat);
 
      end;
   end;
@@ -1177,7 +1177,7 @@ begin
         else
            begin
             if TotalFee<>0 then
-               MarqueeStatus.Caption := '合计:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
+               MarqueeStatus.Caption := '应收:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
             else
                MarqueeStatus.Caption := '';
            end;
@@ -1907,10 +1907,9 @@ begin
   NewOrder;
 end;
 
-procedure TfrmPosOutOrder.btnNewClick(Sender: TObject);
+procedure TfrmPosOutOrder.btnHangupClick(Sender: TObject);
 begin
-  if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前销售单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  NewOrder;
+  DoHangUp;
 end;
 
 function TfrmPosOutOrder.payCashMny(s:string): boolean;
@@ -2587,18 +2586,6 @@ begin
   AdjustGodsStringGrid;
 end;
 
-procedure TfrmPosOutOrder.RzBmpButton2Click(Sender: TObject);
-begin
-  inherited;
-  DoPickUp;
-end;
-
-procedure TfrmPosOutOrder.RzBmpButton1Click(Sender: TObject);
-begin
-  inherited;
-  DoHangUp;
-end; 
-
 procedure TfrmPosOutOrder.intoCustomerClick(Sender: TObject);
 begin
   inherited;
@@ -2618,10 +2605,11 @@ begin
        Key := #0;
        try
          DoCustId(trim(edtCARD_NO.Text));
-       finally
+         if edtInput.CanFocus then edtInput.SetFocus;
+       except
          edtCARD_NO.Text := '';
          if edtCARD_NO.CanFocus then edtCARD_NO.SetFocus;
-         if edtInput.CanFocus then edtInput.SetFocus;
+         Raise;
        end;
      end;
   if Key=#27 then
@@ -2733,10 +2721,11 @@ begin
   end;
 end;
 
-procedure TfrmPosOutOrder.RzBmpButton3Click(Sender: TObject);
+procedure TfrmPosOutOrder.btnNewClick(Sender: TObject);
 begin
   inherited;
-  ImportExcelClick(nil);
+  if MessageBox(Handle,pchar('是否'+btnNew.Caption+'当前销售单？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  NewOrder;
 
 end;
 
@@ -2749,6 +2738,20 @@ begin
   finally
     CodeLisenter := true;
   end;
+end;
+
+procedure TfrmPosOutOrder.RzBmpButton6Click(Sender: TObject);
+begin
+  inherited;
+  ImportExcelClick(nil);
+
+end;
+
+procedure TfrmPosOutOrder.btnPickUpClick(Sender: TObject);
+begin
+  inherited;
+  DoPickUp;
+
 end;
 
 initialization

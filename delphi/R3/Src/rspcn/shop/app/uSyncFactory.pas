@@ -114,6 +114,7 @@ type
     procedure SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
+    procedure SyncStorage;
     procedure GetCloseAccDate;
     function  CheckNeedLoginSync:boolean;
     function  CheckNeedLoginSyncBizData:boolean;
@@ -1989,6 +1990,8 @@ begin
     ProTitle := '<日台账>...';
     SyncRckDays(SyncFlag,BeginDate);
     SetProPosition(400);
+    ProTitle := '<库存表>...';
+    if SyncFlag=0 then SyncStorage;
   finally
     ReadTimeStamp;
   end
@@ -2194,7 +2197,7 @@ begin
           end
        else result := false;
      end;
-  if result then SyncLockDb; // 自动锁定 
+  if result then SyncLockDb; // 自动锁定
 end;
 
 function TSyncFactory.SyncLockDb: boolean;
@@ -2254,7 +2257,7 @@ begin
   ProTitle := '正在备份数据文件，请稍候...';
   try
     delTime := FormatDateTime('YYYYMMDD',now()-7);
-    Folder := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId; 
+    Folder := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId;
     FileName := Folder+'\r3_'+FormatDateTime('YYYYMMDD',now())+'.db';
     ForceDirectories(ExtractFileDir(FileName));
     CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(FileName),false);
@@ -2429,6 +2432,28 @@ begin
     end;
   except
     result := false;
+  end;
+end;
+
+procedure TSyncFactory.SyncStorage;
+var
+  n:PSynTableInfo;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+  new(n);
+  n^.tbname := 'STO_STORAGE';
+  n^.keyFields := 'TENANT_ID;SHOP_ID;GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02';
+  n^.whereStr :=  'TENANT_ID = :TENANT_ID and AMOUNT<>0';
+  n^.synFlag := 1;
+  n^.keyFlag := 1;
+  n^.tbtitle := '当前库存';
+  n^.isSyncUp := '1';
+  n^.isSyncDown := '0';
+  try
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+''); 
+    SyncSingleTable(n);
+  finally
+    dispose(n);
   end;
 end;
 

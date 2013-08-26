@@ -4528,7 +4528,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
   end
   object PopupMenu1: TPopupMenu
     Left = 64
-    Top = 432
+    Top = 440
     object ExcelImport: TMenuItem
       Caption = #21830#21697#26723#26696#23548#20837'...'
       OnClick = ExcelImportClick

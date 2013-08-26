@@ -379,6 +379,7 @@ var
   Params:TftParamList;
 begin
   inherited;
+//  if id='' then dataFactory.MoveToSqlite else dataFactory.MoveToDefault;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
@@ -399,6 +400,7 @@ begin
     ReadFrom(cdsDetail);
     Calc;
   finally
+    dataFactory.MoveToDefault;
     Params.Free;
   end;
 end;
@@ -748,6 +750,8 @@ begin
   inherited;
   if char(Key) = '*' then
      begin
+       if edtInput.CanFocus then edtInput.SetFocus;
+       if CheckNoData then raise Exception.Create('您还没有输入商品，不能做此操作。');
        if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
           begin
             inputFlag := 13;
@@ -765,6 +769,7 @@ begin
      begin
         key := #0;
         try
+          if CheckNoData then raise Exception.Create('您还没有输入商品，不能做此操作。');
           DoSaveOrder;
           edtInput.Text := '';
         finally

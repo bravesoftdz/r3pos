@@ -38,11 +38,6 @@ inherited frmPosInOrder: TfrmPosInOrder
               inherited help: TRzBmpButton
                 Left = 846
               end
-              inherited barcode: TRzPanel
-                inherited edtInput: TcxTextEdit
-                  Tag = -1
-                end
-              end
               inherited helpPanel: TRzPanel
                 Left = 447
                 Width = 417

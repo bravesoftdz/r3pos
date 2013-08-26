@@ -2104,19 +2104,19 @@ begin
   if token.tenantId = '' then Exit;
   LoginStart := GetTickCount;
   LoginId := TSequence.NewId;
-  if token.online then
-     begin
-       Flag := '1';
-       ConnectTo := 'Remote';
-       dataFactory.MoveToRemote;
-     end
-  else
-     begin
-       Flag := '2';
-       ConnectTo := 'Local';
-       dataFactory.MoveToSqlite;
-     end;
   try
+    if token.online then
+       begin
+         Flag := '1';
+         ConnectTo := 'Remote';
+         dataFactory.MoveToRemote;
+       end
+    else
+       begin
+         Flag := '2';
+         ConnectTo := 'Local';
+         dataFactory.MoveToSqlite;
+       end;
     SQL :=
       'insert into CA_LOGIN_INFO(LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
       'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+GetSystemInfo+''',''R6'','''+Flag+''','''+ConnectTo+''','''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
@@ -2129,8 +2129,8 @@ end;
 procedure TSyncFactory.AddLogoutLog;
 begin
   if LoginId='' then Exit;
-  if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
   try
+    if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
     dataFactory.ExecSQL('update CA_LOGIN_INFO set LOGOUT_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
   finally
     dataFactory.MoveToDefault;

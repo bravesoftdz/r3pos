@@ -540,6 +540,7 @@ procedure TfrmSaleOrder.Open(id: string);
 var Params:TftParamList;
 begin
   inherited;
+//  if id='' then dataFactory.MoveToSqlite else dataFactory.MoveToDefault;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
@@ -563,6 +564,7 @@ begin
     if not cdsHeader.IsEmpty and (cdsHeader.FieldByName('CLIENT_ID').AsString='') then edtCLIENT_ID.Text := '普通客户';
     DoShowPayment;
   finally
+    dataFactory.MoveToDefault;
     Params.Free;
   end;
 end;
@@ -1579,6 +1581,8 @@ begin
   inherited;
   if char(Key) = '*' then
      begin
+       if edtInput.CanFocus then edtInput.SetFocus;
+       if CheckNoData then raise Exception.Create('您还没有输入商品，不能做此操作。');
        if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
           begin
             inputFlag := 13;
@@ -1595,6 +1599,8 @@ begin
   if char(Key) = '+' then
      begin
        key := #0;
+       if edtInput.CanFocus then edtInput.SetFocus;
+       if CheckNoData then raise Exception.Create('您还没有输入商品，不能做此操作。');
        if InputFlag=14 then
           begin
             try

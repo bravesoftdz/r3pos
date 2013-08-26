@@ -670,9 +670,9 @@ begin
       cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'smalltoCalc'));
       cdsGoodsInfo.FieldByName('BIG_UNITS').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnits');
       cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'bigtoCalc'));
-      cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'newInprice'));
-      cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'newOutprice'));
-      cdsGoodsInfo.FieldByName('NEW_LOWPRICE').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'newLowprice'));
+      cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat := strtofloatDef(rspFactory.GetNodeValue(pubGoodsinfoResp,'newInprice'),0);
+      cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat := strtofloatDef(rspFactory.GetNodeValue(pubGoodsinfoResp,'newOutprice'),0);
+      cdsGoodsInfo.FieldByName('NEW_LOWPRICE').AsFloat := strtofloatDef(rspFactory.GetNodeValue(pubGoodsinfoResp,'newLowprice'),0);
       cdsGoodsInfo.FieldByName('USING_PRICE').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingPrice'));
       cdsGoodsInfo.FieldByName('HAS_INTEGRAL').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'hasIntegral'));
       cdsGoodsInfo.FieldByName('USING_BATCH_NO').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingBatchNo'));
@@ -1372,11 +1372,11 @@ begin
   rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
 
   Node := doc.CreateElement('newInprice');
-  Node.text := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsString;
+  Node.text := formatFloat('#0.000',cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat);
   rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
 
   Node := doc.CreateElement('newOutprice');
-  Node.text := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsString;
+  Node.text := formatFloat('#0.000',cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat);
   rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
 
   Node := doc.CreateElement('newLowprice');

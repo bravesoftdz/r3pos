@@ -16,6 +16,7 @@ uses
 type
   TfrmOrderExcel = class(TfrmExcelFactory)
     chkPrice: TcxCheckBox;
+    cxCheckBox1: TcxCheckBox;
     procedure chkPriceClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure RzLabel17Click(Sender: TObject);
@@ -40,6 +41,7 @@ type
     function SaveExcel(dsExcel:TZQuery):Boolean;override;
     function IsRequiredFiled(strFiled:string):Boolean;override;
     procedure ClearParams;
+    procedure fillExecl(FileName: string);
   public
     orderForm:TfrmOrderForm;
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
@@ -789,6 +791,8 @@ begin
         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\商品单据导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
         MessageBox(Handle, Pchar('没有找到导入模板！'), '友情提示..', MB_OK + MB_ICONQUESTION);
+      if cxCheckBox1.Checked then
+         fillExecl(SaveDialog1.FileName);
     except
       MessageBox(Handle, Pchar('下载导入模板失败！'), '友情提示..', MB_OK + MB_ICONQUESTION);
     end;
@@ -803,4 +807,52 @@ begin
     result:=true;
 end;
 
+procedure TfrmOrderExcel.fillExecl(FileName: string);
+var
+  Excel,excelWorkBook,Range: Variant;
+  i:integer;
+  rs,un:TZQuery;
+begin
+    RzStatus.Caption := '正在写入商品数据';
+    RzStatus.Update;
+    try
+      Excel := CreateOleObject('Excel.Application');
+    except
+      MessageBox(Handle, Pchar('请查看是否安装Excel应用程序！'), Pchar(Application.Title), MB_OK + MB_ICONQUESTION);
+    end;
+    try
+      excelWorkBook:=Excel.WorkBooks.open(FileName);
+      rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+      un := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+      rs.First;
+      Range := excelWorkBook.sheets[1].Range[Excel.Cells.Item[4, 1],Excel.Cells.Item[4, 10]];
+      for i:=0 to rs.RecordCount-9 do
+        begin
+          Range.rows.insert;
+        end;
+      i := 2;
+      //遇到两条空行之后才认为结束
+      while not rs.Eof do
+      begin
+          RzStatus.Caption := '写入'+rs.FieldbyName('GODS_NAME').asString+'行...';
+          RzStatus.Update;
+          Excel.Cells.Item[i, 1] := rs.FieldbyName('BARCODE').AsString;
+          Excel.Cells.Item[i, 2] := rs.FieldbyName('GODS_CODE').AsString;
+          Excel.Cells.Item[i, 3] := rs.FieldbyName('GODS_NAME').AsString;
+          if un.Locate('UNIT_ID',rs.FieldbyName('UNIT_ID').AsString,[]) then
+             Excel.Cells.Item[i, 4] := un.FieldbyName('UNIT_NAME').AsString;
+          Excel.Cells.Item[i, 5] := '';
+          Excel.Cells.Item[i, 6] := rs.FieldByName('NEW_INPRICE').AsString;
+          Excel.Cells.Item[i, 7] := '';
+          inc(i);
+          rs.Next;
+      end;
+      excelWorkBook.save;
+      RzStatus.Caption := '写入完毕';
+      RzStatus.Update;
+    finally
+      excelWorkBook.close;
+      Excel.quit;
+    end;
+end;
 end.

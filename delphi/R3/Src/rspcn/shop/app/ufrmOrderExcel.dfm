@@ -5,6 +5,7 @@ inherited frmOrderExcel: TfrmOrderExcel
     inherited RzPanel2: TRzPanel
       inherited RzPanel3: TRzPanel
         inherited rzPage: TRzPageControl
+          ActivePage = TabSheet1
           FixedDimension = 0
           inherited TabSheet1: TRzTabSheet
             inherited RzPanel12: TRzPanel
@@ -13,6 +14,23 @@ inherited frmOrderExcel: TfrmOrderExcel
               end
               inherited chkHeader: TcxCheckBox
                 Properties.Caption = #21551#29992#26631#39064#34892
+              end
+              inherited RzPanel70: TRzPanel
+                inherited RzPanel71: TRzPanel
+                  inherited RzLabel41: TRzLabel
+                    Width = 52
+                    Height = 26
+                  end
+                end
+              end
+              object cxCheckBox1: TcxCheckBox
+                Left = 272
+                Top = 208
+                Width = 121
+                Height = 23
+                Properties.DisplayUnchecked = 'False'
+                Properties.Caption = #21253#21547#21830#21697#26723#26696
+                TabOrder = 4
               end
             end
           end

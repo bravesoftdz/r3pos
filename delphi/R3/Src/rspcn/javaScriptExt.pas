@@ -116,6 +116,7 @@ begin
              dataFactory.MoveToDefault;
              dataFactory.connect;
              dataFactory.signined := true;
+             SaveTimeStamp;
              result := true;
              Exit;
              //if rspFactory.xsmLogin(username,3) then
@@ -638,6 +639,7 @@ var
 begin
   LDate := trunc(rspFactory.timestamp/86400.0+40542.0)+2;
   token.lDate := strtoint(formatDatetime('YYYYMMDD',LDate));
+  if formatDatetime('YYYYMMDD',Date())<>formatDatetime('YYYYMMDD',LDate) then Raise Exception.Create('您的计算机时间有误，请校准后才能登录系统');
   dataFactory.MoveToSqlite;
   try
     if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+formatDatetime('YYYYMMDD',LDate)+''' where TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''')=0 then
@@ -676,7 +678,7 @@ begin
   try
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID=0 and DEFINE=''NEAR_LOGIN_DATE''';
     dataFactory.Open(rs);
-    if rs.Fields[0].AsString='' then  Raise Exception.Create('首次登录不允许使用离线操作'); 
+    if rs.Fields[0].AsString='' then  Raise Exception.Create('首次登录不允许使用离线操作');
     if rs.Fields[0].AsString<>'' then
        begin
          if (date()-fnStrtoDate(rs.Fields[0].asString))>7 then
@@ -685,6 +687,7 @@ begin
          if fnStrtoDate(rs.Fields[0].asString)>date() then
             Raise Exception.Create('你的计算机时间与服务器时间不符，请校准后再登录软件。');
        end;
+    token.lDate := strtoint(formatDatetime('YYYYMMDD',date()));
   finally
     rs.Free;
   end;

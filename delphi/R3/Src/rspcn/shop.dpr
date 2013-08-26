@@ -45,5 +45,5 @@ begin
             frmBrowerForm.Timer1.Enabled := true;
           end;
      end;
-  Application.Run;
+   Application.Run;
 end.

@@ -177,6 +177,8 @@ type
     procedure InitRecord;
     function EnCodeBarcode: string;
 
+    function  CheckNoData:boolean; virtual;
+
     function  FindColumn(FieldName:string):TColumnEh;
     procedure FocusColumn(FieldName: string);
     procedure FocusNextColumn;
@@ -1597,7 +1599,7 @@ begin
         begin
           if (length(fndStr)>7) and (fnString.IsNumberChar(fndStr)) then //是13位条码
              begin
-               if TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
+               if (MessageBox(handle,'您没有经营过此商品，是否立即新增？','友情提示',MB_YESNO+MB_ICONQUESTION)=6) and TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
                   begin
                      if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
                      vgds := rs.FieldbyName('GODS_ID').AsString;
@@ -2816,6 +2818,12 @@ begin
       column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
       rs.Next;
     end;
+end;
+
+function TfrmOrderForm.CheckNoData: boolean;
+begin
+  ClearInvaid;
+  result := edtTable.IsEmpty;
 end;
 
 end.

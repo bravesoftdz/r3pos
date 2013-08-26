@@ -1,4 +1,4 @@
-//*************************************************************
+ //*************************************************************
 //                    EmbeddedWB - Tabs Demo                  *
 //                                                            *
 //                            by                              *
@@ -39,7 +39,7 @@ uses
   Classes, Windows, Controls, Forms, ComCtrls, ExtCtrls, StdCtrls, OleCtrls, SysUtils,
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
   RzPanel, Messages, MSHTML, IEConst, RzPrgres,shop_TLB,EncDec, msxml, ComObj, urlParser,
-  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate,HTTPApp;
+  Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate,HTTPApp, WinInet;
 const
   WM_BROWSER_INIT =WM_USER+1000;
   WM_SEND_INPUT =WM_USER+9001;
@@ -120,6 +120,9 @@ type
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
     Image5: TImage;
+    RzBmpButton5: TRzBmpButton;
+    N2: TMenuItem;
+    N3: TMenuItem;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -147,11 +150,13 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure RzBmpButton5Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure lblSignOutClick(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
+    procedure N1Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     FWindowState: TWindowState;
     FInitialized: boolean;
@@ -199,6 +204,7 @@ type
       const Text: WideString);
     procedure SetWindowState(const Value: TWindowState);
     procedure SetInitialized(const Value: boolean);
+    procedure DeleteIECache;
   protected
     m_Rect: TRect;
     m_bCreatedManually: Boolean;
@@ -230,6 +236,7 @@ type
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure FullScreen;
     procedure OpenHome;
+    procedure WriteHookConfig;
 
     procedure WMSendInput(var Msg: TMessage); message WM_SEND_INPUT;
     function KeyBoardHook(Code: integer; Msg: word;lParam: longint):boolean;
@@ -267,7 +274,10 @@ var
   iBorderThick,
   iBorderSize,
   iCaptSize: Integer;
+  code1,code2:string;
 
+  ProcessInfo: TProcessInformation;
+  StartupInfo: TStartupInfo;
 var
   whKeyboard: HHook;
 
@@ -284,6 +294,56 @@ begin
      end;
 end;
 
+procedure TfrmBrowerForm.DeleteIECache;
+   
+var   
+   
+   lpEntryInfo: PInternetCacheEntryInfo;    
+   
+   hCacheDir: LongWord;    
+   
+   dwEntrySize: LongWord;    
+   
+begin   
+   
+   dwEntrySize := 0;    
+   
+   FindFirstUrlCacheEntry(nil,TInternetCacheEntryInfo(nil^),dwEntrySize);//第一个参数可以指定类型 
+   
+   GetMem(lpEntryInfo, dwEntrySize);    
+   
+  if dwEntrySize > 0 then lpEntryInfo^.dwStructSize := dwEntrySize;    
+   
+   hCacheDir := FindFirstUrlCacheEntry(nil, lpEntryInfo^, dwEntrySize);    
+   
+  if hCacheDir <> 0 then   
+   
+  begin   
+   
+    repeat   
+   
+       DeleteUrlCacheEntry(lpEntryInfo^.lpszSourceUrlName);    
+   
+       FreeMem(lpEntryInfo, dwEntrySize);    
+   
+       dwEntrySize := 0;    
+   
+       FindNextUrlCacheEntry(hCacheDir, TInternetCacheEntryInfo(nil^), dwEntrySize);    
+   
+       GetMem(lpEntryInfo, dwEntrySize);    
+   
+      if dwEntrySize > 0 then lpEntryInfo^.dwStructSize := dwEntrySize;    
+   
+    until not FindNextUrlCacheEntry(hCacheDir, lpEntryInfo^, dwEntrySize);    
+   
+  end;    
+   
+   FreeMem(lpEntryInfo, dwEntrySize);    
+   
+   FindCloseUrlCache(hCacheDir);    
+   
+end;    
+   
 procedure TfrmBrowerForm.UpdateControls(_EWB:TEmbeddedWB=nil);
 var
   TabEx: TTabSheetEx;
@@ -519,9 +579,11 @@ begin
   dllFactory := TDLLFactory.Create;
   hotKeyid:=GlobalAddAtom('rspcn');//'Hotkey'名字可以随便取
   RegisterHotKey(Handle,hotKeyid,0,VK_PAUSE);
+  WriteHookConfig;
   Initialized := true;
-  whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
-    HInstance, 0);
+//  whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
+//    HInstance, 0);
+//  if whKeyboard=0 then MessageBox(handle,pchar('条码枪配置安装不成功。'+#13+#13+'1.扫码时请注意输入光标所在位置是否正确'+#13+'2.找不到输入光标时请按【Pause】一健进入扫码状态'),'友情提示..',MB_OK+MB_ICONQUESTION);
   Runed := false;
   Timer1.Enabled := true;
   m_bFullScreen := false;
@@ -690,7 +752,7 @@ begin
      begin
         dllFactory.Clear(false);
         dllFactory.Free;
-        if whKeyboard<>0 then UnhookWindowsHookEx(whKeyboard);
+//        if whKeyboard<>0 then UnhookWindowsHookEx(whKeyboard);
         Timer1.Enabled := false;
         Initialized := false;
         UnRegisterHotKey(handle,hotKeyid);
@@ -1427,11 +1489,6 @@ begin
   UpdateControls(TEmbeddedWB(ASender));
 end;
 
-procedure TfrmBrowerForm.RzBmpButton5Click(Sender: TObject);
-begin
-  LoadUrl('rspcn://shop.dll/TfrmSysDefine','shop.dll');
-end;
-
 procedure TfrmBrowerForm.TitleChange(ASender: TObject;
   const Text: WideString);
 var
@@ -1506,6 +1563,16 @@ var
   childWnd:THandle;
   Message: TWMKeyDown;
 begin
+  case Msg.WParam of
+  1:code1 := inttostr(Msg.LParam);
+  2:begin
+      code2 := inttostr(Msg.LParam);
+      delete(code1,1,1);
+      delete(code2,1,1);
+      Buf.Add(code1+code2);
+    end;
+  end;
+  if Buf.Count=0 then Exit;
   if not dllFactory.Inited then
      begin
        Buf.Clear;
@@ -1596,7 +1663,7 @@ begin
     begin
       if arr[i] = #0 then Exit;
     end;
-  if (getTickCount-time[1])<1000 then
+  if (getTickCount-time[1])<2000 then
     result := true;
 end;
 
@@ -1758,6 +1825,63 @@ begin
       SendMessage(childWnd,msg.Msg,TMessage(msg).WParam,msg.KeyData);
       childWnd := GetWindow(childWnd,GW_HWNDNEXT);
     end;
+end;
+
+procedure TfrmBrowerForm.N1Click(Sender: TObject);
+begin
+  frmLogo.hWnd := MainPanel.Handle;
+  frmLogo.ShowForm;
+  try
+     frmLogo.showCaption := '正在清理浏览器缓存..';
+     DeleteIECache;
+  finally
+     sleep(1000);
+     btnClose.Enabled := true;
+     frmLogo.Close;
+  end;
+end;
+
+procedure TfrmBrowerForm.N3Click(Sender: TObject);
+begin
+  if not token.logined then Exit;
+  ClearPage;
+  dllFactory.Clear(true);
+  dllFactory.Init(mainPanel.Handle);
+end;
+
+procedure TfrmBrowerForm.RzBmpButton5Click(Sender: TObject);
+var
+  x,x1:TPoint;
+begin
+  inherited;
+  x1.X := RzBmpButton5.Left+2;
+  x1.Y := RzBmpButton5.Top+RzBmpButton5.Height+1;
+  x := pnlAddressBar.ClientToScreen(x1);
+  PopupMenu1.Popup(x.X,x.Y);
+end;
+
+procedure TfrmBrowerForm.WriteHookConfig;
+var
+  F:TextFile;
+  Res:DWord;
+begin
+  AssignFile(F,ExtractFilePath(ParamStr(0))+'hook.cfg');
+  rewrite(F);
+  try
+    writeln(F,inttostr(handle));
+  finally
+    CloseFile(F);
+  end;
+  FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
+  StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
+  StartupInfo.wShowWindow := SW_HIDE;
+  if CreateProcess(nil, PChar(ExtractFilePath(ParamStr(0))+'codehk.exe'), nil, nil, False,
+    IDLE_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo) then
+  begin
+    CloseHandle(ProcessInfo.hThread);
+    GetExitCodeProcess(ProcessInfo.hProcess, Res);
+    CloseHandle(ProcessInfo.hProcess);
+  end
 end;
 
 initialization

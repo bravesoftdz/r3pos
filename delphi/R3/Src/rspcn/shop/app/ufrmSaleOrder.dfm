@@ -53,9 +53,6 @@ inherited frmSaleOrder: TfrmSaleOrder
                 inherited barcode_input_line: TImage
                   Hint = #25195#30721#25353' pause '#20581
                 end
-                inherited edtInput: TcxTextEdit
-                  Tag = -1
-                end
               end
               object RzPanel19: TRzPanel [5]
                 Left = 16

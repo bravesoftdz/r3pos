@@ -719,6 +719,7 @@ procedure IncLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,
 var Str:string;
     n:Integer;
 begin
+    Exit;
     if (amt=0) then Exit;
     if trim(BATCH_NO)='' then BATCH_NO := '#';
     if trim(LOCATION_ID)='' then LOCATION_ID := SHOP_ID+'00000000000000000000000';
@@ -741,6 +742,7 @@ procedure DecLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,
 var Str:string;
     n:Integer;
 begin
+    Exit;
     if (amt=0) then Exit;
     if trim(BATCH_NO)='' then BATCH_NO := '#';
     if trim(LOCATION_ID)='' then LOCATION_ID := SHOP_ID+'00000000000000000000000';

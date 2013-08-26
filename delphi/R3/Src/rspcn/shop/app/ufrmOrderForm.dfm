@@ -267,6 +267,7 @@ inherited frmOrderForm: TfrmOrderForm
                   Stretch = True
                 end
                 object edtInput: TcxTextEdit
+                  Tag = -1
                   Left = 4
                   Top = 2
                   Width = 194

@@ -1379,6 +1379,10 @@ begin
   Node.text := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsString;
   rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
 
+  Node := doc.CreateElement('newLowprice');
+  Node.text := '0';
+  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
+
   if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
     begin
       Node := doc.CreateElement('calcRowsId');

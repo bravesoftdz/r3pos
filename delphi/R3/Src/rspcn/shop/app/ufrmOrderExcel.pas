@@ -394,13 +394,14 @@ begin
 end;
 
 function TfrmOrderExcel.OutCheckExcute: Boolean;
-var rs,ss,cs:TZQuery;
+var rs,ss,cs,ds:TZQuery;
     FieldName,UintField,strCode,strUnit,PriceField,strPrice,strError:string;
     i,j:integer;
 begin
   try
     rs:=TZQuery.Create(nil);
     cs:=TZQuery.Create(nil);
+    ds:=TZQuery.Create(nil);
     ss:=TZQuery.Create(nil);
     ss.Data:=cdsExcel.Data;
 
@@ -466,7 +467,13 @@ begin
                 strUnit:=ss.fieldByName(UintField).AsString;
                 if strUnit<> '' then
                 begin
-                  if (not rs.Locate('UNIT_NAME',strUnit,[])) then
+                  ds.Close;
+                  ds.SQL.Text:= 'select BARCODE,GODS_ID,BARCODE_TYPE,VM1.UNIT_NAME '+
+                                'from VIW_BARCODE VG '+
+                                'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.UNIT_ID=VM1.UNIT_ID '+
+                                'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_ID='''+rs.fieldbyName('GODS_ID').AsString+''' ';
+                  dataFactory.Open(ds);
+                  if (not ds.Locate('UNIT_NAME',strUnit,[])) then
                   begin
                       cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
                       cdsExcel.Edit;
@@ -528,6 +535,7 @@ begin
   finally
     rs.Free;
     cs.Free;
+    ds.Free;
     ss.Free;
   end;
 end;

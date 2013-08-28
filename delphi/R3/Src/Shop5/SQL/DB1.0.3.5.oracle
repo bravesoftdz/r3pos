@@ -1,3 +1,5 @@
+alter table PUB_GOODSPRICE modify PRICE_ID varchar2(36);
+update PUB_GOODSPRICE set PRICE_ID = rtrim(ltrim(PRICE_ID)) where PRICE_ID='#                                   '; 
 --批号管理
 CREATE TABLE PUB_BATCH_NO (
         --企业代码

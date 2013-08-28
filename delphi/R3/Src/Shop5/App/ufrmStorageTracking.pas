@@ -1459,10 +1459,10 @@ begin
          end;
       lv := 0;
       rs.First;
-      while not rs.Eof do                      
+      while not rs.Eof do
       begin
-        if fldArr[lv]<>'' then fldArr[lv] := fldArr[lv]+',';
-        fldArr[lv] := fldArr[lv]+''''+rs.FieldbyName('SIZE_ID').AsString+'''';
+        if fldArr[lv]<>'' then fldArr[lv] := fldArr[lv]+' or ';
+        fldArr[lv] := fldArr[lv]+'(A.PROPERTY_01='''+rs.FieldbyName('SIZE_ID').AsString+''' and C.SORT_ID8='''+rs.FieldByName('SORT_ID').AsString+''')';
         if TleArr[lv]<>'' then TleArr[lv] := TleArr[lv]+'|';
         TleArr[lv] := TleArr[lv]+trim(rs.FieldbyName('SIZE_NAME').AsString);
         inc(lv);
@@ -1500,7 +1500,7 @@ begin
         Column.Alignment := taRightJustify;
         Column.ReadOnly := true;
         Column.Index := Idx+1+i+1;
-        ColumnStr := ColumnStr+',sum(case when A.PROPERTY_01 in ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000) else 0 end) as SIZE_'+formatFloat('000',i);
+        ColumnStr := ColumnStr+',sum(case when ('+fldArr[i]+') then A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.000) else 0 end) as SIZE_'+formatFloat('000',i);
       end;
   finally
     Grid.Columns.EndUpdate;

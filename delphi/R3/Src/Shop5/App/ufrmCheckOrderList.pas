@@ -505,7 +505,7 @@ begin
      'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,A.PRINT_TIMES,'+
      'A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,B.RCK_AMOUNT,B.CHK_AMOUNT '+
      ' from STO_PRINTORDER A,STO_PRINTDATA B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID '+
-     ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') ) jc '+
+     ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and B.RCK_AMOUNT<>0 and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') ) jc '+
      ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID and b.COMM not in (''02'',''12'') ) jd '+
      ' left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID ) je '+
      ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CHK_USER=d.USER_ID ) jg '+

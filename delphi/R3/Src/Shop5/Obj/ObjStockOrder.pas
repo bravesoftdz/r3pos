@@ -123,7 +123,7 @@ begin
               rs.Next;
             end;
           if s<>'' then
-            Raise Exception.Create(s+#10+'--商品库存不足,请核对是否输入正确？'); 
+            Raise Exception.Create(s+#10+'--商品库存不足,请核对是否输入正确？');
         finally
           rs.Free;
         end;
@@ -205,6 +205,8 @@ begin
   end;
   case AGlobal.iDbType of
   0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
+  1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
+  4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
   end;
 
 end;
@@ -292,7 +294,7 @@ begin
      begin
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID and ABLE_TYPE=''5''';
+         rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID and ABLE_TYPE=''4''';
          rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
          rs.ParamByName('STOCK_ID').AsString := FieldbyName('STOCK_ID').AsOldString;
          AGlobal.Open(rs);
@@ -543,7 +545,7 @@ begin
   finally
     rs.Free;
   end;
-  AGlobal.BeginTrans; 
+  AGlobal.BeginTrans;
   try
     Str := 'update STK_STOCKORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
@@ -552,12 +554,18 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    {
     rs := TZQuery.Create(nil);
     try
       rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
       rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
       rs.ParamByName('STOCK_ID').AsString := Params.ParambyName('STOCK_ID').AsString;
       AGlobal.Open(rs);
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+      1:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID for update',Params);
+      4:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID WITH RS USE AND KEEP UPDATE LOCKS',Params);
+      end;
       rs.First;
       while not rs.Eof do
         begin
@@ -567,6 +575,7 @@ begin
     finally
       rs.Free;
     end;
+    }
     AGlobal.CommitTrans;
     Result := true;
     Msg := '审核单据成功';
@@ -597,12 +606,18 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    {
     rs := TZQuery.Create(nil);
     try
       rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
       rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
       rs.ParamByName('STOCK_ID').AsString := Params.ParambyName('STOCK_ID').AsString;
       AGlobal.Open(rs);
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+      1:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID for update',Params);
+      4:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID WITH RS USE AND KEEP UPDATE LOCKS',Params);
+      end;
       rs.First;
       while not rs.Eof do
         begin
@@ -612,6 +627,7 @@ begin
     finally
       rs.Free;
     end;
+    }
     AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;

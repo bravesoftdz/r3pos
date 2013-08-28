@@ -204,6 +204,8 @@ begin
   end;
   case AGlobal.iDbType of
   0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
+  1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
+  4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
   end;
 
 end;
@@ -414,6 +416,11 @@ begin
       rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
       rs.ParamByName('STOCK_ID').AsString := Params.ParambyName('STOCK_ID').AsString;
       AGlobal.Open(rs);
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+      1:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID for update',Params);
+      4:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID  WITH RS USE AND KEEP UPDATE LOCKS',Params);
+      end;
       rs.First;
       while not rs.Eof do
         begin
@@ -468,6 +475,11 @@ begin
       rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
       rs.ParamByName('STOCK_ID').AsString := Params.ParambyName('STOCK_ID').AsString;
       AGlobal.Open(rs);
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+      1:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID for update',Params);
+      4:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID  WITH RS USE AND KEEP UPDATE LOCKS',Params);
+      end;
       rs.First;
       while not rs.Eof do
         begin

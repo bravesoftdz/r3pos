@@ -3,7 +3,7 @@ unit uCaFactory;
 interface
 uses
   Windows, Messages, SysUtils, Classes,InvokeRegistry, SOAPHTTPClient, Types, XSBuiltIns,Des,WinInet, xmldom, XMLIntf,
-  msxmldom, XMLDoc, MSHTML,ComObj, ActiveX,msxml,ZDataSet,DB,ZBase,Variants,ZLogFile,ZdbFactory,Forms;
+  msxmldom, XMLDoc, MSHTML,ComObj, ActiveX,msxml,ZDataSet,DB,ZBase,Variants,ZLogFile,ZdbFactory,Forms,EncdDecd;
 type
   TCaTenant=record
     TENANT_ID:integer;
@@ -263,7 +263,7 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses ufrmLogo,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
+uses ufrmLogo,EncDec,ZLibExGZ,uGlobal,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
      IniFiles,ObjCommon,uFnUtil;
 { TCaFactory }
 
@@ -1017,7 +1017,7 @@ begin
         if result <>nil then
            result := FindElement(result,s[i]);
       end;
-    if CheckExists and (result = nil) then Raise Exception.Create('在文档中没找到结点'+tree); 
+    if CheckExists and (result = nil) then Raise Exception.Create('在文档中没找到结点'+tree);
   finally
     s.Free;
   end;
@@ -2904,7 +2904,7 @@ var
   SaveAudited:boolean;
   SaveFactor:TdbFactory;
 begin
-  if CheckRspState then 
+  if CheckRspState then
      begin
         SaveAudited := Audited;
         result:= false;
@@ -3699,6 +3699,7 @@ try
     Params.ParamByName('PassWrd').AsString := PassWrd;
     Params.ParamByName('flag').AsInteger := flag;
     Global.RemoteFactory.Open(rs,'TcoLogin',Params);
+    Global.RemoteFactory.DisConnect;
     result.RET := rs.FieldbyName('code').AsString;
     result.TENANT_ID := rs.FieldbyName('tenantId').AsInteger;
     tid := Global.TENANT_ID;
@@ -3831,6 +3832,7 @@ try
     Params.ParamByName('prodId').AsString := PROD_ID;
     Params.ParamByName('curVeraion').AsString := CurVeraion;
     TftParamList.Decode(prms,Global.RemoteFactory.ExecProc('TcheckUprade',Params));
+    Global.RemoteFactory.DisConnect;
     result.UpGrade := prms.ParambyName('upgradeType').AsInteger;
     result.URL := prms.ParambyName('pkgDownloadUrl').AsString;
     result.Version := prms.ParambyName('newVersion').AsString;
@@ -4164,6 +4166,7 @@ try
     Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Params.ParamByName('SHOP_NAME').AsString := Global.SHOP_NAME;
     Global.RemoteFactory.Open(temp,'TcoCheckLicese',Params);
+    Global.RemoteFactory.DisConnect;
     clseDate := temp.FieldbyName('CLOSE_DATE').AsString;
     rightType := temp.FieldbyName('RIGHT_TYPE').AsString;
     result := true;

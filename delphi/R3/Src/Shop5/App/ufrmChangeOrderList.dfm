@@ -3,7 +3,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
   Top = 133
   Width = 832
   Height = 572
-  Caption = '调整单'
+  Caption = #35843#25972#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -17,7 +17,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
         Height = 481
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = '调整单查询'
+          Caption = #35843#25972#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 798
             Height = 454
@@ -30,14 +30,14 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = '业务日期'
+                Caption = #19994#21153#26085#26399
               end
               object RzLabel3: TRzLabel
                 Left = 200
                 Top = 4
                 Width = 12
                 Height = 12
-                Caption = '至'
+                Caption = #33267
               end
               object RzLabel5: TRzLabel
                 Left = 33
@@ -45,18 +45,18 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = '流水单号'
+                Caption = #27969#27700#21333#21495
               end
               object Label1: TLabel
                 Left = 201
                 Top = 65
                 Width = 120
                 Height = 12
-                Caption = '支持模块,输后4位查询'
+                Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -12
-                Font.Name = '宋体'
+                Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
               end
@@ -66,21 +66,21 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = '经 手 人'
+                Caption = #32463' '#25163' '#20154
               end
               object Label40: TLabel
                 Left = 33
                 Top = 24
                 Width = 48
                 Height = 12
-                Caption = '门店名称'
+                Caption = #38376#24215#21517#31216
               end
               object D1: TcxDateEdit
                 Left = 89
                 Top = 0
                 Width = 104
                 Height = 20
-                ImeName = '中文(简体) - 搜狗五笔输入法'
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -89,7 +89,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Top = 0
                 Width = 109
                 Height = 20
-                ImeName = '中文(简体) - 搜狗五笔输入法'
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
@@ -99,7 +99,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 104
                 Height = 20
                 TabOrder = 3
-                ImeName = '中文(简体) - 搜狗五笔输入法'
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object btnOk: TRzBitBtn
                 Left = 480
@@ -107,12 +107,12 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 67
                 Height = 26
                 Action = actFind
-                Caption = '查询'
+                Caption = #26597#35810
                 Color = clSilver
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
                 Font.Height = -12
-                Font.Name = '宋体'
+                Font.Name = #23435#20307
                 Font.Style = [fsBold]
                 HighlightColor = 16026986
                 HotTrack = True
@@ -137,16 +137,16 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Properties.Columns = 2
                 Properties.Items = <
                   item
-                    Caption = '全部'
+                    Caption = #20840#37096
                   end
                   item
-                    Caption = '待审核'
+                    Caption = #24453#23457#26680
                   end
                   item
-                    Caption = '已审核'
+                    Caption = #24050#23457#26680
                   end
                   item
-                    Caption = '未打印'
+                    Caption = #26410#25171#21360
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -173,13 +173,13 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                     EditButtons = <>
                     FieldName = 'ACCOUNT'
                     Footers = <>
-                    Title.Caption = '帐号'
+                    Title.Caption = #24080#21495
                   end
                   item
                     EditButtons = <>
                     FieldName = 'USER_NAME'
                     Footers = <>
-                    Title.Caption = '姓名'
+                    Title.Caption = #22995#21517
                     Width = 130
                   end>
                 DropWidth = 180
@@ -215,13 +215,13 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                     EditButtons = <>
                     FieldName = 'SHOP_NAME'
                     Footers = <>
-                    Title.Caption = '名称'
+                    Title.Caption = #21517#31216
                   end
                   item
                     EditButtons = <>
                     FieldName = 'SHOP_ID'
                     Footers = <>
-                    Title.Caption = '代码'
+                    Title.Caption = #20195#30721
                     Width = 20
                   end>
                 DropWidth = 185
@@ -249,7 +249,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                   EditButtons = <>
                   FieldName = 'SEQNO'
                   Footers = <>
-                  Title.Caption = '序号'
+                  Title.Caption = #24207#21495
                   Width = 28
                 end
                 item
@@ -257,63 +257,63 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                   EditButtons = <>
                   FieldName = 'CHANGE_DATE'
                   Footers = <>
-                  Title.Caption = '业务日期'
+                  Title.Caption = #19994#21153#26085#26399
                   Width = 72
                 end
                 item
                   EditButtons = <>
                   FieldName = 'GLIDE_NO'
                   Footers = <>
-                  Title.Caption = '单号'
+                  Title.Caption = #21333#21495
                   Width = 105
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DEPT_NAME'
                   Footers = <>
-                  Title.Caption = '部门'
+                  Title.Caption = #37096#38376
                   Width = 101
                 end
                 item
                   EditButtons = <>
                   FieldName = 'SHOP_ID'
                   Footers = <>
-                  Title.Caption = '门店名称'
+                  Title.Caption = #38376#24215#21517#31216
                   Width = 102
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DUTY_USER_TEXT'
                   Footers = <>
-                  Title.Caption = '经手人'
+                  Title.Caption = #32463#25163#20154
                   Width = 71
                 end
                 item
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = '数量'
+                  Title.Caption = #25968#37327
                   Width = 69
                 end
                 item
                   EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
-                  Title.Caption = '备注'
+                  Title.Caption = #22791#27880
                   Width = 198
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_USER_TEXT'
                   Footers = <>
-                  Title.Caption = '制单人'
+                  Title.Caption = #21046#21333#20154
                   Width = 61
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>
-                  Title.Caption = '录入时间'
+                  Title.Caption = #24405#20837#26102#38388
                   Width = 137
                 end>
             end

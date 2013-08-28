@@ -1,3 +1,6 @@
+alter table PUB_GOODSPRICE alter PRICE_ID set data type varchar(36);
+call sysproc.admin_cmd('reorg table PUB_GOODSPRICE');
+update PUB_GOODSPRICE set PRICE_ID = rtrim(ltrim(PRICE_ID)) where PRICE_ID='#                                   ';
 --批号管理
 CREATE TABLE PUB_BATCH_NO (
         --企业代码
@@ -40,7 +43,7 @@ SHOP_ID varchar (13) NOT NULL ,
 BATCH_NO varchar (20) NOT NULL ,
 LOCATION_ID char(36) NOT NULL ,
 GODS_ID char(36) NOT NULL ,
-AMOUNT decimal(18, 3) NULL ,
+AMOUNT decimal(18, 3) ,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000

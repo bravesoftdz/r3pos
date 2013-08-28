@@ -272,7 +272,7 @@ end;
 procedure TRspFactory.doAfterExecute(const MethodName: string;
   SOAPResponse: TStream);
 begin
-  try
+{  try
     InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@connectTimeOut), SizeOf(connectTimeOut));
     InternetSetOption(nil, INTERNET_OPTION_SEND_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
     InternetSetOption(nil, INTERNET_OPTION_RECEIVE_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
@@ -282,6 +282,7 @@ begin
          Raise;
        end;
   end;
+  }
 end;
 
 function TRspFactory.downloadBarcode(inxml: ansistring): ansistring;

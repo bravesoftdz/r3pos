@@ -43,6 +43,7 @@ type
     edtBILL_NO: TcxTextEdit;
     Label5: TLabel;
     edtDEPT_ID: TzrComboBoxList;
+    cdsSaveDetail: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -118,11 +119,12 @@ begin
         Factor.AddBatch(cdsHeader,'TPayOrder',Params);
         Factor.AddBatch(cdsDetail,'TPayData',Params);
         Factor.OpenBatch;
+        cdsSaveDetail.Data := cdsDetail.Data;
       except
         Factor.CancelBatch;
         Raise;
       end;
-      edtSHOP_ID.Properties.ReadOnly := False;      
+      edtSHOP_ID.Properties.ReadOnly := False;
       AObj.ReadFromDataSet(cdsHeader);
       ReadFromObject(AObj,self);
       isAudit := (AObj.FieldByName('CHK_DATE').AsString<>''); 
@@ -223,6 +225,7 @@ var
   n:integer;
   rs:TZQuery;
   r:real;
+  DObj:TRecord_;
 begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择客户名称');
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
@@ -240,9 +243,18 @@ begin
   cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsDetail.DisableControls;
+  DObj := TRecord_.Create;
   try
     n := 0;
     r := 0;
+    cdsSaveDetail.First;
+    while not cdsSaveDetail.Eof do
+      begin
+        if cdsSaveDetail.FieldByName('PAY_MNY').AsCurrency<>0 then
+           cdsSaveDetail.Delete
+        else
+           cdsSaveDetail.Next;
+      end;
     cdsDetail.First;
     while not cdsDetail.Eof do
       begin
@@ -260,10 +272,15 @@ begin
             cdsDetail.FieldbyName('SEQNO').AsInteger := n;
             cdsDetail.FieldbyName('PAY_ID').AsString := AObj.FieldbyName('PAY_ID').AsString;
             cdsDetail.Post;
+            DObj.ReadFromDataSet(cdsDetail);
+            cdsSaveDetail.Append;
+            DObj.WriteToDataSet(cdsSaveDetail);
+            cdsSaveDetail.Post;
             cdsDetail.Next;
            end;
       end;
   finally
+    DObj.Free;
     cdsDetail.EnableControls;
   end;
   cdsHeader.FieldbyName('PAY_MNY').AsFloat := r;
@@ -276,6 +293,7 @@ begin
     Factor.CommitBatch;
   except
     Factor.CancelBatch;
+    cdsSaveDetail.CancelUpdates;
     Raise;
   end;
   dbState := dsBrowse;

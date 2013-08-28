@@ -355,7 +355,9 @@ uses
   ufrmInputNumber in 'App\ufrmInputNumber.pas' {frmInputNumber},
   ufrmGodsComPare in 'App\ufrmGodsComPare.pas' {frmGodsComPare},
   ufrmBatchNo in 'App\ufrmBatchNo.pas' {frmBatchNo},
-  ufrmBatchNoInfo in 'App\ufrmBatchNoInfo.pas' {frmBatchNoInfo};
+  ufrmBatchNoInfo in 'App\ufrmBatchNoInfo.pas' {frmBatchNoInfo},
+  ufrmlocationinfo in 'App\ufrmLocationInfo.pas' {frmlocationinfo},
+  ufrmLocationInfoList in 'App\ufrmLocationInfoList.pas' {frmLocationInfoList};
 
 {$R *.res}
 var
@@ -364,7 +366,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.3.1';
+  DBVersion := '1.0.3.5';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

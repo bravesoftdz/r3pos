@@ -66,7 +66,7 @@ public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
 const
-  ComVersion='3.0.2.55';
+  ComVersion='3.0.2.62';
 var
   FldXdict:TZReadonlyQuery;
   NearSyncDate:TDatetime;
@@ -670,6 +670,7 @@ procedure IncLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,
 var Str:string;
     n:Integer;
 begin
+    Exit;
     if (amt=0) then Exit;
     if trim(BATCH_NO)='' then BATCH_NO := '#';
     if trim(LOCATION_ID)='' then LOCATION_ID := SHOP_ID+'00000000000000000000000';
@@ -678,8 +679,8 @@ begin
       'AMOUNT=round(AMOUNT + '+FormatFloat('#0.000',amt)+',3),'+
       'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
       'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and LOCATION_ID='''+LOCATION_ID+''' and BATCH_NO='''+BATCH_NO+''' ';
-     n := AGlobal.ExecSQL(Str) ;
-     if n=0 then
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
         begin
            Str := 'insert into STO_GOODS_LOCATION(GODS_ID,TENANT_ID,SHOP_ID,LOCATION_ID,BATCH_NO,AMOUNT,COMM,TIME_STAMP) '+
                   'values('''+GODS_ID+''','+TENANT_ID+','''+SHOP_ID+''','''+LOCATION_ID+''','''+BATCH_NO+''','+
@@ -691,6 +692,7 @@ procedure DecLocation(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, LOCATION_ID,
 var Str:string;
     n:Integer;
 begin
+    Exit;
     if (amt=0) then Exit;
     if trim(BATCH_NO)='' then BATCH_NO := '#';
     if trim(LOCATION_ID)='' then LOCATION_ID := SHOP_ID+'00000000000000000000000';

@@ -930,4 +930,11 @@ inherited frmRecvOrder: TfrmRecvOrder
     Left = 128
     Top = 261
   end
+  object cdsSaveDetail: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 120
+    Top = 312
+  end
 end

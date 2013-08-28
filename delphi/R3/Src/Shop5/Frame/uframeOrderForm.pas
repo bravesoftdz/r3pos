@@ -3066,8 +3066,9 @@ begin
        Key := #0;
        DBGridEh1.SetFocus;
        FocusNextColumn;
-     end;
-
+     end
+  else
+  if not fndUNIT_ID.DroppedDown then fndUNIT_ID.DroppedDown := true;
 end;
 
 procedure TframeOrderForm.fndUNIT_IDPropertiesChange(Sender: TObject);
@@ -3960,7 +3961,7 @@ begin
       Field := edtTable.FindField('CALC_AMOUNT');
       if Field<>nil then
          begin
-            Field.AsFloat := edtTable.FindField('AMOUNT').AsInteger * SourceScale;
+            Field.AsFloat := edtTable.FindField('AMOUNT').AsFloat * SourceScale;
          end;
       
 

@@ -876,4 +876,11 @@ inherited frmPayOrder: TfrmPayOrder
     Left = 120
     Top = 224
   end
+  object cdsSaveDetail: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 120
+    Top = 264
+  end
 end

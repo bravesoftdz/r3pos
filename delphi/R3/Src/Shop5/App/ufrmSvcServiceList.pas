@@ -76,6 +76,8 @@ type
     edtGoods_ID: TzrComboBoxList;
     edtGoodsName: TzrComboBoxList;
     edtSORT_ID: TcxButtonEdit;
+    cxRadioButton1: TcxRadioButton;
+    cxRadioButton2: TcxRadioButton;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -98,6 +100,8 @@ type
     procedure edtSORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure edtSORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure cxRadioButton1Click(Sender: TObject);
+    procedure cxRadioButton2Click(Sender: TObject);
   private
     { Private declarations }
     LevelId,RelationId:String;
@@ -490,7 +494,10 @@ begin
   if D1.EditValue = null then Raise Exception.Create('受理日期条件不能为空');
   if D2.EditValue = null then Raise Exception.Create('受理日期条件不能为空');
   if D1.Date > D2.Date then Raise Exception.Create('受理查询开始日期不能大于结束日期');
-  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 ';
+  if cxRadioButton2.Checked then
+     strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 '
+  else
+     strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 ';
 
   //分批取数据的条件:
   if trim(id)<>'' then
@@ -606,8 +613,16 @@ begin
   try
     rs.SQL.Text := EncodeSQL2(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
-    rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
+    if cxRadioButton2.Checked then                     
+       begin
+         rs.Params.ParamByName('D1').AsString := formatdatetime('YYYY-MM-DD',D1.Date)+' 00:00:00';
+         rs.Params.ParamByName('D2').AsString := formatdatetime('YYYY-MM-DD',D2.Date)+' 23:59:59';
+       end
+    else
+       begin
+         rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
+         rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
+       end;
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
     if rs.Params.FindParam('CREA_USER')<>nil then rs.Params.FindParam('CREA_USER').AsString := fndCREA_USER.AsString;
     if rs.Params.FindParam('SERIAL_NO')<>nil then rs.Params.FindParam('SERIAL_NO').AsString := Trim(fndSERIAL_NO.Text);
@@ -922,6 +937,19 @@ begin
   LevelId := '';
   RelationId := '';
   edtSORT_ID.Text := '';
+end;
+
+procedure TfrmSvcServiceList.cxRadioButton1Click(Sender: TObject);
+begin
+  inherited;
+  RzLabel4.Caption := '受理日期';
+end;
+
+procedure TfrmSvcServiceList.cxRadioButton2Click(Sender: TObject);
+begin
+  inherited;
+  RzLabel4.Caption := '录入日期';
+
 end;
 
 end.

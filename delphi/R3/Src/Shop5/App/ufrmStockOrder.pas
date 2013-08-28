@@ -1635,6 +1635,7 @@ begin
     FBarQry.FieldByName('BARCODE_TYPE').AsString:='3';    
     FBarQry.FieldByName('BATCH_NO').AsString:='#';
     FBarQry.FieldByName('BARCODE').AsString:=NewCode;
+    FBarQry.Post;
     result:=NewCode;
   end;
 end;

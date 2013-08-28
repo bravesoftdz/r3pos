@@ -1,9 +1,9 @@
 inherited frmN26Main: TfrmN26Main
-  Left = 250
-  Top = 319
+  Left = 136
+  Top = 187
   Width = 958
   Height = 556
-  Caption = ''
+  Caption = 'yaa'
   Menu = nil
   Position = poDefault
   WindowState = wsNormal

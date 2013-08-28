@@ -19,6 +19,7 @@ type
     procedure FillParams(ZQuery: TZQuery);virtual;
   public
     function CheckUnique(s:string):boolean;
+    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -575,6 +576,8 @@ type
   //29 对系统定义表
   TSyncSysDefine=class(TSyncSingleTable)
   public
+    selfGlobal:IdbHelp;
+    procedure FillParams(ZQuery: TZQuery);override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
@@ -689,7 +692,7 @@ begin
       if WasNull then ZQuery.Params[i].Value := null;
     end;
   if ZQuery.Params.FindParam('LAST_TIME_STAMP')<>nil then
-     ZQuery.Params.FindParam('LAST_TIME_STAMP').Value := Params.ParamByName('TIME_STAMP').Value;
+     ZQuery.Params.FindParam('LAST_TIME_STAMP').Value := ZQuery.Params[TIME_STAMPIdx-1].Value;
 end;
 function TSyncSingleTable.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
@@ -846,6 +849,15 @@ begin
   if InsertQuery<>nil then InsertQuery.Free;
   if UpdateQuery<>nil then UpdateQuery.Free;
   inherited;
+end;
+
+function TSyncSingleTable.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+{  case AGlobal.iDbType of
+  0:AGlobal.ExecSQL('select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+' with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+  1:AGlobal.ExecSQL('select 1 from '+Params.ParambyName('TABLE_NAME').AsString+' where TENANT_ID=:TENANT_ID for update',Params);
+  4:AGlobal.ExecSQL('select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+' where TENANT_ID=:TENANT_ID WITH RS USE AND KEEP UPDATE LOCKS',Params);
+  end; }
 end;
 
 { TSyncCaRelations }
@@ -1150,6 +1162,7 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
              FieldbyName('CALC_MONEY').asFloat-roundto(FieldbyName('CALC_MONEY').asFloat/(1+FieldbyName('TAX_RATE').AsFloat)*FieldbyName('TAX_RATE').AsFloat,-2),1);
+  {
   if FieldbyName('CHK_DATE').AsString<>'' then
      begin
        IncLocation(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
@@ -1158,6 +1171,7 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat);
      end;
+  }
 end;
 begin
   if not Init then
@@ -1200,6 +1214,7 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
                    rs.FieldbyName('CALC_MONEY').asFloat-roundto(rs.FieldbyName('CALC_MONEY').asFloat/(1+rs.FieldbyName('TAX_RATE').asFloat)*rs.FieldbyName('TAX_RATE').asFloat,-2),3);
+        {
         if rs.FieldbyName('CHK_DATE').AsString<>'' then
            begin
               DecLocation(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
@@ -1208,6 +1223,7 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat);
            end;
+        }
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params);
@@ -1445,6 +1461,7 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('COST_PRICE').asFloat*FieldbyName('CALC_AMOUNT').asFloat,-2),2);
+{
   if FieldByName('CHK_DATE').AsString<>'' then
      begin
         DecLocation(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
@@ -1453,6 +1470,7 @@ begin
                    FieldbyName('BATCH_NO').asString,
                    FieldbyName('CALC_AMOUNT').asFloat);
      end;
+}     
 end;
 begin
   if not Init then
@@ -1495,6 +1513,7 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
                    roundto(rs.FieldbyName('COST_PRICE').asFloat*rs.FieldbyName('CALC_AMOUNT').asFloat,-2),3);
+        {
         if rs.FieldByName('CHK_DATE').AsString<>'' then
            begin
               IncLocation(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
@@ -1503,6 +1522,7 @@ begin
                          rs.FieldbyName('BATCH_NO').asString,
                          rs.FieldbyName('CALC_AMOUNT').asFloat);
            end;
+        }
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);
@@ -1603,6 +1623,7 @@ begin
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1);
+  {
   if FieldbyName('CHK_DATE').AsString <> '' then
      begin
         if FieldbyName('CHANGE_TYPE').AsString = '1' then
@@ -1618,6 +1639,7 @@ begin
                    FieldbyName('BATCH_NO').asString,
                    FieldbyName('CALC_AMOUNT').asFloat);
      end;
+  }
 end;
 begin
   if not Init then
@@ -1670,6 +1692,7 @@ begin
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
                    roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3);
+        {
         if rs.FieldByName('CHK_DATE').AsString<>'' then
            begin
               if FieldbyName('CHANGE_TYPE').AsString = '1' then
@@ -1685,6 +1708,7 @@ begin
                          rs.FieldbyName('BATCH_NO').asString,
                          rs.FieldbyName('CALC_AMOUNT').asFloat);
            end;
+        }
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
@@ -3962,9 +3986,16 @@ end;
 { TSyncSysDefine }
 
 function TSyncSysDefine.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  selfGlobal := AGlobal;
+  inherited BeforeInsertRecord(AGlobal);
+end;
+
+procedure TSyncSysDefine.FillParams(ZQuery: TZQuery);
 var
   rs:TZQuery;
 begin
+  inherited;
   if FieldbyName('DEFINE').asString='USING_DATE' then
      begin
         rs := TZQuery.Create(nil);
@@ -3972,19 +4003,18 @@ begin
           rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
           rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
           rs.Params[1].AsString := FieldbyName('DEFINE').AsString;
-          AGlobal.Open(rs);
+          selfGlobal.Open(rs);
           if not rs.IsEmpty then
              begin
-               if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
+               if rs.FieldByName('VALUE').AsString<>ZQuery.ParamByName('VALUE').AsString then
                   begin
-                    FieldbyName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
+                    ZQuery.ParamByName('TIME_STAMP').asInteger := Params.ParambyName('SYN_TIME_STAMP').asInteger;
                   end;
-               if rs.FieldByName('VALUE').AsString<>FieldbyName('VALUE').AsString then
+               if rs.FieldByName('VALUE').AsString<ZQuery.ParamByName('VALUE').AsString then
                   begin
-                    FieldbyName('TIME_STAMP').asInteger := Params.ParambyName('SYN_TIME_STAMP').asInteger;
+                    ZQuery.ParamByName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
                   end;
              end;
-          result := inherited BeforeInsertRecord(AGlobal);
         finally
           rs.Free;
         end;
@@ -3992,11 +4022,8 @@ begin
   else
   if (FieldbyName('DEFINE').asString='ZERO_OUT') and (Params.ParamByName('ZERO_OUT').AsString='1') then
      begin
-        FieldbyName('VALUE').AsString := '1';
-        result := inherited BeforeInsertRecord(AGlobal);
-     end
-  else
-     result := inherited BeforeInsertRecord(AGlobal);
+        ZQuery.ParamByName('VALUE').AsString := '1';
+     end;
 end;
 
 { TSyncDeleteRckClose }

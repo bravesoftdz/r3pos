@@ -17,6 +17,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
       inherited RzPage: TRzPageControl
         Width = 876
         Height = 458
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -680,8 +682,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 442
+            Width = 874
+            Height = 431
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -690,7 +692,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 111
               Align = alTop
               BorderOuter = fsNone
@@ -993,20 +995,40 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 TabOrder = 7
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
+              object cxRadioButton1: TcxRadioButton
+                Left = 312
+                Top = 7
+                Width = 73
+                Height = 17
+                Caption = #21463#29702#26085#26399
+                Checked = True
+                TabOrder = 9
+                TabStop = True
+                OnClick = cxRadioButton1Click
+              end
+              object cxRadioButton2: TcxRadioButton
+                Left = 392
+                Top = 7
+                Width = 73
+                Height = 17
+                Caption = #24405#20837#26085#26399
+                TabOrder = 10
+                OnClick = cxRadioButton2Click
+              end
             end
             object Panel2: TPanel
               Left = 6
               Top = 117
-              Width = 870
-              Height = 319
+              Width = 862
+              Height = 308
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 317
+                Width = 860
+                Height = 306
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

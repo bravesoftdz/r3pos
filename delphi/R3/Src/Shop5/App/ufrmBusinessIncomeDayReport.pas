@@ -622,7 +622,7 @@ begin
     rs.First;
     while not rs.Eof do
     begin
-      if copy(rs.FieldbyName('ACCOUNT_ID').AsString,14,22)='0000000000000000000000' then
+      if copy(rs.FieldbyName('ACCOUNT_ID').AsString,15,22)='0000000000000000000000' then
          sid := '0000000000000000000000'
       else
       if acct.Locate('ACCOUNT_ID',rs.FieldbyName('ACCOUNT_ID').AsString,[]) then

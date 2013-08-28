@@ -76,6 +76,7 @@ inherited frameSelectGoods: TframeSelectGoods
                 Width = 77
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
                 Properties.OnChange = fndGODS_FLAGPropertiesChange
                 TabOrder = 0
               end

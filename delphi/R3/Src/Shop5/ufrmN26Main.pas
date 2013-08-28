@@ -1497,6 +1497,7 @@ begin
   if not result then Exit;
   if result then
      begin
+      Global.RemoteFactory.DisConnect;
       if CaFactory.Audited and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then
          begin
            frmLogo.Show;

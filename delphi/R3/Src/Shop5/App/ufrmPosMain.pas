@@ -10,7 +10,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzStatus, RzPanel, Grids,
   DBGridEh, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, DB,
   ZDataSet, ZBase, Math, RzGrids, FR_Class,DBGrids, RzButton,
-  ZAbstractRODataset, ZAbstractDataset;
+  ZAbstractRODataset, ZAbstractDataset, uCaFactory;
 
 const
   WM_DIALOG_PULL=WM_USER+1;
@@ -213,6 +213,7 @@ type
     procedure frfSalesOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
+    FpTenID:string; //上级加盟企业ID
     CopyHeadInfo: TZQuery;
     CopyDetailInfo: TZQuery;
     CopyDetailObj: TRecord_;
@@ -392,6 +393,8 @@ type
     procedure NewReturnSaleOrder(vType: integer); //新增退货单
     //结算时发送:结算金额、找零、现金、银行卡、储值卡等
     function PostPayMessage(InObj: TRecord_): Boolean;
+    //从烟草市局公司商盟会员复制会员
+    function CopyCustomerFromUnion(ID:string):Boolean;
   public
     { Public declarations }
     //最近输的货品
@@ -1905,6 +1908,7 @@ begin
     end
     else
     begin
+      rs.Close;
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
         'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
@@ -1915,20 +1919,33 @@ begin
         ') c on j.UNION_ID=c.UNION_ID ';
       Factor.Open(rs);
       if rs.IsEmpty then
+      begin
+        rs.Close;
+        rs.SQL.Text :=
+          'select j.*,c.UNION_NAME from ('+
+          'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+          'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and (A.TELEPHONE2='''+id+''' or A.LICENSE_CODE='''+id+''') and A.COMM not in (''02'',''12'') ) j left outer join '+
+          '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+          ' union all '+
+          ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+'  '+
+          ') c on j.UNION_ID=c.UNION_ID ';
+        Factor.Open(rs);
+      end;
+      if CopyCustomerFromUnion(id) then
          begin
-          rs.Close;
-          rs.SQL.Text :=
-            'select j.*,c.UNION_NAME from ('+
-            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and (A.TELEPHONE2='''+id+''' or A.LICENSE_CODE='''+id+''') and A.COMM not in (''02'',''12'') ) j left outer join '+
-            '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
-            ' union all '+
-            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+'  '+
-            ') c on j.UNION_ID=c.UNION_ID ';
-          Factor.Open(rs);
-         end;
+            rs.Close;
+            rs.SQL.Text :=
+              'select j.*,c.UNION_NAME from ('+
+              'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+              'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
+              '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+              ' union all '+
+              ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+'  '+
+              ') c on j.UNION_ID=c.UNION_ID ';
+            Factor.Open(rs);
+         end; //复制会员
     end;
-    if rs.IsEmpty then Raise Exception.Create('没有找到此会员资料.'); 
+    if rs.IsEmpty then Raise Exception.Create('没有找到此会员资料.');
     if rs.RecordCount = 1 then
        SObj.ReadFromDataSet(rs)
     else
@@ -2454,7 +2471,6 @@ begin
          cdsTable.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
          cdsTable.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
          cdsTable.FieldByName('SALES_ID').AsString := cdsHeader.FieldbyName('SALES_ID').AsString;
-         cdsTable.Post;
          if cdsTable.FieldbyName('LOCUS_NO').AsString<>'' then
            begin
              ls.ReadFromDataSet(cdsTable);
@@ -2466,7 +2482,8 @@ begin
              cdsLocusNo.Post;
            end;
          if cdsTable.FieldByName('LOCATION_ID').AsString='' then
-            cdsTable.FieldByName('SALES_ID').AsString := GetDefLocation;
+            cdsTable.FieldByName('LOCATION_ID').AsString := GetDefLocation;
+         cdsTable.Post;
          cdsTable.Next;
        end;
     finally
@@ -4636,7 +4653,7 @@ begin
       Field := cdsTable.FindField('CALC_AMOUNT');
       if Field<>nil then
          begin
-            Field.AsFloat := cdsTable.FindField('AMOUNT').AsInteger * SourceScale;
+            Field.AsFloat := cdsTable.FindField('AMOUNT').AsFloat * SourceScale;
          end;
       
       if cdsTable.FindField('ORG_PRICE')=nil then
@@ -5125,7 +5142,7 @@ begin
   obj := TRecord_.Create;
   try
     rs.Close;
-    rs.SQL.Text := 'select BATCH_NO from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and AMOUNT<>0 order by BATCH_NO';
+    rs.SQL.Text := 'select distinct BATCH_NO from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID and AMOUNT<>0 order by BATCH_NO';
     rs.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
     rs.ParambyName('GODS_ID').asString := cdsTable.FieldByName('GODS_ID').AsString;
     Factor.Open(rs);
@@ -5162,6 +5179,190 @@ begin
      result := rs.FieldbyName('DEF_LOCATION_ID').AsString;
   if result='' then
      result := Global.SHOP_ID+'00000000000000000000000';
+end;
+
+function TfrmPosMain.CopyCustomerFromUnion(ID:string): Boolean;
+var custId,custTenant:string;
+ function CheckUnionRelation:Boolean; //2.判断是否有加入商盟
+ var
+   RsQry:TZQuery;
+   unionId:string;
+ begin
+   result:=false;
+   try
+     RsQry:=TZQuery.Create(nil);
+     RsQry.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and PRICE_TYPE=''2'' ';
+     Global.RemoteFactory.Open(RsQry);
+     UnionId := '';
+     rsQry.First;
+     while not rsQry.Eof do
+       begin
+         if UnionId<>'' then UnionId := UnionId + ',';
+         UnionId := UnionId + ''''+rsQry.Fields[0].AsString+'''';
+         rsQry.Next;
+       end;
+     if unionId='' then Exit;
+     rsQry.Close;
+     rsQry.SQL.Text := 'select CLIENT_ID,TENANT_ID from PUB_IC_INFO where UNION_ID in ('+UnionId+') and IC_CARDNO='''+id+'''';
+     Global.RemoteFactory.Open(rsQry);
+     custId := rsQry.Fields[0].AsString;
+     custTenant := rsQry.Fields[1].AsString;
+     result:=(custId<>'');
+     
+   finally
+     RsQry.Free;
+   end;
+ end;
+ procedure UpdateToGlobal(AObj:TRecord_);
+ var
+   Temp:TZQuery;
+ begin
+   Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
+   Temp.Filtered := false;
+   if not Temp.Locate('CLIENT_ID',AObj.FieldByName('CUST_ID').AsString,[]) then
+     Temp.Append
+   else
+     Temp.Edit;
+   Temp.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+   Temp.FieldByName('LICENSE_CODE').AsString := AObj.FieldbyName('ID_NUMBER').AsString;
+   Temp.FieldByName('CLIENT_CODE').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+   Temp.FieldByName('CLIENT_NAME').AsString := AObj.FieldbyName('CUST_NAME').AsString;
+   Temp.FieldByName('LINKMAN').AsString := AObj.FieldbyName('CUST_NAME').AsString;
+   Temp.FieldByName('CLIENT_SPELL').AsString := AObj.FieldbyName('CUST_SPELL').AsString;
+   Temp.FieldByName('ADDRESS').AsString := AObj.FieldbyName('FAMI_ADDR').AsString;
+   Temp.FieldByName('TELEPHONE2').AsString := AObj.FieldbyName('MOVE_TELE').AsString;
+   Temp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+   Temp.FieldByName('SETTLE_CODE').AsString := '#';
+   Temp.FieldByName('INVOICE_FLAG').AsString := '0';
+   Temp.FieldByName('TAX_RATE').AsString := '0';
+   Temp.FieldByName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
+   Temp.Post;
+ end;
+var
+  NewObj:TRecord_;
+  tmpCust:TZQuery;
+  cdsCust,cdsCustExt,cdsUnion:TZQuery;
+  cdsTable,cdsCustomerExt,cdsUnionCard:TZQuery;
+  Params:TftParamList;
+begin
+  result := false;
+  //会员都到不到从商盟卡取 [1要判断是否在线登录，2判断是否有加入商盟，如果没加商盟也不检测，3.判断网络连接如果是断开，提示并尝试重连]
+  if CaFactory.Audited=False then Exit;
+  //3.判断网络连接如果是断开
+  if (not Global.RemoteFactory.Connected) then
+  begin
+    try
+      Global.RemoteFactory.Connect;
+     except
+      Exit;
+     end;
+  end;
+  if Global.RemoteFactory.Connected=False then Exit;
+
+  if CheckUnionRelation then
+  begin
+    //从应用服务器取数据
+    NewObj:=TRecord_.Create;
+    Params:=TftParamList.Create(nil);
+    cdsTable:=TZQuery.Create(nil);
+    cdsCustomerExt:=TZQuery.Create(nil);
+    cdsUnionCard:=TZQuery.Create(nil);
+    cdsCust:=TZQuery.Create(nil);
+    cdsCustExt:=TZQuery.Create(nil);
+    cdsUnion:=TZQuery.Create(nil);
+    try
+      Params.ParamByName('CUST_ID').asString := custId;
+      Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(custTenant);
+      Global.RemoteFactory.BeginBatch;
+      try
+        Global.RemoteFactory.AddBatch(cdsTable,'TCustomer',Params);
+        Global.RemoteFactory.AddBatch(cdsCustomerExt,'TCustomerExt',Params);
+//        Global.RemoteFactory.AddBatch(cdsUnionCard,'TPubIcInfo',Params);
+        Global.RemoteFactory.OpenBatch;
+      except
+        Global.RemoteFactory.CancelBatch;
+        raise;
+      end;
+      //取数据集
+      Params.ParamByName('CUST_ID').asString := custId;
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(cdsCust,'TCustomer',Params);
+        Factor.AddBatch(cdsCustExt,'TCustomerExt',Params);
+//        Factor.AddBatch(cdsUnion,'TPubIcInfo',Params);
+        Factor.OpenBatch;
+      except
+        Factor.CancelBatch;
+        raise;
+      end;
+      //提交当前Fill数据集(cdsCust)
+      NewObj.ReadFromDataSet(cdsTable);
+      NewObj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID; //改企业ID
+      NewObj.FieldByName('CREA_USER').AsString := Global.UserID;
+      NewObj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+      NewObj.FieldByName('IC_INFO').AsString := '企业卡';
+      NewObj.FieldByName('UNION_ID').AsString := '#';
+      NewObj.FieldByName('IC_STATUS').AsString := '0';
+      NewObj.FieldByName('IC_TYPE').AsString := '0';
+      cdsCust.Append;
+      NewObj.WriteToDataSet(cdsCust);
+      cdsCust.Post;
+      //提交当前Fill数据集(cdsCustExt)
+      NewObj.Clear;
+      cdsCustomerExt.First;
+      while not cdsCustomerExt.Eof do
+      begin
+        NewObj.ReadFromDataSet(cdsCustomerExt);
+        NewObj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID; //改企业ID
+        cdsCustExt.Append;
+        NewObj.WriteToDataSet(cdsCustExt);
+        cdsCustExt.Post;
+        cdsCustomerExt.Next;
+      end;
+      //提交当前Fill数据集(cdsUnionCard)
+      //NewObj.Clear;
+      //cdsUnionCard.First;
+      //while not cdsUnionCard.Eof do
+      //begin
+      //  NewObj.ReadFromDataSet(cdsUnionCard);
+      //  NewObj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID; //改企业ID
+      //  if cdsUnion.Locate('UNION_ID','#',[]) then
+      //     begin
+      //       cdsUnion.Edit;
+      //       cdsUnion.FieldbyName('IC_CARDNO').AsString := id;
+      //       NewObj.WriteToDataSet(cdsUnion);
+      //       cdsUnion.Post;
+      //     end;
+      //  cdsUnionCard.Next;
+      //end;
+      //提交数据库
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(cdsCust,'TCustomer');
+        //Factor.AddBatch(cdsUnion,'TPubIcInfo');
+        Factor.AddBatch(cdsCustExt,'TCustomerExt');
+        Factor.CommitBatch;
+      except
+        Factor.CancelBatch;
+        Raise;
+      end;
+      NewObj.Clear;
+      NewObj.ReadFromDataSet(cdsTable);
+      //更新缓存
+      UpdateToGlobal(NewObj);
+      result := true;
+    finally
+      NewObj.Free;
+      Params.Free;
+      cdsTable.Free;
+      cdsCustomerExt.Free;
+      cdsUnionCard.Free;
+      cdsCust.Free;
+      cdsCustExt.Free;
+      cdsUnion.Free;
+    end;
+  end;
 end;
 
 end.

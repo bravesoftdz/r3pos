@@ -222,7 +222,9 @@ begin
   end;
   case AGlobal.iDbType of
   0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
-  end; 
+  1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
+  4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
+  end;
 end;
 
 procedure TSalesData.InitClass;
@@ -347,6 +349,8 @@ function GetAdvaMny:currency;
 var
   rs:TZQuery;
 begin
+  result := 0;
+  if FieldbyName('FROM_ID').AsString='' then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
@@ -683,12 +687,18 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    {
     rs := TZQuery.Create(nil);
     try
       rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
       rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
       rs.ParamByName('SALES_ID').AsString := Params.ParambyName('SALES_ID').AsString;
       AGlobal.Open(rs);
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+      1:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID for update',Params);
+      4:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID  WITH RS USE AND KEEP UPDATE LOCKS',Params);
+      end;
       rs.First;
       while not rs.Eof do
         begin
@@ -699,6 +709,7 @@ begin
       rs.Free;
     end;
     CheckZero(AGlobal,Params);
+    }
     Result := true;
     AGlobal.CommitTrans;
     Msg := '审核单据成功';
@@ -738,12 +749,18 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    {
     rs := TZQuery.Create(nil);
     try
       rs.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,LOCATION_ID,BATCH_NO,CALC_AMOUNT from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
       rs.ParamByName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').AsInteger;
       rs.ParamByName('SALES_ID').AsString := Params.ParambyName('SALES_ID').AsString;
       AGlobal.Open(rs);
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION with(UPDLOCK) where TENANT_ID=:TENANT_ID',Params);
+      1:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID for update',Params);
+      4:AGlobal.ExecSQL('select count(*) from STO_GOODS_LOCATION where TENANT_ID=:TENANT_ID  WITH RS USE AND KEEP UPDATE LOCKS',Params);
+      end;
       rs.First;
       while not rs.Eof do
         begin
@@ -753,6 +770,7 @@ begin
     finally
       rs.Free;
     end;
+    }
     AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;

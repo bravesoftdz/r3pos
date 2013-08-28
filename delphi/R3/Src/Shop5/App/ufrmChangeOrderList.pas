@@ -420,7 +420,21 @@ begin
 end;
 
 function TfrmChangeOrderList.PrintSQL(tenantid, id: string): string;
+var
+  TopCnd,order1,order2: string;
 begin
+  //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
+  case Factor.iDbType of
+   0: begin
+        TopCnd:=' top 20000 ';
+        order1 := ' order by SEQNO ';
+      end
+   else
+      begin
+        TopCnd:='';
+        order2 := ' order by SEQNO ';
+      end;
+  end;
   result :=
    'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT,'+
    '(select sum(CALC_MONEY) from STO_CHANGEDATA where TENANT_ID='+tenantid+' and CHANGE_ID=j.CHANGE_ID) as TOTAL_RTL_MNY '+
@@ -436,8 +450,8 @@ begin
    'select je.*,e.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as DUTY_USER_TEXT from ('+
    'select jb.*,b.CHANGE_NAME from ('+
-   'select A.*,B.AMOUNT,B.CALC_AMOUNT,B.COST_PRICE,B.APRICE,B.CALC_MONEY,B.SEQNO,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from STO_CHANGEORDER A,STO_CHANGEDATA B '+
-   'where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and A.TENANT_ID='+tenantid+' and A.CHANGE_ID='''+id+''' ) jb '+
+   'select '+TopCnd+' A.*,B.AMOUNT,B.CALC_AMOUNT,B.COST_PRICE,B.APRICE,B.CALC_MONEY,B.SEQNO,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from STO_CHANGEORDER A,STO_CHANGEDATA B '+
+   'where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and A.TENANT_ID='+tenantid+' and A.CHANGE_ID='''+id+''' '+order1+' ) jb '+
    'left outer join STO_CHANGECODE b on jb.CHANGE_CODE=b.CHANGE_CODE ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.DUTY_USER=c.USER_ID ) je '+
    'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CHK_USER=e.USER_ID ) jf '+
@@ -448,7 +462,7 @@ begin
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and jj.PROPERTY_02=j.COLOR_ID ) jk '+
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl '+
    'left outer join CA_DEPT_INFO l on jl.TENANT_ID=l.TENANT_ID and jl.DEPT_ID=l.DEPT_ID ) jm '+
-   'left outer join VIW_USERS m on jm.TENANT_ID=m.TENANT_ID and jm.LOCUS_USER=m.USER_ID ) j order by SEQNO';
+   'left outer join VIW_USERS m on jm.TENANT_ID=m.TENANT_ID and jm.LOCUS_USER=m.USER_ID ) j '+order2;
 
 end;
 

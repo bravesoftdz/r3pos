@@ -9,7 +9,7 @@ type
   //台账计算基类
   TBaseCalc = class
   private
-    dbHelp:IdbHelp;  //数据库访问接口
+    dbHelp:IdbHelp; //数据库访问接口
     FParams:TftParamList; //参数集对象
     FTENANT_ID:integer;   //企业ID
     FLastMth_Date:TDate;  //上一个结账日期
@@ -22,7 +22,7 @@ type
   public
     procedure CreateNew; virtual;
     procedure SetInParams(AGlobal:IdbHelp;InParams:TftParamList;TEN_ID:integer;U_ID:string;LMth_Date:TDate); //设置参数
-    function DoCalcReck(Reck_Beg_Date,Reck_End_Date:TDate):Boolean;virtual; //外部调用函数
+    function  DoCalcReck(Reck_Beg_Date,Reck_End_Date:TDate):Boolean;virtual; //外部调用函数
     function CreateTable(tb,CreaSQL,CreaIdxFields:string;ClearFlag:Boolean=true):Boolean;
     property ReckBegDate:TDate read FReckBegDate write SetReckBegDate; //核算区间开始日期（核算开始日期）
     property ReckEndDate:TDate read FReckEndDate write SetReckEndDate; //核算区间结束日期（核算结束日期）
@@ -45,10 +45,6 @@ type
     procedure CreateNew; override;
     //日结账检查是否存在盘点没有审核
     function CheckForRck:Boolean;
-    //生成成本核算中间表SQL
-    function GetRckTempTabSQL(tb:string):string;
-    //清空本核算临时表
-    procedure ClearRckTempTable(TabName:string);
     //生成核算成本价临时表SQL
     function GetCostPriceTmpSQL(tb:string):string;
     //创建成本核算临时表
@@ -57,7 +53,7 @@ type
     procedure ClearCostTempTable(TabName:string);
   protected
     //删除本期间的商品日台账表流水
-    function DeleteRckGodsData(DelFlag:Boolean=False):Boolean;
+    function DeleteRckGodsData:Boolean;
     //生成本区间核算临时表数据
     function CreateDataForRck:Boolean;
     //移动平均成本核算<按开单时的平均加计算>
@@ -124,8 +120,6 @@ type
     procedure CreateNew; override;
     //返回创建临时表的SQL
     function GetTempMonthSQL(tb: string): string;
-    //清空临时表
-    function CleanTempMonth:boolean;
   public
     //计算月台账
     function DoCalcReck(BegReckDate,EndReckDate:TDate):Boolean;override;
@@ -143,19 +137,15 @@ type
     //商品档案临时表
     tempTableGods:string;
     //门店临时表
-    tempTableUpShop:string;
+    tempTableUpShop:string; 
     //创建临时表
     procedure CreateNew; override;
     //返回创建临时表的SQL
     function GetTempAnalySQL(tb: string): string;
     //清除月台账记录
     procedure ClearAnalyTempTable(TabName:string);
-    //返回商品档案临时表
-    function GetTempGoodSQL(tb: string): string;
     //创建商品档案临时表
     function CreateGoodTable: Boolean;
-    //清空临时表
-    function CleanTempGodsAnaly:boolean;
   public
     //分析监控
     function DoCalcGodsAnaly: Boolean;
@@ -489,9 +479,8 @@ begin
       'select GODS_ID,BATCH_NO,'+
       '(case when (cast(sum(ORG_AMT)as decimal(18,3))*1.000000)<>0 then round(cast(sum(ORG_CST)as decimal(18,3))/(cast(sum(ORG_AMT)as decimal(18,3))*1.000000),6) else 0.0 end)as COST_PRICE '+
       ' from '+
-      '(select GODS_ID,BATCH_NO,sum(BAL_AMT)as ORG_AMT,sum(BAL_CST)as ORG_CST from RCK_GOODS_DAYS '+
+      '(select GODS_ID,BATCH_NO,BAL_AMT as ORG_AMT,BAL_CST as ORG_CST from RCK_GOODS_DAYS '+
       ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',(CurRckDate-1))+' and (BAL_AMT<>0 or BAL_CST<>0) '+
-      ' group by GODS_ID,BATCH_NO '+
       ' union all '+
       ' select GODS_ID,BATCH_NO,sum(RCK_AMT)as ORG_AMT,sum(RCK_MNY) as ORG_CST from '+tempTableOrder+' '+
       ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',CurRckDate)+' and ORDER_TYPE in (11,13)'+
@@ -519,7 +508,7 @@ begin
   //1、创建成本临时表
   CreateCostPriceTable(True);
   //2、删除本区间日台账流水记录
-  DeleteRckGodsData(True);
+  DeleteRckGodsData;
 
   //3、核算成本价(核算一个月成本价)
   SQL:=
@@ -527,9 +516,8 @@ begin
     'select GODS_ID,BATCH_NO,'+
     '(case when cast(sum(ORG_AMT) as decimal(18,3))<>0 then round(cast(sum(ORG_CST)as decimal(18,3))/(cast(sum(ORG_AMT)as decimal(18,3))*1.000000),6) else 0.0 end)as COST_PRICE '+
     ' from '+
-    '(select GODS_ID,BATCH_NO,sum(BAL_AMT)as ORG_AMT,sum(BAL_CST)as ORG_CST from RCK_GOODS_DAYS '+
+    '(select GODS_ID,BATCH_NO,BAL_AMT as ORG_AMT,BAL_CST as ORG_CST from RCK_GOODS_DAYS '+
     ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE='+FormatDatetime('YYYYMMDD',(FReckBegDate-1))+' and (BAL_AMT<>0 or BAL_CST<>0) '+
-    ' group by GODS_ID,BATCH_NO '+
     ' union all '+
     ' select GODS_ID,BATCH_NO,sum(RCK_AMT)as ORG_AMT,sum(RCK_MNY) as ORG_CST from '+tempTableOrder+' '+
     ' where TENANT_ID='+inttostr(TENANT_ID)+' and ORDER_TYPE in (11,13) group by GODS_ID,BATCH_NO)A '+
@@ -558,9 +546,7 @@ begin
   VIW_GODS_DAYS:=
     'select TENANT_ID,SHOP_ID,CREA_DATE,ORDER_TYPE,A.GODS_ID,A.BATCH_NO,RCK_AMT,RCK_MNY,'+
     '(case when ORDER_TYPE in (12,21,22,23,24,31,32,33,34,35) then round(RCK_AMT*isnull(B.COST_PRICE,0),2) else RCK_CST end) as RCK_CST,'+
-    ' RCK_TAX,RCK_RTL,'+
-    '(case when ORDER_TYPE in (21,23,24) then RCK_MNY - round(RCK_AMT*isnull(B.COST_PRICE,0),2) else RCK_PRF end) as RCK_PRF,'+  //毛利计算
-    ' RCK_AGO,A.COST_PRICE '+
+    ' RCK_TAX,RCK_RTL,RCK_PRF,RCK_AGO,A.COST_PRICE '+
     ' from '+tempTableOrder+' A '+
     ' left outer join '+tempTabCost+' B ON A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO '+
     ' where A.TENANT_ID='+inttostr(TENANT_ID)+' and A.CREA_DATE='+FormatDatetime('YYYYMMDD',RckDate)+' '+
@@ -656,22 +642,14 @@ begin
   ReckEndDate:=Reck_End_Date; //台账结束日期
   FRckDays:=Round(Reck_End_Date-Reck_Beg_Date); //计算循环天数
 
-  try
-    //1、生成本区间核算临时表数据
-    CreateDataForRck;
+  //1、生成本区间核算临时表数据
+  CreateDataForRck;
 
-    //2、核算商品成本
-    case FCalc_Flag of
-     0:result:=Calc0;
-     1:result:=Calc1;
-     2:result:=Calc2;
-    end;
-  finally
-    try
-      ClearRckTempTable(tempTableOrder);
-      ClearCostTempTable(tempTabCost);
-    except
-    end;
+  //2、核算商品成本
+  case FCalc_Flag of
+   0:result:=Calc0;
+   1:result:=Calc1;
+   2:result:=Calc2;
   end;
 end;
 
@@ -692,7 +670,60 @@ begin
    1,5:tempTableOrder := 'T_ORDER_DAYS';
    4:tempTableOrder := 'session.T_ORDER_DAYS';
   end;
-  TabSQL:=GetRckTempTabSQL(tempTableOrder);
+  //创建临时表SQL
+  case iDbType of
+   0,5:TabSQL :=
+    'CREATE TABLE '+tempTableOrder+' ('+
+    '	TENANT_ID int NOT NULL ,'+
+    '	SHOP_ID varchar (13) NOT NULL ,'+
+    '	CREA_DATE int NOT NULL ,'+
+    '	ORDER_TYPE int NOT NULL ,'+
+    '	GODS_ID varchar (36)  NOT NULL ,'+
+    '	BATCH_NO varchar (36) NOT NULL ,'+
+    '	RCK_AMT decimal(18, 3) NULL ,'+
+    '	RCK_MNY decimal(18, 3) NULL ,'+
+    '	RCK_CST decimal(18, 3) NULL ,'+
+    '	RCK_TAX decimal(18, 3) NULL ,'+
+    '	RCK_RTL decimal(18, 3) NULL ,'+
+    '	RCK_PRF decimal(18, 3) NULL ,'+
+    '	RCK_AGO decimal(18, 3) NULL ,'+
+    '	COST_PRICE decimal(18, 6) NULL '+
+    ')';
+  1:TabSQL := 
+    'create global temporary table '+tempTableOrder+' ('+
+    ' TENANT_ID NUMBER(9,0) NOT NULL ,'+
+    ' SHOP_ID varchar2(13) NOT NULL ,'+
+    ' CREA_DATE NUMBER(9,0) NOT NULL ,'+
+    '	ORDER_TYPE int NOT NULL ,'+
+    ' GODS_ID varchar2(36)  NOT NULL ,'+
+    ' BATCH_NO varchar2(36) NOT NULL ,'+
+    '	RCK_AMT decimal(18, 3) ,'+
+    '	RCK_MNY decimal(18, 3) ,'+
+    '	RCK_CST decimal(18, 3) ,'+
+    '	RCK_TAX decimal(18, 3) ,'+
+    '	RCK_RTL decimal(18, 3) ,'+
+    '	RCK_PRF decimal(18, 3) ,'+
+    '	RCK_AGO decimal(18, 3) ,'+
+    '	COST_PRICE decimal(18, 6) '+
+    ') ON COMMIT PRESERVE ROWS';
+  4:TabSQL :=
+    'declare global temporary table '+tempTableOrder+' ('+
+    '	TENANT_ID int NOT NULL ,'+
+    '	SHOP_ID varchar (13) NOT NULL ,'+
+    '	CREA_DATE int NOT NULL ,'+
+    '	ORDER_TYPE int NOT NULL ,'+
+    '	GODS_ID varchar (36)  NOT NULL ,'+
+    '	BATCH_NO varchar (36) NOT NULL ,'+
+    '	RCK_AMT decimal(18, 3) ,'+
+    '	RCK_MNY decimal(18, 3) ,'+
+    '	RCK_CST decimal(18, 3) ,'+
+    '	RCK_TAX decimal(18, 3) ,'+
+    '	RCK_RTL decimal(18, 3) ,'+
+    '	RCK_PRF decimal(18, 3) ,'+
+    '	RCK_AGO decimal(18, 3) ,'+
+    '	COST_PRICE decimal(18, 6) '+
+    ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
+  end;
   CreateTable(tempTableOrder,TabSQL,'TENANT_ID,CREA_DATE',True);
 
   //成本表
@@ -761,20 +792,21 @@ begin
   SQL:=
     'insert into '+tempTableOrder+'(TENANT_ID,SHOP_ID,CREA_DATE,ORDER_TYPE,GODS_ID,BATCH_NO,RCK_AMT,RCK_MNY,RCK_CST,RCK_TAX,RCK_RTL,RCK_PRF,RCK_AGO,COST_PRICE)'+
     'select B.TENANT_ID,B.SHOP_ID,B.STOCK_DATE,(B.STOCK_TYPE+10) as ORDER_TYPE,A.GODS_ID,A.BATCH_NO,'+
-    ' CALC_AMOUNT as RCK_AMT,'+
-    ' round(case when STOCK_TYPE=2 then 0 '+
-               ' else A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end),2)'+
-               ' end,2)as RCK_MNY,'+
-    ' round(case when STOCK_TYPE=2 then A.CALC_MONEY else 0 end,2)as RCK_CST,'+
-    ' round(case when STOCK_TYPE=2 then 0 '+
-               ' else A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)'+
-               ' end,2)as RCK_TAX,'+
+    ' round(sum(CALC_AMOUNT),3) as RCK_AMT,'+
+    ' round(sum(case when STOCK_TYPE=2 then 0 '+
+                   ' else A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end),2)'+
+                   ' end),2)as RCK_MNY,'+
+    ' round(sum(case when STOCK_TYPE=2 then A.CALC_MONEY else 0 end),2)as RCK_CST,'+
+    ' round(sum(case when STOCK_TYPE=2 then 0 '+
+                   ' else round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG=''3'' then B.TAX_RATE else 0 end),2)'+
+                   ' end),2)as RCK_TAX,'+
     ' 0 as RCK_RTL,'+
-    ' 0 as RCK_PRF,'+
+    ' 0 as RCK_PRF,'+             
     ' 0 as RCK_AGO,'+
     ' 0 as COST_PRICE '+
     ' from STK_STOCKDATA A,STK_STOCKORDER B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and B.TENANT_ID='+IntToStr(TENANT_ID)+' '+DateCnd;
+    ' where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and B.TENANT_ID='+IntToStr(TENANT_ID)+' '+DateCnd+
+    ' group by B.TENANT_ID,B.SHOP_ID,B.STOCK_DATE,B.STOCK_TYPE,A.GODS_ID,A.BATCH_NO';
   FdbHelp.ExecSQL(SQL);
 
   //2、插入SAL_SALESORDER(1:销售出货;2:调拨出库;3:销售退货;4:零售)
@@ -785,21 +817,22 @@ begin
   SQL:=
     'insert into '+tempTableOrder+'(TENANT_ID,SHOP_ID,CREA_DATE,ORDER_TYPE,GODS_ID,BATCH_NO,RCK_AMT,RCK_MNY,RCK_CST,RCK_TAX,RCK_RTL,RCK_PRF,RCK_AGO,COST_PRICE)'+
     'select B.TENANT_ID,B.SHOP_ID,B.SALES_DATE,(B.SALES_TYPE+20) as ORDER_TYPE,A.GODS_ID,A.BATCH_NO,'+
-    ' CALC_AMOUNT as RCK_AMT,'+
-    ' round(case when SALES_TYPE=2 then 0 '+
-               ' else A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) '+
-               ' end,2)as RCK_MNY,'+
-    ' round(A.CALC_AMOUNT*A.COST_PRICE,2)as RCK_CST,'+
-    ' round(case when SALES_TYPE=2 then 0 '+
-               ' else round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) '+
-               ' end,2)as RCK_TAX,'+
-    ' round(case when SALES_TYPE=2 then 0 else A.CALC_MONEY+A.AGIO_MONEY end,2)as RCK_RTL,'+
-    ' round(case when SALES_TYPE=2 then 0 '+
-               ' else A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)-round(A.CALC_AMOUNT*A.COST_PRICE,2) end,2)as RCK_PRF,'+
-    ' A.AGIO_MONEY as RCK_AGO,'+
+    ' round(sum(CALC_AMOUNT),3)as RCK_AMT,'+
+    ' round(sum(case when SALES_TYPE=2 then 0 '+
+                   ' else A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) '+
+                   ' end),2)as RCK_MNY,'+
+    ' round(sum(round(A.CALC_AMOUNT*A.COST_PRICE,2)),2)as RCK_CST,'+
+    ' round(sum(case when SALES_TYPE=2 then 0 '+
+                   ' else round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) '+
+                   ' end),2)as RCK_TAX,'+
+    ' round(sum(case when SALES_TYPE=2 then 0 else A.CALC_MONEY+A.AGIO_MONEY end),2)as RCK_RTL,'+
+    ' round(sum(case when SALES_TYPE=2 then 0 '+
+                   ' else A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) '+
+                   ' -round(A.CALC_AMOUNT*A.COST_PRICE,2) end),2)as RCK_PRF,'+
+    ' round(sum(A.AGIO_MONEY),2)as RCK_AGO,'+
     ' 0 as COST_PRICE '+
-    ' from SAL_SALESDATA A,SAL_SALESORDER B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and B.TENANT_ID='+IntToStr(TENANT_ID)+' '+DateCnd;
+    ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and B.TENANT_ID='+IntToStr(TENANT_ID)+' '+DateCnd+' '+
+    ' group by B.TENANT_ID,B.SHOP_ID,B.SALES_DATE,B.SALES_TYPE,A.GODS_ID,A.BATCH_NO';
   FdbHelp.ExecSQL(SQL);
 
   //3、插入STO_CHANGEORDER(1:损益单;2:领用单)
@@ -812,21 +845,22 @@ begin
     'select B.TENANT_ID,B.SHOP_ID,B.CHANGE_DATE,'+
     '(case when B.CHANGE_CODE=''1'' then 31 when B.CHANGE_CODE=''2'' then 32 when B.CHANGE_CODE=''3'' then 33 '+
          ' when B.CHANGE_CODE=''4'' then 34 when B.CHANGE_CODE=''5'' then 35 else 30 end)as ORDER_TYPE,GODS_ID,BATCH_NO,'+
-    ' (case when B.CHANGE_TYPE=''1'' then 1 else -1 end)*A.CALC_AMOUNT as RCK_AMT,'+
+    ' round(sum((case when B.CHANGE_TYPE=''1'' then 1 else -1 end)*A.CALC_AMOUNT),3)as RCK_AMT,'+
     ' 0 as RCK_MNY, '+
-    ' (case when B.CHANGE_TYPE=''1'' then 1 else -1 end)*round(A.CALC_AMOUNT*A.COST_PRICE,2) as RCK_CST,'+
+    ' round(sum((case when B.CHANGE_TYPE=''1'' then 1 else -1 end)*round(A.CALC_AMOUNT*A.COST_PRICE,2)),2)as RCK_CST,'+
     ' 0 as RCK_TAX,'+
     ' 0 as RCK_RTL,'+
     ' 0 as RCK_PRF,'+
     ' 0 as RCK_AGO,'+
     ' 0 as COST_PRICE '+
     ' from STO_CHANGEDATA A,STO_CHANGEORDER B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and B.TENANT_ID='+IntToStr(TENANT_ID)+' '+DateCnd;
+    ' where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and B.TENANT_ID='+IntToStr(TENANT_ID)+' '+DateCnd+' '+
+    ' group by B.TENANT_ID,B.SHOP_ID,B.CHANGE_DATE,B.CHANGE_CODE,GODS_ID,BATCH_NO';
   FdbHelp.ExecSQL(SQL);
   result:=true;
 end;
 
-function TCalcForGodsCost.DeleteRckGodsData(DelFlag:Boolean): Boolean;
+function TCalcForGodsCost.DeleteRckGodsData: Boolean;
 var
   SQL:string;
 begin
@@ -835,8 +869,6 @@ begin
     SQL := ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE='+FormatDatetime('YYYYMMDD',FReckBegDate)+' '
   else
     SQL := ' where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate)+' and CREA_DATE<='+FormatDatetime('YYYYMMDD',FReckEndDate)+' ';
-  if DelFlag then
-    FdbHelp.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(TENANT_ID)+' and CREA_DATE>='+FormatDatetime('YYYYMMDD',FReckBegDate));
   FdbHelp.ExecSQL('delete from RCK_GOODS_DAYS '+SQL);
   FdbHelp.ExecSQL('delete from RCK_C_GOODS_DAYS '+SQL);
   result:=true;
@@ -867,15 +899,15 @@ begin
               'case when B.CLIENT_ID is null then ''#'' else B.CLIENT_ID end,'+
               'B.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
               'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2))as SALE_MNY,'+
-              'sum(round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)) as SALE_TAX, '+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2))as SALE_MNY,'+
+              'sum(round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)) as SALE_TAX, '+
               'sum(round(A.CALC_AMOUNT*isnull(A.COST_PRICE,0),2)) as SALE_CST,'+
               'round(case when sum(A.CALC_AMOUNT)<>0 then sum(A.CALC_AMOUNT*isnull(A.COST_PRICE,0))*1.0000/sum(A.CALC_AMOUNT) else 0 end,6) as COST_PRICE, '+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)'+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)'+
                   '-round(A.CALC_AMOUNT*isnull(A.COST_PRICE,0),2)) as SALE_PRF, '+
               'sum(case when B.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, '+
-              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
-              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
+              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
+              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
               'sum(case when B.SALES_TYPE=3 then round(A.CALC_AMOUNT*isnull(A.COST_PRICE,0),2) else 0 end) as SALRT_CST, '+
               '''00'','+GetTimeStamp(iDbType)+' '+
           ' from SAL_SALESDATA A,SAL_SALESORDER B '+
@@ -913,15 +945,15 @@ begin
               'case when B.CLIENT_ID is null then ''#'' else B.CLIENT_ID end,'+
               'B.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
               'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2))as SALE_MNY,'+
-              'sum(round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)) as SALE_TAX, '+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2))as SALE_MNY,'+
+              'sum(round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)) as SALE_TAX, '+
               'sum(round(A.CALC_AMOUNT*isnull(C.COST_PRICE,0),2)) as SALE_CST,'+
               'max(C.COST_PRICE) as COST_PRICE, '+
-              'sum(A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2)'+
+              'sum(A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2)'+
                   '-round(A.CALC_AMOUNT*isnull(C.COST_PRICE,0),2)) as SALE_PRF, '+
               'sum(case when B.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, '+
-              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
-              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY*1.000/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
+              'sum(case when B.SALES_TYPE=3 then A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_MNY, '+
+              'sum(case when B.SALES_TYPE=3 then round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end)*(case when B.INVOICE_FLAG in (''2'',''3'') then B.TAX_RATE else 0 end),2) else 0 end) as SALRT_TAX, '+
               'sum(case when B.SALES_TYPE=3 then round(A.CALC_AMOUNT*isnull(C.COST_PRICE,0),2) else 0 end) as SALRT_CST, '+
               '''00'','+GetTimeStamp(iDbType)+' '+
           ' from SAL_SALESDATA A '+
@@ -947,7 +979,7 @@ begin
    4:begin
        FdbHelp.ExecSQL(GetCostPriceTmpSQL(TabName));
        //FdbHelp.ExecSQL('CREATE INDEX '+TabName+'_IDX ON '+TabName+'(GODS_ID,BATCH_NO)');
-     end;
+     end;                                        
    5:FdbHelp.ExecSQL('delete from '+TabName);
   end;
 end;
@@ -970,73 +1002,6 @@ begin
     result:=true;
   finally
     rs.Free;
-  end;
-end;
-
-function TCalcForGodsCost.GetRckTempTabSQL(tb: string): string;
-begin
-  //创建临时表SQL
-  case iDbType of
-   0,5:result:=
-    'CREATE TABLE '+tb+' ('+
-    '	TENANT_ID int NOT NULL ,'+
-    '	SHOP_ID varchar (13) NOT NULL ,'+
-    '	CREA_DATE int NOT NULL ,'+
-    '	ORDER_TYPE int NOT NULL ,'+
-    '	GODS_ID varchar (36)  NOT NULL ,'+
-    '	BATCH_NO varchar (36) NOT NULL ,'+
-    '	RCK_AMT decimal(18, 3) NULL ,'+
-    '	RCK_MNY decimal(18, 3) NULL ,'+
-    '	RCK_CST decimal(18, 3) NULL ,'+
-    '	RCK_TAX decimal(18, 3) NULL ,'+
-    '	RCK_RTL decimal(18, 3) NULL ,'+
-    '	RCK_PRF decimal(18, 3) NULL ,'+
-    '	RCK_AGO decimal(18, 3) NULL ,'+
-    '	COST_PRICE decimal(18, 6) NULL '+
-    ')';
-  1:result :=
-    'create global temporary table '+tb+' ('+
-    ' TENANT_ID NUMBER(9,0) NOT NULL ,'+
-    ' SHOP_ID varchar2(13) NOT NULL ,'+
-    ' CREA_DATE NUMBER(9,0) NOT NULL ,'+
-    '	ORDER_TYPE int NOT NULL ,'+
-    ' GODS_ID varchar2(36)  NOT NULL ,'+
-    ' BATCH_NO varchar2(36) NOT NULL ,'+
-    '	RCK_AMT decimal(18, 3) ,'+
-    '	RCK_MNY decimal(18, 3) ,'+
-    '	RCK_CST decimal(18, 3) ,'+
-    '	RCK_TAX decimal(18, 3) ,'+
-    '	RCK_RTL decimal(18, 3) ,'+
-    '	RCK_PRF decimal(18, 3) ,'+
-    '	RCK_AGO decimal(18, 3) ,'+
-    '	COST_PRICE decimal(18, 6) '+
-    ') ON COMMIT PRESERVE ROWS';
-  4:result :=
-    'declare global temporary table '+tb+' ('+
-    '	TENANT_ID int NOT NULL ,'+
-    '	SHOP_ID varchar (13) NOT NULL ,'+
-    '	CREA_DATE int NOT NULL ,'+
-    '	ORDER_TYPE int NOT NULL ,'+
-    '	GODS_ID varchar (36)  NOT NULL ,'+
-    '	BATCH_NO varchar (36) NOT NULL ,'+
-    '	RCK_AMT decimal(18, 3) ,'+
-    '	RCK_MNY decimal(18, 3) ,'+
-    '	RCK_CST decimal(18, 3) ,'+
-    '	RCK_TAX decimal(18, 3) ,'+
-    '	RCK_RTL decimal(18, 3) ,'+
-    '	RCK_PRF decimal(18, 3) ,'+
-    '	RCK_AGO decimal(18, 3) ,'+
-    '	COST_PRICE decimal(18, 6) '+
-    ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
-  end;
-end;
-
-procedure TCalcForGodsCost.ClearRckTempTable(TabName: string);
-begin
-  case iDbType of
-   0,1:FdbHelp.ExecSQL('truncate table '+TabName);
-   4:FdbHelp.ExecSQL(GetRckTempTabSQL(TabName));
-   5:FdbHelp.ExecSQL('delete from '+TabName);
   end;
 end;
 
@@ -1864,56 +1829,52 @@ begin
   FdbHelp.ExecSQL(SQL);    
 
   //4、生成月台账临时表
+  //if iDbType <> 5 then FdbHelp.BeginTrans;
   try
-    //if iDbType <> 5 then FdbHelp.BeginTrans;
-    try
-      //A、生成月台账汇总插入(RCK_GOODS_MONTH)
-      SQL :=
-        'insert into RCK_GOODS_MONTH('+
-           'TENANT_ID,SHOP_ID,MONTH,GODS_ID,BATCH_NO,'+
-           'ORG_AMT,ORG_CST,'+
-           'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
-           'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,'+
-           'SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
-           'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
-           'DBIN_AMT,DBIN_CST,'+
-           'DBOUT_AMT,DBOUT_CST,'+
-           'CHANGE1_AMT,CHANGE1_CST,'+
-           'CHANGE2_AMT,CHANGE2_CST,'+
-           'CHANGE3_AMT,CHANGE3_CST,'+
-           'CHANGE4_AMT,CHANGE4_CST,'+
-           'CHANGE5_AMT,CHANGE5_CST,'+
-           'BAL_AMT,BAL_CST,ADJ_CST,COMM,TIME_STAMP '+
-        ') '+
-        'select '+
-           'TENANT_ID,SHOP_ID,'+FormatDatetime('YYYYMM',EndReckDate)+' as MONTH,GODS_ID,BATCH_NO,'+
-           'round(sum(ORG_AMT),3)as ORG_AMT,'+
-           'round(sum(ORG_CST),2)as ORG_CST,'+
-           'round(sum(STOCK_AMT),3),round(sum(STOCK_MNY),2),round(sum(STOCK_TAX),2),round(sum(STOCK_AGO),2),round(sum(STKRT_AMT),3),round(sum(STKRT_MNY),2),round(sum(STKRT_TAX),2),'+
-           'round(sum(SALE_AMT),3),round(sum(SALE_RTL),2),round(sum(SALE_AGO),2),round(sum(SALE_MNY),2),round(sum(SALE_TAX),2),round(sum(SALE_CST),2),round(sum(SALE_PRF),2),'+
-           'round(sum(SALRT_AMT),3),round(sum(SALRT_MNY),2),round(sum(SALRT_TAX),2),round(sum(SALRT_CST),2),'+
-           'round(sum(PRIOR_YEAR_AMT),2),round(sum(PRIOR_YEAR_MNY),2),round(sum(PRIOR_YEAR_TAX),2),round(sum(PRIOR_YEAR_CST),2),round(sum(PRIOR_MONTH_AMT),2),round(sum(PRIOR_MONTH_MNY),2),round(sum(PRIOR_MONTH_TAX),2),round(sum(PRIOR_MONTH_CST),2),'+
-           'round(sum(DBIN_AMT),3),round(sum(DBIN_CST),2),'+
-           'round(sum(DBOUT_AMT),3),round(sum(DBOUT_CST),2),'+
-           'round(sum(CHANGE1_AMT),3),round(sum(CHANGE1_CST),2),'+
-           'round(sum(CHANGE2_AMT),3),round(sum(CHANGE2_CST),2),'+
-           'round(sum(CHANGE3_AMT),3),round(sum(CHANGE3_CST),2),'+
-           'round(sum(CHANGE4_AMT),3),round(sum(CHANGE4_CST),2),'+
-           'round(sum(CHANGE5_AMT),3),round(sum(CHANGE5_CST),2),'+
-           'round(sum(BAL_AMT),3)as BAL_AMT,'+
-           'round(sum(BAL_CST),2)as BAL_CST,'+
-           '0,''00'' as COMM,'+GetTimeStamp(iDbType)+' '+
-        'from '+tempTableUpMonth+' '+
-      ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
-      FdbHelp.ExecSQL(SQL);
+    //A、生成月台账汇总插入(RCK_GOODS_MONTH)
+    SQL :=
+      'insert into RCK_GOODS_MONTH('+
+         'TENANT_ID,SHOP_ID,MONTH,GODS_ID,BATCH_NO,'+
+         'ORG_AMT,ORG_CST,'+
+         'STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,'+
+         'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,'+
+         'SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,'+
+         'PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,'+
+         'DBIN_AMT,DBIN_CST,'+
+         'DBOUT_AMT,DBOUT_CST,'+
+         'CHANGE1_AMT,CHANGE1_CST,'+
+         'CHANGE2_AMT,CHANGE2_CST,'+
+         'CHANGE3_AMT,CHANGE3_CST,'+
+         'CHANGE4_AMT,CHANGE4_CST,'+
+         'CHANGE5_AMT,CHANGE5_CST,'+
+         'BAL_AMT,BAL_CST,ADJ_CST,COMM,TIME_STAMP '+
+      ') '+
+      'select '+
+         'TENANT_ID,SHOP_ID,'+FormatDatetime('YYYYMM',EndReckDate)+' as MONTH,GODS_ID,BATCH_NO,'+
+         'round(sum(ORG_AMT),3)as ORG_AMT,'+
+         'round(sum(ORG_CST),2)as ORG_CST,'+
+         'round(sum(STOCK_AMT),3),round(sum(STOCK_MNY),2),round(sum(STOCK_TAX),2),round(sum(STOCK_AGO),2),round(sum(STKRT_AMT),3),round(sum(STKRT_MNY),2),round(sum(STKRT_TAX),2),'+
+         'round(sum(SALE_AMT),3),round(sum(SALE_RTL),2),round(sum(SALE_AGO),2),round(sum(SALE_MNY),2),round(sum(SALE_TAX),2),round(sum(SALE_CST),2),round(sum(SALE_PRF),2),'+
+         'round(sum(SALRT_AMT),3),round(sum(SALRT_MNY),2),round(sum(SALRT_TAX),2),round(sum(SALRT_CST),2),'+
+         'round(sum(PRIOR_YEAR_AMT),2),round(sum(PRIOR_YEAR_MNY),2),round(sum(PRIOR_YEAR_TAX),2),round(sum(PRIOR_YEAR_CST),2),round(sum(PRIOR_MONTH_AMT),2),round(sum(PRIOR_MONTH_MNY),2),round(sum(PRIOR_MONTH_TAX),2),round(sum(PRIOR_MONTH_CST),2),'+
+         'round(sum(DBIN_AMT),3),round(sum(DBIN_CST),2),'+
+         'round(sum(DBOUT_AMT),3),round(sum(DBOUT_CST),2),'+
+         'round(sum(CHANGE1_AMT),3),round(sum(CHANGE1_CST),2),'+
+         'round(sum(CHANGE2_AMT),3),round(sum(CHANGE2_CST),2),'+
+         'round(sum(CHANGE3_AMT),3),round(sum(CHANGE3_CST),2),'+
+         'round(sum(CHANGE4_AMT),3),round(sum(CHANGE4_CST),2),'+
+         'round(sum(CHANGE5_AMT),3),round(sum(CHANGE5_CST),2),'+
+         'round(sum(BAL_AMT),3)as BAL_AMT,'+
+         'round(sum(BAL_CST),2)as BAL_CST,'+
+         '0,''00'' as COMM,'+GetTimeStamp(iDbType)+' '+
+      'from '+tempTableUpMonth+' '+
+    ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
+    FdbHelp.ExecSQL(SQL);
 
-      //if iDbType <> 5 then FdbHelp.CommitTrans;
-    except
-      //if iDbType <> 5 then FdbHelp.RollbackTrans;
-      Raise;
-    end;
-  finally
-    CleanTempMonth; //清空临时表
+    //if iDbType <> 5 then FdbHelp.CommitTrans;
+  except
+    //if iDbType <> 5 then FdbHelp.RollbackTrans;
+    Raise;
   end;
   result:=true;
 end;
@@ -1932,18 +1893,6 @@ begin
   //生数据临时表
   SQL:=GetTempMonthSQL(tempTableUpMonth);
   CreateTable(tempTableUpMonth,SQL,'TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO',True);
-end;
-
-function TCalcForGodsMonth.CleanTempMonth: boolean;
-begin
-  try
-    case iDbType of
-     0,1:FdbHelp.ExecSQL('truncate table '+tempTableUpMonth);
-     4: FdbHelp.ExecSQL(GetTempMonthSQL(tempTableUpMonth));
-     5:FdbHelp.ExecSQL('delete from '+tempTableUpMonth);
-    end;
-  except
-  end;
 end;
 
 { TCalcForDayAcct }
@@ -2057,16 +2006,6 @@ end;
 
 { TCalcForGodsAnaly }
 
-function TCalcForGodsAnaly.CleanTempGodsAnaly: boolean;
-begin
-  //先清空临时表
-  case iDbType of
-   0,1:FdbHelp.ExecSQL('truncate table '+tempTableGods);
-   4:FdbHelp.ExecSQL(GetTempAnalySQL(tempTableGods));
-   5:FdbHelp.ExecSQL('delete from '+tempTableGods);
-  end;
-end;
-
 procedure TCalcForGodsAnaly.ClearAnalyTempTable(TabName: string);
 begin
   //先清空临时表
@@ -2094,7 +2033,83 @@ begin
    4: tempTableGods := 'session.T_GOODS';
    5: tempTableGods := 'T_GOODS';
   end;
-  TabSQL:=GetTempGoodSQL(tempTableGods);
+  case iDbType of
+   0,5:TabSQL :=
+        'CREATE TABLE '+tempTableGods+' ('+
+        '	TENANT_ID int NOT NULL ,'+
+        '	GODS_ID varchar (36)  NOT NULL ,'+
+        ' SORT_ID1 varchar (36)  NOT NULL ,'+
+        ' SORT_ID2 varchar (36)  NOT NULL ,'+
+        ' SORT_ID3 varchar (36)  NOT NULL ,'+
+        ' SORT_ID4 varchar (36)  NOT NULL ,'+
+        ' SORT_ID5 varchar (36)  NOT NULL ,'+
+        ' SORT_ID6 varchar (36)  NOT NULL ,'+
+        ' SORT_ID7 varchar (36)  NOT NULL ,'+
+        ' SORT_ID8 varchar (36)  NOT NULL ,'+
+        ' SORT_ID9 varchar (36)  NOT NULL ,'+
+        ' SORT_ID10 varchar (36)  NOT NULL ,'+
+        ' SORT_ID11 varchar (36)  NOT NULL ,'+
+        ' SORT_ID12 varchar (36)  NOT NULL ,'+
+        ' SORT_ID13 varchar (36)  NOT NULL ,'+
+        ' SORT_ID14 varchar (36)  NOT NULL ,'+
+        ' SORT_ID15 varchar (36)  NOT NULL ,'+
+        ' SORT_ID16 varchar (36)  NOT NULL ,'+
+        ' SORT_ID17 varchar (36)  NOT NULL ,'+
+        ' SORT_ID18 varchar (36)  NOT NULL ,'+
+        ' SORT_ID19 varchar (36)  NOT NULL ,'+
+        ' SORT_ID20 varchar (36)  NOT NULL '+
+        ')';
+   1: TabSQL :=
+        'create global temporary table '+tempTableGods+' ('+
+        ' TENANT_ID NUMBER(9,0) NOT NULL ,'+
+        ' GODS_ID varchar2(36)  NOT NULL ,'+
+        ' SORT_ID1 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID2 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID3 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID4 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID5 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID6 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID7 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID8 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID9 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID10 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID11 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID12 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID13 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID14 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID15 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID16 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID17 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID18 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID19 varchar2(36)  NOT NULL ,'+
+        ' SORT_ID20 varchar2(36)  NOT NULL '+
+        ') ON COMMIT PRESERVE ROWS';
+   4: TabSQL :=
+        'declare global temporary table '+tempTableGods+' ('+
+        '	TENANT_ID int NOT NULL ,'+
+        '	GODS_ID varchar (36)  NOT NULL ,'+
+        '	SORT_ID1 varchar (36)  NOT NULL ,'+
+        '	SORT_ID2 varchar (36)  NOT NULL ,'+
+        '	SORT_ID3 varchar (36)  NOT NULL ,'+
+        '	SORT_ID4 varchar (36)  NOT NULL ,'+
+        '	SORT_ID5 varchar (36)  NOT NULL ,'+
+        '	SORT_ID6 varchar (36)  NOT NULL ,'+
+        '	SORT_ID7 varchar (36)  NOT NULL ,'+
+        '	SORT_ID8 varchar (36)  NOT NULL ,'+
+        '	SORT_ID9 varchar (36)  NOT NULL ,'+
+        '	SORT_ID10 varchar (36)  NOT NULL ,'+
+        '	SORT_ID11 varchar (36)  NOT NULL ,'+
+        '	SORT_ID12 varchar (36)  NOT NULL ,'+
+        '	SORT_ID13 varchar (36)  NOT NULL ,'+
+        '	SORT_ID14 varchar (36)  NOT NULL ,'+
+        '	SORT_ID15 varchar (36)  NOT NULL ,'+
+        '	SORT_ID16 varchar (36)  NOT NULL ,'+
+        '	SORT_ID17 varchar (36)  NOT NULL ,'+
+        '	SORT_ID18 varchar (36)  NOT NULL ,'+
+        '	SORT_ID19 varchar (36)  NOT NULL ,'+
+        '	SORT_ID20 varchar (36)  NOT NULL '+
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
+  end;
   //立即生成临时表数据
   CreateTable(tempTableGods,TabSQL,'TENANT_ID,GODS_ID');
   TabSQL:=
@@ -2131,101 +2146,93 @@ var
   rs:TZQuery;
 begin
   result:=False;
-  try
-    safe := Params.ParamByName('SAFE_DAY').AsInteger;
-    reas := Params.ParamByName('REAS_DAY').AsInteger;
-    daySale := Params.ParamByName('DAY_SALE_STAND').AsInteger;
-    sid := Params.ParamByName('SMT_RATE').AsString;
+  safe := Params.ParamByName('SAFE_DAY').AsInteger;
+  reas := Params.ParamByName('REAS_DAY').AsInteger;
+  daySale := Params.ParamByName('DAY_SALE_STAND').AsInteger;
+  sid := Params.ParamByName('SMT_RATE').AsString;
 
-    //判断并插入不存在记录商品
-    SQL :=
-      'insert into PUB_GOODS_INSHOP(TENANT_ID,GODS_ID,SHOP_ID,COMM,TIME_STAMP)'+
-      'select TENANT_ID,GODS_ID,SHOP_ID,''00'','+GetTimeStamp(iDbType)+' from VIW_GOODSPRICE A where TENANT_ID='+inttostr(TENANT_ID)+' and '+
-      'not Exists(select * from PUB_GOODS_INSHOP where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SHOP_ID=A.SHOP_ID)';
-    FdbHelp.ExecSQL(SQL);
+  //判断并插入不存在记录商品
+  SQL :=
+    'insert into PUB_GOODS_INSHOP(TENANT_ID,GODS_ID,SHOP_ID,COMM,TIME_STAMP)'+
+    'select TENANT_ID,GODS_ID,SHOP_ID,''00'','+GetTimeStamp(iDbType)+' from VIW_GOODSPRICE A where TENANT_ID='+inttostr(TENANT_ID)+' and '+
+    'not Exists(select * from PUB_GOODS_INSHOP where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SHOP_ID=A.SHOP_ID)';
+  FdbHelp.ExecSQL(SQL);
 
-    //1、算近期销量(NEAR_SALE_AMT)
-    ClearAnalyTempTable(tempTableUpShop);
-    SQL:=                                                                              
-       'insert into '+tempTableUpShop+'(TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT)'+
-       'select TENANT_ID,SHOP_ID,GODS_ID,sum(CALC_AMOUNT)as SALE_AMT from VIW_SALESDATA where TENANT_ID='+inttostr(TENANT_ID)+
-       ' and SALES_DATE>='+FormatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+' '+
-       ' group by TENANT_ID,SHOP_ID,GODS_ID';
-    FdbHelp.ExecSQL(SQL);
-    //更新PUB_GOODS_INSHOP.NEAR_SALE_AMT
-    SQL :=
-      'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select SALE_AMT from '+tempTableUpShop+' where TENANT_ID='+inttostr(TENANT_ID)+
-      ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID) '+
-      'where TENANT_ID='+inttostr(TENANT_ID);
-    FdbHelp.ExecSQL(SQL);
+  //1、算近期销量(NEAR_SALE_AMT)
+  ClearAnalyTempTable(tempTableUpShop);
+  SQL:=                                                                              
+     'insert into '+tempTableUpShop+'(TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT)'+
+     'select TENANT_ID,SHOP_ID,GODS_ID,sum(CALC_AMOUNT)as SALE_AMT from VIW_SALESDATA where TENANT_ID='+inttostr(TENANT_ID)+
+     ' and SALES_DATE>='+FormatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+' '+
+     ' group by TENANT_ID,SHOP_ID,GODS_ID';
+  FdbHelp.ExecSQL(SQL);
+  //更新PUB_GOODS_INSHOP.NEAR_SALE_AMT
+  SQL :=
+    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select SALE_AMT from '+tempTableUpShop+' where TENANT_ID='+inttostr(TENANT_ID)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID) '+
+    'where TENANT_ID='+inttostr(TENANT_ID);
+  FdbHelp.ExecSQL(SQL);
 
-    //2、日均销量测算(DAY_SALE_AMT)
-    ClearAnalyTempTable(tempTableUpShop);
-    SQL:=
-      'insert into '+tempTableUpShop+'(TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT)'+
-      'select TENANT_ID,SHOP_ID,GODS_ID,round((DAY_SALE_AMT*1.000000/'+GetDayDiff(iDbType,'MIN_SALES_DATE','MAX_SALES_DATE')+'),3)as SALE_AMT '+
-      ' from (select TENANT_ID,SHOP_ID,GODS_ID,sum(CALC_AMOUNT)as DAY_SALE_AMT,min(SALES_DATE)as MIN_SALES_DATE,max(SALES_DATE)as MAX_SALES_DATE from VIW_SALESDATA where TENANT_ID='+inttostr(TENANT_ID)+
-      ' and SALES_DATE>='+FormatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+' '+
-      ' group by TENANT_ID,SHOP_ID,GODS_ID)tp';
-    FdbHelp.ExecSQL(SQL);
-    //更新PUB_GOODS_INSHOP.DAY_SALE_AMT
-    SQL :=
-      'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select SALE_AMT from '+tempTableUpShop+' where TENANT_ID='+inttostr(TENANT_ID)+
-      ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID) '+
-      'where TENANT_ID='+inttostr(TENANT_ID);
-    FdbHelp.ExecSQL(SQL);
+  //2、日均销量测算(DAY_SALE_AMT)
+  ClearAnalyTempTable(tempTableUpShop);
+  SQL:=
+    'insert into '+tempTableUpShop+'(TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT)'+
+    'select TENANT_ID,SHOP_ID,GODS_ID,round((DAY_SALE_AMT*1.000000/'+GetDayDiff(iDbType,'MIN_SALES_DATE','MAX_SALES_DATE')+'),3)as SALE_AMT '+
+    ' from (select TENANT_ID,SHOP_ID,GODS_ID,sum(CALC_AMOUNT)as DAY_SALE_AMT,min(SALES_DATE)as MIN_SALES_DATE,max(SALES_DATE)as MAX_SALES_DATE from VIW_SALESDATA where TENANT_ID='+inttostr(TENANT_ID)+
+    ' and SALES_DATE>='+FormatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+' '+
+    ' group by TENANT_ID,SHOP_ID,GODS_ID)tp';
+  FdbHelp.ExecSQL(SQL);
+  //更新PUB_GOODS_INSHOP.DAY_SALE_AMT
+  SQL :=
+    'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select SALE_AMT from '+tempTableUpShop+' where TENANT_ID='+inttostr(TENANT_ID)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID) '+
+    'where TENANT_ID='+inttostr(TENANT_ID);
+  FdbHelp.ExecSQL(SQL);
 
-    //3、本月销量(MTH_SALE_AMT)
-    ClearAnalyTempTable(tempTableUpShop);
-    SQL:=
-      'insert into '+tempTableUpShop+'(TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT)'+
-      'select TENANT_ID,SHOP_ID,GODS_ID,sum(CALC_AMOUNT) as SALE_AMT from VIW_SALESDATA where TENANT_ID='+inttostr(TENANT_ID)+
-      ' and SALES_DATE>='+formatDatetime('YYYYMM01',Date)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
-      ' group by TENANT_ID,SHOP_ID,GODS_ID ';
-    FdbHelp.ExecSQL(SQL);
-    //更新PUB_GOODS_INSHOP.MTH_SALE_AMT
-    SQL :=
-      'update PUB_GOODS_INSHOP set MTH_SALE_AMT=(select SALE_AMT from '+tempTableUpShop+' where TENANT_ID='+inttostr(TENANT_ID)+
-      ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID) '+
-      'where TENANT_ID='+inttostr(TENANT_ID);
-    FdbHelp.ExecSQL(SQL);
+  //3、本月销量(MTH_SALE_AMT)
+  ClearAnalyTempTable(tempTableUpShop);
+  SQL:=
+    'insert into '+tempTableUpShop+'(TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT)'+
+    'select TENANT_ID,SHOP_ID,GODS_ID,sum(CALC_AMOUNT) as SALE_AMT from VIW_SALESDATA where TENANT_ID='+inttostr(TENANT_ID)+
+    ' and SALES_DATE>='+formatDatetime('YYYYMM01',Date)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    ' group by TENANT_ID,SHOP_ID,GODS_ID ';
+  FdbHelp.ExecSQL(SQL);
+  //更新PUB_GOODS_INSHOP.MTH_SALE_AMT
+  SQL :=
+    'update PUB_GOODS_INSHOP set MTH_SALE_AMT=(select SALE_AMT from '+tempTableUpShop+' where TENANT_ID='+inttostr(TENANT_ID)+
+    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID) '+
+    'where TENANT_ID='+inttostr(TENANT_ID);
+  FdbHelp.ExecSQL(SQL);
 
-    //4、安全库存及合理库存测算
-    SQL :=
-      'update PUB_GOODS_INSHOP set LOWER_AMOUNT=DAY_SALE_AMT*'+inttostr(safe)+',UPPER_AMOUNT=DAY_SALE_AMT*'+inttostr(reas)+' '+
-      'where TENANT_ID='+inttostr(TENANT_ID)+'';
-    FdbHelp.ExecSQL(SQL);
+  //4、安全库存及合理库存测算
+  SQL :=
+    'update PUB_GOODS_INSHOP set LOWER_AMOUNT=DAY_SALE_AMT*'+inttostr(safe)+',UPPER_AMOUNT=DAY_SALE_AMT*'+inttostr(reas)+' '+
+    'where TENANT_ID='+inttostr(TENANT_ID)+'';
+  FdbHelp.ExecSQL(SQL);
  
-    if sid='' then sid := '2';
-    //计算存销比
-    rs := TZQuery.Create(nil);
-    try
-      rs.Close;
-      rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE like ''SMT_RATE_%'' and COMM not in (''02'',''12'')';
-      FdbHelp.Open(rs);
-      if not rs.IsEmpty then CreateGoodTable; //创建商品临时表
-      rs.First;
-      while not rs.Eof do
-      begin
-        id := copy(rs.Fields[0].AsString,1,36);
-        v := trim(copy(rs.Fields[0].AsString,38,555));
-        w := pos('-',v);
-        v1:= copy(v,1,w-1);
-        v2:= copy(v,w+1,20);
-        SQL:='update PUB_GOODS_INSHOP set LOWER_RATE='+v1+',UPPER_RATE='+v2+' where TENANT_ID='+inttostr(TENANT_ID)+
-             ' and exists(select * from '+tempTableGods+' where TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SORT_ID'+sid+'='''+id+''')';
-        FdbHelp.ExecSQL(SQL);
-        rs.Next;
-      end;
-    finally
-      rs.Free;
+  if sid='' then sid := '2';
+  //计算存销比
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE like ''SMT_RATE_%'' and COMM not in (''02'',''12'')';
+    FdbHelp.Open(rs);
+    if not rs.IsEmpty then CreateGoodTable; //创建商品临时表
+    rs.First;
+    while not rs.Eof do
+    begin
+      id := copy(rs.Fields[0].AsString,1,36);
+      v := trim(copy(rs.Fields[0].AsString,38,555));
+      w := pos('-',v);
+      v1:= copy(v,1,w-1);
+      v2:= copy(v,w+1,20);
+      SQL:='update PUB_GOODS_INSHOP set LOWER_RATE='+v1+',UPPER_RATE='+v2+' where TENANT_ID='+inttostr(TENANT_ID)+
+           ' and exists(select * from '+tempTableGods+' where TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SORT_ID'+sid+'='''+id+''')';
+      FdbHelp.ExecSQL(SQL);
+      rs.Next;
     end;
   finally
-    try
-      ClearAnalyTempTable(tempTableUpShop);
-      CleanTempGodsAnaly;
-    except
-    end;
+    rs.Free;
   end;
   result:=True;
 end;
@@ -2358,87 +2365,6 @@ begin
       Msg:=E.Message;
       Raise;
     end;
-  end;
-end;
-
-function TCalcForGodsAnaly.GetTempGoodSQL(tb: string): string;
-begin
-  case iDbType of
-   0,5:result :=
-        'CREATE TABLE '+tb+' ('+
-        '	TENANT_ID int NOT NULL ,'+
-        '	GODS_ID varchar (36)  NOT NULL ,'+
-        ' SORT_ID1 varchar (36)  NOT NULL ,'+
-        ' SORT_ID2 varchar (36)  NOT NULL ,'+
-        ' SORT_ID3 varchar (36)  NOT NULL ,'+
-        ' SORT_ID4 varchar (36)  NOT NULL ,'+
-        ' SORT_ID5 varchar (36)  NOT NULL ,'+
-        ' SORT_ID6 varchar (36)  NOT NULL ,'+
-        ' SORT_ID7 varchar (36)  NOT NULL ,'+
-        ' SORT_ID8 varchar (36)  NOT NULL ,'+
-        ' SORT_ID9 varchar (36)  NOT NULL ,'+
-        ' SORT_ID10 varchar (36)  NOT NULL ,'+
-        ' SORT_ID11 varchar (36)  NOT NULL ,'+
-        ' SORT_ID12 varchar (36)  NOT NULL ,'+
-        ' SORT_ID13 varchar (36)  NOT NULL ,'+
-        ' SORT_ID14 varchar (36)  NOT NULL ,'+
-        ' SORT_ID15 varchar (36)  NOT NULL ,'+
-        ' SORT_ID16 varchar (36)  NOT NULL ,'+
-        ' SORT_ID17 varchar (36)  NOT NULL ,'+
-        ' SORT_ID18 varchar (36)  NOT NULL ,'+
-        ' SORT_ID19 varchar (36)  NOT NULL ,'+
-        ' SORT_ID20 varchar (36)  NOT NULL '+
-        ')';
-   1: result :=
-        'create global temporary table '+tb+' ('+
-        ' TENANT_ID NUMBER(9,0) NOT NULL ,'+
-        ' GODS_ID varchar2(36)  NOT NULL ,'+
-        ' SORT_ID1 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID2 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID3 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID4 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID5 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID6 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID7 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID8 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID9 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID10 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID11 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID12 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID13 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID14 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID15 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID16 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID17 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID18 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID19 varchar2(36)  NOT NULL ,'+
-        ' SORT_ID20 varchar2(36)  NOT NULL '+
-        ') ON COMMIT PRESERVE ROWS';
-   4: result :=
-        'declare global temporary table '+tb+' ('+
-        '	TENANT_ID int NOT NULL ,'+
-        '	GODS_ID varchar (36)  NOT NULL ,'+
-        '	SORT_ID1 varchar (36)  NOT NULL ,'+
-        '	SORT_ID2 varchar (36)  NOT NULL ,'+
-        '	SORT_ID3 varchar (36)  NOT NULL ,'+
-        '	SORT_ID4 varchar (36)  NOT NULL ,'+
-        '	SORT_ID5 varchar (36)  NOT NULL ,'+
-        '	SORT_ID6 varchar (36)  NOT NULL ,'+
-        '	SORT_ID7 varchar (36)  NOT NULL ,'+
-        '	SORT_ID8 varchar (36)  NOT NULL ,'+
-        '	SORT_ID9 varchar (36)  NOT NULL ,'+
-        '	SORT_ID10 varchar (36)  NOT NULL ,'+
-        '	SORT_ID11 varchar (36)  NOT NULL ,'+
-        '	SORT_ID12 varchar (36)  NOT NULL ,'+
-        '	SORT_ID13 varchar (36)  NOT NULL ,'+
-        '	SORT_ID14 varchar (36)  NOT NULL ,'+
-        '	SORT_ID15 varchar (36)  NOT NULL ,'+
-        '	SORT_ID16 varchar (36)  NOT NULL ,'+
-        '	SORT_ID17 varchar (36)  NOT NULL ,'+
-        '	SORT_ID18 varchar (36)  NOT NULL ,'+
-        '	SORT_ID19 varchar (36)  NOT NULL ,'+
-        '	SORT_ID20 varchar (36)  NOT NULL '+
-        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE';
   end;
 end;
 

@@ -1,3 +1,9 @@
+drop index IX_PUB_GOODSPRICE_PRICE_ID on PUB_GOODSPRICE;
+alter table PUB_GOODSPRICE drop constraint PK_PUB_GOODSPRICE;
+alter table PUB_GOODSPRICE alter column PRICE_ID varchar(36) not null;
+alter table PUB_GOODSPRICE add  constraint PK_PUB_GOODSPRICE primary key (TENANT_ID,GODS_ID,SHOP_ID,PRICE_ID);
+create index IX_PUB_GOODSPRICE_PRICE_ID on PUB_GOODSPRICE(TENANT_ID,PRICE_ID);
+update PUB_GOODSPRICE set PRICE_ID = rtrim(ltrim(PRICE_ID)) where PRICE_ID='#                                   ';
 --批号管理
 CREATE TABLE PUB_BATCH_NO (
         --企业代码

@@ -41,6 +41,7 @@ type
     edtDEPT_ID: TzrComboBoxList;
     Label9: TLabel;
     edtBILL_NO: TcxTextEdit;
+    cdsSaveDetail: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -117,6 +118,7 @@ begin
         Factor.AddBatch(cdsHeader,'TRecvOrder',Params);
         Factor.AddBatch(cdsDetail,'TRecvData',Params);
         Factor.OpenBatch;
+        cdsSaveDetail.Data := cdsDetail.Data;
       except
         Factor.CancelBatch;
         Raise;
@@ -235,6 +237,7 @@ var
   n:integer;
   rs:TZQuery;
   r:real;
+  DObj:TRecord_;
 begin
   if edtSHOP_ID.AsString = '' then Raise Exception.Create('请选择缴款门店');
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
@@ -253,9 +256,19 @@ begin
   cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsDetail.DisableControls;
+  DObj := TRecord_.Create;
   try
     n := 0;
     r := 0;
+    cdsSaveDetail.First;
+    while not cdsSaveDetail.Eof do
+      begin
+        if cdsSaveDetail.FieldByName('RECV_MNY').AsCurrency<>0 then
+           cdsSaveDetail.Delete
+        else
+           cdsSaveDetail.Next;
+      end;
+
     cdsDetail.First;
     while not cdsDetail.Eof do
       begin
@@ -273,10 +286,16 @@ begin
             cdsDetail.FieldbyName('RECV_ID').AsString := AObj.FieldbyName('RECV_ID').AsString;
             r := r + cdsDetail.FieldbyName('RECV_MNY').AsFloat;
             cdsDetail.Post;
+            DObj.ReadFromDataSet(cdsDetail);
+            cdsSaveDetail.Append;
+            DObj.WriteToDataSet(cdsSaveDetail);
+            cdsSaveDetail.Post;
+
             cdsDetail.Next;
            end;
       end;
   finally
+    DObj.Free;
     cdsDetail.EnableControls;
   end;
   cdsHeader.FieldbyName('RECV_MNY').AsFloat := r;
@@ -285,10 +304,11 @@ begin
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsHeader,'TRecvOrder');
-    Factor.AddBatch(cdsDetail,'TRecvData');
+    Factor.AddBatch(cdsSaveDetail,'TRecvData');
     Factor.CommitBatch;
   except
     Factor.CancelBatch;
+    cdsSaveDetail.CancelUpdates;
     Raise;
   end;
   dbState := dsBrowse;

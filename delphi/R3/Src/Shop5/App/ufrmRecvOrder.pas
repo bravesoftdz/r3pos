@@ -48,6 +48,7 @@ type
     BtnVoucher: TRzBitBtn;
     Label4: TLabel;
     cdsICGlide: TZQuery;
+    cdsSaveDetail: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -128,6 +129,7 @@ begin
         Factor.AddBatch(cdsDetail,'TRecvData',Params);
         Factor.AddBatch(cdsIcGlide,'TSalesICData',Params);
         Factor.OpenBatch;
+        cdsSaveDetail.Data := cdsDetail.Data;
       except
         Factor.CancelBatch;
         Raise;
@@ -234,7 +236,7 @@ begin
   begin
     SetEditStyle(dsBrowse,edtSHOP_ID.Style);
     edtSHOP_ID.Properties.ReadOnly := True;
-  end;  
+  end;
 end;
 
 procedure TfrmRecvOrder.SaveOrder;
@@ -242,6 +244,7 @@ var
   n:integer;
   rs:TZQuery;
   r:currency;
+  DObj:TRecord_;
 begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择缴款门店');
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
@@ -265,9 +268,18 @@ begin
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   if (cdsHeader.FieldbyName('PAYM_ID').asString='C') and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
   cdsDetail.DisableControls;
+  DObj:=TRecord_.Create;
   try
     n := 0;
     r := 0;
+    cdsSaveDetail.First;
+    while not cdsSaveDetail.Eof do
+      begin
+        if cdsSaveDetail.FieldByName('RECV_MNY').AsCurrency<>0 then
+           cdsSaveDetail.Delete
+        else
+           cdsSaveDetail.Next;
+      end;
     cdsDetail.First;
     while not cdsDetail.Eof do
       begin
@@ -285,10 +297,15 @@ begin
             cdsDetail.FieldbyName('RECV_ID').AsString := AObj.FieldbyName('RECV_ID').AsString;
             r := r + cdsDetail.FieldbyName('RECV_MNY').AsFloat;
             cdsDetail.Post;
+            DObj.ReadFromDataSet(cdsDetail);
+            cdsSaveDetail.Append;
+            DObj.WriteToDataSet(cdsSaveDetail);
+            cdsSaveDetail.Post;
             cdsDetail.Next;
            end;
       end;
   finally
+    DObj.Free;
     cdsDetail.EnableControls;
   end;
   cdsHeader.FieldbyName('RECV_MNY').AsFloat := r;
@@ -311,7 +328,7 @@ begin
        if rs.Locate('CLIENT_ID',cdsHeader.FieldbyName('CLIENT_ID').asString,[]) then
           cdsIcGlide.FieldbyName('IC_CARDNO').AsString := rs.FieldbyName('CLIENT_CODE').AsString
        else
-          Raise Exception.Create('没有找到当前客户的储值卡,无法支付'); 
+          Raise Exception.Create('没有找到当前客户的储值卡,无法支付');
        cdsIcGlide.FieldbyName('PAY_C').asFloat := cdsHeader.FieldbyName('RECV_MNY').AsFloat;
        cdsIcGlide.FieldbyName('GLIDE_MNY').asFloat := cdsHeader.FieldbyName('RECV_MNY').AsFloat;
        cdsIcGlide.Post;
@@ -329,6 +346,7 @@ begin
     Factor.CommitBatch;
   except
     Factor.CancelBatch;
+    cdsSaveDetail.CancelUpdates;
     Raise;
   end;
   dbState := dsBrowse;

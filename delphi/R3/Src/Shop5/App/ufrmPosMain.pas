@@ -1931,7 +1931,7 @@ begin
           ') c on j.UNION_ID=c.UNION_ID ';
         Factor.Open(rs);
       end;
-      if CopyCustomerFromUnion(id) then
+      if (rs.IsEmpty) and CopyCustomerFromUnion(id) then
          begin
             rs.Close;
             rs.SQL.Text :=

@@ -99,7 +99,7 @@ begin
     f.ReadSections(ls);
     for i:=0 to ls.count-1 do
       begin
-         if copy(ls[i],1,2)='H_' then
+         if (copy(ls[i],1,2)='H_') and (copy(ls[i],3,255)=srvrId) then
             begin
                DataSet.Append;
                DataSet.FieldByName('code').AsString := auditStatus;

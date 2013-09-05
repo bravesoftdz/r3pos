@@ -128,7 +128,7 @@ begin
          '        ( '+
          '          select P.*,(case when G.NEW_OUTPRICE>0 then cast(round((P.NEW_OUTPRICE*100)/(G.NEW_OUTPRICE*1.0),0) as integer) else null end) as PROFIT_RATE '+
          '          from PUB_GOODSPRICE P,VIW_GOODSPRICE G '+
-         '          where P.TENANT_ID=G.TENANT_ID and P.GODS_ID=G.GODS_ID and P.SHOP_ID=G.SHOP_ID and P.PRICE_ID<>''#'' and P.TENANT_ID=:TENANT_ID and P.SHOP_ID=:SHOP_ID and P.GODS_ID=:GODS_ID '+
+         '          where P.TENANT_ID=G.TENANT_ID and P.GODS_ID=G.GODS_ID and P.SHOP_ID=G.SHOP_ID and P.TENANT_ID=:TENANT_ID and P.SHOP_ID=:SHOP_ID and P.GODS_ID=:GODS_ID '+
          '        ) B on A.PRICE_ID=B.PRICE_ID '+
          ' order by A.PRICE_ID';
   DataSet.Close;

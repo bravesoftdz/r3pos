@@ -4990,7 +4990,7 @@ CREATE TABLE PUB_GOODSPRICE (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --客户类型 # 号为所有客户
-	PRICE_ID char (36) NOT NULL , 
+	PRICE_ID varchar (36) NOT NULL , 
         --门店代码
 	SHOP_ID varchar (13) NOT NULL ,
         --货号编码

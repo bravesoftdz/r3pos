@@ -5,7 +5,7 @@ uses
   Forms,
   Windows,
   SysUtils,
-  WinSvc,
+  WinSvc,IniFiles,
   ScktCnst,
   uSrvrMain in 'uSrvrMain.pas' {SocketForm},
   ufrmDbSetup in '..\..\Basic\ufrmDbSetup.pas' {frmDBSetup},
@@ -97,12 +97,29 @@ uses
   ObjBatchNo in '..\Shop5\Obj\ObjBatchNo.pas';
 
 {$R *.res}
+var
+  svcName:string;
+  svcDisplayName:string;
 //{$R JclCommCtrlAdmin.RES}
 
 function Installing: Boolean;
 begin
   Result := FindCmdLineSwitch('INSTALL',['-','\','/'], True) or
             FindCmdLineSwitch('UNINSTALL',['-','\','/'], True);
+end;
+
+function getServiceInfo:boolean;
+var
+  f:TIniFile;
+begin
+  f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sckt.cfg');
+  try
+    svcName := f.ReadString('svc','name','RSPScktSrvr');
+    svcDisplayName := f.ReadString('svc','displayName','RSP Socket Service');
+    result := true;
+  finally
+    f.free;
+  end;
 end;
 
 function StartService: Boolean;
@@ -116,7 +133,7 @@ begin
   Mgr := OpenSCManager(nil, nil, SC_MANAGER_ALL_ACCESS);
   if Mgr <> 0 then
   begin
-    Svc := OpenService(Mgr, PChar('RSPScktSrvr'), SERVICE_ALL_ACCESS);
+    Svc := OpenService(Mgr, PChar(svcName), SERVICE_ALL_ACCESS);
     Result := Svc <> 0;
     if Result then
     begin
@@ -145,13 +162,13 @@ begin
 end;
 var FromService:boolean;
 begin
-  FromService := StartService;
+  FromService := getServiceInfo and StartService;
   if not Installing and not FromService then
   begin
-    CreateMutex(nil, True, 'RSPSCKTSRVR');
+    CreateMutex(nil, True, Pchar(svcName));
     if GetLastError = ERROR_ALREADY_EXISTS then
     begin
-      MessageBox(0, PChar('RSP Socket Service 已经运行，不能重复执行.'), SApplicationName, MB_ICONERROR);
+      MessageBox(0, PChar('已经运行，不能重复执行.'), SApplicationName, MB_ICONERROR);
       Halt;
       Exit;
     end;
@@ -161,8 +178,10 @@ begin
     SvcMgr.Application.Initialize;
     SvcMgr.Application.Title := '通讯服务器';
     SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
+    SocketService.Name := svcName;
+    SocketService.DisplayName := svcDisplayName;
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-  SvcMgr.Application.Run;
+    SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;

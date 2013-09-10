@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 326
-    ActivePage = PropPage
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     OnChange = PagesChange
@@ -130,7 +130,7 @@ object SocketForm: TSocketForm
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           MaxLength = 20
           TabOrder = 0
-          Text = '10'
+          Text = '50'
           OnExit = IntegerExit
         end
         object ThreadUpDown: TUpDown
@@ -140,7 +140,7 @@ object SocketForm: TSocketForm
           Height = 20
           Associate = ThreadSize
           Max = 1000
-          Position = 10
+          Position = 50
           TabOrder = 1
           Thousands = False
           OnClick = UpDownClick

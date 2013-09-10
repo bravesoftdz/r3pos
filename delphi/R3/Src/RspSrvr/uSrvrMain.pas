@@ -511,7 +511,8 @@ begin
           if CompareText(Sections[i], csSettings) <> 0 then
             begin
               try
-                CreateItem(StrToInt(Sections[i]));
+                if Sections[i]<>'svc' then
+                   CreateItem(StrToInt(Sections[i]));
               except
                 on E:Exception do
                    Application.MessageBox(pchar(E.Message),'”—«ÈÃ· æ...',MB_OK+MB_ICONINFORMATION);

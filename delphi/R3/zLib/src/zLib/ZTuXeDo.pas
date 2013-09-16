@@ -829,8 +829,8 @@ begin
   try
     fConnected := false;
     if (tpinit(nil) = -1) then RaiseError;
+    DisConnect;
     fConnected := true;
-    // DisConnect;
     fiDbType := -1;
   finally
     FTickCount:=GetTickCount-FTickCount;

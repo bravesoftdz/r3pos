@@ -60,10 +60,10 @@
 			}
 			
 			ds.createDataSet();	
-			var sql = "select A.GODS_ID,B.GODS_NAME,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as PRF_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.RELATION_ID"+typeValue+"1000006 group by A.GODS_ID,B.GODS_NAME";
+			var sql = "select A.GODS_ID,B.GODS_NAME,sum(CALC_MONEY-A.CALC_AMOUNT*B.NEW_INPRICE) as PRF_MONEY from VIW_SALESDATA A,PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.TENANT_ID"+typeValue+"110000001 group by A.GODS_ID,B.GODS_NAME";
 			//取前十条数据,根据不同数据库进行取数
 			sql = rsp.fechTopResults(sql,10,'PRF_MONEY desc');
-			rsp.setLocalJson('jypm_tj',"卷烟排名统计sql:"+sql);
+			//rsp.setLocalJson('jypm_tj',"卷烟排名统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
@@ -105,9 +105,9 @@
 			var d1 = d.format('yyyyMMdd');		//上个月今天日期
 			
 			ds.createDataSet();	
-			var sql = "select j.SORT_ID,j.SORT_NAME,ifnull(c.CALC_MONEY,0) as CALC_MONEY from VIW_GOODSSORT j left outer join (select s.TENANT_ID,a.SORT_ID2,sum(s.CALC_MONEY) CALC_MONEY from VIW_SALESDATA s,VIW_GOODSINFO a where s.TENANT_ID=a.TENANT_ID and s.gods_id = a.gods_id and s.TENANT_ID="+tenant_id+" and s.SALES_DATE>="+d1+" and s.SALES_DATE<="+d2+" group by s.TENANT_ID,A.SORT_ID2) c on j.TENANT_ID=c.TENANT_ID and j.SORT_ID=c.SORT_ID2 where j.SORT_TYPE=2 and j.TENANT_ID="+tenant_id+" order by j.SEQ_NO";
+			var sql = "select j.SORT_ID,j.SORT_NAME,ifnull(c.CALC_MONEY,0) as CALC_MONEY from (select SORT_ID,SORT_NAME,SEQ_NO from PUB_GOODSSORT WHERE TENANT_ID=110000001 and SORT_TYPE=2) j left outer join (select a.SORT_ID2,sum(s.CALC_MONEY) CALC_MONEY from VIW_SALESDATA s,PUB_GOODSINFO a where s.gods_id = a.gods_id and s.TENANT_ID="+tenant_id+" and s.SALES_DATE>="+d1+" and s.SALES_DATE<="+d2+" and A.TENANT_ID=110000001 group by a.SORT_ID2) c on j.SORT_ID=c.SORT_ID2  order by j.SEQ_NO";
 			sql = rsp.parseSQL(sql);
-			rsp.setLocalJson('jyfltjqk',"卷烟分类统计sql:"+sql);
+			//rsp.setLocalJson('jyfltjqk',"卷烟分类统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
@@ -145,10 +145,9 @@
 			var d1 = d.format('yyyyMMdd');		//上个月今天日期
 			
 			ds.createDataSet();	
-			// var sql = "select j.TENANT_ID,d.SORT_ID,ifnull(d.SORT_NAME,'无分类') as SORT_NAME,j.CALC_MONEY from (select A.TENANT_ID,substr(C.LEVEL_ID,1,4) as LEVEL_ID,b.RELATION_ID,1 as SORT_TYPE,sum(A.CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID=C.TENANT_ID and B.SORT_ID1=C.SORT_ID  where A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" and B.RELATION_ID<>1000006 group by A.TENANT_ID,substr(C.LEVEL_ID,1,4),b.RELATION_ID) j left outer join VIW_GOODSSORT d on j.TENANT_ID=d.TENANT_ID and j.LEVEL_ID=d.LEVEL_ID and j.RELATION_ID=d.RELATION_ID and j.SORT_TYPE=d.SORT_TYPE order by d.SEQ_NO";
 			var sql = "select A.TENANT_ID,C.SORT_ID,COALESCE(C.SORT_NAME,'无分类') AS SORT_NAME,SUM(A.CALC_MONEY) AS CALC_MONEY from VIW_SALESDATA A inner join VIW_GOODSINFO B on A.TENANT_ID = B.TENANT_ID and A.GODS_ID = B.GODS_ID left outer join VIW_GOODSSORT C on B.TENANT_ID = C.TENANT_ID and B.SORT_ID1 = C.SORT_ID and C.SORT_TYPE = 1 where A.TENANT_ID = "+tenant_id+" and A.SALES_DATE >= "+d1+" and A.SALES_DATE <= "+d2+" and B.RELATION_ID <> 1000006 GROUP BY A.TENANT_ID,C.SORT_ID,C.SORT_NAME";
 			sql = rsp.parseSQL(sql);
-			rsp.setLocalJson('fyfltjqk',"非烟分类统计sql:"+sql);
+			//rsp.setLocalJson('fyfltjqk',"非烟分类统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			ds.first();
@@ -183,8 +182,8 @@
 			var d1 = d.format('yyyyMMdd');		//今天日期
 			ds.createDataSet();	
 			
-			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.RELATION_ID=1000006) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(case when (b.RELATION_ID=1000006) then A.CALC_AMOUNT else 0 end) cacl_amount from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE) j";
-			rsp.setLocalJson('xstjqk',"销售统计sql:"+sql);
+			var sql = "select SALES_DATE,cacl_amount,jy_money,fy_money,round((JY_MONEY*1.0/(JY_MONEY+FY_MONEY)*100),1) as jyzb from (select A.SALES_DATE,sum(case when (b.TENANT_ID=110000001) then a.CALC_MONEY else 0 end ) JY_MONEY,sum(case when (b.TENANT_ID<>110000001) then a.CALC_MONEY else 0 end ) FY_MONEY,sum(case when (b.TENANT_ID=110000001) then A.CALC_AMOUNT else 0 end) cacl_amount from VIW_SALESDATA A,PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE="+d1+" group by A.SALES_DATE) j";
+			//rsp.setLocalJson('xstjqk',"销售统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			var flag = ds.locate('SALES_DATE',d1);
@@ -218,9 +217,9 @@
 			d = d.getWeekStartDate();
 			var d1 = d.format('yyyyMMdd');		//本周第一天
 			ds.createDataSet();	
-		var sql = "select case when b.RELATION_ID=1000006 then relation_id else 0 end as relation_id,count(distinct a.gods_id) as amount,sum(case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end ) as jy_amount,sum(a.CALC_AMOUNT*b.NEW_OUTPRICE) as yj_money from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2+" group by case when b.RELATION_ID=1000006 then relation_id else 0 end";
+		var sql = "select case when (b.TENANT_ID=110000001) then 1000006 else 0 end as relation_id,count(distinct a.gods_id) as amount,sum(case b.SMALLTO_CALC when ifnull(b.smallto_calc,1) then CALC_AMOUNT/b.smallto_calc else Calc_amount end ) as jy_amount,sum(a.CALC_AMOUNT*b.NEW_OUTPRICE) as yj_money from VIW_STOCKDATA A,PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.STOCK_DATE>="+d1+" and A.STOCK_DATE<="+d2+" group by case when (b.TENANT_ID=110000001) then 1000006 else 0 end";
 			sql = rsp.parseSQL(sql);
-			rsp.setLocalJson('jhtjqk',"进货统计sql:"+sql);
+			//rsp.setLocalJson('jhtjqk',"进货统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			var amount = 0;
@@ -258,7 +257,7 @@
 			// var sql = "select count(distinct b.GODS_ID) as GODS_AMT, count(distinct a.GODS_ID) as STO_AMT,sum(a.AMOUNT ) as AMOUNT,sum(A.AMOUNT*B.NEW_OUTPRICE) as AMONEY from  VIW_GOODSINFO B left outer join STO_STORAGE A on A.TENANT_ID=B.TENANT_ID and b.comm not in ('02','12') and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id;
 			var sql = "select COUNT(DISTINCT B.GODS_ID) AS GODS_AMT,COUNT(DISTINCT A.GODS_ID) AS STO_AMT,SUM(A.AMOUNT) AS AMOUNT,SUM(A.AMOUNT * B.NEW_OUTPRICE) AS AMONEY from VIW_GOODSINFO B left outer join STO_STORAGE A on B.TENANT_ID = A.TENANT_ID and B.GODS_ID = A.GODS_ID where B.COMM NOT IN ('02','12') and B.TENANT_ID = "+tenant_id;
 			ds.setSQL(sql);	
-			rsp.setLocalJson('kc_tj',"库存统计sql:"+sql);
+			//rsp.setLocalJson('kc_tj',"库存统计sql:"+sql);
 			var dataset = factor.open(ds);
 			ds.first();
 			var goods_amt = ds.getAsString("GODS_AMT");
@@ -287,8 +286,8 @@
 			d = d.showMonthFirstDay();
 			var d1 = d.format('yyyyMMdd');		//本月第一天
 			ds.createDataSet();	
-		var sql = "select b.TENANT_ID,sum(a.calc_money-a.CALC_AMOUNT*b.new_inprice) as calc_money, sum(case when (b.RELATION_ID=1000006) then (a.CALC_MONEY-a.CALC_AMOUNT*b.new_inprice)  else 0 end ) JY_MONEY,sum(case when (b.RELATION_ID<>1000006) then  (a.CALC_MONEY-a.CALC_AMOUNT*b.new_inprice) else 0 end ) FY_MONEY from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" group by b.TENANT_ID";
-			rsp.setLocalJson('yltjqk',"盈利统计sql:"+sql);
+		var sql = "select a.TENANT_ID,sum(a.calc_money-a.CALC_AMOUNT*b.new_inprice) as calc_money, sum(case when (b.TENANT_ID=110000001) then (a.CALC_MONEY-a.CALC_AMOUNT*b.new_inprice)  else 0 end ) JY_MONEY,sum(case when (b.TENANT_ID=110000001) then  (a.CALC_MONEY-a.CALC_AMOUNT*b.new_inprice) else 0 end ) FY_MONEY from VIW_SALESDATA A,PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID and A.TENANT_ID="+tenant_id+" and A.SALES_DATE>="+d1+" and A.SALES_DATE<="+d2+" group by a.TENANT_ID";
+			//rsp.setLocalJson('yltjqk',"盈利统计sql:"+sql);
 			ds.setSQL(sql);
 			var dataset = factor.open(ds);
 			var flag = ds.locate('TENANT_ID',tenant_id);

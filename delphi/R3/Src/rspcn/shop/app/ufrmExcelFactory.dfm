@@ -1,5 +1,5 @@
 inherited frmExcelFactory: TfrmExcelFactory
-  Left = 682
+  Left = 651
   Top = 284
   Caption = 'Excel'#25968#25454#23548#20837
   ClientHeight = 425

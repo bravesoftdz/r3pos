@@ -1255,7 +1255,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.remote.DBLock(true);
+      dataFactory.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1305,7 +1305,7 @@ begin
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
-      dataFactory.remote.DBLock(false);
+      dataFactory.DBLock(false);
       Free;
     end;
   end;
@@ -1320,7 +1320,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.remote.DBLock(true);
+      dataFactory.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1337,7 +1337,7 @@ begin
            RtcSyncFactory.SyncRtcData;
          end;
     finally
-      dataFactory.remote.DBLock(false);
+      dataFactory.DBLock(false);
       Free;
     end;
   end;
@@ -1351,7 +1351,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.remote.DBLock(true);
+      dataFactory.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1359,7 +1359,7 @@ begin
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData(1,BeginDate);
     finally
-      dataFactory.remote.DBLock(false);
+      dataFactory.DBLock(false);
       Free;
     end;
   end;
@@ -1373,7 +1373,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.remote.DBLock(true);
+      dataFactory.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1385,7 +1385,7 @@ begin
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
-      dataFactory.remote.DBLock(false);
+      dataFactory.DBLock(false);
       Free;
     end;
   end;

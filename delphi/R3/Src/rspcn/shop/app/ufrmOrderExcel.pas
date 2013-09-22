@@ -415,7 +415,7 @@ begin
                   'from VIW_BARCODE VG '+
                   'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.UNIT_ID=VM1.UNIT_ID '+
                   'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.barcode in ('+FBarcode+')';
-      dataFactory.Open(rs);
+      dataFactory.sqlite.Open(rs);
       if not rs.IsEmpty then
       begin
         FBarcodeType:=1;
@@ -472,7 +472,7 @@ begin
                                 'from VIW_BARCODE VG '+
                                 'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.UNIT_ID=VM1.UNIT_ID '+
                                 'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_ID='''+rs.fieldbyName('GODS_ID').AsString+''' ';
-                  dataFactory.Open(ds);
+                  dataFactory.sqlite.Open(ds);
                   if (not ds.Locate('UNIT_NAME',strUnit,[])) then
                   begin
                       cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
@@ -553,7 +553,7 @@ begin
               'left join VIW_MEAUNITS VM2 on VG.TENANT_ID=VM2.TENANT_ID and VG.SMALL_UNITS=VM2.UNIT_ID '+
               'left join VIW_MEAUNITS VM3 on VG.TENANT_ID=VM3.TENANT_ID and VG.BIG_UNITS=VM3.UNIT_ID '+
               'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_CODE in ('+FGoodsCode+')';
-  dataFactory.Open(cs);
+  dataFactory.sqlite.Open(cs);
 
   cdsColumn.Locate('FieldName','GODS_CODE',[]);
   strCode:=cdsColumn.fieldByName('FileName').AsString;
@@ -820,6 +820,7 @@ var
   Excel,excelWorkBook,Range: Variant;
   i:integer;
   rs,un:TZQuery;
+  rate:currency;
 begin
     RzStatus.Caption := '正在写入商品数据';
     RzStatus.Update;
@@ -847,10 +848,20 @@ begin
           Excel.Cells.Item[i, 1] := rs.FieldbyName('BARCODE').AsString;
           Excel.Cells.Item[i, 2] := rs.FieldbyName('GODS_CODE').AsString;
           Excel.Cells.Item[i, 3] := rs.FieldbyName('GODS_NAME').AsString;
+          rate := 1;
           if un.Locate('UNIT_ID',rs.FieldbyName('UNIT_ID').AsString,[]) then
-             Excel.Cells.Item[i, 4] := un.FieldbyName('UNIT_NAME').AsString;
+             begin
+               if rs.FieldByName('UNIT_ID').AsString = rs.FieldByName('SMALL_UNITS').AsString then
+                  rate := rs.FieldbyName('SMALLTO_CALC').AsFloat
+               else
+               if rs.FieldByName('UNIT_ID').AsString = rs.FieldByName('BIG_UNITS').AsString then
+                  rate := rs.FieldbyName('BIGTO_CALC').AsFloat
+               else
+                  rate := 1;
+               Excel.Cells.Item[i, 4] := un.FieldbyName('UNIT_NAME').AsString;
+             end;
           Excel.Cells.Item[i, 5] := '';
-          Excel.Cells.Item[i, 6] := rs.FieldByName('NEW_INPRICE').AsString;
+          Excel.Cells.Item[i, 6] := FormatFloat('#0.0###',rs.FieldByName('NEW_INPRICE').AsFloat*rate);
           Excel.Cells.Item[i, 7] := '';
           inc(i);
           rs.Next;

@@ -621,6 +621,13 @@ begin
   else
      begin
         cdsGoodsInfo.CancelUpdates;
+        cdsGoodsInfo.Edit;
+        cdsGoodsInfo.FieldbyName('CALC_UNITS').AsString := AObj.FieldbyName('CALC_UNITS').asString;
+        cdsGoodsInfo.FieldbyName('SMALL_UNITS').AsString := AObj.FieldbyName('SMALL_UNITS').asString;
+        cdsGoodsInfo.FieldbyName('BIG_UNITS').AsString := AObj.FieldbyName('BIG_UNITS').asString;
+        cdsGoodsInfo.FieldbyName('SMALLTO_CALC').AsString := AObj.FieldbyName('SMALLTO_CALC').asString;
+        cdsGoodsInfo.FieldbyName('BIGTO_CALC').AsString := AObj.FieldbyName('BIGTO_CALC').asString;
+        cdsGoodsInfo.Post;
         if (relationType=1) and not cdsGodsRelation.IsEmpty then //经销商加盟
            begin
              cdsGodsRelation.Edit;
@@ -675,24 +682,29 @@ begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
   btnSave.Visible := dbState <> dsBrowse;
-  if relationId=0 then Exit;
+
+  if (relationId=0) then Exit;
   SetEditStyle(dsBrowse,edtBARCODE.Style);
   edtBK_BARCODE.Color := edtBARCODE.Style.Color;
   edtBARCODE.Properties.ReadOnly := true;
-  SetEditStyle(dsBrowse,edtCALC_UNITS.Style);
-  edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
-  edtCALC_UNITS.Properties.ReadOnly := true;
-  SetEditStyle(dsBrowse,edtSMALL_UNITS.Style);
-  edtBK_SMALL_UNITS.Color := edtSMALL_UNITS.Style.Color;
-  edtSMALL_UNITS.Properties.ReadOnly := true;
-  SetEditStyle(dsBrowse,edtBIG_UNITS.Style);
-  edtBK_BIG_UNITS.Color := edtBIG_UNITS.Style.Color;
-  edtBIG_UNITS.Properties.ReadOnly := true;
-  SetEditStyle(dsBrowse,edtBIGTO_CALC.Style);
-  edtBIGTO_CALC.Properties.ReadOnly := true;
-  SetEditStyle(dsBrowse,edtSMALLTO_CALC.Style);
-  edtSMALLTO_CALC.Properties.ReadOnly := true;
-  edtUNIT_ID_USING.Properties.ReadOnly := true;
+
+  if (relationId<>1000008) then
+  begin
+    SetEditStyle(dsBrowse,edtCALC_UNITS.Style);
+    edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
+    edtCALC_UNITS.Properties.ReadOnly := true;
+    SetEditStyle(dsBrowse,edtSMALL_UNITS.Style);
+    edtBK_SMALL_UNITS.Color := edtSMALL_UNITS.Style.Color;
+    edtSMALL_UNITS.Properties.ReadOnly := true;
+    SetEditStyle(dsBrowse,edtBIG_UNITS.Style);
+    edtBK_BIG_UNITS.Color := edtBIG_UNITS.Style.Color;
+    edtBIG_UNITS.Properties.ReadOnly := true;
+    SetEditStyle(dsBrowse,edtBIGTO_CALC.Style);
+    edtBIGTO_CALC.Properties.ReadOnly := true;
+    SetEditStyle(dsBrowse,edtSMALLTO_CALC.Style);
+    edtSMALLTO_CALC.Properties.ReadOnly := true;
+    edtUNIT_ID_USING.Properties.ReadOnly := true;
+  end;
   if not dllGlobal.checkChangePrice(relationId) then
      begin
         SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);

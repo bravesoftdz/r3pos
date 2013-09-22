@@ -38,7 +38,7 @@ interface
 uses
   Classes, Windows, Controls, Forms, ComCtrls, ExtCtrls, StdCtrls, OleCtrls, SysUtils,
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
-  RzPanel, Messages, MSHTML, IEConst, RzPrgres,shop_TLB,EncDec, msxml, ComObj, urlParser,
+  RzPanel, Messages, MSHTML, IEConst, RzPrgres,shop_TLB,EncDec, msxml, ComObj, urlParser,TLHelp32,
   Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate,HTTPApp, WinInet;
 const
   WM_BROWSER_INIT =WM_USER+1000;
@@ -237,6 +237,7 @@ type
     procedure FullScreen;
     procedure OpenHome;
     procedure WriteHookConfig;
+    procedure KillCodeHk;
 
     procedure WMSendInput(var Msg: TMessage); message WM_SEND_INPUT;
     function KeyBoardHook(Code: integer; Msg: word;lParam: longint):boolean;
@@ -759,6 +760,7 @@ begin
         GlobalDeleteAtom(hotKeyid);
         jsExt := nil;
         if assigned(InternetSession) then InternetSession.UnregisterNameSpace(Factory, 'rspcn');
+        KillCodeHk;
      end;
   frmUpdate.Free;
   Buf.Free;
@@ -1607,7 +1609,7 @@ begin
       dllFactory.Send(tabEx.url,Buf[0]);
       Buf.Delete(0);
     end;
-  PostMessage(handle,WM_PAUSE_KEY,0,0);
+//  PostMessage(handle,WM_PAUSE_KEY,0,0);
 end;
 
 function TfrmBrowerForm.AddKey(scanCode: DWORD):boolean;
@@ -1882,6 +1884,35 @@ begin
     GetExitCodeProcess(ProcessInfo.hProcess, Res);
     CloseHandle(ProcessInfo.hProcess);
   end
+end;
+
+procedure TfrmBrowerForm.KillCodeHk;
+var
+   hSnapshot: THandle;//用于获得进程列表
+   lppe: TProcessEntry32;//用于查找进程
+   Found: Boolean;//用于判断进程遍历是否完成
+   KillHandle: THandle;//用于杀死进程
+   processHandle : THandle;
+begin
+   KillHandle := 0;
+   hSnapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);//获得系统进程列表
+   lppe.dwSize := SizeOf(TProcessEntry32);//在调用Process32First API之前，需要初始化lppe记录的大小
+   Found := Process32First(hSnapshot, lppe);//将进程列表的第一个进程信息读入ppe记录中
+   while Found do
+   begin
+     if (UpperCase(ExtractFileName(lppe.szExeFile))=UpperCase('codehk.exe')) then
+     begin
+       KillHandle := lppe.th32ProcessID;
+       break;
+     end;
+     Found := Process32Next(hSnapshot, lppe);//将进程列表的下一个进程信息读入lppe记录中
+   end;
+  if KillHandle>0 then
+     begin
+       processHandle := OpenProcess(PROCESS_TERMINATE,false,KillHandle);
+       if processHandle>0 then
+          TerminateProcess(processHandle,0);
+     end;
 end;
 
 initialization

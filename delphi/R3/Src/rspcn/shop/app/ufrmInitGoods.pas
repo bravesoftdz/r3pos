@@ -234,7 +234,7 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      if (rs.FieldByName('RELATION_ID').AsInteger <> 1000006) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
+      if (rs.FieldByName('RELATION_ID').AsInteger = 1000008) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
         begin
           FY_RELATION_ID := rs.FieldByName('RELATION_ID').AsString;
           FY_TENANT_ID := rs.FieldByName('TENANT_ID').AsString;

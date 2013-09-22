@@ -476,7 +476,7 @@ begin
   try
     Rel_ID:='';
     Rel_IDS:='';
-    IsRoot:=False;
+    IsRoot:=False;                                               
     ClearTree(rzTree);
     rs := GetZQueryFromName('PUB_GOODSSORT');
     rs.First;
@@ -532,40 +532,16 @@ begin
 end;
 
 function TdllGlobal.GetViwGoodsInfo(s:string;all:boolean=true): string;
+function getFields(relation:integer=0):string;
 var
-  rs:TZQuery;
-  w,fields:string;
   list:TStringList;
+  fields:string;
   i:integer;
 begin
-  if all then
-     w := 'where A.TENANT_ID='+token.tenantId+ ' '
-  else
-     w := 'where (A.TENANT_ID='+token.tenantId+ ' and A.COMM not in (''02'',''12'')) ';
-  rs := GetZQueryFromName('CA_RELATIONS');
-  rs.first;
-  while not rs.eof do
-    begin
-      case rs.FieldByName('RELATION_TYPE').AsInteger of
-      1:begin
-          if not all then
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' and B.COMM not in (''02'',''12'')) '
-          else
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' ) ';
-        end
-      else
-        begin
-          if not all then
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' and B.COMM not in (''02'',''12'')) '
-          else
-             w := w +'or (A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' ) ';
-        end;
-      end;
-      rs.next;
-    end;
   list := TStringList.Create;
   try
     list.DelimitedText := s;
+    fields := '';
     for i:=0 to list.Count-1 do
       begin
         if fields<>'' then fields := fields + ',';
@@ -595,21 +571,64 @@ begin
               fields := fields+ '''#'' as PRICE_ID'
            else
            if list[i]='RELATION_ID' then
-              fields := fields+
-                        ' case '+
-                        '   when A.TENANT_ID = '+token.tenantId+' then 0 '+
-                        '   else B.RELATION_ID '+
-                        ' end as RELATION_ID'
+              begin
+                 if relation=0 then
+                    fields := fields+' 0 as RELATION_ID'
+                 else
+                    fields := fields+' B.RELATION_ID as RELATION_ID'
+              end
            else
-              fields := fields+ 'isnull(B.'+list[i]+',A.'+list[i]+') as '+list[i]
+              begin
+                 if relation=0 then
+                    fields := fields+list[i]
+                 else
+                    fields := fields+ 'isnull(B.'+list[i]+',A.'+list[i]+') as '+list[i]
+              end;
            end
         else
-           fields := fields+ 'A.'+list[i];
+           begin
+              if relation=0 then
+                 fields := fields+list[i]
+              else
+                 fields := fields+ 'A.'+list[i];
+           end;
       end;
   finally
     list.Free;
   end;
-  result := ParseSQL(dataFactory.iDbType,'select '+fields+' from PUB_GOODSINFO A left outer join PUB_GOODS_RELATION B on A.GODS_ID=B.GODS_ID '+w);
+  result := fields;
+end;
+var
+  rs:TZQuery;
+  w,sql:string;
+begin
+  if all then
+     sql := 'select '+getFields(0)+' from PUB_GOODSINFO where TENANT_ID='+token.tenantId+' '
+  else
+     sql := 'select '+getFields(0)+' from PUB_GOODSINFO where TENANT_ID='+token.tenantId+' and COMM not in (''02'',''12'') ';
+  rs := GetZQueryFromName('CA_RELATIONS');
+  rs.first;
+  while not rs.eof do
+    begin
+      case rs.FieldByName('RELATION_TYPE').AsInteger of
+      1:begin
+          if not all then
+             w := ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' and B.COMM not in (''02'',''12'') '
+          else
+             w := ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+token.tenantId+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' ';
+        end
+      else
+        begin
+          if not all then
+             w := ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' and B.COMM not in (''02'',''12'') '
+          else
+             w := ' and A.TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and B.TENANT_ID='+rs.FieldbyName('P_TENANT_ID').AsString+' and B.RELATION_ID='+rs.FieldbyName('RELATION_ID').AsString+' ';
+        end;
+      end;
+      sql := sql + ' union all select '+getFields(1)+' from PUB_GOODSINFO A,PUB_GOODS_RELATION B where A.GODS_ID=B.GODS_ID '+ w;
+      rs.next;
+    end;
+  result := ParseSQL(dataFactory.iDbType,sql);
 end;
 
 function TdllGlobal.checkChangePrice(relationId: integer): boolean;

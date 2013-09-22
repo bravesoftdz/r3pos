@@ -578,18 +578,18 @@ begin
     ' PROPERTY_01'+varchar+'(36) NOT NULL , '+
     ' PROPERTY_02'+varchar+'(36) NOT NULL , '+
     '	IN_AMOUNT decimal(18, 3) '+default+', '+
-    '	IN_PRICE  decimal(18, 6) '+default+', '+
-    '	IN_MONEY  decimal(18, 3) '+default+', '+
-    '	IN_TAX  decimal(18, 3) '+default+', '+
+    '	IN_PRICE  decimal(18, 6) '+null+', '+
+    '	IN_MONEY  decimal(18, 3) '+null+', '+
+    '	IN_TAX  decimal(18, 3) '+null+', '+
     ' OUT_AMOUNT decimal(18, 3) '+default+', '+
-    ' OUT_PRICE decimal(18, 6) '+default+', '+
-    ' OUT_MONEY decimal(18, 3) '+default+', '+
-    ' SALE_PRICE decimal(18, 6) '+default+', '+
-    ' SALE_MONEY decimal(18, 3) '+default+', '+
-    ' SALE_TAX decimal(18, 3) '+default+', '+
+    ' OUT_PRICE decimal(18, 6) '+null+', '+
+    ' OUT_MONEY decimal(18, 3) '+null+', '+
+    ' SALE_PRICE decimal(18, 6) '+null+', '+
+    ' SALE_MONEY decimal(18, 3) '+null+', '+
+    ' SALE_TAX decimal(18, 3) '+null+', '+
     ' BAL_AMOUNT decimal(18, 3) '+default+', '+
-    ' BAL_PRICE decimal(18, 6) '+default+', '+
-    ' BAL_MONEY decimal(18, 3) '+default+', '+
+    ' BAL_PRICE decimal(18, 6) '+null+', '+
+    ' BAL_MONEY decimal(18, 3) '+null+', '+
     '	GUIDE_USER'+varchar+'(36) '+null+', '+
     '	CREA_USER'+varchar+'(36) '+null+' '+  priKey +
     ')';
@@ -628,13 +628,15 @@ begin
     ' case when B.STOCK_TYPE=1 then ''进货'' when B.STOCK_TYPE=2 then ''调入'' when B.STOCK_TYPE=3 then ''退出'' else ''入库'' end as BILL_NAME,B.STOCK_DATE,1 as SEQNO, '+
     ' A.GODS_ID,B.CLIENT_ID,A.UNIT_ID,cast(A.CALC_AMOUNT as decimal(18,3)) / cast(A.AMOUNT as decimal(18,3)) as CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
     ' A.CALC_AMOUNT as IN_AMOUNT,'+
-    ' round((A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end,2)) / cast(A.CALC_AMOUNT as decimal(18,3)),6) as IN_PRICE, '+
-    ' A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end,2) as IN_MONEY,'+
-    ' round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=''3'' then A.TAX_RATE else 0 end,2) as IN_TAX, '+
+    ' round((A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG=''3'' then isnull(A.TAX_RATE,0) else 0 end)*case when B.INVOICE_FLAG=''3'' then isnull(A.TAX_RATE,0) else 0 end,2)) / '+
+    ' cast(A.CALC_AMOUNT as decimal(18,3)),6) as IN_PRICE, '+
+    ' A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG=''3'' then isnull(A.TAX_RATE,0) else 0 end)*case when B.INVOICE_FLAG=''3'' then isnull(A.TAX_RATE,0) else 0 end,2) as IN_MONEY,'+
+    ' round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG=''3'' then isnull(A.TAX_RATE,0) else 0 end)*case when B.INVOICE_FLAG=''3'' then isnull(A.TAX_RATE,0) else 0 end,2) as IN_TAX, '+
     ' B.GUIDE_USER,B.CREA_USER '+
     'from STK_STOCKDATA A,STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and '+
     ' B.TENANT_ID='+token.tenantId+' and B.STOCK_DATE>='+formatDatetime('YYYYMMDD',_beginDate)+' and B.STOCK_DATE<='+formatDatetime('YYYYMMDD',_endDate)+' '+
     'order by A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,B.STOCK_DATE,B.CREA_DATE ';
+  sql := ParseSQL(dataFactory.iDbType,sql);
   n := dataFactory.ExecSQL(sql);
   if dataFactory.iDbType=1 then
      begin
@@ -651,14 +653,16 @@ begin
     ' case when B.SALES_TYPE in (1,4) then ''销售'' when B.SALES_TYPE=2 then ''调出'' when B.SALES_TYPE=3 then ''退入'' else ''出库'' end as BILL_NAME,B.SALES_DATE,1 as SEQNO, '+
     ' A.GODS_ID,B.CLIENT_ID,A.UNIT_ID,cast(A.CALC_AMOUNT as decimal(18,3)) / cast(A.AMOUNT as decimal(18,3)) as CONV_RATE,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02, '+
     ' A.CALC_AMOUNT as OUT_AMOUNT,A.COST_PRICE,round(A.CALC_AMOUNT*A.COST_PRICE,2),'+
-    ' round((A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2)) / cast(A.CALC_AMOUNT as decimal(18,3))'+
+    ' round((A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then isnull(A.TAX_RATE,0) else 0 end)*'+
+    ' case when B.INVOICE_FLAG in (''2'',''3'') then isnull(A.TAX_RATE,0) else 0 end,2)) / cast(A.CALC_AMOUNT as decimal(18,3))'+
     ' ,6) as SALE_PRICE,'+
-    ' A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as SALE_MONEY, '+
-    ' round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then A.TAX_RATE else 0 end,2) as SALE_TAX, '+
+    ' A.CALC_MONEY-round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then isnull(A.TAX_RATE,0) else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then isnull(A.TAX_RATE,0) else 0 end,2) as SALE_MONEY, '+
+    ' round(cast(A.CALC_MONEY as decimal(18,3))/(1+case when B.INVOICE_FLAG in (''2'',''3'') then isnull(A.TAX_RATE,0) else 0 end)*case when B.INVOICE_FLAG in (''2'',''3'') then isnull(A.TAX_RATE,0) else 0 end,2) as SALE_TAX, '+
     ' B.GUIDE_USER,B.CREA_USER '+
     'from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and '+
     ' B.TENANT_ID='+token.tenantId+' and B.SALES_DATE>='+formatDatetime('YYYYMMDD',_beginDate)+' and B.SALES_DATE<='+formatDatetime('YYYYMMDD',_endDate)+' '+
     'order by A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,B.SALES_DATE,B.CREA_DATE ';
+  sql := ParseSQL(dataFactory.iDbType,sql);
   n := n + dataFactory.ExecSQL(sql);
   RzProgressBar1.Percent := 40;
   if dataFactory.iDbType=1 then
@@ -693,9 +697,10 @@ begin
     'select '+
     ' '+tmpIdValue+'TENANT_ID,SHOP_ID,BILL_ID,BILL_CODE,BILL_TYPE,BILL_NAME,BILL_DATE,SEQNO,'+
     ' GODS_ID,CLIENT_ID,UNIT_ID,CONV_RATE,BATCH_NO,PROPERTY_01,PROPERTY_02,'+
-    ' IN_AMOUNT,IN_PRICE,IN_MONEY,IN_TAX,OUT_AMOUNT,OUT_PRICE,OUT_MONEY,SALE_PRICE,SALE_MONEY,SALE_TAX,BAL_AMOUNT,BAL_PRICE,BAL_MONEY,'+
+    ' IN_AMOUNT,isnull(IN_PRICE,0),isnull(IN_MONEY,0),isnull(IN_TAX,0),OUT_AMOUNT,isnull(OUT_PRICE,0),isnull(OUT_MONEY,0),isnull(SALE_PRICE,0),isnull(SALE_MONEY,0),isnull(SALE_TAX,0),BAL_AMOUNT,isnull(BAL_PRICE,0),isnull(BAL_MONEY,0),'+
     ' GUIDE_USER,CREA_USER '+
     'from '+seqTable+' order by GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,BILL_DATE,ID';
+  sql := ParseSQL(dataFactory.iDbType,sql);
   rw := rw + dataFactory.ExecSQL(sql);
 end;
 
@@ -742,14 +747,14 @@ end;
 procedure TfrmStocksCalc.btnCalcClick(Sender: TObject);
 begin
   inherited;
-  dataFactory.remote.DBLock(true);
+  dataFactory.DBLock(true);
   try
     CheckAppVersion;
     ClearDays;
     _endDate := 0;
     while _endDate<eDate do creaStocks;
   finally
-    dataFactory.remote.DBLock(false);
+    dataFactory.DBLock(false);
   end;
   ModalResult := MROK;
 end;
@@ -794,6 +799,8 @@ begin
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.ParamByName('DEFINE').AsString := 'APPVERSION';
+    params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    params.ParamByName('DEFINE').AsString := 'APPVERSION';
     dataFactory.Open(rs);
     AppVersion := rs.Fields[0].AsString;
     if AppVersion = '' then AppVersion := 'V3';

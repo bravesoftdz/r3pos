@@ -78,8 +78,8 @@ inherited frmSelectGoods: TfrmSelectGoods
           FooterFont.Style = []
           FrozenCols = 1
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs]
+          OptionsEh = [dghFixed3D, dghHighlightFocus]
           RowHeight = 23
           TabOrder = 0
           TitleFont.Charset = GB2312_CHARSET

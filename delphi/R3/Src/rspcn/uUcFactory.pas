@@ -3,7 +3,7 @@ unit uUcFactory;
 interface
 
 uses
-  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp, Forms,ZBase,
+  SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection, HttpApp, Forms,ZBase,ZLogFile,
   IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB, EncDec, IniFiles, IdCookieManager,IdCookie,WinInet;
 
 type
@@ -168,6 +168,7 @@ begin
   except
     on E:Exception do
     begin
+      LogFile.AddLogFile(0,'错误了,访问:'+url);
       Raise;
     end;
   end;
@@ -193,6 +194,7 @@ begin
     loginTime := getTickCount;
     result := true;
   except
+    LogFile.AddLogFile(0,'错误了,访问:'+url);
     Raise;
   end;
 end;
@@ -241,6 +243,7 @@ try
 except
   on E:Exception do
   begin
+    LogFile.AddLogFile(0,'错误了,访问:'+url);
     xsmLogined := false;
     Raise;
   end;
@@ -345,6 +348,7 @@ begin
     on E:Exception do
     begin
       xsmLogined := false;
+      LogFile.AddLogFile(0,'错误了,访问:'+url);
       Raise;
     end;
   end;

@@ -3,7 +3,7 @@ unit uRspFactory;
 interface
 
 uses
-  SysUtils,Classes,Des,EncDec,msxml,windows,activex,inifiles,ComObj,EncdDecd;
+  SysUtils,Classes,Des,EncDec,msxml,windows,activex,inifiles,ComObj,EncdDecd,ZLogFile;
 
 type
   TRspFunction=function(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
@@ -236,6 +236,7 @@ var
   paramsList: TStringList;
   i:integer;
 begin
+try
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -287,7 +288,7 @@ begin
                prodParams := GetNodeValue(caTenantLoginResp,'prodParams');
                dbId := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
                f.WriteString('db','dbid',inttostr(dbId));
-               
+
                if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
                   hsname := GetNodeValue(caTenantLoginResp,'dbHostName')
                else
@@ -364,6 +365,13 @@ begin
      end
   else
      Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
+except
+  on E:exception do
+     begin
+       LogFile.AddLogFile(0,'∑√Œ rspLogin¥ÌŒÛ¡À,∑√Œ :'+e.Message);
+       Raise;
+     end;
+end;
 end;
 
 function TrspFactory.getTenantInfo(tenantId:integer): widestring;

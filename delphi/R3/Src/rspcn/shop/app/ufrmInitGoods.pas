@@ -8,7 +8,7 @@ uses
   cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, DB, ZBase,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, cxMaskEdit,
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
-  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
+  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,ZdbFactory,
   RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms;
 
 type
@@ -166,14 +166,22 @@ type
     procedure edtBIGTO_CALCKeyPress(Sender: TObject; var Key: Char);
     procedure edtSMALL_UNITSKeyPress(Sender: TObject; var Key: Char);
     procedure edtBIG_UNITSKeyPress(Sender: TObject; var Key: Char);
+    procedure edtInputKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtGOODS_OPTION1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtGOODS_OPTION1KeyPress(Sender: TObject; var Key: Char);
+    procedure edtGOODS_OPTION2KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
+    function BarcodeFactory(rs:TZQuery;code:string):boolean;
+
     function  GetFinded:boolean;
     function  CanFocus(Control:TControl):Boolean;
+    function  CheckUnit(unitName:string):string;
     procedure GetGoodsInfo;
     procedure UploadGoodsInfo;
     function  IsChinese(str:string):Boolean;
-    procedure DownloadUnits;overload;
-    procedure DownloadUnits(pubGoodsinfoResp:IXMLDOMNode);overload;
     procedure RefreshUnits;
     procedure RefreshUnitsList;
     procedure AddUnits(Sender: TObject);
@@ -210,7 +218,7 @@ type
 implementation
 
 uses uRspFactory,udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,EncDec;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -319,7 +327,14 @@ begin
       rzPage.ActivePageIndex := 1;
       btnPrev.Visible := True;
       btnNext.Visible := True;
-      if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
+      if edtGOODS_OPTION1.Checked then
+         begin
+           if CanFocus(edtGODS_NAME) then edtGODS_NAME.SetFocus;
+         end
+      else
+         begin
+           if CanFocus(edtGODS_CODE) then edtGODS_CODE.SetFocus;
+         end;
     end
   else if rzPage.ActivePageIndex = 1 then
     begin
@@ -337,7 +352,7 @@ begin
           WriteToObject;
           if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
           Save;
-          if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK);
+          if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK) else ModalResult := MROK;
           rzPage.ActivePageIndex := 0;
           btnPrev.Visible := False;
           btnNext.Visible := True;
@@ -350,7 +365,7 @@ begin
       WriteToObject;
       if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
       Save;
-      if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK);
+      if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK) else ModalResult := MROK;
       rzPage.ActivePageIndex := 0;
       btnPrev.Visible := False;
       btnNext.Visible := True;
@@ -396,14 +411,13 @@ end;
 procedure TfrmInitGoods.GetGoodsInfo;
 var
   barcode,godsId:string;
-  outxml:widestring;
-  doc:IXMLDomDocument;
-  pubGoodsinfoResp:IXMLDOMNode;
   hasGoods:TZQuery;
-  tmpGoodsInfo,tmpBarCode:TZQuery;
+  tmpGoodsInfo,tmpBarCode,xxbarcode:TZQuery;
   Params:TftParamList;
   tmpObj:TRecord_;
+  i:integer;
 begin
+  xxbarcode := nil;
   barcode := trim(edtInput.Text);
   if barcode = '' then
     begin
@@ -443,6 +457,7 @@ begin
   end;
 
   // 查询服务端商品
+  {
   if (not Finded) and (dataFactory.iDbType = 5) then
     begin
       dataFactory.MoveToRemote;
@@ -472,35 +487,24 @@ begin
         dataFactory.MoveToDefault;
       end;
     end;
-
+  }
   // 查询RSP商品
   if not Finded then
     begin
       try
-        outxml := rspFactory.getGoodsInfo(barcode);
-        doc := rspFactory.CreateXML(outxml);
-        pubGoodsinfoResp := rspFactory.FindNode(doc,'body');
-        pubGoodsinfoResp := pubGoodsinfoResp.firstChild;
-        if pubGoodsinfoResp <> nil then
-          begin
-            RspFinded := true;
-            godsId := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
-          end
-        else
-          begin
-            RspFinded := false;
-            godsId := '';
-          end;
+        xxbarcode := TZQuery.Create(nil);
+        RspFinded := barcodeFactory(xxbarcode,barcode);
       except
         on E:Exception do
            begin
              RspFinded := false;
              godsId := '';
+             freeandnil(xxbarcode);
              Raise Exception.Create('查询商品信息失败，原因：'+E.Message);
            end;
       end;
     end;
-
+ {
   if not Finded then
     begin
       try
@@ -510,7 +514,7 @@ begin
            Raise Exception.Create('下载商品分类失败，原因：'+E.Message);
       end;
     end;
-
+  }
   OpenDataSet(FY_TENANT_ID, godsId);
 
   if LocalFinded then
@@ -552,7 +556,7 @@ begin
             end;
         end;
     end;
-
+  {
   if RemoteFinded then
     begin
       tmpGoodsInfo := TZQuery.Create(nil);
@@ -649,89 +653,53 @@ begin
 
       DownloadUnits;
     end;
-
+  }
   if RspFinded then
     begin
       if cdsGoodsInfo.IsEmpty then
         cdsGoodsInfo.Append
       else
         cdsGoodsInfo.Edit;
-      cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
-      cdsGoodsInfo.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
-      cdsGoodsInfo.FieldByName('GODS_CODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsCode');
-      cdsGoodsInfo.FieldByName('GODS_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsName');
-      cdsGoodsInfo.FieldByName('GODS_SPELL').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsSpell');
-      cdsGoodsInfo.FieldByName('GODS_TYPE').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'godsType'));
-      cdsGoodsInfo.FieldByName('SORT_ID1').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'sortId1');
-      cdsGoodsInfo.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'unitId');
-      cdsGoodsInfo.FieldByName('CALC_UNITS').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnits');
-      cdsGoodsInfo.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'barcode');
-      cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnits');
-      cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'smalltoCalc'));
-      cdsGoodsInfo.FieldByName('BIG_UNITS').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnits');
-      cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat := strtofloat(rspFactory.GetNodeValue(pubGoodsinfoResp,'bigtoCalc'));
-      cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat := strtofloatDef(rspFactory.GetNodeValue(pubGoodsinfoResp,'newInprice'),0);
-      cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat := strtofloatDef(rspFactory.GetNodeValue(pubGoodsinfoResp,'newOutprice'),0);
-      cdsGoodsInfo.FieldByName('NEW_LOWPRICE').AsFloat := strtofloatDef(rspFactory.GetNodeValue(pubGoodsinfoResp,'newLowprice'),0);
-      cdsGoodsInfo.FieldByName('USING_PRICE').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingPrice'));
-      cdsGoodsInfo.FieldByName('HAS_INTEGRAL').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'hasIntegral'));
-      cdsGoodsInfo.FieldByName('USING_BATCH_NO').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingBatchNo'));
-      cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingBarter'));
-      cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'usingLocusNo'));
-      cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'barterIntegral'));
+      cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := StrtoInt(FY_TENANT_ID);
+      cdsGoodsInfo.FieldByName('GODS_ID').AsString := '00000000000000000000000' + xxBarcode.FieldbyName('BARCODE').AsString;
+      cdsGoodsInfo.FieldByName('GODS_CODE').AsString := xxBarcode.FieldbyName('BARCODE').AsString;
+      cdsGoodsInfo.FieldByName('GODS_NAME').AsString := xxBarcode.FieldbyName('NAME').AsString;
+      cdsGoodsInfo.FieldByName('GODS_SPELL').AsString := xxBarcode.FieldbyName('SPELL').AsString;
+      cdsGoodsInfo.FieldByName('GODS_TYPE').AsInteger := 1;
+      cdsGoodsInfo.FieldByName('SORT_ID1').AsString := '#';
+      cdsGoodsInfo.FieldByName('UNIT_ID').AsString := CheckUnit(xxBarcode.FieldbyName('UNIT_NAME').AsString);
+      cdsGoodsInfo.FieldByName('CALC_UNITS').AsString := cdsGoodsInfo.FieldByName('UNIT_ID').AsString;
+      cdsGoodsInfo.FieldByName('BARCODE').AsString := xxBarcode.FieldbyName('BARCODE').AsString;
+      cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString := '';
+      cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat := 1;
+      cdsGoodsInfo.FieldByName('BIG_UNITS').AsString := '';
+      cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat := 1;
+      cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat := xxBarcode.FieldbyName('IN_PRICE').AsFloat;
+      cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat := xxBarcode.FieldbyName('OUT_PRICE').AsFloat;
+      cdsGoodsInfo.FieldByName('NEW_LOWPRICE').AsFloat := 0;
+      cdsGoodsInfo.FieldByName('USING_PRICE').AsInteger := 1;
+      cdsGoodsInfo.FieldByName('HAS_INTEGRAL').AsInteger := 1;
+      cdsGoodsInfo.FieldByName('USING_BATCH_NO').AsInteger := 2;
+      cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := 1;
+      cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := 2;
+      cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
 
       if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
         cdsBarCode.Edit
       else
       begin
         cdsBarCode.Append;
-        cdsBarCode.FieldByName('ROWS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'calcRowsId');
+        cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
       end;
-      cdsBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
-      cdsBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
+      cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldbyName('TENANT_ID').AsInteger;
+      cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldbyName('GODS_ID').AsString;
       cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
       cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
-      cdsBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnits');
+      cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldbyName('CALC_UNITS').AsString;
       cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '0';
       cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
-      cdsBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'barcode');
+      cdsBarCode.FieldByName('BARCODE').AsString := cdsGoodsInfo.FieldbyName('BARCODE').AsString;
 
-      if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-        begin
-          if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
-            cdsBarCode.Edit
-          else
-          begin
-            cdsBarCode.Append;
-            cdsBarCode.FieldByName('ROWS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallRowsId');
-          end;
-          cdsBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
-          cdsBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
-          cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
-          cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
-          cdsBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnits');
-          cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
-          cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
-          cdsBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallBarcode');
-        end;
-      if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-        begin
-          if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
-            cdsBarCode.Edit
-          else
-          begin
-            cdsBarCode.Append;
-            cdsBarCode.FieldByName('ROWS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigRowsId');
-          end;
-          cdsBarCode.FieldByName('TENANT_ID').AsInteger := strtoint(rspFactory.GetNodeValue(pubGoodsinfoResp,'tenantId'));
-          cdsBarCode.FieldByName('GODS_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'godsId');
-          cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
-          cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
-          cdsBarCode.FieldByName('UNIT_ID').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnits');
-          cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
-          cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
-          cdsBarCode.FieldByName('BARCODE').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigBarcode');
-        end;
 
       if cdsGoodsRelation.IsEmpty then
       begin
@@ -750,8 +718,7 @@ begin
 
       PostDataSet;
 
-      DownloadUnits(pubGoodsinfoResp);
-    end;
+     end;
 
   if Finded and (cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID) then
      Raise Exception.Create('卷烟商品不允许新增！'); 
@@ -1314,157 +1281,7 @@ begin
 end;
 
 procedure TfrmInitGoods.UploadGoodsInfo;
-var
-  doc:IXMLDomDocument;
-  node:IXMLDOMNode;
-  success:boolean;
 begin
-  doc := rspFactory.CreateRspXML;
-  Node := doc.CreateElement('flag');
-  Node.text := '1';
-  rspFactory.FindNode(doc,'header\pub').appendChild(Node);
-
-  Node := doc.CreateElement('pubGoodsinfo');
-  rspFactory.FindNode(doc,'body').appendChild(Node);
-
-  Node := doc.CreateElement('tenantId');
-  Node.text := cdsGoodsInfo.FieldByName('TENANT_ID').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('relationId');
-  Node.text := FY_RELATION_ID;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('godsId');
-  Node.text := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('godsCode');
-  Node.text := cdsGoodsInfo.FieldByName('GODS_CODE').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('godsName');
-  Node.text := cdsGoodsInfo.FieldByName('GODS_NAME').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('godsSpell');
-  Node.text := cdsGoodsInfo.FieldByName('GODS_SPELL').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('godsType');
-  Node.text := '1';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('sortId1');
-  Node.text := cdsGoodsInfo.FieldByName('SORT_ID1').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('unitId');
-  Node.text := cdsGoodsInfo.FieldByName('UNIT_ID').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('calcUnits');
-  Node.text := cdsGoodsInfo.FieldByName('CALC_UNITS').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('barcode');
-  Node.text := cdsGoodsInfo.FieldByName('BARCODE').AsString;
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('newInprice');
-  Node.text := formatFloat('#0.000',cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat);
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('newOutprice');
-  Node.text := formatFloat('#0.000',cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat);
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('newLowprice');
-  Node.text := '0';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
-    begin
-      Node := doc.CreateElement('calcRowsId');
-      Node.text := cdsBarCode.FieldByName('ROWS_ID').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-    end;
-
-  if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-    begin
-      Node := doc.CreateElement('smallUnits');
-      Node.text := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-      Node := doc.CreateElement('smalltoCalc');
-      Node.text := cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-      if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
-        begin
-          Node := doc.CreateElement('smallRowsId');
-          Node.text := cdsBarCode.FieldByName('ROWS_ID').AsString;
-          rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-          Node := doc.CreateElement('smallBarcode');
-          Node.text := cdsBarCode.FieldByName('BARCODE').AsString;
-          rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-        end;
-    end;
-
-  if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-    begin
-      Node := doc.CreateElement('bigUnits');
-      Node.text := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-      Node := doc.CreateElement('bigtoCalc');
-      Node.text := cdsGoodsInfo.FieldByName('BIGTO_CALC').AsString;
-      rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-      if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
-        begin
-          Node := doc.CreateElement('bigRowsId');
-          Node.text := cdsBarCode.FieldByName('ROWS_ID').AsString;
-          rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-          Node := doc.CreateElement('bigBarcode');
-          Node.text := cdsBarCode.FieldByName('BARCODE').AsString;
-          rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-        end;
-    end;
-  
-  Node := doc.CreateElement('usingPrice');
-  Node.text := '1';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-  
-  Node := doc.CreateElement('hasIntegral');
-  Node.text := '1';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-  
-  Node := doc.CreateElement('usingBatchNo');
-  Node.text := '2';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-  
-  Node := doc.CreateElement('usingBarter');
-  Node.text := '1';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  Node := doc.CreateElement('usingLocusNo');
-  Node.text := '2';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-  
-  Node := doc.CreateElement('barterIntegral');
-  Node.text := '0';
-  rspFactory.FindNode(doc,'body\pubGoodsinfo').appendChild(Node);
-
-  try
-    success := rspFactory.uploadGoods('<?xml version="1.0" encoding="gb2312"?>'+doc.xml)
-  except
-    on E:Exception do
-       Raise Exception.Create('发布新品失败，原因：'+E.Message);
-  end;
-  if not success then Raise Exception.Create('发布新品失败！');
 end;
 
 procedure TfrmInitGoods.Save;
@@ -1505,7 +1322,7 @@ begin
     end;
 
   // 远程保存非烟商品
-  if RspFinded and (dataFactory.iDbType = 5) then
+  {if RspFinded and (dataFactory.iDbType = 5) then
      begin
        tmpGoodsInfo := TZQuery.Create(nil);
        tmpBarCode := TZQuery.Create(nil);
@@ -1606,7 +1423,7 @@ begin
          tmpBarCode.Free;
        end;
      end;
-
+  }
   dataFactory.BeginBatch;
   try
     dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
@@ -1634,40 +1451,20 @@ begin
         try
           Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
           Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-          dataFactory.Open(tmpGoodsInfo,'TGoodsInfoV60',Params);
-        finally
-          Params.Free;
-        end;
-
-        Params := TftParamList.Create(nil);
-        tmpBarCode.Close;
-        try
-          Params.ParamByName('TENANT_ID').AsInteger := cdsBarCode.FieldByName('TENANT_ID').AsInteger;
-          Params.ParamByName('GODS_ID').AsString := cdsBarCode.FieldByName('GODS_ID').AsString;
-          dataFactory.Open(tmpBarCode,'TBarCodeV60',Params);
-        finally
-          Params.Free;
-        end;
-
-        Params := TftParamList.Create(nil);
-        tmpGoodsRelation.Close;
-        try
-          Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger;
-          Params.ParamByName('GODS_ID').AsString := cdsGoodsRelation.FieldByName('GODS_ID').AsString;
           Params.ParamByName('RELATION_ID').AsInteger := cdsGoodsRelation.FieldByName('RELATION_ID').AsInteger;
-          dataFactory.Open(tmpGoodsRelation,'TGoodsRelationV60',Params);
-        finally
-          Params.Free;
-        end;
-
-        Params := TftParamList.Create(nil);
-        tmpGoodsPrice.Close;
-        try
-          Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
           Params.ParamByName('SHOP_ID').AsString := cdsGoodsPrice.FieldByName('SHOP_ID').AsString;
-          Params.ParamByName('GODS_ID').AsString := cdsGoodsPrice.FieldByName('GODS_ID').AsString;
           Params.ParamByName('PRICE_ID').AsString := cdsGoodsPrice.FieldByName('PRICE_ID').AsString;
-          dataFactory.Open(tmpGoodsPrice,'TGoodsPriceV60',Params);
+          dataFactory.BeginBatch;
+          try
+            dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',Params);
+            dataFactory.AddBatch(tmpBarCode,'TBarCodeV60',Params);
+            dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
+            dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
+            dataFactory.OpenBatch;
+          except
+            dataFactory.CancelBatch;
+            Raise;
+          end;
         finally
           Params.Free;
         end;
@@ -1823,178 +1620,6 @@ begin
      cdsGoodsRelation.Post;
 end;
 
-procedure TfrmInitGoods.DownloadUnits;
-var
-  tmpUnits,cdsUnits:TZQuery;
-  tmpObj:TRecord_;
-  unitIds:string;
-begin
-  tmpUnits := TZQuery.Create(nil);
-  cdsUnits := TZQuery.Create(nil);
-  tmpObj := TRecord_.Create;
-  try
-    unitIds := ''''+cdsGoodsInfo.FieldByName('CALC_UNITS').AsString+'''';
-    if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-       unitIds := unitIds + ',' + '''' + cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString + '''';
-    if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-       unitIds := unitIds + ',' + '''' + cdsGoodsInfo.FieldByName('BIG_UNITS').AsString + '''';
-
-    dataFactory.MoveToRemote;
-    try
-      tmpUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
-      dataFactory.Open(tmpUnits);
-    finally
-      dataFactory.MoveToDefault;
-    end;
-
-    dataFactory.MoveToSqlite;
-    try
-      cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
-      dataFactory.Open(cdsUnits);
-    finally
-      dataFactory.MoveToDefault;
-    end;
-
-    tmpUnits.First;
-    while not tmpUnits.Eof do
-      begin
-        if not cdsUnits.Locate('UNIT_ID',tmpUnits.FieldByName('UNIT_ID').AsString,[]) then
-           begin
-             cdsUnits.Append;
-             tmpObj.ReadFromDataSet(tmpUnits);
-             tmpObj.WriteToDataSet(cdsUnits);
-           end;
-        tmpUnits.Next;
-      end;
-
-    dataFactory.MoveToSqlite;
-    try
-      dataFactory.UpdateBatch(cdsUnits,'TMeaUnitsV60');
-    finally
-      dataFactory.MoveToDefault;
-    end;
-  finally
-    tmpUnits.Free;
-    cdsUnits.Free;
-    tmpObj.Free;
-  end;
-
-  RefreshUnits;
-end;
-
-procedure TfrmInitGoods.DownloadUnits(pubGoodsinfoResp: IXMLDOMNode);
-var
-  cdsUnits:TZQuery;
-  unitIds:string;
-begin
-  unitIds := ''''+cdsGoodsInfo.FieldByName('CALC_UNITS').AsString+'''';
-  if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-     unitIds := unitIds + ',' + '''' + cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString + '''';
-  if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-     unitIds := unitIds + ',' + '''' + cdsGoodsInfo.FieldByName('BIG_UNITS').AsString + '''';
-
-  cdsUnits := TZQuery.Create(nil);
-  dataFactory.MoveToSqlite;
-  try
-    cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
-    dataFactory.Open(cdsUnits);
-
-    if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('CALC_UNITS').AsString,[]) then
-       begin
-         cdsUnits.Append;
-         cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-         cdsUnits.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('CALC_UNITS').AsString;
-         cdsUnits.FieldByName('UNIT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsName');
-         cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsName'),3);
-         cdsUnits.FieldByName('SEQ_NO').AsInteger := strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsSeqNo'),0);
-         cdsUnits.Post;
-       end;
-    if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-    begin
-       if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString,[]) then
-       begin
-         cdsUnits.Append;
-         cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-         cdsUnits.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
-         cdsUnits.FieldByName('UNIT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsName');
-         cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsName'),3);
-         cdsUnits.FieldByName('SEQ_NO').AsInteger := strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsSeqNo'),0);
-         cdsUnits.Post;
-       end;
-    end;
-    if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-    begin
-       if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('BIG_UNITS').AsString,[]) then
-       begin
-         cdsUnits.Append;
-         cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-         cdsUnits.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
-         cdsUnits.FieldByName('UNIT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsName');
-         cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsName'),3);
-         cdsUnits.FieldByName('SEQ_NO').AsInteger := strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsSeqNo'),0);
-         cdsUnits.Post;
-       end;
-    end;
-    
-    dataFactory.UpdateBatch(cdsUnits,'TMeaUnitsV60');
-  finally
-    cdsUnits.Free;
-    dataFactory.MoveToDefault;
-  end;
-
-  if dataFactory.iDbType <> 5 then
-  begin
-    cdsUnits := TZQuery.Create(nil);
-    try
-      cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where UNIT_ID in ('+unitIds+')';
-      dataFactory.Open(cdsUnits);
-
-      if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('CALC_UNITS').AsString,[]) then
-         begin
-           cdsUnits.Append;
-           cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-           cdsUnits.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('CALC_UNITS').AsString;
-           cdsUnits.FieldByName('UNIT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsName');
-           cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsName'),3);
-           cdsUnits.FieldByName('SEQ_NO').AsInteger := strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'calcUnitsSeqNo'),0);
-           cdsUnits.Post;
-         end;
-      if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-      begin
-         if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString,[]) then
-         begin
-           cdsUnits.Append;
-           cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-           cdsUnits.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
-           cdsUnits.FieldByName('UNIT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsName');
-           cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsName'),3);
-           cdsUnits.FieldByName('SEQ_NO').AsInteger := strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'smallUnitsSeqNo'),0);
-           cdsUnits.Post;
-         end;
-      end;
-      if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-      begin
-         if not cdsUnits.Locate('UNIT_ID',cdsGoodsInfo.FieldByName('BIG_UNITS').AsString,[]) then
-         begin
-           cdsUnits.Append;
-           cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-           cdsUnits.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
-           cdsUnits.FieldByName('UNIT_NAME').AsString := rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsName');
-           cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsName'),3);
-           cdsUnits.FieldByName('SEQ_NO').AsInteger := strtointdef(rspFactory.GetNodeValue(pubGoodsinfoResp,'bigUnitsSeqNo'),0);
-           cdsUnits.Post;
-         end;
-      end;
-
-      dataFactory.UpdateBatch(cdsUnits,'TMeaUnitsV60');
-    finally
-      cdsUnits.Free;
-    end;
-  end;
-
-  RefreshUnits;
-end;
-
 procedure TfrmInitGoods.RefreshUnits;
 begin
   dllGlobal.Refresh('PUB_MEAUNITS');
@@ -2128,10 +1753,12 @@ begin
     btnNext.Click;
     if Finded then
       begin
-        btnNext.Click;
-        if edtMoreUnits.Checked then
-          btnNext.Click;
-        result := true;
+        ActiveControl := edtNEW_INPRICE;
+        result := (ShowModal=MROK);
+        //btnNext.Click;
+        //if edtMoreUnits.Checked then
+        //  btnNext.Click;
+        //result := true;
       end;
   except
     on E:Exception do
@@ -2322,7 +1949,7 @@ begin
               end
             else
               begin
-                result := (ShowModal = MROK);
+                result := (ShowModal=MROK);
                 if result then GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
               end;
           end
@@ -2532,6 +2159,107 @@ procedure TfrmInitGoods.edtBIG_UNITSKeyPress(Sender: TObject;
 begin
   inherited;
   if Key <> #13 then Key := #0;
+end;
+
+function TfrmInitGoods.BarcodeFactory(rs: TZQuery;code:string): boolean;
+var
+  db:TdbFactory;
+begin
+  db := TdbFactory.Create;
+  try
+    db.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\barcode.db');
+    db.connect;
+    rs.SQL.Text := 'select * from xx_barcode where barcode=:barcode';
+    rs.ParamByName('barcode').AsString := code;
+    db.Open(rs);
+    result := not rs.IsEmpty;
+  finally
+    db.free;
+  end;
+end;
+
+function TfrmInitGoods.CheckUnit(unitName: string): string;
+var
+  cdsUnits:TZQuery;
+  id:string;
+  i,w:integer;
+begin
+  cdsUnits := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  if cdsUnits.Locate('UNIT_NAME',unitName,[]) then
+     begin
+       result := cdsUnits.FieldByName('UNIT_ID').AsString;
+       Exit;
+     end;
+  id := EncStr(unitName,ENC_KEY);
+  w := 36-length(id);
+  for i:=1 to w do id := '0'+id;
+  result := id;
+  cdsUnits := TZQuery.Create(nil);
+  dataFactory.MoveToSqlite;
+  try
+    cdsUnits.Close;
+    cdsUnits.SQL.Text := 'select * from PUB_MEAUNITS where TENANT_ID=:TENANT_ID and UNIT_ID=:UNIT_ID';
+    cdsUnits.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
+    cdsUnits.ParamByName('UNIT_ID').AsString := id;
+    dataFactory.Open(cdsUnits);
+    cdsUnits.Append;
+    cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
+    cdsUnits.FieldByName('UNIT_ID').AsString := id;
+    cdsUnits.FieldByName('UNIT_NAME').AsString := unitName;
+    cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(unitName,3);
+    cdsUnits.FieldByName('SEQ_NO').AsInteger := 1;
+    cdsUnits.Post;
+    dataFactory.UpdateBatch(cdsUnits,'TMeaUnitsV60');
+  finally
+    cdsUnits.Free;
+    dataFactory.MoveToDefault;
+  end;
+  RefreshUnits;
+end;
+
+procedure TfrmInitGoods.edtInputKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key=VK_DOWN then
+     begin
+       edtGOODS_OPTION2.Checked := true;
+       edtGOODS_OPTION2.SetFocus;
+     end;
+
+end;
+
+procedure TfrmInitGoods.edtGOODS_OPTION1KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key=VK_DOWN then
+     begin
+       edtGOODS_OPTION2.Checked := true;
+       edtGOODS_OPTION2.SetFocus;
+     end;
+
+end;
+
+procedure TfrmInitGoods.edtGOODS_OPTION1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     if btnNext.Visible then btnNext.Click;
+
+end;
+
+procedure TfrmInitGoods.edtGOODS_OPTION2KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key=VK_UP then
+     begin
+       edtGOODS_OPTION1.Checked := true;
+       edtInput.SetFocus;
+     end;
+
 end;
 
 end.

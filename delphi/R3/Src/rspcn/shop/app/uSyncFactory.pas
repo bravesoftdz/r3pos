@@ -1446,7 +1446,7 @@ begin
       SetProPosition(100 div ls.RecordCount * ls.RecNo);
 
       // 小于关账日期的单据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('STOCK_DATE').AsInteger < CloseAccDate) then
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('STOCK_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
@@ -1588,7 +1588,7 @@ begin
       SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
 
       // 小于关账日期的单据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('SALES_DATE').AsInteger < CloseAccDate) then
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('SALES_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
@@ -1749,7 +1749,7 @@ begin
       SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
 
       // 小于关账日期的单据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CHANGE_DATE').AsInteger < CloseAccDate) then
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CHANGE_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
@@ -1888,7 +1888,7 @@ begin
       SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
 
       // 小于关账日期的数据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger < CloseAccDate) then
+      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;

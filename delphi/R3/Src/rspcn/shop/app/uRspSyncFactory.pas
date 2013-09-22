@@ -110,7 +110,7 @@ begin
         rs.FieldByName('REMARK').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'remark');
         rs.FieldByName('PASSWRD').AsString := EncStr(rspFactory.GetNodeValue(caTenantDownloadResp,'passwrd'),ENC_KEY);
         rs.FieldByName('REGION_ID').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'regionId');
-        rs.FieldByName('SRVR_ID').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'passwrd');
+        rs.FieldByName('SRVR_ID').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'srvrId');
         rs.FieldByName('AUDIT_STATUS').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'auditStatus');
         rs.FieldByName('PROD_ID').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'prodId');
         rs.FieldByName('DB_ID').AsString := rspFactory.GetNodeValue(caTenantDownloadResp,'dbId');

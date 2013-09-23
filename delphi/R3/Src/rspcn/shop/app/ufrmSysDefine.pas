@@ -505,18 +505,37 @@ begin
   if dataFactory.AuthMode = 2 then
      begin
        rs := TZQuery.Create(nil);
-       Params := TftParamList.Create(nil);
        dataFactory.MoveToRemote;
        try
-         Params.ParamByName('UPPER_XSM_CODE').AsString := UpperCase(token.xsmCode);
-         Params.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(token.xsmCode);
-         dataFactory.Open(rs, 'TAdoLoginV60', Params);
+         rs.SQL.Text :=
+           ' select a.TENANT_ID,a.SRVR_ID DEF_SRVR_ID, '+
+           '        b.SHOP_ID,b.SHOP_NAME, '+
+           '        c.PROD_ID,c.PROD_NAME,c.PROD_FLAG,c.INDUSTRY,c.RES_VERSION,c.RES_DESKTOP,c.PROD_PARAMS, '+
+           '        d.DB_ID, '+
+           '        f.SRVR_ID,f.SRVR_NAME,f.CONN_MODE,f.HOST_NAME,f.SRVR_PORT,f.SRVR_PATH,f.SRVR_STATUS '+
+           ' from   CA_TENANT a,CA_SHOP_INFO b,CA_PROD_INFO c, '+
+           '        CA_DB_INFO d,CA_DB_TO_SRVR e,CA_SERVER_INFO f '+
+           ' where  a.TENANT_ID = b.TENANT_ID '+
+           '        and a.PROD_ID = c.PROD_ID '+
+           '        and a.DB_ID = d.DB_ID '+
+           '        and d.DB_ID = e.DB_ID '+
+           '        and e.SRVR_ID = f.SRVR_ID '+
+           '        and b.XSM_CODE in (:UPPER_XSM_CODE,:LOWER_XSM_CODE) '+
+           '        and a.COMM not in (''02'',''12'') '+
+           '        and b.COMM not in (''02'',''12'') '+
+           '        and c.COMM not in (''02'',''12'') '+
+           '        and d.COMM not in (''02'',''12'') '+
+           '        and e.COMM not in (''02'',''12'') '+
+           '        and f.COMM not in (''02'',''12'') '+
+           ' order by b.SHOP_ID ';
+         rs.ParamByName('UPPER_XSM_CODE').AsString := UpperCase(token.xsmCode);
+         rs.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(token.xsmCode);
+         dataFactory.Open(rs);
          if rs.IsEmpty then Raise Exception.Create('´íÎóµÄµÇÂ¼Ãû...');
          tid := rs.FieldByName('TENANT_ID').AsString;
          sid := rs.FieldByName('SHOP_ID').AsString;
        finally
          dataFactory.MoveToDefault;
-         Params.Free;
          rs.Free;
        end;
 

@@ -526,7 +526,6 @@ var
   rs:TZQuery;
   db,r3:TIniFile;
   remote:TdbFactory;
-  Params:TftParamList;
   isSrvr,finded:boolean;
   paramsList:TStringList;
   str,defStr,dbId,srvrId,defSrvrId,shopId,tenantId:string;
@@ -535,15 +534,35 @@ begin
 
   remote := TdbFactory.Create;
   rs := TZQuery.Create(nil);
-  Params := TftParamList.Create(nil);
   db := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   r3 := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     remote.Initialize(connstr);
     remote.connect;
-    Params.ParamByName('UPPER_XSM_CODE').AsString := UpperCase(username);
-    Params.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(username);
-    remote.Open(rs, 'TAdoLoginV60', Params);
+    rs.SQL.Text :=
+      ' select a.TENANT_ID,a.SRVR_ID DEF_SRVR_ID, '+
+      '        b.SHOP_ID,b.SHOP_NAME, '+
+      '        c.PROD_ID,c.PROD_NAME,c.PROD_FLAG,c.INDUSTRY,c.RES_VERSION,c.RES_DESKTOP,c.PROD_PARAMS, '+
+      '        d.DB_ID, '+
+      '        f.SRVR_ID,f.SRVR_NAME,f.CONN_MODE,f.HOST_NAME,f.SRVR_PORT,f.SRVR_PATH,f.SRVR_STATUS '+
+      ' from   CA_TENANT a,CA_SHOP_INFO b,CA_PROD_INFO c, '+
+      '        CA_DB_INFO d,CA_DB_TO_SRVR e,CA_SERVER_INFO f '+
+      ' where  a.TENANT_ID = b.TENANT_ID '+
+      '        and a.PROD_ID = c.PROD_ID '+
+      '        and a.DB_ID = d.DB_ID '+
+      '        and d.DB_ID = e.DB_ID '+
+      '        and e.SRVR_ID = f.SRVR_ID '+
+      '        and b.XSM_CODE in (:UPPER_XSM_CODE,:LOWER_XSM_CODE) '+
+      '        and a.COMM not in (''02'',''12'') '+
+      '        and b.COMM not in (''02'',''12'') '+
+      '        and c.COMM not in (''02'',''12'') '+
+      '        and d.COMM not in (''02'',''12'') '+
+      '        and e.COMM not in (''02'',''12'') '+
+      '        and f.COMM not in (''02'',''12'') '+
+      ' order by b.SHOP_ID ';
+    rs.ParamByName('UPPER_XSM_CODE').AsString := UpperCase(username);
+    rs.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(username);
+    remote.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('´íÎóµÄµÇÂ¼Ãû...');
     srvrId := db.readString('db','srvrId','');
     defSrvrId := rs.FieldbyName('DEF_SRVR_ID').AsString;
@@ -636,7 +655,6 @@ begin
     db.Free;
     r3.Free;
     rs.Free;
-    Params.Free;
     remote.Free;
   end;
 end;
@@ -713,18 +731,25 @@ begin
 end;
 
 function TUcFactory.CheckUpgrade(tenantId, prodId, CurVeraion: string): TCaUpgrade;
-var
-  rs:TZQuery;
-  Params:TftParamList;
+var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
-  Params := TftParamList.Create(nil);
   dataFactory.MoveToRemote;
   try
-    Params.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
-    Params.ParamByName('CUR_VERSION').AsString := CurVeraion;
-    Params.ParamByName('PROD_ID').AsString := prodId;
-    dataFactory.Open(rs,'TAdoCheckVersionV60',Params);
+    rs.SQL.Text :=
+      ' select  A.VERSION_ID,A.PROD_ID,A.UPGRADE_VERSION,A.SRVR_ID,A.VERSION_STATUS,A.UPGRADE_FLAG,A.UPGRADE_RANGE,A.UPGRADE_URL '+
+      ' from    CA_UPGRADE_VERSION A,CA_TENANT B '+
+      ' where   A.PROD_ID = :PROD_ID '+
+      '         AND A.SRVR_ID = B.SRVR_ID '+
+      '         AND B.TENANT_ID = :TENANT_ID '+
+      '         AND UPGRADE_VERSION > :CUR_VERSION '+
+      '         AND A.VERSION_STATUS = ''2'' '+
+      '         AND A.COMM NOT IN (''02'',''12'') '+
+      ' order by VERSION_ID DESC ';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
+    rs.ParamByName('CUR_VERSION').AsString := CurVeraion;
+    rs.ParamByName('PROD_ID').AsString := prodId;
+    dataFactory.Open(rs);
     if rs.IsEmpty then
        result.UpGrade := 3
     else
@@ -736,7 +761,6 @@ begin
        end;
   finally
     dataFactory.MoveToDefault;
-    Params.Free;
     rs.Free;
   end;
 end;

@@ -25,7 +25,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure btn24hscClick(Sender: TObject);
   private
-    { Private declarations }
     CaUpgrade:TCaUpgrade;
     CreateDbFactroy:TCreateDbFactory;
     FUpgrade: integer;
@@ -33,10 +32,8 @@ type
     procedure CallBack(Title, SQL: string; Percent: Integer);
     procedure SetUpgrade(const Value: integer);
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     function CheckUpgrade:boolean;
     function CheckDBVersion:boolean;
     procedure UpgradeDBVersion;
@@ -45,10 +42,10 @@ type
   end;
 
 implementation
-uses ufrmBrowerForm,uTokenFactory,IniFiles,udataFactory;
-{$R *.dfm}
 
-{ TfrmUpdate }
+uses ufrmBrowerForm,uTokenFactory,IniFiles,udataFactory,uUcFactory;
+
+{$R *.dfm}
 
 procedure TfrmUpdate.CreateParams(var Params: TCreateParams);
 begin
@@ -140,20 +137,25 @@ begin
     F.Free;
   end;
   myVersion := '0.0.0.0';// inttostr(WebUpdater1.ApplicationVersion.MajorVersion)+'.'+inttostr(WebUpdater1.ApplicationVersion.MinorVersion)+'.'+inttostr(WebUpdater1.ApplicationVersion.ReleaseVersion)+'.'+inttostr(WebUpdater1.ApplicationVersion.BuildVersion);
-  CaUpgrade := rspFactory.CheckUpgrade(token.tenantId,ProductId,myVersion);
-{  if CaUpgrade.UpGrade in [1,2] then
-  begin
-     if (MessageBox(handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
-     begin
-       if (CaUpgrade.UpGrade=1) then
-          begin
-            MessageBox(handle,pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
-            Application.Terminate;
-          end else CaUpgrade.UpGrade := 3;
-     end;
-  end
+  if UcFactory.AuthMode = 2 then
+     CaUpgrade := UcFactory.CheckUpgrade(token.tenantId,ProductId,myVersion)
   else
-     CaUpgrade.UpGrade := 3;    }
+     CaUpgrade := rspFactory.CheckUpgrade(token.tenantId,ProductId,myVersion);
+{
+  if CaUpgrade.UpGrade in [1,2] then
+     begin
+       if (MessageBox(handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
+          begin
+            if (CaUpgrade.UpGrade=1) then
+               begin
+                 MessageBox(handle,pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
+                 Application.Terminate;
+               end else CaUpgrade.UpGrade := 3;
+          end;
+     end
+  else
+     CaUpgrade.UpGrade := 3;
+}
   if CaUpgrade.URL='' then Exit;
   RzVersionInfo1.FilePath := ExtractFilePath(ParamStr(0))+'shop.dll';
   url := TStringList.Create;

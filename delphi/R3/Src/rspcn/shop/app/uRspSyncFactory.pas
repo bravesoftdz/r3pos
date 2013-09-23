@@ -764,6 +764,7 @@ end;
 
 procedure TRspSyncFactory.SyncAll;
 begin
+  if dataFactory.AuthMode = 2 then Exit;
   SetProMax(5);
   SetProPosition(0);
   ProTitle := '正在下载<企业信息>...';
@@ -806,8 +807,13 @@ begin
   ss := TZQuery.Create(nil);
   ss_l := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID=110000002';
-    dataFactory.Open(rs);
+    dataFactory.MoveToRemote;
+    try
+      rs.SQL.Text := 'select * from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID=110000002 and COMM not in (''02'',''12'')';
+      dataFactory.Open(rs);
+    finally
+      dataFactory.MoveToDefault;
+    end;
     ss.FieldDefs := rs.FieldDefs;
     ss.CreateDataSet;
     rs.First;

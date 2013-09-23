@@ -69,8 +69,7 @@ implementation
 
 uses ComServ,udataFactory,uUcFactory,uRspFactory,uTokenFactory,ufrmBrowerForm,udllFactory;
 
-function TjavaScriptExt.signIn(const username, password,
-  verify: WideString; online: WordBool): WordBool;
+function TjavaScriptExt.signIn(const username, password, verify: WideString; online: WordBool): WordBool;
 var tenantId:integer;
 function CheckRegister:boolean;
 var
@@ -98,7 +97,7 @@ begin
   if not CheckRegister then //没有注册,先自动注册
      begin
         if not online then Raise Exception.Create('没开通零售终端不支持离线使用');  
-        if not rspFactory.xsmLogin(username,3) then Raise Exception.Create('当前账号没有开通零售终端，请联系客户经理申请。'); 
+        if (UcFactory.AuthMode = 1) and not rspFactory.xsmLogin(username,3) then Raise Exception.Create('当前账号没有开通零售终端，请联系客户经理申请。'); 
         if UcFactory.xsmLogin(username,password) then
            begin
              dataFactory.signined := true;
@@ -119,14 +118,6 @@ begin
              SaveTimeStamp;
              result := true;
              Exit;
-             //if rspFactory.xsmLogin(username,3) then
-             //   begin
-             //     WriteRegister;
-             //     dataFactory.MoveToDefault;
-             //     dataFactory.connect;
-             //     result := true;
-             //     Exit;
-             //   end;
            end;
      end
   else
@@ -135,16 +126,29 @@ begin
         token.online := online;
         if online then //在线操作情况重取系统参数
            begin
-              //已经登录过了，用企业号订证一下，读取相关连接参数
-              if rspFactory.xsmLogin(inttostr(tenantId),4) then
-                 begin
-                   dataFactory.MoveToDefault;
-                   dataFactory.connect;
-                 end else Raise Exception.Create('rsp认证失败了，当前企业没开通终端功能');
+             //已经登录过了，用企业号订证一下，读取相关连接参数
+             if UcFactory.AuthMode = 2 then
+                begin
+                  if UcFactory.autoLogin(inttostr(tenantId), username, password) then
+                     begin
+                       dataFactory.MoveToDefault;
+                       dataFactory.connect;
+                     end
+                  else Raise Exception.Create('认证失败，当前企业没开通终端功能...');
+                end
+             else
+                begin
+                  if rspFactory.xsmLogin(inttostr(tenantId),4) then
+                     begin
+                       dataFactory.MoveToDefault;
+                       dataFactory.connect;
+                     end
+                  else Raise Exception.Create('rsp认证失败，当前企业没开通终端功能...');
+                end;
            end
         else
            begin
-              dataFactory.MoveToSqlite;
+             dataFactory.MoveToSqlite;
            end;
      end;
   //开始登录
@@ -177,15 +181,11 @@ begin
         begin
           if isXsm and online then //在线使用并属于新商盟用户
              begin
-               if UcFactory.xsmLogin(username,password) then
-                  begin
-                     dataFactory.MoveToSqlite;
-                     dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(password,ENC_KEY)+''' where TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and SHOP_ID='''+rs.FieldbyName('SHOP_ID').asString+'''');
-                     dataFactory.movetoDefault;
-                     dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(password,ENC_KEY)+''' where TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and SHOP_ID='''+rs.FieldbyName('SHOP_ID').asString+'''');
-                  end
-               else
-                  Raise Exception.Create('输入的密码无效,请重新输入。');
+               if (UcFactory.AuthMode <> 2) and not UcFactory.xsmLogin(username,password) then Raise Exception.Create('输入的密码无效,请重新输入。');
+               dataFactory.MoveToSqlite;
+               dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(password,ENC_KEY)+''' where TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and SHOP_ID='''+rs.FieldbyName('SHOP_ID').asString+'''');
+               dataFactory.movetoDefault;
+               dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(password,ENC_KEY)+''' where TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and SHOP_ID='''+rs.FieldbyName('SHOP_ID').asString+'''');
              end
           else
              begin

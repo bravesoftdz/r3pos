@@ -2,7 +2,7 @@ unit udataFactory;
 
 interface
 
-uses SysUtils, Classes,DB ,ZDataSet, ZBase, ZIntf, ZdbFactory,Forms,IniFiles;
+uses SysUtils, Classes,DB ,ZDataSet, ZBase, ZIntf, ZdbFactory, Forms, IniFiles, EncDec;
 
 type
   TdataFactory = class(TDataModule)
@@ -11,12 +11,12 @@ type
     Fsqlite: TdbFactory;
     dbFlag:integer;
     Fonline: boolean;
+    FAuthMode: integer;
     function getRemote: IdbDllHelp;
     procedure Setsqlite(const Value: TdbFactory);
     procedure Setonline(const Value: boolean);
-    { Private declarations }
+    procedure SetAuthMode(const Value: integer);
   public
-    { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     //开始事务  超时设置 单位秒
@@ -25,12 +25,12 @@ type
     procedure CommitTrans;
     //回滚事务
     procedure RollbackTrans;
-
     //是否已经在事务中 True 在事务中
     function  InTransaction:boolean;
-
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
     function  iDbType:Integer;
+    //获取服务端时间戳
+    function  GetDBTimeStamp:int64;
     //数据包组织
     function BeginBatch:Boolean;
     function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):Boolean;
@@ -52,28 +52,27 @@ type
     function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;
 
     //执行远程方式，返回结果
-    function ExecProc(AClassName:String;Params:TftParamList=nil):String;
+    function  ExecProc(AClassName:String;Params:TftParamList=nil):String;
     procedure MoveToDefault;
     procedure MoveToRemote;
     procedure MoveToSqlite;
     function DBLock(locked:boolean):boolean;
-
+    //认证方式 1:rsp 2:xsm
+    property AuthMode:integer read FAuthMode write SetAuthMode;
     property sqlite:TdbFactory read Fsqlite write Setsqlite;
     property remote:IdbDllHelp read getRemote;
     property online:boolean read Fonline write Setonline;
   end;
 
-var
-  dataFactory: TdataFactory;
+var dataFactory: TdataFactory;
 
 implementation
+
 uses dllApi,uTokenFactory;
+
 {$R *.dfm}
 
-{ TdataFactory }
-
-function TdataFactory.AddBatch(DataSet: TDataSet; AClassName: string;
-  Params: TftParamList): Boolean;
+function TdataFactory.AddBatch(DataSet: TDataSet; AClassName: string; Params: TftParamList): Boolean;
 begin
   case dbFlag of
   0:result := sqlite.AddBatch(DataSet,AClassName,Params);
@@ -177,6 +176,9 @@ begin
 end;
 
 constructor TdataFactory.Create(AOwner: TComponent);
+var
+  uc:string;
+  F:TIniFile;
 begin
   inherited;
   sqlite := TdbFactory.Create;
@@ -184,6 +186,20 @@ begin
   dbFlag := 0;
   sqlite.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\r3.db');
   sqlite.connect;
+
+  AuthMode := 1;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    uc := F.ReadString('soft', 'xsm', '');
+    if (uc <> '') and (uc[1] = '#') then
+       begin
+         delete(uc,1,1);
+         uc := DecStr(uc,ENC_KEY);
+       end;
+    if uc <> '' then AuthMode := 2;
+  finally
+    F.Free;
+  end;
 end;
 
 destructor TdataFactory.Destroy;
@@ -447,6 +463,42 @@ begin
     begin
       dbHelp.DBLock(locked);
     end;
+  end;
+end;
+
+procedure TdataFactory.SetAuthMode(const Value: integer);
+begin
+  FAuthMode := Value;
+end;
+
+function TdataFactory.GetDBTimeStamp: int64;
+var
+  str:string;
+  rs:TZQuery;
+begin
+  case remote.iDbType of
+    0:str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+    1:str := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
+    4:str := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
+    5:str := 'strftime(''%s'',''now'',''localtime'')-1293840000';
+    else str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+  end;
+
+  case remote.iDbType of
+    0,5: str := 'select ' + str + ' as time_stamp ';
+    4:   str := 'select ' + str + ' as time_stamp from SYSIBM.SYSDUMMY1';
+    1:   str := 'select ' + str + ' as time_stamp from DUAL';
+  end;
+
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToRemote;
+  try
+    rs.SQL.Text := str;
+    dataFactory.Open(rs);
+    result := StrtoInt64(rs.Fields[0].Asstring);
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
   end;
 end;
 

@@ -227,7 +227,6 @@ type
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
     RzLabel51: TRzLabel;
-    Tool_Right: TRzToolButton;
     Tool_Reset: TRzToolButton;
     RzPanel13: TRzPanel;
     RzPanel82: TRzPanel;
@@ -495,118 +494,203 @@ end;
 
 procedure TfrmSysDefine.GetShopInfo;
 var
+  tid,sid:string;
+  tmpObj:TRecord_;
+  rs,tmpTenant,tmpShopInfo:TZQuery;
   Params:TftParamList;
   tenantxml,shopxml:widestring;
   tenantdoc,shopdoc:IXMLDomDocument;
   caTenant,caShopInfo:IXMLDOMNode;
 begin
-  if not rspFactory.xsmLogin(token.xsmCode,3) then Exit;
+  if dataFactory.AuthMode = 2 then
+     begin
+       rs := TZQuery.Create(nil);
+       Params := TftParamList.Create(nil);
+       dataFactory.MoveToRemote;
+       try
+         Params.ParamByName('UPPER_XSM_CODE').AsString := UpperCase(token.xsmCode);
+         Params.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(token.xsmCode);
+         dataFactory.Open(rs, 'TAdoLoginV60', Params);
+         if rs.IsEmpty then Raise Exception.Create('错误的登录名...');
+         tid := rs.FieldByName('TENANT_ID').AsString;
+         sid := rs.FieldByName('SHOP_ID').AsString;
+       finally
+         dataFactory.MoveToDefault;
+         Params.Free;
+         rs.Free;
+       end;
 
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := rspFactory.tenantId;
-    Params.ParamByName('SHOP_ID').AsString := rspFactory.shopId;
-    dataFactory.BeginBatch;
-    try
-      dataFactory.AddBatch(cdsTenant,'TTenantV60',Params);
-      dataFactory.AddBatch(cdsShopInfo,'TShopInfoV60',Params);
-      dataFactory.OpenBatch;
-    except
-      dataFactory.CancelBatch;
-      Raise;
-    end;
-  finally
-    Params.Free;
-  end;
+       Params := TftParamList.Create(nil);
+       try
+         Params.ParamByName('TENANT_ID').AsInteger := strtoint(tid);
+         Params.ParamByName('SHOP_ID').AsString := sid;
+         dataFactory.BeginBatch;
+         try
+           dataFactory.AddBatch(cdsTenant,'TTenantV60',Params);
+           dataFactory.AddBatch(cdsShopInfo,'TShopInfoV60',Params);
+           dataFactory.OpenBatch;
+         except
+           dataFactory.CancelBatch;
+           Raise;
+         end;
+       finally
+         Params.Free;
+       end;
 
-  tenantxml := rspFactory.getTenantInfo(rspFactory.tenantId);
-  tenantdoc := rspFactory.CreateXML(tenantxml);
-  caTenant := rspFactory.FindNode(tenantdoc,'body\caTenant',false);
+       if dataFactory.iDbType = 5 then
+          begin
+            dataFactory.MoveToRemote;
+            tmpTenant := TZQuery.Create(nil);
+            tmpShopInfo := TZQuery.Create(nil);
+            Params := TftParamList.Create(nil);
+            try
+              Params.ParamByName('TENANT_ID').AsInteger := strtoint(tid);
+              Params.ParamByName('SHOP_ID').AsString := sid;
+              dataFactory.BeginBatch;
+              try
+                dataFactory.AddBatch(tmpTenant,'TTenantV60',Params);
+                dataFactory.AddBatch(tmpShopInfo,'TShopInfoV60',Params);
+                dataFactory.OpenBatch;
+              except
+                dataFactory.CancelBatch;
+                Raise;
+              end;
 
-  if caTenant = nil then Raise Exception.Create('查询企业信息失败...');
+              cdsTenant.Edit;
+              tmpObj := TRecord_.Create;
+              try
+                tmpObj.ReadFromDataSet(tmpTenant);
+                tmpObj.WriteToDataSet(cdsTenant);
+              finally
+                tmpObj.Free;
+              end;
 
-  if cdsTenant.IsEmpty then cdsTenant.Append
-  else cdsTenant.Edit;
+              cdsShopInfo.Edit;
+              tmpObj := TRecord_.Create;
+              try
+                tmpObj.ReadFromDataSet(tmpShopInfo);
+                tmpObj.WriteToDataSet(cdsShopInfo);
+              finally
+                tmpObj.Free;
+              end;
+            finally
+              dataFactory.MoveToDefault;
+              tmpShopInfo.Free;
+              tmpTenant.Free;
+              Params.Free;
+            end;
+          end;
 
-  cdsTenant.FieldByName('TENANT_ID').AsInteger := StrtoInt(rspFactory.GetNodeValue(caTenant,'tenantId'));
-  cdsTenant.FieldByName('LOGIN_NAME').AsString := rspFactory.GetNodeValue(caTenant,'loginName');
-  cdsTenant.FieldByName('TENANT_NAME').AsString := rspFactory.GetNodeValue(caTenant,'tenantName');
-  cdsTenant.FieldByName('SHORT_TENANT_NAME').AsString := rspFactory.GetNodeValue(caTenant,'shortTenantName');
-  cdsTenant.FieldByName('TENANT_SPELL').AsString := rspFactory.GetNodeValue(caTenant,'tenantSpell');
-  cdsTenant.FieldByName('TENANT_TYPE').AsInteger := StrtoInt(rspFactory.GetNodeValue(caTenant,'tenantType'));
-  cdsTenant.FieldByName('LICENSE_CODE').AsString := rspFactory.GetNodeValue(caTenant,'licenseCode');
-  cdsTenant.FieldByName('LEGAL_REPR').AsString := rspFactory.GetNodeValue(caTenant,'legalRepr');
-  cdsTenant.FieldByName('LINKMAN').AsString := rspFactory.GetNodeValue(caTenant,'linkman');
-  cdsTenant.FieldByName('TELEPHONE').AsString := rspFactory.GetNodeValue(caTenant,'telephone');
-  cdsTenant.FieldByName('FAXES').AsString := rspFactory.GetNodeValue(caTenant,'faxes');
-  cdsTenant.FieldByName('HOMEPAGE').AsString := rspFactory.GetNodeValue(caTenant,'homepage');
-  cdsTenant.FieldByName('ADDRESS').AsString := rspFactory.GetNodeValue(caTenant,'address');
-  cdsTenant.FieldByName('POSTALCODE').AsString := rspFactory.GetNodeValue(caTenant,'postalcode');
-  cdsTenant.FieldByName('PASSWRD').AsString := rspFactory.GetNodeValue(caTenant,'passwrd');
-  cdsTenant.FieldByName('QQ').AsString := rspFactory.GetNodeValue(caTenant,'qq');
-  cdsTenant.FieldByName('MSN').AsString := rspFactory.GetNodeValue(caTenant,'msn');
-  cdsTenant.FieldByName('REMARK').AsString := rspFactory.GetNodeValue(caTenant,'remark');
-  cdsTenant.FieldByName('REGION_ID').AsString := rspFactory.GetNodeValue(caTenant,'regionId');
-  cdsTenant.FieldByName('SRVR_ID').AsString := rspFactory.GetNodeValue(caTenant,'srvrId');
-  cdsTenant.FieldByName('PROD_ID').AsString := rspFactory.GetNodeValue(caTenant,'prodId');
-  cdsTenant.FieldByName('AUDIT_STATUS').AsString := rspFactory.GetNodeValue(caTenant,'auditStatus');
-  cdsTenant.Post;
-
-  if cdsShopInfo.IsEmpty then cdsShopInfo.Append
-  else cdsShopInfo.Edit;
-
-  if rspFactory.shopId = '' then Raise Exception.Create('门店信息尚未审核...');
-
-  if Copy(rspFactory.shopId,Length(rspFactory.shopId)-3,Length(rspFactory.shopId)) = '0001' then
-  begin
-    cdsShopInfo.FieldByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
-    cdsShopInfo.FieldByName('SHOP_ID').AsString := rspFactory.shopId;
-    cdsShopInfo.FieldByName('SHOP_NAME').AsString := cdsTenant.FieldByName('SHORT_TENANT_NAME').AsString;
-    cdsShopInfo.FieldByName('SHOP_SPELL').AsString := cdsTenant.FieldByName('TENANT_SPELL').AsString;
-    cdsShopInfo.FieldByName('LICENSE_CODE').AsString := cdsTenant.FieldByName('LICENSE_CODE').AsString;
-    cdsShopInfo.FieldByName('LINKMAN').AsString := cdsTenant.FieldByName('LINKMAN').AsString;
-    cdsShopInfo.FieldByName('TELEPHONE').AsString := cdsTenant.FieldByName('TELEPHONE').AsString;
-    cdsShopInfo.FieldByName('FAXES').AsString := cdsTenant.FieldByName('FAXES').AsString;
-    cdsShopInfo.FieldByName('ADDRESS').AsString := cdsTenant.FieldByName('ADDRESS').AsString;
-    cdsShopInfo.FieldByName('POSTALCODE').AsString := cdsTenant.FieldByName('POSTALCODE').AsString;
-    if cdsShopInfo.FieldByName('SHOP_ID').AsString = rspFactory.shopId then
-       cdsShopInfo.FieldByName('XSM_CODE').AsString := token.xsmCode
-    else
-       cdsShopInfo.FieldByName('XSM_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'xsmCode');
-    cdsShopInfo.FieldByName('XSM_PSWD').AsString := EncStr(token.xsmPWD,ENC_KEY);
-    cdsShopInfo.FieldByName('REGION_ID').AsString := cdsTenant.FieldByName('REGION_ID').AsString;
-    cdsShopInfo.FieldByName('SHOP_TYPE').AsString := '#';
-    cdsShopInfo.FieldByName('SEQ_NO').AsInteger := 1001;
-    cdsShopInfo.Post;
-  end
+       rspFactory.timestamp := dataFactory.GetDBTimeStamp;
+     end
   else
-  begin
-    shopxml := rspFactory.getShopInfo(rspFactory.tenantId,rspFactory.shopId);
-    shopdoc := rspFactory.CreateXML(shopxml);
-    caShopInfo := rspFactory.FindNode(shopdoc,'body\caShopInfo',false);
+     begin
+       if not rspFactory.xsmLogin(token.xsmCode,3) then Exit;
 
-    if caShopInfo = nil then Raise Exception.Create('查询门店信息失败...');
+       Params := TftParamList.Create(nil);
+       try
+         Params.ParamByName('TENANT_ID').AsInteger := rspFactory.tenantId;
+         Params.ParamByName('SHOP_ID').AsString := rspFactory.shopId;
+         dataFactory.BeginBatch;
+         try
+           dataFactory.AddBatch(cdsTenant,'TTenantV60',Params);
+           dataFactory.AddBatch(cdsShopInfo,'TShopInfoV60',Params);
+           dataFactory.OpenBatch;
+         except
+           dataFactory.CancelBatch;
+           Raise;
+         end;
+       finally
+         Params.Free;
+       end;
 
-    cdsShopInfo.FieldByName('TENANT_ID').AsInteger := StrtoInt(rspFactory.GetNodeValue(caShopInfo,'tenantId'));
-    cdsShopInfo.FieldByName('SHOP_ID').AsString := rspFactory.GetNodeValue(caShopInfo,'shopId');
-    cdsShopInfo.FieldByName('SHOP_NAME').AsString := rspFactory.GetNodeValue(caShopInfo,'shopName');
-    cdsShopInfo.FieldByName('SHOP_SPELL').AsString := rspFactory.GetNodeValue(caShopInfo,'shopSpell');
-    cdsShopInfo.FieldByName('LICENSE_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'licenseCode');
-    cdsShopInfo.FieldByName('LINKMAN').AsString := rspFactory.GetNodeValue(caShopInfo,'linkman');
-    cdsShopInfo.FieldByName('TELEPHONE').AsString := rspFactory.GetNodeValue(caShopInfo,'telephone');
-    cdsShopInfo.FieldByName('FAXES').AsString := rspFactory.GetNodeValue(caShopInfo,'faxes');
-    cdsShopInfo.FieldByName('ADDRESS').AsString := rspFactory.GetNodeValue(caShopInfo,'address');
-    cdsShopInfo.FieldByName('POSTALCODE').AsString := rspFactory.GetNodeValue(caShopInfo,'postalcode');
-    if cdsShopInfo.FieldByName('SHOP_ID').AsString = rspFactory.shopId then
-       cdsShopInfo.FieldByName('XSM_CODE').AsString := token.xsmCode
-    else
-       cdsShopInfo.FieldByName('XSM_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'xsmCode');
-    cdsShopInfo.FieldByName('XSM_PSWD').AsString := EncStr(token.xsmPWD,ENC_KEY);
-    cdsShopInfo.FieldByName('REGION_ID').AsString := rspFactory.GetNodeValue(caShopInfo,'regionId');
-    cdsShopInfo.FieldByName('SHOP_TYPE').AsString := rspFactory.GetNodeValue(caShopInfo,'shopType');
-    cdsShopInfo.FieldByName('SEQ_NO').AsInteger := StrtoInt(rspFactory.GetNodeValue(caShopInfo,'seqNo'));
-    cdsShopInfo.Post;
-  end;
+       tenantxml := rspFactory.getTenantInfo(rspFactory.tenantId);
+       tenantdoc := rspFactory.CreateXML(tenantxml);
+       caTenant := rspFactory.FindNode(tenantdoc,'body\caTenant',false);
+
+       if caTenant = nil then Raise Exception.Create('查询企业信息失败...');
+
+       if cdsTenant.IsEmpty then cdsTenant.Append else cdsTenant.Edit;
+
+       cdsTenant.FieldByName('TENANT_ID').AsInteger := StrtoInt(rspFactory.GetNodeValue(caTenant,'tenantId'));
+       cdsTenant.FieldByName('LOGIN_NAME').AsString := rspFactory.GetNodeValue(caTenant,'loginName');
+       cdsTenant.FieldByName('TENANT_NAME').AsString := rspFactory.GetNodeValue(caTenant,'tenantName');
+       cdsTenant.FieldByName('SHORT_TENANT_NAME').AsString := rspFactory.GetNodeValue(caTenant,'shortTenantName');
+       cdsTenant.FieldByName('TENANT_SPELL').AsString := rspFactory.GetNodeValue(caTenant,'tenantSpell');
+       cdsTenant.FieldByName('TENANT_TYPE').AsInteger := StrtoInt(rspFactory.GetNodeValue(caTenant,'tenantType'));
+       cdsTenant.FieldByName('LICENSE_CODE').AsString := rspFactory.GetNodeValue(caTenant,'licenseCode');
+       cdsTenant.FieldByName('LEGAL_REPR').AsString := rspFactory.GetNodeValue(caTenant,'legalRepr');
+       cdsTenant.FieldByName('LINKMAN').AsString := rspFactory.GetNodeValue(caTenant,'linkman');
+       cdsTenant.FieldByName('TELEPHONE').AsString := rspFactory.GetNodeValue(caTenant,'telephone');
+       cdsTenant.FieldByName('FAXES').AsString := rspFactory.GetNodeValue(caTenant,'faxes');
+       cdsTenant.FieldByName('HOMEPAGE').AsString := rspFactory.GetNodeValue(caTenant,'homepage');
+       cdsTenant.FieldByName('ADDRESS').AsString := rspFactory.GetNodeValue(caTenant,'address');
+       cdsTenant.FieldByName('POSTALCODE').AsString := rspFactory.GetNodeValue(caTenant,'postalcode');
+       cdsTenant.FieldByName('PASSWRD').AsString := rspFactory.GetNodeValue(caTenant,'passwrd');
+       cdsTenant.FieldByName('QQ').AsString := rspFactory.GetNodeValue(caTenant,'qq');
+       cdsTenant.FieldByName('MSN').AsString := rspFactory.GetNodeValue(caTenant,'msn');
+       cdsTenant.FieldByName('REMARK').AsString := rspFactory.GetNodeValue(caTenant,'remark');
+       cdsTenant.FieldByName('REGION_ID').AsString := rspFactory.GetNodeValue(caTenant,'regionId');
+       cdsTenant.FieldByName('SRVR_ID').AsString := rspFactory.GetNodeValue(caTenant,'srvrId');
+       cdsTenant.FieldByName('PROD_ID').AsString := rspFactory.GetNodeValue(caTenant,'prodId');
+       cdsTenant.FieldByName('AUDIT_STATUS').AsString := rspFactory.GetNodeValue(caTenant,'auditStatus');
+       cdsTenant.Post;
+
+       if cdsShopInfo.IsEmpty then cdsShopInfo.Append else cdsShopInfo.Edit;
+
+       if rspFactory.shopId = '' then Raise Exception.Create('门店信息尚未审核...');
+
+       if Copy(rspFactory.shopId,Length(rspFactory.shopId)-3,Length(rspFactory.shopId)) = '0001' then
+          begin
+            cdsShopInfo.FieldByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
+            cdsShopInfo.FieldByName('SHOP_ID').AsString := rspFactory.shopId;
+            cdsShopInfo.FieldByName('SHOP_NAME').AsString := cdsTenant.FieldByName('SHORT_TENANT_NAME').AsString;
+            cdsShopInfo.FieldByName('SHOP_SPELL').AsString := cdsTenant.FieldByName('TENANT_SPELL').AsString;
+            cdsShopInfo.FieldByName('LICENSE_CODE').AsString := cdsTenant.FieldByName('LICENSE_CODE').AsString;
+            cdsShopInfo.FieldByName('LINKMAN').AsString := cdsTenant.FieldByName('LINKMAN').AsString;
+            cdsShopInfo.FieldByName('TELEPHONE').AsString := cdsTenant.FieldByName('TELEPHONE').AsString;
+            cdsShopInfo.FieldByName('FAXES').AsString := cdsTenant.FieldByName('FAXES').AsString;
+            cdsShopInfo.FieldByName('ADDRESS').AsString := cdsTenant.FieldByName('ADDRESS').AsString;
+            cdsShopInfo.FieldByName('POSTALCODE').AsString := cdsTenant.FieldByName('POSTALCODE').AsString;
+            if cdsShopInfo.FieldByName('SHOP_ID').AsString = rspFactory.shopId then
+               cdsShopInfo.FieldByName('XSM_CODE').AsString := token.xsmCode
+            else
+               cdsShopInfo.FieldByName('XSM_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'xsmCode');
+            cdsShopInfo.FieldByName('XSM_PSWD').AsString := EncStr(token.xsmPWD,ENC_KEY);
+            cdsShopInfo.FieldByName('REGION_ID').AsString := cdsTenant.FieldByName('REGION_ID').AsString;
+            cdsShopInfo.FieldByName('SHOP_TYPE').AsString := '#';
+            cdsShopInfo.FieldByName('SEQ_NO').AsInteger := 1001;
+            cdsShopInfo.Post;
+          end
+       else
+          begin
+            shopxml := rspFactory.getShopInfo(rspFactory.tenantId,rspFactory.shopId);
+            shopdoc := rspFactory.CreateXML(shopxml);
+            caShopInfo := rspFactory.FindNode(shopdoc,'body\caShopInfo',false);
+
+            if caShopInfo = nil then Raise Exception.Create('查询门店信息失败...');
+
+            cdsShopInfo.FieldByName('TENANT_ID').AsInteger := StrtoInt(rspFactory.GetNodeValue(caShopInfo,'tenantId'));
+            cdsShopInfo.FieldByName('SHOP_ID').AsString := rspFactory.GetNodeValue(caShopInfo,'shopId');
+            cdsShopInfo.FieldByName('SHOP_NAME').AsString := rspFactory.GetNodeValue(caShopInfo,'shopName');
+            cdsShopInfo.FieldByName('SHOP_SPELL').AsString := rspFactory.GetNodeValue(caShopInfo,'shopSpell');
+            cdsShopInfo.FieldByName('LICENSE_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'licenseCode');
+            cdsShopInfo.FieldByName('LINKMAN').AsString := rspFactory.GetNodeValue(caShopInfo,'linkman');
+            cdsShopInfo.FieldByName('TELEPHONE').AsString := rspFactory.GetNodeValue(caShopInfo,'telephone');
+            cdsShopInfo.FieldByName('FAXES').AsString := rspFactory.GetNodeValue(caShopInfo,'faxes');
+            cdsShopInfo.FieldByName('ADDRESS').AsString := rspFactory.GetNodeValue(caShopInfo,'address');
+            cdsShopInfo.FieldByName('POSTALCODE').AsString := rspFactory.GetNodeValue(caShopInfo,'postalcode');
+            if cdsShopInfo.FieldByName('SHOP_ID').AsString = rspFactory.shopId then
+               cdsShopInfo.FieldByName('XSM_CODE').AsString := token.xsmCode
+            else
+               cdsShopInfo.FieldByName('XSM_CODE').AsString := rspFactory.GetNodeValue(caShopInfo,'xsmCode');
+            cdsShopInfo.FieldByName('XSM_PSWD').AsString := EncStr(token.xsmPWD,ENC_KEY);
+            cdsShopInfo.FieldByName('REGION_ID').AsString := rspFactory.GetNodeValue(caShopInfo,'regionId');
+            cdsShopInfo.FieldByName('SHOP_TYPE').AsString := rspFactory.GetNodeValue(caShopInfo,'shopType');
+            cdsShopInfo.FieldByName('SEQ_NO').AsInteger := StrtoInt(rspFactory.GetNodeValue(caShopInfo,'seqNo'));
+            cdsShopInfo.Post;
+          end;
+     end;
 end;
 
 procedure TfrmSysDefine.OpenShopInfo(tenantId:string='';shopId:string='');

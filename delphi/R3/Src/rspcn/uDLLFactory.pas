@@ -562,9 +562,11 @@ begin
        try
         rs.Close;
         rs.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,A.TENANT_ID,C.TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
-          'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT=:ACCOUNT';
+          'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID=:TENANT_ID and A.ACCOUNT in (:ACCOUNT,:LOWER_ACCOUNT,:UPPER_ACCOUNT)';
         rs.ParamByName('TENANT_ID').AsInteger := tenantId;
         rs.ParamByName('ACCOUNT').AsString := token.account;
+        rs.ParamByName('LOWER_ACCOUNT').AsString := lowerCase(token.account);
+        rs.ParamByName('UPPER_ACCOUNT').AsString := upperCase(token.account);
         dataFactory.Open(rs);
         if rs.IsEmpty then Raise Exception.Create('读取用户信息失败，请重新登录...');
         token.userId := rs.FieldbyName('USER_ID').AsString;

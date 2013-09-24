@@ -9,8 +9,10 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset, udataFactory, cxMaskEdit,
   cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
   cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,ZdbFactory,
-  RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms;
-
+  RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
+  AppWebUpdater, ComCtrls, RzEdit,uRspFactory;
+const
+  WM_CHECK_BARCODE = WM_USER + 1235;
 type
   TfrmInitGoods = class(TfrmWebDialog)
     RzPanel2: TRzPanel;
@@ -128,6 +130,13 @@ type
     red4: TLabel;
     red5: TLabel;
     cdsUnits: TZQuery;
+    TabSheet4: TRzTabSheet;
+    RzBackground4: TRzBackground;
+    RzLabel28: TRzLabel;
+    RzLabel29: TRzLabel;
+    WebUpdater1: TWebUpdater;
+    Memo1: TRzMemo;
+    ProgressBar1: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -173,6 +182,11 @@ type
     procedure edtGOODS_OPTION1KeyPress(Sender: TObject; var Key: Char);
     procedure edtGOODS_OPTION2KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure WebUpdater1ChangeText(Sender: TObject; Text: String);
+    procedure WebUpdater1Success(Sender: TObject;
+      SuccessCode: TSuccessMessage; Parameter, SuccessMessage: String);
+    procedure WebUpdater1Error(Sender: TObject; ErrorCode: TErrorMessage;
+      Parameter, ErrMessage: String);
   private
     function BarcodeFactory(rs:TZQuery;code:string):boolean;
 
@@ -190,6 +204,9 @@ type
     procedure SetRspFinded(const Value: boolean);
     procedure HideGodsCode;
     procedure ShowGodsCode;
+    procedure upgrade(var Message: TMessage); message WM_CHECK_BARCODE;
+    function CheckUpgrade(tenantId, prodId,
+      CurVeraion: string): TCaUpgrade;
   public
     AObj:TRecord_;
     FLocalFinded:boolean;
@@ -198,6 +215,9 @@ type
     Simple:boolean;
     FY_RELATION_ID:string;
     FY_TENANT_ID:string;
+    function checkBarcode:boolean;
+
+
     procedure OpenDataSet(tenantId,godsId:string);
     procedure PostDataSet;
     procedure ReadFromObject;
@@ -218,7 +238,7 @@ type
 implementation
 
 uses udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,EncDec;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,EncDec,IniFiles;
 
 const
   FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
@@ -370,6 +390,10 @@ begin
       btnPrev.Visible := False;
       btnNext.Visible := True;
       btnNext.Caption := '下一步';
+    end
+  else if rzPage.ActivePageIndex = 3 then
+    begin
+      WebUpdater1.Start;
     end;
 end;
 
@@ -387,6 +411,14 @@ begin
     begin
       rzPage.ActivePageIndex := 1;
       btnPrev.Visible := True;
+      btnNext.Visible := True;
+      btnNext.Caption := '下一步';
+    end
+  else if rzPage.ActivePageIndex = 3 then
+    begin
+      rzPage.ActivePageIndex := 0;
+      btnPrev.Visible := false;
+      btnPrev.Caption := '上一步';
       btnNext.Visible := True;
       btnNext.Caption := '下一步';
     end;
@@ -410,7 +442,7 @@ end;
 
 procedure TfrmInitGoods.GetGoodsInfo;
 var
-  barcode,godsId:string;
+  barcode,godsId,gid:string;
   hasGoods:TZQuery;
   tmpGoodsInfo,tmpBarCode,xxbarcode:TZQuery;
   Params:TftParamList;
@@ -661,7 +693,9 @@ begin
       else
         cdsGoodsInfo.Edit;
       cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := StrtoInt(FY_TENANT_ID);
-      cdsGoodsInfo.FieldByName('GODS_ID').AsString := '00000000000000000000000' + xxBarcode.FieldbyName('BARCODE').AsString;
+      gid := xxBarcode.FieldbyName('BARCODE').AsString;
+      for i:=1 to (36-length(gid)) do gid := '0'+gid;
+      cdsGoodsInfo.FieldByName('GODS_ID').AsString := gid;
       cdsGoodsInfo.FieldByName('GODS_CODE').AsString := xxBarcode.FieldbyName('BARCODE').AsString;
       cdsGoodsInfo.FieldByName('GODS_NAME').AsString := xxBarcode.FieldbyName('NAME').AsString;
       cdsGoodsInfo.FieldByName('GODS_SPELL').AsString := xxBarcode.FieldbyName('SPELL').AsString;
@@ -1955,6 +1989,7 @@ begin
           end
         else
           begin
+            PostMessage(handle,WM_CHECK_BARCODE,0,0);
             result := (ShowModal = MROK);
             if result then GodsId := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
           end;
@@ -2260,6 +2295,116 @@ begin
        edtInput.SetFocus;
      end;
 
+end;
+
+function TfrmInitGoods.CheckUpgrade(tenantId, prodId, CurVeraion: string): TCaUpgrade;
+var rs:TZQuery;
+begin
+  if not token.online then Exit;
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToRemote;
+  try
+    rs.SQL.Text :=
+      ' select  A.VERSION_ID,A.PROD_ID,A.UPGRADE_VERSION,A.SRVR_ID,A.VERSION_STATUS,A.UPGRADE_FLAG,A.UPGRADE_RANGE,A.UPGRADE_URL '+
+      ' from    CA_UPGRADE_VERSION A,CA_TENANT B '+
+      ' where   A.PROD_ID = :PROD_ID '+
+      '         AND A.SRVR_ID = B.SRVR_ID '+
+      '         AND B.TENANT_ID = :TENANT_ID '+
+      '         AND UPGRADE_VERSION > :CUR_VERSION '+
+      '         AND A.VERSION_STATUS = ''2'' '+
+      '         AND A.COMM NOT IN (''02'',''12'') '+
+      ' order by VERSION_ID DESC ';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
+    rs.ParamByName('CUR_VERSION').AsString := CurVeraion;
+    rs.ParamByName('PROD_ID').AsString := prodId;
+    dataFactory.Open(rs);
+    if rs.IsEmpty then
+       result.UpGrade := 3
+    else
+       begin
+         rs.First;
+         result.UpGrade := rs.FieldByName('UPGRADE_FLAG').AsInteger;
+         result.URL := rs.FieldByName('UPGRADE_URL').AsString;
+         result.Version := rs.FieldByName('UPGRADE_VERSION').AsString;
+       end;
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
+end;
+
+function TfrmInitGoods.checkBarcode: boolean;
+var
+  CaUpgrade:TCaUpgrade;
+  F:TIniFile;
+  ProductId,myVersion:string;
+  url:TStringList;
+begin
+  CaUpgrade.UpGrade := 3;
+  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    ProductId := F.ReadString('soft','ProductID','');
+  finally
+    F.Free;
+  end;
+  myVersion := '0.0.0.0';
+  //CaUpgrade := rspFactory.CheckUpgrade(token.tenantId,ProductId,myVersion);
+  CaUpgrade.URL := 'http://www.24hsc.cn/update';
+  if CaUpgrade.URL='' then Exit;
+  url := TStringList.Create;
+  try
+    url.Delimiter := '/';
+    url.DelimitedText := CaUpgrade.URL;
+    if lowercase(copy(url[url.Count-1],length(url[url.Count-1])-3,4))='.exe' then url.Delete(url.Count-1);
+    WebUpdater1.WebUrl := url.DelimitedText;
+  finally
+    url.Free;
+  end;
+  WebUpdater1.GetXmlCurrentVersion;
+  result := WebUpdater1.Check;
+end;
+
+procedure TfrmInitGoods.WebUpdater1ChangeText(Sender: TObject;
+  Text: String);
+begin
+  inherited;
+  Memo1.Lines.Add(Text); 
+
+end;
+
+procedure TfrmInitGoods.WebUpdater1Success(Sender: TObject;
+  SuccessCode: TSuccessMessage; Parameter, SuccessMessage: String);
+begin
+  inherited;
+  rzPage.ActivePageIndex := 0;
+  btnPrev.Visible := false;
+  btnPrev.Caption := '上一步';
+  btnNext.Caption := '上一步';
+end;
+
+procedure TfrmInitGoods.WebUpdater1Error(Sender: TObject;
+  ErrorCode: TErrorMessage; Parameter, ErrMessage: String);
+begin
+  inherited;
+  rzPage.ActivePageIndex := 0;
+  btnPrev.Visible := false;
+  btnPrev.Caption := '上一步';
+  btnNext.Caption := '上一步';
+
+end;
+
+procedure TfrmInitGoods.upgrade(var Message: TMessage);
+begin
+  if checkBarcode then
+     begin
+       if MessageBox(handle,'系统检测条码库有更新,是立即下载？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+          begin
+            rzPage.ActivePageIndex := 3;
+            btnPrev.Caption := '返回';
+            btnNext.Caption := '点击下载';
+            ProgressBar1.Position := 0;
+          end;
+     end;
 end;
 
 end.

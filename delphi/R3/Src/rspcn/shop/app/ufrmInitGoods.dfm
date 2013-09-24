@@ -35,7 +35,7 @@ inherited frmInitGoods: TfrmInitGoods
           Top = 1
           Width = 421
           Height = 340
-          ActivePage = TabSheet2
+          ActivePage = TabSheet4
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -165,8 +165,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel11: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 76
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#26465#24418#30721
@@ -226,8 +226,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel12: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 308
-                  Height = 27
+                  Width = 167
+                  Height = 16
                   Align = alClient
                   Caption = '  '#28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
                   Font.Charset = GB2312_CHARSET
@@ -418,8 +418,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel13: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #26465' '#22411' '#30721
@@ -474,8 +474,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel14: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#36135#21495
@@ -530,8 +530,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel15: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#21517#31216
@@ -586,8 +586,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel16: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#20998#31867
@@ -651,8 +651,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel17: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #35745#37327#21333#20301
@@ -745,8 +745,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel18: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #36827' '#36135' '#20215
@@ -801,8 +801,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel19: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 62
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #38646' '#21806' '#20215
@@ -857,8 +857,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel20: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #24215#20869#21806#20215
@@ -1469,6 +1469,74 @@ inherited frmInitGoods: TfrmInitGoods
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 OnKeyPress = edtBIGTO_CALCKeyPress
               end
+            end
+          end
+          object TabSheet4: TRzTabSheet
+            Color = 15461355
+            TabVisible = False
+            Caption = #19979#36733#26465#30721#24211
+            DesignSize = (
+              421
+              340)
+            object RzBackground4: TRzBackground
+              Left = 8
+              Top = 11
+              Width = 406
+              Height = 49
+              Active = True
+              Align = alNone
+              GradientColorStart = clGray
+              GradientColorStop = clWhite
+              GradientDirection = gdVerticalEnd
+              ImageStyle = isCenter
+              ShowGradient = True
+              ShowImage = False
+              ShowTexture = False
+            end
+            object RzLabel28: TRzLabel
+              Left = 20
+              Top = 23
+              Width = 75
+              Height = 24
+              Caption = #26465#30721#24211
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -24
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+              Transparent = True
+            end
+            object RzLabel29: TRzLabel
+              Left = 111
+              Top = 32
+              Width = 135
+              Height = 15
+              Caption = #25317#26377#21508#34892#19994#24120#29992#26465#30721
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWhite
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+            end
+            object Memo1: TRzMemo
+              Left = 8
+              Top = 77
+              Width = 406
+              Height = 177
+              ScrollBars = ssVertical
+              TabOrder = 0
+              FrameVisible = True
+            end
+            object ProgressBar1: TProgressBar
+              Left = 8
+              Top = 269
+              Width = 406
+              Height = 17
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 1
             end
           end
         end
@@ -3035,5 +3103,35 @@ inherited frmInitGoods: TfrmInitGoods
     Params = <>
     Left = 45
     Top = 383
+  end
+  object WebUpdater1: TWebUpdater
+    About = 'Application Updater by bsalsa : bsalsa@gmail.com'
+    AbortMessage = #29616#22312#27491#24537#65292#20197#21518#20877#19979#36733#65281
+    ApplicationName = 'shop'
+    Author = 'rspcn'
+    BackupFolder = 'Backup\'
+    Caption = #27491#22312#26816#27979#26465#30721#24211#26159#21542#26377#26356#26032#65292#35831#31245#31561'...'
+    DeleteBatchFileOnComplete = False
+    DeleteWebInfoFileOnComplete = False
+    ErrorMessage = #20986#38169#20102#65292#21407#22240#65306
+    LogAddTime = True
+    LogFileName = 'barcodeUpdater.txt'
+    MatchDetails = False
+    MailErrorReport = False
+    OnChangeText = WebUpdater1ChangeText
+    OnError = WebUpdater1Error
+    OnSuccess = WebUpdater1Success
+    ProgressBar = ProgressBar1
+    QuitOnError = False
+    SaveBackup = False
+    ShowUserMessages = False
+    ShowPersonalDetails = False
+    ShowUpdateFilesList = True
+    SuccessMessageText = #21319#32423#23436#27605#20102
+    UpdatesFolder = 'barcode\'
+    WebInfoFileName = 'barcode.xml'
+    WebURL = 'http://'
+    Left = 328
+    Top = 124
   end
 end

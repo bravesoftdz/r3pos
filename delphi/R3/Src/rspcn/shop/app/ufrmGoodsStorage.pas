@@ -1968,19 +1968,55 @@ begin
 end;
 
 procedure TfrmGoodsStorage.ExcelImportClick(Sender: TObject);
-var rs:TZQuery;
+var
+  rs:TZQuery;
+  n1,n2,n3:PSynTableInfo;
 begin
   inherited;
-  rs:=TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
   if TfrmGoodsExcel.ExcelFactory(self,rs,'','',true) then
-  begin
-     if dataFactory.iDbType <> 5 then
      begin
-       SyncFactory.SyncBasic;
+       if dataFactory.iDbType <> 5 then
+          begin
+            new(n1);
+            n1^.tbname := 'PUB_GOODSINFO';
+            n1^.keyFields := 'TENANT_ID;GODS_ID';
+            n1^.synFlag := 22;
+            n1^.keyFlag := 0;
+            n1^.tbtitle := '商品档案';
+            n1^.isSyncDown := '1';
+
+            new(n2);
+            n2^.tbname := 'PUB_BARCODE';
+            n2^.keyFields := 'ROWS_ID';
+            n2^.synFlag := 3;
+            n2^.keyFlag := 0;
+            n2^.tbtitle := '条码表';
+            n2^.isSyncDown := '1';
+
+            new(n3);
+            n3^.tbname := 'PUB_GOODSPRICE';
+            n3^.keyFields := 'TENANT_ID;GODS_ID;SHOP_ID;PRICE_ID';
+            n3^.whereStr := 'TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or SHOP_ID='''+token.tenantId+'0001'') and TIME_STAMP>:TIME_STAMP';
+            n3^.synFlag := 0;
+            n3^.keyFlag := 0;
+            n3^.syncShopId := token.shopId;
+            n3^.tbtitle := '最新售价';
+            n3^.isSyncDown := '1';
+
+            try
+              SyncFactory.SyncSingleTable(n1,1,false);
+              SyncFactory.SyncSingleTable(n2,1,false);
+              SyncFactory.SyncSingleTable(n3,1,false);
+            finally
+              dispose(n1);
+              dispose(n2);
+              dispose(n3);
+            end;
+          end;
+       dllGlobal.Refresh('PUB_GOODSINFO');
+       RefreshMeaUnits;
      end;
-     dllGlobal.Refresh('PUB_GOODSINFO');
-     RefreshMeaUnits;
-  end;
 end;
 
 procedure TfrmGoodsStorage.RzLabel37Click(Sender: TObject);

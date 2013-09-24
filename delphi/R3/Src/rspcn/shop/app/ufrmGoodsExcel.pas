@@ -1047,15 +1047,15 @@ begin
           end;
 
           for i:=0 to tmpList.Count-1 do
-          begin
-            cdsUnits.Append;
-            cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-            cdsUnits.FieldByName('UNIT_ID').AsString := TSequence.NewId;
-            cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(token.tenantId)+i;
-            cdsUnits.FieldByName('UNIT_NAME').AsString := trim(tmpList[i]);
-            cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(tmpList[i],3);
-            cdsUnits.Post;
-          end;
+            begin
+              cdsUnits.Append;
+              cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+              cdsUnits.FieldByName('UNIT_ID').AsString := TSequence.NewId;
+              cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(token.tenantId)+i;
+              cdsUnits.FieldByName('UNIT_NAME').AsString := trim(tmpList[i]);
+              cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(tmpList[i],3);
+              cdsUnits.Post;
+            end;
 
           dataFactory.BeginBatch;
           try
@@ -1075,27 +1075,26 @@ begin
            Params := TftParamList.Create(nil);
            tmpObj := TRecord_.Create;
            try
+             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+             Params.ParamByName('UNIT_ID').AsString := '';
+             dataFactory.Open(tmpUnits,'TMeaUnitsV60',Params);
+
              cdsUnits.First;
              while not cdsUnits.Eof do
-             begin
-               Params.ParamByName('TENANT_ID').AsInteger := cdsUnits.FieldByName('TENANT_ID').AsInteger;
-               Params.ParamByName('UNIT_ID').AsString := cdsUnits.FieldByName('UNIT_ID').AsString;
-               dataFactory.Open(tmpUnits,'TMeaUnitsV60',Params);
-
-               if tmpUnits.IsEmpty then tmpUnits.Append else tmpUnits.Edit;
-
-               tmpObj.ReadFromDataSet(cdsUnits);
-               tmpObj.WriteToDataSet(tmpUnits);
-               cdsUnits.Next;
-             end;
+               begin
+                 tmpUnits.Append;
+                 tmpObj.ReadFromDataSet(cdsUnits);
+                 tmpObj.WriteToDataSet(tmpUnits);
+                 cdsUnits.Next;
+               end;
 
              dataFactory.BeginBatch;
              try
-              dataFactory.AddBatch(tmpUnits,'TMeaUnitsV60');
-              dataFactory.CommitBatch;
+               dataFactory.AddBatch(tmpUnits,'TMeaUnitsV60');
+               dataFactory.CommitBatch;
              except
-              dataFactory.CancelBatch;
-              Raise;
+               dataFactory.CancelBatch;
+               Raise;
              end;
            finally
              dataFactory.MoveToDefault;

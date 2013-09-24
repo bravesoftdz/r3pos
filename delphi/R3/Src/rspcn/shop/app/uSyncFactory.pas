@@ -103,12 +103,12 @@ type
     function  CheckRemoteData(AppHandle:HWnd):integer;//0:未还原 1:文件还原 2:服务端还原
     procedure BackUpDBFile;
     procedure InitTenant;
-    procedure InitSyncList1;
-    procedure InitSyncList;
+    // 0:默认同步 1:注册同步 2:退出同步 3:恢复同步
+    procedure InitSyncRelationList(SyncType:integer=0);
+    procedure InitSyncBasicList(SyncType:integer=0);
     procedure SyncList;
 
     procedure SyncBizData(SyncFlag:integer=0;BeginDate:string='');
-    procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
     procedure BeforeSyncBiz(DataSet:TZQuery;FieldName:string;SyncFlag:integer);
     procedure SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');// 0:上传 1:下载
     procedure SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
@@ -127,8 +127,10 @@ type
   public
     constructor Create;
     destructor  Destroy;override;
-
-    procedure SyncBasic;
+    // 单表同步
+    procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
+    // 0:默认同步 1:注册同步 2:退出同步 3:恢复同步
+    procedure SyncBasic(SyncType:integer=0);
     // 检测文件是否是有效的数据文件
     function  CheckValidDBFile(src:string):boolean;
     // 登录时同步
@@ -425,7 +427,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1);
+procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
   procedure UploadSingleTable(rs_l:TZQuery;ZClassName:string;n:PSynTableInfo);
   var ss:TZQuery;
   begin
@@ -615,7 +617,7 @@ begin
              end;
         end;
 
-    if MaxTimeStamp > SyncTimeStamp then
+    if SaveCtrl and (MaxTimeStamp > SyncTimeStamp) then
        SetSynTimeStamp(n^.syncTenantId,n^.tbName,MaxTimeStamp,n^.syncShopId);
   finally
     rs_l.Free;
@@ -648,14 +650,14 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncBasic;
+procedure TSyncFactory.SyncBasic(SyncType:integer=0);
 begin
   try
-    InitSyncList1;
+    InitSyncRelationList(SyncType);
     SyncList;
     dllGlobal.Refresh('CA_RELATIONS');
 
-    InitSyncList;
+    InitSyncBasicList(SyncType);
     SyncList;
   finally
     ReadTimeStamp;
@@ -669,7 +671,7 @@ begin
   FList.Clear;
 end;
 
-procedure TSyncFactory.InitSyncList1;
+procedure TSyncFactory.InitSyncRelationList(SyncType:integer=0);
 var n:PSynTableInfo;
 begin
   ClearSyncList;
@@ -704,7 +706,7 @@ begin
   FList.Add(n);
 end;
 
-procedure TSyncFactory.InitSyncList;
+procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
   procedure InitList0;
   var n:PSynTableInfo;
   begin

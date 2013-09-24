@@ -995,8 +995,10 @@ begin
 end;
 
 procedure TfrmCustomer.ExcelImportClick(Sender: TObject);
-var Params:TftParamList;
-    rs:TZQuery;
+var
+  rs:TZQuery;
+  n1,n2:PSynTableInfo;
+  Params:TftParamList;
 begin
   inherited;
   Params := TftParamList.Create(nil);
@@ -1004,25 +1006,47 @@ begin
   try
     dataFactory.BeginBatch;
     try
-       Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-       Params.ParamByName('CUST_ID').AsString := '';
-       dataFactory.AddBatch(rs,'TCustomerV60',Params);
-       dataFactory.OpenBatch;
+      Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+      Params.ParamByName('CUST_ID').AsString := '';
+      dataFactory.AddBatch(rs,'TCustomerV60',Params);
+      dataFactory.OpenBatch;
     except
-       dataFactory.CancelBatch;
-       Raise;
+      dataFactory.CancelBatch;
+      Raise;
     end;
 
     if TfrmCustomerExcel.ExcelFactory(self,rs,'','',true) then
-    begin
-      if dataFactory.iDbType <> 5 then
        begin
-         SyncFactory.SyncBasic;
-       end;
-      dllGlobal.Refresh('PUB_CUSTOMER');
-      Open;
-    end;
+         if dataFactory.iDbType <> 5 then
+            begin
+              new(n1);
+              n1^.tbname := 'PUB_CUSTOMER';
+              n1^.keyFields := 'TENANT_ID;CUST_ID';
+              n1^.synFlag := 0;
+              n1^.keyFlag := 0;
+              n1^.tbtitle := '会员档案';
+              n1^.isSyncDown := '1';
 
+              new(n2);
+              n2^.tbname := 'PUB_IC_INFO';
+              n2^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
+              n2^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,COMM,TIME_STAMP';
+              n2^.synFlag := 4;
+              n2^.keyFlag := 1;
+              n2^.tbtitle := 'IC档案';
+              n2^.isSyncDown := '1';
+
+              try
+                SyncFactory.SyncSingleTable(n1,1,false);
+                SyncFactory.SyncSingleTable(n2,1,false);
+              finally
+                dispose(n1);
+                dispose(n2);
+              end;
+            end;
+         dllGlobal.Refresh('PUB_CUSTOMER');
+         Open;
+       end;
   finally
     Params.Free;
     rs.Free;

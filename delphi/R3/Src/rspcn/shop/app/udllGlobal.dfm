@@ -1,5 +1,6 @@
 object dllGlobal: TdllGlobal
   OldCreateOrder = False
+  OnCreate = DataModuleCreate
   Left = 192
   Top = 130
   Height = 509

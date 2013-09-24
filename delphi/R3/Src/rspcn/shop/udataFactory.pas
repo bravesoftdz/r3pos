@@ -2,7 +2,7 @@ unit udataFactory;
 
 interface
 
-uses SysUtils, Classes,DB ,ZDataSet, ZBase, ZIntf, ZdbFactory, Forms, IniFiles, EncDec;
+uses SysUtils, Classes,DB ,ZDataSet, ZBase, ZIntf, ZdbFactory, Forms, IniFiles;
 
 type
   TdataFactory = class(TDataModule)
@@ -11,11 +11,9 @@ type
     Fsqlite: TdbFactory;
     dbFlag:integer;
     Fonline: boolean;
-    FAuthMode: integer;
     function getRemote: IdbDllHelp;
     procedure Setsqlite(const Value: TdbFactory);
     procedure Setonline(const Value: boolean);
-    procedure SetAuthMode(const Value: integer);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -29,8 +27,6 @@ type
     function  InTransaction:boolean;
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
     function  iDbType:Integer;
-    //获取服务端时间戳
-    function  GetDBTimeStamp:int64;
     //数据包组织
     function BeginBatch:Boolean;
     function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):Boolean;
@@ -57,8 +53,6 @@ type
     procedure MoveToRemote;
     procedure MoveToSqlite;
     function DBLock(locked:boolean):boolean;
-    //认证方式 1:rsp 2:xsm
-    property AuthMode:integer read FAuthMode write SetAuthMode;
     property sqlite:TdbFactory read Fsqlite write Setsqlite;
     property remote:IdbDllHelp read getRemote;
     property online:boolean read Fonline write Setonline;
@@ -176,9 +170,6 @@ begin
 end;
 
 constructor TdataFactory.Create(AOwner: TComponent);
-var
-  uc:string;
-  F:TIniFile;
 begin
   inherited;
   sqlite := TdbFactory.Create;
@@ -186,20 +177,6 @@ begin
   dbFlag := 0;
   sqlite.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\r3.db');
   sqlite.connect;
-
-  AuthMode := 1;
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
-  try
-    uc := F.ReadString('soft', 'xsm', '');
-    if (uc <> '') and (uc[1] = '#') then
-       begin
-         delete(uc,1,1);
-         uc := DecStr(uc,ENC_KEY);
-       end;
-    if uc <> '' then AuthMode := 2;
-  finally
-    F.Free;
-  end;
 end;
 
 destructor TdataFactory.Destroy;
@@ -463,42 +440,6 @@ begin
     begin
       dbHelp.DBLock(locked);
     end;
-  end;
-end;
-
-procedure TdataFactory.SetAuthMode(const Value: integer);
-begin
-  FAuthMode := Value;
-end;
-
-function TdataFactory.GetDBTimeStamp: int64;
-var
-  str:string;
-  rs:TZQuery;
-begin
-  case remote.iDbType of
-    0:str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
-    1:str := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
-    4:str := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
-    5:str := 'strftime(''%s'',''now'',''localtime'')-1293840000';
-    else str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
-  end;
-
-  case remote.iDbType of
-    0,5: str := 'select ' + str + ' as time_stamp ';
-    4:   str := 'select ' + str + ' as time_stamp from SYSIBM.SYSDUMMY1';
-    1:   str := 'select ' + str + ' as time_stamp from DUAL';
-  end;
-
-  rs := TZQuery.Create(nil);
-  dataFactory.MoveToRemote;
-  try
-    rs.SQL.Text := str;
-    dataFactory.Open(rs);
-    result := StrtoInt64(rs.Fields[0].Asstring);
-  finally
-    dataFactory.MoveToDefault;
-    rs.Free;
   end;
 end;
 

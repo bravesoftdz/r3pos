@@ -160,7 +160,11 @@ type
     rowToolNav: TRzToolbar;
     Tool_Del: TRzToolButton;
     Tool_Edit: TRzToolButton;
+    Tool_Right: TRzToolButton;
+    Tool_Reset: TRzToolButton;
     RzSpacer1: TRzSpacer;
+    RzSpacer2: TRzSpacer;
+    RzSpacer3: TRzSpacer;
     RzPanel35: TRzPanel;
     RzPanel69: TRzPanel;
     RzBackground32: TRzBackground;
@@ -199,7 +203,6 @@ type
     edtUSER_NAME: TcxTextEdit;
     btnSaveUsers: TRzBmpButton;
     btnNewUsers: TRzBmpButton;
-    RzSpacer2: TRzSpacer;
     RzPanel37: TRzPanel;
     RzBackground29: TRzBackground;
     RzLabel37: TRzLabel;
@@ -227,7 +230,6 @@ type
     RzLabel50: TRzLabel;
     edtINDUSTRY_TYPE: TcxComboBox;
     RzLabel51: TRzLabel;
-    Tool_Reset: TRzToolButton;
     RzPanel13: TRzPanel;
     RzPanel82: TRzPanel;
     RzLabel52: TRzLabel;
@@ -494,7 +496,7 @@ end;
 
 procedure TfrmSysDefine.GetShopInfo;
 var
-  tid,sid:string;
+  tid,sid,str:string;
   tmpObj:TRecord_;
   rs,tmpTenant,tmpShopInfo:TZQuery;
   Params:TftParamList;
@@ -502,7 +504,7 @@ var
   tenantdoc,shopdoc:IXMLDomDocument;
   caTenant,caShopInfo:IXMLDOMNode;
 begin
-  if dataFactory.AuthMode = 2 then
+  if dllGlobal.AuthMode = 2 then
      begin
        rs := TZQuery.Create(nil);
        dataFactory.MoveToRemote;
@@ -600,7 +602,29 @@ begin
             end;
           end;
 
-       rspFactory.timestamp := dataFactory.GetDBTimeStamp;
+       // 检测卷烟供应链
+       rs := TZQuery.Create(nil);
+       dataFactory.MoveToRemote;
+       try
+         rs.SQL.Text := 'select 1 from CA_RELATIONS where RELATION_ID=1000006 and RELATI_ID='+tid+' and COMM not in (''02'',''12'')';
+         dataFactory.Open(rs);
+         if rs.IsEmpty then Raise Exception.Create('当前企业尚未加盟卷烟供应链...');
+       finally
+         dataFactory.MoveToDefault;
+         rs.Free;
+       end;
+
+       // 自动加盟非烟供应链
+       str := ' update CA_RELATIONS set COMM='+GetCommStr(dataFactory.remote.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.remote.iDbType)+
+              ' where TENANT_ID=110000002 and RELATION_ID=1000008 and RELATI_ID='+tid;
+       if dataFactory.remote.ExecSQL(str) <= 0 then
+          begin
+            str := ' insert into CA_RELATIONS (RELATIONS_ID,RELATION_ID,TENANT_ID,RELATI_ID,RELATION_TYPE,LEVEL_ID,RELATION_STATUS,CREA_DATE,CHK_DATE,COMM,TIME_STAMP) values '+
+                   ' ('''+TSequence.NewId+''',1000008,110000002,'+tid+',''1'',''000000'',''2'','''+FormatDateTime('YYYY-MM-DD',now())+''','''+FormatDateTime('YYYY-MM-DD',now())+''',''00'','+GetTimeStamp(dataFactory.remote.iDbType)+') ';
+            dataFactory.remote.ExecSQL(str);
+          end;
+
+       rspFactory.timestamp := dllGlobal.GetDBTimeStamp;
      end
   else
      begin
@@ -2062,8 +2086,14 @@ begin
       try
         GetShopInfo;
       except
-        MessageBox(Handle,pchar('尚未开通门店管理功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
-        Exit;
+        on E:Exception do
+           begin
+             if pos('卷烟供应链', E.Message) > 0 then
+                MessageBox(Handle,pchar('当前企业尚未加盟卷烟供应链，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK)
+             else
+                MessageBox(Handle,pchar('当前企业尚未开通门店管理功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
+             Exit;
+           end;
       end;
       SaveShopInfo(true);
       result := true;

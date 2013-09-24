@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, RzTreeVw,
-  ZBase, ObjCommon;
+  ZBase, ObjCommon, EncDec;
 
 type
   TdllGlobal = class(TDataModule)
@@ -23,11 +23,14 @@ type
     PUB_PAYMENT: TZQuery;
     PUB_GOODSSORT: TZQuery;
     PUB_REGION_INFO: TZQuery;
+    procedure DataModuleCreate(Sender: TObject);
   private
     QQ,Telephone:string;
     SFVersion: string;
     ProductId: string;
+    FAuthMode: integer;
     procedure OpenPubGoodsInfo;
+    procedure SetAuthMode(const Value: integer);
   public
     function GetZQueryFromName(Name:string):TZQuery;
     function Refresh(Name:string):boolean;
@@ -47,6 +50,8 @@ type
     function GetVersionFlag:integer;
     function sysDate:TDatetime;
     function GetParameter(paramname:string):string;
+    //获取服务端时间戳
+    function GetDBTimeStamp:int64;
     //得到供应链企业 in ();
     function GetRelatTenantInWhere:string;
     //得么商品视图
@@ -64,6 +69,8 @@ type
     //创建分类树
     function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowCgtSort:boolean=true;ShowNoSort:boolean=true):boolean;overload;
     function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;ShowSelfRoot:boolean=false):boolean;overload;
+    //认证方式 1:rsp 2:xsm
+    property AuthMode:integer read FAuthMode write SetAuthMode;
   end;
 
 var dllGlobal: TdllGlobal;
@@ -661,6 +668,62 @@ begin
           end;
     end;
   GetZQueryFromName(Name); 
+end;
+
+procedure TdllGlobal.SetAuthMode(const Value: integer);
+begin
+  FAuthMode := Value;
+end;
+
+procedure TdllGlobal.DataModuleCreate(Sender: TObject);
+var
+  uc:string;
+  F:TIniFile;
+begin
+  AuthMode := 1;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    uc := F.ReadString('soft', 'xsm', '');
+    if (uc <> '') and (uc[1] = '#') then
+       begin
+         delete(uc,1,1);
+         uc := DecStr(uc,ENC_KEY);
+       end;
+    if uc <> '' then AuthMode := 2;
+  finally
+    F.Free;
+  end;
+end;
+
+function TdllGlobal.GetDBTimeStamp: int64;
+var
+  str:string;
+  rs:TZQuery;
+begin
+  case dataFactory.remote.iDbType of
+    0:str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+    1:str := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
+    4:str := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
+    5:str := 'strftime(''%s'',''now'',''localtime'')-1293840000';
+    else str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+  end;
+
+  case dataFactory.remote.iDbType of
+    0,5: str := 'select ' + str + ' as time_stamp ';
+    4:   str := 'select ' + str + ' as time_stamp from SYSIBM.SYSDUMMY1';
+    1:   str := 'select ' + str + ' as time_stamp from DUAL';
+  end;
+
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToRemote;
+  try
+    rs.SQL.Text := str;
+    dataFactory.Open(rs);
+    result := StrtoInt64(rs.Fields[0].Asstring);
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
 end;
 
 initialization

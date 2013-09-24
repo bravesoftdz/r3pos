@@ -764,7 +764,7 @@ end;
 
 procedure TRspSyncFactory.SyncAll;
 begin
-  if dataFactory.AuthMode = 2 then Exit;
+  if dllGlobal.AuthMode = 2 then Exit;
   SetProMax(5);
   SetProPosition(0);
   ProTitle := '正在下载<企业信息>...';

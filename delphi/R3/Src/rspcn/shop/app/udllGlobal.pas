@@ -378,12 +378,7 @@ end;
 
 function TdllGlobal.OpenSqlite(DataSet: TZQuery): boolean;
 begin
-  dataFactory.MoveToSqlite;
-  try
-    dataFactory.Open(DataSet);
-  finally
-    dataFactory.MoveToDefault;
-  end;
+  dataFactory.sqlite.Open(DataSet);
 end;
 
 function TdllGlobal.sysDate: TDatetime;

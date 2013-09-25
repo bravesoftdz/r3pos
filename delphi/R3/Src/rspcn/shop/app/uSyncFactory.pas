@@ -78,7 +78,6 @@ type
     FProHandle:Hwnd;
     FProTitle:string;
     FSyncTimeStamp: int64;
-    FParams: TftParamList;
     FinishIndex:integer;
     procedure SetTicket;
     function  GetTicket:Int64;
@@ -87,7 +86,6 @@ type
     function  GetFactoryName(node:PSynTableInfo):string;
     function  GetTableFields(tbName:string;alias:string=''):string;
 
-    procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetStoped(const Value: boolean);
     procedure SetProHandle(const Value: Hwnd);
@@ -158,7 +156,6 @@ type
 
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
-    property  Params:TftParamList read FParams write SetParams;
     property  SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property  Stoped:boolean read FStoped write SetStoped;
     property  ProHandle:Hwnd read FProHandle write SetProHandle;
@@ -308,7 +305,6 @@ begin
   LoginSyncDate := 0;
   LastLoginSyncDate := 0;
   LastLogoutSyncDate := 0;
-  FParams := TftParamList.Create(nil);
   FList := TList.Create;
 end;
 
@@ -317,7 +313,6 @@ var i:integer;
 begin
   for i:=0 to FList.Count -1 do Dispose(FList[i]);
   FList.Free;
-  FParams.Free;
   inherited;
 end;
 
@@ -329,11 +324,6 @@ end;
 function TSyncFactory.GetTicket:int64;
 begin
   result := GetTickCount - _Start;
-end;
-
-procedure TSyncFactory.SetParams(const Value: TftParamList);
-begin
-  FParams := Value;
 end;
 
 procedure TSyncFactory.SetSyncTimeStamp(const Value: int64);
@@ -437,7 +427,7 @@ begin
 end;
 
 procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
-  procedure UploadSingleTable(rs_l:TZQuery;ZClassName:string;n:PSynTableInfo);
+  procedure UploadSingleTable(rs_l:TZQuery;ZClassName:string;n:PSynTableInfo;Params:TftParamList);
   var ss:TZQuery;
   begin
     ss := TZQuery.Create(nil);
@@ -472,7 +462,7 @@ procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;
     end;
   end;
 
-  procedure DownloadSingleTable(rs_r:TZQuery;ZClassName:string;n:PSynTableInfo);
+  procedure DownloadSingleTable(rs_r:TZQuery;ZClassName:string;n:PSynTableInfo;Params:TftParamList);
   var ss:TZQuery;
   begin
     ss := TZQuery.Create(nil);
@@ -504,6 +494,7 @@ var
   MaxTimeStamp:int64;
   ZClassName:string;
   openSQL:string;
+  Params:TftParamList;
 begin
   if (n^.isSyncUp <> '1') and (n^.isSyncDown <> '1') then Exit;
 
@@ -517,25 +508,26 @@ begin
   SyncTimeStamp := GetSynTimeStamp(n^.syncTenantId,n^.tbName,n^.syncShopId);
   MaxTimeStamp := SyncTimeStamp;
 
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
-  Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
-  Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('LAST_TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
-  Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
-  if trim(n^.tableFields) <> '' then
-     Params.ParamByName('TABLE_FIELDS').AsString := n^.tableFields
-  else
-     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
-
   rs_l := TZQuery.Create(nil);
   rs_r := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
     rs_l.Close;
     rs_r.Close;
+
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
+    Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
+    Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('LAST_TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
+    Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
+    if trim(n^.tableFields) <> '' then
+       Params.ParamByName('TABLE_FIELDS').AsString := n^.tableFields
+    else
+       Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
 
     if n^.isSyncUp = '1' then
        begin
@@ -605,12 +597,12 @@ begin
         begin
           if n^.isSyncUp = '1' then
              begin
-               UploadSingleTable(rs_l,ZClassName,n);
+               UploadSingleTable(rs_l,ZClassName,n,Params);
                SetProPosition(FinishIndex * 100 + 50);
              end;
           if n^.isSyncDown = '1' then
              begin
-               DownloadSingleTable(rs_r,ZClassName,n);
+               DownloadSingleTable(rs_r,ZClassName,n,Params);
                SetProPosition(FinishIndex * 100 + 100);
              end;
         end
@@ -618,12 +610,12 @@ begin
         begin
           if n^.isSyncDown = '1' then
              begin
-               DownloadSingleTable(rs_r,ZClassName,n);
+               DownloadSingleTable(rs_r,ZClassName,n,Params);
                SetProPosition(FinishIndex * 100 + 50);
              end;
           if n^.isSyncUp = '1' then
              begin
-               UploadSingleTable(rs_l,ZClassName,n);
+               UploadSingleTable(rs_l,ZClassName,n,Params);
                SetProPosition(FinishIndex * 100 + 100);
              end;
         end;
@@ -631,6 +623,7 @@ begin
     if SaveCtrl and (MaxTimeStamp > SyncTimeStamp) then
        SetSynTimeStamp(n^.syncTenantId,n^.tbName,MaxTimeStamp,n^.syncShopId);
   finally
+    Params.Free;
     rs_l.Free;
     rs_r.Free;
   end;
@@ -1485,9 +1478,10 @@ end;
 
 procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');
 var
-  tbName,orderFields,dataFields:string;
   MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  tbName,orderFields,dataFields:string;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
@@ -1495,29 +1489,30 @@ begin
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp;
 
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-
-  if SyncFlag = 0 then
-     Params.ParamByName('SYN_COMM').AsBoolean := true
-  else
-     Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-
-  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+inttostr(SyncTimeStamp));
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+    if SyncFlag = 0 then
+       Params.ParamByName('SYN_COMM').AsBoolean := true
+    else
+       Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if (SyncFlag <> 0) and (BeginDate <> '') then
+       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+
     SetTicket;
     if SyncFlag = 0 then
        dataFactory.MoveToSqlite
@@ -1615,6 +1610,7 @@ begin
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;
@@ -1625,9 +1621,10 @@ end;
 
 procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
 var
-  tbName,orderFields,dataFields,glideFields:string;
   MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,rs_s,cs_h,cs_d,cs_s:TZQuery;
+  tbName,orderFields,dataFields,glideFields:string;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
@@ -1635,22 +1632,7 @@ begin
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp;
 
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-
-  if SyncFlag = 0 then
-     Params.ParamByName('SYN_COMM').AsBoolean := true
-  else
-     Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-
-  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+inttostr(SyncTimeStamp));
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1659,7 +1641,23 @@ begin
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   cs_s := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+    if SyncFlag = 0 then
+       Params.ParamByName('SYN_COMM').AsBoolean := true
+    else
+       Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if (SyncFlag <> 0) and (BeginDate <> '') then
+       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+
     SetTicket;
     if SyncFlag = 0 then
        dataFactory.MoveToSqlite
@@ -1776,6 +1774,7 @@ begin
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;
@@ -1788,9 +1787,10 @@ end;
 
 procedure TSyncFactory.SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
 var
-  tbName,orderFields,dataFields:string;
   MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  tbName,orderFields,dataFields:string;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
@@ -1798,29 +1798,30 @@ begin
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp;
 
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-
-  if SyncFlag = 0 then
-     Params.ParamByName('SYN_COMM').AsBoolean := true
-  else
-     Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-
-  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+inttostr(SyncTimeStamp));
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+    if SyncFlag = 0 then
+       Params.ParamByName('SYN_COMM').AsBoolean := true
+    else
+       Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if (SyncFlag <> 0) and (BeginDate <> '') then
+       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+
     SetTicket;
     if SyncFlag = 0 then
        dataFactory.MoveToSqlite
@@ -1918,6 +1919,7 @@ begin
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;
@@ -1928,9 +1930,10 @@ end;
 
 procedure TSyncFactory.SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
 var
-  tbName,orderFields,dataFields:string;
   MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  tbName,orderFields,dataFields:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
 
@@ -1938,29 +1941,30 @@ begin
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp; 
 
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-
-  if SyncFlag = 0 then
-     Params.ParamByName('SYN_COMM').AsBoolean := true
-  else
-     Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-  if (SyncFlag <> 0) and (BeginDate <> '') then
-     Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-
-  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').AsString+'  本次时间:'+inttostr(SyncTimeStamp));
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+inttostr(SyncTimeStamp));
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+    if SyncFlag = 0 then
+       Params.ParamByName('SYN_COMM').AsBoolean := true
+    else
+       Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if (SyncFlag <> 0) and (BeginDate <> '') then
+       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+
     SetTicket;
     if SyncFlag = 0 then
        dataFactory.MoveToSqlite
@@ -2056,6 +2060,7 @@ begin
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;
@@ -2093,6 +2098,7 @@ procedure TSyncFactory.BeforeSyncBiz(DataSet:TZQuery;FieldName:string;SyncFlag:i
 var
   rDate:integer;
   isUpdate:boolean;
+  Params:TftParamList;
 begin
   rDate := 99999999;
   isUpdate := false;
@@ -2108,12 +2114,17 @@ begin
   end;
   if isUpdate then
   begin
+    Params := TftParamList.Create(nil);
+    try
       Params.ParamByName('CLSE_DATE').AsInteger := rDate;
       Params.ParamByName('MOTH_DATE').AsString := formatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(inttostr(rDate)));
       if SyncFlag = 0 then
          dataFactory.remote.ExecProc('TSyncDeleteRckCloseV60',TftParamList.Encode(Params))
       else
          dataFactory.sqlite.ExecProc('TSyncDeleteRckCloseV60',Params);
+    finally
+      Params.Free;
+    end;
   end;
 end;
 
@@ -2283,7 +2294,7 @@ function TSyncFactory.SyncLockDb: boolean;
 var
   rs:TZQuery;
   MacAddr:string;
-  vParams:TftParamList;
+  Params:TftParamList;
 begin
   result := true;
   if not token.online then Exit;
@@ -2305,15 +2316,15 @@ begin
   MacAddr := GetMacAddrInfo;
   if MacAddr = '' then MacAddr := GetComputerName;
   if Length(MacAddr) > 100 then SetLength(MacAddr, 100);
-  vParams:=TftParamList.Create(nil);
+  Params:=TftParamList.Create(nil);
   try
     try
-      vParams.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
-      vParams.ParamByName('DBKEY').AsString:='DBKEY_'+token.shopId;
-      vParams.ParamByName('NEWID').AsString:=MacAddr;
+      Params.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
+      Params.ParamByName('DBKEY').AsString:='DBKEY_'+token.shopId;
+      Params.ParamByName('NEWID').AsString:=MacAddr;
       dataFactory.MoveToRemote;
       try
-        dataFactory.ExecProc('TDoLockDBKey',vParams);
+        dataFactory.ExecProc('TDoLockDBKey',Params);
       finally
         dataFactory.MoveToDefault;
       end;
@@ -2321,7 +2332,7 @@ begin
       Raise;
     end;
   finally
-    vParams.Free;
+    Params.Free;
   end;
 end;
 
@@ -2595,24 +2606,15 @@ end;
 
 procedure TSyncFactory.TimerSyncSales;
 var
-  tbName,orderFields,dataFields,glideFields:string;
-  MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,rs_s,cs_h,cs_d,cs_s:TZQuery;
+  tbName,orderFields,dataFields,glideFields:string;
 begin
   if (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
   tbName := 'SAL_SALESORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  MaxTimeStamp := SyncTimeStamp;
   if timerTerminted then Exit;
-
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2621,7 +2623,16 @@ begin
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   cs_s := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+
     dataFactory.sqlite.Open(ls,'TSyncSalesOrderListV60',Params);
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
 
@@ -2695,6 +2706,7 @@ begin
       ls.Next;
     end;
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;
@@ -2707,33 +2719,34 @@ end;
 
 procedure TSyncFactory.TimerSyncChange;
 var
-  tbName,orderFields,dataFields:string;
-  MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  tbName,orderFields,dataFields:string;
 begin
   if (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
   tbName := 'STO_CHANGEORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  MaxTimeStamp := SyncTimeStamp;
   if timerTerminted then Exit;
-
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+
     dataFactory.sqlite.Open(ls,'TSyncChangeOrderListV60',Params);
     if timerTerminted then Exit;
+
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'> 记录数:'+inttostr(ls.RecordCount));
     BeforeSyncBiz(ls,'CHANGE_DATE',0);
     ls.First;
@@ -2783,6 +2796,7 @@ begin
       ls.Next;
     end;
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;
@@ -2793,34 +2807,35 @@ end;
 
 procedure TSyncFactory.TimerSyncStock;
 var
-  tbName,orderFields,dataFields:string;
-  MaxTimeStamp:int64;
+  Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  tbName,orderFields,dataFields:string;
 begin
   if (dllGlobal.GetSFVersion <> '.LCL') then Exit;
 
   tbName := 'STK_STOCKORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
-  MaxTimeStamp := SyncTimeStamp;
   if timerTerminted then Exit;
-
-  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  Params.ParamByName('SHOP_ID').AsString := token.shopId;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('KEY_FLAG').AsInteger := 0;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  Params.ParamByName('SYN_COMM').AsBoolean := true;
 
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+
     dataFactory.sqlite.Open(ls,'TSyncStockOrderListV60',Params);
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
     if timerTerminted then Exit;
+
     BeforeSyncBiz(ls,'STOCK_DATE',0);
     ls.First;
     while not ls.Eof do
@@ -2870,6 +2885,7 @@ begin
       ls.Next;
     end;
   finally
+    Params.Free;
     ls.Free;
     rs_h.Free;
     rs_d.Free;

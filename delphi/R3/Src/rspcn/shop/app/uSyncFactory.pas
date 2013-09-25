@@ -1334,172 +1334,172 @@ var
   flag:integer;
   firstLogin:boolean;
 begin
-dllApplication.WaitForTimer;
-timered := true;
-try
-  firstLogin := false;
-  if dllApplication.mode = 'demo' then Exit;
-  with TfrmSyncData.Create(nil) do
-  begin
-    try
-      if token.online then dataFactory.remote.DBLock(true);
-      ReadTimeStamp;
-      AddLoginLog;
-      if not token.online then Exit;
-      CommandPush.ExecuteCommand;
-      hWnd := PHWnd;
-      ShowForm;
-      BringToFront;
-      Update;
-      Application.ProcessMessages;
-      if token.tenantId = '' then
-         begin
-           firstLogin := true;
-           TfrmSysDefine.AutoRegister;
-           if token.tenantId = '' then Exit;
-           flag := SyncFactory.CheckRemoteData(PHWnd);
-           if flag = 0 then // 没有还原
-              begin
-                RspSyncFactory.SyncAll;
-                RspSyncFactory.copyGoodsSort;
-                SyncFactory.InitTenant;
-                SyncFactory.SyncBasic(1);
-                TfrmSysDefine.SaveRegister;
-              end
-           else if flag = 1 then // 文件还原
-              begin
+  dllApplication.WaitForTimer;
+  timered := true;
+  try
+    firstLogin := false;
+    if dllApplication.mode = 'demo' then Exit;
+    with TfrmSyncData.Create(nil) do
+    begin
+      try
+        if token.online then dataFactory.remote.DBLock(true);
+        ReadTimeStamp;
+        AddLoginLog;
+        if not token.online then Exit;
+        CommandPush.ExecuteCommand;
+        hWnd := PHWnd;
+        ShowForm;
+        BringToFront;
+        Update;
+        Application.ProcessMessages;
+        if token.tenantId = '' then
+           begin
+             firstLogin := true;
+             TfrmSysDefine.AutoRegister;
+             if token.tenantId = '' then Exit;
+             flag := SyncFactory.CheckRemoteData(PHWnd);
+             if flag = 0 then // 没有还原
+                begin
+                  RspSyncFactory.SyncAll;
+                  RspSyncFactory.copyGoodsSort;
+                  SyncFactory.InitTenant;
+                  SyncFactory.SyncBasic(1);
+                  TfrmSysDefine.SaveRegister;
+                end
+             else if flag = 1 then // 文件还原
+                begin
 
-              end
-           else if flag = 2 then // 远程数据还原
-              begin
-                TfrmSysDefine.SaveRegister;
-              end;
-         end
-      else
-         begin
-           CheckBackUpDBFile(PHWnd);
-           if not CheckNeedLoginSync then Exit;
-           if not SyncLockCheck(PHWnd) then Exit;
-           SyncFactory.BackUpDBFile;
-           RspSyncFactory.SyncAll;
-           RspSyncFactory.copyGoodsSort;
-           SyncFactory.SyncBasic(2);
-           if CheckNeedLoginSyncBizData then
-              begin
-                if MessageBox(PHWnd,'系统检测到上次退出未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
-                   begin
-                     SyncFactory.SyncBizData;
-                     SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
-                   end;
-              end;
-         end;
-      SyncFactory.LoginSyncDate := token.lDate;
-      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
-    finally
-      if token.online then dataFactory.remote.DBLock(false);
-      Free;
+                end
+             else if flag = 2 then // 远程数据还原
+                begin
+                  TfrmSysDefine.SaveRegister;
+                end;
+           end
+        else
+           begin
+             CheckBackUpDBFile(PHWnd);
+             if not CheckNeedLoginSync then Exit;
+             if not SyncLockCheck(PHWnd) then Exit;
+             SyncFactory.BackUpDBFile;
+             RspSyncFactory.SyncAll;
+             RspSyncFactory.copyGoodsSort;
+             SyncFactory.SyncBasic(2);
+             if CheckNeedLoginSyncBizData then
+                begin
+                  if MessageBox(PHWnd,'系统检测到上次退出未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
+                     begin
+                       SyncFactory.SyncBizData;
+                       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
+                     end;
+                end;
+           end;
+        SyncFactory.LoginSyncDate := token.lDate;
+        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
+      finally
+        if token.online then dataFactory.remote.DBLock(false);
+        Free;
+      end;
     end;
+  finally
+    timered := false;
   end;
-finally
-  timered := false;
-end;
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
-dllApplication.WaitForTimer;
-timered := true;
-try
-  if dllApplication.mode = 'demo' then Exit;
-  if token.tenantId = '' then Exit;
-  with TfrmSyncData.Create(nil) do
-  begin
-    try
-      if token.online then dataFactory.remote.DBLock(true);
-      AddLogoutLog;
-      if not token.online then Exit;
-      hWnd := PHWnd;
-      ShowForm;
-      BringToFront;
-      Update;
-      if not SyncFactory.SyncLockCheck(PHWnd) then Exit;
-      SyncFactory.SyncBasic(2);
-      if dllGlobal.GetSFVersion = '.LCL' then
-         TfrmStocksCalc.Calc(Application.MainForm,now());
-      SyncFactory.SyncBizData;
-      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
-      if RtcSyncFactory.GetToken then
-         begin
-           RtcSyncFactory.RtcLogout;
-           RtcSyncFactory.SyncRtcData;
-         end;
-    finally
-      if token.online then dataFactory.remote.DBLock(false);
-      Free;
+  dllApplication.WaitForTimer;
+  timered := true;
+  try
+    if dllApplication.mode = 'demo' then Exit;
+    if token.tenantId = '' then Exit;
+    with TfrmSyncData.Create(nil) do
+    begin
+      try
+        if token.online then dataFactory.remote.DBLock(true);
+        AddLogoutLog;
+        if not token.online then Exit;
+        hWnd := PHWnd;
+        ShowForm;
+        BringToFront;
+        Update;
+        if not SyncFactory.SyncLockCheck(PHWnd) then Exit;
+        SyncFactory.SyncBasic(2);
+        if dllGlobal.GetSFVersion = '.LCL' then
+           TfrmStocksCalc.Calc(Application.MainForm,now());
+        SyncFactory.SyncBizData;
+        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',token.lDate,'#');
+        if RtcSyncFactory.GetToken then
+           begin
+             RtcSyncFactory.RtcLogout;
+             RtcSyncFactory.SyncRtcData;
+           end;
+      finally
+        if token.online then dataFactory.remote.DBLock(false);
+        Free;
+      end;
     end;
+  finally
+    timered := false;
   end;
-finally
-  timered := false;
-end;
 end;
 
 procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
-dllApplication.WaitForTimer;
-timered := true;
-try
-  if dllApplication.mode = 'demo' then Exit;
-  if token.tenantId = '' then Exit;
-  if not token.online then Exit;
-  with TfrmSyncData.Create(nil) do
-  begin
-    try
-      if token.online then dataFactory.remote.DBLock(true);
-      hWnd := PHWnd;
-      ShowForm;
-      BringToFront;
-      Update;
-      SyncFactory.SyncBasic(3);
-      SyncFactory.SyncBizData(1,BeginDate);
-    finally
-      if token.online then dataFactory.remote.DBLock(false);
-      Free;
+  dllApplication.WaitForTimer;
+  timered := true;
+  try
+    if dllApplication.mode = 'demo' then Exit;
+    if token.tenantId = '' then Exit;
+    if not token.online then Exit;
+    with TfrmSyncData.Create(nil) do
+    begin
+      try
+        if token.online then dataFactory.remote.DBLock(true);
+        hWnd := PHWnd;
+        ShowForm;
+        BringToFront;
+        Update;
+        SyncFactory.SyncBasic(3);
+        SyncFactory.SyncBizData(1,BeginDate);
+      finally
+        if token.online then dataFactory.remote.DBLock(false);
+        Free;
+      end;
     end;
+  finally
+    timered := false;
   end;
-finally
-  timered := false;
-end;
 end;
 
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
-dllApplication.WaitForTimer;
-timered := true;
-try
-  if dllApplication.mode = 'demo' then Exit;
-  if token.tenantId = '' then Exit;
-  with TfrmSyncData.Create(nil) do
-  begin
-    try
-      if token.online then dataFactory.remote.DBLock(true);
-      hWnd := PHWnd;
-      ShowForm;
-      BringToFront;
-      Update;
-      RspSyncFactory.SyncAll;
-      RspSyncFactory.copyGoodsSort;
-      SyncFactory.InitTenant;
-      SyncFactory.SyncBasic(1);
-      SyncFactory.LoginSyncDate := token.lDate;
-      SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
-    finally
-      if token.online then dataFactory.remote.DBLock(false);
-      Free;
+  dllApplication.WaitForTimer;
+  timered := true;
+  try
+    if dllApplication.mode = 'demo' then Exit;
+    if token.tenantId = '' then Exit;
+    with TfrmSyncData.Create(nil) do
+    begin
+      try
+        if token.online then dataFactory.remote.DBLock(true);
+        hWnd := PHWnd;
+        ShowForm;
+        BringToFront;
+        Update;
+        RspSyncFactory.SyncAll;
+        RspSyncFactory.copyGoodsSort;
+        SyncFactory.InitTenant;
+        SyncFactory.SyncBasic(1);
+        SyncFactory.LoginSyncDate := token.lDate;
+        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
+      finally
+        if token.online then dataFactory.remote.DBLock(false);
+        Free;
+      end;
     end;
+  finally
+    timered := false;
   end;
-finally
-  timered := false;
-end;
 end;
 
 procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');
@@ -2283,8 +2283,8 @@ begin
          result := false;
          LocalList := TStringList.Create;
          try
-           LocalList.DelimitedText:= GetMacAddrInfo;
-           LocalList.Delimiter:= ',';
+           LocalList.DelimitedText := GetMacAddrInfo;
+           LocalList.Delimiter := ',';
            for i := 0 to LocalList.Count - 1 do
              begin
                if pos(','+LocalList[i]+',', ','+rid+',') > 0 then
@@ -2301,11 +2301,14 @@ begin
               result := true;
             end;
        end
-    else result := true;
+    else
+       begin
+         SyncLockDb;
+         result := true;
+       end;
   finally
     rs.Free;
   end;
-  if result then SyncLockDb;
 end;
 
 function TSyncFactory.SyncLockCheck(PHWnd:THandle): boolean;

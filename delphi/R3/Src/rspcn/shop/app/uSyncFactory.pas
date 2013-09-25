@@ -146,6 +146,7 @@ type
     // 灾难恢复时关账
     procedure RecoveryClose(CloseDate:string);
     // 数据库锁定
+    function  DBLocked:boolean;
     function  SyncLockCheck(PHWnd:THandle):boolean;
     function  SyncLockDb:boolean;
     //同步心跳
@@ -350,7 +351,7 @@ begin
       end;
     dataFactory.ExecProc('TGetSyncTimeStamp',Params);
   finally
-    Params.free;
+    Params.Free;
   end;
 end;
 
@@ -2259,7 +2260,7 @@ begin
   FLoginId := Value;
 end;
 
-function TSyncFactory.SyncLockCheck(PHWnd:THandle): boolean;
+function TSyncFactory.DBLocked: boolean;
 var
   i:integer;
   rs:TZQuery;
@@ -2271,11 +2272,10 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
-    dataFactory.MoveToRemote;
     try
-      dataFactory.Open(rs);
-    finally
-      dataFactory.MoveToDefault;
+      rs.Data := dataFactory.remote.OpenSQL(rs.SQL.Text,TftParamList.Encode(rs.Params));
+    except
+      Raise Exception.Create(StrPas(dataFactory.remote.getLastError));
     end;
     rid := rs.Fields[0].AsString;
     if rid <> '' then
@@ -2305,15 +2305,21 @@ begin
   finally
     rs.Free;
   end;
+  if result then SyncLockDb;
+end;
+
+function TSyncFactory.SyncLockCheck(PHWnd:THandle): boolean;
+begin
+  result := DBLocked;
   if not result then
      begin
        if MessageBox(PHWnd,'系统检测到当前使用的电脑不是您常用的电脑，无法上传数据...'+#10#13+'是否立即解锁?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
           begin
             result := TfrmUnLockGuide.ShowDialog(Application.MainForm);
+            if result then SyncLockDb;
           end
        else result := false;
      end;
-  if result then SyncLockDb; // 自动锁定
 end;
 
 function TSyncFactory.SyncLockDb: boolean;
@@ -2329,11 +2335,10 @@ begin
   try
     rs.Close;
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
-    dataFactory.MoveToRemote;
     try
-      dataFactory.Open(rs);
-    finally
-      dataFactory.MoveToDefault;
+      rs.Data := dataFactory.remote.OpenSQL(rs.SQL.Text,TftParamList.Encode(rs.Params));
+    except
+      Raise Exception.Create(StrPas(dataFactory.remote.getLastError));
     end;
     if rs.Fields[0].AsString<>'' then Exit;
   finally
@@ -2344,19 +2349,10 @@ begin
   if Length(MacAddr) > 100 then SetLength(MacAddr, 100);
   Params:=TftParamList.Create(nil);
   try
-    try
-      Params.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
-      Params.ParamByName('DBKEY').AsString:='DBKEY_'+token.shopId;
-      Params.ParamByName('NEWID').AsString:=MacAddr;
-      dataFactory.MoveToRemote;
-      try
-        dataFactory.ExecProc('TDoLockDBKey',Params);
-      finally
-        dataFactory.MoveToDefault;
-      end;
-    except
-      Raise;
-    end;
+    Params.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
+    Params.ParamByName('DBKEY').AsString:='DBKEY_'+token.shopId;
+    Params.ParamByName('NEWID').AsString:=MacAddr;
+    dataFactory.remote.ExecProc('TDoLockDBKey',TftParamList.Encode(Params));
   finally
     Params.Free;
   end;
@@ -2555,7 +2551,7 @@ procedure TSyncFactory.SyncStorage;
 var
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
-  SyncTimeStamp :Int64;
+  SyncTimeStamp:int64;
   Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
@@ -2588,9 +2584,9 @@ begin
     dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
   finally
     dispose(n);
-    Params.free;
-    rs_l.free;
-    rs_r.free;
+    Params.Free;
+    rs_l.Free;
+    rs_r.Free;
   end;
 end;
 
@@ -2719,7 +2715,7 @@ begin
         dataFactory.sqlite.CancelBatch;
         Raise;
       end;
-      
+
       if timerTerminted then Exit;
 
       cs_h.SyncDelta := rs_h.SyncDelta;
@@ -2914,7 +2910,7 @@ begin
       end;
 
       if timerTerminted then Exit;
-      
+
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
 
@@ -2947,7 +2943,7 @@ procedure TSyncFactory.TimerSyncStroage;
 var
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
-  SyncTimeStamp :Int64;
+  SyncTimeStamp:int64;
   Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
@@ -2983,9 +2979,9 @@ begin
     dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
   finally
     dispose(n);
-    Params.free;
-    rs_l.free;
-    rs_r.free;
+    Params.Free;
+    rs_l.Free;
+    rs_r.Free;
   end;
 end;
 

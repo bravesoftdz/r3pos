@@ -153,6 +153,7 @@ type
     procedure TimerSyncSales;
     procedure TimerSyncStock;
     procedure TimerSyncChange;
+    procedure TimerSyncStroage;
 
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
@@ -1332,6 +1333,9 @@ var
   flag:integer;
   firstLogin:boolean;
 begin
+dllApplication.WaitForTimer;
+timered := true;
+try
   firstLogin := false;
   if dllApplication.mode = 'demo' then Exit;
   with TfrmSyncData.Create(nil) do
@@ -1395,10 +1399,16 @@ begin
       Free;
     end;
   end;
+finally
+  timered := false;
+end;
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
+dllApplication.WaitForTimer;
+timered := true;
+try
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
   with TfrmSyncData.Create(nil) do
@@ -1427,10 +1437,16 @@ begin
       Free;
     end;
   end;
+finally
+  timered := false;
+end;
 end;
 
 procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
+dllApplication.WaitForTimer;
+timered := true;
+try
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
   if not token.online then Exit;
@@ -1449,10 +1465,16 @@ begin
       Free;
     end;
   end;
+finally
+  timered := false;
+end;
 end;
 
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
+dllApplication.WaitForTimer;
+timered := true;
+try
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
   with TfrmSyncData.Create(nil) do
@@ -1474,6 +1496,9 @@ begin
       Free;
     end;
   end;
+finally
+  timered := false;
+end;
 end;
 
 procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');
@@ -2529,6 +2554,9 @@ end;
 procedure TSyncFactory.SyncStorage;
 var
   n:PSynTableInfo;
+  rs_l,rs_r:TZQuery;
+  SyncTimeStamp :Int64;
+  Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
   new(n);
@@ -2539,11 +2567,30 @@ begin
   n^.keyFlag := 1;
   n^.tbtitle := '当前库存';
   n^.isSyncUp := '1';
+  rs_l := TZQuery.Create(nil);
+  rs_r := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
   try
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+''); 
-    SyncSingleTable(n);
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+'');
+    SyncTimeStamp := GetSynTimeStamp(token.tenantId,n^.tbname,token.shopId);
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
+    Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
+    Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('LAST_TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
+    Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
+    rs_r.SyncDelta := rs_l.SyncDelta;
+    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
   finally
     dispose(n);
+    Params.free;
+    rs_l.free;
+    rs_r.free;
   end;
 end;
 
@@ -2595,6 +2642,7 @@ begin
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncSales;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStock;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
+    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStroage;
   finally
     SyncFactory.timered := false;
   end;
@@ -2892,6 +2940,52 @@ begin
     rs_d.Free;
     cs_h.Free;
     cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.TimerSyncStroage;
+var
+  n:PSynTableInfo;
+  rs_l,rs_r:TZQuery;
+  SyncTimeStamp :Int64;
+  Params:TftParamList;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+  new(n);
+  n^.tbname := 'STO_STORAGE';
+  n^.keyFields := 'TENANT_ID;SHOP_ID;GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02';
+  n^.whereStr :=  'TENANT_ID = :TENANT_ID and AMOUNT<>0';
+  n^.synFlag := 1;
+  n^.keyFlag := 1;
+  n^.tbtitle := '当前库存';
+  n^.isSyncUp := '1';
+  rs_l := TZQuery.Create(nil);
+  rs_r := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+'');
+    if timerTerminted then Exit;
+    SyncTimeStamp := GetSynTimeStamp(token.tenantId,n^.tbname,token.shopId);
+    if timerTerminted then Exit;
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
+    Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
+    Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
+    Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('LAST_TIME_STAMP').Value := SyncTimeStamp;
+    Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
+    Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
+    if timerTerminted then Exit;
+    rs_r.SyncDelta := rs_l.SyncDelta;
+    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+  finally
+    dispose(n);
+    Params.free;
+    rs_l.free;
+    rs_r.free;
   end;
 end;
 

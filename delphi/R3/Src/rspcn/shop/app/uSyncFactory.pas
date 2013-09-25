@@ -404,7 +404,7 @@ begin
          rs.Params.ParamByName('TABLE_NAME').AsString := tbName;
          dataFactory.Open(rs);
          if rs.IsEmpty then
-            dataFactory.remote.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+token.tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
+            dataFactory.remote.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+token.tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
        end;
   finally
     rs.Free;
@@ -505,6 +505,8 @@ var
   ZClassName:string;
   openSQL:string;
 begin
+  if (n^.isSyncUp <> '1') and (n^.isSyncDown <> '1') then Exit;
+
   SFVersion := dllGlobal.GetSFVersion;
   LCLVersion := (SFVersion = '.LCL');
 

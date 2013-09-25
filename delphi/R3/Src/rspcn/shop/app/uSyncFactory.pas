@@ -94,6 +94,7 @@ type
     procedure SetProMax(max:integer);
     procedure SetProPosition(position:integer);
   private
+    ThreadLock:TRTLCriticalSection;
     CloseAccDate:integer;
     LoginSyncDate:integer;
     LastLoginSyncDate,LastLogoutSyncDate:integer;
@@ -126,6 +127,7 @@ type
     procedure SetLoginId(const Value: string);
     procedure Settimered(const Value: boolean);
     procedure SettimerTerminted(const Value: boolean);
+    function Gettimered: boolean;
   public
     constructor Create;
     destructor  Destroy;override;
@@ -164,7 +166,7 @@ type
     property  ProTitle:string read FProTitle write SetProTitle;
     property  LoginId:string read FLoginId write SetLoginId;
 
-    property  timered:boolean read Ftimered write Settimered;
+    property  timered:boolean read Gettimered write Settimered;
     property  timerTerminted:boolean read FtimerTerminted write SettimerTerminted;
   end;
 
@@ -301,6 +303,7 @@ end;
 
 constructor TSyncFactory.Create;
 begin
+  InitializeCriticalSection(ThreadLock);
   timered := false;
   timerTerminted := false;
   CloseAccDate := -1;
@@ -315,6 +318,7 @@ var i:integer;
 begin
   for i:=0 to FList.Count -1 do Dispose(FList[i]);
   FList.Free;
+  DeleteCriticalSection(ThreadLock);
   inherited;
 end;
 
@@ -2646,7 +2650,12 @@ end;
 
 procedure TSyncFactory.Settimered(const Value: boolean);
 begin
-  Ftimered := Value;
+  EnterCriticalSection(ThreadLock);
+  try
+    Ftimered := Value;
+  finally
+    LeaveCriticalSection(ThreadLock);
+  end;
 end;
 
 { TTimeSyncThread }
@@ -2670,6 +2679,7 @@ begin
   inherited;
   SyncFactory.timered := true;
   try
+    if not SyncFactory.DBLocked then Exit;
     //ÔÚÏß×´Ì¬ÐÄÌø
     if SyncFactory.LoginId<>'' then
     begin
@@ -3031,6 +3041,16 @@ begin
     Params.Free;
     rs_l.Free;
     rs_r.Free;
+  end;
+end;
+
+function TSyncFactory.Gettimered: boolean;
+begin
+  EnterCriticalSection(ThreadLock);
+  try
+    result := Ftimered;
+  finally
+    LeaveCriticalSection(ThreadLock);
   end;
 end;
 

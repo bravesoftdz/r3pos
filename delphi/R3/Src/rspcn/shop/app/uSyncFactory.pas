@@ -100,6 +100,8 @@ type
     LoginSyncDate:integer;
     LastLoginSyncDate,LastLogoutSyncDate:integer;
     FLoginId: string;
+    Ftimered: boolean;
+    FtimerTerminted: boolean;
     function  CheckRemoteData(AppHandle:HWnd):integer;//0:未还原 1:文件还原 2:服务端还原
     procedure BackUpDBFile;
     procedure InitTenant;
@@ -124,6 +126,8 @@ type
     procedure AddLoginLog;
     procedure AddLogoutLog;
     procedure SetLoginId(const Value: string);
+    procedure Settimered(const Value: boolean);
+    procedure SettimerTerminted(const Value: boolean);
   public
     constructor Create;
     destructor  Destroy;override;
@@ -146,6 +150,12 @@ type
     // 数据库锁定
     function  SyncLockCheck(PHWnd:THandle):boolean;
     function  SyncLockDb:boolean;
+    //同步心跳
+    procedure TimerSync;
+    procedure TimerSyncSales;
+    procedure TimerSyncStock;
+    procedure TimerSyncChange;
+
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     property  Params:TftParamList read FParams write SetParams;
@@ -154,7 +164,18 @@ type
     property  ProHandle:Hwnd read FProHandle write SetProHandle;
     property  ProTitle:string read FProTitle write SetProTitle;
     property  LoginId:string read FLoginId write SetLoginId;
-  end; 
+
+    property  timered:boolean read Ftimered write Settimered;
+    property  timerTerminted:boolean read FtimerTerminted write SettimerTerminted;
+  end;
+
+  TTimeSyncThread=class(TThread)
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(CreateSuspended: Boolean);
+    destructor Destroy; override;
+  end;
 
 var SyncFactory:TSyncFactory;
 
@@ -281,6 +302,8 @@ end;
 
 constructor TSyncFactory.Create;
 begin
+  timered := false;
+  timerTerminted := false;
   CloseAccDate := -1;
   LoginSyncDate := 0;
   LastLoginSyncDate := 0;
@@ -355,12 +378,7 @@ begin
     rs.ParambyName('TENANT_ID').AsInteger := strtoint(tenantId);
     rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
     rs.ParamByName('TABLE_NAME').AsString := tbName;
-    dataFactory.MoveToSqlite;
-    try
-      dataFactory.Open(rs);
-    finally
-      dataFactory.MoveToDefault;
-    end;
+    dataFactory.sqlite.Open(rs);
     if rs.IsEmpty then result := 0 else result := rs.Fields[0].Value;
   finally
     rs.Free;
@@ -412,7 +430,7 @@ begin
   ls := TZQuery.Create(nil);
   try
     ls.SQL.Text := 'select * from '+tbName+' limit 1';
-    dllGlobal.OpenSqlite(ls);
+    dataFactory.sqlite.Open(ls);
     for i:=0 to ls.FieldList.Count - 1 do
       begin
         if selectFields<>'' then selectFields := selectFields + ',';
@@ -683,7 +701,7 @@ begin
   n^.synFlag := 1;
   n^.keyFlag := 1;
   n^.tbtitle := '供应关系';
-  n^.isSyncUp := '1';
+  n^.isSyncUp := '0';
   n^.isSyncDown := '1';
   FList.Add(n);
 
@@ -701,7 +719,7 @@ begin
   n^.synFlag := 2;
   n^.keyFlag := 0;
   n^.tbtitle := '供应链';
-  n^.isSyncUp := '1';
+  n^.isSyncUp := '0';
   n^.isSyncDown := '1';
   FList.Add(n);
 end;
@@ -1249,15 +1267,15 @@ var
   firstLogin:boolean;
 begin
   firstLogin := false;
-  ReadTimeStamp;
   if dllApplication.mode = 'demo' then Exit;
-  AddLoginLog;
-  if not token.online then Exit;
-  CommandPush.ExecuteCommand;
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.DBLock(true);
+      if token.online then dataFactory.remote.DBLock(true);
+      ReadTimeStamp;
+      AddLoginLog;
+      if not token.online then Exit;
+      CommandPush.ExecuteCommand;
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1307,7 +1325,7 @@ begin
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
-      dataFactory.DBLock(false);
+      if token.online then dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1317,12 +1335,12 @@ procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
-  AddLogoutLog;
-  if not token.online then Exit;
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.DBLock(true);
+      if token.online then dataFactory.remote.DBLock(true);
+      AddLogoutLog;
+      if not token.online then Exit;
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1339,7 +1357,7 @@ begin
            RtcSyncFactory.SyncRtcData;
          end;
     finally
-      dataFactory.DBLock(false);
+      if token.online then dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1353,7 +1371,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.DBLock(true);
+      if token.online then dataFactory.remote.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1361,7 +1379,7 @@ begin
       SyncFactory.SyncBasic;
       SyncFactory.SyncBizData(1,BeginDate);
     finally
-      dataFactory.DBLock(false);
+      if token.online then dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -1375,7 +1393,7 @@ begin
   with TfrmSyncData.Create(nil) do
   begin
     try
-      dataFactory.DBLock(true);
+      if token.online then dataFactory.remote.DBLock(true);
       hWnd := PHWnd;
       ShowForm;
       BringToFront;
@@ -1387,7 +1405,7 @@ begin
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
-      dataFactory.DBLock(false);
+      if token.online then dataFactory.remote.DBLock(false);
       Free;
     end;
   end;
@@ -2018,17 +2036,12 @@ begin
   end;
   if isUpdate then
   begin
-    if SyncFlag = 0 then
-       dataFactory.MoveToRemote
-    else
-       dataFactory.MoveToSqlite;
-    try
       Params.ParamByName('CLSE_DATE').AsInteger := rDate;
       Params.ParamByName('MOTH_DATE').AsString := formatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(inttostr(rDate)));
-      dataFactory.ExecProc('TSyncDeleteRckCloseV60',Params);
-    finally
-      dataFactory.MoveToDefault;
-    end;
+      if SyncFlag = 0 then
+         dataFactory.remote.ExecProc('TSyncDeleteRckCloseV60',TftParamList.Encode(Params))
+      else
+         dataFactory.sqlite.ExecProc('TSyncDeleteRckCloseV60',Params);
   end;
 end;
 
@@ -2456,6 +2469,350 @@ begin
     SyncSingleTable(n);
   finally
     dispose(n);
+  end;
+end;
+
+procedure TSyncFactory.TimerSync;
+begin
+  if not timered then TTimeSyncThread.Create(false); 
+end;
+
+procedure TSyncFactory.Settimered(const Value: boolean);
+begin
+  Ftimered := Value;
+end;
+
+{ TTimeSyncThread }
+
+constructor TTimeSyncThread.Create(CreateSuspended: Boolean);
+begin
+  inherited Create(CreateSuspended);
+  FreeOnTerminate := true;
+end;
+
+destructor TTimeSyncThread.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TTimeSyncThread.Execute;
+var
+  db:TdbFactory;
+  sql:string;
+begin
+  inherited;
+  SyncFactory.timered := true;
+  try
+    //在线状态心跳
+    if SyncFactory.LoginId<>'' then
+    begin
+      if token.online then
+         begin
+           sql := 'update CA_LOGIN_INFO set LOGOUT_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-SyncFactory.LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.remote.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.remote.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+SyncFactory.LoginId+'''';
+           dataFactory.remote.ExecSQL(sql);
+         end
+      else
+         begin
+           sql := 'update CA_LOGIN_INFO set LOGOUT_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-SyncFactory.LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.sqlite.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.sqlite.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+SyncFactory.LoginId+'''';
+           dataFactory.sqlite.ExecSQL(sql);
+         end;
+    end;
+    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncSales;
+    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStock;
+    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
+  finally
+    SyncFactory.timered := false;
+  end;
+end;
+
+procedure TSyncFactory.SettimerTerminted(const Value: boolean);
+begin
+  FtimerTerminted := Value;
+end;
+
+procedure TSyncFactory.TimerSyncSales;
+var
+  tbName,orderFields,dataFields,glideFields:string;
+  MaxTimeStamp:int64;
+  ls,rs_h,rs_d,rs_s,cs_h,cs_d,cs_s:TZQuery;
+begin
+  if (dllGlobal.GetSFVersion <> '.LCL') then Exit;
+
+  tbName := 'SAL_SALESORDER';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := SyncTimeStamp;
+  if timerTerminted then exit;
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  rs_s := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  cs_s := TZQuery.Create(nil);
+  try
+    dataFactory.sqlite.Open(ls,'TSyncSalesOrderListV60',Params);
+    if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
+
+    if timerTerminted then exit;
+
+    BeforeSyncBiz(ls,'SALES_DATE',0);
+    ls.First;
+    while not ls.Eof do
+    begin
+      if timerTerminted then exit;
+      rs_h.Close;
+      rs_d.Close;
+      rs_s.Close;
+      cs_h.Close;
+      cs_d.Close;
+      cs_s.Close;
+
+      Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SALES_ID';
+      Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('SAL_SALESORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('SAL_SALESDATA');
+      if glideFields = '' then glideFields := GetTableFields('SAL_IC_GLIDE');
+
+      dataFactory.sqlite.BeginBatch;
+      try
+        Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+        dataFactory.sqlite.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
+        Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+        dataFactory.sqlite.AddBatch(rs_d,'TSyncSalesDataV60',Params);
+        Params.ParamByName('TABLE_FIELDS').AsString := glideFields;
+        dataFactory.sqlite.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
+        dataFactory.sqlite.OpenBatch;
+      except
+        dataFactory.sqlite.CancelBatch;
+        Raise;
+      end;
+      
+      if timerTerminted then exit;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+      cs_s.SyncDelta := rs_s.SyncDelta;
+
+      dataFactory.remote.BeginBatch;
+      try
+        dataFactory.remote.AddBatch(TZQuery(cs_h).Delta,'TSyncSalesOrderV60',TftParamList.Encode(Params));
+        dataFactory.remote.AddBatch(TZQuery(cs_d).Delta,'TSyncSalesDataV60',TftParamList.Encode(Params));
+        dataFactory.remote.AddBatch(TZQuery(cs_s).Delta,'TSyncSalesICDataV60',TftParamList.Encode(Params));
+        dataFactory.remote.CommitBatch;
+      except
+        dataFactory.remote.CancelBatch;
+        Raise;
+      end;
+
+      rs_h.Delete;
+        dataFactory.sqlite.BeginBatch;
+        try
+          dataFactory.sqlite.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
+          if not rs_s.IsEmpty then
+             begin
+               rs_s.Delete;
+               dataFactory.sqlite.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
+             end;
+          dataFactory.sqlite.CommitBatch;
+        except
+          dataFactory.sqlite.CancelBatch;
+          Raise;
+        end;
+
+      ls.Next;
+    end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    rs_s.Free;
+    cs_h.Free;
+    cs_d.Free;
+    cs_s.Free;
+  end;
+end;
+
+procedure TSyncFactory.TimerSyncChange;
+var
+  tbName,orderFields,dataFields:string;
+  MaxTimeStamp:int64;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+begin
+  if (dllGlobal.GetSFVersion <> '.LCL') then Exit;
+
+  tbName := 'STO_CHANGEORDER';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := SyncTimeStamp;
+  if timerTerminted then exit;
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  try
+    dataFactory.sqlite.Open(ls,'TSyncChangeOrderListV60',Params);
+    if timerTerminted then exit;
+    if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'> 记录数:'+inttostr(ls.RecordCount));
+    BeforeSyncBiz(ls,'CHANGE_DATE',0);
+    ls.First;
+    while not ls.Eof do
+    begin
+      if timerTerminted then exit;
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+
+      Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;CHANGE_ID';
+      Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('STO_CHANGEORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('STO_CHANGEDATA','a');
+
+      dataFactory.sqlite.BeginBatch;
+      try
+        Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+        dataFactory.sqlite.AddBatch(rs_h,'TSyncChangeOrderV60',Params);
+        Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+        dataFactory.sqlite.AddBatch(rs_d,'TSyncChangeDataV60',Params);
+        dataFactory.sqlite.OpenBatch;
+      except
+        dataFactory.sqlite.CancelBatch;
+        Raise;
+      end;
+      if timerTerminted then exit;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.remote.BeginBatch;
+      try
+        dataFactory.remote.AddBatch(TZQuery(cs_h).Delta,'TSyncChangeOrderV60',TftParamList.Encode(Params));
+        dataFactory.remote.AddBatch(TZQuery(cs_d).Delta,'TSyncChangeDataV60',TftParamList.Encode(Params));
+        dataFactory.remote.CommitBatch;
+      except
+        dataFactory.remote.CancelBatch;
+        Raise;
+      end;
+
+      rs_h.Delete;
+      dataFactory.UpdateBatch(rs_h,'TSyncChangeOrderV60',Params);
+
+      ls.Next;
+    end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.TimerSyncStock;
+var
+  tbName,orderFields,dataFields:string;
+  MaxTimeStamp:int64;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+begin
+  if (dllGlobal.GetSFVersion <> '.LCL') then Exit;
+
+  tbName := 'STK_STOCKORDER';
+  SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := SyncTimeStamp;
+  if timerTerminted then exit;
+
+  Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  Params.ParamByName('SHOP_ID').AsString := token.shopId;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('KEY_FLAG').AsInteger := 0;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SYN_COMM').AsBoolean := true;
+
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  try
+    dataFactory.sqlite.Open(ls,'TSyncStockOrderListV60',Params);
+    if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
+    if timerTerminted then exit;
+    BeforeSyncBiz(ls,'STOCK_DATE',0);
+    ls.First;
+    while not ls.Eof do
+    begin
+      if timerTerminted then exit;
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+
+      Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;STOCK_ID';
+      Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('STK_STOCKORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('STK_STOCKDATA','a');
+
+      dataFactory.sqlite.BeginBatch;
+      try
+        Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+        dataFactory.sqlite.AddBatch(rs_h,'TSyncStockOrderV60',Params);
+        Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+        dataFactory.sqlite.AddBatch(rs_d,'TSyncStockDataV60',Params);
+        dataFactory.sqlite.OpenBatch;
+      except
+        dataFactory.sqlite.CancelBatch;
+        Raise;
+      end;
+
+      if timerTerminted then exit;
+      
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.remote.BeginBatch;
+      try
+        dataFactory.remote.AddBatch(TZQuery(cs_h).Delta,'TSyncStockOrderV60',TftParamList.Encode(Params));
+        dataFactory.remote.AddBatch(TZQuery(cs_d).Delta,'TSyncStockDataV60',TftParamList.Encode(Params));
+        dataFactory.remote.CommitBatch;
+      except
+        dataFactory.remote.CancelBatch;
+        Raise;
+      end;
+
+      rs_h.Delete;
+      dataFactory.sqlite.UpdateBatch(rs_h,'TSyncStockOrderV60',Params);
+
+      ls.Next;
+    end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
   end;
 end;
 

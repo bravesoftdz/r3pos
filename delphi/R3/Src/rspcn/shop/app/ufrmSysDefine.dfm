@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 162
-  Top = 27
+  Left = 219
+  Top = 272
   Caption = #31995#32479#35774#32622
   ClientHeight = 655
   ClientWidth = 920
@@ -11366,5 +11366,9 @@ inherited frmSysDefine: TfrmSysDefine
     Filter = #22270#29255#25991#20214'|*.png'
     Left = 103
     Top = 416
+  end
+  object Timer1: TTimer
+    Left = 369
+    Top = 175
   end
 end

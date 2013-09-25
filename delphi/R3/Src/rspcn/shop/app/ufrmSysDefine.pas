@@ -256,6 +256,7 @@ type
     edtXSM_CODE: TcxTextEdit;
     edtXSM_PSWD: TcxTextEdit;
     cxSaveCodePrint: TcxCheckBox;
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);

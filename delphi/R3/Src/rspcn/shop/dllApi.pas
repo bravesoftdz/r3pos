@@ -6,7 +6,7 @@ uses
   Classes,
   Forms,
   Windows,
-  ZIntf,
+  ZIntf,ExtCtrls,
   uTokenFactory,
   ufrmWebForm,
   uRspFactory,
@@ -43,12 +43,17 @@ type
     Fhandle: THandle;
     Fmode: string;
     Finited: boolean;
+    timer:TTimer;
+    EvtHandle:THandle;
     procedure Sethandle(const Value: THandle);
     procedure Setmode(const Value: string);
     procedure Setinited(const Value: boolean);
   public
     constructor Create;
     destructor Destroy; override;
+
+    procedure WaitForTimer;
+    procedure onTimer(Sender: TObject);
     function getDllClass(name:string):TPersistentClass;
     function getModuId(name:string):string;
     procedure dllException(Sender: TObject; E: Exception);
@@ -206,6 +211,9 @@ begin
     result := true;
     if not Assigned(webForm) then Exit;
     if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...');
+    dllApplication.inited := false;
+    if assigned(SyncFactory) then SyncFactory.timerTerminted := true;
+    dllApplication.WaitForTimer;
     if assigned(SyncFactory) and synced then SyncFactory.LogoutSync(dllApplication.handle);
     while webForm.Count>0 do
        begin
@@ -335,9 +343,16 @@ constructor TdllApplication.Create;
 var
   F:TIniFile;
 begin
+  EvtHandle := CreateEvent(nil, True, False, nil);
+  ResetEvent(EvtHandle);
+  timer := TTimer.Create(nil);
+  timer.OnTimer := onTimer;
+  timer.Enabled := false;
+//  timer.Interval := 30*60*1000;
+  timer.Interval := 1000;
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
   try
-    mode := F.ReadString('soft','mode','release'); 
+    mode := F.ReadString('soft','mode','release');
   finally
     F.Free;
   end;
@@ -345,6 +360,8 @@ end;
 
 destructor TdllApplication.Destroy;
 begin
+  CloseHandle(EvtHandle);
+  timer.Free;
   inherited;
 end;
 
@@ -387,6 +404,11 @@ begin
   result := name;
 end;
 
+procedure TdllApplication.onTimer(Sender: TObject);
+begin
+  if assigned(SyncFactory) then SyncFactory.TimerSync;
+end;
+
 procedure TdllApplication.Sethandle(const Value: THandle);
 begin
   Fhandle := Value;
@@ -395,11 +417,22 @@ end;
 procedure TdllApplication.Setinited(const Value: boolean);
 begin
   Finited := Value;
+  timer.Enabled := Value;
 end;
 
 procedure TdllApplication.Setmode(const Value: string);
 begin
   Fmode := Value;
+end;
+
+procedure TdllApplication.WaitForTimer;
+begin
+  if SyncFactory=nil then Exit;
+  while true do
+    begin
+      if not SyncFactory.timered then Exit;
+      WaitForSingleObject(EvtHandle,500);
+    end;
 end;
 
 initialization

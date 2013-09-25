@@ -438,7 +438,7 @@ begin
     end
   else
     begin
-      dbHelp.DBLock(locked);
+       dbHelp.DBLock(locked);
     end;
   end;
 end;

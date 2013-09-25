@@ -714,6 +714,7 @@ end;
 function TDLLFactory.DBLock(locked: boolean): boolean;
 begin
   try
+    if not token.online then Exit;
     if dataFactory.dbFlag=0 then dataFactory.MoveToRemote;
     dataFactory.DBLock(locked);
     result := true;

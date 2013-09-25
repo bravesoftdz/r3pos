@@ -105,7 +105,7 @@ type
     function  CheckRemoteData(AppHandle:HWnd):integer;//0:未还原 1:文件还原 2:服务端还原
     procedure BackUpDBFile;
     procedure InitTenant;
-    // 0:默认同步 1:注册同步 2:退出同步 3:恢复同步
+    // 0:默认同步 1:注册同步 2:正常同步 3:恢复同步
     procedure InitSyncRelationList(SyncType:integer=0);
     procedure InitSyncBasicList(SyncType:integer=0);
     procedure SyncList;
@@ -133,7 +133,7 @@ type
     destructor  Destroy;override;
     // 单表同步
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
-    // 0:默认同步 1:注册同步 2:退出同步 3:恢复同步
+    // 0:默认同步 1:注册同步 2:正常同步 3:恢复同步
     procedure SyncBasic(SyncType:integer=0);
     // 检测文件是否是有效的数据文件
     function  CheckValidDBFile(src:string):boolean;
@@ -353,14 +353,9 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    if not (dataFactory.iDbType = 5) then
+    if dataFactory.iDbType <> 5 then
       begin
-        try
-          dataFactory.MoveToSqlite;
-          dataFactory.ExecProc('TGetSyncTimeStamp',Params);
-        finally
-          dataFactory.MoveToDefault;
-        end;
+        dataFactory.sqlite.ExecProc('TGetSyncTimeStamp',Params);
       end;
     dataFactory.ExecProc('TGetSyncTimeStamp',Params);
   finally
@@ -391,30 +386,26 @@ var
   rs:TZQuery;
 begin
   if SHOP_ID='' then SHOP_ID:='#';
-  try
-    dataFactory.MoveToSqlite;
-    r := dataFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+tenantId+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
-    if r=0 then
-      dataFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
-  finally
-    dataFactory.MoveToDefault;
-  end;
+
+  r := dataFactory.sqlite.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+tenantId+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
+  if r=0 then
+     dataFactory.sqlite.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
 
   //更新服务端时间戳
   rs := TZQuery.Create(nil);
   dataFactory.MoveToRemote;
   try
-    r := dataFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+token.tenantId+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+''' and TIME_STAMP<'+inttostr(TimeStamp));
+    r := dataFactory.remote.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+token.tenantId+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+''' and TIME_STAMP<'+inttostr(TimeStamp));
     if r=0 then
-      begin
-        rs.SQL.Text := 'select 1 from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
-        rs.Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-        rs.Params.ParamByName('SHOP_ID').AsString := SHOP_ID;
-        rs.Params.ParamByName('TABLE_NAME').AsString := tbName;
-        dataFactory.Open(rs);
-        if rs.IsEmpty then
-          dataFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+token.tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
-      end;
+       begin
+         rs.SQL.Text := 'select 1 from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
+         rs.Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+         rs.Params.ParamByName('SHOP_ID').AsString := SHOP_ID;
+         rs.Params.ParamByName('TABLE_NAME').AsString := tbName;
+         dataFactory.Open(rs);
+         if rs.IsEmpty then
+            dataFactory.remote.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+token.tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
+       end;
   finally
     rs.Free;
     dataFactory.MoveToDefault;
@@ -701,7 +692,7 @@ begin
   n^.synFlag := 1;
   n^.keyFlag := 1;
   n^.tbtitle := '供应关系';
-  n^.isSyncUp := '0';
+  if dllGlobal.AuthMode = 1 then n^.isSyncUp := '1';
   n^.isSyncDown := '1';
   FList.Add(n);
 
@@ -719,12 +710,68 @@ begin
   n^.synFlag := 2;
   n^.keyFlag := 0;
   n^.tbtitle := '供应链';
-  n^.isSyncUp := '0';
+  if dllGlobal.AuthMode = 1 then n^.isSyncUp := '1';
   n^.isSyncDown := '1';
   FList.Add(n);
 end;
 
+// 0:默认同步 1:注册同步 2:正常同步 3:恢复同步
 procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
+  procedure InitSyncBasicUpAndDown(var n:PSynTableInfo);
+  begin
+    if SyncType = 1 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 2 then
+       begin
+         if dllGlobal.GetSFVersion = '.LCL' then
+            n^.isSyncUp := '1'
+         else
+            n^.isSyncDown := '1'
+       end
+    else if SyncType = 3 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end
+  end;
+
+  procedure InitSyncRelationUpAndDown(var n:PSynTableInfo;tenantId:string);
+  begin
+    if SyncType = 1 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 2 then
+       begin
+         if dllGlobal.GetSFVersion = '.LCL' then
+            begin
+              if tenantId = token.tenantId then
+                 n^.isSyncUp := '1'
+              else
+                 n^.isSyncDown := '1'
+            end
+         else
+            begin
+              n^.isSyncDown := '1'
+            end;
+       end
+    else if SyncType = 3 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end
+  end;
+
   procedure InitList0;
   var n:PSynTableInfo;
   begin
@@ -734,8 +781,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '门店资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -744,8 +790,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '部门资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -754,8 +799,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '职务资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -764,8 +808,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '角色资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -774,8 +817,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '用户资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -784,8 +826,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 1;
     n^.tbtitle := '操作权限';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -794,8 +835,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '客户等级';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -804,8 +844,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '商盟档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -814,8 +853,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.synFlag := 0;
     n^.tbtitle := '商盟指标';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -824,8 +862,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '客户档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -834,8 +871,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '会员档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -844,8 +880,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 1;
     n^.tbtitle := '会员档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -854,8 +889,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '最新进价';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
     new(n);
@@ -864,7 +898,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.tbtitle := '登录日志';
-    n^.isSyncUp := '1';
+    if SyncType in [0,2] then n^.isSyncUp := '1';
     FList.Add(n);
   end;
 
@@ -879,12 +913,11 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.syncShopId := token.shopId;
     n^.tbtitle := '最新售价';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
   end;
 
-  procedure InitList2(whereStr:string;syncTenantId:string);
+  procedure InitList2(whereStr,syncTenantId:string);
   var n:PSynTableInfo;
   begin
     new(n);
@@ -895,8 +928,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '其他编码';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncRelationUpAndDown(n,syncTenantId);
     FList.Add(n);
 
     new(n);
@@ -907,8 +939,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '货品分类';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncRelationUpAndDown(n,syncTenantId);
     FList.Add(n);
 
     new(n);
@@ -919,8 +950,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '颜色档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncRelationUpAndDown(n,syncTenantId);
     FList.Add(n);
 
     new(n);
@@ -931,8 +961,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '尺码档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncRelationUpAndDown(n,syncTenantId);
     FList.Add(n);
 
     new(n);
@@ -943,8 +972,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 0;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '计量单位';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncRelationUpAndDown(n,syncTenantId);
     FList.Add(n);
   end;
 
@@ -991,8 +1019,24 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 3;
     n^.keyFlag := 0;
     n^.tbtitle := '条码表';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    if SyncType = 1 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 2 then
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 3 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end;
     FList.Add(n);
   end;
 
@@ -1006,8 +1050,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 4;
     n^.keyFlag := 1;
     n^.tbtitle := 'IC档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
   end;
 
@@ -1021,8 +1064,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 10;
     n^.keyFlag := 0;
     n^.tbtitle := '账户资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
   end;
 
@@ -1065,12 +1107,28 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 20;
     n^.keyFlag := 0;
     n^.tbtitle := '企业资料';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    if SyncType = 1 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 2 then
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 3 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end;
     FList.Add(n);
   end;
 
-  procedure InitList21(whereStr:string;syncTenantId,SyncUp,SyncDown:string);
+  procedure InitList21(whereStr,syncTenantId:string);
   var n:PSynTableInfo;
   begin
     new(n);
@@ -1081,8 +1139,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.keyFlag := 1;
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '供应链商品';
-    n^.isSyncUp := SyncUp;
-    n^.isSyncDown := SyncDown;
+    InitSyncRelationUpAndDown(n,syncTenantId);
     FList.Add(n);
   end;
 
@@ -1145,8 +1202,24 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 22;
     n^.keyFlag := 0;
     n^.tbtitle := '商品档案';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    if SyncType = 1 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 2 then
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end
+    else if SyncType = 3 then
+       begin
+         n^.isSyncDown := '1';
+       end
+    else
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end;
     FList.Add(n);
   end;
 
@@ -1159,8 +1232,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 23;
     n^.keyFlag := 0;
     n^.tbtitle := '序列号控制表';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
   end;
 
@@ -1173,8 +1245,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.synFlag := 29;
     n^.keyFlag := 0;
     n^.tbtitle := '参数定义表';
-    n^.isSyncUp := '1';
-    n^.isSyncDown := '1';
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
   end;
 var
@@ -1204,13 +1275,13 @@ begin
 
   InitList20;
 
-  InitList21('TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP',token.tenantId,'1','1');
+  InitList21('TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP',token.tenantId);
   rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
   rs.First;
   while not rs.Eof do
   begin
     str := 'TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+' and TIME_STAMP>:TIME_STAMP';
-    InitList21(str,rs.FieldByName('P_TENANT_ID').AsString,'0','1');
+    InitList21(str,rs.FieldByName('P_TENANT_ID').AsString);
     rs.Next;
   end;
 
@@ -1292,7 +1363,7 @@ begin
                 RspSyncFactory.SyncAll;
                 RspSyncFactory.copyGoodsSort;
                 SyncFactory.InitTenant;
-                SyncFactory.SyncBasic;
+                SyncFactory.SyncBasic(1);
                 TfrmSysDefine.SaveRegister;
               end
            else if flag = 1 then // 文件还原
@@ -1312,7 +1383,7 @@ begin
            SyncFactory.BackUpDBFile;
            RspSyncFactory.SyncAll;
            RspSyncFactory.copyGoodsSort;
-           SyncFactory.SyncBasic;
+           SyncFactory.SyncBasic(2);
            if CheckNeedLoginSyncBizData then
               begin
                 if MessageBox(PHWnd,'系统检测到上次退出未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
@@ -1346,7 +1417,7 @@ begin
       BringToFront;
       Update;
       if not SyncFactory.SyncLockCheck(PHWnd) then Exit;
-      SyncFactory.SyncBasic;
+      SyncFactory.SyncBasic(2);
       if dllGlobal.GetSFVersion = '.LCL' then
          TfrmStocksCalc.Calc(Application.MainForm,now());
       SyncFactory.SyncBizData;
@@ -1376,7 +1447,7 @@ begin
       ShowForm;
       BringToFront;
       Update;
-      SyncFactory.SyncBasic;
+      SyncFactory.SyncBasic(3);
       SyncFactory.SyncBizData(1,BeginDate);
     finally
       if token.online then dataFactory.remote.DBLock(false);
@@ -1389,7 +1460,6 @@ procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   if dllApplication.mode = 'demo' then Exit;
   if token.tenantId = '' then Exit;
-  // if not CheckNeedLoginSync then Exit;
   with TfrmSyncData.Create(nil) do
   begin
     try
@@ -1401,7 +1471,7 @@ begin
       RspSyncFactory.SyncAll;
       RspSyncFactory.copyGoodsSort;
       SyncFactory.InitTenant;
-      SyncFactory.SyncBasic;
+      SyncFactory.SyncBasic(1);
       SyncFactory.LoginSyncDate := token.lDate;
       SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
     finally
@@ -2046,20 +2116,13 @@ begin
 end;
 
 procedure TSyncFactory.RecoveryClose(CloseDate: string);
-var
-  str:string;
+var str:string;
 begin
-  dataFactory.MoveToSqlite;
-  try
-    if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+CloseDate+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''SYS_BEGIN_DATE'' ')=0 then
-      begin
-        str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values '+
-               ' ('+token.tenantId+',''SYS_BEGIN_DATE'','''+CloseDate+''',0,''00'',0)';
-        dataFactory.ExecSQL(str);
-      end;
-  finally
-    dataFactory.MoveToDefault;
-  end;
+  if dataFactory.sqlite.ExecSQL('update SYS_DEFINE set VALUE='''+CloseDate+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''SYS_BEGIN_DATE'' ')=0 then
+    begin
+      str := ' insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values ('+token.tenantId+',''SYS_BEGIN_DATE'','''+CloseDate+''',0,''00'',0)';
+      dataFactory.sqlite.ExecSQL(str);
+    end;
   CloseAccDate := strtoint(CloseDate);
 end;
 
@@ -2068,18 +2131,17 @@ var rs:TZQuery;
 begin
   if CloseAccDate >= 0 then Exit;
   rs := TZQuery.Create(nil);
-  dataFactory.MoveToSqlite;
   try
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.ParamByName('DEFINE').AsString := 'SYS_BEGIN_DATE';
-    dataFactory.Open(rs);
+    dataFactory.sqlite.Open(rs);
     if rs.IsEmpty then
        CloseAccDate := 0
     else
        CloseAccDate := rs.Fields[0].AsInteger;
   finally
-    dataFactory.MoveToDefault;
+    rs.Free;
   end;
 end;
 
@@ -2144,8 +2206,8 @@ end;
 procedure TSyncFactory.AddLogoutLog;
 begin
   if LoginId='' then Exit;
+  if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
   try
-    if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
     dataFactory.ExecSQL('update CA_LOGIN_INFO set LOGOUT_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
   finally
     dataFactory.MoveToDefault;
@@ -2463,7 +2525,6 @@ begin
   n^.keyFlag := 1;
   n^.tbtitle := '当前库存';
   n^.isSyncUp := '1';
-  n^.isSyncDown := '0';
   try
     dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+''); 
     SyncSingleTable(n);
@@ -2492,7 +2553,6 @@ end;
 
 destructor TTimeSyncThread.Destroy;
 begin
-
   inherited;
 end;
 
@@ -2542,7 +2602,7 @@ begin
   tbName := 'SAL_SALESORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp;
-  if timerTerminted then exit;
+  if timerTerminted then Exit;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -2563,13 +2623,13 @@ begin
     dataFactory.sqlite.Open(ls,'TSyncSalesOrderListV60',Params);
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
 
-    if timerTerminted then exit;
+    if timerTerminted then Exit;
 
     BeforeSyncBiz(ls,'SALES_DATE',0);
     ls.First;
     while not ls.Eof do
     begin
-      if timerTerminted then exit;
+      if timerTerminted then Exit;
       rs_h.Close;
       rs_d.Close;
       rs_s.Close;
@@ -2598,7 +2658,7 @@ begin
         Raise;
       end;
       
-      if timerTerminted then exit;
+      if timerTerminted then Exit;
 
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
@@ -2616,19 +2676,19 @@ begin
       end;
 
       rs_h.Delete;
-        dataFactory.sqlite.BeginBatch;
-        try
-          dataFactory.sqlite.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
-          if not rs_s.IsEmpty then
-             begin
-               rs_s.Delete;
-               dataFactory.sqlite.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
-             end;
-          dataFactory.sqlite.CommitBatch;
-        except
-          dataFactory.sqlite.CancelBatch;
-          Raise;
-        end;
+      dataFactory.sqlite.BeginBatch;
+      try
+        dataFactory.sqlite.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
+        if not rs_s.IsEmpty then
+           begin
+             rs_s.Delete;
+             dataFactory.sqlite.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
+           end;
+        dataFactory.sqlite.CommitBatch;
+      except
+        dataFactory.sqlite.CancelBatch;
+        Raise;
+      end;
 
       ls.Next;
     end;
@@ -2654,7 +2714,7 @@ begin
   tbName := 'STO_CHANGEORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp;
-  if timerTerminted then exit;
+  if timerTerminted then Exit;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -2671,13 +2731,13 @@ begin
   cs_d := TZQuery.Create(nil);
   try
     dataFactory.sqlite.Open(ls,'TSyncChangeOrderListV60',Params);
-    if timerTerminted then exit;
+    if timerTerminted then Exit;
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'> 记录数:'+inttostr(ls.RecordCount));
     BeforeSyncBiz(ls,'CHANGE_DATE',0);
     ls.First;
     while not ls.Eof do
     begin
-      if timerTerminted then exit;
+      if timerTerminted then Exit;
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -2700,7 +2760,7 @@ begin
         dataFactory.sqlite.CancelBatch;
         Raise;
       end;
-      if timerTerminted then exit;
+      if timerTerminted then Exit;
 
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
@@ -2740,7 +2800,7 @@ begin
   tbName := 'STK_STOCKORDER';
   SyncTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := SyncTimeStamp;
-  if timerTerminted then exit;
+  if timerTerminted then Exit;
 
   Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
   Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -2758,12 +2818,12 @@ begin
   try
     dataFactory.sqlite.Open(ls,'TSyncStockOrderListV60',Params);
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
-    if timerTerminted then exit;
+    if timerTerminted then Exit;
     BeforeSyncBiz(ls,'STOCK_DATE',0);
     ls.First;
     while not ls.Eof do
     begin
-      if timerTerminted then exit;
+      if timerTerminted then Exit;
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -2787,7 +2847,7 @@ begin
         Raise;
       end;
 
-      if timerTerminted then exit;
+      if timerTerminted then Exit;
       
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;

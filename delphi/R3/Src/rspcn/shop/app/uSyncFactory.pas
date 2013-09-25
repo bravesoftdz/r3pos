@@ -2303,8 +2303,7 @@ begin
        end
     else
        begin
-         SyncLockDb;
-         result := true;
+         result := false;
        end;
   finally
     rs.Free;
@@ -2312,8 +2311,55 @@ begin
 end;
 
 function TSyncFactory.SyncLockCheck(PHWnd:THandle): boolean;
+var
+  i:integer;
+  rs:TZQuery;
+  rid:string;
+  LocalList:TStringList;
 begin
-  result := DBLocked;
+  result := true;
+  if (dllGlobal.GetSFVersion = '.ONL') or (dllGlobal.GetSFVersion = '.NET') then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+token.shopId+''' and TENANT_ID='+token.tenantId;
+    try
+      rs.Data := dataFactory.remote.OpenSQL(rs.SQL.Text,TftParamList.Encode(rs.Params));
+    except
+      Raise Exception.Create(StrPas(dataFactory.remote.getLastError));
+    end;
+    rid := rs.Fields[0].AsString;
+    if rid <> '' then
+       begin
+         result := false;
+         LocalList := TStringList.Create;
+         try
+           LocalList.DelimitedText := GetMacAddrInfo;
+           LocalList.Delimiter := ',';
+           for i := 0 to LocalList.Count - 1 do
+             begin
+               if pos(','+LocalList[i]+',', ','+rid+',') > 0 then
+                  begin
+                    result := true;
+                    break;
+                  end;
+             end;
+         finally
+           LocalList.Free;
+         end;
+         if (not result) and (GetComputerName = rid) then
+            begin
+              result := true;
+            end;
+       end
+    else
+       begin
+         result := true;
+         SyncLockDb;
+       end;
+  finally
+    rs.Free;
+  end;
+
   if not result then
      begin
        if MessageBox(PHWnd,'系统检测到当前使用的电脑不是您常用的电脑，无法上传数据...'+#10#13+'是否立即解锁?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then

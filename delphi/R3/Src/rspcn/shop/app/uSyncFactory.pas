@@ -1110,18 +1110,27 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
   end;
 
   procedure InitList20;
-  var n:PSynTableInfo;
-      str_l,str_r:string;
+  var str:string;
+      n:PSynTableInfo;
   begin
-    str_l :=
+    str :=
       'select  i.TENANT_ID,i.LOGIN_NAME,i.LICENSE_CODE,i.TENANT_NAME,i.TENANT_TYPE,i.SHORT_TENANT_NAME,i.TENANT_SPELL,i.LEGAL_REPR, '+
       '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
       '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM,i.TIME_STAMP '+
       'from    CA_TENANT i '+
       'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
       'order by TIME_STAMP asc';
+    new(n);
+    n^.tbname := 'CA_TENANT';
+    n^.keyFields := 'TENANT_ID';
+    n^.selectSQL := str;
+    n^.synFlag := 20;
+    n^.keyFlag := 0;
+    n^.tbtitle := '企业资料';
+    InitSyncBasicUpAndDown(n);
+    FList.Add(n);
 
-    str_r :=
+    str :=
       'select * from ( '+
       'select  i.TENANT_ID,i.LOGIN_NAME,i.LICENSE_CODE,i.TENANT_NAME,i.TENANT_TYPE,i.SHORT_TENANT_NAME,i.TENANT_SPELL,i.LEGAL_REPR, '+
       '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
@@ -1136,39 +1145,16 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
       '        select RELATI_ID as TENANT_ID,TIME_STAMP from CA_RELATIONS s where s.TENANT_ID=:TENANT_ID '+
       '        ) r '+
       'where   i.TENANT_ID=r.TENANT_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+
-      'union all '+
-      'select  i.TENANT_ID,i.LOGIN_NAME,i.LICENSE_CODE,i.TENANT_NAME,i.TENANT_TYPE,i.SHORT_TENANT_NAME,i.TENANT_SPELL,i.LEGAL_REPR, '+
-      '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
-      '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM,i.TIME_STAMP '+
-      'from    CA_TENANT i '+
-      'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
       ') t order by TIME_STAMP asc';
     new(n);
     n^.tbname := 'CA_TENANT';
     n^.keyFields := 'TENANT_ID';
-    n^.selectLocalSQL := str_l;
-    n^.selectRemoteSQL := str_r;
+    n^.selectSQL := str;
     n^.synFlag := 20;
     n^.keyFlag := 0;
     n^.tbtitle := '企业资料';
-    if SyncType = 1 then
-       begin
-         n^.isSyncDown := '1';
-       end
-    else if SyncType = 2 then
-       begin
-         n^.isSyncUp := '1';
-         n^.isSyncDown := '1';
-       end
-    else if SyncType = 3 then
-       begin
-         n^.isSyncDown := '1';
-       end
-    else
-       begin
-         n^.isSyncUp := '1';
-         n^.isSyncDown := '1';
-       end;
+    n^.syncTenantId := '999999999';
+    n^.isSyncDown := '1';
     FList.Add(n);
   end;
 

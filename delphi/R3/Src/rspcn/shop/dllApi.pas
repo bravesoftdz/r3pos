@@ -45,6 +45,7 @@ type
     Finited: boolean;
     timer:TTimer;
     EvtHandle:THandle;
+    ThreadLock:TRTLCriticalSection;
     procedure Sethandle(const Value: THandle);
     procedure Setmode(const Value: string);
     procedure Setinited(const Value: boolean);
@@ -343,6 +344,7 @@ constructor TdllApplication.Create;
 var
   F:TIniFile;
 begin
+  InitializeCriticalSection(ThreadLock);
   EvtHandle := CreateEvent(nil, True, False, nil);
   ResetEvent(EvtHandle);
   timer := TTimer.Create(nil);
@@ -361,6 +363,7 @@ end;
 destructor TdllApplication.Destroy;
 begin
   CloseHandle(EvtHandle);
+  DeleteCriticalSection(ThreadLock);
   timer.Free;
   inherited;
 end;
@@ -427,12 +430,17 @@ end;
 
 procedure TdllApplication.WaitForTimer;
 begin
-  if SyncFactory=nil then Exit;
-  while true do
-    begin
-      if not SyncFactory.timered then Exit;
-      WaitForSingleObject(EvtHandle,500);
-    end;
+  EnterCriticalSection(ThreadLock);
+  try
+    if SyncFactory=nil then Exit;
+    while true do
+      begin
+        if not SyncFactory.timered then Exit;
+        WaitForSingleObject(EvtHandle,500);
+      end;
+  finally
+    LeaveCriticalSection(ThreadLock);
+  end;
 end;
 
 initialization

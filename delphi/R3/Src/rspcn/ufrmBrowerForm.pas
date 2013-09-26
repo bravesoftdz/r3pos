@@ -121,8 +121,6 @@ type
     RzBmpButton2: TRzBmpButton;
     Image5: TImage;
     RzBmpButton5: TRzBmpButton;
-    N2: TMenuItem;
-    N3: TMenuItem;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);

@@ -304,7 +304,7 @@ end;
 constructor TSyncFactory.Create;
 begin
   InitializeCriticalSection(ThreadLock);
-  timered := false;
+  ftimered := false;
   timerTerminted := false;
   CloseAccDate := -1;
   LoginSyncDate := 0;
@@ -318,6 +318,7 @@ var i:integer;
 begin
   for i:=0 to FList.Count -1 do Dispose(FList[i]);
   FList.Free;
+  ftimered := false;
   DeleteCriticalSection(ThreadLock);
   inherited;
 end;
@@ -1338,7 +1339,6 @@ var
   flag:integer;
   firstLogin:boolean;
 begin
-  dllApplication.WaitForTimer;
   timered := true;
   try
     firstLogin := false;
@@ -1411,7 +1411,6 @@ end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
-  dllApplication.WaitForTimer;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -1449,7 +1448,6 @@ end;
 
 procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
-  dllApplication.WaitForTimer;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -1477,7 +1475,6 @@ end;
 
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
-  dllApplication.WaitForTimer;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -2650,12 +2647,11 @@ end;
 
 procedure TSyncFactory.Settimered(const Value: boolean);
 begin
-  EnterCriticalSection(ThreadLock);
-  try
-    Ftimered := Value;
-  finally
-    LeaveCriticalSection(ThreadLock);
-  end;
+  if Value then
+     EnterCriticalSection(ThreadLock)
+  else
+     LeaveCriticalSection(ThreadLock);
+  Ftimered := Value;
 end;
 
 { TTimeSyncThread }
@@ -3046,11 +3042,11 @@ end;
 
 function TSyncFactory.Gettimered: boolean;
 begin
-  EnterCriticalSection(ThreadLock);
+//  EnterCriticalSection(ThreadLock);
   try
     result := Ftimered;
   finally
-    LeaveCriticalSection(ThreadLock);
+//    LeaveCriticalSection(ThreadLock);
   end;
 end;
 

@@ -790,7 +790,9 @@ begin
 end;
 
 procedure TRspSyncFactory.copyGoodsSort;
-var rs,ss,ss_l:TZQuery;
+var
+  timeStamp:int64;
+  rs,ss,ss_l:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   dataFactory.MoveToRemote;
@@ -802,6 +804,8 @@ begin
     dataFactory.MoveToDefault;
     rs.Free;
   end;
+
+  timeStamp := dllGlobal.GetDBTimeStamp;
 
   rs := TZQuery.Create(nil);
   ss := TZQuery.Create(nil);
@@ -827,8 +831,8 @@ begin
       ss.FieldByName('SORT_TYPE').AsInteger := rs.FieldByName('SORT_TYPE').AsInteger;
       ss.FieldByName('SORT_SPELL').AsString := rs.FieldByName('SORT_SPELL').AsString;
       ss.FieldByName('SEQ_NO').AsInteger := rs.FieldByName('SEQ_NO').AsInteger;
-      ss.FieldByName('COMM').AsString := rs.FieldByName('COMM').AsString;
-      TLargeintField(ss.FieldByName('TIME_STAMP')).Value := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
+      ss.FieldByName('COMM').AsString := '00';
+      TLargeintField(ss.FieldByName('TIME_STAMP')).Value := timeStamp;
       ss.Post;
       rs.Next;
     end;

@@ -706,7 +706,7 @@ begin
             try
               Temp.Close;
               Temp.SQL.Text := 'select LOGIN_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID';
-              Temp.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+              Temp.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
               dataFactory.sqlite.Open(Temp);
               name := Temp.FieldByName('LOGIN_NAME').AsString;
             finally

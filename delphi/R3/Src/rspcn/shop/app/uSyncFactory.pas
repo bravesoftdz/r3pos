@@ -702,13 +702,18 @@ begin
   n^.tbname := 'CA_RELATION';
   n^.keyFields := 'TENANT_ID;RELATION_ID';
   n^.selectRemoteSQL :=
-    ' select i.* from CA_RELATION i,'+
+    ' select * from ( '+
+    ' select i.RELATION_ID,i.TENANT_ID,i.RELATION_NAME,i.RELATION_SPELL,i.REMARK,i.CREA_DATE,i.COMM, '+
+    ' case when i.TIME_STAMP > r.TIME_STAMP then i.TIME_STAMP else r.TIME_STAMP end TIME_STAMP '+
+    ' from CA_RELATION i,'+
     ' ( '+
     '  select j.TENANT_ID,s.TIME_STAMP from CA_RELATION j,CA_RELATIONS s '+
     '  where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID '+
     ' ) r where i.TENANT_ID=r.TENANT_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+
     ' union all '+
-    ' select i.* from CA_RELATION i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+    ' select i.RELATION_ID,i.TENANT_ID,i.RELATION_NAME,i.RELATION_SPELL,i.REMARK,i.CREA_DATE,i.COMM,i.TIME_STAMP '+
+    ' from CA_RELATION i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+    ' ) t order by TIME_STAMP asc ';
   n^.synFlag := 2;
   n^.keyFlag := 0;
   n^.tbtitle := '¹©Ó¦Á´';
@@ -910,7 +915,10 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     new(n);
     n^.tbname := 'PUB_GOODSPRICE';
     n^.keyFields := 'TENANT_ID;GODS_ID;SHOP_ID;PRICE_ID';
-    n^.whereStr := 'TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or SHOP_ID='''+token.tenantId+'0001'') and TIME_STAMP>:TIME_STAMP';
+    if token.shopId = (token.tenantId + '0001') then
+       n^.whereStr := 'TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP'
+    else
+       n^.whereStr := 'TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or SHOP_ID='''+token.tenantId+'0001'') and TIME_STAMP>:TIME_STAMP';
     n^.synFlag := 0;
     n^.keyFlag := 0;
     n^.syncShopId := token.shopId;
@@ -986,7 +994,8 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     str :=
       'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM,b.TIME_STAMP '+
       'from   PUB_BARCODE b '+
-      'where  TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+      'where  TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+      'order by TIME_STAMP asc';
     new(n);
     n^.tbname := 'PUB_BARCODE';
     n^.keyFields := 'ROWS_ID';
@@ -1011,6 +1020,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
            pid := rs.FieldByName('P_TENANT_ID').AsString;
 
         str :=
+          'select * from ( '+
           'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM, '+
           '       case '+
           '         when b.TIME_STAMP >= c.TIME_STAMP and b.TIME_STAMP >= s.TIME_STAMP then b.TIME_STAMP '+
@@ -1025,7 +1035,8 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
           '       and b.GODS_ID = c.GODS_ID '+
           '       and s.RELATION_ID = c.RELATION_ID '+
           '       and s.RELATI_ID = ' + token.tenantId +
-          '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) ';
+          '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) '+
+          ') t order by TIME_STAMP asc';
         new(n);
         n^.tbname := 'PUB_BARCODE';
         n^.keyFields := 'ROWS_ID';
@@ -1107,9 +1118,11 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
       '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
       '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM,i.TIME_STAMP '+
       'from    CA_TENANT i '+
-      'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+      'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+      'order by TIME_STAMP asc';
 
     str_r :=
+      'select * from ( '+
       'select  i.TENANT_ID,i.LOGIN_NAME,i.LICENSE_CODE,i.TENANT_NAME,i.TENANT_TYPE,i.SHORT_TENANT_NAME,i.TENANT_SPELL,i.LEGAL_REPR, '+
       '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
       '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM, '+
@@ -1128,7 +1141,8 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
       '        i.LINKMAN,i.TELEPHONE,i.FAXES,i.HOMEPAGE,i.ADDRESS,i.QQ,i.MSN,i.POSTALCODE,i.REMARK,i.PASSWRD,i.REGION_ID,i.SRVR_ID, '+
       '        i.AUDIT_STATUS,i.PROD_ID,i.DB_ID,i.CREA_DATE,i.COMM,i.TIME_STAMP '+
       'from    CA_TENANT i '+
-      'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+      'where   TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+      ') t order by TIME_STAMP asc';
     new(n);
     n^.tbname := 'CA_TENANT';
     n^.keyFields := 'TENANT_ID';
@@ -1186,7 +1200,8 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
       '       b.SMALLTO_CALC,b.BIGTO_CALC,b.NEW_INPRICE,b.NEW_OUTPRICE,b.NEW_LOWPRICE,b.USING_PRICE,b.HAS_INTEGRAL, '+
       '       b.USING_BATCH_NO,b.USING_BARTER,b.USING_LOCUS_NO,b.BARTER_INTEGRAL,b.REMARK,b.COMM,b.TIME_STAMP, '+
       '       b.SHORT_GODS_NAME,b.CREA_DATE '+
-      'from   PUB_GOODSINFO b where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
+      'from   PUB_GOODSINFO b where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+      'order by TIME_STAMP asc ';
     new(n);
     n^.tbname := 'PUB_GOODSINFO';
     n^.keyFields := 'TENANT_ID;GODS_ID';
@@ -1211,6 +1226,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
            pid := rs.FieldByName('P_TENANT_ID').AsString;
 
         str :=
+          'select * from ('+
           'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
           '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
           '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
@@ -1231,7 +1247,8 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
           '       and b.GODS_ID = c.GODS_ID '+
           '       and s.RELATION_ID = c.RELATION_ID '+
           '       and s.RELATI_ID = ' + token.tenantId +
-          '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) ';
+          '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) '+
+          ') t order by TIME_STAMP asc';
         new(n);
         n^.tbname := 'PUB_GOODSINFO';
         n^.keyFields := 'TENANT_ID;GODS_ID';

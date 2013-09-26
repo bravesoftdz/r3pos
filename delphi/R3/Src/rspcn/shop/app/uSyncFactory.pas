@@ -979,67 +979,95 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
   end;
 
   procedure InitList3;
-  var n:PSynTableInfo;
-      str_l,str_r:string;
+  var rs:TZQuery;
+      n:PSynTableInfo;
+      str,relationType,pid,cid:string;
   begin
-    str_l :=
+    str :=
       'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM,b.TIME_STAMP '+
       'from   PUB_BARCODE b '+
       'where  TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
-
-    str_r :=
-      'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM,b.TIME_STAMP '+
-      'from   PUB_BARCODE b '+
-      'where  TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
-      'union all '+
-      'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM, '+
-      '       case '+
-      '         when b.TIME_STAMP >= c.TIME_STAMP and b.TIME_STAMP >= s.TIME_STAMP then b.TIME_STAMP '+
-      '         when c.TIME_STAMP >= b.TIME_STAMP and c.TIME_STAMP >= s.TIME_STAMP then c.TIME_STAMP '+
-      '         when s.TIME_STAMP >= b.TIME_STAMP and s.TIME_STAMP >= c.TIME_STAMP then s.TIME_STAMP '+
-      '         else b.TIME_STAMP '+
-      '       end TIME_STAMP '+
-      'from   PUB_BARCODE b,PUB_GOODS_RELATION c,CA_RELATION j,CA_RELATIONS s '+
-      'where  b.TENANT_ID=j.TENANT_ID '+
-      '       and b.GODS_ID=c.GODS_ID '+
-      '       and c.RELATION_ID=j.RELATION_ID '+
-      '       and c.RELATION_ID=s.RELATION_ID '+
-      '       and j.RELATION_ID=s.RELATION_ID '+
-      '       and '+
-      '       ( '+
-      '        (c.TENANT_ID=s.TENANT_ID and s.RELATION_TYPE<>''1'') '+
-      '         or '+
-      '        (c.TENANT_ID=s.RELATI_ID and s.RELATION_TYPE=''1'') '+
-      '       ) '+
-      '       and s.RELATI_ID=:TENANT_ID '+
-      '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) ';
     new(n);
     n^.tbname := 'PUB_BARCODE';
     n^.keyFields := 'ROWS_ID';
-    n^.selectLocalSQL := str_l;
-    n^.selectRemoteSQL := str_r;
+    n^.selectSQL := str;
     n^.synFlag := 3;
     n^.keyFlag := 0;
     n^.tbtitle := '条码表';
-    if SyncType = 1 then
-       begin
-         n^.isSyncDown := '1';
-       end
-    else if SyncType = 2 then
-       begin
-         n^.isSyncUp := '1';
-         n^.isSyncDown := '1';
-       end
-    else if SyncType = 3 then
-       begin
-         n^.isSyncDown := '1';
-       end
-    else
-       begin
-         n^.isSyncUp := '1';
-         n^.isSyncDown := '1';
-       end;
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
+
+    rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+    rs.First;
+    while not rs.Eof do
+      begin
+        relationType := rs.FieldByName('RELATION_TYPE').AsString;
+
+        cid := rs.FieldByName('TENANT_ID').AsString;
+
+        if relationType = '1' then
+           pid := token.tenantId
+        else
+           pid := rs.FieldByName('P_TENANT_ID').AsString;
+
+        str :=
+          'select b.ROWS_ID,b.TENANT_ID,b.GODS_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.BARCODE_TYPE,b.BATCH_NO,b.BARCODE,b.COMM, '+
+          '       case '+
+          '         when b.TIME_STAMP >= c.TIME_STAMP and b.TIME_STAMP >= s.TIME_STAMP then b.TIME_STAMP '+
+          '         when c.TIME_STAMP >= b.TIME_STAMP and c.TIME_STAMP >= s.TIME_STAMP then c.TIME_STAMP '+
+          '         when s.TIME_STAMP >= b.TIME_STAMP and s.TIME_STAMP >= c.TIME_STAMP then s.TIME_STAMP '+
+          '         else b.TIME_STAMP '+
+          '       end TIME_STAMP '+
+          'from   PUB_BARCODE b,PUB_GOODS_RELATION c,CA_RELATIONS s '+
+          'where  b.TENANT_ID = '+ cid +
+          '       and c.TENANT_ID = ' + pid +
+          '       and c.RELATION_ID = ' + rs.FieldByName('RELATION_ID').AsString +
+          '       and b.GODS_ID = c.GODS_ID '+
+          '       and s.RELATION_ID = c.RELATION_ID '+
+          '       and s.RELATI_ID = ' + token.tenantId +
+          '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) ';
+        new(n);
+        n^.tbname := 'PUB_BARCODE';
+        n^.keyFields := 'ROWS_ID';
+        n^.selectSQL := str;
+        n^.synFlag := 3;
+        n^.keyFlag := 0;
+        n^.tbtitle := '条码表';
+        n^.syncTenantId := cid;
+        if SyncType = 1 then
+           begin
+             n^.isSyncDown := '1';
+           end
+        else if SyncType = 2 then
+           begin
+             if rs.FieldByName('RELATION_ID').AsInteger = 1000006 then //卷烟供应链只下载
+                n^.isSyncDown := '1'
+             else if rs.FieldByName('RELATION_ID').AsInteger = 1000008 then //非烟供应链
+                begin
+                  if dllGlobal.GetSFVersion = '.LCL' then
+                     n^.isSyncUp := '1'
+                  else
+                     n^.isSyncDown := '1';
+                end
+             else
+                begin
+                  n^.isSyncUp := '1';
+                  n^.isSyncDown := '1';
+                end;
+           end
+        else if SyncType = 3 then
+           begin
+             n^.isSyncDown := '1';
+           end
+        else
+           begin
+             n^.isSyncUp := '1';
+             n^.isSyncDown := '1';
+           end;
+        FList.Add(n);
+
+        rs.Next;
+      end;
   end;
 
   procedure InitList4;
@@ -1146,10 +1174,11 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
   end;
 
   procedure InitList22;
-  var n:PSynTableInfo;
-      str_l,str_r:string;
+  var rs:TZQuery;
+      n:PSynTableInfo;
+      str,relationType,pid,cid:string;
   begin
-     str_l :=
+    str :=
       'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
       '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
       '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
@@ -1158,71 +1187,93 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
       '       b.USING_BATCH_NO,b.USING_BARTER,b.USING_LOCUS_NO,b.BARTER_INTEGRAL,b.REMARK,b.COMM,b.TIME_STAMP, '+
       '       b.SHORT_GODS_NAME,b.CREA_DATE '+
       'from   PUB_GOODSINFO b where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP ';
-
-     str_r :=
-      'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
-      '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
-      '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
-      '       b.SORT_ID18,b.SORT_ID19,b.SORT_ID20,b.BARCODE,b.UNIT_ID,b.CALC_UNITS,b.SMALL_UNITS,b.BIG_UNITS, '+
-      '       b.SMALLTO_CALC,b.BIGTO_CALC,b.NEW_INPRICE,b.NEW_OUTPRICE,b.NEW_LOWPRICE,b.USING_PRICE,b.HAS_INTEGRAL, '+
-      '       b.USING_BATCH_NO,b.USING_BARTER,b.USING_LOCUS_NO,b.BARTER_INTEGRAL,b.REMARK,b.COMM,b.TIME_STAMP, '+
-      '       b.SHORT_GODS_NAME,b.CREA_DATE '+
-      'from   PUB_GOODSINFO b where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
-      'union all '+
-      'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
-      '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
-      '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
-      '       b.SORT_ID18,b.SORT_ID19,b.SORT_ID20,b.BARCODE,b.UNIT_ID,b.CALC_UNITS,b.SMALL_UNITS,b.BIG_UNITS, '+
-      '       b.SMALLTO_CALC,b.BIGTO_CALC,b.NEW_INPRICE,b.NEW_OUTPRICE,b.NEW_LOWPRICE,b.USING_PRICE,b.HAS_INTEGRAL, '+
-      '       b.USING_BATCH_NO,b.USING_BARTER,b.USING_LOCUS_NO,b.BARTER_INTEGRAL,b.REMARK,b.COMM, '+
-      '       case '+
-      '         when b.TIME_STAMP >= c.TIME_STAMP and b.TIME_STAMP >= s.TIME_STAMP then b.TIME_STAMP '+
-      '         when c.TIME_STAMP >= b.TIME_STAMP and c.TIME_STAMP >= s.TIME_STAMP then c.TIME_STAMP '+
-      '         when s.TIME_STAMP >= b.TIME_STAMP and s.TIME_STAMP >= c.TIME_STAMP then s.TIME_STAMP '+
-      '         else b.TIME_STAMP '+
-      '       end TIME_STAMP, '+
-      '       b.SHORT_GODS_NAME,b.CREA_DATE '+
-      'from   PUB_GOODSINFO b,PUB_GOODS_RELATION c,CA_RELATION j,CA_RELATIONS s '+
-      'where  b.TENANT_ID=j.TENANT_ID '+
-      '       and b.GODS_ID=c.GODS_ID '+
-      '       and c.RELATION_ID=j.RELATION_ID '+
-      '       and c.RELATION_ID=s.RELATION_ID '+
-      '       and j.RELATION_ID=s.RELATION_ID '+
-      '       and '+
-      '       ( '+
-      '        (c.TENANT_ID=s.TENANT_ID and s.RELATION_TYPE<>''1'') '+
-      '         or '+
-      '        (c.TENANT_ID=s.RELATI_ID and s.RELATION_TYPE=''1'') '+
-      '       ) '+
-      '       and s.RELATI_ID=:TENANT_ID '+
-      '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP)';
     new(n);
     n^.tbname := 'PUB_GOODSINFO';
     n^.keyFields := 'TENANT_ID;GODS_ID';
-    n^.selectLocalSQL := str_l;
-    n^.selectRemoteSQL := str_r;
+    n^.selectSQL := str;
     n^.synFlag := 22;
     n^.keyFlag := 0;
     n^.tbtitle := '商品档案';
-    if SyncType = 1 then
-       begin
-         n^.isSyncDown := '1';
-       end
-    else if SyncType = 2 then
-       begin
-         n^.isSyncUp := '1';
-         n^.isSyncDown := '1';
-       end
-    else if SyncType = 3 then
-       begin
-         n^.isSyncDown := '1';
-       end
-    else
-       begin
-         n^.isSyncUp := '1';
-         n^.isSyncDown := '1';
-       end;
+    InitSyncBasicUpAndDown(n);
     FList.Add(n);
+
+    rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+    rs.First;
+    while not rs.Eof do
+      begin
+        relationType := rs.FieldByName('RELATION_TYPE').AsString;
+
+        cid := rs.FieldByName('TENANT_ID').AsString;
+
+        if relationType = '1' then
+           pid := token.tenantId
+        else
+           pid := rs.FieldByName('P_TENANT_ID').AsString;
+
+        str :=
+          'select b.GODS_ID,b.TENANT_ID,b.GODS_CODE,b.GODS_NAME,b.GODS_SPELL,b.GODS_TYPE,b.SORT_ID1, '+
+          '       b.SORT_ID2,b.SORT_ID3,b.SORT_ID4,b.SORT_ID5,b.SORT_ID6,b.SORT_ID7,b.SORT_ID8,b.SORT_ID9, '+
+          '       b.SORT_ID10,b.SORT_ID11,b.SORT_ID12,b.SORT_ID13,b.SORT_ID14,b.SORT_ID15,b.SORT_ID16,b.SORT_ID17, '+
+          '       b.SORT_ID18,b.SORT_ID19,b.SORT_ID20,b.BARCODE,b.UNIT_ID,b.CALC_UNITS,b.SMALL_UNITS,b.BIG_UNITS, '+
+          '       b.SMALLTO_CALC,b.BIGTO_CALC,b.NEW_INPRICE,b.NEW_OUTPRICE,b.NEW_LOWPRICE,b.USING_PRICE,b.HAS_INTEGRAL, '+
+          '       b.USING_BATCH_NO,b.USING_BARTER,b.USING_LOCUS_NO,b.BARTER_INTEGRAL,b.REMARK,b.COMM, '+
+          '       case '+
+          '         when b.TIME_STAMP >= c.TIME_STAMP and b.TIME_STAMP >= s.TIME_STAMP then b.TIME_STAMP '+
+          '         when c.TIME_STAMP >= b.TIME_STAMP and c.TIME_STAMP >= s.TIME_STAMP then c.TIME_STAMP '+
+          '         when s.TIME_STAMP >= b.TIME_STAMP and s.TIME_STAMP >= c.TIME_STAMP then s.TIME_STAMP '+
+          '         else b.TIME_STAMP '+
+          '       end TIME_STAMP, '+
+          '       b.SHORT_GODS_NAME,b.CREA_DATE '+
+          'from   PUB_GOODSINFO b,PUB_GOODS_RELATION c,CA_RELATIONS s '+
+          'where  b.TENANT_ID = '+ cid +
+          '       and c.TENANT_ID = ' + pid +
+          '       and c.RELATION_ID = ' + rs.FieldByName('RELATION_ID').AsString +
+          '       and b.GODS_ID = c.GODS_ID '+
+          '       and s.RELATION_ID = c.RELATION_ID '+
+          '       and s.RELATI_ID = ' + token.tenantId +
+          '       and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) ';
+        new(n);
+        n^.tbname := 'PUB_GOODSINFO';
+        n^.keyFields := 'TENANT_ID;GODS_ID';
+        n^.selectSQL := str;
+        n^.synFlag := 22;
+        n^.keyFlag := 0;
+        n^.tbtitle := '商品档案';
+        n^.syncTenantId := cid;
+        if SyncType = 1 then
+           begin
+             n^.isSyncDown := '1';
+           end
+        else if SyncType = 2 then
+           begin
+             if rs.FieldByName('RELATION_ID').AsInteger = 1000006 then //卷烟供应链只下载
+                n^.isSyncDown := '1'
+             else if rs.FieldByName('RELATION_ID').AsInteger = 1000008 then //非烟供应链
+                begin
+                  if dllGlobal.GetSFVersion = '.LCL' then
+                     n^.isSyncUp := '1'
+                  else
+                     n^.isSyncDown := '1';
+                end
+             else
+                begin
+                  n^.isSyncUp := '1';
+                  n^.isSyncDown := '1';
+                end;
+           end
+        else if SyncType = 3 then
+           begin
+             n^.isSyncDown := '1';
+           end
+        else
+           begin
+             n^.isSyncUp := '1';
+             n^.isSyncDown := '1';
+           end;
+        FList.Add(n);
+
+        rs.Next;
+      end;
   end;
 
   procedure InitList23;

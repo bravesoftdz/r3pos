@@ -2552,7 +2552,7 @@ begin
 
   end;
 
-  if FileName <> '' then
+  if (FileName <> '') and (CheckValidDBFile(Folder+'\'+FileName)) then
      begin
        //本地文件还原
        if MessageBox(AppHandle,pchar('系统检测到本地存在数据备份文件，是否立即还原？'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then

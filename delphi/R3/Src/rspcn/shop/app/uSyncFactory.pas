@@ -1584,7 +1584,10 @@ begin
        Params.ParamByName('SYN_COMM').AsBoolean := false;
 
     if (SyncFlag <> 0) and (BeginDate <> '') then
-       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
 
     SetTicket;
     if SyncFlag = 0 then
@@ -1604,14 +1607,14 @@ begin
     begin
       ProTitle := '<进货单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100 div ls.RecordCount * ls.RecNo);
-
+{
       // 小于关账日期的单据不下载
       if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('STOCK_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
          end;
-
+}
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -1729,7 +1732,10 @@ begin
        Params.ParamByName('SYN_COMM').AsBoolean := false;
 
     if (SyncFlag <> 0) and (BeginDate <> '') then
-       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
 
     SetTicket;
     if SyncFlag = 0 then
@@ -1749,14 +1755,14 @@ begin
     begin
       ProTitle := '<销售单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
-
+{
       // 小于关账日期的单据不下载
       if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('SALES_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
          end;
-
+}
       rs_h.Close;
       rs_d.Close;
       rs_s.Close;
@@ -1893,7 +1899,10 @@ begin
        Params.ParamByName('SYN_COMM').AsBoolean := false;
 
     if (SyncFlag <> 0) and (BeginDate <> '') then
-       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
 
     SetTicket;
     if SyncFlag = 0 then
@@ -1913,14 +1922,14 @@ begin
     begin
       ProTitle := '<损益单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
-
+{
       // 小于关账日期的单据不下载
       if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CHANGE_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
          end;
-
+}
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -2036,7 +2045,10 @@ begin
        Params.ParamByName('SYN_COMM').AsBoolean := false;
 
     if (SyncFlag <> 0) and (BeginDate <> '') then
-       Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
 
     SetTicket;
     if SyncFlag = 0 then
@@ -2055,14 +2067,14 @@ begin
     begin
       ProTitle := '<日台账>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
-
+{
       // 小于关账日期的数据不下载
       if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger <= CloseAccDate) then
          begin
            ls.Next;
            Continue;
          end;
-
+}
       rs_h.Close;
       rs_d.Close;
 

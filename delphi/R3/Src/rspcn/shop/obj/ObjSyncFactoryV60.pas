@@ -458,7 +458,7 @@ begin
   if Params.FindParam('BEGIN_DATE') = nil then
      str := str + ' and TIME_STAMP>:TIME_STAMP'
   else
-     str := str + ' and CREA_DATE>=:BEGIN_DATE';
+     str := str + ' and CREA_DATE>=:BEGIN_DATE and CREA_DATE>:SYS_BEGIN_DATE';
 
   if Params.ParamByName('SYN_COMM').AsBoolean then
      str := str + ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
@@ -523,7 +523,7 @@ begin
   if Params.FindParam('BEGIN_DATE') = nil then
      str := str + ' and TIME_STAMP>:TIME_STAMP'
   else
-     str := str + ' and SALES_DATE>=:BEGIN_DATE';
+     str := str + ' and SALES_DATE>=:BEGIN_DATE and SALES_DATE>:SYS_BEGIN_DATE';
 
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
@@ -541,7 +541,7 @@ begin
   if Params.FindParam('BEGIN_DATE') = nil then
      str := str + ' and TIME_STAMP>:TIME_STAMP'
   else
-     str := str + ' and STOCK_DATE>=:BEGIN_DATE';
+     str := str + ' and STOCK_DATE>=:BEGIN_DATE and STOCK_DATE>:SYS_BEGIN_DATE';
 
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
@@ -559,7 +559,7 @@ begin
   if Params.FindParam('BEGIN_DATE') = nil then
      str := str + ' and TIME_STAMP>:TIME_STAMP'
   else
-     str := str + ' and CHANGE_DATE>=:BEGIN_DATE';
+     str := str + ' and CHANGE_DATE>=:BEGIN_DATE and CHANGE_DATE>:SYS_BEGIN_DATE';
 
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');

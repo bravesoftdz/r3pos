@@ -155,9 +155,9 @@ begin
       ' BAL_AMOUNT,BAL_PRICE,BAL_MONEY) '+
       'select '+tmpIdValue+'j.TENANT_ID,''#'' as SHOP_ID,''#'' as BILL_ID,0 as BILL_TYPE,''ÆÚ³õ'',19700101,1,'+
       ' j.GODS_ID,''#'' as CLIENT_ID,''#'' as UNIT_ID,1 as CONV_RATE,''#'' as BATCH_NO,''#'' as PROPERTY_01,''#'' as PROPERTY_02, '+
-      ' 0,j.NEW_INPRICE,0 from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,NEW_INPRICE',true)+') j '+
+      ' 0,ifnull(j.NEW_INPRICE,0),0 from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,NEW_INPRICE',true)+') j '+
       'left outer join PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID ';
-  n := dataFactory.ExecSQL(sql);
+  n := dataFactory.ExecSQL(ParseSQL(dataFactory.iDbType,sql));
   if dataFactory.iDbType=1 then
      begin
        id := 'id,';

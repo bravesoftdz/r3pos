@@ -2602,6 +2602,7 @@ begin
             Exit;
           end;
        MessageBox(PHWnd,'系统检测到上次文件还原过程中异常中断，需对数据文件进行还原...','友情提示...',MB_OK+MB_ICONQUESTION);
+       dataFactory.sqlite.DisConnect;
        if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
           begin
             dataFactory.sqlite.Connect;

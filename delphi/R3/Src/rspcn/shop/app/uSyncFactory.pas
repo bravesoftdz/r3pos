@@ -153,7 +153,7 @@ type
     procedure TimerSyncSales;
     procedure TimerSyncStock;
     procedure TimerSyncChange;
-    procedure TimerSyncStroage;
+    procedure TimerSyncStorage;
 
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
@@ -2612,7 +2612,7 @@ begin
             DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
             Exit;
           end;
-       MessageBox(PHWnd,'系统检测到上次文件还原过程中异常中断，需对数据文件进行还原...','友情提示...',MB_OK+MB_ICONQUESTION);
+       MessageBox(PHWnd,'系统检测到上次数据恢复过程中异常中断，需对数据文件进行还原...','友情提示...',MB_OK+MB_ICONQUESTION);
        dataFactory.sqlite.DisConnect;
        if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
           begin
@@ -2675,7 +2675,7 @@ begin
   rs_r := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
   try
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+'');
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
     LastTimeStamp := GetSynTimeStamp(token.tenantId,n^.tbname,token.shopId);
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
@@ -2751,7 +2751,7 @@ begin
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncSales;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStock;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
-    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStroage;
+    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStorage;
   finally
     SyncFactory.timered := false;
   end;
@@ -3055,7 +3055,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.TimerSyncStroage;
+procedure TSyncFactory.TimerSyncStorage;
 var
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
@@ -3075,7 +3075,7 @@ begin
   rs_r := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
   try
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+'');
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
     if timerTerminted then Exit;
     LastTimeStamp := GetSynTimeStamp(token.tenantId,n^.tbname,token.shopId);
     if timerTerminted then Exit;

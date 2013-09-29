@@ -1826,7 +1826,6 @@ var rs:TZQuery;
 begin
   if not SyncFactory.CheckValidDBFile(src) then Raise Exception.Create('所恢复的文件不是有效数据文件，无法进行文件恢复...');
   try
-    //zhangsr add 2013-07-10 文件恢复时，先断开连接。
     dataFactory.sqlite.DisConnect;
     if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
        begin
@@ -1860,12 +1859,18 @@ begin
   except
     on E:Exception do
        begin
+         dataFactory.sqlite.DisConnect;
          if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
-         begin
-           dataFactory.sqlite.Connect;
-           if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
-              DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
-         end;
+            begin
+              dataFactory.sqlite.Connect;
+              if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+                 DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
+            end
+         else
+            begin
+              MessageBox(AppHandle,'数据恢复过程中发生异常，请退出重新登录...','友情提示..',MB_OK);
+              Exit;
+            end;
          Raise Exception.Create('数据恢复失败，原因：'+E.Message);
        end;
   end;
@@ -1901,7 +1906,7 @@ end;
 procedure TfrmSysDefine.RemoteRecovery(recType:string;AppHandle:HWnd);
 var
   rs:TZQuery;
-  UsingDate,str,BeginDate,MaxDate:string;
+  str,BeginDate,MaxDate:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
 
@@ -1943,19 +1948,11 @@ begin
      end;
   BeginDate := BeginDate + '01';
 
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
-    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    rs.ParamByName('DEFINE').AsString := 'USING_DATE';
-    dataFactory.Open(rs);
-    if rs.Fields[0].AsString = '' then
-       UsingDate := FormatDateTime('YYYY-MM-DD',now())
-    else
-       UsingDate := rs.Fields[0].AsString;
-  finally
-    rs.Free;
-  end;
+  if not CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),false) then
+     begin
+       MessageBox(AppHandle,'数据恢复失败，原因：文件备份发生错误...','友情提示..',MB_OK);
+       Exit;
+     end;
 
   try
     str := 'update SYS_DEFINE set VALUE='''+FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(BeginDate))+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''USING_DATE'' ';
@@ -2044,16 +2041,28 @@ begin
     finally
       rs.Free;
     end;
+
+    SyncFactory.RecoveryClose(BeginDate);
+
+    RtcSyncClose;
   except
-    dataFactory.ExecSQL('delete from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-    dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+UsingDate+''' where TENANT_ID='+token.tenantId+' and DEFINE = ''USING_DATE''');
-    Raise;
+    on E:Exception do
+       begin
+         dataFactory.sqlite.DisConnect;
+         if CopyFile(pchar(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6'),pchar(ExtractFilePath(Application.ExeName)+'data\r3.db'),false) then
+            begin
+              dataFactory.sqlite.Connect;
+              if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+                 DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
+            end
+         else
+            begin
+              MessageBox(AppHandle,'数据恢复过程中发生异常，请退出重新登录...','友情提示..',MB_OK);
+              Exit;
+            end;
+         Raise Exception.Create('数据恢复失败，原因：'+E.Message);
+       end;
   end;
-
-  //关账
-  SyncFactory.RecoveryClose(BeginDate);
-
-  RtcSyncClose;
 end;
 
 procedure TfrmSysDefine.RtcSyncClose;

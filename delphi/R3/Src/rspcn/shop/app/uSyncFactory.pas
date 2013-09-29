@@ -2547,7 +2547,6 @@ begin
              begin
                if (Copy(sr.Name,1,3) = 'r3_') and (Length(sr.Name) = 14) then
                   begin
-                    FileName := sr.Name;
                     if (FileName = '') or (Copy(sr.Name,4,8) > Copy(FileName,4,8)) then
                        begin
                          FileName := sr.Name;

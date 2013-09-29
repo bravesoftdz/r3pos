@@ -1402,6 +1402,7 @@ begin
         BringToFront;
         Update;
         Application.ProcessMessages;
+        CheckBackUpDBFile(PHWnd);
         if token.tenantId = '' then
            begin
              firstLogin := true;
@@ -1427,7 +1428,6 @@ begin
            end
         else
            begin
-             CheckBackUpDBFile(PHWnd);
              if not CheckNeedLoginSync then Exit;
              if not SyncLockCheck(PHWnd) then Exit;
              SyncFactory.BackUpDBFile;
@@ -2627,7 +2627,7 @@ begin
       end;
 end;
 
-function TSyncFactory.CheckValidDBFile(src:string): boolean;
+function TSyncFactory.CheckValidDBFile(src: string): boolean;
 var
   rs:TZQuery;
   sqlite:TdbFactory;
@@ -2635,12 +2635,11 @@ begin
   result := false;
   try
     sqlite := TdbFactory.Create;
-    rs:=TZQuery.Create(nil);
+    rs := TZQuery.Create(nil);
     try
       sqlite.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(src));
       sqlite.connect;
-      rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=:TENANT_ID';
-      rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+      rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE = ''TENANT_ID'' and TENANT_ID=0';
       sqlite.Open(rs);
       if rs.Fields[0].AsString = token.tenantId then
          result := true

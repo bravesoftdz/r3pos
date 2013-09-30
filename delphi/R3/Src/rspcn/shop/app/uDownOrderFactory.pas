@@ -22,7 +22,6 @@ function GetUrlStream(url:string; Stream:TStream): boolean;
 var Http:TIdHTTP;
 begin
   try
-    LogFile.AddLogFile(0,'下载订单:'+url); 
     Http := TIdHttp.Create(nil);
     try
       Http.HandleRedirects := True;
@@ -34,7 +33,11 @@ begin
       Http.Free;
     end;
   except
-    result := false;
+    on E:Exception do
+       begin
+         LogFile.AddLogFile(0,'下载订单出现异常:'+url+',错误:'+E.Message);
+         result := false;
+       end;
   end;
 end;
 

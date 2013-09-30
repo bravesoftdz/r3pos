@@ -465,7 +465,8 @@ begin
   InitSQL(AGlobal);
   FillParams(InsertQuery);
   AGlobal.ExecQuery(InsertQuery);
-  InsertStorageInfo;
+  if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
+     InsertStorageInfo;
 end;
 
 function TSyncChangeDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -473,32 +474,35 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text :=
-       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
-       'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
-    rs.Params.AssignValues(Params); 
-    AGlobal.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        if FieldbyName('CHANGE_TYPE').AsString = '1' then
-        DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
-                   rs.FieldbyName('GODS_ID').AsString,
-                   rs.FieldbyName('PROPERTY_01').AsString,
-                   rs.FieldbyName('PROPERTY_02').AsString,
-                   rs.FieldbyName('BATCH_NO').AsString,
-                   rs.FieldbyName('CALC_AMOUNT').asFloat,
-                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3)
-        else
-        IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
-                   rs.FieldbyName('GODS_ID').AsString,
-                   rs.FieldbyName('PROPERTY_01').AsString,
-                   rs.FieldbyName('PROPERTY_02').AsString,
-                   rs.FieldbyName('BATCH_NO').AsString,
-                   rs.FieldbyName('CALC_AMOUNT').AsFloat,
-                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3);
-        rs.Next;
-      end;
+    if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
+    begin
+      rs.SQL.Text :=
+         'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
+         'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+      rs.Params.AssignValues(Params); 
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          if FieldbyName('CHANGE_TYPE').AsString = '1' then
+          DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+                     rs.FieldbyName('GODS_ID').AsString,
+                     rs.FieldbyName('PROPERTY_01').AsString,
+                     rs.FieldbyName('PROPERTY_02').AsString,
+                     rs.FieldbyName('BATCH_NO').AsString,
+                     rs.FieldbyName('CALC_AMOUNT').asFloat,
+                     roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3)
+          else
+          IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+                     rs.FieldbyName('GODS_ID').AsString,
+                     rs.FieldbyName('PROPERTY_01').AsString,
+                     rs.FieldbyName('PROPERTY_02').AsString,
+                     rs.FieldbyName('BATCH_NO').AsString,
+                     rs.FieldbyName('CALC_AMOUNT').AsFloat,
+                     roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3);
+          rs.Next;
+        end;
+    end;
     AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
   finally
     rs.Free;

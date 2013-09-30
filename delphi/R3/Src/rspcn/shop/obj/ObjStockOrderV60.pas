@@ -518,7 +518,8 @@ begin
      end;
   FillParams(InsertQuery);
   AGlobal.ExecQuery(InsertQuery);
-  InsertStorageInfo;
+  if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
+     InsertStorageInfo;
 end;
 
 function TSyncStockDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -526,24 +527,27 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text :=
-       ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
-       ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+
-       ' from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
-    rs.Params.AssignValues(Params); 
-    AGlobal.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
-                   rs.FieldbyName('GODS_ID').AsString,
-                   rs.FieldbyName('PROPERTY_01').AsString,
-                   rs.FieldbyName('PROPERTY_02').AsString,
-                   rs.FieldbyName('BATCH_NO').AsString,
-                   rs.FieldbyName('CALC_AMOUNT').AsFloat,
-                   rs.FieldbyName('CALC_MONEY').AsFloat-roundto(rs.FieldbyName('CALC_MONEY').AsFloat/(1+rs.FieldbyName('TAX_RATE').AsFloat)*rs.FieldbyName('TAX_RATE').AsFloat,-2),3);
-        rs.Next;
-      end;
+    if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
+    begin
+      rs.SQL.Text :=
+         ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
+         ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+
+         ' from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
+      rs.Params.AssignValues(Params);
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+                     rs.FieldbyName('GODS_ID').AsString,
+                     rs.FieldbyName('PROPERTY_01').AsString,
+                     rs.FieldbyName('PROPERTY_02').AsString,
+                     rs.FieldbyName('BATCH_NO').AsString,
+                     rs.FieldbyName('CALC_AMOUNT').AsFloat,
+                     rs.FieldbyName('CALC_MONEY').AsFloat-roundto(rs.FieldbyName('CALC_MONEY').AsFloat/(1+rs.FieldbyName('TAX_RATE').AsFloat)*rs.FieldbyName('TAX_RATE').AsFloat,-2),3);
+          rs.Next;
+        end;
+    end;
     AGlobal.ExecSQL('delete from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params);
   finally
     rs.Free;

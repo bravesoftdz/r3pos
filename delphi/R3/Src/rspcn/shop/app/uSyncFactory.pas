@@ -1589,6 +1589,22 @@ begin
          Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
        end;
 
+    //更新库存控制
+    if SyncFlag = 0 then
+       begin
+         if dllGlobal.GetSFVersion = '.LCL' then
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
+         else
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
+       end
+    else
+       begin
+         if BeginDate = '' then
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
+         else
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
+       end;
+
     SetTicket;
     if SyncFlag = 0 then
        dataFactory.MoveToSqlite
@@ -1735,6 +1751,22 @@ begin
        begin
          Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
          Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
+
+    //更新库存控制
+    if SyncFlag = 0 then
+       begin
+         if dllGlobal.GetSFVersion = '.LCL' then
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
+         else
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
+       end
+    else
+       begin
+         if BeginDate = '' then
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
+         else
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
        end;
 
     SetTicket;
@@ -1902,6 +1934,22 @@ begin
        begin
          Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
          Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
+
+    //更新库存控制
+    if SyncFlag = 0 then
+       begin
+         if dllGlobal.GetSFVersion = '.LCL' then
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
+         else
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
+       end
+    else
+       begin
+         if BeginDate = '' then
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
+         else
+            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
        end;
 
     SetTicket;
@@ -2790,6 +2838,11 @@ begin
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
     Params.ParamByName('SYN_COMM').AsBoolean := true;
+    //更新库存控制
+    if dllGlobal.GetSFVersion = '.LCL' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
+    else
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     dataFactory.sqlite.Open(ls,'TSyncSalesOrderListV60',Params);
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
@@ -2902,6 +2955,11 @@ begin
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
     Params.ParamByName('SYN_COMM').AsBoolean := true;
+    //更新库存控制
+    if dllGlobal.GetSFVersion = '.LCL' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
+    else
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     dataFactory.sqlite.Open(ls,'TSyncChangeOrderListV60',Params);
     if timerTerminted then Exit;
@@ -2991,6 +3049,11 @@ begin
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
     Params.ParamByName('SYN_COMM').AsBoolean := true;
+    //更新库存控制
+    if dllGlobal.GetSFVersion = '.LCL' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
+    else
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     dataFactory.sqlite.Open(ls,'TSyncStockOrderListV60',Params);
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));

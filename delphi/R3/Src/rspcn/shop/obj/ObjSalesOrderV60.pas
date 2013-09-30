@@ -748,7 +748,8 @@ begin
   InitSQL(AGlobal);
   FillParams(InsertQuery);
   AGlobal.ExecQuery(InsertQuery);
-  InsertStorageInfo;
+  if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
+     InsertStorageInfo;
 end;
 
 function TSyncSalesDataV60.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -756,23 +757,26 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text :=
-       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
-       'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
-    rs.Params.AssignValues(Params); 
-    AGlobal.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
-                   rs.FieldbyName('GODS_ID').asString,
-                   rs.FieldbyName('PROPERTY_01').asString,
-                   rs.FieldbyName('PROPERTY_02').asString,
-                   rs.FieldbyName('BATCH_NO').asString,
-                   rs.FieldbyName('CALC_AMOUNT').AsFloat,
-                   roundto(rs.FieldbyName('COST_PRICE').AsFloat*rs.FieldbyName('CALC_AMOUNT').AsFloat,-2),3);
-        rs.Next;
-      end;
+    if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
+    begin
+      rs.SQL.Text :=
+         'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
+         'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
+      rs.Params.AssignValues(Params); 
+      AGlobal.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                     rs.FieldbyName('GODS_ID').asString,
+                     rs.FieldbyName('PROPERTY_01').asString,
+                     rs.FieldbyName('PROPERTY_02').asString,
+                     rs.FieldbyName('BATCH_NO').asString,
+                     rs.FieldbyName('CALC_AMOUNT').AsFloat,
+                     roundto(rs.FieldbyName('COST_PRICE').AsFloat*rs.FieldbyName('CALC_AMOUNT').AsFloat,-2),3);
+          rs.Next;
+        end;
+    end;
     AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);
   finally
     rs.Free;

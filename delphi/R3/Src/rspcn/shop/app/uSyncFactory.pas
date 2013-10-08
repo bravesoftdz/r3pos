@@ -2780,7 +2780,7 @@ begin
   inherited;
   SyncFactory.timered := true;
   try
-//    if not SyncFactory.DBLocked then Exit;
+    if not SyncFactory.DBLocked then Exit;
     //ÔÚÏß×´Ì¬ÐÄÌø
     if SyncFactory.LoginId<>'' then
     begin

@@ -165,6 +165,7 @@ var
 begin
   try
     result := false;
+    IdCookieManager1.CookieCollection.Clear;
     url := xsmUC+'users/forlogin';
     xml := IdHTTP1.Get(url);
     xml := Utf8ToAnsi(xml);
@@ -245,7 +246,7 @@ begin
     Root := doc.DocumentElement;
     if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
     if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
+    if (Root.attributes.getNamedItem('code').text<>'0000') then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
     xsmComId := Root.selectSingleNode('comId').text;
 
     if AuthMode = 2 then

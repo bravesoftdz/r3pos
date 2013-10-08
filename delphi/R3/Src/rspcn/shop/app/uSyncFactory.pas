@@ -2780,7 +2780,7 @@ begin
   inherited;
   SyncFactory.timered := true;
   try
-    if not SyncFactory.DBLocked then Exit;
+//    if not SyncFactory.DBLocked then Exit;
     //在线状态心跳
     if SyncFactory.LoginId<>'' then
     begin
@@ -2838,6 +2838,7 @@ begin
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
     Params.ParamByName('SYN_COMM').AsBoolean := true;
+
     //更新库存控制
     if dllGlobal.GetSFVersion = '.LCL' then
        Params.ParamByName('UPDATE_STORAGE').AsBoolean := false

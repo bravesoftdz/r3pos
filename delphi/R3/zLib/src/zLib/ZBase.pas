@@ -205,11 +205,13 @@ TZFactory=Class(TRecord_,IZFactory)
     FZClassName: string;
     FZParamWStr: widestring;
     FSQLTable:TStringList;
+    FTransed: boolean;
     procedure SetIsSQLUpdate(const Value: Boolean);
     procedure SetDLLHandle(const Value: THandle);
     procedure SetKeyFields(const Value: String);
     procedure SetZClassName(const Value: string);
     procedure SetZParamWStr(const Value: widestring);
+    procedure SetTransed(const Value: boolean);
   protected
     //初始化对象
     procedure PSInitialize;stdcall;
@@ -267,6 +269,7 @@ TZFactory=Class(TRecord_,IZFactory)
 
     property ZClassName:string read FZClassName write SetZClassName;
     property ZParamWStr:widestring read FZParamWStr write SetZParamWStr;
+    property Transed:boolean read FTransed write SetTransed;
   end;
 
 TZFactoryClass= class of TZFactory;
@@ -1090,6 +1093,7 @@ end;
 constructor TZFactory.Create(ADataSet: TDataSet);
 begin
   inherited;
+  FTransed := true;
   FDataSet := ADataSet;
   if ADataSet.ClassNameIs('TZQuery') then
   begin
@@ -1211,6 +1215,11 @@ end;
 procedure TZFactory.SetKeyFields(const Value: String);
 begin
   FKeyFields := Value;
+end;
+
+procedure TZFactory.SetTransed(const Value: boolean);
+begin
+  FTransed := Value;
 end;
 
 procedure TZFactory.SetZClassName(const Value: string);

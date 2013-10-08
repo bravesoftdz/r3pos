@@ -747,7 +747,7 @@ begin
     if Assigned(Params) then Factory.Params.Assign(Params);
     Factory.InitClass;
     SaveTrans := dbHelp.InTransaction;
-    if not SaveTrans then dbHelp.BeginTrans;
+    if not SaveTrans and Factory.Transed then dbHelp.BeginTrans;
     try
       //改由SQLUpdate完成
       //Factory.ReadFromDataSet(DataSet);
@@ -766,10 +766,10 @@ begin
          Raise Exception.Create('不支持的数据集.');
 
       result := UpdateBatch(DataSet);
-      Factory.BeforeCommitRecord(dbHelp); 
-      if not SaveTrans then dbHelp.CommitTrans;
+      Factory.BeforeCommitRecord(dbHelp);
+      if not SaveTrans and Factory.Transed then dbHelp.CommitTrans;
     except
-      if not SaveTrans then dbHelp.RollbackTrans;
+      if not SaveTrans and Factory.Transed then dbHelp.RollbackTrans;
       Raise;
     end;
   finally

@@ -320,6 +320,7 @@ end;
 procedure TSyncSingleTableV60.InitClass;
 begin
   inherited;
+  Transed := false;
   Init := false;
   InsertQuery := nil;
   UpdateQuery := nil;

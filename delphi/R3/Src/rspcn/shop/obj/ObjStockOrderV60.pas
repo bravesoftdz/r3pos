@@ -529,6 +529,11 @@ begin
   try
     if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
     begin
+      case AGlobal.iDbType of
+      0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
+      1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
+      4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
+      end;
       rs.SQL.Text :=
          ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
          ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+

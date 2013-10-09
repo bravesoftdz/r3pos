@@ -2747,7 +2747,8 @@ end;
 
 procedure TSyncFactory.TimerSync;
 begin
-  if not timered then TTimeSyncThread.Create(false); 
+  if dllApplication.mode = 'demo' then Exit;
+  if not timered then TTimeSyncThread.Create(false);
 end;
 
 procedure TSyncFactory.Settimered(const Value: boolean);

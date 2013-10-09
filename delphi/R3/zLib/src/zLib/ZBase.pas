@@ -1093,7 +1093,6 @@ end;
 constructor TZFactory.Create(ADataSet: TDataSet);
 begin
   inherited;
-  FTransed := true;
   FDataSet := ADataSet;
   if ADataSet.ClassNameIs('TZQuery') then
   begin
@@ -1112,6 +1111,7 @@ end;
 procedure TZFactory.CreateNew(AOwner: TComponent);
 begin
   inherited;
+  FTransed := true;
   FDataSet := nil;
   FIsSQLUpdate := False;
   FSelectSQL := TSQLCache.Create;

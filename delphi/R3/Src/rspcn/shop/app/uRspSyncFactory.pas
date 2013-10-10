@@ -818,7 +818,17 @@ begin
     finally
       dataFactory.MoveToDefault;
     end;
-    ss.FieldDefs := rs.FieldDefs;
+
+    ss.Close;
+    ss.FieldDefs.Add('SORT_ID',ftstring,36,true);
+    ss.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
+    ss.FieldDefs.Add('LEVEL_ID',ftstring,20,true);
+    ss.FieldDefs.Add('SORT_NAME',ftstring,30,true);
+    ss.FieldDefs.Add('SORT_TYPE',ftInteger,0,true);
+    ss.FieldDefs.Add('SORT_SPELL',ftstring,30,true);
+    ss.FieldDefs.Add('SEQ_NO',ftInteger,0,true);
+    ss.FieldDefs.Add('COMM',ftstring,2,true);
+    ss.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
     ss.CreateDataSet;
     rs.First;
     while not rs.Eof do

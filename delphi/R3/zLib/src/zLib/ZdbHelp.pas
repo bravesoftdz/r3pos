@@ -256,6 +256,7 @@ begin
      (pos('SQL0952N',s)>0) or
      (pos('SQL30081N',s)>0) or
      (pos('CLI0106E',s)>0) or
+     (pos('CLI0115E',s)>0) or
      (pos('ORA-03114',s)>0) or
      (pos('database is locked',s)>0)
   );
@@ -310,19 +311,24 @@ end;
 
 function TdbHelp.ExecQuery(DataSet: TDataSet): Integer;
 var ZQuery:TZQuery;
+  _start:int64;
 begin
   if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
+  _start := getTickCount;
   try
     result := -1;
     ZQuery := TZQuery(DataSet);
     ZQuery.Connection := ZConn;
     ZQuery.ExecSQL;
     result := ZQuery.RowsAffected;
+    if (getTickCount-_start)>10000 then
+       LogFile.AddLogFile(0,'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+ZQuery.SQL.Text);
   except
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
+        LogFile.AddLogFile(0,'错误：'+E.Message+'秒 SQL:'+ZQuery.SQL.Text);
         Raise;
       end;
   end;
@@ -333,11 +339,13 @@ function TdbHelp.ExecSQL(const SQL: WideString;
 var
   ZQuery:TZQuery;
   i:integer;
+  _start:int64;
 begin
   if Killed then Raise Exception.Create('客户端已断开连接'); 
   CheckConnection;
   try
   result := -1;
+  _start := getTickCount;
   ZQuery := TZQuery.Create(nil);
   try
     ZQuery.Connection := ZConn;
@@ -365,6 +373,8 @@ begin
        end;
     ZQuery.ExecSQL;
     result := ZQuery.RowsAffected;
+    if (getTickCount-_start)>10000 then
+       LogFile.AddLogFile(0,'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+SQL);
   finally
     ZQuery.Free;
   end;
@@ -372,6 +382,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
+        LogFile.AddLogFile(0,'错误：'+E.Message+'秒 SQL:'+SQL);
         Raise;
       end;
   end;

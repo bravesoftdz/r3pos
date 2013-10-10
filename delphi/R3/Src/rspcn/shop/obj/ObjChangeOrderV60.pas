@@ -22,10 +22,11 @@ type
   end;
 
   TChangeDataV60=class(TZFactory)
-  public
+  private
     IsZeroOut:Boolean;
     lock:boolean;
     isSync:boolean;
+    Updates:TUpdateStroageList;
   public
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -33,6 +34,8 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
+    procedure CreateNew(AOwner: TComponent);override;
+    destructor  Destroy;override;
   end;
 
   TSyncChangeOrderV60=class(TSyncSingleTableV60)
@@ -43,10 +46,15 @@ type
   end;
 
   TSyncChangeDataV60=class(TSyncSingleTableV60)
+  private
+    Updates:TUpdateStroageList;
   public
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure CreateNew(AOwner: TComponent);override;
+    destructor  Destroy;override;
   end;
 
 implementation
@@ -61,6 +69,7 @@ var
 begin
   Result := true;
   if isSync then Exit;
+  updates.DoUpdate(AGlobal);
    //对整单库存进行检测
   if IsZeroOut then Exit;
   rs := TZQuery.Create(nil);
@@ -115,7 +124,7 @@ begin
   try
   if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
   if FieldbyName('CHANGE_TYPE').AsOldString = '1' then
-  DecStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
+  updates.DecUpdateStorage(FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
              FieldbyName('GODS_ID').asOldString,
              FieldbyName('PROPERTY_01').asOldString,
              FieldbyName('PROPERTY_02').asOldString,
@@ -123,7 +132,7 @@ begin
              FieldbyName('CALC_AMOUNT').asOldFloat,
              roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,-2),3)
   else
-  IncStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
+  updates.IncUpdateStorage(FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
              FieldbyName('GODS_ID').asOldString,
              FieldbyName('PROPERTY_01').asOldString,
              FieldbyName('PROPERTY_02').asOldString,
@@ -153,7 +162,7 @@ begin
   try
   if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
   if FieldbyName('CHANGE_TYPE').AsString = '1' then
-  IncStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+  Updates.IncUpdateStorage(FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
              FieldbyName('GODS_ID').AsString,
              FieldbyName('PROPERTY_01').AsString,
              FieldbyName('PROPERTY_02').AsString,
@@ -161,7 +170,7 @@ begin
              FieldbyName('CALC_AMOUNT').asFloat,
              roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1)
   else
-  DecStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+  Updates.DecUpdateStorage(FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
              FieldbyName('GODS_ID').AsString,
              FieldbyName('PROPERTY_01').AsString,
              FieldbyName('PROPERTY_02').AsString,
@@ -198,11 +207,12 @@ var Temp:TZQuery;
 begin
   Result := true;
   isSync := Params.FindParam('SyncFlag')<>nil;
-  case AGlobal.iDbType of
+{  case AGlobal.iDbType of
   0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
   1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
   4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
   end;
+}
   if isSync then Exit;
   Temp := TZQuery.Create(nil);
   try
@@ -214,6 +224,18 @@ begin
      Temp.free;
   end;
 
+end;
+
+procedure TChangeDataV60.CreateNew(AOwner: TComponent);
+begin
+  inherited;
+  Updates := TUpdateStroageList.Create;
+end;
+
+destructor TChangeDataV60.Destroy;
+begin
+  Updates.Free;
+  inherited;
 end;
 
 procedure TChangeDataV60.InitClass;
@@ -440,7 +462,7 @@ function TSyncChangeDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
   begin
     if FieldbyName('BATCH_NO').AsString='' then FieldbyName('BATCH_NO').AsString := '#';
     if FieldbyName('CHANGE_TYPE').AsString = '1' then
-    IncStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+    updates.IncUpdateStorage(FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
                FieldbyName('GODS_ID').AsString,
                FieldbyName('PROPERTY_01').AsString,
                FieldbyName('PROPERTY_02').AsString,
@@ -448,7 +470,7 @@ function TSyncChangeDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
                FieldbyName('CALC_AMOUNT').asFloat,
                roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1)
     else
-    DecStorage(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
+    updates.DecUpdateStorage(FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,
                FieldbyName('GODS_ID').AsString,
                FieldbyName('PROPERTY_01').AsString,
                FieldbyName('PROPERTY_02').AsString,
@@ -476,11 +498,11 @@ begin
   try
     if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
     begin
-      case AGlobal.iDbType of
+      {case AGlobal.iDbType of
       0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
       1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
       4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
-      end;
+      end; }
       rs.SQL.Text :=
          'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
          'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
@@ -490,7 +512,7 @@ begin
       while not rs.Eof do
         begin
           if FieldbyName('CHANGE_TYPE').AsString = '1' then
-          DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+          updates.DecUpdateStorage(rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
                      rs.FieldbyName('GODS_ID').AsString,
                      rs.FieldbyName('PROPERTY_01').AsString,
                      rs.FieldbyName('PROPERTY_02').AsString,
@@ -498,7 +520,7 @@ begin
                      rs.FieldbyName('CALC_AMOUNT').asFloat,
                      roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3)
           else
-          IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
+          updates.IncUpdateStorage(rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
                      rs.FieldbyName('GODS_ID').AsString,
                      rs.FieldbyName('PROPERTY_01').AsString,
                      rs.FieldbyName('PROPERTY_02').AsString,
@@ -512,6 +534,23 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TSyncChangeDataV60.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+begin
+  Updates.DoUpdate(AGlobal);
+end;
+
+procedure TSyncChangeDataV60.CreateNew(AOwner: TComponent);
+begin
+  inherited;
+  Updates := TUpdateStroageList.Create;
+end;
+
+destructor TSyncChangeDataV60.Destroy;
+begin
+  Updates.Free;
+  inherited;
 end;
 
 initialization

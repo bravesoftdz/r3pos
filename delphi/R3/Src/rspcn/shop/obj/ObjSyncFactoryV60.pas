@@ -320,8 +320,8 @@ end;
 procedure TSyncSingleTableV60.InitClass;
 begin
   inherited;
-  Transed := false;
-  Init := false;
+  if (Params.FindParam('Transed')<>nil) and not Params.ParamByName('Transed').AsBoolean then
+      Transed := false;
   InsertQuery := nil;
   UpdateQuery := nil;
 end;

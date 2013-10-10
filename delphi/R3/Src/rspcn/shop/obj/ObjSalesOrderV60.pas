@@ -25,6 +25,7 @@ type
     IsZeroOut:Boolean;
     lock:boolean;
     isSync:boolean;
+    Updates:TUpdateStroageList;
   public
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -32,6 +33,8 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass;override;
+    procedure CreateNew(AOwner: TComponent);override;
+    destructor  Destroy;override;
   end;
 
   TSalesICDataV60=class(TZFactory)
@@ -54,10 +57,15 @@ type
   end;
 
   TSyncSalesDataV60=class(TSyncSingleTableV60)
+  private
+    Updates:TUpdateStroageList;
   public
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure CreateNew(AOwner: TComponent);override;
+    destructor  Destroy;override;
   end;
 
   TSyncSalesICDataV60=class(TSyncSingleTableV60)
@@ -83,6 +91,7 @@ begin
   Result := true;
   //对整单库存进行检测
   if isSync then Exit;
+  updates.DoUpdate(AGlobal);
   if IsZeroOut then Exit;
   rs := TZQuery.Create(nil);
   try
@@ -135,7 +144,7 @@ var
 begin
   try
   if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
-  IncStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
+  updates.IncUpdateStorage(FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
              FieldbyName('GODS_ID').asOldString,
              FieldbyName('PROPERTY_01').asOldString,
              FieldbyName('PROPERTY_02').asOldString,
@@ -162,7 +171,7 @@ begin
   if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
 //改由开单前台最当最新进价
 //  FieldbyName('COST_PRICE').AsFloat := GetCostPrice(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,FieldbyName('GODS_ID').AsString,FieldbyName('PROPERTY_01').AsString,FieldbyName('PROPERTY_02').AsString,FieldbyName('BATCH_NO').AsString);
-  DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+  updates.DecUpdateStorage(FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
              FieldbyName('GODS_ID').asString,
              FieldbyName('PROPERTY_01').asString,
              FieldbyName('PROPERTY_02').asString,
@@ -197,11 +206,11 @@ var Temp:TZQuery;
 begin
   Result := true;
   isSync := Params.FindParam('SyncFlag')<>nil;
-  case AGlobal.iDbType of
+  {case AGlobal.iDbType of
   0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
   1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
   4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
-  end;
+  end; }
   if isSync then Exit;
   Temp := TZQuery.Create(nil);
   try
@@ -212,6 +221,18 @@ begin
   finally
      Temp.free;
   end;
+end;
+
+procedure TSalesDataV60.CreateNew(AOwner: TComponent);
+begin
+  inherited;
+  Updates := TUpdateStroageList.Create;
+end;
+
+destructor TSalesDataV60.Destroy;
+begin
+  Updates.Free;
+  inherited;
 end;
 
 procedure TSalesDataV60.InitClass;
@@ -732,7 +753,7 @@ function TSyncSalesDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
   procedure InsertStorageInfo;
   begin
     if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
-    DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+    updates.DecUpdateStorage(FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
                FieldbyName('GODS_ID').asString,
                FieldbyName('PROPERTY_01').asString,
                FieldbyName('PROPERTY_02').asString,
@@ -759,11 +780,11 @@ begin
   try
     if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
     begin
-      case AGlobal.iDbType of
+      {case AGlobal.iDbType of
       0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
       1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
       4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
-      end;
+      end;}
       rs.SQL.Text :=
          'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
          'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
@@ -772,7 +793,7 @@ begin
       rs.First;
       while not rs.Eof do
         begin
-          IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+          updates.IncUpdateStorage(rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
                      rs.FieldbyName('GODS_ID').asString,
                      rs.FieldbyName('PROPERTY_01').asString,
                      rs.FieldbyName('PROPERTY_02').asString,
@@ -786,6 +807,23 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TSyncSalesDataV60.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+begin
+  Updates.DoUpdate(AGlobal);
+end;
+
+procedure TSyncSalesDataV60.CreateNew(AOwner: TComponent);
+begin
+  inherited;
+  Updates := TUpdateStroageList.Create;
+end;
+
+destructor TSyncSalesDataV60.Destroy;
+begin
+  Updates.Free;
+  inherited;
 end;
 
 { TSyncSalesICDataV60 }

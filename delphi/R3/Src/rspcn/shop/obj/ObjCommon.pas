@@ -80,6 +80,26 @@ public
   function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
 end;
 
+PUpdateStorage=^TUpdateStorage;
+TUpdateStorage=record
+  decInc:integer; //0¼Ó¿â´æ 1¼õ¿â´æ
+  TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02, BATCH_NO: String;
+  amt,mny: Real;
+  flag:integer;
+end;
+
+TUpdateStroageList=class(TList)
+protected
+  procedure DoSort;
+public
+  destructor Destroy; override;
+
+  procedure IncUpdateStorage(TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO: String; amt,mny: Real;flag:integer);
+  procedure DecUpdateStorage(TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO: String; amt,mny: Real;flag:integer);
+
+  procedure DoUpdate(AGlobal: IdbHelp);
+end;
+
 const
   ComVersion='3.0.2.59';
 var
@@ -1073,6 +1093,135 @@ begin
     AGlobal.ExecSQL(SqlStr);
     result:=true;
   end;
+end;
+
+{ TUpdateStroageList }
+
+procedure TUpdateStroageList.DecUpdateStorage(TENANT_ID, SHOP_ID, GODS_ID,
+  PROPERTY_01, PROPERTY_02, BATCH_NO: String; amt, mny: Real;
+  flag: integer);
+var
+  node:PUpdateStorage;
+begin
+  new(node);
+  node^.TENANT_ID :=  TENANT_ID;
+  node^.SHOP_ID :=  SHOP_ID;
+  node^.GODS_ID :=  GODS_ID;
+  node^.PROPERTY_01 :=  PROPERTY_01;
+  node^.PROPERTY_02 :=  PROPERTY_02;
+  node^.BATCH_NO :=  BATCH_NO;
+  node^.amt :=  amt;
+  node^.mny :=  mny;
+  node^.flag :=  flag;
+  node^.decInc := 1;
+  Add(node); 
+end;
+
+destructor TUpdateStroageList.Destroy;
+var
+  i:integer;
+begin
+  for i:=0 to count-1 do
+    dispose(Items[i]);
+  Clear;
+  inherited;
+end;
+
+function Compare(Item1, Item2: Pointer): Integer;
+begin
+  if PUpdateStorage(Item1)^.TENANT_ID> PUpdateStorage(Item2)^.TENANT_ID then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.SHOP_ID> PUpdateStorage(Item2)^.SHOP_ID then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.GODS_ID> PUpdateStorage(Item2)^.GODS_ID then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.PROPERTY_01> PUpdateStorage(Item2)^.PROPERTY_01 then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.PROPERTY_02> PUpdateStorage(Item2)^.PROPERTY_02 then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.BATCH_NO> PUpdateStorage(Item2)^.BATCH_NO then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.TENANT_ID< PUpdateStorage(Item2)^.TENANT_ID then
+     result := -1
+  else
+  if PUpdateStorage(Item1)^.SHOP_ID< PUpdateStorage(Item2)^.SHOP_ID then
+     result := -1
+  else
+  if PUpdateStorage(Item1)^.GODS_ID< PUpdateStorage(Item2)^.GODS_ID then
+     result := -1
+  else
+  if PUpdateStorage(Item1)^.PROPERTY_01< PUpdateStorage(Item2)^.PROPERTY_01 then
+     result := -1
+  else
+  if PUpdateStorage(Item1)^.PROPERTY_02< PUpdateStorage(Item2)^.PROPERTY_02 then
+     result := -1
+  else
+  if PUpdateStorage(Item1)^.BATCH_NO< PUpdateStorage(Item2)^.BATCH_NO then
+     result := -1
+  else
+     result :=  0;
+end;
+procedure TUpdateStroageList.DoSort;
+begin
+  Sort(@Compare);
+end;
+
+procedure TUpdateStroageList.DoUpdate(AGlobal: IdbHelp);
+var
+  i:integer;
+begin
+  DoSort;
+  for i:=0 to count-1 do
+    begin
+      if PUpdateStorage(items[i])^.decInc=0 then
+         IncStorage(AGlobal,
+           PUpdateStorage(items[i])^.TENANT_ID,
+           PUpdateStorage(items[i])^.SHOP_ID,
+           PUpdateStorage(items[i])^.GODS_ID,
+           PUpdateStorage(items[i])^.PROPERTY_01,
+           PUpdateStorage(items[i])^.PROPERTY_02,
+           PUpdateStorage(items[i])^.BATCH_NO,
+           PUpdateStorage(items[i])^.amt,
+           PUpdateStorage(items[i])^.mny,
+           PUpdateStorage(items[i])^.flag)
+      else
+         DecStorage(AGlobal,
+           PUpdateStorage(items[i])^.TENANT_ID,
+           PUpdateStorage(items[i])^.SHOP_ID,
+           PUpdateStorage(items[i])^.GODS_ID,
+           PUpdateStorage(items[i])^.PROPERTY_01,
+           PUpdateStorage(items[i])^.PROPERTY_02,
+           PUpdateStorage(items[i])^.BATCH_NO,
+           PUpdateStorage(items[i])^.amt,
+           PUpdateStorage(items[i])^.mny,
+           PUpdateStorage(items[i])^.flag);
+    end;
+end;
+
+procedure TUpdateStroageList.IncUpdateStorage(TENANT_ID, SHOP_ID, GODS_ID,
+  PROPERTY_01, PROPERTY_02, BATCH_NO: String; amt, mny: Real;
+  flag: integer);
+var
+  node:PUpdateStorage;
+begin
+  new(node);
+  node^.TENANT_ID :=  TENANT_ID;
+  node^.SHOP_ID :=  SHOP_ID;
+  node^.GODS_ID :=  GODS_ID;
+  node^.PROPERTY_01 :=  PROPERTY_01;
+  node^.PROPERTY_02 :=  PROPERTY_02;
+  node^.BATCH_NO :=  BATCH_NO;
+  node^.amt :=  amt;
+  node^.mny :=  mny;
+  node^.flag :=  flag;
+  node^.decInc := 0;
+  Add(node); 
 end;
 
 initialization

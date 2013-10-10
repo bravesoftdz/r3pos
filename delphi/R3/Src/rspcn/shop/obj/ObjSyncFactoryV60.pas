@@ -297,7 +297,7 @@ begin
     (pos('unique',lowercase(s))>0)
     or
     (pos('primary',lowercase(s))>0)
-    or                                                      
+    or
     (pos('sql0803',lowercase(s))>0)
     or
     (pos('Ö÷¼ü',s)>0)
@@ -322,6 +322,7 @@ begin
   inherited;
   if (Params.FindParam('Transed')<>nil) and not Params.ParamByName('Transed').AsBoolean then
       Transed := false;
+  Init := false;
   InsertQuery := nil;
   UpdateQuery := nil;
 end;

@@ -2045,6 +2045,9 @@ begin
     SyncFactory.RecoveryClose(BeginDate);
 
     RtcSyncClose;
+
+    if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
+       DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
   except
     on E:Exception do
        begin

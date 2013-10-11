@@ -229,7 +229,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        Raise;
+        Raise Exception.Create('BeginTrans:'+E.Message);
       end;
   end;
 end;
@@ -272,8 +272,8 @@ begin
   except
     on E:Exception do
       begin
-        if CheckError(E.Message) then ZConn.Disconnect;
-        Raise;
+        //if CheckError(E.Message) then ZConn.Disconnect;
+        Raise Exception.Create('CommitTrans:'+E.Message);
       end;
   end;
 end;
@@ -442,7 +442,7 @@ begin
     on E:Exception do
       begin
 //        if CheckError(E.Message) then ZConn.Disconnect;
-        Raise;
+        Raise Exception.Create('InTransaction:'+E.Message);
       end;
   end;
 end;
@@ -450,6 +450,7 @@ end;
 function TdbHelp.KillDBConnect: Integer;
 begin
   Killed := true;
+  LogFile.AddLogFile(0,'客户端连接中断，中止数据请求。');
 end;
 
 function TdbHelp.Open(DataSet: TDataSet): boolean;
@@ -511,7 +512,7 @@ begin
     on E:Exception do
       begin
 //        if CheckError(E.Message) then ZConn.Disconnect;
-        Raise;
+        Raise Exception.Create('Rollback:'+E.Message);
       end;
   end;
 end;

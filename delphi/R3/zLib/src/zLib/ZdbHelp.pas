@@ -735,7 +735,7 @@ end;
 
 function TdbResolver.InTransaction: boolean;
 begin
-  result := dbHelp.InTransaction;
+  result := dbHelp.Connected and dbHelp.InTransaction;
 end;
 
 function TdbResolver.Open(DataSet: TDataSet): Boolean;

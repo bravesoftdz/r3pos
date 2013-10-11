@@ -747,7 +747,7 @@ procedure TDoInvokeDispatch.PushCache;
 begin
   if not Assigned(Session) then Raise Exception.Create('dbid连接参数没有设置，无法找到对应的Session');
   if not Assigned(Session.dbResolver) then Exit;
-  if (not Session.dbResolver.InTransaction and not dbLock) or not Session.dbResolver.Connected then
+  if not Session.dbResolver.Connected or (not Session.dbResolver.InTransaction and not dbLock) then
      begin
        try
          ConnCache.Push(Session.dbResolver);

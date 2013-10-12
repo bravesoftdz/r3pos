@@ -1,6 +1,6 @@
 inherited frmGoodsStorage: TfrmGoodsStorage
-  Left = -8
-  Top = -8
+  Left = 279
+  Top = 0
   Caption = #21830#21697#24211#23384
   ClientHeight = 738
   ClientWidth = 1276
@@ -2924,6 +2924,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Default = True
               end>
             Properties.ReadOnly = False
+            Properties.OnChange = edtCALC_UNITSPropertiesChange
             TabOrder = 1
             InGrid = False
             KeyValue = Null
@@ -3050,6 +3051,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Default = True
               end>
             Properties.ReadOnly = False
+            Properties.OnChange = edtSMALL_UNITSPropertiesChange
             TabOrder = 2
             InGrid = False
             KeyValue = Null
@@ -3175,6 +3177,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 Default = True
               end>
             Properties.ReadOnly = False
+            Properties.OnChange = edtBIG_UNITSPropertiesChange
             TabOrder = 2
             InGrid = False
             KeyValue = Null
@@ -3323,7 +3326,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object edtBK_SHOW_NEW_OUTPRICE: TRzPanel
           Left = 272
           Top = 221
-          Width = 218
+          Width = 560
           Height = 31
           BorderOuter = fsStatus
           BorderWidth = 1
@@ -3340,7 +3343,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             BorderSides = [sdRight]
             FlatColor = clGray
             TabOrder = 0
-            object RzLabel12: TRzLabel
+            object h_label: TRzLabel
               Left = 0
               Top = 0
               Width = 102
@@ -3368,6 +3371,82 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Height = 23
             Properties.MaxLength = 9
             TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object RzPanel10: TRzPanel
+            Left = 218
+            Top = 2
+            Width = 60
+            Height = 27
+            BorderOuter = fsGroove
+            BorderSides = [sdLeft, sdRight]
+            TabOrder = 4
+            object t_label: TRzLabel
+              Left = 2
+              Top = 0
+              Width = 56
+              Height = 27
+              Align = alClient
+              Alignment = taCenter
+              Caption = #23567#20214#21806#20215
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object edtSHOP_NEW_OUTPRICE1: TcxTextEdit
+            Left = 277
+            Top = 4
+            Width = 110
+            Height = 23
+            Properties.MaxLength = 9
+            TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object RzPanel12: TRzPanel
+            Left = 388
+            Top = 2
+            Width = 60
+            Height = 27
+            BorderOuter = fsGroove
+            BorderSides = [sdLeft, sdRight]
+            TabOrder = 5
+            object x_label: TRzLabel
+              Left = 2
+              Top = 0
+              Width = 56
+              Height = 27
+              Align = alClient
+              Alignment = taCenter
+              Caption = #22823#20214#21806#20215
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object edtSHOP_NEW_OUTPRICE2: TcxTextEdit
+            Left = 448
+            Top = 4
+            Width = 110
+            Height = 23
+            Properties.MaxLength = 9
+            TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
@@ -3531,7 +3610,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           end
         end
         object RzPanel9: TRzPanel
-          Left = 520
+          Left = 843
           Top = 226
           Width = 100
           Height = 22

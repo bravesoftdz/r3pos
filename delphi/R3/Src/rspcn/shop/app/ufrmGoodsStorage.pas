@@ -104,7 +104,7 @@ type
     edtNEW_OUTPRICE: TcxTextEdit;
     edtBK_SHOW_NEW_OUTPRICE: TRzPanel;
     RzPanel27: TRzPanel;
-    RzLabel12: TRzLabel;
+    h_label: TRzLabel;
     edtSHOP_NEW_OUTPRICE: TcxTextEdit;
     edtBK_AMOUNT: TRzPanel;
     RzPanel37: TRzPanel;
@@ -135,6 +135,12 @@ type
     ChangeImport: TMenuItem;
     RzBmpButton8: TRzBmpButton;
     N1: TMenuItem;
+    RzPanel10: TRzPanel;
+    t_label: TRzLabel;
+    edtSHOP_NEW_OUTPRICE1: TcxTextEdit;
+    RzPanel12: TRzPanel;
+    x_label: TRzLabel;
+    edtSHOP_NEW_OUTPRICE2: TcxTextEdit;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -177,6 +183,9 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure ChangeImportClick(Sender: TObject);
     procedure RzBmpButton8Click(Sender: TObject);
+    procedure edtCALC_UNITSPropertiesChange(Sender: TObject);
+    procedure edtSMALL_UNITSPropertiesChange(Sender: TObject);
+    procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
   private
     ESortId:string;
     FSortId:string;
@@ -583,14 +592,39 @@ begin
         edtNEW_INPRICE.Text := cdsGoodsExt.FieldbyName('NEW_INPRICE').AsString;
       end;
   edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
+  edtSHOP_NEW_OUTPRICE1.Text:= '';
+  edtSHOP_NEW_OUTPRICE2.Text:= '';
   if not cdsGoodsPrice.IsEmpty then
       begin
         cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]);
-        edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
+        if (cdsGoodsPrice.FieldByName('COMM').AsString<>'02') and (cdsGoodsPrice.FieldByName('COMM').AsString<>'12') then
+          begin 
+            edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
+            edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
+            edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
+          end;
       end;
   edtLOWER_AMOUNT.Text := formatFloat('#0.###',cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat);
   edtUPPER_AMOUNT.Text := formatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat);
   edtUNIT_ID_USING.Checked := (AObj.FieldbyName('SMALL_UNITS').AsString<>'') or (AObj.FieldbyName('BIG_UNITS').AsString<>'');
+  if edtUNIT_ID_USING.Checked then
+    begin
+      edtBK_SHOW_NEW_OUTPRICE.Width:=560;
+      RzPanel9.Left:=843;
+      if (edtSHOP_NEW_OUTPRICE1.Text='') and (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+        begin
+          edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+        end;
+      if (edtSHOP_NEW_OUTPRICE2.Text='') and (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+        begin
+          edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+        end;
+    end
+  else
+    begin
+      edtBK_SHOW_NEW_OUTPRICE.Width:=218;
+      RzPanel9.Left:=520;
+    end;
 
   if cdsList.FieldbyName('AMOUNT').AsString<>'' then
     storAmt := cdsList.FieldbyName('AMOUNT').AsFloat
@@ -651,7 +685,10 @@ begin
   cdsGoodsExt.Post;
 
   isDel := false;
-  if FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))=0 then
+  if (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))=0) and
+     (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.Text,0))=0) and
+     (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.Text,0))=0)
+   then
      begin
         if cdsGoodsPrice.Locate('SHOP_ID',token.tenantId+'0001',[]) and
            (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat)=0)
@@ -661,7 +698,11 @@ begin
            isDel := true;
         if IsDel and cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]) then cdsGoodsPrice.Delete;
      end;
-  if not isDel and (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))<>0) then
+  if not isDel and
+    ((FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0))<>0) or
+     (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.Text,0))<>0)  or
+     (FnNumber.CompareFloat(StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0),StrtoFloatDef(edtNEW_OUTPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.Text,0))<>0))
+  then
      begin
        cdsGoodsPrice.Edit;
        cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
@@ -670,7 +711,13 @@ begin
        cdsGoodsPrice.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
        cdsGoodsPrice.FieldByName('PRICE_METHOD').AsString := '1';
        cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
-       cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
+       if (edtSHOP_NEW_OUTPRICE1.Text<>'') and (edtBK_SMALL_UNITS.Visible) and (edtSMALL_UNITS.Text<>'') then
+        cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat :=StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)
+       else
+        cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
+      if (edtSHOP_NEW_OUTPRICE2.Text<>'') and (edtBK_BIG_UNITS.Visible) and (edtBIG_UNITS.Text<>'') then
+        cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)
+      else
        cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
        cdsGoodsPrice.Post;
      end;
@@ -771,6 +818,48 @@ begin
   inherited;
   edtBK_SMALL_UNITS.Visible := edtUNIT_ID_USING.Checked;
   edtBK_BIG_UNITS.Visible := edtUNIT_ID_USING.Checked;
+  if edtUNIT_ID_USING.Checked then
+    begin
+      edtBK_SHOW_NEW_OUTPRICE.Width:=560;
+      RzPanel9.Left:=843;
+      if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+        begin
+          t_label.Caption:=edtSMALL_UNITS.Text+'售价';
+          edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+        end
+      else
+        begin
+          if (edtSMALLTO_CALC.Text='') or (edtSHOP_NEW_OUTPRICE.Text='') then
+             edtSHOP_NEW_OUTPRICE1.Text:='';
+          if edtSMALL_UNITS.Text ='' then
+             t_label.Caption:='小件售价';
+        end;
+      if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+        begin
+          x_label.Caption:=edtBIG_UNITS.Text+'售价';
+          edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+        end
+      else
+        begin
+          if (edtBIGTO_CALC.Text='') or (edtSHOP_NEW_OUTPRICE.Text='') then
+             edtSHOP_NEW_OUTPRICE2.Text:='';
+          if edtBIG_UNITS.Text ='' then
+             x_label.Caption:='大件售价';
+        end;
+    end
+  else
+    begin
+      edtBK_SHOW_NEW_OUTPRICE.Width:=218;
+      RzPanel9.Left:=520;
+
+      if relationId=0 then  //自经营
+        begin
+          edtSMALL_UNITS.KeyValue:='';
+          edtSMALLTO_CALC.Text:='';
+          edtBIG_UNITS.KeyValue:='';
+          edtBIGTO_CALC.Text:='';
+        end;
+    end;
 end;
 
 procedure TfrmGoodsStorage.toolEditClick(Sender: TObject);
@@ -2231,6 +2320,32 @@ begin
       column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
       rs.Next;
+    end;
+end;
+
+procedure TfrmGoodsStorage.edtCALC_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  h_label.Caption:='店内'+edtCALC_UNITS.Text+'售价';
+end;
+
+procedure TfrmGoodsStorage.edtSMALL_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  t_label.Caption:=edtSMALL_UNITS.Text+'售价';
+  if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+    begin
+      edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+    end;
+end;
+
+procedure TfrmGoodsStorage.edtBIG_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  x_label.Caption:=edtBIG_UNITS.Text+'售价';
+  if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+    begin
+      edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
     end;
 end;
 

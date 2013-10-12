@@ -260,6 +260,9 @@ begin
      (pos('ORA-03114',s)>0) or
      (pos('database is locked',s)>0)
   );
+  if result then
+     LogFile.AddLogFile(0,'连接中断，原因：'+s);
+
 end;
 
 procedure TdbHelp.CommitTrans;
@@ -280,11 +283,18 @@ end;
 
 function TdbHelp.Connect: boolean;
 begin
-  LogFile.AddLogFile(0,'ZConn.Connect to '+ZConn.Database);
-  ZConn.Disconnect;
-  ZConn.Connect;
-  Killed := false;
-  LogFile.AddLogFile(0,'ZConn.Connect finish');
+//  LogFile.AddLogFile(0,'ZConn.Connect to '+ZConn.Database);
+  try
+    ZConn.Disconnect;
+    ZConn.Connect;
+    Killed := false;
+  except
+    on E:Exception do
+       begin
+         LogFile.AddLogFile(0,'ZConn.Connect error:'+E.Message);
+         Raise;
+       end;
+  end;
 end;
 
 function TdbHelp.Connected: boolean;

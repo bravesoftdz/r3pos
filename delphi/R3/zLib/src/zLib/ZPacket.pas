@@ -1006,7 +1006,7 @@ begin
       Data.Signature := ResultSig or asError;
       if FSendDataBlock<>nil then
          FSendDataBlock.Send(Data, False);
-      LogFile.AddLogFile(2,E.Message,E.bstrSource);
+//      LogFile.AddLogFile(2,<>+E.Message,E.bstrSource);
     end;
     on E: Exception do
     begin
@@ -1015,7 +1015,7 @@ begin
       Data.Signature := ResultSig or asError;
       if (FSendDataBlock<>nil) then
          FSendDataBlock.Send(Data, False);
-      LogFile.AddLogFile(2,E.Message,'TZDataBlockInterpreter.InterpretData');
+//      LogFile.AddLogFile(2,E.Message,'TZDataBlockInterpreter.InterpretData');
     end;
   end;
 end;

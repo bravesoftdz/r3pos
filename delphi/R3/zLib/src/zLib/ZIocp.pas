@@ -1310,9 +1310,9 @@ begin
                        on E:Exception do
                        begin
                          try
+                           LogFile.AddLogFile(0,'<'+inttostr(sdb.SessionId)+'>未知异常强行关闭客户端，错误:'+E.Message,'WorkerThread','InterpretData');
                            SocketDispatcher.CloseSocket(sdb^.SessionId);
                          finally
-                           LogFile.AddLogFile(0,E.Message,'WorkerThread','InterpretData');
                          end;
                        end;
                     end;

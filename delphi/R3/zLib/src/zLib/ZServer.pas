@@ -207,7 +207,7 @@ var
   DataBlockMaxWaitTime:int64;
   MaxSyncRequestCount:integer;
 implementation
-uses EncDec;
+uses EncDec,ZLogFile;
 
 { TDoInvokeDispatch }
 function TDoInvokeDispatch.CheckIdTransact: boolean;
@@ -246,6 +246,7 @@ end;
 function TDoInvokeDispatch.DoInvoke(Token, LocaleID: Integer; Flags: Word;
   var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;
 begin
+try
   case TZToken(Token) of
     SKTOpenCommandText:Result := DoSKTOpenCommandText(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
     SKTOpenClassName:Result := DoSKTOpenClassName(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
@@ -265,7 +266,14 @@ begin
     SKTDBLock:Result := DoSKTDBLock(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
   else
     raise EInvokeDispatchError.CreateResFmt(@SIdInvalidToken, [Token]);
-  end; 
+  end;
+except
+  on E:Exception do
+     begin
+       LogFile.AddLogFile(2,'<SessionId='+inttostr(SessionId)+'>'+E.Message,'TDoInvokeDispatch.DoInvoke');
+       Raise;
+     end;
+end;
 end;
 
 function TDoInvokeDispatch.DoSKTBeginTrans(Token, LocaleID: Integer;
@@ -1210,14 +1218,17 @@ begin
 end;
 
 function TZConnCache.CreatedbResolver(dbid:Integer): TdbResolver;
+var connstr:string;
 begin
   result := TdbResolver.Create;
   try
     result.dbid := dbid;
-    result.Initialize(DecStr(F.ReadString('db'+inttostr(dbid),'connstr',''),ENC_KEY));
+    connstr := DecStr(F.ReadString('db'+inttostr(dbid),'connstr',''),ENC_KEY);
+    if connstr='' then Raise Exception.Create('ÎÞÐ§µÄDBID='+inttostr(dbid)); 
+    result.Initialize(connstr);
     result.Connect;
   except
-    result.Free;
+    FreeAndNil(result);
     Raise;
   end;
 end;

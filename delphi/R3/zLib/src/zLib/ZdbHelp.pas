@@ -16,6 +16,7 @@ type
     Killed:boolean;
     function CheckError(s:string):boolean;
     function CheckConnection:boolean;
+    function getErrFlag:string;
   protected
     //设置连接参数
     function  Initialize(Const ConnStr:WideString):boolean;stdcall;
@@ -219,7 +220,7 @@ uses ZLogFile;
 
 procedure TdbHelp.BeginTrans(TimeOut: integer);
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   CheckConnection;
   try
     if ZConn.InTransaction then Raise Exception.Create('当前连接已经启动事务了,不能BeginTrans');
@@ -262,7 +263,6 @@ begin
   );
   if result then
      LogFile.AddLogFile(0,'连接中断，原因：'+s);
-
 end;
 
 procedure TdbHelp.CommitTrans;
@@ -323,7 +323,7 @@ function TdbHelp.ExecQuery(DataSet: TDataSet): Integer;
 var ZQuery:TZQuery;
   _start:int64;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   CheckConnection;
   _start := getTickCount;
   try
@@ -332,13 +332,13 @@ begin
     ZQuery.Connection := ZConn;
     ZQuery.ExecSQL;
     result := ZQuery.RowsAffected;
-    if (getTickCount-_start)>10000 then
-       LogFile.AddLogFile(0,'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+ZQuery.SQL.Text);
+    if (getTickCount-_start)>5000 then
+       LogFile.AddLogFile(0,getErrFlag+'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+ZQuery.SQL.Text);
   except
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        LogFile.AddLogFile(0,'错误：'+E.Message+'秒 SQL:'+ZQuery.SQL.Text);
+        LogFile.AddLogFile(0,getErrFlag+'错误：'+E.Message+' SQL:'+ZQuery.SQL.Text);
         Raise;
       end;
   end;
@@ -351,7 +351,7 @@ var
   i:integer;
   _start:int64;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   CheckConnection;
   try
   result := -1;
@@ -383,8 +383,8 @@ begin
        end;
     ZQuery.ExecSQL;
     result := ZQuery.RowsAffected;
-    if (getTickCount-_start)>10000 then
-       LogFile.AddLogFile(0,'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+SQL);
+    if (getTickCount-_start)>5000 then
+       LogFile.AddLogFile(0,getErrFlag+'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+SQL);
   finally
     ZQuery.Free;
   end;
@@ -392,7 +392,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        LogFile.AddLogFile(0,'错误：'+E.Message+'秒 SQL:'+SQL);
+        LogFile.AddLogFile(0,getErrFlag+'错误：'+E.Message+' SQL:'+SQL);
         Raise;
       end;
   end;
@@ -401,6 +401,11 @@ end;
 function TdbHelp.GetConnectionString: WideString;
 begin
   result := 'Provider='+ZConn.Protocol+';HostName='+ZConn.HostName+';DatabaseName='+ZConn.Database+';UID='+ZConn.User+';Password='+ZConn.Password;
+end;
+
+function TdbHelp.getErrFlag: string;
+begin
+  result := '<dbHelp='+inttostr(integer(Pointer(self)))+'>';
 end;
 
 function TdbHelp.iDbType: Integer;
@@ -460,12 +465,14 @@ end;
 function TdbHelp.KillDBConnect: Integer;
 begin
   Killed := true;
-  LogFile.AddLogFile(0,'客户端连接中断，中止数据请求。');
+  LogFile.AddLogFile(0,getErrFlag+'客户端连接中断，中止数据请求。');
 end;
 
 function TdbHelp.Open(DataSet: TDataSet): boolean;
+var
+  _start:int64;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   CheckConnection;
   try
   result := false;
@@ -485,8 +492,11 @@ begin
        TZTable(DataSet).CachedUpdates := true;
        TZTable(DataSet).Connection := ZConn;
      end;
+  _start := getTickCount;
   try
     DataSet.Open;
+    if (getTickCount-_start)>5000 then
+       LogFile.AddLogFile(0,getErrFlag+'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+TZQuery(dataSet).SQL.Text);
     result := true;
   finally
     if DataSet.ClassNameIs('TZQuery') then
@@ -506,6 +516,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
+        LogFile.AddLogFile(0,getErrFlag+'错误：'+E.Message+' SQL:'+TZQuery(dataSet).SQL.Text);
         Raise;
       end;
   end;
@@ -528,8 +539,10 @@ begin
 end;
 
 function TdbHelp.UpdateBatch(DataSet: TDataSet): boolean;
+var
+  _start:int64;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   CheckConnection;
   try
   result := false;
@@ -541,12 +554,15 @@ begin
      begin
        TZTable(DataSet).Connection := ZConn;
      end;
+  _start := getTickCount;
   try
     with TZAbstractDataset(DataSet) do
       begin
         ApplyUpdates;
         result := true;
       end;
+    if (getTickCount-_start)>10000 then
+       LogFile.AddLogFile(0,getErrFlag+'执行时长：'+inttostr((getTickCount-_start))+'秒 SQL:'+TZQuery(dataSet).SQL.Text);
   finally
     if DataSet.ClassNameIs('TZQuery') then
        begin
@@ -561,6 +577,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
+        LogFile.AddLogFile(0,getErrFlag+'错误：'+E.Message+' SQL:'+TZQuery(dataSet).SQL.Text);
         Raise;
       end;
   end;
@@ -605,6 +622,7 @@ var
   node:IXMLDOMNode;
   SQL:TSQLCache;
 begin
+  result := nil;
   w := pos('@',AClassName);
   filename := copy(AClassName,1,w-1);
   ns := copy(AClassName,w+1,255);
@@ -641,6 +659,7 @@ end;
 var
   FactoryClass:TPersistentClass;
 begin
+  result := nil;
   if AClassName<>'' then
   begin
     if pos('@',AClassName)>0 then  //xml命名空间 shop/tenant@tenant 路径/包名@命名空间
@@ -719,7 +738,6 @@ end;
 function TdbResolver.ExecSQL(const SQL: WideString;
   ObjectFactory: TObject): Integer;
 begin
-  if pos(lowercase('update STO_STORAGE set COST_PRICE=('),lowercase(SQL))>0 then Exit;
   if Assigned(ObjectFactory) then
      result := dbHelp.ExecSQL(SQL,ObjectFactory)
   else

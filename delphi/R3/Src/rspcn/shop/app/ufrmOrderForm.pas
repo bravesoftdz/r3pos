@@ -2724,7 +2724,7 @@ var basInfo:TZQuery;
 begin
   basInfo := dllGlobal.GetZQueryFromName('PUB_GOODSINFO'); 
   if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
-  AddRecord(AObj,basInfo.FieldbyName('UNIT_ID').AsString);
+  AddRecord(AObj,basInfo.FieldbyName('CALC_UNITS').AsString);
   if (edtTable.FindField('AMOUNT')<>nil) then
      begin
        if not PropertyEnabled then

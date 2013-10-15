@@ -688,6 +688,7 @@ begin
       Port := PortNo;
     end;
     ThreadCacheSize := F.ReadInteger(Section, 'ckThreadCacheSize', 10);
+    ConnCache.MaxCache := ThreadCacheSize;
     FTimeout := F.ReadInteger(Section, 'ckTimeout', 0);
     FKeepAlive := F.ReadBool(Section, 'ckKeepAlive', true);
   finally

@@ -1245,7 +1245,7 @@ end;
 
 procedure TZConnCache.CheckConnected(Conn: TdbResolver);
 begin
-  if not Conn.Connected then
+  if not Conn.Connected  then
      begin
        Conn.DisConnect;
        Conn.Initialize(DecStr(F.ReadString('db'+inttostr(Conn.dbid),'connstr',''),ENC_KEY));

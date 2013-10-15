@@ -24,7 +24,12 @@ begin
   SORT_ID := 'SORT_ID'+FieldByName('SORT_TYPE').AsString;
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where TENANT_ID=:TENANT_ID and '+SORT_ID+'=:SORT_ID and COMM not in (''02'',''12'')';;
+    rs.SQL.Text := 'select count(*) from '+
+                   '( '+
+                   'select 1 from PUB_GOODSINFO where TENANT_ID=:TENANT_ID and '+SORT_ID+'=:SORT_ID and COMM not in (''02'',''12'') '+
+                   'union all '+
+                   'select 1 from PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and '+SORT_ID+'=:SORT_ID and COMM not in (''02'',''12'') '+
+                   ') t ';
     rs.ParamByName('SORT_ID').AsString := FieldbyName('SORT_ID').AsString;
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     AGlobal.Open(rs);

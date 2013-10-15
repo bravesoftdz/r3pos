@@ -11,8 +11,6 @@ inherited frmProfitReport: TfrmProfitReport
     Width = 979
     inherited PageControl: TRzPageControl
       Width = 979
-      ActivePage = TabSheet3
-      TabIndex = 2
       OnChange = PageControlChange
       FixedDimension = 21
       inherited TabSheet1: TRzTabSheet
@@ -121,16 +119,6 @@ inherited frmProfitReport: TfrmProfitReport
                     ReadOnly = True
                     Title.Caption = #38144#21806#37329#39069
                     Width = 71
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'SALE_TAX'
-                    Footer.Alignment = taRightJustify
-                    Footer.DisplayFormat = '#0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    Title.Caption = #38144#39033#31246#39069
                   end
                   item
                     Alignment = taRightJustify
@@ -800,8 +788,6 @@ inherited frmProfitReport: TfrmProfitReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

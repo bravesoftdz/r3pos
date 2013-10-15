@@ -545,6 +545,7 @@ begin
     Column.Alignment := taRightJustify;
     Column.Footer.ValueType := fvtSum;
     Column.Footer.Alignment := taRightJustify;
+{
     Column := DBGridEh1.Columns.Add;
     Column.Width := 68;
     Column.FieldName := 'SALE_TAX';
@@ -554,6 +555,7 @@ begin
     Column.Alignment := taRightJustify;
     Column.Footer.ValueType := fvtSum;
     Column.Footer.Alignment := taRightJustify;
+}
     Column := DBGridEh1.Columns.Add;
     Column.Width := 68;
     Column.FieldName := 'OUT_MONEY';
@@ -671,6 +673,7 @@ begin
     Column.Alignment := taRightJustify;
     Column.Footer.ValueType := fvtSum;
     Column.Footer.Alignment := taRightJustify;
+{
     Column := DBGridEh2.Columns.Add;
     Column.Width := 68;
     Column.FieldName := 'SALE_TAX';
@@ -680,6 +683,7 @@ begin
     Column.Alignment := taRightJustify;
     Column.Footer.ValueType := fvtSum;
     Column.Footer.Alignment := taRightJustify;
+}
     Column := DBGridEh2.Columns.Add;
     Column.Width := 68;
     Column.FieldName := 'OUT_MONEY';

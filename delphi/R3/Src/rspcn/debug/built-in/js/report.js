@@ -1,4 +1,4 @@
-﻿	var ds = new dataset();
+	var ds = new dataset();
 	$().ready( function() {	
 		var jsonObj = JSON.parse(rsp.getUserInfo());
 		var tenantId = jsonObj.tenantId;

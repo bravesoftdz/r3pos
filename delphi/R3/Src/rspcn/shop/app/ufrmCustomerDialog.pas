@@ -142,10 +142,9 @@ begin
      begin
        rs := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
        if rs.Locate('SHOP_ID',token.shopId,[]) then
-          AObj.FieldbyName('REGION_ID').AsString := rs.FieldbyName('REGION_ID').AsString
-       else
-          AObj.FieldbyName('REGION_ID').AsString := '999999';
+          AObj.FieldbyName('REGION_ID').AsString := rs.FieldbyName('REGION_ID').AsString;
      end;
+  if AObj.FieldbyName('REGION_ID').AsString='' then AObj.FieldbyName('REGION_ID').AsString := '999999';
   if AObj.FieldbyName('SHOP_ID').AsString = '' then AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
   if AObj.FieldbyName('CUST_ID').AsString = '' then AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId();
   if AObj.FieldbyName('CREA_USER').AsString = '' then AObj.FieldbyName('CREA_USER').AsString := token.userId;

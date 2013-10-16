@@ -295,6 +295,8 @@ type
     procedure InitToken;
     procedure SaveRegisterParams;
 
+    procedure CheckInfoPercent;
+
     procedure SyncData;
     
     procedure OpenSysDefine;
@@ -784,6 +786,7 @@ begin
          if i < 0 then i := 0;
          edtINDUSTRY_TYPE.ItemIndex := i;
        end;
+    CheckInfoPercent;
   end;
   if PageIndex = 1 then
   begin
@@ -950,6 +953,7 @@ begin
     end;
   end;
 
+  CheckInfoPercent;
   dllGlobal.Refresh('CA_TENANT');
   dllGlobal.Refresh('CA_SHOP_INFO');
   dllGlobal.Refresh('SYS_DEFINE');
@@ -1299,7 +1303,7 @@ begin
   else
   begin
     btnSaveShopInfo.Caption := '±£´æ';
-    RzProgressBar1.Percent := 99;
+    RzProgressBar1.Percent := 100;
   end;
 end;
 
@@ -2149,6 +2153,23 @@ begin
       Free;
     end;
   end;
+end;
+
+procedure TfrmSysDefine.CheckInfoPercent;
+var i:integer;
+begin
+  i := 0;
+  if trim(edtSHOP_NAME.Text) <> '' then inc(i);
+  if trim(edtLICENSE_CODE.Text) <> '' then inc(i);
+  if trim(edtREGION_ID.AsString) <> '' then inc(i);
+  if trim(edtLINKMAN.Text) <> '' then inc(i);
+  if trim(edtTELEPHONE.Text) <> '' then inc(i);
+  if edtINDUSTRY_TYPE.ItemIndex >= 0 then inc(i);
+  if edtINPUT_MODE.ItemIndex >= 0 then inc(i);
+  if trim(edtXSM_CODE.Text) <> '' then inc(i);
+  if trim(edtXSM_PSWD.Text) <> '' then inc(i);
+  if trim(edtADDRESS.Text) <> '' then inc(i);
+  RzProgressBar1.Percent := i * 100 div 10;
 end;
 
 initialization

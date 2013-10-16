@@ -278,7 +278,7 @@ begin
     end;
   4:begin
       lblInput.Caption := '输入单价';
-      lblHint.Caption := '请直接输入单价或折扣率(如95折/95)后按 Enter 键,赠送商品输入0后按 Enter 键';
+      lblHint.Caption := '请直接输入单价或折扣率(如95折 输入/95)后按 Enter 键';
     end;
   else
     begin

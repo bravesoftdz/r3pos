@@ -29,8 +29,6 @@ type
     RzToolButton8: TRzToolButton;
     RzToolButton9: TRzToolButton;
     DBGridEh2: TDBGridEh;
-    RzToolbar3: TRzToolbar;
-    RzToolButton10: TRzToolButton;
     cdsReport1: TZQuery;
     dsReport1: TDataSource;
     cdsReport2: TZQuery;

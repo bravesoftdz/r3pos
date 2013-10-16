@@ -29,8 +29,6 @@ type
     RzToolButton8: TRzToolButton;
     RzToolButton9: TRzToolButton;
     DBGridEh2: TDBGridEh;
-    RzToolbar3: TRzToolbar;
-    RzToolButton10: TRzToolButton;
     cdsReport1: TZQuery;
     dsReport1: TDataSource;
     cdsReport2: TZQuery;
@@ -164,7 +162,6 @@ begin
   D1.Properties.ReadOnly := not all;
   D2.Properties.ReadOnly := not all;
   RzBmpButton4.Caption := 'Õ¹¿ªÃ÷Ï¸';
-  
 end;
 
 procedure TfrmSaleReport.dateFlagPropertiesChange(Sender: TObject);

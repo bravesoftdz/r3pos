@@ -630,6 +630,7 @@ procedure TfrmPosInOrder.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
+  if PageControl.ActivePageIndex <> 0 then Exit;
   if Key = VK_F5 then
      begin
        if edtTable.FieldbyName('IS_PRESENT').AsString = '1' then

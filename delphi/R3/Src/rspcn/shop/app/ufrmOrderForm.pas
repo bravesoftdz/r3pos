@@ -365,6 +365,7 @@ procedure TfrmOrderForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
+  if PageControl.ActivePageIndex <> 0 then Exit;
   if Key = VK_F1 then
      begin
        if Assigned(help.OnClick) then help.OnClick(help);

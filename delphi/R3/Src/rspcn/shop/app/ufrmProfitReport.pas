@@ -715,6 +715,7 @@ begin
     Column.Width := 38;
     Column.FieldName := 'TOOL_NAV';
     Column.Title.Caption := '²Ù×÷';
+    Column.Visible := false;
     for i:=0 to DBGridEh1.Columns.Count-1 do
       DBGridEh1.Columns[i].Title.Color := ColumnTitleColor;
   finally

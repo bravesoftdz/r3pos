@@ -497,48 +497,9 @@ inherited frmSaleReport: TfrmSaleReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #25805#20316
+                    Visible = False
                     Width = 38
                   end>
-              end
-              object RzToolbar3: TRzToolbar
-                Left = 513
-                Top = 49
-                Width = 40
-                Align = alNone
-                AutoStyle = False
-                Margin = 0
-                TopMargin = 0
-                BorderInner = fsNone
-                BorderOuter = fsNone
-                BorderSides = [sdTop]
-                BorderWidth = 0
-                Color = clWhite
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-                TabOrder = 2
-                Visible = False
-                ToolbarControls = (
-                  RzToolButton10)
-                object RzToolButton10: TRzToolButton
-                  Left = 0
-                  Top = 0
-                  Width = 35
-                  Cursor = crHandPoint
-                  ShowCaption = True
-                  UseToolbarButtonSize = False
-                  UseToolbarShowCaption = False
-                  Caption = #26126#32454
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clNavy
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold, fsUnderline]
-                  ParentFont = False
-                end
               end
               object rowToolNav2: TRzToolbar
                 Left = 521
@@ -559,7 +520,7 @@ inherited frmSaleReport: TfrmSaleReport
                 Font.Name = #23435#20307
                 Font.Style = []
                 ParentFont = False
-                TabOrder = 3
+                TabOrder = 2
                 Visible = False
                 ToolbarControls = (
                   linkToStock)

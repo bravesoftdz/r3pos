@@ -287,6 +287,7 @@ begin
   try
     ZConn.Disconnect;
     ZConn.Connect;
+    LogFile.AddLogFile(0,'ZConn.Connect finish');
     Killed := false;
   except
     on E:Exception do
@@ -338,7 +339,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+ZQuery.SQL.Text);
+        //LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+ZQuery.SQL.Text);
         Raise;
       end;
   end;
@@ -392,7 +393,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+SQL);
+        //LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+SQL);
         Raise;
       end;
   end;
@@ -516,7 +517,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+TZQuery(dataSet).SQL.Text);
+        //LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+TZQuery(dataSet).SQL.Text);
         Raise;
       end;
   end;
@@ -577,7 +578,7 @@ begin
     on E:Exception do
       begin
         if CheckError(E.Message) then ZConn.Disconnect;
-        LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+TZQuery(dataSet).SQL.Text);
+        //LogFile.AddLogFile(0,getErrFlag+'´íÎó£º'+E.Message+' SQL:'+TZQuery(dataSet).SQL.Text);
         Raise;
       end;
   end;

@@ -116,6 +116,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure cdsDropColumnEnter(Sender: TObject);
   private
     FDataSet: TZQuery;
     FStartRow: Integer;
@@ -1059,6 +1060,12 @@ end;
 function TfrmExcelFactory.IsRequiredFiled(strFiled: string): Boolean;
 begin
 
+end;
+
+procedure TfrmExcelFactory.cdsDropColumnEnter(Sender: TObject);
+begin
+  inherited;
+  cdsDropColumn.Text := cdsColumn.FieldByName('FileTitle').AsString;
 end;
 
 end.

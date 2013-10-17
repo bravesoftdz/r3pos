@@ -1,6 +1,6 @@
 inherited frmExcelFactory: TfrmExcelFactory
-  Left = 651
-  Top = 284
+  Left = 364
+  Top = 162
   Caption = 'Excel'#25968#25454#23548#20837
   ClientHeight = 425
   ClientWidth = 613
@@ -35,7 +35,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Top = 1
           Width = 601
           Height = 340
-          ActivePage = TabSheet5
+          ActivePage = TabSheet3
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -1401,6 +1401,7 @@ inherited frmExcelFactory: TfrmExcelFactory
                 Properties.OnChange = cdsDropColumnPropertiesChange
                 TabOrder = 1
                 Visible = False
+                OnEnter = cdsDropColumnEnter
               end
             end
           end
@@ -3979,6 +3980,7 @@ inherited frmExcelFactory: TfrmExcelFactory
       TextStyle = tsShadow
     end
     inherited RzFormShape1: TRzFormShape
+      Left = -64
       Width = 613
     end
     inherited btnClose: TRzBmpButton

@@ -3091,6 +3091,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Width = 75
             Height = 23
             TabStop = False
+            Properties.OnChange = edtSMALLTO_CALCPropertiesChange
             TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -3217,6 +3218,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Width = 75
             Height = 23
             TabStop = False
+            Properties.OnChange = edtBIGTO_CALCPropertiesChange
             TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -3388,7 +3390,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Height = 27
               Align = alClient
               Alignment = taCenter
-              Caption = #23567#20214#21806#20215
+              Caption = #21806#20215
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
               Font.Height = -15
@@ -3426,7 +3428,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Height = 27
               Align = alClient
               Alignment = taCenter
-              Caption = #22823#20214#21806#20215
+              Caption = #21806#20215
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
               Font.Height = -15

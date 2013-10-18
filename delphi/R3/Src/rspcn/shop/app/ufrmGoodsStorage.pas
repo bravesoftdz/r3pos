@@ -854,9 +854,9 @@ begin
 
       if relationId=0 then  //自经营
         begin
-          edtSMALL_UNITS.KeyValue:='';
+          edtSMALL_UNITS.KeyValue:=null;
           edtSMALLTO_CALC.Text:='';
-          edtBIG_UNITS.KeyValue:='';
+          edtBIG_UNITS.KeyValue:=null;
           edtBIGTO_CALC.Text:='';
         end;
     end;
@@ -2326,14 +2326,14 @@ end;
 procedure TfrmGoodsStorage.edtCALC_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
-  h_label.Caption:='店内'+edtCALC_UNITS.Text+'售价';
+  h_label.Caption:='店内售价('+edtCALC_UNITS.Text+')';
 end;
 
 procedure TfrmGoodsStorage.edtSMALL_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
-  t_label.Caption:=edtSMALL_UNITS.Text+'售价';
-  if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+  t_label.Caption:=edtSMALL_UNITS.Text+'价';
+  if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') and edtSMALL_UNITS.Focused then
     begin
       edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
     end;
@@ -2342,8 +2342,8 @@ end;
 procedure TfrmGoodsStorage.edtBIG_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
-  x_label.Caption:=edtBIG_UNITS.Text+'售价';
-  if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+  x_label.Caption:=edtBIG_UNITS.Text+'价';
+  if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') and edtSMALL_UNITS.Focused then
     begin
       edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
     end;

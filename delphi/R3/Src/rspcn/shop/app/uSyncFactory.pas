@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
-  ObjCommon, ZLogFile, Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock;
+  ObjCommon, ZLogFile, Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock,ActiveX;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -531,6 +531,7 @@ begin
        begin
          LogFile.AddLogFile(0,'开始上传<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>上次时间:'+inttostr(LastTimeStamp));
          Params.ParamByName('SYN_COMM').AsBoolean := true;
+         Params.ParamByName('Transed').AsBoolean := false;
          SetTicket;
          dataFactory.MoveToSqlite;
          try
@@ -563,6 +564,7 @@ begin
        begin
          LogFile.AddLogFile(0,'开始下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>上次时间:'+inttostr(LastTimeStamp));
          Params.ParamByName('SYN_COMM').AsBoolean := false;
+         Params.ParamByName('Transed').AsBoolean := true;
          SetTicket;
          dataFactory.MoveToRemote;
          try
@@ -2730,7 +2732,7 @@ begin
     Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
     Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
-    Params.ParamByName('LAST_TIME_STAMP').Value := LastTimeStamp;
+    //Params.ParamByName('LAST_TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
@@ -2780,6 +2782,7 @@ var
 begin
   inherited;
   SyncFactory.timered := true;
+  CoInitialize(nil);
   try
     if not SyncFactory.DBLocked then Exit;
     //在线状态心跳
@@ -2801,6 +2804,7 @@ begin
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStorage;
   finally
+    CoUninitialize;
     SyncFactory.timered := false;
   end;
 end;
@@ -3149,10 +3153,11 @@ begin
     Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
     Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
-    Params.ParamByName('LAST_TIME_STAMP').Value := LastTimeStamp;
+    //Params.ParamByName('LAST_TIME_STAMP').Value := 0;
     Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Params.ParamByName('Transed').AsBoolean := false;
     dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
     if timerTerminted then Exit;
     rs_r.SyncDelta := rs_l.SyncDelta;

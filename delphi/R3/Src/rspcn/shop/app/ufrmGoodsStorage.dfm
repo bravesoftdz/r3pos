@@ -1,27 +1,27 @@
 inherited frmGoodsStorage: TfrmGoodsStorage
-  Left = 259
-  Top = 172
+  Left = -8
+  Top = -8
   Caption = #21830#21697#24211#23384
-  ClientHeight = 519
-  ClientWidth = 862
+  ClientHeight = 748
+  ClientWidth = 1280
   Color = 12040119
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
-    Width = 862
-    Height = 472
+    Width = 1280
+    Height = 701
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
-      Width = 862
-      Height = 472
+      Width = 1280
+      Height = 701
       Align = alClient
       object RzPanel11: TRzPanel
         Left = 0
         Top = 0
-        Width = 862
+        Width = 1280
         Height = 42
         Align = alTop
         BorderOuter = fsNone
@@ -31,7 +31,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object RzPanel13: TRzPanel
           Left = 0
           Top = 0
-          Width = 862
+          Width = 1280
           Height = 42
           Align = alClient
           BorderOuter = fsNone
@@ -39,7 +39,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Color = 15461355
           TabOrder = 0
           DesignSize = (
-            862
+            1280
             42)
           object btnFind: TRzBmpButton
             Left = 10
@@ -1287,7 +1287,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             end
           end
           object lower: TRzPanel
-            Left = 698
+            Left = 1116
             Top = 16
             Width = 73
             Height = 25
@@ -1304,7 +1304,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TabOrder = 5
           end
           object upper: TRzPanel
-            Left = 786
+            Left = 1204
             Top = 16
             Width = 73
             Height = 25
@@ -1845,8 +1845,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       object RzPanel2: TRzPanel
         Left = 0
         Top = 42
-        Width = 862
-        Height = 119
+        Width = 1280
+        Height = 348
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1856,8 +1856,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object RzPanel3: TRzPanel
           Left = 10
           Top = 10
-          Width = 842
-          Height = 99
+          Width = 1260
+          Height = 328
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1865,7 +1865,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 1
             Top = 1
             Width = 172
-            Height = 97
+            Height = 326
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1873,7 +1873,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = 69
+              Top = 298
               Width = 171
               Height = 27
               Align = alBottom
@@ -1915,7 +1915,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Left = 0
               Top = 0
               Width = 171
-              Height = 69
+              Height = 298
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1932,7 +1932,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 173
             Top = 1
             Width = 10
-            Height = 97
+            Height = 326
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1942,8 +1942,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           object RzPanel7: TRzPanel
             Left = 183
             Top = 1
-            Width = 658
-            Height = 97
+            Width = 1076
+            Height = 326
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1952,8 +1952,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Tag = -1
               Left = 1
               Top = 0
-              Width = 657
-              Height = 97
+              Width = 1075
+              Height = 326
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -2168,8 +2168,8 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       end
       object EditPanel: TRzPanel
         Left = 0
-        Top = 161
-        Width = 862
+        Top = 390
+        Width = 1280
         Height = 311
         Align = alBottom
         BorderInner = fsStatus
@@ -2180,17 +2180,17 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         TabOrder = 2
         Visible = False
         DesignSize = (
-          862
+          1280
           311)
         object RzBorder1: TRzBorder
           Left = 25
           Top = 172
-          Width = 821
+          Width = 1239
           Height = 2
           Anchors = [akLeft, akTop, akRight]
         end
         object btnSave: TRzBmpButton
-          Left = 682
+          Left = 1100
           Top = 258
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -2407,7 +2407,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           OnClick = btnSaveClick
         end
         object RzBmpButton5: TRzBmpButton
-          Left = 768
+          Left = 1186
           Top = 258
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -3666,11 +3666,11 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     end
   end
   inherited toolNav: TRzPanel
-    Width = 862
+    Width = 1280
     object lblCaption: TRzLabel
       Left = 0
       Top = 0
-      Width = 310
+      Width = 728
       Height = 47
       Align = alClient
       Alignment = taCenter
@@ -3690,7 +3690,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       TextStyle = tsShadow
     end
     object RzPanel8: TRzPanel
-      Left = 310
+      Left = 728
       Top = 0
       Width = 552
       Height = 47

@@ -752,7 +752,7 @@ begin
   edtBK_BARCODE.Color := edtBARCODE.Style.Color;
   edtBARCODE.Properties.ReadOnly := true;
 
-  if (relationId<>1000008) then
+  if (relationId=1000006) then
   begin
     SetEditStyle(dsBrowse,edtCALC_UNITS.Style);
     edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
@@ -768,7 +768,9 @@ begin
     SetEditStyle(dsBrowse,edtSMALLTO_CALC.Style);
     edtSMALLTO_CALC.Properties.ReadOnly := true;
     edtUNIT_ID_USING.Properties.ReadOnly := true;
-  end;
+  end
+  else
+    edtUNIT_ID_USING.Properties.ReadOnly := false;
   if not dllGlobal.checkChangePrice(relationId) then
      begin
         SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);

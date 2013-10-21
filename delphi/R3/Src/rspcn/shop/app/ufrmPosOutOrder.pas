@@ -197,10 +197,11 @@ type
     procedure Calc;override; //2011.06.09判断是否限量
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
-    function GetCostPrice(GODS_ID, BATCH_NO: string): real;
+    procedure PriceToGods(id:string);override;
+    function  GetCostPrice(GODS_ID, BATCH_NO: string): real;
     //重读所有商品价格
     procedure CalcPrice;
-    function getPaymentTitle(pay:string):string;
+    function  getPaymentTitle(pay:string):string;
 
     //快捷键
     function  doShortCut(s:string):boolean;override;
@@ -2760,14 +2761,21 @@ procedure TfrmPosOutOrder.RzBmpButton6Click(Sender: TObject);
 begin
   inherited;
   ImportExcelClick(nil);
-
 end;
 
 procedure TfrmPosOutOrder.btnPickUpClick(Sender: TObject);
 begin
   inherited;
   DoPickUp;
+end;
 
+procedure TfrmPosOutOrder.PriceToGods(id: string);
+begin
+  if dbState = dsBrowse then Exit;
+  if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
+     Raise Exception.Create('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！');
+  inherited;
 end;
 
 initialization

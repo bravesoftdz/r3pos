@@ -1481,11 +1481,12 @@ end;
 
 procedure TfrmSaleOrder.DoPickUp;
 var
-  sr: TSearchRec;
-  FileAttrs: Integer;
+  sr:TSearchRec;
+  FileAttrs:Integer;
   s,tmp:string;
   h:TZQuery;
   mm:TMemoryStream;
+  PayZero:real;
 begin
   FileAttrs := 0;
   FileAttrs := FileAttrs + faAnyFile;
@@ -1525,6 +1526,7 @@ begin
   end;
   edtTable.Last;
   RowId := edtTable.FieldbyName('SEQNO').AsInteger;
+  PayZero := AObj.FieldByName('PAY_ZERO').AsFloat;
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\H'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\P'+s);
@@ -1533,6 +1535,10 @@ begin
      begin
        edtCLIENT_ID.KeyValue := AObj.FieldByName('CLIENT_ID').AsString;
        edtCLIENT_ID.Text := AObj.FieldByName('CLIENT_ID_TEXT').AsString;
+     end;
+  if PayZero <> 0 then
+     begin
+       DoPayZero(FloatToStr(TotalFee-PayZero));
      end;
 end;
 
@@ -2167,13 +2173,13 @@ begin
 
 end;
 
-procedure TfrmSaleOrder.edtACCT_MNYKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TfrmSaleOrder.edtACCT_MNYKeyPress(Sender: TObject; var Key: Char);
 var r,fee:currency;
 begin
   inherited;
   if (Key=#13) then
      begin
+       if abs(StrtoFloatDef(edtACCT_MNY.Text,0))>TotalFee then edtACCT_MNY.Text := FloatToStr(TotalFee);
        r := StrtoFloatDef(edtACCT_MNY.Text,0);
        AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-r;
        if TotalFee<>0 then

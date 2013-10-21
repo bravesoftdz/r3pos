@@ -73,11 +73,12 @@ type
     procedure RzBmpButton2Click(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
+    procedure edtChar1TypeClick(Sender: TObject);
+    procedure edtChar2TypeClick(Sender: TObject);
+    procedure edtDataSourcePropertiesChange(Sender: TObject);
   private
-    { Private declarations }
     WTitle1:TStringList;
   public
-    { Public declarations }
     procedure OpenReport1;
     procedure showForm;override;
     procedure CreateChart;
@@ -88,22 +89,22 @@ type
     function IsProfit:Boolean;
   end;
 
-  const
-    weekList: Array[0..6] of string=('星期天','星期一','星期二','星期三','星期四','星期五','星期六');
-var
-  frmAnlyReport: TfrmAnlyReport;
+const
+  weekList: Array[0..6] of string=('星期天','星期一','星期二','星期三','星期四','星期五','星期六');
+
+var frmAnlyReport: TfrmAnlyReport;
 
 implementation
-uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,printers;
-{$R *.dfm}
 
-{ TfrmSaleReport }
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,printers;
+
+{$R *.dfm}
 
 function TfrmAnlyReport.IsProfit:Boolean;
 begin
   result:=false;
   if ((edtReportType.ItemIndex=0) and (edtDataSource.ItemIndex=2)) or ((edtReportType.ItemIndex=1) and (edtDataSource.ItemIndex=3)) then
-    result:=true;
+     result:=true;
 end;
 
 procedure TfrmAnlyReport.OpenReport1;
@@ -192,7 +193,6 @@ begin
       cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
       if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
       if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
-
     end;
   1:begin 
       WTitle1.Clear;
@@ -295,7 +295,6 @@ begin
       //D2.Properties.ReadOnly := false;
     end;
   end;
-
 end;
 
 procedure TfrmAnlyReport.showForm;
@@ -307,14 +306,12 @@ begin
   edtReportType.ItemIndex := 1; 
 end;
 
-
 procedure TfrmAnlyReport.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
   case PageControl.ActivePageIndex of
   0:OpenChart;
   end;
-
 end;
 
 procedure TfrmAnlyReport.btnPriorClick(Sender: TObject);
@@ -331,14 +328,12 @@ begin
   D1.Properties.ReadOnly := false;
   D2.Properties.ReadOnly := false;
   RzBmpButton4.Caption := '统计';
-
 end;
 
 procedure TfrmAnlyReport.PageControlChange(Sender: TObject);
 begin
   inherited;
   btnPrior.Visible := PageControl.ActivePageIndex>0;
-
 end;
 
 procedure TfrmAnlyReport.edtGODS_IDClearValue(Sender: TObject);
@@ -359,23 +354,21 @@ procedure TfrmAnlyReport.FormCreate(Sender: TObject);
 begin
   inherited;
   WTitle1 := TStringList.Create;
-
 end;
 
 procedure TfrmAnlyReport.FormDestroy(Sender: TObject);
 begin
   WTitle1.Free;
   inherited;
-
 end;
 
 procedure TfrmAnlyReport.CreateChartText;
 var i:integer;
 begin
   if edtReportType.ItemIndex= 0 then
-    i:=1
+     i:=1
   else
-    i:=0;
+     i:=0;
 
   if edtChar1Type.Checked then
     begin
@@ -511,7 +504,6 @@ procedure TfrmAnlyReport.chartClick(Sender: TObject);
 begin
   inherited;
   OpenChart;
-
 end;
 
 procedure TfrmAnlyReport.OpenChart;
@@ -521,10 +513,10 @@ begin
 end;
 
 procedure TfrmAnlyReport.CalcClientNum(var rs: TZQuery;filterStr:string);
-var ss:TZQuery;
-    item:TRecord_;
+var
+  ss:TZQuery;
+  item:TRecord_;
 begin
-
   if cdsReport1.IsEmpty then exit;
   ss:=TZQuery.Create(nil);
   ss.SQL.Text:='SELECT 0 as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
@@ -556,13 +548,13 @@ begin
   rs.Close;
   rs.Data:=ss.Data;
   ss.Free;
-  
 end;
 
 procedure TfrmAnlyReport.CalcWeek(var rs: TZQuery; filterStr: string);
-var ss:TZQuery;
-    item:TRecord_;
-    i:integer;
+var
+  ss:TZQuery;
+  item:TRecord_;
+  i:integer;
 begin
   ss:=TZQuery.Create(nil);
   ss.SQL.Text:='SELECT 0 as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
@@ -611,9 +603,10 @@ begin
 end;
 
 procedure TfrmAnlyReport.RzBmpButton2Click(Sender: TObject);
-var formImage:TBitmap;
-    myImage:TImage;
-    saveDialog:TSaveDialog;
+var
+  formImage:TBitmap;
+  myImage:TImage;
+  saveDialog:TSaveDialog;
 begin
   //inherited;
   saveDialog1.DefaultExt:='*.bmp';
@@ -640,8 +633,9 @@ begin
 end;
 
 procedure TfrmAnlyReport.RzBmpButton3Click(Sender: TObject);
-var formImage:TBitmap;
-    myImage:TImage;
+var
+  formImage:TBitmap;
+  myImage:TImage;
 begin
   //inherited;
   formImage:=GetFormImage;
@@ -658,10 +652,11 @@ begin
 end;
 
 procedure TfrmAnlyReport.RzBmpButton1Click(Sender: TObject);
-var formImage:TBitmap;
-    myImage:TImage;
-    strect:Trect; //定义打印输出矩形框的大小
-    temhi,temwd:integer;
+var
+  formImage:TBitmap;
+  myImage:TImage;
+  strect:Trect; //定义打印输出矩形框的大小
+  temhi,temwd:integer;
 begin
   //inherited;
   formImage:=GetFormImage;
@@ -694,7 +689,24 @@ begin
     formImage.Free;
     myImage.Free;
   end;
+end;
 
+procedure TfrmAnlyReport.edtChar1TypeClick(Sender: TObject);
+begin
+  inherited;
+  if cdsReport1.Active then OpenChart;
+end;
+
+procedure TfrmAnlyReport.edtChar2TypeClick(Sender: TObject);
+begin
+  inherited;
+  if cdsReport1.Active then OpenChart;
+end;
+
+procedure TfrmAnlyReport.edtDataSourcePropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if cdsReport1.Active then OpenChart;
 end;
 
 initialization

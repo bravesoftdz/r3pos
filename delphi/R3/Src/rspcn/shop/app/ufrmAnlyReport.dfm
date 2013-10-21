@@ -103,8 +103,6 @@ inherited frmAnlyReport: TfrmAnlyReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0
@@ -244,6 +242,7 @@ inherited frmAnlyReport: TfrmAnlyReport
               Checked = True
               TabOrder = 1
               TabStop = True
+              OnClick = edtChar1TypeClick
             end
             object edtChar2Type: TcxRadioButton
               Left = 199
@@ -252,6 +251,7 @@ inherited frmAnlyReport: TfrmAnlyReport
               Height = 17
               Caption = #25353#26143#26399
               TabOrder = 2
+              OnClick = edtChar2TypeClick
             end
           end
           object RzPanel26: TRzPanel
@@ -321,6 +321,7 @@ inherited frmAnlyReport: TfrmAnlyReport
               Properties.Items.Strings = (
                 #38144#21806#37327
                 #38144#21806#39069)
+              Properties.OnChange = edtDataSourcePropertiesChange
               Style.Edges = []
               Style.HotTrack = False
               Style.ButtonTransparency = ebtInactive

@@ -523,12 +523,21 @@ procedure TfrmPosInOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
+
+  if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
+  begin
+    Value := TColumnEh(Sender).Field.asFloat;
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗已经赠送，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    Exit;
+  end;
+
   try
     if Text='' then
        r := 0

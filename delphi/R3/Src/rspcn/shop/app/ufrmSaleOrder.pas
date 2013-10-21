@@ -705,13 +705,22 @@ var
   allow :boolean;
   bs:TZQuery;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
-  //2011.06.08 Add 供应链限制改价：
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
+
+  if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
+  begin
+    Value := TColumnEh(Sender).Field.asFloat;
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗已经赠送，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    Exit;
+  end;
+
+  //供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
     Value := TColumnEh(Sender).Field.asFloat;
@@ -722,15 +731,9 @@ begin
 
   //调价权限(调价权限)
   if not dllGlobal.GetChkRight('12400001',5) then
-     begin
-{       if TfrmLogin.doLogin(Params) then
-          begin
-            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
-          end
-       else                  }
-          allow := false;
-     end else allow := true;
+     allow := false
+  else
+     allow := true;
 
   if allow then
   begin

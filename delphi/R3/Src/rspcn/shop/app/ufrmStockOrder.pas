@@ -1173,6 +1173,7 @@ begin
   if dbState = dsBrowse then Exit;
   if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...');
   if TotalAmt=0 then Raise Exception.Create('不能挂一张空单据...');
+  WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
   AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
@@ -1323,6 +1324,11 @@ begin
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\stock\D'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\stock\P'+s);
   Calc;
+  if AObj.FieldByName('CLIENT_ID').AsString <> '' then
+     begin
+       edtCLIENT_ID.KeyValue := AObj.FieldByName('CLIENT_ID').AsString;
+       edtCLIENT_ID.Text := AObj.FieldByName('CLIENT_ID_TEXT').AsString;
+     end;
 end;
 
 function TfrmStockOrder.getPaymentTitle(pay: string): string;

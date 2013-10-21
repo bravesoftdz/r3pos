@@ -1921,6 +1921,7 @@ var
 begin
   if dbState = dsBrowse then Exit;
   if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  if (edtTable.FindField('IS_PRESENT')<>nil) and (edtTable.FieldbyName('IS_PRESENT').AsInteger=1) then Raise Exception.Create('已赠送的商品不能修改单价');
   s := trim(id);
   IsAgio := (s[1]='/');
   if IsAgio then delete(s,1,1);

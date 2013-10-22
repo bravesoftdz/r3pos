@@ -637,7 +637,7 @@ begin
   for i:=0 to FList.Count -1 do
   begin
     case PSynTableInfo(FList[i])^.synFlag of
-    0,1,2,3,4,10,20,21,22,23,29:
+    0,1,2,3,4,10,20,21,22,23,29,33:
       begin
         ProTitle := '<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
         SyncSingleTable(FList[i]);

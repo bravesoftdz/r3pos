@@ -235,7 +235,7 @@ function TMsgFactory.ReadMsg: PMsgInfo;
 var i:integer;
 begin
   result := nil;
-  if ShowIng then Exit;
+  if Showing then Exit;
   Enter;
   try
   for i:=count - 1 downto 0 do

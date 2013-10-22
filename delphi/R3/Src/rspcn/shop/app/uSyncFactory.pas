@@ -382,7 +382,6 @@ begin
 
   //更新服务端时间戳
   rs := TZQuery.Create(nil);
-  dataFactory.MoveToRemote;
   try
     r := dataFactory.remote.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+token.tenantId+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+''' and TIME_STAMP<'+inttostr(TimeStamp));
     if r=0 then
@@ -391,13 +390,16 @@ begin
          rs.Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
          rs.Params.ParamByName('SHOP_ID').AsString := SHOP_ID;
          rs.Params.ParamByName('TABLE_NAME').AsString := tbName;
-         dataFactory.Open(rs);
+         try
+           TZQuery(rs).Data := dbHelp.OpenSQL(TZQuery(rs).SQL.Text,TftParamList.Encode(TZQuery(rs).Params));
+         except
+           Raise Exception.Create(StrPas(dbHelp.getLastError));
+         end;
          if rs.IsEmpty then
             dataFactory.remote.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values ('+token.tenantId+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
        end;
   finally
     rs.Free;
-    dataFactory.MoveToDefault;
   end;
 end;
 

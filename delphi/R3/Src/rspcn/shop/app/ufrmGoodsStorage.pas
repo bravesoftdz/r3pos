@@ -599,22 +599,15 @@ begin
       end;
   //µÍƒ⁄ €º€
   edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
-  if relationId=1000006 then
-    begin
-      if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
-        edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
-      if strtofloatdef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-        edtSHOP_NEW_OUTPRICE1.Text:='';
-      if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
-        edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
-      if strtofloatdef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-        edtSHOP_NEW_OUTPRICE2.Text:='';
-    end
-  else
-    begin
-      edtSHOP_NEW_OUTPRICE1.Text:= '';
-      edtSHOP_NEW_OUTPRICE2.Text:= '';
-    end;
+  if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+    edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+  if strtofloatdef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
+    edtSHOP_NEW_OUTPRICE1.Text:='';
+  if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+    edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+  if strtofloatdef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
+    edtSHOP_NEW_OUTPRICE2.Text:='';
+
   if not cdsGoodsPrice.IsEmpty then
       begin
         cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]);
@@ -2475,7 +2468,7 @@ begin
     begin
       t_panel.Visible:=true;
       x_panel.Visible:=true;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=465;
+      edtBK_SHOW_NEW_OUTPRICE.Width:=466;
       RzPanel9.Left:=746;
     end
   else

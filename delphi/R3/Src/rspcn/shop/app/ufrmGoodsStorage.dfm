@@ -3328,7 +3328,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object edtBK_SHOW_NEW_OUTPRICE: TRzPanel
           Left = 272
           Top = 221
-          Width = 465
+          Width = 466
           Height = 31
           BorderOuter = fsStatus
           BorderWidth = 1
@@ -3417,7 +3417,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             end
           end
           object x_panel: TRzPanel
-            Left = 328
+            Left = 329
             Top = 2
             Width = 135
             Height = 27

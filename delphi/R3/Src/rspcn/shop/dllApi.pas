@@ -1,6 +1,7 @@
 unit dllApi;
 
 interface
+
 uses
   SysUtils,
   Classes,
@@ -52,7 +53,6 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-
     procedure WaitForTimer;
     procedure onTimer(Sender: TObject);
     function getDllClass(name:string):TPersistentClass;
@@ -73,7 +73,7 @@ implementation
 
 uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,
      uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory,uRtcLibFactory,
-     uCodePrinterFactory;
+     uCodePrinterFactory,ufrmHintMsg;
 
 var
   webForm:TStringList;
@@ -212,6 +212,7 @@ begin
     result := true;
     if not Assigned(webForm) then Exit;
     if assigned(frmSortDropFrom) and frmSortDropFrom.droped then Raise Exception.Create('当前模块正在操作...');
+    if assigned(frmMsg) then FreeAndNil(frmMsg);
     dllApplication.inited := false;
     if assigned(SyncFactory) then SyncFactory.timerTerminted := true;
     dllApplication.WaitForTimer;
@@ -222,7 +223,7 @@ begin
           webForm.Delete(0);
           Form.Free;
        end;
-    //if assigned(frmSortDropFrom) then FreeAndNil(frmSortDropFrom);
+    if assigned(MsgFactory) then FreeAndNil(MsgFactory);
     if assigned(DevFactory) then FreeAndNil(DevFactory);
     if assigned(CodePrinterFactory) then FreeAndNil(CodePrinterFactory);
     if assigned(RightsFactory) then FreeAndNil(RightsFactory);
@@ -351,7 +352,6 @@ begin
   timer.OnTimer := onTimer;
   timer.Enabled := false;
   timer.Interval := 30*60*1000;
-//  timer.Interval := 1000;
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
   try
     mode := F.ReadString('soft','mode','release');
@@ -409,7 +409,15 @@ end;
 
 procedure TdllApplication.onTimer(Sender: TObject);
 begin
-  if assigned(SyncFactory) then SyncFactory.TimerSync;
+  if Assigned(SyncFactory) then
+     begin
+       SyncFactory.TimerSync;
+       SyncFactory.SyncMessage;
+     end;
+  if Assigned(MsgFactory) then
+     begin
+       MsgFactory.ShowHintMsg;
+     end;
 end;
 
 procedure TdllApplication.Sethandle(const Value: THandle);

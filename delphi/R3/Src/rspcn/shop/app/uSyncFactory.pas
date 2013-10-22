@@ -1292,6 +1292,41 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     InitSyncBasicUpAndDown(n);
     FList.Add(n);
   end;
+
+  procedure InitList33;
+  var n:PSynTableInfo;
+  begin
+    if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+    new(n);
+    n^.tbname := 'MSC_MESSAGE';
+    n^.keyFields := 'TENANT_ID;MSG_ID';
+    n^.whereStr :=  'TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP and END_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
+    n^.synFlag := 33;
+    n^.keyFlag := 0;
+    n^.tbtitle := '消息内容';
+    if SyncType in [0,2] then
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end;
+    FList.Add(n);
+
+    new(n);
+    n^.tbname := 'MSC_MESSAGE_LIST';
+    n^.keyFields := 'TENANT_ID;MSG_ID;SHOP_ID';
+    n^.whereStr :=  'TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP and MSG_READ_STATUS=1';
+    n^.syncShopId := token.shopId;
+    n^.synFlag := 33;
+    n^.keyFlag := 0;
+    n^.tbtitle := '消息列表';
+    if SyncType in [0,2] then
+       begin
+         n^.isSyncUp := '1';
+         n^.isSyncDown := '1';
+       end;
+    FList.Add(n);
+  end;
 var
   str:string;
   rs:TZQuery;
@@ -1334,6 +1369,8 @@ begin
   InitList23;
 
   InitList29;
+
+  InitList33;
 end;
 
 function TSyncFactory.CheckNeedLoginSync: boolean;
@@ -3183,7 +3220,7 @@ begin
   n1^.tbname := 'MSC_MESSAGE';
   n1^.keyFields := 'TENANT_ID;MSG_ID';
   n1^.whereStr :=  'TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP and END_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
-  n1^.synFlag := 1;
+  n1^.synFlag := 33;
   n1^.keyFlag := 0;
   n1^.tbtitle := '消息内容';
   n1^.isSyncDown := '1';
@@ -3193,7 +3230,7 @@ begin
   n2^.keyFields := 'TENANT_ID;MSG_ID;SHOP_ID';
   n2^.whereStr :=  'TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP and MSG_READ_STATUS=1';
   n2^.syncShopId := token.shopId;
-  n2^.synFlag := 1;
+  n2^.synFlag := 33;
   n2^.keyFlag := 0;
   n2^.tbtitle := '消息列表';
   n2^.isSyncDown := '1';

@@ -200,8 +200,8 @@ begin
       dataFactory.Open(rs);
       Enter;
       try
-      rs.First;
-      while not rs.Eof do
+        rs.First;
+        while not rs.Eof do
         begin
           new(MsgInfo);
           MsgInfo^.ID := rs.Fields[0].AsString;

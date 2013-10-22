@@ -154,7 +154,8 @@ type
     procedure TimerSyncStock;
     procedure TimerSyncChange;
     procedure TimerSyncStorage;
-
+    // 同步消息
+    procedure SyncMessage;
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     property  Stoped:boolean read FStoped write SetStoped;
@@ -437,21 +438,15 @@ procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;
            ss.SyncDelta := rs_l.SyncDelta;
            if not ss.IsEmpty then
               begin
-                dataFactory.MoveToRemote;
                 try
-                  dataFactory.UpdateBatch(ss,ZClassName,Params);
-                finally
-                  dataFactory.MoveToDefault;
+                  dataFactory.remote.UpdateBatch(TZQuery(ss).Delta,ZClassName,TftParamList.Encode(Params));
+                except
+                  Raise Exception.Create(StrPas(dbHelp.getLastError));
                 end;
               end;
 
            rs_l.Delete;
-           dataFactory.MoveToSqlite;
-           try
-             dataFactory.UpdateBatch(rs_l,ZClassName,Params);
-           finally
-             dataFactory.MoveToDefault;
-           end;
+           dataFactory.sqlite.UpdateBatch(rs_l,ZClassName,Params);
 
            LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
          end;
@@ -471,14 +466,7 @@ procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;
            SetTicket;
            ss.SyncDelta := rs_r.SyncDelta;
            if not ss.IsEmpty then
-              begin
-                dataFactory.MoveToSqlite;
-                try
-                  dataFactory.UpdateBatch(ss,ZClassName,Params);
-                finally
-                  dataFactory.MoveToDefault;
-                end;
-              end;
+              dataFactory.sqlite.UpdateBatch(ss,ZClassName,Params);
            LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
          end;
     finally
@@ -533,23 +521,20 @@ begin
          Params.ParamByName('SYN_COMM').AsBoolean := true;
          Params.ParamByName('Transed').AsBoolean := false;
          SetTicket;
-         dataFactory.MoveToSqlite;
-         try
-           if (trim(n^.selectSQL) = '') and (trim(n^.selectLocalSQL) = '') then
-              dataFactory.Open(rs_l,ZClassName,Params)
-           else
-             begin
-               if trim(n^.selectLocalSQL) <> '' then
-                  openSQL := n^.selectLocalSQL
-               else
-                  openSQL := n^.selectSQL;
-               rs_l.SQL.Text := openSQL;
-               rs_l.Params := Params;
-               dataFactory.Open(rs_l);
-             end;
-         finally
-           dataFactory.MoveToDefault;
-         end;
+
+         if (trim(n^.selectSQL) = '') and (trim(n^.selectLocalSQL) = '') then
+            dataFactory.sqlite.Open(rs_l,ZClassName,Params)
+         else
+           begin
+             if trim(n^.selectLocalSQL) <> '' then
+                openSQL := n^.selectLocalSQL
+             else
+                openSQL := n^.selectSQL;
+             rs_l.SQL.Text := openSQL;
+             rs_l.Params := Params;
+             dataFactory.sqlite.Open(rs_l);
+           end;
+
          LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs_l.RecordCount));
 
          if not rs_l.IsEmpty then
@@ -566,23 +551,30 @@ begin
          Params.ParamByName('SYN_COMM').AsBoolean := false;
          Params.ParamByName('Transed').AsBoolean := true;
          SetTicket;
-         dataFactory.MoveToRemote;
-         try
-           if (trim(n^.selectSQL) = '') and (trim(n^.selectRemoteSQL) = '') then
-              dataFactory.Open(rs_r,ZClassName,Params)
-           else
-             begin
-               if trim(n^.selectRemoteSQL) <> '' then
-                  openSQL := n^.selectRemoteSQL
-               else
-                  openSQL := n^.selectSQL;
-               rs_r.SQL.Text := openSQL;
-               rs_r.Params := Params;
-               dataFactory.Open(rs_r);
+
+         if (trim(n^.selectSQL) = '') and (trim(n^.selectRemoteSQL) = '') then
+           begin
+             try
+               TZQuery(rs_r).Data := dbHelp.OpenNS(ZClassName,TftParamList.Encode(Params));
+             except
+               Raise Exception.Create(StrPas(dbHelp.getLastError));
              end;
-         finally
-           dataFactory.MoveToDefault;
-         end;
+           end
+         else
+           begin
+             if trim(n^.selectRemoteSQL) <> '' then
+                openSQL := n^.selectRemoteSQL
+             else
+                openSQL := n^.selectSQL;
+             rs_r.SQL.Text := openSQL;
+             rs_r.Params := Params;
+             try
+               TZQuery(rs_r).Data := dbHelp.OpenSQL(TZQuery(rs_r).SQL.Text,TftParamList.Encode(TZQuery(rs_r).Params));
+             except
+               Raise Exception.Create(StrPas(dbHelp.getLastError));
+             end;
+           end;
+
          LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs_r.RecordCount));
 
          if not rs_r.IsEmpty then
@@ -2732,7 +2724,6 @@ begin
     Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
     Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
-    //Params.ParamByName('LAST_TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
@@ -3172,11 +3163,45 @@ end;
 
 function TSyncFactory.Gettimered: boolean;
 begin
-//  EnterCriticalSection(ThreadLock);
+  // EnterCriticalSection(ThreadLock);
   try
     result := Ftimered;
   finally
-//    LeaveCriticalSection(ThreadLock);
+    // LeaveCriticalSection(ThreadLock);
+  end;
+end;
+
+procedure TSyncFactory.SyncMessage;
+var n1,n2:PSynTableInfo;
+begin
+  if not token.online then Exit;
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  new(n1);
+  n1^.tbname := 'MSC_MESSAGE';
+  n1^.keyFields := 'TENANT_ID;MSG_ID';
+  n1^.whereStr :=  'TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP and END_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
+  n1^.synFlag := 1;
+  n1^.keyFlag := 0;
+  n1^.tbtitle := '消息内容';
+  n1^.isSyncDown := '1';
+
+  new(n2);
+  n2^.tbname := 'MSC_MESSAGE_LIST';
+  n2^.keyFields := 'TENANT_ID;MSG_ID;SHOP_ID';
+  n2^.whereStr :=  'TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP and MSG_READ_STATUS=1';
+  n2^.syncShopId := token.shopId;
+  n2^.synFlag := 1;
+  n2^.keyFlag := 0;
+  n2^.tbtitle := '消息列表';
+  n2^.isSyncDown := '1';
+
+  try
+    SyncSingleTable(n1);
+    SyncSingleTable(n2);
+  finally
+    dispose(n1);
+    dispose(n2);
   end;
 end;
 

@@ -250,7 +250,9 @@
 			var sto_amt = ds.getAsString("STO_AMT");
 			var amount = ds.getAsString("AMOUNT");
 			var amoney = ds.getAsString("AMONEY");
-			$("#kcqk").html("(当前经营商品:"+goods_amt+"种,其中有效商品"+sto_amt+"种,总库存数量:"+amount+",库存金额:"+amoney+"元。)");
+			if (amount == '') amount = 0;
+			if (amoney == '') amoney = 0;
+			$("#kcqk").html("(当前经营商品:"+goods_amt+"种，其中有效商品"+sto_amt+"种，库存总数量:"+amount+"，库存金额:"+amoney+"元。)");
 			ds.eraseDataSet();
 		}catch(e){
 			alert(e.message);

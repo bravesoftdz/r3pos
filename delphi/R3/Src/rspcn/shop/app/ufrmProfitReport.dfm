@@ -534,8 +534,8 @@ inherited frmProfitReport: TfrmProfitReport
               object RzLabel4: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 102
-                Height = 26
+                Width = 61
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #32479#35745#31867#22411
@@ -612,8 +612,8 @@ inherited frmProfitReport: TfrmProfitReport
               object RzLabel1: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 102
-                Height = 26
+                Width = 46
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #30408#21033#21069
@@ -678,8 +678,8 @@ inherited frmProfitReport: TfrmProfitReport
               object RzLabel2: TRzLabel
                 Left = 1
                 Top = 0
-                Width = 102
-                Height = 26
+                Width = 46
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #30340#23458#25143
@@ -953,98 +953,6 @@ inherited frmProfitReport: TfrmProfitReport
               9E9E9E9E0000}
             Stretch = True
           end
-          object edtReportType: TcxComboBox
-            Left = 10
-            Top = 4
-            Width = 71
-            Height = 23
-            Properties.DropDownListStyle = lsFixedList
-            Properties.Items.Strings = (
-              #25353#23458#25143
-              #25353#21830#21697)
-            Properties.OnChange = edtReportTypePropertiesChange
-            Style.Edges = []
-            Style.HotTrack = False
-            Style.ButtonTransparency = ebtInactive
-            TabOrder = 0
-            Text = #25353#23458#25143
-          end
-          object edtCLIENT_ID: TzrComboBoxList
-            Left = 86
-            Top = 4
-            Width = 283
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = False
-            Style.Edges = []
-            Style.HotTrack = False
-            Style.ButtonTransparency = ebtInactive
-            TabOrder = 1
-            Text = #20840#37096#23458#25143
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
-            KeyField = 'CLIENT_ID'
-            ListField = 'CLIENT_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'CLIENT_CODE'
-                Footers = <>
-                Title.Caption = #23458#25143#21495
-                Width = 60
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CLIENT_NAME'
-                Footers = <>
-                Title.Caption = #23458#25143#21517#31216
-                Width = 150
-              end
-              item
-                EditButtons = <>
-                FieldName = 'LINKMAN'
-                Footers = <>
-                Title.Caption = #32852#31995#20154
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'TELEPHONE2'
-                Footers = <>
-                Title.Caption = #32852#31995#30005#35805
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'LICENSE_CODE'
-                Footers = <>
-                Title.Caption = #35777#20214#21495
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'ADDRESS'
-                Footers = <>
-                Title.Caption = #22320#22336
-                Width = 150
-              end>
-            DropWidth = 314
-            DropHeight = 281
-            ShowTitle = True
-            AutoFitColWidth = False
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbClear]
-            DropListStyle = lsFixed
-            OnClearValue = edtCLIENT_IDClearValue
-            MultiSelect = False
-          end
           object edtGODS_ID: TzrComboBoxList
             Left = 87
             Top = 4
@@ -1102,6 +1010,98 @@ inherited frmProfitReport: TfrmProfitReport
             Buttons = [zbClear]
             DropListStyle = lsFixed
             OnClearValue = edtGODS_IDClearValue
+            MultiSelect = False
+          end
+          object edtReportType: TcxComboBox
+            Left = 10
+            Top = 4
+            Width = 71
+            Height = 23
+            Properties.DropDownListStyle = lsFixedList
+            Properties.Items.Strings = (
+              #25353#23458#25143
+              #25353#21830#21697)
+            Properties.OnChange = edtReportTypePropertiesChange
+            Style.Edges = []
+            Style.HotTrack = False
+            Style.ButtonTransparency = ebtInactive
+            TabOrder = 0
+            Text = #25353#23458#25143
+          end
+          object edtCLIENT_ID: TzrComboBoxList
+            Left = 87
+            Top = 4
+            Width = 289
+            Height = 23
+            Anchors = [akLeft, akTop, akRight]
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = False
+            Style.Edges = []
+            Style.HotTrack = False
+            Style.ButtonTransparency = ebtInactive
+            TabOrder = 1
+            Text = #25152#26377#23458#25143
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
+            KeyField = 'CLIENT_ID'
+            ListField = 'CLIENT_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CLIENT_CODE'
+                Footers = <>
+                Title.Caption = #23458#25143#21495
+                Width = 60
+              end
+              item
+                EditButtons = <>
+                FieldName = 'CLIENT_NAME'
+                Footers = <>
+                Title.Caption = #23458#25143#21517#31216
+                Width = 150
+              end
+              item
+                EditButtons = <>
+                FieldName = 'LINKMAN'
+                Footers = <>
+                Title.Caption = #32852#31995#20154
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'TELEPHONE2'
+                Footers = <>
+                Title.Caption = #32852#31995#30005#35805
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'LICENSE_CODE'
+                Footers = <>
+                Title.Caption = #35777#20214#21495
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'ADDRESS'
+                Footers = <>
+                Title.Caption = #22320#22336
+                Width = 150
+              end>
+            DropWidth = 314
+            DropHeight = 281
+            ShowTitle = True
+            AutoFitColWidth = False
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbClear]
+            DropListStyle = lsFixed
+            OnClearValue = edtCLIENT_IDClearValue
             MultiSelect = False
           end
           object RzPanel16: TRzPanel

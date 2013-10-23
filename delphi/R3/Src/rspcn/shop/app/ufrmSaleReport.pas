@@ -108,6 +108,7 @@ begin
   CreateGrid1;
   WTitle1.Clear;
   WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
+
   ReportItemIndex := edtReportType.ItemIndex;
 
   if edtReportType.ItemIndex = 0 then
@@ -126,7 +127,7 @@ begin
           end;
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,CLIENT_ID';
        cdsReport1.SQL.Text :=
-         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.CLIENT_CODE,ifnull(b.CLIENT_NAME,''零售客户'') CLIENT_NAME from ('+cdsReport1.SQL.Text+') j '+
+         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.CLIENT_CODE,ifnull(b.CLIENT_NAME,''普通客户'') CLIENT_NAME from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID order by b.CLIENT_CODE';
      end
   else if edtReportType.ItemIndex = 1 then
@@ -254,7 +255,7 @@ begin
 
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
-    'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,case when j.CLIENT_ID is null then ''零售客户'' else c.CLIENT_NAME end as CLIENT_NAME,d.USER_NAME from ('+cdsReport2.SQL.Text+') j '+
+    'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,case when j.CLIENT_ID is null then ''普通客户'' else c.CLIENT_NAME end as CLIENT_NAME,d.USER_NAME from ('+cdsReport2.SQL.Text+') j '+
     'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
     'left outer join VIW_CUSTOMER c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID '+
     'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.CREA_USER=d.USER_ID '+

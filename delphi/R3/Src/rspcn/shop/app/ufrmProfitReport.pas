@@ -167,7 +167,7 @@ begin
 
       cdsReport1.SQL.Text :=
          ParseSQL(dataFactory.iDbType,
-         'select j.*,1 as flag,case when j.SALE_MONEY<>0 then cast(j.SALE_PRF as decimal(18,3)) *100.00 / cast(j.SALE_MONEY as decimal(18,3)) else 0 end as PRF_RATE,ifnull(b.CLIENT_NAME,''零售客户'') as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport1.SQL.Text+') j '+
+         'select j.*,1 as flag,case when j.SALE_MONEY<>0 then cast(j.SALE_PRF as decimal(18,3)) *100.00 / cast(j.SALE_MONEY as decimal(18,3)) else 0 end as PRF_RATE,ifnull(b.CLIENT_NAME,''普通客户'') as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID order by b.CLIENT_CODE'
          );
       cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
@@ -269,7 +269,7 @@ begin
 
       cdsReport2.SQL.Text :=
          'select j.*,1 as flag,case when j.SALE_MONEY<>0 then cast(j.SALE_PRF as decimal(18,3)) *100.00 / cast(j.SALE_MONEY as decimal(18,3)) else 0 end as PRF_RATE,'+
-         'case when j.CLIENT_ID is null or j.CLIENT_ID = ''#'' then ''零售客户'' else b.CLIENT_NAME end as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport2.SQL.Text+') j '+
+         'case when j.CLIENT_ID is null or j.CLIENT_ID = ''#'' then ''普通客户'' else b.CLIENT_NAME end as CLIENT_NAME,b.CLIENT_CODE from ('+cdsReport2.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID  order by j.GODS_ID,b.CLIENT_CODE';
       cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
       cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));

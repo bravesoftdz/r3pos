@@ -1,6 +1,6 @@
 inherited frmSaleReport: TfrmSaleReport
-  Left = 121
-  Top = 159
+  Left = 134
+  Top = 169
   Caption = #38144#21806#32479#35745#25253#34920
   ClientWidth = 991
   OnCreate = FormCreate
@@ -424,6 +424,12 @@ inherited frmSaleReport: TfrmSaleReport
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'USER_NAME'
+                    Footers = <>
+                    Title.Caption = #24215#21592
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'GODS_NAME'
                     Footer.Value = #21512#35745
                     Footers = <>
@@ -590,188 +596,12 @@ inherited frmSaleReport: TfrmSaleReport
         end
         inherited RzBmpButton4: TRzBmpButton
           Left = 889
+          Top = 18
           OnClick = RzBmpButton4Click
-        end
-        object barcode: TRzPanel
-          Left = 12
-          Top = 20
-          Width = 445
-          Height = 29
-          Anchors = [akLeft, akTop, akRight]
-          BorderOuter = fsNone
-          TabOrder = 2
-          DesignSize = (
-            445
-            29)
-          object barcode_input_left: TImage
-            Left = 0
-            Top = 0
-            Width = 6
-            Height = 29
-            Align = alLeft
-            AutoSize = True
-            Picture.Data = {
-              07544269746D61707A020000424D7A0200000000000036000000280000000600
-              00001D000000010018000000000044020000C30E0000C30E0000000000000000
-              0000EBEBEBEBEBEBEBEBEBE6E6E6F5F5F5FCFCFC0000EBEBEBEBEBEBE1E1E1E9
-              E9E9F4F4F4FBFBFB0000EBEBEBCBCBCBE0E0E0FAFAFAFFFFFFFFFFFF0000CBCB
-              CBCACACAF4F4F4FFFFFFFFFFFFFFFFFF0000ABABABD9D9D9FCFCFCFFFFFFFFFF
-              FFFFFFFF0000A1A1A1DDDDDDFEFEFEFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDE
-              FFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
-              00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFF
-              FFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E
-              9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFF
-              FFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDE
-              FFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
-              00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFF
-              FFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E
-              9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFF
-              FFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009D9D9DDDDDDD
-              FEFEFEFFFFFFFFFFFFFFFFFF00009B9B9BD9D9D9FCFCFCFFFFFFFFFFFFFFFFFF
-              0000979797C9C9C9F4F4F4FFFFFFFFFFFFFFFFFF00009B9B9BADADADE0E0E0FA
-              FAFAFFFFFFFFFFFF0000EBEBEB929292B9B9B9DFDFDFF3F3F3FBFBFB0000EBEB
-              EBEBEBEB919191ACACACC6C6C6D6D6D60000EBEBEBEBEBEBEBEBEBA2A2A29999
-              999999990000}
-          end
-          object barcode_input_right: TImage
-            Left = 440
-            Top = 0
-            Width = 5
-            Height = 29
-            Align = alRight
-            AutoSize = True
-            Picture.Data = {
-              07544269746D617006020000424D060200000000000036000000280000000500
-              00001D0000000100180000000000D0010000120B0000120B0000000000000000
-              0000FCFCFCF5F5F5EBEBEBEBEBEBEBEBEB00FCFCFCFCFCFCFFFFFFEBEBEBEBEB
-              EB00FFFFFFFFFFFFFDFDFDFFFFFFEBEBEB00FFFFFFFFFFFFFFFFFFFCFCFCF7F7
-              F700FFFFFFFFFFFFFFFFFFFDFDFDFDFDFD00FFFFFFFFFFFFFFFFFFFEFEFEFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FF00FFFFFFFFFFFFFFFFFFFEFEFEFFFFFF00FFFFFFFFFFFFFFFFFFFCFCFCFDFD
-              FD00FFFFFFFFFFFFFFFFFFF5F5F5F7F7F700FFFFFFFFFFFFFAFAFAE7E7E7E6E6
-              E600FBFBFBF3F3F3DFDFDFE2E2E2EBEBEB00D6D6D6C6C6C6CBCBCBEBEBEBEBEB
-              EB00AEAEAECBCBCBEBEBEBEBEBEBEBEBEB00}
-          end
-          object barcode_input_line: TImage
-            Left = 6
-            Top = 0
-            Width = 434
-            Height = 29
-            Hint = #25195#30721#38144#21806#35831#25353' pause '#20581
-            Align = alClient
-            AutoSize = True
-            Picture.Data = {
-              07544269746D61707A020000424D7A0200000000000036000000280000000600
-              00001D0000000100180000000000440200000000000000000000000000000000
-              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
-              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF
-              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
-              FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
-              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF
-              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
-              FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
-              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF
-              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
-              FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
-              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000DEDE
-              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE00009E9E9E9E9E9E9E9E9E9E9E9E9E9E
-              9E9E9E9E0000}
-            Stretch = True
-          end
-          object edtCLIENT_ID: TzrComboBoxList
-            Left = 8
-            Top = 4
-            Width = 433
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = False
-            Style.Edges = []
-            Style.HotTrack = False
-            Style.ButtonTransparency = ebtInactive
-            TabOrder = 0
-            Text = #20840#37096#23458#25143
-            OnExit = edtCLIENT_IDExit
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
-            KeyField = 'CLIENT_ID'
-            ListField = 'CLIENT_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'CLIENT_CODE'
-                Footers = <>
-                Title.Caption = #23458#25143#21495
-                Width = 60
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CLIENT_NAME'
-                Footers = <>
-                Title.Caption = #23458#25143#21517#31216
-                Width = 150
-              end
-              item
-                EditButtons = <>
-                FieldName = 'LINKMAN'
-                Footers = <>
-                Title.Caption = #32852#31995#20154
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'TELEPHONE2'
-                Footers = <>
-                Title.Caption = #32852#31995#30005#35805
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'LICENSE_CODE'
-                Footers = <>
-                Title.Caption = #35777#20214#21495
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'ADDRESS'
-                Footers = <>
-                Title.Caption = #22320#22336
-                Width = 150
-              end>
-            DropWidth = 314
-            DropHeight = 281
-            ShowTitle = True
-            AutoFitColWidth = False
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbClear]
-            DropListStyle = lsFixed
-            OnClearValue = edtCLIENT_IDClearValue
-            MultiSelect = False
-          end
         end
         object RzPanel4: TRzPanel
           Left = 475
-          Top = 19
+          Top = 18
           Width = 387
           Height = 31
           Anchors = [akTop, akRight]
@@ -779,7 +609,7 @@ inherited frmSaleReport: TfrmSaleReport
           BorderWidth = 1
           Color = clWhite
           FlatColor = 9145227
-          TabOrder = 3
+          TabOrder = 2
           object RzPanel9: TRzPanel
             Left = 2
             Top = 2
@@ -922,6 +752,322 @@ inherited frmSaleReport: TfrmSaleReport
             Style.HotTrack = False
             Style.ButtonTransparency = ebtInactive
             TabOrder = 5
+          end
+        end
+        object barcode: TRzPanel
+          Left = 12
+          Top = 19
+          Width = 445
+          Height = 29
+          Anchors = [akLeft, akTop, akRight]
+          BorderOuter = fsNone
+          TabOrder = 3
+          DesignSize = (
+            445
+            29)
+          object barcode_input_left: TImage
+            Left = 0
+            Top = 0
+            Width = 6
+            Height = 29
+            Align = alLeft
+            AutoSize = True
+            Picture.Data = {
+              07544269746D61707A020000424D7A0200000000000036000000280000000600
+              00001D000000010018000000000044020000C30E0000C30E0000000000000000
+              0000EBEBEBEBEBEBEBEBEBE6E6E6F5F5F5FCFCFC0000EBEBEBEBEBEBE1E1E1E9
+              E9E9F4F4F4FBFBFB0000EBEBEBCBCBCBE0E0E0FAFAFAFFFFFFFFFFFF0000CBCB
+              CBCACACAF4F4F4FFFFFFFFFFFFFFFFFF0000ABABABD9D9D9FCFCFCFFFFFFFFFF
+              FFFFFFFF0000A1A1A1DDDDDDFEFEFEFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDE
+              FFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
+              00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFF
+              FFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E
+              9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFF
+              FFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDE
+              FFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF
+              00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFF
+              FFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E
+              9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFF
+              FFFFFFFF00009E9E9EDEDEDEFFFFFFFFFFFFFFFFFFFFFFFF00009D9D9DDDDDDD
+              FEFEFEFFFFFFFFFFFFFFFFFF00009B9B9BD9D9D9FCFCFCFFFFFFFFFFFFFFFFFF
+              0000979797C9C9C9F4F4F4FFFFFFFFFFFFFFFFFF00009B9B9BADADADE0E0E0FA
+              FAFAFFFFFFFFFFFF0000EBEBEB929292B9B9B9DFDFDFF3F3F3FBFBFB0000EBEB
+              EBEBEBEB919191ACACACC6C6C6D6D6D60000EBEBEBEBEBEBEBEBEBA2A2A29999
+              999999990000}
+          end
+          object barcode_input_right: TImage
+            Left = 440
+            Top = 0
+            Width = 5
+            Height = 29
+            Align = alRight
+            AutoSize = True
+            Picture.Data = {
+              07544269746D617006020000424D060200000000000036000000280000000500
+              00001D0000000100180000000000D0010000120B0000120B0000000000000000
+              0000FCFCFCF5F5F5EBEBEBEBEBEBEBEBEB00FCFCFCFCFCFCFFFFFFEBEBEBEBEB
+              EB00FFFFFFFFFFFFFDFDFDFFFFFFEBEBEB00FFFFFFFFFFFFFFFFFFFCFCFCF7F7
+              F700FFFFFFFFFFFFFFFFFFFDFDFDFDFDFD00FFFFFFFFFFFFFFFFFFFEFEFEFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FF00FFFFFFFFFFFFFFFFFFFEFEFEFFFFFF00FFFFFFFFFFFFFFFFFFFCFCFCFDFD
+              FD00FFFFFFFFFFFFFFFFFFF5F5F5F7F7F700FFFFFFFFFFFFFAFAFAE7E7E7E6E6
+              E600FBFBFBF3F3F3DFDFDFE2E2E2EBEBEB00D6D6D6C6C6C6CBCBCBEBEBEBEBEB
+              EB00AEAEAECBCBCBEBEBEBEBEBEBEBEBEB00}
+          end
+          object barcode_input_line: TImage
+            Left = 6
+            Top = 0
+            Width = 434
+            Height = 29
+            Hint = #25195#30721#38144#21806#35831#25353' pause '#20581
+            Align = alClient
+            AutoSize = True
+            Picture.Data = {
+              07544269746D61707A020000424D7A0200000000000036000000280000000600
+              00001D0000000100180000000000440200000000000000000000000000000000
+              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000DEDE
+              DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE00009E9E9E9E9E9E9E9E9E9E9E9E9E9E
+              9E9E9E9E0000}
+            Stretch = True
+          end
+          object edtCLIENT_ID: TzrComboBoxList
+            Left = 87
+            Top = 4
+            Width = 353
+            Height = 23
+            Anchors = [akLeft, akTop, akRight]
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = False
+            Style.Edges = []
+            Style.HotTrack = False
+            Style.ButtonTransparency = ebtInactive
+            TabOrder = 1
+            Text = #25152#26377#23458#25143
+            OnExit = edtCLIENT_IDExit
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
+            KeyField = 'CLIENT_ID'
+            ListField = 'CLIENT_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CLIENT_CODE'
+                Footers = <>
+                Title.Caption = #23458#25143#21495
+                Width = 60
+              end
+              item
+                EditButtons = <>
+                FieldName = 'CLIENT_NAME'
+                Footers = <>
+                Title.Caption = #23458#25143#21517#31216
+                Width = 150
+              end
+              item
+                EditButtons = <>
+                FieldName = 'LINKMAN'
+                Footers = <>
+                Title.Caption = #32852#31995#20154
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'TELEPHONE2'
+                Footers = <>
+                Title.Caption = #32852#31995#30005#35805
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'LICENSE_CODE'
+                Footers = <>
+                Title.Caption = #35777#20214#21495
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'ADDRESS'
+                Footers = <>
+                Title.Caption = #22320#22336
+                Width = 150
+              end>
+            DropWidth = 314
+            DropHeight = 281
+            ShowTitle = True
+            AutoFitColWidth = False
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbClear]
+            DropListStyle = lsFixed
+            OnClearValue = edtCLIENT_IDClearValue
+            MultiSelect = False
+          end
+          object edtGODS_ID: TzrComboBoxList
+            Left = 87
+            Top = 4
+            Width = 353
+            Height = 23
+            TabStop = False
+            Anchors = [akLeft, akTop, akRight]
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = False
+            Style.BorderStyle = ebsUltraFlat
+            Style.Edges = []
+            Style.HotTrack = False
+            Style.ButtonStyle = btsUltraFlat
+            Style.ButtonTransparency = ebtInactive
+            TabOrder = 2
+            Text = #25152#26377#21830#21697
+            Visible = False
+            OnExit = edtGODS_IDExit
+            InGrid = True
+            KeyValue = Null
+            FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+            KeyField = 'GODS_ID'
+            ListField = 'GODS_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'GODS_NAME'
+                Footers = <>
+                Title.Caption = #21830#21697#21517#31216
+                Width = 150
+              end
+              item
+                EditButtons = <>
+                FieldName = 'GODS_CODE'
+                Footers = <>
+                Title.Caption = #36135#21495
+                Width = 50
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BARCODE'
+                Footers = <>
+                Title.Caption = #26465#30721
+                Width = 65
+              end>
+            DropWidth = 380
+            DropHeight = 250
+            ShowTitle = True
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbClear]
+            DropListStyle = lsFixed
+            OnClearValue = edtGODS_IDClearValue
+            MultiSelect = False
+          end
+          object edtUSER_ID: TzrComboBoxList
+            Left = 86
+            Top = 4
+            Width = 353
+            Height = 23
+            TabStop = False
+            Anchors = [akLeft, akTop, akRight]
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = False
+            Style.BorderStyle = ebsUltraFlat
+            Style.Edges = []
+            Style.HotTrack = False
+            Style.ButtonStyle = btsUltraFlat
+            Style.ButtonTransparency = ebtInactive
+            TabOrder = 4
+            Text = #25152#26377#24215#21592
+            Visible = False
+            OnExit = edtUSER_IDExit
+            InGrid = True
+            KeyValue = Null
+            FilterFields = 'ACCOUNT;USER_NAME'
+            KeyField = 'USER_ID'
+            ListField = 'USER_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'ACCOUNT'
+                Footers = <>
+                Title.Caption = #21592#24037#36134#21495
+                Width = 80
+              end
+              item
+                EditButtons = <>
+                FieldName = 'USER_NAME'
+                Footers = <>
+                Title.Caption = #21592#24037#22995#21517
+                Width = 100
+              end>
+            DropWidth = 380
+            DropHeight = 250
+            ShowTitle = True
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbClear]
+            DropListStyle = lsFixed
+            OnClearValue = edtUSER_IDClearValue
+            MultiSelect = False
+          end
+          object edtReportType: TcxComboBox
+            Left = 10
+            Top = 4
+            Width = 71
+            Height = 23
+            Properties.DropDownListStyle = lsFixedList
+            Properties.Items.Strings = (
+              #25353#23458#25143
+              #25353#21830#21697
+              #25353#24215#21592)
+            Properties.OnChange = edtReportTypePropertiesChange
+            Style.Edges = []
+            Style.HotTrack = False
+            Style.ButtonTransparency = ebtInactive
+            TabOrder = 0
+            Text = #25353#23458#25143
+          end
+          object RzPanel16: TRzPanel
+            Left = 83
+            Top = 1
+            Width = 3
+            Height = 28
+            BorderOuter = fsGroove
+            BorderSides = [sdLeft, sdRight]
+            TabOrder = 3
           end
         end
       end

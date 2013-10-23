@@ -412,7 +412,6 @@ begin
   if Assigned(SyncFactory) then
      begin
        SyncFactory.TimerSync;
-       SyncFactory.SyncMessage;
      end;
   if Assigned(MsgFactory) then
      begin

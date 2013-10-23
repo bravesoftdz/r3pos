@@ -154,8 +154,8 @@ type
     procedure TimerSyncStock;
     procedure TimerSyncChange;
     procedure TimerSyncStorage;
-    // 同步消息
-    procedure SyncMessage;
+    procedure TimerSyncMessage;
+
     function  GetSynTimeStamp(tenantId,tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tenantId,tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     property  Stoped:boolean read FStoped write SetStoped;
@@ -2832,6 +2832,7 @@ begin
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStock;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStorage;
+    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncMessage;
   finally
     CoUninitialize;
     SyncFactory.timered := false;
@@ -3182,7 +3183,6 @@ begin
     Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
     Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
-    //Params.ParamByName('LAST_TIME_STAMP').Value := 0;
     Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
@@ -3201,15 +3201,10 @@ end;
 
 function TSyncFactory.Gettimered: boolean;
 begin
-  // EnterCriticalSection(ThreadLock);
-  try
-    result := Ftimered;
-  finally
-    // LeaveCriticalSection(ThreadLock);
-  end;
+  result := Ftimered;
 end;
 
-procedure TSyncFactory.SyncMessage;
+procedure TSyncFactory.TimerSyncMessage;
 var n1,n2:PSynTableInfo;
 begin
   if not token.online then Exit;
@@ -3236,6 +3231,7 @@ begin
 
   try
     SyncSingleTable(n1);
+    if timerTerminted then Exit;
     SyncSingleTable(n2);
   finally
     dispose(n1);

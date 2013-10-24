@@ -311,7 +311,7 @@ begin
             CodeName := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_NAME').AsString);
             SortName := 'SORT_ID'+CodeId;
             SortField := SortName+',';
-            WTitle2.add(CodeName+'£º'+edtSTAT_ID.AsString);
+            WTitle2.add(CodeName+'£º'+edtSTAT_ID.Text);
           end;
      end;
 

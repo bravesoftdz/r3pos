@@ -1767,8 +1767,8 @@ begin
   frmLogo.showCaption := '正在检测资源包..';
   if token.online then
      begin
-       resFactory.checkAndDownRes;
-       OpenHome;
+       if resFactory.checkAndDownRes then
+          OpenHome;
      end;
   frmLogo.showCaption := '正在检测新版本..';
   if token.online and frmUpdate.CheckUpgrade then

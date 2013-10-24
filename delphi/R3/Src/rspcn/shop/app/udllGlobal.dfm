@@ -41,7 +41,7 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
+    Left = 160
     Top = 24
     ParamData = <
       item
@@ -63,8 +63,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
-    Top = 88
+    Left = 48
+    Top = 80
     ParamData = <
       item
         DataType = ftUnknown
@@ -86,8 +86,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
-    Top = 160
+    Left = 48
+    Top = 136
     ParamData = <
       item
         DataType = ftUnknown
@@ -112,8 +112,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
-    Top = 344
+    Left = 160
+    Top = 136
     ParamData = <
       item
         DataType = ftUnknown
@@ -138,8 +138,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
-    Top = 288
+    Left = 48
+    Top = 248
     ParamData = <
       item
         DataType = ftUnknown
@@ -178,8 +178,8 @@ object dllGlobal: TdllGlobal
         ParamType = ptUnknown
       end>
     IndexFieldNames = 'GODS_ID Asc'
-    Left = 136
-    Top = 232
+    Left = 48
+    Top = 192
     ParamData = <
       item
         DataType = ftUnknown
@@ -206,8 +206,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 264
-    Top = 216
+    Left = 160
+    Top = 192
     ParamData = <
       item
         DataType = ftUnknown
@@ -223,8 +223,8 @@ object dllGlobal: TdllGlobal
         'select CODE_ID,CODE_NAME,TYPE_CODE from PUB_PARAMS order by  TYP' +
         'E_CODE,CODE_ID')
     Params = <>
-    Left = 264
-    Top = 288
+    Left = 272
+    Top = 192
   end
   object PUB_PRICEGRADE: TZQuery
     Tag = 1
@@ -240,8 +240,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 264
-    Top = 344
+    Left = 160
+    Top = 248
     ParamData = <
       item
         DataType = ftUnknown
@@ -267,8 +267,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 264
-    Top = 168
+    Left = 272
+    Top = 80
     ParamData = <
       item
         DataType = ftUnknown
@@ -293,7 +293,7 @@ object dllGlobal: TdllGlobal
         ParamType = ptUnknown
       end>
     Left = 384
-    Top = 344
+    Top = 24
     ParamData = <
       item
         DataType = ftUnknown
@@ -316,8 +316,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 264
-    Top = 96
+    Left = 160
+    Top = 80
     ParamData = <
       item
         DataType = ftUnknown
@@ -340,8 +340,8 @@ object dllGlobal: TdllGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 264
-    Top = 32
+    Left = 272
+    Top = 24
     ParamData = <
       item
         DataType = ftUnknown
@@ -357,7 +357,64 @@ object dllGlobal: TdllGlobal
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
         'E_TYPE='#39'8'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <>
+    Left = 272
+    Top = 248
+  end
+  object PUB_STAT_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      'select CODE_ID,CODE_NAME,SEQ_NO from ('
+      
+        'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME ' +
+        'else b.CODE_NAME end as CODE_NAME,'
+      
+        'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO fr' +
+        'om PUB_PARAMS j left outer join '
+      
+        '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENAN' +
+        'T_ID=:TENANT_ID and CODE_TYPE='#39'16'#39' ) b on j.CODE_ID=b.CODE_ID '
+      'where j.TYPE_CODE='#39'SORT_TYPE'#39')'
+      
+        'g where not(CODE_NAME like '#39#33258#23450#20041'%'#39') order by SEQ_NO, cast(CODE_ID' +
+        ' as int)')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 272
+    Top = 136
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_GOODS_INDEXS: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO,SORT_TYPE,LEVEL_ID fr' +
+        'om VIW_GOODSSORT '
+      'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') '
+      'order  by SORT_TYPE,LEVEL_ID,SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
     Left = 384
-    Top = 288
+    Top = 80
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
   end
 end

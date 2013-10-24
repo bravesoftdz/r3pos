@@ -8,7 +8,7 @@ uses
   RzPanel, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBmpBtn, RzBckgnd,
-  pngimage, PrnDbgeh;
+  pngimage, PrnDbgeh, ZBase;
 
 type
   TfrmSaleReport = class(TfrmReportForm)
@@ -58,6 +58,7 @@ type
     edtGODS_ID: TzrComboBoxList;
     RzPanel16: TRzPanel;
     edtUSER_ID: TzrComboBoxList;
+    edtSTAT_ID: TzrComboBoxList;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -80,6 +81,8 @@ type
     procedure edtUSER_IDExit(Sender: TObject);
     procedure edtCLIENT_IDExit(Sender: TObject);
     procedure edtGODS_IDExit(Sender: TObject);
+    procedure edtSTAT_IDClearValue(Sender: TObject);
+    procedure edtSTAT_IDExit(Sender: TObject);
   private
     WTitle1:TStringList;
     WTitle2:TStringList;
@@ -101,6 +104,8 @@ uses udataFactory,utokenFactory,uFnUtil,udllGlobal,udllShopUtil,ObjCommon;
 {$R *.dfm}
 
 procedure TfrmSaleReport.OpenReport1;
+var
+  CodeId,CodeName,SortName:string;
 begin
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
@@ -125,6 +130,7 @@ begin
           begin
             cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
           end;
+
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,CLIENT_ID';
        cdsReport1.SQL.Text :=
          'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.CLIENT_CODE,ifnull(b.CLIENT_NAME,''普通客户'') CLIENT_NAME from ('+cdsReport1.SQL.Text+') j '+
@@ -144,6 +150,7 @@ begin
           begin
             cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID';
           end;
+
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID';
        cdsReport1.SQL.Text :=
          'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,b.SORT_ID1 from ('+cdsReport1.SQL.Text+') j '+
@@ -163,12 +170,48 @@ begin
           begin
             cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and CREA_USER=:USER_ID';
           end;
+
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,CREA_USER';
        cdsReport1.SQL.Text :=
          'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.ACCOUNT,b.USER_NAME from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_USERS b on j.TENANT_ID=b.TENANT_ID and j.CREA_USER=b.USER_ID order by b.ACCOUNT';
-     end;
+     end
+  else if edtReportType.ItemIndex > 2 then
+     begin
+        CodeId := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_ID').AsString);
+        CodeName := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_NAME').AsString);
+        SortName := 'SORT_ID'+CodeId;
+        WTitle1.add(CodeName+'：'+edtSTAT_ID.Text);
 
+        cdsReport1.SQL.Text :=
+          'select a.TENANT_ID,b.'+SortName+' SORT_ID,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+          'from VIW_SALESDATA a '+
+          'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,'+SortName,true)+') b on a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
+          'where a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2';
+
+       if FnString.TrimRight(token.shopId,4)<>'0001' then
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.SHOP_ID=:SHOP_ID';
+
+       if edtSTAT_ID.AsString <> '' then
+          begin
+            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.'+SortName+'=:SORT_ID';
+          end;
+
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,b.'+SortName;
+
+       if CodeId = '3' then
+          begin
+            cdsReport1.SQL.Text :=
+              'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,ifnull(b.CLIENT_NAME,''未定义'') SORT_NAME from ('+cdsReport1.SQL.Text+') j '+
+              'left outer join VIW_CLIENTINFO b on j.TENANT_ID=b.TENANT_ID and j.SORT_ID=b.CLIENT_ID ';
+          end
+       else
+          begin
+            cdsReport1.SQL.Text :=
+              'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,ifnull(b.SORT_NAME,''未定义'') SORT_NAME from ('+cdsReport1.SQL.Text+') j '+
+              'left outer join VIW_GOODSSORT b on j.TENANT_ID=b.TENANT_ID and b.SORT_TYPE='+CodeId+' and j.SORT_ID=b.SORT_ID ';
+          end;
+     end;
   cdsReport1.SQL.Text := ParseSQL(dataFactory.iDbType, cdsReport1.SQL.Text);
   cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport1.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
@@ -177,10 +220,13 @@ begin
   if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
   if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
   if cdsReport1.Params.FindParam('USER_ID')<>nil then cdsReport1.ParamByName('USER_ID').AsString := edtUSER_ID.AsString;
+  if cdsReport1.Params.FindParam('SORT_ID')<>nil then cdsReport1.ParamByName('SORT_ID').AsString := edtSTAT_ID.AsString;
   dataFactory.Open(cdsReport1);
 end;
 
 procedure TfrmSaleReport.OpenReport2(all:boolean=true);
+var
+  CodeId,CodeName,SortName,SortField:string;
 begin
   PageControl.ActivePageIndex := 1;
   PageControlChange(nil);
@@ -220,6 +266,14 @@ begin
             WTitle2.add('店员：'+cdsReport1.FieldbyName('USER_NAME').AsString);
             cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CREA_USER=:USER_ID';
             cdsReport2.ParamByName('USER_ID').AsString := cdsReport1.FieldbyName('CREA_USER').AsString;
+          end
+       else if ReportItemIndex > 2 then
+          begin
+            CodeId := trim(TRecord_(edtReportType.Properties.Items.Objects[ReportItemIndex]).FieldByName('CODE_ID').AsString);
+            CodeName := trim(TRecord_(edtReportType.Properties.Items.Objects[ReportItemIndex]).FieldByName('CODE_NAME').AsString);
+            SortName := 'SORT_ID'+CodeId;
+            SortField := SortName+',';
+            WTitle2.add(CodeName+'：'+cdsReport1.FieldbyName('SORT_NAME').AsString);
           end;
      end
   else
@@ -250,16 +304,52 @@ begin
                  cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CREA_USER=:USER_ID';
                  cdsReport2.ParamByName('USER_ID').AsString := edtUSER_ID.AsString;
                end;
+          end
+       else if edtReportType.ItemIndex > 2 then
+          begin
+            CodeId := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_ID').AsString);
+            CodeName := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_NAME').AsString);
+            SortName := 'SORT_ID'+CodeId;
+            SortField := SortName+',';
+            WTitle2.add(CodeName+'：'+cdsReport1.FieldbyName('SORT_NAME').AsString);
           end;
      end;
 
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
     'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,case when j.CLIENT_ID is null then ''普通客户'' else c.CLIENT_NAME end as CLIENT_NAME,d.USER_NAME from ('+cdsReport2.SQL.Text+') j '+
-    'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+    'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,'+SortField+'CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
     'left outer join VIW_CUSTOMER c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID '+
-    'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.CREA_USER=d.USER_ID '+
-    'order by j.SALES_DATE,j.GLIDE_NO';
+    'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.CREA_USER=d.USER_ID ';
+
+  if not all then
+     begin
+       if ReportItemIndex > 2 then
+          begin
+            if cdsReport1.FieldbyName('SORT_ID').AsString = '' then
+               begin
+                 cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.'+SortName+' is null';
+               end
+            else
+               begin
+                 cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.'+SortName+'=:SORT_ID';
+                 cdsReport2.ParamByName('SORT_ID').AsString := cdsReport1.FieldbyName('SORT_ID').AsString;
+               end;
+          end;
+     end
+  else
+     begin
+       if edtReportType.ItemIndex > 2 then
+          begin
+            if edtSTAT_ID.AsString <> '' then
+               begin
+                 cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.'+SortName+'=:SORT_ID';
+                 cdsReport2.ParamByName('SORT_ID').AsString := edtSTAT_ID.AsString;
+               end;
+          end;
+     end;
+
+  cdsReport2.SQL.Text := cdsReport2.SQL.Text + 'order by j.SALES_DATE,j.GLIDE_NO';
   cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsReport2.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
@@ -276,7 +366,9 @@ begin
       else if ReportItemIndex = 1 then
          RzLabel1.Caption := '"'+cdsReport1.FieldbyName('GODS_NAME').AsString+'" 商品的销售流水'
       else if ReportItemIndex = 2 then
-         RzLabel1.Caption := '"'+cdsReport1.FieldbyName('USER_NAME').AsString+'" 店员的销售流水';
+         RzLabel1.Caption := '"'+cdsReport1.FieldbyName('USER_NAME').AsString+'" 店员的销售流水'
+      else if ReportItemIndex > 2 then
+         RzLabel1.Caption := '"'+cdsReport1.FieldbyName('SORT_NAME').AsString+'" '+CodeName+'的销售流水'
      end;
 
   RzBmpButton4.Caption := '展开明细';
@@ -309,14 +401,17 @@ end;
 procedure TfrmSaleReport.showForm;
 var
   rs:TZQuery;
+  AObj:TRecord_;
   Column:TColumnEh;
 begin
   inherited;
   dateFlag.ItemIndex := 1;
   edtReportType.ItemIndex := 1;
+
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   edtGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   edtUSER_ID.DataSet := dllGlobal.GetZQueryFromName('CA_USERS');
+
   Column := FindColumn(DBGridEh2,'UNIT_ID');
   if Assigned(Column) then
      begin
@@ -329,6 +424,19 @@ begin
            rs.Next;
          end;
      end;
+
+  rs := dllGlobal.GetZQueryFromName('PUB_STAT_INFO');
+  rs.First;
+  while not rs.Eof do
+    begin
+      if (rs.FieldByName('CODE_ID').AsString<>'1') and (rs.FieldByName('CODE_ID').AsString<>'7') and (rs.FieldByName('CODE_ID').AsString<>'8') then
+         begin
+           AObj := TRecord_.Create;
+           AObj.ReadFromDataSet(rs);
+           edtReportType.Properties.Items.AddObject('按'+rs.FieldByName('CODE_NAME').AsString,AObj);
+         end;
+      rs.Next;
+    end;
 end;
 
 procedure TfrmSaleReport.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -516,18 +624,64 @@ begin
 end;
 
 procedure TfrmSaleReport.FormDestroy(Sender: TObject);
+var i:integer;
 begin
   WTitle1.Free;
   WTitle2.Free;
+
+  for i:=0 to edtReportType.Properties.Items.Count -1 do
+    edtReportType.Properties.Items.Objects[i].Free;
+  edtReportType.Properties.Items.Clear;
+
   inherited;
 end;
 
 procedure TfrmSaleReport.edtReportTypePropertiesChange(Sender: TObject);
+var
+  CodeId:string;
+  ItemsIdx:integer;
 begin
   inherited;
   edtCLIENT_ID.Visible := (edtReportType.ItemIndex = 0);
   edtGODS_ID.Visible := (edtReportType.ItemIndex = 1);
   edtUSER_ID.Visible := (edtReportType.ItemIndex = 2);
+  edtSTAT_ID.Visible := (edtReportType.ItemIndex > 2);
+  if edtReportType.ItemIndex > 2 then
+     begin
+       CodeId := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_ID').AsString);
+       ItemsIdx:=StrtoIntDef(CodeId,0);
+       if ItemsIdx <= 0 then Exit;
+       edtSTAT_ID.Text := '所有指标';
+       edtSTAT_ID.KeyValue := null;
+       case ItemsIdx of
+        3:begin
+            edtSTAT_ID.KeyField:='CLIENT_ID';
+            edtSTAT_ID.ListField:='CLIENT_NAME';
+            edtSTAT_ID.FilterFields:='CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
+          end;
+        else
+          begin
+            edtSTAT_ID.KeyField:='SORT_ID';
+            edtSTAT_ID.ListField:='SORT_NAME';
+            edtSTAT_ID.FilterFields:='SORT_ID;SORT_NAME;SORT_SPELL';
+          end;
+       end;
+       edtSTAT_ID.Columns[0].FieldName:=edtSTAT_ID.ListField;
+       if edtSTAT_ID.Columns.Count>1 then edtSTAT_ID.Columns[1].FieldName:=edtSTAT_ID.KeyField;
+       case ItemsIdx of
+        3:begin
+            edtSTAT_ID.RangeField := '';
+            edtSTAT_ID.RangeValue := '';
+            edtSTAT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
+          end;
+        else
+          begin
+            edtSTAT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODS_INDEXS');
+            edtSTAT_ID.RangeField := 'SORT_TYPE';
+            edtSTAT_ID.RangeValue := InttoStr(ItemsIdx);
+          end;
+       end;
+     end;
 end;
 
 procedure TfrmSaleReport.edtCLIENT_IDClearValue(Sender: TObject);
@@ -578,6 +732,23 @@ begin
      begin
        edtUSER_ID.KeyValue := null;
        edtUSER_ID.Text := '所有店员';
+     end;
+end;
+
+procedure TfrmSaleReport.edtSTAT_IDClearValue(Sender: TObject);
+begin
+  inherited;
+  edtSTAT_ID.KeyValue := null;
+  edtSTAT_ID.Text := '所有指标';
+end;
+
+procedure TfrmSaleReport.edtSTAT_IDExit(Sender: TObject);
+begin
+  inherited;
+  if trim(edtSTAT_ID.Text)='' then
+     begin
+       edtSTAT_ID.KeyValue := null;
+       edtSTAT_ID.Text := '所有指标';
      end;
 end;
 
@@ -646,6 +817,16 @@ begin
         Column.Width := 272;
         Column.FieldName := 'USER_NAME';
         Column.Title.Caption := '员工姓名';
+      end;
+    else
+      begin
+        Column := DBGridEh1.Columns.Add;
+        Column.Width := 300;
+        Column.FieldName := 'SORT_NAME';
+        Column.Title.Caption := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_NAME').AsString);
+        Column.Footer.Alignment := taCenter;
+        Column.Footer.ValueType := fvtStaticText;
+        Column.Footer.Value := '合计';
       end;
     end;
     Column := DBGridEh1.Columns.Add;

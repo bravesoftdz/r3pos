@@ -23,6 +23,8 @@ type
     PUB_PAYMENT: TZQuery;
     PUB_GOODSSORT: TZQuery;
     PUB_REGION_INFO: TZQuery;
+    PUB_STAT_INFO: TZQuery;
+    PUB_GOODS_INDEXS: TZQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     QQ,Telephone:string;

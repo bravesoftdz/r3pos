@@ -1765,7 +1765,11 @@ begin
   frmLogo.ShowForm;
   try
   frmLogo.showCaption := '正在检测资源包..';
-  if token.online then resFactory.checkAndDownRes;
+  if token.online then
+     begin
+       resFactory.checkAndDownRes;
+       OpenHome;
+     end;
   frmLogo.showCaption := '正在检测新版本..';
   if token.online and frmUpdate.CheckUpgrade then
      frmUpdate.Show;

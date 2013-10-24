@@ -186,7 +186,7 @@ type
     procedure DoNewOrder;
     procedure DoHangUp;
     procedure DoPickUp;
-    procedure DoPayZero(s:string);
+    procedure DoPayDibs(s:string);
     procedure DoPayInput(s:string;flag:string);
     procedure DoSaveOrder;
     procedure DBGridPrint;
@@ -287,9 +287,9 @@ begin
     AObj.FieldbyName('SALE_MNY').asFloat := TotalFee;
     if orgFee<>TotalFee then
     begin
-      AObj.FieldbyName('PAY_ZERO').asFloat := 0;
-      AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
       AObj.FieldbyName('PAY_DIBS').asFloat := 0;
+      AObj.FieldbyName('CASH_MNY').asFloat := TotalFee;
+      AObj.FieldbyName('PAY_ZERO').asFloat := 0;
     end;
 {
     AObj.FieldByName('PAY_A').AsFloat := 0;
@@ -503,8 +503,8 @@ begin
   AObj.FieldByName('SALE_AMT').AsFloat := 0;
   AObj.FieldByName('SALE_MNY').AsFloat := 0;
   AObj.FieldByName('CASH_MNY').AsFloat := 0;
-  AObj.FieldByName('PAY_ZERO').AsFloat := 0;
   AObj.FieldByName('PAY_DIBS').AsFloat := 0;
+  AObj.FieldByName('PAY_ZERO').AsFloat := 0;
   AObj.FieldByName('PAY_A').AsFloat := 0;
   AObj.FieldByName('PAY_B').AsFloat := 0;
   AObj.FieldByName('PAY_C').AsFloat := 0;
@@ -1007,7 +1007,7 @@ begin
 end;
 
 function TfrmSaleOrder.checkPayment:boolean;
-var fee,allFee,payZero,salMny:currency;
+var fee,allFee,payDibs,salMny:currency;
 begin
   fee :=
     AObj.FieldbyName('PAY_B').AsFloat+
@@ -1019,15 +1019,15 @@ begin
     AObj.FieldbyName('PAY_I').AsFloat+
     AObj.FieldbyName('PAY_J').AsFloat;
 
-  payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
+  payDibs := AObj.FieldbyName('PAY_DIBS').AsFloat;
   salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
 
   case InputFlag of
   13,14:
      begin
-       if (TotalFee-payZero)-fee=0 then
+       if (TotalFee-payDibs)-fee=0 then
        edtInput.Text := '' else
-       edtInput.Text := formatFloat('#0.00',(TotalFee-payZero)-fee);
+       edtInput.Text := formatFloat('#0.00',(TotalFee-payDibs)-fee);
      end
   else
      begin
@@ -1035,19 +1035,19 @@ begin
           allFee := fee
        else
           allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
-       if abs(allFee)>abs(TotalFee-payZero) then
+       if abs(allFee)>abs(TotalFee-payDibs) then
           begin
             Raise Exception.Create('你已经超额支付了,请正确输入收款金额');
           end;
           
        if fee=0 then
-          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-AObj.FieldbyName('PAY_D').AsFloat
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat
        else
-          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payZero)-fee-AObj.FieldbyName('PAY_D').AsFloat;
+          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payDibs)-fee-AObj.FieldbyName('PAY_D').AsFloat;
        if AObj.FieldbyName('CASH_MNY').AsFloat=0 then AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldbyName('PAY_A').AsFloat;
 
-       AObj.FieldbyName('PAY_DIBS').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
-       MarqueeStatus.Caption := '实收:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_DIBS').AsFloat);
+       AObj.FieldbyName('PAY_ZERO').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
+       MarqueeStatus.Caption := '实收:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat);
 
      end;
   end;
@@ -1056,7 +1056,7 @@ end;
 
 procedure TfrmSaleOrder.DoShowPayment;
 var
-  fee,payZero,salMny:currency;
+  fee,payDibs,salMny:currency;
   s,payInfo:string;
   w:integer;
 begin
@@ -1070,14 +1070,14 @@ begin
     AObj.FieldbyName('PAY_H').AsFloat+
     AObj.FieldbyName('PAY_I').AsFloat+
     AObj.FieldbyName('PAY_J').AsFloat;
-  payZero := AObj.FieldbyName('PAY_ZERO').AsFloat;
+  payDibs := AObj.FieldbyName('PAY_DIBS').AsFloat;
   salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
   case dbState of
   dsBrowse:begin
       edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
-      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
+      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payDibs));
       if TotalFee<>0 then
-         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
+         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
       else
          edtAGIO_RATE.Text := '';
     end;
@@ -1085,17 +1085,17 @@ begin
     begin
       if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
          begin
-           edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payZero)-AObj.FieldbyName('PAY_D').AsFloat);
+           edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat);
          end
       else
          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
-      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payZero));
+      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payDibs));
       if TotalFee<>0 then
-         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)
+         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
       else
          edtAGIO_RATE.Text := '';
       if inputFlag in [13,14] then
-         edtInput.Text := formatFloat('#0.00#',(TotalFee-payZero)-(fee+AObj.FieldbyName('PAY_A').AsFloat));
+         edtInput.Text := formatFloat('#0.00#',(TotalFee-payDibs)-(fee+AObj.FieldbyName('PAY_A').AsFloat));
     end;
   end;
   s := '0000000000';
@@ -1180,7 +1180,7 @@ begin
         else
            begin
             if TotalFee<>0 then
-               MarqueeStatus.Caption := '合计:'+formatFloat('#0.00',(TotalFee-payZero))+'  折扣:'+formatFloat('#0.0',(TotalFee-payZero)*100/TotalFee)+'%'
+               MarqueeStatus.Caption := '合计:'+formatFloat('#0.00',(TotalFee-payDibs))+'  折扣:'+formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)+'%'
             else
                MarqueeStatus.Caption := '';
            end;
@@ -1440,7 +1440,7 @@ begin
      NewOrder;
 end;
 
-procedure TfrmSaleOrder.DoPayZero(s:string);
+procedure TfrmSaleOrder.DoPayDibs(s:string);
 var
   mny:currency;
   IsAgio:boolean;
@@ -1464,16 +1464,16 @@ begin
      end;
   if not IsAgio then
      begin
-       AObj.FieldbyName('PAY_ZERO').asFloat := totalFee-mny;
+       AObj.FieldbyName('PAY_DIBS').asFloat := totalFee-mny;
        edtACCT_MNY.Text := formatFloat('#0.00',mny);
      end
   else
      begin
-       AObj.FieldbyName('PAY_ZERO').AsString := formatFloat('#0.00',totalfee-(totalFee*mny/100));
-       edtACCT_MNY.Text := formatFloat('#0.00',totalfee-AObj.FieldbyName('PAY_ZERO').asFloat);
+       AObj.FieldbyName('PAY_DIBS').AsString := formatFloat('#0.00',totalfee-(totalFee*mny/100));
+       edtACCT_MNY.Text := formatFloat('#0.00',totalfee-AObj.FieldbyName('PAY_DIBS').asFloat);
      end;
   if TotalFee<>0 then
-     edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-AObj.FieldbyName('PAY_ZERO').asFloat)*100/TotalFee)
+     edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-AObj.FieldbyName('PAY_DIBS').asFloat)*100/TotalFee)
   else
      edtAGIO_RATE.Text := '';
   DoShowPayment;
@@ -1486,7 +1486,7 @@ var
   s,tmp:string;
   h:TZQuery;
   mm:TMemoryStream;
-  PayZero:real;
+  payDibs:real;
 begin
   FileAttrs := 0;
   FileAttrs := FileAttrs + faAnyFile;
@@ -1526,7 +1526,7 @@ begin
   end;
   edtTable.Last;
   RowId := edtTable.FieldbyName('SEQNO').AsInteger;
-  PayZero := AObj.FieldByName('PAY_ZERO').AsFloat;
+  payDibs := AObj.FieldByName('PAY_DIBS').AsFloat;
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\H'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\P'+s);
@@ -1536,9 +1536,9 @@ begin
        edtCLIENT_ID.KeyValue := AObj.FieldByName('CLIENT_ID').AsString;
        edtCLIENT_ID.Text := AObj.FieldByName('CLIENT_ID_TEXT').AsString;
      end;
-  if PayZero <> 0 then
+  if payDibs <> 0 then
      begin
-       DoPayZero(FloatToStr(TotalFee-PayZero));
+       DoPayDibs(FloatToStr(TotalFee-payDibs));
      end;
 end;
 
@@ -1569,7 +1569,7 @@ begin
       if s<>'' then DoGuideUser(s);
     end;
   11:begin
-      if s<>'' then DoPayZero(s);
+      if s<>'' then DoPayDibs(s);
     end;
   else
     result := false;
@@ -1600,7 +1600,7 @@ begin
      begin
        if edtInput.CanFocus then edtInput.SetFocus;
        if CheckNoData then raise Exception.Create('您还没有输入商品，不能做此操作。');
-       if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
+       if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_DIBS').AsFloat,AObj) then
           begin
             inputFlag := 13;
             try
@@ -1773,7 +1773,7 @@ begin
   cdsList.Close;
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,
-    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户'') as CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
+    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户'') as CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_DIBS as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
     'from SAL_SALESORDER A '+
     'left outer join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
@@ -1945,7 +1945,7 @@ begin
     AObj.FieldbyName('PAY_H').AsFloat+
     AObj.FieldbyName('PAY_I').AsFloat+
     AObj.FieldbyName('PAY_J').AsFloat;
-  A := (AObj.FieldbyName('SALE_MNY').AsFloat-AObj.FieldbyName('PAY_ZERO').AsFloat)-fee;
+  A := (AObj.FieldbyName('SALE_MNY').AsFloat-AObj.FieldbyName('PAY_DIBS').AsFloat)-fee;
   try
     r := strtoFloat(s);
   except
@@ -2105,7 +2105,7 @@ end;
 procedure TfrmSaleOrder.paymentClick(Sender: TObject);
 begin
   inherited;
-  if TfrmPayment.payment(self,totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat,AObj) then
+  if TfrmPayment.payment(self,totalFee-AObj.FieldbyName('PAY_DIBS').AsFloat,AObj) then
      DoShowPayment;
 end;
 
@@ -2181,7 +2181,7 @@ begin
      begin
        if abs(StrtoFloatDef(edtACCT_MNY.Text,0))>TotalFee then edtACCT_MNY.Text := FloatToStr(TotalFee);
        r := StrtoFloatDef(edtACCT_MNY.Text,0);
-       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-r;
+       AObj.FieldbyName('PAY_DIBS').AsFloat := TotalFee-r;
        if TotalFee<>0 then
           edtAGIO_RATE.Text := formatFloat('#0.0',r*100/TotalFee)
        else
@@ -2212,8 +2212,8 @@ begin
   if (Key=#13) then
      begin
        r := StrtoFloatDef(edtAGIO_RATE.Text,0);
-       AObj.FieldbyName('PAY_ZERO').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
-       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_ZERO').AsFloat);
+       AObj.FieldbyName('PAY_DIBS').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
+       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_DIBS').AsFloat);
        fee :=
         AObj.FieldbyName('PAY_B').AsFloat+
         AObj.FieldbyName('PAY_C').AsFloat+
@@ -2251,7 +2251,7 @@ begin
        AObj.FieldbyName('PAY_A').AsFloat := r;
        AObj.FieldbyName('PAY_B').AsFloat := 0;
        AObj.FieldbyName('PAY_C').AsFloat := 0;
-       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_ZERO').AsFloat)-r;
+       AObj.FieldbyName('PAY_D').AsFloat := (totalFee-AObj.FieldbyName('PAY_DIBS').AsFloat)-r;
        AObj.FieldbyName('PAY_E').AsFloat := 0;
        AObj.FieldbyName('PAY_F').AsFloat := 0;
        AObj.FieldbyName('PAY_G').AsFloat := 0;
@@ -2287,7 +2287,7 @@ begin
      AObj.FieldbyName('CLIENT_CODE').AsString := hdr.FieldbyName('CLIENT_CODE').asString;
      AObj.FieldbyName('UNION_ID').AsString := hdr.FieldbyName('UNION_ID').asString;
      AObj.FieldbyName('PRICE_ID').AsString := hdr.FieldbyName('PRICE_ID').asString;
-     AObj.FieldbyName('PAY_ZERO').AsString := hdr.FieldbyName('PAY_ZERO').asString;
+     AObj.FieldbyName('PAY_DIBS').AsString := hdr.FieldbyName('PAY_DIBS').asString;
      edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
      edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
      edt.First;
@@ -2321,7 +2321,7 @@ begin
      end;
      InitRecord;
      Calc;
-     AObj.FieldbyName('PAY_ZERO').AsFloat := -hdr.FieldbyName('PAY_ZERO').AsFloat;
+     AObj.FieldbyName('PAY_DIBS').AsFloat := -hdr.FieldbyName('PAY_DIBS').AsFloat;
      DoShowPayment;
    finally
      rs.Free;

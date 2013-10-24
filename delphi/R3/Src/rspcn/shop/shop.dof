@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=D:\r6
+OutputDir=..\debug
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -142,6 +142,6 @@ Count=1
 Item0=$(RMHome)\Source\Components\zlib123
 [HistoryLists\hlOutputDirectorry]
 Count=3
-Item0=D:\r6
-Item1=..\debug
+Item0=..\debug
+Item1=D:\r6
 Item2=D:\ต๗สิ\shop_tuxedo

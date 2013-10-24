@@ -101,6 +101,8 @@ uses uTokenFactory,udllGlobal,ZLogFile,udataFactory,ObjCommon,ufrmNewPaperReader
 
 {$R *.dfm}
 
+procedure SwitchToThisWindow(hWnd:THandle;bRestore:boolean);stdcall; external user32 name 'SwitchToThisWindow';
+
 procedure TMsgFactory.Add(MsgInfo: PMsgInfo);
 begin
   Enter;
@@ -416,12 +418,22 @@ begin
 end;
 
 procedure TMsgFactory.ShowHintMsg;
-var P:PMsgInfo;
+var
+  P:PMsgInfo;
+  Win:HWnd;
 begin
   Enter;
   try
     P := MsgFactory.ReadMsg;
-    if P <> nil then MsgFactory.HintMsg(P);
+    if P <> nil then
+       begin
+         Win := GetForegroundWindow();
+         try
+           MsgFactory.HintMsg(P);
+         finally
+           SwitchToThisWindow(Win,true);
+         end;
+       end;
   finally
     Leave;
   end;

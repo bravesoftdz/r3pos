@@ -1742,8 +1742,32 @@ item: Install File
   File Date=20130325 185815
 end
 item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\TSCLIB.dll
+  Destination=%MAINDIR%\TSCLIB.dll
+  Flags=0000000010000010
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\TSCLIB.lib
+  Destination=%MAINDIR%\TSCLIB.lib
+  Flags=0000000010000010
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
+end
+item: Install File
   Source=d:\myWork\Delphi\R3\Src\rspcn\debug\shop.dll
   Destination=%MAINDIR%\shop.dll
+  Flags=0000000010000010
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\codehk.exe
+  Destination=%MAINDIR%\codehk.exe
   Flags=0000000010000010
   File Size=570947
   File Date=20130323 155500
@@ -1771,6 +1795,14 @@ item: Install File
   Flags=0000000010000010
   File Size=18742
   File Date=20100908 152924
+end
+item: Install File
+  Source=d:\myWork\Delphi\R3\Src\rspcn\debug\vcredist2008.exe
+  Destination=%MAINDIR%\vcredist2008.exe
+  Flags=0000000010000010
+  File Size=570947
+  File Date=20130323 155500
+  EXE Type=32
 end
 item: Set Variable
   Variable=COMMON
@@ -1932,6 +1964,11 @@ item: Edit INI File
   Settings=[r3]
   Settings=path=%MAINDIR%
   Settings=
+end
+item: Execute Program
+  Pathname=%MAINDIR%\vcredist2008.exe
+  Command Line= /q:a /c:"msiexec /i vcredist.msi /qn /l*v %temp%\vcredist_x86.log"
+  Flags=00000010
 end
 item: Execute Program
   Pathname=%MAINDIR%\shop.exe

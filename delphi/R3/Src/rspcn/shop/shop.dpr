@@ -109,7 +109,9 @@ uses
   ObjUtilsV60 in 'obj\ObjUtilsV60.pas',
   uCodePrinterFactory in 'app\uCodePrinterFactory.pas',
   ufrmCodeScan in 'app\ufrmCodeScan.pas' {frmCodeScan},
-  uCommand in 'app\uCommand.pas';
+  uCommand in 'app\uCommand.pas',
+  ufrmHintMsg in 'app\ufrmHintMsg.pas' {frmHintMsg},
+  ufrmNewPaperReader in 'app\ufrmNewPaperReader.pas' {frmNewPaperReader};
 
 {$R *.res}
 exports

@@ -757,6 +757,7 @@ procedure TfrmGoodsStorage.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
+  edtUNIT_ID_USING.Properties.ReadOnly := dbState = dsBrowse;
   btnSave.Visible := dbState <> dsBrowse;
 
   if (relationId=0) then Exit;

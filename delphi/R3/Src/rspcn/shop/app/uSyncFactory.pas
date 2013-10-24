@@ -181,7 +181,7 @@ implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
-     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand;
+     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand,ufrmHintMsg;
 
 function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
 
@@ -2813,6 +2813,7 @@ begin
   SyncFactory.timered := true;
   CoInitialize(nil);
   try
+    try
     if not SyncFactory.DBLocked then Exit;
     //ÔÚÏß×´Ì¬ÐÄÌø
     if SyncFactory.LoginId<>'' then
@@ -2833,6 +2834,8 @@ begin
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStorage;
     if not SyncFactory.timerTerminted then SyncFactory.TimerSyncMessage;
+    except
+    end;
   finally
     CoUninitialize;
     SyncFactory.timered := false;
@@ -3237,6 +3240,9 @@ begin
     dispose(n1);
     dispose(n2);
   end;
+
+  MsgFactory.Load;
+  MsgFactory.GetUnRead;
 end;
 
 initialization

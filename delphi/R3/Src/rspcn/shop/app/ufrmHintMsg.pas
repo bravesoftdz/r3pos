@@ -38,19 +38,20 @@ type
     function  GetMsgRead(Msg: PMsgInfo): boolean;
     procedure SetMsgRead(Msg: PMsgInfo; const Value: boolean);
     procedure SetOpened(const Value: boolean);
+    function  ReadMsg:PMsgInfo;
+    
+    procedure Enter;
+    procedure Leave;
+    procedure Clear;
   public
     constructor Create;
     destructor  Destroy; override;
-    procedure Enter;
-    procedure Leave;
     function  EncodeSQL:String;
     function  Load:Boolean;
     procedure Add(MsgInfo:PMsgInfo);
     procedure ShowMsg(MsgInfo:PMsgInfo);
     procedure HintMsg(MsgInfo:PMsgInfo);
-    procedure Clear;
     procedure ClearType(C_Type:Integer);
-    function  ReadMsg:PMsgInfo;
     function  FindMsg(ID:string):PMsgInfo;
     procedure GetUnRead;
     procedure ShowHintMsg;
@@ -113,7 +114,7 @@ end;
 procedure TMsgFactory.Clear;
 var i:integer;
 begin
-  Enter;
+//  Enter;
   try
     for i:=FList.Count -1 downto 0 do
       begin
@@ -121,7 +122,7 @@ begin
       end;
     FList.Clear;
   finally
-    Enter;
+//    Enter;
   end;
 end;
 
@@ -193,33 +194,29 @@ var
   MsgInfo:PMsgInfo;
 begin
   try
-    Clear;
     rs := TZQuery.Create(nil);
+    Enter;
     try
       rs.SQL.Text := EncodeSQL;
       dataFactory.Open(rs);
-      Enter;
-      try
-        rs.First;
-        while not rs.Eof do
-        begin
-          new(MsgInfo);
-          MsgInfo^.ID := rs.Fields[0].AsString;
-          MsgInfo^.Title := rs.Fields[1].AsString;
-          MsgInfo^.Contents := rs.Fields[2].AsString;
-          MsgInfo^.SndDate := rs.Fields[3].AsString;
-          MsgInfo^.Rdd := false;
-          MsgInfo^.Msg_Class := StrToIntDef(rs.Fields[4].AsString,0);
-          MsgInfo^.sFlag := 0;
-          FList.Add(MsgInfo);
-          rs.Next;
-        end;
-      finally
-        Leave;
+      Clear;
+      rs.First;
+      while not rs.Eof do
+      begin
+        new(MsgInfo);
+        MsgInfo^.ID := rs.Fields[0].AsString;
+        MsgInfo^.Title := rs.Fields[1].AsString;
+        MsgInfo^.Contents := rs.Fields[2].AsString;
+        MsgInfo^.SndDate := rs.Fields[3].AsString;
+        MsgInfo^.Rdd := false;
+        MsgInfo^.Msg_Class := StrToIntDef(rs.Fields[4].AsString,0);
+        MsgInfo^.sFlag := 0;
+        FList.Add(MsgInfo);
+        rs.Next;
       end;
-      GetUnRead;
     finally
       rs.free;
+      Leave;
     end;
     Loaded := true;
   except
@@ -236,8 +233,6 @@ var i:integer;
 begin
   result := nil;
   if Showing then Exit;
-  Enter;
-  try
   for i:=count - 1 downto 0 do
     begin
       if not MsgInfo[i]^.Rdd then
@@ -247,9 +242,6 @@ begin
            Exit;
          end;
     end;
-  finally
-    Leave;
-  end;
 end;
 
 procedure TMsgFactory.SetUnRead(const Value: Integer);
@@ -276,7 +268,7 @@ end;
 class procedure TfrmHintMsg.ShowInfo(Msg: PMsgInfo);
 var Contents_M:WideString;
 begin
-  if frmMsg=nil then frmMsg := TfrmHintMsg.Create(Application.MainForm);
+  if frmMsg=nil then frmMsg := TfrmHintMsg.Create(nil);
   if Pointer(frmMsg.MsgInfo)=Pointer(Msg) then
      begin
        if not frmMsg.Visible then
@@ -426,9 +418,13 @@ end;
 procedure TMsgFactory.ShowHintMsg;
 var P:PMsgInfo;
 begin
-  MsgFactory.Load;
-  P := MsgFactory.ReadMsg;
-  if P <> nil then MsgFactory.HintMsg(P);
+  Enter;
+  try
+    P := MsgFactory.ReadMsg;
+    if P <> nil then MsgFactory.HintMsg(P);
+  finally
+    Leave;
+  end;
 end;
 
 initialization

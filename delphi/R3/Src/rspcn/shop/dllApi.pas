@@ -352,6 +352,7 @@ begin
   timer.OnTimer := onTimer;
   timer.Enabled := false;
   timer.Interval := 30*60*1000;
+  //timer.Interval := 2*1000;
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
   try
     mode := F.ReadString('soft','mode','release');

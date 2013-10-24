@@ -17,6 +17,9 @@ type
     function CheckError(s:string):boolean;
     function CheckConnection:boolean;
     function getErrFlag:string;
+
+    procedure Enter;
+    procedure Leave;
   protected
     //设置连接参数
     function  Initialize(Const ConnStr:WideString):boolean;stdcall;
@@ -214,6 +217,8 @@ type
     procedure DBLock(Locked:boolean);override;
   end;
 
+var
+  DriverLock:TRTLCriticalSection;
 implementation
 uses ZLogFile;
 { TdbHelp }
@@ -267,9 +272,9 @@ end;
 
 procedure TdbHelp.CommitTrans;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   try
-    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能commit'); 
+    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能commit');
     ZConn.Commit;
     ZConn.TransactIsolationLevel := tiNone;
   except
@@ -283,18 +288,24 @@ end;
 
 function TdbHelp.Connect: boolean;
 begin
-//  LogFile.AddLogFile(0,'ZConn.Connect to '+ZConn.Database);
+  Enter;
   try
-    ZConn.Disconnect;
-    ZConn.Connect;
-    LogFile.AddLogFile(0,'ZConn.Connect finish');
-    Killed := false;
-  except
-    on E:Exception do
-       begin
-         LogFile.AddLogFile(0,'ZConn.Connect error:'+E.Message);
-         Raise;
-       end;
+    try
+      ZConn.Disconnect;
+      ZConn.Connect;
+      result := true;
+      LogFile.AddLogFile(0,'ZConn.Connect finish');
+      Killed := false;
+    except
+      on E:Exception do
+         begin
+           result := false;
+           LogFile.AddLogFile(0,'ZConn.Connect error:'+E.Message+' url'+ZConn.HostName);
+           Raise;
+         end;
+    end;
+  finally
+    Leave;
   end;
 end;
 
@@ -305,19 +316,39 @@ end;
 
 constructor TdbHelp.Create;
 begin
-  ZConn := TZConnection.Create(nil);
-  Killed := false;
+  Enter;
+  try
+    ZConn := TZConnection.Create(nil);
+    Killed := false;
+  finally
+    Leave;
+  end;
 end;
 
 destructor TdbHelp.Destroy;
 begin
-  FreeAndNil(ZConn);
-  inherited;
+  Enter;
+  try
+    FreeAndNil(ZConn);
+    inherited;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbHelp.DisConnect: boolean;
 begin
-  ZConn.Disconnect;
+  Enter;
+  try
+    ZConn.Disconnect;
+  finally
+    Leave;
+  end;
+end;
+
+procedure TdbHelp.Enter;
+begin
+  EnterCriticalSection(DriverLock);
 end;
 
 function TdbHelp.ExecQuery(DataSet: TDataSet): Integer;
@@ -411,7 +442,7 @@ end;
 
 function TdbHelp.iDbType: Integer;
 begin
-  if Killed then Raise Exception.Create('客户端已断开连接'); 
+  if Killed then Raise Exception.Create('客户端已断开连接');
   if copy(ZConn.Protocol,1,6) = 'mssql' then
      result := 0
   else
@@ -432,9 +463,10 @@ function TdbHelp.Initialize(const ConnStr: WideString): boolean;
 var
   vList:TStringList;
 begin
-  ZConn.Disconnect;
+  Enter;
   vList := TStringList.Create;
   try
+    ZConn.Disconnect;
     vList.Delimiter := ';';
     vList.QuoteChar := '"';
     vList.DelimitedText := ConnStr;
@@ -445,13 +477,14 @@ begin
     ZConn.Protocol := vList.Values['provider'];
   finally
     vList.Free;
+    Leave;
   end;
   ZConnStr := ConnStr;
 end;
 
 function TdbHelp.InTransaction: boolean;
 begin
-//  if Killed then Raise Exception.Create('客户端已断开连接'); 
+//  if Killed then Raise Exception.Create('客户端已断开连接');
   try
     result := zConn.InTransaction;
   except
@@ -469,6 +502,11 @@ begin
   LogFile.AddLogFile(0,getErrFlag+'客户端连接中断，中止数据请求。');
 end;
 
+procedure TdbHelp.Leave;
+begin
+  LeaveCriticalSection(DriverLock);
+end;
+
 function TdbHelp.Open(DataSet: TDataSet): boolean;
 var
   _start:int64;
@@ -482,17 +520,21 @@ begin
      begin
        TZQuery(DataSet).CachedUpdates := true;
        TZQuery(DataSet).Connection := ZConn;
-     end;
+     end
+  else
   if DataSet.ClassNameIs('TZReadonlyQuery') then
      begin
        TZQuery(DataSet).CachedUpdates := true;
        TZQuery(DataSet).Connection := ZConn;
-     end;
+     end
+  else
   if DataSet.ClassNameIs('TZTable') then
      begin
        TZTable(DataSet).CachedUpdates := true;
        TZTable(DataSet).Connection := ZConn;
-     end;
+     end
+  else
+     Raise Exception.Create('无效类名:'+DataSet.ClassName);
   _start := getTickCount;
   try
     DataSet.Open;
@@ -503,15 +545,19 @@ begin
     if DataSet.ClassNameIs('TZQuery') then
        begin
          TZQuery(DataSet).Connection := nil;
-       end;
+       end
+    else
     if DataSet.ClassNameIs('TZReadonlyQuery') then
        begin
          TZQuery(DataSet).Connection := nil;
-       end;
+       end
+    else
     if DataSet.ClassNameIs('TZTable') then
        begin
          TZTable(DataSet).Connection := nil;
-       end;
+       end
+    else
+       Raise Exception.Create('无效类名:'+DataSet.ClassName);
   end;
   except
     on E:Exception do
@@ -529,7 +575,7 @@ begin
 //    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback');
     ZConn.Rollback;
     ZConn.TransactIsolationLevel := tiNone;
-//    if Killed then Raise Exception.Create('客户端已断开连接'); 
+//    if Killed then Raise Exception.Create('客户端已断开连接');
   except
     on E:Exception do
       begin
@@ -550,11 +596,14 @@ begin
   if DataSet.ClassNameIs('TZQuery') then
      begin
        TZQuery(DataSet).Connection := ZConn;
-     end;
+     end
+  else
   if DataSet.ClassNameIs('TZTable') then
      begin
        TZTable(DataSet).Connection := ZConn;
-     end;
+     end
+  else
+     Raise Exception.Create('无效类名:'+DataSet.ClassName);
   _start := getTickCount;
   try
     with TZAbstractDataset(DataSet) do
@@ -690,9 +739,9 @@ destructor TdbResolver.Destroy;
 var
   i:integer;
 begin
-  dbHelp := nil;
   for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
   FList.Free;
+  dbHelp := nil;
   inherited;
 end;
 
@@ -1243,4 +1292,8 @@ begin
   FThreadId := Value;
 end;
 
+initialization
+  InitializeCriticalSection(DriverLock);
+finalization
+  DeleteCriticalSection(DriverLock);
 end.

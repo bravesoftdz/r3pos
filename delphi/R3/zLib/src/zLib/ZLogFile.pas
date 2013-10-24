@@ -55,7 +55,7 @@ begin
          CloseFile(F);
        end;
      except
-     end;
+     end;  
      if (MainFormHandle>0) and Showing then
         begin
           Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);

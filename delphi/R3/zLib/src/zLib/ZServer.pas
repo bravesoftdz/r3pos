@@ -145,9 +145,9 @@ type
   private
     FList:TList;
     FThreadLock:TRTLCriticalSection;
-  protected
     procedure Enter;
     procedure Leave;
+  protected
 
     procedure FreeCache(i:integer);
   public
@@ -174,11 +174,10 @@ type
     procedure SetDBCacheLockCount(const Value: integer);
     function GetCount: integer;
     procedure SetTimerOut(const Value: integer);
-  protected
-    F:TIniFile;
     procedure Enter;
     procedure Leave;
-
+  protected
+    F:TIniFile;
     function CreatedbResolver(dbid:Integer):TdbResolver;
     procedure FreeCache(i:integer);
     procedure CheckConnected(Conn:TdbResolver);
@@ -1042,7 +1041,6 @@ begin
      Leave;
      DeleteCriticalSection(FThreadLock);
   end;
-  inherited;
 end;
 
 procedure TZDataCache.Enter;
@@ -1078,7 +1076,9 @@ begin
 end;
 
 function TZDataCache.GetFirst: PZDataBlock;
-var wait:int64;
+var
+  wait:int64;
+  i:integer;
 begin
   Enter;
   try
@@ -1089,6 +1089,23 @@ begin
     dec(WaitDataBlockCount);
     wait := GetTickCount-result^.TimeStamp;
     if wait>DataBlockMaxWaitTime then DataBlockMaxWaitTime := wait;
+    if result^.Data=nil then
+       begin
+          for i:=FList.Count-1 downto 0 do
+            begin
+              if PZDataBlock(FList[i])^.SessionId = result^.SessionId then
+                 begin
+                   FreeCache(i);
+                   dec(WaitDataBlockCount);
+                 end;
+            end;
+          if (GetTickCount - result^.TimeStamp)<1000 then
+            begin
+              FList.Add(result);
+              inc(WaitDataBlockCount);
+              result := nil;
+            end;
+       end;
   finally
     Leave;
   end;
@@ -1156,13 +1173,12 @@ begin
   try
      Clear;
      FList.Free;
+     F.Free;
      inherited;
   finally
      Leave;
      DeleteCriticalSection(FThreadLock);
   end;
-  F.Free;
-  inherited;
 end;
 
 procedure TZConnCache.Enter;

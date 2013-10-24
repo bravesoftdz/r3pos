@@ -168,6 +168,8 @@ type
     Disp:IDoInvokeDispatch;
     FLock: TCriticalSection;
     procedure SetDoInvokeDispatch(const Value: IDoInvokeDispatch);
+    procedure Lock;
+    procedure UnLock;
   protected
     procedure DoInvoke(const Data: IDataBlock);
   public
@@ -175,8 +177,6 @@ type
     function  CallInvoke(Token,LocaleID: Integer;
       Flags: Word;Var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult; override;
 
-    procedure Lock;
-    procedure UnLock;
     constructor Create(SendDataBlock: ISendDataBlock; CheckRegValue: string);
     destructor Destroy; override;
     property DoInvokeDispatch:IDoInvokeDispatch read Disp write SetDoInvokeDispatch;
@@ -987,6 +987,8 @@ procedure TZDataBlockInterpreter.InterpretData(const Data: IDataBlock);
 var
   Action: Integer;
 begin
+Lock;
+try
   Action := Data.Signature;
   if (Action and asMask) = asError then
      begin
@@ -1018,6 +1020,9 @@ begin
 //      LogFile.AddLogFile(2,E.Message,'TZDataBlockInterpreter.InterpretData');
     end;
   end;
+finally
+  UnLock;
+end;
 end;
 
 constructor TZDataBlockInterpreter.Create(SendDataBlock: ISendDataBlock;

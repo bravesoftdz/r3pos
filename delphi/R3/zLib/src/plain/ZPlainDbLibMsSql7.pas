@@ -57,7 +57,7 @@ interface
 
 {$I ZPlain.inc}
 
-uses Classes, ZCompatibility, ZPlainLoader, ZPlainDBLibDriver;
+uses Classes, ZCompatibility, Windows,ZPlainLoader, ZDbcDbLib,ZPlainDBLibDriver;
 
 const
   WINDOWS_DLL_LOCATION = 'ntwdblib.dll';
@@ -501,16 +501,21 @@ function ErrorHandle(Proc: PDBPROCESS; Severity, DbErr, OsErr: Integer;
 var
   MSSqlError: PDBLibError;
 begin
-  New(MSSqlError);
-  MSSqlError.dbProc := Proc;
-  MSSqlError.Severity := Severity;
-  MSSqlError.DbErr := DbErr;
-  MSSqlError.OsErr := OsErr;
-  MSSqlError.DbErrStr := DbErrStr;
-  MSSqlError.OsErrStr := OsErrStr;
-  MSSqlErrors.Add(MSSqlError);
+  EnterCriticalSection(DBLibLock);
+  try
+    New(MSSqlError);
+    MSSqlError.dbProc := Proc;
+    MSSqlError.Severity := Severity;
+    MSSqlError.DbErr := DbErr;
+    MSSqlError.OsErr := OsErr;
+    MSSqlError.DbErrStr := DbErrStr;
+    MSSqlError.OsErrStr := OsErrStr;
+    MSSqlErrors.Add(MSSqlError);
 
-  Result := INT_CANCEL;
+    Result := INT_CANCEL;
+  finally
+    LeaveCriticalSection(DBLibLock);
+  end;
 end;
 
 { Handle sql server messages }
@@ -519,18 +524,23 @@ function MessageHandle(Proc: PDBPROCESS; MsgNo: DBINT; MsgState, Severity: Integ
 var
   MSSqlMessage: PDBLibMessage;
 begin
-  New(MSSqlMessage);
-  MSSqlMessage.dbProc := Proc;
-  MSSqlMessage.MsgNo := MsgNo;
-  MSSqlMessage.MsgState := MsgState;
-  MSSqlMessage.Severity := Severity;
-  MSSqlMessage.MsgText := MsgText;
-  MSSqlMessage.SrvName := SrvName;
-  MSSqlMessage.ProcName := ProcName;
-  MSSqlMessage.Line := Line;
-  MSSqlMessages.Add(MSSqlMessage);
+  EnterCriticalSection(DBLibLock);
+  try
+    New(MSSqlMessage);
+    MSSqlMessage.dbProc := Proc;
+    MSSqlMessage.MsgNo := MsgNo;
+    MSSqlMessage.MsgState := MsgState;
+    MSSqlMessage.Severity := Severity;
+    MSSqlMessage.MsgText := MsgText;
+    MSSqlMessage.SrvName := SrvName;
+    MSSqlMessage.ProcName := ProcName;
+    MSSqlMessage.Line := Line;
+    MSSqlMessages.Add(MSSqlMessage);
 
-  Result := 0;
+    Result := 0;
+  finally
+    LeaveCriticalSection(DBLibLock);
+  end;
 end;
 
 function DBSETLHOST(Login: PLOGINREC; ClientHost: PChar): RETCODE;

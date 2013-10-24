@@ -90,6 +90,11 @@ type
     FLastActivity: TDateTime;
     FLockThread: boolean;
     FWorkThread: TSocketWorkerThread;
+    
+    SocktLock: TCriticalSection;
+    RecvLock: TCriticalSection;
+    SendLock: TCriticalSection;
+
     procedure SetSession(const Value: TZSession);
     function GetRemoteAddress: string;
     function GetRemotePort: integer;
@@ -97,16 +102,13 @@ type
     procedure SetLockThread(const Value: boolean);
     function GetRemoteHost: string;
     procedure SetWorkThread(const Value: TSocketWorkerThread);
-  protected
-    SocktLock: TCriticalSection;
-    RecvLock: TCriticalSection;
-    SendLock: TCriticalSection;
     //对接收资源进行保护
     procedure RecvEnter;
     procedure RecvLeave;
     //对发送资源进行保护
     procedure SendEnter;
     procedure SendLeave;
+  protected
 
     function Send(const Data: IDataBlock; WaitForResult: Boolean): IDataBlock; stdcall;
   public
@@ -121,6 +123,7 @@ type
     procedure WorkSend(IOData: PPER_IO_OPERATION_DATA;BytesReaded:integer);
     procedure WriteBuffer(IOData:PPER_IO_OPERATION_DATA;DataBlock:IDataBlock=nil);
     procedure ReadBuffer(IOData:PPER_IO_OPERATION_DATA;DataBlock:IDataBlock=nil);
+    function checkIdle:boolean;
     property Session:TZSession read FSession write SetSession;
     property RemoteAddress:string read GetRemoteAddress;
     property RemoteHost:string read GetRemoteHost;
@@ -182,6 +185,7 @@ type
 
     function LockClient(SessionId:Integer;WorkThread:TSocketWorkerThread):boolean;
     procedure CloseSocket(SessionId:Integer);
+    procedure IcopSocket(SessionId:Integer);
     procedure UnLockClient(SessionId:Integer;WorkThread:TSocketWorkerThread);
     //===========
     //数据队列处理
@@ -275,26 +279,27 @@ begin
     begin
       BytesTransd := 0;
       ASocket := nil;
-      Overlapped := nil;
+      Overlapped := nil;             
       try
         //查询IOCP状态（数据读写操作是否完成）
         if not GetQueuedCompletionStatus(siocp,BytesTransd,dword(ASocket),Overlapped, INFINITE) then
            begin
-              if Assigned(ASocket) then ASocket.Close; //只能关闭连接不能FREE对象，可能还有工作线程在使用它
+              if Assigned(ASocket) then SocketDispatcher.IcopSocket(Integer(ASocket)); //只能关闭连接不能FREE对象，可能还有工作线程在使用它
               continue;
            end;
            
-         if Cardinal(Overlapped) = SHUTDOWN_FLAG then
+         if Cardinal(Overlapped) = SHUTDOWN_FLAG then //强制关闭
            begin
-              if Assigned(ASocket) then ASocket.Close; //只能关闭连接不能FREE对象，可能还有工作线程在使用它
+              if Assigned(ASocket) then SocketDispatcher.IcopSocket(Integer(ASocket)); //只能关闭连接不能FREE对象，可能还有工作线程在使用它
               break;
            end;
 
-         if BytesTransd = 0  then
+         if BytesTransd = 0  then  //这种情况是SOCKET连接被关闭
            begin
-              if Assigned(ASocket) then ASocket.Close; //只能关闭连接不能FREE对象，可能还有工作线程在使用它
+              if Assigned(ASocket) then SocketDispatcher.IcopSocket(Integer(ASocket)); //只能关闭连接不能FREE对象，可能还有工作线程在使用它
               continue;
            end;
+           
           if ASocket.Connected then
              begin
                 try
@@ -303,14 +308,12 @@ begin
                      ASocket.WorkSend(Buf,BytesTransd)
                   else
                   if (Buf=ASocket.FRecvBuffer) then
-                     ASocket.WorkRecv(Buf,BytesTransd)
-                  else
-                     Raise Exception.Create('无效的数据请求');
+                     ASocket.WorkRecv(Buf,BytesTransd);
                 except
                   on E:Exception do
                   begin
                     try
-                      if Assigned(ASocket) then ASocket.Close; //只能关闭连接不能FREE对象，可能还有工作线程在使用它
+                      if Assigned(ASocket) then SocketDispatcher.IcopSocket(Integer(ASocket)); //只能关闭连接不能FREE对象，可能还有工作线程在使用它
                     finally
                       LogFile.AddLogFile(0,E.Message,'DispatcherThread','CallWork');
                     end;
@@ -320,8 +323,7 @@ begin
       except
         on E:Exception do
            begin
-             if not assigned(ASocket) then
-                LogFile.AddLogFile(0,E.Message,'DispatcherThread','Listen');
+             LogFile.AddLogFile(0,E.Message,'DispatcherThread','Listen');
            end;
       end;
     end;
@@ -408,7 +410,7 @@ begin
 //  if FSocket = INVALID_SOCKET then Exit;
   DataCache.Add(integer(ClientSocket),DataBlock);
   FWaitTime := DataCache.Wait;
-  if IsCallWorker then CallWorker(0);
+  if IsCallWorker and (DataBlock<>nil) then CallWorker(0);
 end;
 
 procedure TSocketDispatcher.AddClient(ASocket: TServerClientSocket);
@@ -597,23 +599,6 @@ begin
 
   Classes.DeallocateHWnd(FHandle);
   CloseAcceptThread;
-  List := WorkerPool.LockList;
-  try
-  while List.Count>0 do
-    begin
-      with TSocketWorkerThread(List.Last) do
-         begin
-           FreeOnTerminate := False;
-           Terminate;
-           SetEvent(FhEvent);
-           Waitfor;
-           free;
-           List.Remove(List.Last);
-         end;
-    end;
-  finally
-    WorkerPool.UnlockList;
-  end;
 
   DataCache.Clear;
   Lock;
@@ -626,6 +611,25 @@ begin
   finally
     UnLock;
   end;
+
+  List := WorkerPool.LockList;
+  try
+  while List.Count>0 do
+    begin
+      with TSocketWorkerThread(List.Last) do
+         begin
+           FreeOnTerminate := true;
+           Terminate;
+           SetEvent(FhEvent);
+           //Waitfor;
+           //free;
+           List.Remove(List.Last);
+         end;
+    end;
+  finally
+    WorkerPool.UnlockList;
+  end;
+
 //  if FListenThread<>nil then FListenThread.Free;
 end;
 
@@ -639,13 +643,12 @@ begin
     iocp := CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
     if iocp = 0 then
        raise ESocketError.Create(SysErrorMessage(GetLastError));
-
-    CreateAcceptThread;
-
     FSocket := WSASocket(PF_INET, SOCK_STREAM, IPPROTO_TCP, nil, 0, WSA_FLAG_OVERLAPPED);
     if FSocket = INVALID_SOCKET then
        raise ESocketError.Create(SysErrorMessage(GetLastError));
 
+    CreateAcceptThread;
+       
     FillChar(FAddr, SizeOf(FAddr), 0);
     FAddr.sin_family := AF_INET;
     FAddr.sin_port := htons(FPort);
@@ -705,7 +708,14 @@ begin
     DataCache.Delete(integer(ASocket));
     if SocketCache.IndexOf(Pointer(ASocket))>=0 then
        begin
+          //if not ASocket.checkIdle then
+          //   begin
+          //     DataCache.Add(integer(ASocket),nil);
+          //     Exit;
+          //   end;
           try
+            ASocket.WorkThread := nil;
+            ASocket.LockThread := false;
             ASocket.Free;
           finally
             SocketCache.Remove(Pointer(ASocket));
@@ -755,14 +765,9 @@ begin
   Lock;
   try
     result := nil;
-    for I := 0 to SocketCache.Count - 1 do
-    begin
-      if SessionId= integer(SocketCache[I]) then
-         begin
-           Result := TServerClientSocket(SocketCache[I]);
-           break;
-         end;
-    end;
+    i := SocketCache.IndexOf(Pointer(SessionId));
+    if i<0 then Exit;
+    result := TServerClientSocket(SocketCache[I])
   finally
     UnLock;
   end;
@@ -845,16 +850,28 @@ begin
   end;
 end;
 
+function TServerClientSocket.checkIdle: boolean;
+begin
+ result := FSendBuffer^.IOMode = IOIDLE;
+end;
+
 procedure TServerClientSocket.Close(locked:boolean=true);
 var
   skt: TSocket;
 begin
-  SocktLock.Enter;
+//  SocktLock.Enter;
   try
+    try
+      if locked and Assigned(Session) and Assigned(Session.dbResolver) then
+         Session.dbResolver.KillDbConnect;
+    except
+      on E:Exception do
+         LogFile.AddLogFile(0,E.Message,'TServerClientSocket','Close');
+    end;
     if (FSocket <> INVALID_SOCKET) then
     begin
-      RecvEnter;
-      SendEnter;
+//      RecvEnter;
+//      SendEnter;
       try
         skt := FSocket;
         FSocket := INVALID_SOCKET;
@@ -862,19 +879,12 @@ begin
         FRecvBuffer^.Buffer := nil;
         FSendBuffer^.Buffer := nil;
       finally
-        RecvLeave;
-        SendLeave;
+//        RecvLeave;
+//        SendLeave;
       end;
     end;
-    try
-      if Assigned(Session) and Assigned(Session.dbResolver) then
-         Session.dbResolver.KillDbConnect;
-    except
-      on E:Exception do
-         LogFile.AddLogFile(0,E.Message,'TServerClientSocket','Close');
-    end; 
   finally
-    SocktLock.Leave;
+//    SocktLock.Leave;
 //    SocketDispatcher.DataCache.Delete(Integer(self));
     if locked then SocketDispatcher.AddBlock(nil,self);
   end;
@@ -1055,25 +1065,34 @@ function TServerClientSocket.Send(const Data: IDataBlock;
   WaitForResult: Boolean): IDataBlock;
 begin
   if FSocket=INVALID_SOCKET then Raise Exception.Create('Send数据失败，客户端已经断开连接了.');
-  GZip.DataOut(Data);
-  SendEnter;
   try
-    while (FSendBuffer^.IOMode <> IOIDLE) do
+    GZip.DataOut(Data);
+    SendEnter;
+    try
+      while (FSendBuffer^.IOMode <> IOIDLE) do
+        begin
+          if FSocket=INVALID_SOCKET then Raise Exception.Create('Send数据失败，客户端已经断开连接了.');
+          WaitForSingleObject(FhEvent, 50);
+        end;
+    finally
+      SendLeave;
+    end;
+    SendEnter;
+    try
+      FSendBuffer^.Buffer := nil;
+      ZeroMemory(FSendBuffer,sizeof(PER_IO_OPERATION_DATA));
+      FSendBuffer^.IOMode := IOSendBytesReserved;
+      WriteBuffer(FSendBuffer,Data);
+    finally
+      SendLeave;
+    end;
+  except
+    on E:Exception do
       begin
-        if FSocket=INVALID_SOCKET then Raise Exception.Create('Send数据失败，客户端已经断开连接了.');
-        WaitForSingleObject(FhEvent, 50);
+        FSendBuffer^.IOMode := IOIDLE;
+        LogFile.AddLogFile(0,'<Send>'+E.Message,'TDoInvokeDispatch.DoInvoke');
+        Raise;
       end;
-  finally
-    SendLeave;
-  end;
-  SendEnter;
-  try
-    FSendBuffer^.Buffer := nil;
-    ZeroMemory(FSendBuffer,sizeof(PER_IO_OPERATION_DATA));
-    FSendBuffer^.IOMode := IOSendBytesReserved;
-    WriteBuffer(FSendBuffer,Data);
-  finally
-    SendLeave;
   end;
 end;
 
@@ -1205,6 +1224,8 @@ begin
          4:s := 'IOMode=IOSend';
          end;
          s := s+';StreamLen='+Inttostr(IOData^.StreamLen)+';BytesReaded='+inttostr(BytesReaded);
+         IOData^.Buffer := nil;
+         IOData^.IOMode := IOIDLE;
          raise ESocketConnectionError.Create('无效数据包'+s);
        end;
   finally
@@ -1245,6 +1266,7 @@ begin
       ErrCode := WSAGetLastError;
       if (ErrCode <> WSAEWOULDBLOCK) and (ErrCode <> ERROR_IO_PENDING) then
       begin
+         IOData^.IOMode := IOIDLE;
          IOData^.Buffer := nil;
          raise ESocketError.CreateFmt(SWindowsSocketError,[SysErrorMessage(ErrCode), ErrCode, 'WSASend n='+inttostr(IOData^.StreamLen)]);
       end;
@@ -1310,15 +1332,15 @@ begin
                     except
                        on E:Exception do
                        begin
-                         try
-                           LogFile.AddLogFile(0,'<'+inttostr(sdb.SessionId)+'>未知异常强行关闭客户端，错误:'+E.Message,'WorkerThread','InterpretData');
-                           SocketDispatcher.CloseSocket(sdb^.SessionId);
-                         finally
-                         end;
+                         LogFile.AddLogFile(0,'<'+inttostr(sdb.SessionId)+'>未知异常强行关闭客户端，错误:'+E.Message,'WorkerThread','InterpretData');
+                         SocketDispatcher.CloseSocket(sdb^.SessionId);
                        end;
                     end;
                  finally
-                    SocketDispatcher.UnLockClient(sdb.SessionId,self);
+                    if sdb^.Data = nil then
+                       SocketDispatcher.RemoveClient(TServerClientSocket(sdb^.SessionId))
+                    else
+                       SocketDispatcher.UnLockClient(sdb.SessionId,self);
                  end;
               end
               else //客户端忙，等待处理
@@ -1336,9 +1358,9 @@ begin
       finally
         FWorking := false;
       end;
-      WaitForSingleObject(FhEvent, 50);
       if not Terminated then
          begin
+           WaitForSingleObject(FhEvent, 50);
            ResetEvent(FhEvent);
          end;
     end;
@@ -1376,30 +1398,30 @@ begin
   Lock;
   try
      try
-        if SocketCache.IndexOf(Pointer(SessionId))<0 then
-           begin
-             DataCache.Delete(SessionId);
-             exit;
-           end;
-        if (TServerClientSocket(SessionId).Connected) then
-            begin
+        //if SocketCache.IndexOf(Pointer(SessionId))<0 then
+        //   begin
+        //     DataCache.Delete(SessionId);
+        //     exit;
+        //   end;
+        //if (TServerClientSocket(SessionId).Connected) then
+        //    begin
               TServerClientSocket(SessionId).LockThread := false;
               TServerClientSocket(SessionId).WorkThread := nil;
-            end
-        else
-          begin
-            DataCache.Delete(SessionId);
-            if TServerClientSocket(SessionId).LockThread and (TServerClientSocket(SessionId).WorkThread<>WorkThread) then
-               begin
-                 AddBlock(nil,TServerClientSocket(SessionId),false);
-                 Exit;
-               end;
-            try
-              TServerClientSocket(SessionId).Free;
-            finally
-              SocketCache.Remove(Pointer(SessionId));
-            end;
-          end;
+        //    end
+        //else
+        //  begin
+            //DataCache.Delete(SessionId);
+            //if TServerClientSocket(SessionId).LockThread and (TServerClientSocket(SessionId).WorkThread<>WorkThread) then
+            //   begin
+            //     AddBlock(nil,TServerClientSocket(SessionId),false);
+            //     Exit;
+            //   end;
+            //try
+            //  TServerClientSocket(SessionId).Free;
+            //finally
+            //  SocketCache.Remove(Pointer(SessionId));
+            //end;
+        //  end;
      except
         on E:Exception do
            LogFile.AddLogFile(0,E.Message,'SocketDispatcher','UnLockClient');
@@ -1426,12 +1448,38 @@ var
 begin
   Lock;
   try
-    if SocketCache.IndexOf(Pointer(SessionId))<0 then exit;
+    if SocketCache.IndexOf(Pointer(SessionId))<0 then
+       exit;
     try
        TServerClientSocket(SessionId).Close(false);
     except
        on E:Exception do
-          LogFile.AddLogFile(0,E.Message,'SocketDispatcher','CloseSocket');
+         begin
+           LogFile.AddLogFile(0,'<CloseSocket>'+E.Message,'SocketDispatcher','CloseSocket');
+           //Raise;
+         end;
+    end;
+  finally
+    UnLock;
+  end;
+end;
+
+procedure TSocketDispatcher.IcopSocket(SessionId: Integer);
+var
+  i:integer;
+begin
+  Lock;
+  try
+    if SocketCache.IndexOf(Pointer(SessionId))<0 then
+       exit;
+    try
+       TServerClientSocket(SessionId).Close(True);
+    except
+       on E:Exception do
+         begin
+           LogFile.AddLogFile(0,'<CloseSocket>'+E.Message,'SocketDispatcher','CloseSocket');
+           //Raise;
+         end;
     end;
   finally
     UnLock;

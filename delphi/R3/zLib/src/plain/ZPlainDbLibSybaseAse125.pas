@@ -57,7 +57,7 @@ interface
 
 {$I ZPlain.inc}
 
-uses Classes, ZCompatibility, ZPlainLoader, ZPlainDbLibDriver;
+uses Classes, ZCompatibility,Windows, ZPlainLoader, ZDbcDbLib, ZPlainDbLibDriver;
 
 const
   WINDOWS_DLL_LOCATION = 'libsybdb.dll';
@@ -470,16 +470,21 @@ function ErrorHandle(Proc: PDBPROCESS; Severity, DbErr, OsErr: Integer;
 var
   SybaseError: PDBLibError;
 begin
-  New(SybaseError);
-  SybaseError.dbProc := Proc;
-  SybaseError.Severity := Severity;
-  SybaseError.DbErr := DbErr;
-  SybaseError.OsErr := OsErr;
-  SybaseError.DbErrStr := DbErrStr;
-  SybaseError.OsErrStr := OsErrStr;
-  SybaseErrors.Add(SybaseError);
+  EnterCriticalSection(DBLibLock);
+  try
+    New(SybaseError);
+    SybaseError.dbProc := Proc;
+    SybaseError.Severity := Severity;
+    SybaseError.DbErr := DbErr;
+    SybaseError.OsErr := OsErr;
+    SybaseError.DbErrStr := DbErrStr;
+    SybaseError.OsErrStr := OsErrStr;
+    SybaseErrors.Add(SybaseError);
 
-  Result := INT_CANCEL;
+    Result := INT_CANCEL;
+  finally
+    LeaveCriticalSection(DBLibLock);
+  end;
 end;
 
 { Handle sql server messages }
@@ -488,18 +493,23 @@ function MessageHandle(Proc: PDBPROCESS; MsgNo: DBINT; MsgState, Severity: Integ
 var
   SybaseMessage: PDBLibMessage;
 begin
-  New(SybaseMessage);
-  SybaseMessage.dbProc := Proc;
-  SybaseMessage.MsgNo := MsgNo;
-  SybaseMessage.MsgState := MsgState;
-  SybaseMessage.Severity := Severity;
-  SybaseMessage.MsgText := MsgText;
-  SybaseMessage.SrvName := SrvName;
-  SybaseMessage.ProcName := ProcName;
-  SybaseMessage.Line := Line;
-  SybaseMessages.Add(SybaseMessage);
+  EnterCriticalSection(DBLibLock);
+  try
+    New(SybaseMessage);
+    SybaseMessage.dbProc := Proc;
+    SybaseMessage.MsgNo := MsgNo;
+    SybaseMessage.MsgState := MsgState;
+    SybaseMessage.Severity := Severity;
+    SybaseMessage.MsgText := MsgText;
+    SybaseMessage.SrvName := SrvName;
+    SybaseMessage.ProcName := ProcName;
+    SybaseMessage.Line := Line;
+    SybaseMessages.Add(SybaseMessage);
 
-  Result := 0;
+    Result := 0;
+  finally
+    LeaveCriticalSection(DBLibLock);
+  end;
 end;
 
 function DBSETLHOST(Login: PLOGINREC; ClientHost: PChar): RETCODE;

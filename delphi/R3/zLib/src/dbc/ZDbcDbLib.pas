@@ -66,7 +66,7 @@ uses
     Comobj,
   {$ENDIF}
 {$ENDIF}
-  Classes, ZDbcConnection, ZDbcIntfs, ZCompatibility, ZDbcLogging,
+  Classes,Windows, ZDbcConnection, ZDbcIntfs, ZCompatibility, ZDbcLogging,
   ZPlainDbLibDriver, ZTokenizer, ZGenericSqlAnalyser;
 
 type
@@ -100,6 +100,8 @@ type
   {** Implements a generic DBLib Connection. }
   TZDBLibConnection = class(TZAbstractConnection, IZDBLibConnection)
   private
+    procedure Enter;
+    procedure Leave;
     procedure ReStartTransactionSupport;
     procedure InternalSetTransactionIsolation(Level: TZTransactIsolationLevel);
   protected
@@ -147,6 +149,7 @@ type
 var
   {** The common driver manager object. }
   DBLibDriver: IZDriver;
+  DBLibLock: TRTLCriticalSection;
 
 implementation
 
@@ -397,14 +400,19 @@ end;
 
 procedure TZDBLibConnection.CheckDBLibError(LogCategory: TZLoggingCategory; const LogMessage: string);
 begin
+  Enter;
   try
-    FPlainDriver.CheckError;
-  except
-    on E: Exception do
-    begin
-      DriverManager.LogError(LogCategory, FPlainDriver.GetProtocol, LogMessage, 0, E.Message);
-      raise;
+    try
+      FPlainDriver.CheckError;
+    except
+      on E: Exception do
+      begin
+        DriverManager.LogError(LogCategory, FPlainDriver.GetProtocol, LogMessage, 0, E.Message);
+        raise;
+      end;
     end;
+  finally
+    Leave;
   end;
 end;
 
@@ -752,11 +760,25 @@ procedure TZDBLibConnection.ClearWarnings;
 begin
 end;
 
+procedure TZDBLibConnection.Enter;
+begin
+  EnterCriticalSection(DBLibLock);
+
+end;
+
+procedure TZDBLibConnection.Leave;
+begin
+  LeaveCriticalSection(DBLibLock);
+
+end;
+
 initialization
   DBLibDriver := TZDBLibDriver.Create;
   DriverManager.RegisterDriver(DBLibDriver);
+  InitializeCriticalSection(DBLibLock);
 finalization
   if Assigned(DriverManager) then
     DriverManager.DeregisterDriver(DBLibDriver);
   DBLibDriver := nil;
+  DeleteCriticalSection(DBLibLock);
 end.

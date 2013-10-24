@@ -1210,8 +1210,7 @@ begin
     MSSqlMessages.Delete(0);
   end;
   MSSqlMessages.Clear;
-  if S <> '' then
-    raise Exception.Create(S);
+  if S <> '' then    raise Exception.Create(S);
 end;
 
 

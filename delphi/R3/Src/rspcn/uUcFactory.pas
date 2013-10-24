@@ -514,7 +514,6 @@ begin
             end;
        end
     else Raise Exception.Create('获取应用服务器配置信息失败，返回xml无效...');
-
   except
     LogFile.AddLogFile(0,'获取应用服务器配置信息失败,url='+url);
     Raise;
@@ -524,12 +523,12 @@ end;
 function TUcFactory.getDBConfig(username, connstr: string): boolean;
 var
   i:integer;
-  rs:TZQuery;
+  rs,us:TZQuery;
   db,r3:TIniFile;
   remote:TdbFactory;
   isSrvr,finded:boolean;
   paramsList:TStringList;
-  str,defStr,dbId,srvrId,defSrvrId,shopId,tenantId:string;
+  CheckShopId,str,defStr,dbId,srvrId,defSrvrId,shopId,tenantId:string;
 begin
   if connstr = '' then Raise Exception.Create('获取连接配置失败...');
 
@@ -545,26 +544,51 @@ begin
       '        b.SHOP_ID,b.SHOP_NAME, '+
       '        c.PROD_ID,c.PROD_NAME,c.PROD_FLAG,c.INDUSTRY,c.RES_VERSION,c.RES_DESKTOP,c.PROD_PARAMS, '+
       '        d.DB_ID, '+
-      '        f.SRVR_ID,f.SRVR_NAME,f.CONN_MODE,f.HOST_NAME,f.SRVR_PORT,f.SRVR_PATH,f.SRVR_STATUS '+
-      ' from   CA_TENANT a,CA_SHOP_INFO b,CA_PROD_INFO c, '+
-      '        CA_DB_INFO d,CA_DB_TO_SRVR e,CA_SERVER_INFO f '+
-      ' where  a.TENANT_ID = b.TENANT_ID '+
-      '        and a.PROD_ID = c.PROD_ID '+
-      '        and a.DB_ID = d.DB_ID '+
-      '        and d.DB_ID = e.DB_ID '+
-      '        and e.SRVR_ID = f.SRVR_ID '+
-      '        and b.XSM_CODE in (:UPPER_XSM_CODE,:LOWER_XSM_CODE) '+
-      '        and a.COMM not in (''02'',''12'') '+
-      '        and b.COMM not in (''02'',''12'') '+
-      '        and c.COMM not in (''02'',''12'') '+
-      '        and d.COMM not in (''02'',''12'') '+
-      '        and e.COMM not in (''02'',''12'') '+
-      '        and f.COMM not in (''02'',''12'') '+
+      '        d.SRVR_ID,d.SRVR_NAME,d.CONN_MODE,d.HOST_NAME,d.SRVR_PORT,d.SRVR_PATH,d.SRVR_STATUS, '+
+      '        a.COMM COMM_1,b.COMM COMM_2 '+
+      ' from   CA_SHOP_INFO b '+
+      '        inner join CA_TENANT a on a.TENANT_ID = b.TENANT_ID '+
+      '        left  join CA_PROD_INFO c on a.PROD_ID = c.PROD_ID and c.COMM not in (''02'',''12'') '+
+      '        left  join '+
+      '        ( '+
+      '          select a.DB_ID,c.SRVR_ID,c.SRVR_NAME,c.CONN_MODE,c.HOST_NAME,c.SRVR_PORT,c.SRVR_PATH,c.SRVR_STATUS '+
+      '          from   CA_DB_INFO a,CA_DB_TO_SRVR b,CA_SERVER_INFO c '+
+      '          where  a.DB_ID = b.DB_ID and b.SRVR_ID = c.SRVR_ID and a.COMM not in (''02'',''12'') and b.COMM not in (''02'',''12'') and c.COMM not in (''02'',''12'') '+
+      '         ) d  on a.DB_ID = d.DB_ID '+
+      ' where  b.XSM_CODE in (:UPPER_XSM_CODE,:LOWER_XSM_CODE) '+
       ' order by b.SHOP_ID ';
     rs.ParamByName('UPPER_XSM_CODE').AsString := UpperCase(username);
     rs.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(username);
     remote.Open(rs);
+
     if rs.IsEmpty then Raise Exception.Create('错误的登录名...');
+    if (Copy(rs.FieldByName('COMM_1').AsString,2,1) = '2') or (Copy(rs.FieldByName('COMM_2').AsString,2,1) = '2') then Raise Exception.Create('该用户已注销...');
+    if rs.FieldByName('PROD_ID').AsString = '' then Raise Exception.Create('该用户尚未分配产品信息...');
+    if rs.FieldByName('DEF_SRVR_ID').AsString = '' then Raise Exception.Create('该用户尚未分配默认应用服务器信息...');
+    if rs.FieldByName('DB_ID').AsString = '' then Raise Exception.Create('该用户尚未分配数据库服务器信息...');
+
+    rs.First;
+    CheckShopId := rs.FieldByName('SHOP_ID').AsString;
+    while not rs.Eof do
+      begin
+        if CheckShopId <> rs.FieldByName('SHOP_ID').AsString then Raise Exception.Create('重复的登录名...');
+        rs.Next;
+      end;
+    rs.First;
+
+    us := TZQuery.Create(nil);
+    try
+      us.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
+      dataFactory.sqlite.Open(us);
+      if not us.IsEmpty then
+         begin
+           if us.Fields[0].AsInteger <> rs.FieldByName('TENANT_ID').AsInteger then
+              Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员...');
+         end;
+    finally
+      us.Free;
+    end;    
+
     srvrId := db.readString('db','srvrId','');
     defSrvrId := rs.FieldbyName('DEF_SRVR_ID').AsString;
     tenantId := rs.FieldbyName('TENANT_ID').AsString;

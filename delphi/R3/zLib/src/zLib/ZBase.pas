@@ -1382,7 +1382,7 @@ begin
         ftLargeint:
            begin
              ss.Read(p6,sizeof(p6));
-             param.asString := inttostr(p6);
+             param.Value := p6;
            end;
         ftFMTBcd:
            begin

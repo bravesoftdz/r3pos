@@ -2348,8 +2348,10 @@ begin
     F.Free;
   end;
   myVersion := '0.0.0.0';
-  CaUpgrade := CheckUpgrade(token.tenantId,ProductId,myVersion);
-  //CaUpgrade.URL := 'http://www.24hsc.cn/update';
+  if dllGlobal.AuthMode = 2 then
+     CaUpgrade := CheckUpgrade(token.tenantId,ProductId,myVersion)
+  else
+     CaUpgrade := rspFactory.CheckUpgrade(token.tenantId,ProductId,myVersion);
   if CaUpgrade.URL='' then Exit;
   url := TStringList.Create;
   try

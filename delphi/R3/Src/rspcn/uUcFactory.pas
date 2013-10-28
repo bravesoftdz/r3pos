@@ -91,7 +91,7 @@ var UcFactory: TUcFactory;
 
 implementation
 
-uses udataFactory,uTokenFactory;
+uses udataFactory,uTokenFactory,uDLLFactory;
 
 {$R *.dfm}
 
@@ -467,6 +467,7 @@ var
   Params:TftParamList;
   msg:string;
 begin
+  if not dllFactory.getTokenInfo then Raise Exception.Create('读取用户信息失败，请重新登录...');
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);

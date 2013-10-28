@@ -205,8 +205,7 @@ type
     procedure HideGodsCode;
     procedure ShowGodsCode;
     procedure upgrade(var Message: TMessage); message WM_CHECK_BARCODE;
-    function CheckUpgrade(tenantId, prodId,
-      CurVeraion: string): TCaUpgrade;
+    function  CheckUpgrade(tenantId, prodId, CurVeraion: string): TCaUpgrade;
   public
     AObj:TRecord_;
     FLocalFinded:boolean;
@@ -2200,6 +2199,11 @@ function TfrmInitGoods.BarcodeFactory(rs: TZQuery;code:string): boolean;
 var
   db:TdbFactory;
 begin
+  if not FileExists(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\barcode.db') then
+     begin
+       result := false;
+       Exit;
+     end;
   db := TdbFactory.Create;
   try
     db.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(Application.ExeName))+'data\barcode.db');
@@ -2300,37 +2304,42 @@ end;
 function TfrmInitGoods.CheckUpgrade(tenantId, prodId, CurVeraion: string): TCaUpgrade;
 var rs:TZQuery;
 begin
-  if not token.online then Exit;
-  rs := TZQuery.Create(nil);
-  dataFactory.MoveToRemote;
-  try
-    rs.SQL.Text :=
-      ' select  A.VERSION_ID,A.PROD_ID,A.UPGRADE_VERSION,A.SRVR_ID,A.VERSION_STATUS,A.UPGRADE_FLAG,A.UPGRADE_RANGE,A.UPGRADE_URL '+
-      ' from    CA_UPGRADE_VERSION A,CA_TENANT B '+
-      ' where   A.PROD_ID = :PROD_ID '+
-      '         AND A.SRVR_ID = B.SRVR_ID '+
-      '         AND B.TENANT_ID = :TENANT_ID '+
-      '         AND UPGRADE_VERSION > :CUR_VERSION '+
-      '         AND A.VERSION_STATUS = ''2'' '+
-      '         AND A.COMM NOT IN (''02'',''12'') '+
-      ' order by VERSION_ID DESC ';
-    rs.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
-    rs.ParamByName('CUR_VERSION').AsString := CurVeraion;
-    rs.ParamByName('PROD_ID').AsString := prodId;
-    dataFactory.Open(rs);
-    if rs.IsEmpty then
-       result.UpGrade := 3
-    else
-       begin
-         rs.First;
-         result.UpGrade := rs.FieldByName('UPGRADE_FLAG').AsInteger;
-         result.URL := rs.FieldByName('UPGRADE_URL').AsString;
-         result.Version := rs.FieldByName('UPGRADE_VERSION').AsString;
+  if dllGlobal.AuthMode <> 2 then
+     result := rspFactory.CheckUpgrade(tenantId, prodId, CurVeraion)
+  else
+     begin
+       if not token.online then Exit;
+       rs := TZQuery.Create(nil);
+       dataFactory.MoveToRemote;
+       try
+         rs.SQL.Text :=
+           ' select  A.VERSION_ID,A.PROD_ID,A.UPGRADE_VERSION,A.SRVR_ID,A.VERSION_STATUS,A.UPGRADE_FLAG,A.UPGRADE_RANGE,A.UPGRADE_URL '+
+           ' from    CA_UPGRADE_VERSION A,CA_TENANT B '+
+           ' where   A.PROD_ID = :PROD_ID '+
+           '         AND A.SRVR_ID = B.SRVR_ID '+
+           '         AND B.TENANT_ID = :TENANT_ID '+
+           '         AND UPGRADE_VERSION > :CUR_VERSION '+
+           '         AND A.VERSION_STATUS = ''2'' '+
+           '         AND A.COMM NOT IN (''02'',''12'') '+
+           ' order by VERSION_ID DESC ';
+         rs.ParamByName('TENANT_ID').AsInteger := strtoint(tenantId);
+         rs.ParamByName('CUR_VERSION').AsString := CurVeraion;
+         rs.ParamByName('PROD_ID').AsString := prodId;
+         dataFactory.Open(rs);
+         if rs.IsEmpty then
+            result.UpGrade := 3
+         else
+            begin
+              rs.First;
+              result.UpGrade := rs.FieldByName('UPGRADE_FLAG').AsInteger;
+              result.URL := rs.FieldByName('UPGRADE_URL').AsString;
+              result.Version := rs.FieldByName('UPGRADE_VERSION').AsString;
+            end;
+       finally
+         dataFactory.MoveToDefault;
+         rs.Free;
        end;
-  finally
-    dataFactory.MoveToDefault;
-    rs.Free;
-  end;
+     end;
 end;
 
 function TfrmInitGoods.checkBarcode: boolean;
@@ -2348,10 +2357,7 @@ begin
     F.Free;
   end;
   myVersion := '0.0.0.0';
-  if dllGlobal.AuthMode = 2 then
-     CaUpgrade := CheckUpgrade(token.tenantId,ProductId,myVersion)
-  else
-     CaUpgrade := rspFactory.CheckUpgrade(token.tenantId,ProductId,myVersion);
+  CaUpgrade := CheckUpgrade(token.tenantId,ProductId,myVersion);
   if CaUpgrade.URL='' then Exit;
   url := TStringList.Create;
   try

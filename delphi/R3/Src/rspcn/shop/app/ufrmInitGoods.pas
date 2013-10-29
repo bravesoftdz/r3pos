@@ -1715,7 +1715,7 @@ begin
     begin
       cdsUnits.Append;
       tmpObj.ReadFromDataSet(rs);
-      tmpObj.WriteToDataSet(cdsUnits);
+      tmpObj.WriteToDataSet(cdsUnits,false);
       rs.Next;
     end;
   finally

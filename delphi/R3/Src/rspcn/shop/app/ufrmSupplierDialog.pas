@@ -231,7 +231,7 @@ begin
       end;
       if tmpQuery.IsEmpty then tmpQuery.Append else tmpQuery.Edit;
       tmpObj.ReadFromDataSet(cdsSupplier);
-      tmpObj.WriteToDataSet(tmpQuery);
+      tmpObj.WriteToDataSet(tmpQuery,false);
       dataFactory.BeginBatch;
       try
         dataFactory.AddBatch(tmpQuery,'TSupplierV60',nil);

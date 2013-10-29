@@ -583,7 +583,7 @@ begin
               tmpObj := TRecord_.Create;
               try
                 tmpObj.ReadFromDataSet(tmpTenant);
-                tmpObj.WriteToDataSet(cdsTenant);
+                tmpObj.WriteToDataSet(cdsTenant,false);
               finally
                 tmpObj.Free;
               end;
@@ -592,7 +592,7 @@ begin
               tmpObj := TRecord_.Create;
               try
                 tmpObj.ReadFromDataSet(tmpShopInfo);
-                tmpObj.WriteToDataSet(cdsShopInfo);
+                tmpObj.WriteToDataSet(cdsShopInfo,false);
               finally
                 tmpObj.Free;
               end;
@@ -871,7 +871,7 @@ begin
         if tmpTenant.IsEmpty then tmpTenant.Append
         else tmpTenant.Edit;
         tmpObj.ReadFromDataSet(cdsTenant);
-        tmpObj.WriteToDataSet(tmpTenant);
+        tmpObj.WriteToDataSet(tmpTenant,false);
       finally
         tmpObj.Free;
       end;
@@ -881,7 +881,7 @@ begin
         if tmpShopInfo.IsEmpty then tmpShopInfo.Append
         else tmpShopInfo.Edit;
         tmpObj.ReadFromDataSet(cdsShopInfo);
-        tmpObj.WriteToDataSet(tmpShopInfo);
+        tmpObj.WriteToDataSet(tmpShopInfo,false);
       finally
         tmpObj.Free;
       end;

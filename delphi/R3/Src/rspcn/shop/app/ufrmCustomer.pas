@@ -942,7 +942,7 @@ begin
       end;
       if tmpCustomer.IsEmpty then tmpCustomer.Append else tmpCustomer.Edit;
       tmpObj.ReadFromDataSet(cdsCustomer);
-      tmpObj.WriteToDataSet(tmpCustomer);
+      tmpObj.WriteToDataSet(tmpCustomer,false);
       dataFactory.BeginBatch;
       try
         dataFactory.AddBatch(tmpCustomer,'TCustomerV60',nil);

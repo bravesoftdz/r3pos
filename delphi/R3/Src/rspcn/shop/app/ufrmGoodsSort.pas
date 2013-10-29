@@ -156,7 +156,7 @@ begin
        if tmpSort.IsEmpty then tmpSort.Append else tmpSort.Edit;
 
        tmpObj.ReadFromDataSet(cdsSort);
-       tmpObj.WriteToDataSet(tmpSort);
+       tmpObj.WriteToDataSet(tmpSort,false);
 
        dataFactory.UpdateBatch(tmpSort,'TGoodsSortV60');
      finally

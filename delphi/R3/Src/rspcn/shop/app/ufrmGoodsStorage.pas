@@ -1947,7 +1947,7 @@ begin
     try
       if tmpGoodsInfo.IsEmpty then tmpGoodsInfo.Append else tmpGoodsInfo.Edit;
       tmpObj.ReadFromDataSet(cdsGoodsInfo);
-      tmpObj.WriteToDataSet(tmpGoodsInfo);
+      tmpObj.WriteToDataSet(tmpGoodsInfo,false);
     finally
       tmpObj.Free;
     end;
@@ -1956,7 +1956,7 @@ begin
     try
       if tmpGoodsExt.IsEmpty then tmpGoodsExt.Append else tmpGoodsExt.Edit;
       tmpObj.ReadFromDataSet(cdsGoodsExt);
-      tmpObj.WriteToDataSet(tmpGoodsExt);
+      tmpObj.WriteToDataSet(tmpGoodsExt,false);
     finally
       tmpObj.Free;
     end;
@@ -1967,7 +1967,7 @@ begin
       try
         if tmpGoodsRelation.IsEmpty then tmpGoodsRelation.Append else tmpGoodsRelation.Edit;
         tmpObj.ReadFromDataSet(cdsGodsRelation);
-        tmpObj.WriteToDataSet(tmpGoodsRelation);
+        tmpObj.WriteToDataSet(tmpGoodsRelation,false);
       finally
         tmpObj.Free;
       end;
@@ -1982,7 +1982,7 @@ begin
            else
               tmpBarCode.Append;
            tmpObj.ReadFromDataSet(cdsBarCode);
-           tmpObj.WriteToDataSet(tmpBarCode);
+           tmpObj.WriteToDataSet(tmpBarCode,false);
          end
       else
          begin
@@ -1997,7 +1997,7 @@ begin
            else
               tmpBarCode.Append;
            tmpObj.ReadFromDataSet(cdsBarCode);
-           tmpObj.WriteToDataSet(tmpBarCode);
+           tmpObj.WriteToDataSet(tmpBarCode,false);
          end
       else
          begin
@@ -2012,7 +2012,7 @@ begin
            else
               tmpBarCode.Append;
            tmpObj.ReadFromDataSet(cdsBarCode);
-           tmpObj.WriteToDataSet(tmpBarCode);
+           tmpObj.WriteToDataSet(tmpBarCode,false);
          end
       else
          begin
@@ -2032,7 +2032,7 @@ begin
            else
               tmpGoodsPrice.Append;
            tmpObj.ReadFromDataSet(cdsGoodsPrice);
-           tmpObj.WriteToDataSet(tmpGoodsPrice);
+           tmpObj.WriteToDataSet(tmpGoodsPrice,false);
          end
       else
          begin

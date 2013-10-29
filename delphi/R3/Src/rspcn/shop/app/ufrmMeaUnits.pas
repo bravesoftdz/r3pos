@@ -125,7 +125,7 @@ begin
        if tmpUnits.IsEmpty then tmpUnits.Append else tmpUnits.Edit;
 
        tmpObj.ReadFromDataSet(cdsUnits);
-       tmpObj.WriteToDataSet(tmpUnits);
+       tmpObj.WriteToDataSet(tmpUnits,false);
 
        dataFactory.UpdateBatch(tmpUnits,'TMeaUnitsV60');
      finally

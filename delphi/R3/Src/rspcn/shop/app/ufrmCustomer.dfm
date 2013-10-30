@@ -3838,6 +3838,7 @@ inherited frmCustomer: TfrmCustomer
     PageHeader.Font.Name = #23435#20307
     PageHeader.Font.Style = [fsBold]
     Units = MM
+    ParamsFile = 'Seting.Ini'
     Left = 112
     Top = 208
     BeforeGridText_Data = {

@@ -588,6 +588,11 @@ begin
   inherited;
   SaveInfo;
   EditPanel.Visible := false;
+  if dbState=dsInsert then
+  begin
+    open;
+    cdsList.Locate('CUST_ID',AObj.FieldbyName('CUST_ID').AsString,[]);
+  end;
 end;
 
 procedure TfrmCustomer.RzBmpButton5Click(Sender: TObject);
@@ -832,6 +837,7 @@ begin
        unDeleteInfo(cdsList.FieldbyName('CUST_ID').AsString);
        cdsList.Delete;
      end;
+  EditPanel.Visible := false;
 end;
 
 procedure TfrmCustomer.btnNewSortClick(Sender: TObject);

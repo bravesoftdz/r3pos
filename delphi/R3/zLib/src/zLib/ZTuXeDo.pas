@@ -1139,6 +1139,7 @@ begin
   try
     errno := gettperrno;
     s := StrPas(tpstrerror(errno));
+    if (Pos(lowercase('Cannot open message catalog LIBWSC_CAT'),lowercase(s))>0) then _dbLock := false;
   except
     Raise Exception.Create('读取tperrno错误信息失败');
   end;
@@ -1290,6 +1291,7 @@ begin
       //if CheckRaiseError(LTickCount) then //检测网络断开重连接在执行1次
       //begin
       //  if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
+        _dbLock := false;
         RaiseError;
       //end;
     end;

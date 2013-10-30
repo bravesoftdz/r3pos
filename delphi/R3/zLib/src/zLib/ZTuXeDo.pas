@@ -1223,7 +1223,11 @@ begin
   ClearBuf;
   ms := TMemoryStream.Create;
   try
-    if not _dbLock and (tpinit(nil) = -1) then RaiseError;
+    if not _dbLock then
+       begin
+         tpterm();
+         if (tpinit(nil) = -1) then RaiseError;
+       end;
     coEncode(coPacket,ms);
     sendlen := ms.Size;
     sendbuf := tpalloc('CARRAY', nil, sendlen+1);
@@ -1264,7 +1268,11 @@ begin
   ClearBuf;
   ms := TMemoryStream.Create;
   try
-    if not _dbLock and (tpinit(nil) = -1) then RaiseError;
+    if not _dbLock then
+       begin
+         tpterm();
+         if (tpinit(nil) = -1) then RaiseError;
+       end;
     for i:=0 to coList.Count -1 do
         coEncode(PftPacked(coList[i]),ms);
     sendlen := ms.Size;
@@ -1282,7 +1290,7 @@ begin
       //if CheckRaiseError(LTickCount) then //检测网络断开重连接在执行1次
       //begin
       //  if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
-          RaiseError;
+        RaiseError;
       //end;
     end;
   finally

@@ -144,6 +144,8 @@ type
     edtSHOP_NEW_OUTPRICE2: TcxTextEdit;
     RzPanel14: TRzPanel;
     edtSHOP_NEW_OUTPRICE: TcxTextEdit;
+    N2: TMenuItem;
+    N6: TMenuItem;
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -191,6 +193,8 @@ type
     procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
     procedure edtSMALLTO_CALCPropertiesChange(Sender: TObject);
     procedure edtBIGTO_CALCPropertiesChange(Sender: TObject);
+    procedure N6Click(Sender: TObject);
+    procedure edtCALC_UNITSAddClick(Sender: TObject);
   private
     ESortId:string;
     FSortId:string;
@@ -212,6 +216,7 @@ type
     procedure SaveChangeOrder(rs: TZQuery);
     procedure RefreshMeaUnits;
     procedure SetShopOutPricePlace;
+    procedure AddUnits(Sender: TObject);
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
@@ -229,7 +234,7 @@ implementation
 
 uses ufrmSortDropFrom,udllDsUtil,udllCtrlUtil,uFnUtil,udllGlobal,udataFactory,
      udllShopUtil,utokenFactory,uSyncFactory,ufrmGoodsSort,ufrmInitGoods,ufrmMemberPrice,
-     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview,ufrmClearStorage,ufrmStorageExcel;
+     ufrmGoodsExcel,ufrmPriceExcel,ufrmDBGridPreview,ufrmClearStorage,ufrmStorageExcel,ufrmMeaUnits;
 
 {$R *.dfm}
 
@@ -2479,6 +2484,46 @@ begin
       edtBK_SHOW_NEW_OUTPRICE.Width:=218;
       RzPanel9.Left:=520;
     end;
+end;
+
+procedure TfrmGoodsStorage.N6Click(Sender: TObject);
+var SObj:TRecord_;
+begin
+  inherited;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if (SObj = nil)
+     or
+     (SObj.FieldByName('RELATION_ID').AsInteger <> 0)
+     or
+     (SObj.FieldByName('SORT_ID').AsString = '#') then
+     Raise Exception.Create('不允许添加非自经营商品单位...');
+
+  AddUnits(Sender);
+end;
+
+procedure TfrmGoodsStorage.AddUnits(Sender: TObject);
+var AObj,SObj:TRecord_;
+begin 
+  AObj := TRecord_.Create;
+  try
+    if TfrmMeaUnits.ShowDialog(self,'',AObj) then
+       begin
+         dllGlobal.Refresh('PUB_MEAUNITS');
+         if Sender is TzrComboBoxList then
+         begin
+           TzrComboBoxList(Sender).KeyValue := AObj.FieldByName('UNIT_ID').AsString;
+           TzrComboBoxList(Sender).Text := AObj.FieldByName('UNIT_NAME').AsString;
+         end;
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmGoodsStorage.edtCALC_UNITSAddClick(Sender: TObject);
+begin
+  inherited;
+  AddUnits(Sender);
 end;
 
 initialization

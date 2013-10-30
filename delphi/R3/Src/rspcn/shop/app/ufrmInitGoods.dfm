@@ -35,7 +35,7 @@ inherited frmInitGoods: TfrmInitGoods
           Top = 1
           Width = 421
           Height = 340
-          ActivePage = TabSheet4
+          ActivePage = TabSheet1
           Align = alClient
           Color = clWindow
           UseColoredTabs = True
@@ -95,7 +95,7 @@ inherited frmInitGoods: TfrmInitGoods
               Top = 152
               Width = 315
               Height = 15
-              Caption = #25195#20837#26465#22411#30721#21518#31995#32479#23558#21040#20135#21697#24211#26816#27979#26159#21542#21830#21697#23384#22312
+              Caption = #25195#20837#26465#24418#30721#21518#31995#32479#23558#21040#20135#21697#24211#26816#27979#26159#21542#21830#21697#23384#22312
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -15
@@ -109,7 +109,7 @@ inherited frmInitGoods: TfrmInitGoods
               Top = 245
               Width = 315
               Height = 15
-              Caption = #27809#26377#26465#22411#30721#30340#21830#21697#31995#32479#23558#33258#21160#29983#25104#19968#20010#24215#20869#26465#30721
+              Caption = #27809#26377#26465#24418#30721#30340#21830#21697#31995#32479#23558#33258#21160#29983#25104#19968#20010#24215#20869#26465#30721
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -15
@@ -165,8 +165,8 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel11: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 76
-                  Height = 16
+                  Width = 102
+                  Height = 27
                   Align = alClient
                   Alignment = taCenter
                   Caption = #21830#21697#26465#24418#30721
@@ -226,10 +226,10 @@ inherited frmInitGoods: TfrmInitGoods
                 object RzLabel12: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 167
-                  Height = 16
+                  Width = 308
+                  Height = 27
                   Align = alClient
-                  Caption = '  '#28155#21152#27809#26377#26465#22411#30721#30340#21830#21697
+                  Caption = '  '#28155#21152#27809#26377#26465#24418#30721#30340#21830#21697
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15

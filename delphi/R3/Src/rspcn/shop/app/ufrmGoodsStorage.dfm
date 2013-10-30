@@ -2951,9 +2951,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             DropHeight = 120
             ShowTitle = False
             AutoFitColWidth = True
+            OnAddClick = edtCALC_UNITSAddClick
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = []
+            Buttons = [zbNew]
             DropListStyle = lsFixed
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
@@ -3078,9 +3079,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             DropHeight = 120
             ShowTitle = False
             AutoFitColWidth = True
+            OnAddClick = edtCALC_UNITSAddClick
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = []
+            Buttons = [zbNew]
             DropListStyle = lsFixed
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
@@ -3205,9 +3207,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             DropHeight = 120
             ShowTitle = False
             AutoFitColWidth = True
+            OnAddClick = edtCALC_UNITSAddClick
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = []
+            Buttons = [zbNew]
             DropListStyle = lsFixed
             MultiSelect = False
             ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
@@ -4602,6 +4605,13 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       Caption = #21024#38500#25152#36873#20998#31867
       OnClick = N5Click
     end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object N6: TMenuItem
+      Caption = #28155#21152#21830#21697#21333#20301
+      OnClick = N6Click
+    end
   end
   object PrintDBGridEh1: TPrintDBGridEh
     DBGridEh = DBGridEh1
@@ -4623,6 +4633,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
     PageHeader.Font.Name = #23435#20307
     PageHeader.Font.Style = [fsBold]
     Units = MM
+    ParamsFile = 'Seting.Ini'
     Left = 112
     Top = 208
     BeforeGridText_Data = {

@@ -299,7 +299,7 @@ end;
 procedure TfrmInitGoods.btnNextClick(Sender: TObject);
 begin
   inherited;
-  if rzPage.ActivePageIndex = 0 then
+ if rzPage.ActivePageIndex = 0 then
     begin
       LocalFinded := false;
       RemoteFinded := false;
@@ -1682,27 +1682,20 @@ var
   rs:TZQuery;
 begin
   rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
-  if edtGOODS_OPTION1.Checked then
+  if true then
      begin
-       edtCALC_UNITS.Buttons := [];
-       edtSMALL_UNITS.Buttons := [zbClear];
-       edtBIG_UNITS.Buttons := [zbClear];
-       edtCALC_UNITS.OnAddClick := nil;
-       edtSMALL_UNITS.OnAddClick := nil;
-       edtBIG_UNITS.OnAddClick := nil;
        rs.Filtered := false;
        rs.Filter := 'RELATION_FLAG=1';
        rs.Filtered := true;
-     end
-  else
-     begin
-       edtCALC_UNITS.Buttons := [zbNew];
-       edtSMALL_UNITS.Buttons := [zbNew,zbClear];
-       edtBIG_UNITS.Buttons := [zbNew,zbClear];
-       edtCALC_UNITS.OnAddClick := AddUnits;
-       edtSMALL_UNITS.OnAddClick := AddUnits;
-       edtBIG_UNITS.OnAddClick := AddUnits;
      end;
+
+  //新增商品有无条码时都可以新增单位
+  edtCALC_UNITS.Buttons := [zbNew];
+  edtSMALL_UNITS.Buttons := [zbNew,zbClear];
+  edtBIG_UNITS.Buttons := [zbNew,zbClear];
+  edtCALC_UNITS.OnAddClick := AddUnits;
+  edtSMALL_UNITS.OnAddClick := AddUnits;
+  edtBIG_UNITS.OnAddClick := AddUnits;
 
   cdsUnits.Close;
   cdsUnits.FieldDefs := rs.FieldDefs;

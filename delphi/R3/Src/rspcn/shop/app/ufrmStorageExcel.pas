@@ -435,6 +435,7 @@ var rs,ss,cs:TZQuery;
     strWhere,strWhere2,codeWhere:string;
     strList,codeList:TStringList;
     isHas:Boolean;
+    LogSQL:TStringList;
 begin
   try
     rs:=TZQuery.Create(nil);
@@ -452,10 +453,10 @@ begin
       rs.SQL.Text:=
                   'select VB.BARCODE,VB.GODS_ID,VB.BARCODE_TYPE,VM1.UNIT_NAME CALC_UNITS_NAME,VG.USING_BATCH_NO,VG.SORT_ID7,VG.SORT_ID8 '+
                   'from VIW_BARCODE VB '+
-                  'left join VIW_GOODSPRICEEXT VG on VB.TENANT_ID=VG.TENANT_ID and VB.GODS_ID=VG.GODS_ID '+
+                  'left join ('+GetViwGoodsInfo('USING_BATCH_NO,SORT_ID7,SORT_ID8')+') VG on VB.TENANT_ID=VG.TENANT_ID and VB.GODS_ID=VG.GODS_ID '+
                   'left join VIW_MEAUNITS VM1 on VB.TENANT_ID=VM1.TENANT_ID and VB.UNIT_ID=VM1.UNIT_ID '+
-                  'where VB.tenant_id='+token.tenantId+' and VB.comm not in(''02'',''12'') and VG.comm not in(''02'',''12'') and VB.BARCODE_TYPE=''0'' and VB.barcode in ('+strWhere+')';
-      dataFactory.Open(rs);
+                  'where VB.tenant_id='+token.tenantId+' and VB.comm not in(''02'',''12'') and VB.BARCODE_TYPE=''0'' and VB.barcode in ('+strWhere+')';
+       dataFactory.Open(rs);
       if not rs.IsEmpty then
       begin
         FieldType[FieldIndex]:=1;
@@ -653,9 +654,9 @@ begin
   cs.Close;
   cs.SQL.Text:=
               'select distinct VG.GODS_CODE,VG.GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VG.USING_BATCH_NO,VG.SORT_ID7,VG.SORT_ID8 '+
-              'from VIW_GOODSPRICEEXT VG '+
+              'from ('+GetViwGoodsInfo('USING_BATCH_NO,SORT_ID7,SORT_ID8')+') VG '+
               'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
-              'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_CODE in ('+FieldCheckSet[index]+')';
+              'where VG.tenant_id='+token.tenantId+' and VG.GODS_CODE in ('+FieldCheckSet[index]+')';
   dataFactory.Open(cs);
 
   strCode:=codeField;

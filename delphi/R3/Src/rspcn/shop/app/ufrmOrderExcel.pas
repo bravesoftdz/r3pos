@@ -548,11 +548,11 @@ begin
   cs.Close;
   cs.SQL.Text:=
               'select distinct GODS_CODE,GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VM2.UNIT_NAME SMALL_UNITS_NAME,VM3.UNIT_NAME BIG_UNITS_NAME '+
-              'from VIW_GOODSPRICEEXT VG '+
+              'from ('+GetViwGoodsInfo('CALC_UNITS,SMALL_UNITS,BIG_UNITS')+') VG '+
               'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
               'left join VIW_MEAUNITS VM2 on VG.TENANT_ID=VM2.TENANT_ID and VG.SMALL_UNITS=VM2.UNIT_ID '+
               'left join VIW_MEAUNITS VM3 on VG.TENANT_ID=VM3.TENANT_ID and VG.BIG_UNITS=VM3.UNIT_ID '+
-              'where VG.tenant_id='+token.tenantId+' and VG.comm not in(''02'',''12'') and VG.GODS_CODE in ('+FGoodsCode+')';
+              'where VG.tenant_id='+token.tenantId+' and VG.GODS_CODE in ('+FGoodsCode+')';
   dataFactory.sqlite.Open(cs);
 
   cdsColumn.Locate('FieldName','GODS_CODE',[]);

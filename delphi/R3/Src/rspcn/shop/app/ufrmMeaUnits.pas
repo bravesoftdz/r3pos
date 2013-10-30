@@ -24,6 +24,10 @@ type
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    FY_RELATION_ID:string;
+    FY_TENANT_ID:string;
   public
     procedure Open(id:string);
     procedure Save;
@@ -32,7 +36,7 @@ type
 
 implementation
 
-uses ufrmSortDropFrom,udataFactory,uTokenFactory,udllDsUtil,uFnUtil,udllGlobal,udllShopUtil;
+uses ufrmSortDropFrom,udataFactory,uTokenFactory,udllDsUtil,uFnUtil,udllGlobal,udllShopUtil,EncDec;
 
 {$R *.dfm}
 
@@ -41,7 +45,7 @@ var Params:TftParamList;
 begin
   Params:=TftParamList.Create(nil);
   try
-    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
     Params.ParamByName('UNIT_ID').AsString := id;
     dataFactory.Open(cdsUnits,'TMeaUnitsV60',Params);
   finally
@@ -75,6 +79,8 @@ var
   Params:TftParamList;
   tmpUnits:TZQuery;
   tmpObj:TRecord_;
+  id:string;
+  i,w:integer;
 begin
   if trim(edtUNIT_NAME.Text) = '' then
      begin
@@ -96,12 +102,17 @@ begin
           Raise Exception.Create('商品单位名称不能重复...');
      end;
 
+  //获取单位的非烟统一单位ID
+  id := EncStr(trim(edtUNIT_NAME.Text),ENC_KEY);
+  w := 36-length(id);
+  for i:=1 to w do id := '0'+id;
+
   if cdsUnits.IsEmpty then
      begin
        cdsUnits.Append;
-       cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-       cdsUnits.FieldByName('UNIT_ID').AsString := TSequence.NewId;
-       cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(cdsUnits.FieldByName('TENANT_ID').AsString);
+       cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
+       cdsUnits.FieldByName('UNIT_ID').AsString :=id;// TSequence.NewId;
+       cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(FY_TENANT_ID);
      end
   else cdsUnits.Edit;
   cdsUnits.FieldByName('UNIT_NAME').AsString := trim(edtUNIT_NAME.Text);
@@ -118,8 +129,8 @@ begin
      Params := TftParamList.Create(nil);
      tmpObj := TRecord_.Create;
      try
-       Params.ParamByName('TENANT_ID').AsInteger := cdsUnits.FieldByName('TENANT_ID').AsInteger;
-       Params.ParamByName('UNIT_ID').AsString := cdsUnits.FieldByName('UNIT_ID').AsString;
+       Params.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
+       Params.ParamByName('UNIT_ID').AsString := id;
        dataFactory.Open(tmpUnits,'TMeaUnitsV60',Params);
 
        if tmpUnits.IsEmpty then tmpUnits.Append else tmpUnits.Edit;
@@ -171,6 +182,28 @@ procedure TfrmMeaUnits.FormShow(Sender: TObject);
 begin
   inherited;
   if edtUNIT_NAME.CanFocus then edtUNIT_NAME.SetFocus;
+end;
+
+procedure TfrmMeaUnits.FormCreate(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+
+  FY_RELATION_ID := '';
+  FY_TENANT_ID := '';
+
+  rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+  rs.First;
+  while not rs.Eof do
+    begin
+      if (rs.FieldByName('RELATION_ID').AsInteger = 1000008) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
+        begin
+          FY_RELATION_ID := rs.FieldByName('RELATION_ID').AsString;
+          FY_TENANT_ID := rs.FieldByName('TENANT_ID').AsString;
+          break;
+        end;
+      rs.Next;
+    end;
 end;
 
 end.

@@ -52,7 +52,7 @@ type
 implementation
 
 uses udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,ufrmProgressBar;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,ufrmProgressBar,EncDec;
 
 {$R *.dfm}
 
@@ -727,7 +727,7 @@ begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
       rs.Close;
-      rs.SQL.Text:='select distinct GODS_CODE from VIW_GOODSPRICEEXT where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and GODS_CODE in ('+strWhere+')';
+      rs.SQL.Text:='select distinct GODS_CODE from ('+GetViwGoodsInfo('')+') A where A.tenant_id='+token.tenantId+' and A.GODS_CODE in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
       begin
@@ -812,7 +812,7 @@ begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
       rs.Close;
-      rs.SQL.Text:='select distinct SORT_NAME from VIW_GOODSSORT where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and SORT_NAME in ('+strWhere+')';
+      rs.SQL.Text:='select distinct SORT_NAME from VIW_GOODSSORT where tenant_id='+token.tenantId+' and sort_type=1 and comm not in(''02'',''12'') and SORT_NAME in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
       begin
@@ -962,10 +962,12 @@ function TfrmGoodsExcel.AddUnits: Boolean;
   end;
 var unitField,tempField,strWhere,strUnits:string;
     unitList,tmpList:TStringlist;
-    c,i:integer;
+    c,i,w,j:integer;
     rs,cdsUnits,tmpUnits:TZQuery;
     Params:TftParamList;
     tmpObj:TRecord_;
+    id:string;
+    SeqNo:integer;
 begin
   result:=false;
   try
@@ -1030,7 +1032,7 @@ begin
     if strUnits<>'' then
     begin
       try
-        if MessageBox(Handle,pchar('检索到系统中没有以下单位：'+strUnits+'，是否导入？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)=6 then
+        if MessageBox(Handle,pchar('检索到系统中没有以下单位：'''+strUnits+'''，是否新增单位？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)=6 then
         begin
           tmpList.Clear;
           tmpList.CommaText:=strUnits;
@@ -1039,19 +1041,24 @@ begin
           Params := TftParamList.Create(nil);
           cdsUnits.Close;
           try
-            Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+            Params.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
             Params.ParamByName('UNIT_ID').AsString := '';
             dataFactory.Open(cdsUnits,'TMeaUnitsV60',Params);
           finally
             Params.Free;
           end;
 
+          SeqNo:= GetSeqNo(FY_TENANT_ID);
           for i:=0 to tmpList.Count-1 do
             begin
+              id:=EncStr(trim(tmpList[i]),ENC_KEY);
+              w:=36-length(id);
+              for j:=0 to w do
+                id:='0'+id;
               cdsUnits.Append;
-              cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-              cdsUnits.FieldByName('UNIT_ID').AsString := TSequence.NewId;
-              cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(token.tenantId)+i;
+              cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
+              cdsUnits.FieldByName('UNIT_ID').AsString :=id;  
+              cdsUnits.FieldByName('SEQ_NO').AsInteger := SeqNo+i;
               cdsUnits.FieldByName('UNIT_NAME').AsString := trim(tmpList[i]);
               cdsUnits.FieldByName('UNIT_SPELL').AsString := fnString.GetWordSpell(tmpList[i],3);
               cdsUnits.Post;
@@ -1075,7 +1082,7 @@ begin
            Params := TftParamList.Create(nil);
            tmpObj := TRecord_.Create;
            try
-             Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+             Params.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
              Params.ParamByName('UNIT_ID').AsString := '';
              dataFactory.Open(tmpUnits,'TMeaUnitsV60',Params);
 

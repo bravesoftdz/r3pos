@@ -628,7 +628,11 @@ begin
   end;
   dbState := dsBrowse;
   if DevFactory.SaveCodePrint then CodePrinterFactory.PrintCode(cdsDetail.Data,self.Handle);
-  if DevFactory.SavePrint then DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
+  if DevFactory.SavePrint then
+     begin
+       DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
+       DevFactory.OpenCashBox(self.Font);
+     end;
 end;
 
 procedure TfrmSaleOrder.edtTableAfterPost(DataSet: TDataSet);

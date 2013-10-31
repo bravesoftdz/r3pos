@@ -2738,7 +2738,6 @@ procedure TSyncFactory.SyncStorage;
 var
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
-  LastTimeStamp:int64;
   Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
@@ -2754,19 +2753,17 @@ begin
   rs_r := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
   try
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-    LastTimeStamp := GetSynTimeStamp(token.tenantId,n^.tbname,token.shopId);
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
     Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
     Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
     Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
-    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
     rs_r.SyncDelta := rs_l.SyncDelta;
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
     dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
   finally
     dispose(n);
@@ -3160,7 +3157,6 @@ procedure TSyncFactory.TimerSyncStorage;
 var
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
-  LastTimeStamp:int64;
   Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
@@ -3176,16 +3172,11 @@ begin
   rs_r := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
   try
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-    if timerTerminted then Exit;
-    LastTimeStamp := GetSynTimeStamp(token.tenantId,n^.tbname,token.shopId);
-    if timerTerminted then Exit;
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
     Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
     Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
     Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
-    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
@@ -3193,6 +3184,7 @@ begin
     dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
     if timerTerminted then Exit;
     rs_r.SyncDelta := rs_l.SyncDelta;
+    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
     dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
   finally
     dispose(n);

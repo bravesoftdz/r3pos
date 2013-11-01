@@ -159,7 +159,6 @@ type
     FilePath: String;
     isNull:Boolean;
     LastcdsColumnIndex:integer;
-    FY_TENANT_ID,FY_RELATION_ID:string;
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;virtual;
     property DataSet:TZQuery read FDataSet write SetDataSet;
     property StartRow:integer read FStartRow write SetStartRow;
@@ -402,29 +401,11 @@ begin
 end;
 
 procedure TfrmExcelFactory.FormCreate(Sender: TObject);
-var rs:TZQuery;
 begin
   inherited;
   vList := TStringList.Create;
   vColumnList:=TStringList.Create;
   StartRow := 1;
-
-  FY_RELATION_ID := '';
-  FY_TENANT_ID := '';
-
-  rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
-  rs.First;
-  while not rs.Eof do
-    begin
-      if (rs.FieldByName('RELATION_ID').AsInteger = 1000008) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
-        begin
-          FY_RELATION_ID := rs.FieldByName('RELATION_ID').AsString;
-          FY_TENANT_ID := rs.FieldByName('TENANT_ID').AsString;
-          break;
-        end;
-      rs.Next;
-    end; 
-
 end;
 
 procedure TfrmExcelFactory.FormDestroy(Sender: TObject);

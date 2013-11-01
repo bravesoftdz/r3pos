@@ -618,11 +618,11 @@ begin
 
        // 自动加盟非烟供应链
        str := ' update CA_RELATIONS set COMM='+GetCommStr(dataFactory.remote.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.remote.iDbType)+
-              ' where TENANT_ID=110000002 and RELATION_ID=1000008 and RELATI_ID='+tid;
+              ' where TENANT_ID='+FY_TENANT_ID+' and RELATION_ID='+FY_RELATION_ID+' and RELATI_ID='+tid;
        if dataFactory.remote.ExecSQL(str) <= 0 then
           begin
             str := ' insert into CA_RELATIONS (RELATIONS_ID,RELATION_ID,TENANT_ID,RELATI_ID,RELATION_TYPE,LEVEL_ID,RELATION_STATUS,CREA_DATE,CHK_DATE,COMM,TIME_STAMP) values '+
-                   ' ('''+TSequence.NewId+''',1000008,110000002,'+tid+',''1'',''000000'',''2'','''+FormatDateTime('YYYY-MM-DD',now())+''','''+FormatDateTime('YYYY-MM-DD',now())+''',''00'','+GetTimeStamp(dataFactory.remote.iDbType)+') ';
+                   ' ('''+TSequence.NewId+''','+FY_RELATION_ID+','+FY_TENANT_ID+','+tid+',''1'',''000000'',''2'','''+FormatDateTime('YYYY-MM-DD',now())+''','''+FormatDateTime('YYYY-MM-DD',now())+''',''00'','+GetTimeStamp(dataFactory.remote.iDbType)+') ';
             dataFactory.remote.ExecSQL(str);
           end;
 

@@ -75,6 +75,10 @@ type
     property AuthMode:integer read FAuthMode write SetAuthMode;
   end;
 
+const
+  FY_TENANT_ID = '110000002';
+  FY_RELATION_ID = '1000008';
+
 var dllGlobal: TdllGlobal;
 
 implementation

@@ -24,9 +24,6 @@ type
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-  private
-    FY_TENANT_ID:string;
   public
     procedure Open(id:string);
     procedure Save;
@@ -181,12 +178,6 @@ procedure TfrmMeaUnits.FormShow(Sender: TObject);
 begin
   inherited;
   if edtUNIT_NAME.CanFocus then edtUNIT_NAME.SetFocus;
-end;
-
-procedure TfrmMeaUnits.FormCreate(Sender: TObject);
-begin
-  inherited;
-  FY_TENANT_ID := '110000002';
 end;
 
 end.

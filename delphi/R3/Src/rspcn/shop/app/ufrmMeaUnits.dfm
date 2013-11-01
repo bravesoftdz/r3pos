@@ -5,7 +5,6 @@ inherited frmMeaUnits: TfrmMeaUnits
   ClientHeight = 153
   ClientWidth = 339
   OldCreateOrder = True
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15

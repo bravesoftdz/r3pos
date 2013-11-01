@@ -212,11 +212,7 @@ type
     FRemoteFinded:boolean;
     FRspFinded:boolean;
     Simple:boolean;
-    FY_RELATION_ID:string;
-    FY_TENANT_ID:string;
-    function checkBarcode:boolean;
-
-
+    function  checkBarcode:boolean;
     procedure OpenDataSet(tenantId,godsId:string);
     procedure PostDataSet;
     procedure ReadFromObject;
@@ -239,9 +235,6 @@ implementation
 uses udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
      uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,EncDec,IniFiles;
 
-const
-  FY_CREATOR_ID = '110000002'; //非烟供应链创建者,允许修改商品分类
-
 {$R *.dfm}
 
 procedure TfrmInitGoods.FormCreate(Sender: TObject);
@@ -253,23 +246,6 @@ begin
   Simple := false;
   AObj := TRecord_.Create;
   dbState := dsInsert;
-
-  FY_RELATION_ID := '';
-  FY_TENANT_ID := '';
-
-  rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
-  rs.First;
-  while not rs.Eof do
-    begin
-      if (rs.FieldByName('RELATION_ID').AsInteger = 1000008) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
-        begin
-          FY_RELATION_ID := rs.FieldByName('RELATION_ID').AsString;
-          FY_TENANT_ID := rs.FieldByName('TENANT_ID').AsString;
-          break;
-        end;
-      rs.Next;
-    end;
-
   for i := 0 to rzPage.PageCount - 1 do
     begin
       rzPage.Pages[i].TabVisible := False;
@@ -280,12 +256,6 @@ begin
   edtDefault1.Checked := false;
   edtDefault2.Checked := false;
   edtSORT_ID.Properties.ReadOnly := true;
-
-  if (FY_TENANT_ID = '') or (FY_RELATION_ID = '') then
-    begin
-      btnNext.Enabled := false;
-      Raise Exception.Create('当前企业尚未加盟非烟供应链！');
-    end;
 end;
 
 procedure TfrmInitGoods.FormShow(Sender: TObject);
@@ -753,7 +723,7 @@ begin
 
      end;
 
-  if Finded and (cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID) then
+  if Finded and (cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_TENANT_ID) then
      Raise Exception.Create('卷烟商品不允许新增！'); 
 
   edtTable.Data := cdsGoodsInfo.Data;
@@ -876,7 +846,7 @@ begin
     begin
       SetReadOnly;
 
-      if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_CREATOR_ID then
+      if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_TENANT_ID then
         begin
           rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
           if rs.Locate('SORT_ID',cdsGoodsInfo.FieldByName('SORT_ID1').AsString,[]) then

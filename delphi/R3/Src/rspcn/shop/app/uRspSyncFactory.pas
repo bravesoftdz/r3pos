@@ -813,7 +813,7 @@ begin
   try
     dataFactory.MoveToRemote;
     try
-      rs.SQL.Text := 'select * from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID=110000002 and COMM not in (''02'',''12'')';
+      rs.SQL.Text := 'select * from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID='+FY_TENANT_ID+' and COMM not in (''02'',''12'')';
       dataFactory.Open(rs);
     finally
       dataFactory.MoveToDefault;

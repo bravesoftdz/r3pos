@@ -558,7 +558,7 @@ inherited frmMeaUnits: TfrmMeaUnits
       Top = 4
       Width = 153
       Height = 23
-      Properties.MaxLength = 15
+      Properties.MaxLength = 9
       TabOrder = 1
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end

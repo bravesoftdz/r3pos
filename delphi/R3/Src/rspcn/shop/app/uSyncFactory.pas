@@ -970,6 +970,10 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     n^.syncTenantId := syncTenantId;
     n^.tbtitle := '计量单位';
     InitSyncRelationUpAndDown(n,syncTenantId);
+    if (syncTenantId = 110000002) and (dllGlobal.GetSFVersion = '.LCL') then
+       begin
+         n^.isSyncUp := '1';
+       end;
     FList.Add(n);
   end;
 

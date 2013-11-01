@@ -2487,22 +2487,13 @@ begin
 end;
 
 procedure TfrmGoodsStorage.N6Click(Sender: TObject);
-var SObj:TRecord_;
 begin
   inherited;
-  SObj := TRecord_(rzTree.Selected.Data);
-  if (SObj = nil)
-     or
-     (SObj.FieldByName('RELATION_ID').AsInteger <> 0)
-     or
-     (SObj.FieldByName('SORT_ID').AsString = '#') then
-     Raise Exception.Create('不允许添加非自经营商品单位...');
-
   AddUnits(Sender);
 end;
 
 procedure TfrmGoodsStorage.AddUnits(Sender: TObject);
-var AObj,SObj:TRecord_;
+var AObj:TRecord_;
 begin 
   AObj := TRecord_.Create;
   try

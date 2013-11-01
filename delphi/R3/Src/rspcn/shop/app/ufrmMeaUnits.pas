@@ -26,7 +26,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    FY_RELATION_ID:string;
     FY_TENANT_ID:string;
   public
     procedure Open(id:string);
@@ -111,7 +110,7 @@ begin
      begin
        cdsUnits.Append;
        cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-       cdsUnits.FieldByName('UNIT_ID').AsString :=id;// TSequence.NewId;
+       cdsUnits.FieldByName('UNIT_ID').AsString := id;// TSequence.NewId;
        cdsUnits.FieldByName('SEQ_NO').AsInteger := GetSeqNo(FY_TENANT_ID);
      end
   else cdsUnits.Edit;
@@ -185,25 +184,9 @@ begin
 end;
 
 procedure TfrmMeaUnits.FormCreate(Sender: TObject);
-var rs:TZQuery;
 begin
   inherited;
-
-  FY_RELATION_ID := '';
-  FY_TENANT_ID := '';
-
-  rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
-  rs.First;
-  while not rs.Eof do
-    begin
-      if (rs.FieldByName('RELATION_ID').AsInteger = 1000008) and (rs.FieldByName('RELATION_TYPE').AsString = '1') then
-        begin
-          FY_RELATION_ID := rs.FieldByName('RELATION_ID').AsString;
-          FY_TENANT_ID := rs.FieldByName('TENANT_ID').AsString;
-          break;
-        end;
-      rs.Next;
-    end;
+  FY_TENANT_ID := '110000002';
 end;
 
 end.

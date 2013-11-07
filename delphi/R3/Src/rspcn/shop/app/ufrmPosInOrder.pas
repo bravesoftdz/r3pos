@@ -529,7 +529,13 @@ begin
        Value := TColumnEh(Sender).Field.asFloat;
        Exit;
      end;
-
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
   if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
   begin
     Value := TColumnEh(Sender).Field.asFloat;

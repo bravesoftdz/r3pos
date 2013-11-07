@@ -139,6 +139,8 @@ type
     procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure btnImportClick(Sender: TObject);
+    procedure DBGridEh1Columns10UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -667,12 +669,12 @@ procedure TfrmSaleOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Currency;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -716,7 +718,13 @@ begin
        Value := TColumnEh(Sender).Field.asFloat;
        Exit;
      end;
-
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
   if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
   begin
     Value := TColumnEh(Sender).Field.asFloat;
@@ -804,12 +812,19 @@ var
   allow :boolean;
   bs:TZQuery;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
@@ -2381,6 +2396,18 @@ begin
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
      Raise Exception.Create('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！');
   inherited;
+end;
+
+procedure TfrmSaleOrder.DBGridEh1Columns10UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       Exit;
+     end;
 end;
 
 initialization

@@ -681,12 +681,12 @@ procedure TfrmPosOutOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Currency;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -731,7 +731,13 @@ begin
        Value := TColumnEh(Sender).Field.asFloat;
        Exit;
      end;
-
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
   if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
   begin
     Value := TColumnEh(Sender).Field.asFloat;

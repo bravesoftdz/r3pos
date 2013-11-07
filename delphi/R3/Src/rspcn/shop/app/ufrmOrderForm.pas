@@ -532,15 +532,14 @@ begin
   edtTable.DisableControls;
   try
   edtTable.Last;
-  if edtTable.IsEmpty or (edtTable.FieldbyName('GODS_ID').AsString <>'') then
+  if edtTable.IsEmpty or (edtTable.FieldbyName('GODS_ID').AsString <> '') or (edtTable.FieldbyName('SEQNO').AsString = '') then
     begin
       inc(RowID);
-      edtTable.Append;
+      if edtTable.FieldbyName('SEQNO').AsString='' then edtTable.Edit else edtTable.Append;
       edtTable.FieldByName('GODS_ID').Value := null;
       edtTable.FieldByName('IS_PRESENT').Value := 0;
       if edtTable.FindField('SEQNO')<> nil then
          edtTable.FindField('SEQNO').asInteger := RowID;
-      edtTable.Post;
     end;
     DbGridEh1.Col := 1 ;
     if DBGridEh1.CanFocus and Visible and not edtInput.Focused and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
@@ -842,7 +841,7 @@ end;
 procedure TfrmOrderForm.UpdateRecord(AObj: TRecord_; UNIT_ID: string);
 var Field:TField;
 begin
-  if edtTable.State = dsBrowse then
+  // if edtTable.State = dsBrowse then
      begin
        if edtTable.FieldbyName('SEQNO').asString='' then
           InitRecord else edtTable.Edit;

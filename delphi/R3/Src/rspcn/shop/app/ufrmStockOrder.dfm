@@ -707,6 +707,7 @@ inherited frmStockOrder: TfrmStockOrder
                   Title.Caption = #22791#27880
                   Title.Color = 15787416
                   Width = 111
+                  OnUpdateData = DBGridEh1Columns10UpdateData
                 end
                 item
                   EditButtons = <>
@@ -3777,6 +3778,7 @@ inherited frmStockOrder: TfrmStockOrder
     PageHeader.Font.Name = #23435#20307
     PageHeader.Font.Style = [fsBold]
     Units = MM
+    ParamsFile = 'Seting.Ini'
     Left = 888
     Top = 184
     BeforeGridText_Data = {

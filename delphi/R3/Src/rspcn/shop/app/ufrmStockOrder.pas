@@ -136,6 +136,8 @@ type
     procedure edtAGIO_RATEExit(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure btnImportClick(Sender: TObject);
+    procedure DBGridEh1Columns10UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -459,12 +461,12 @@ procedure TfrmStockOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -505,7 +507,13 @@ begin
        Value := TColumnEh(Sender).Field.asFloat;
        Exit;
      end;
-
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
   if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
   begin
     Value := TColumnEh(Sender).Field.asFloat;
@@ -956,12 +964,19 @@ procedure TfrmStockOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
-   if length(Text)>10 then
-      begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         Exit;
-      end;
+  if length(Text)>10 then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+       Exit;
+     end;
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
   try
     if Text='' then
        r := 0
@@ -1703,6 +1718,18 @@ begin
   inherited;
   ImportExcelClick(nil);
 
+end;
+
+procedure TfrmStockOrder.DBGridEh1Columns10UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       Exit;
+     end;
 end;
 
 initialization

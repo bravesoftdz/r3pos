@@ -486,11 +486,23 @@ end;
 
 function TUcFactory.getConnStr: string;
 var
+  F:TIniFile;
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;
   Node:IXMLDOMNode;
   xml,url,str:string;
 begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
+  try
+    if F.ReadString('soft','mode','release') = 'debug' then
+       begin
+         result := F.ReadString('soft','connstr',''); 
+         Exit;
+       end;
+  finally
+    F.Free;
+  end;
+
   try
     url := xsmUC+'navi/donavi/c?comId='+xsmComId+'&srvType=43';
     xml := IdHTTP1.Get(url);

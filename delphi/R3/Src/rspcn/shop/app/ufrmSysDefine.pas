@@ -391,12 +391,20 @@ begin
        edtXSM_CODE.Properties.ReadOnly := false;
        SetEditStyle(dsInsert, edtXSM_CODE.Style);
        edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;
+
+       edtXSM_PSWD.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert, edtXSM_PSWD.Style);
+       edtBK_XSM_PSWD.Color := edtXSM_PSWD.Style.Color;
      end
   else
      begin
        edtXSM_CODE.Properties.ReadOnly := true;
        SetEditStyle(dsBrowse, edtXSM_CODE.Style);
        edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;
+
+       edtXSM_PSWD.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse, edtXSM_PSWD.Style);
+       edtBK_XSM_PSWD.Color := edtXSM_PSWD.Style.Color;
      end;
 end;
 
@@ -1531,6 +1539,16 @@ begin
      begin
        if edtUSER_NAME.CanFocus then edtUSER_NAME.SetFocus;
        Raise Exception.Create('用户姓名不允许为空！');
+     end;
+  if trim(LowerCase(edtACCOUNT.Text)) = 'admin' then
+     begin
+       if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+       Raise Exception.Create('admin为系统内置账号，不允许新增！');
+     end;
+  if trim(LowerCase(edtACCOUNT.Text)) = 'system' then
+     begin
+       if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+       Raise Exception.Create('system为系统内置账号，不允许新增！');
      end;
 end;
 

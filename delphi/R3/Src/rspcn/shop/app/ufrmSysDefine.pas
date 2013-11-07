@@ -388,6 +388,10 @@ begin
 
   if (token.account = 'admin') or (token.account = 'system') then
      begin
+       edtLICENSE_CODE.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert, edtLICENSE_CODE.Style);
+       edtBK_LICENSE_CODE.Color := edtLICENSE_CODE.Style.Color;
+
        edtXSM_CODE.Properties.ReadOnly := false;
        SetEditStyle(dsInsert, edtXSM_CODE.Style);
        edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;
@@ -398,6 +402,10 @@ begin
      end
   else
      begin
+       edtLICENSE_CODE.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse, edtLICENSE_CODE.Style);
+       edtBK_LICENSE_CODE.Color := edtLICENSE_CODE.Style.Color;
+
        edtXSM_CODE.Properties.ReadOnly := true;
        SetEditStyle(dsBrowse, edtXSM_CODE.Style);
        edtBK_XSM_CODE.Color := edtXSM_CODE.Style.Color;

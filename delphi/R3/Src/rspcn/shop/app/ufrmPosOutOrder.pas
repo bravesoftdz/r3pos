@@ -665,7 +665,9 @@ begin
   NewOrder;
   InitGodsStringGrid;
   if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
-     RzBmpButton4.Visible := true;
+     RzBmpButton4.Visible := true
+  else
+     RzBmpButton4.Visible := false;
 end;
 
 procedure TfrmPosOutOrder.DBGridEh1Columns1BeforeShowControl(

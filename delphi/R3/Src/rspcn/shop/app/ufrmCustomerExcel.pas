@@ -37,16 +37,15 @@ type
 
   const
     FieldsString =
-    'CUST_CODE=会员卡号,CUST_NAME=会员名称,CUST_SPELL=拼音码,SEX=性别,SORT_ID=会员类别,PRICE_ID=会员等级,REGION_ID=地区,'+
+    'CUST_CODE=会员卡号,CUST_NAME=会员名称,PRICE_ID=会员等级,SEX=性别,REGION_ID=地区,'+
     'SHOP_ID=入会门店,MOVE_TELE=移动电话,BIRTHDAY=会员生日,FAMI_ADDR=地址,POSTALCODE=邮编,ID_NUMBER=证件号码,IDN_TYPE=证件类型,SND_DATE=入会日期,'+
     'CON_DATE=续会日期,QQ=QQ,MSN=MSN,END_DATE=有效截止日期,MONTH_PAY=月收入,DEGREES=学历,EMAIL=电子邮件,OFFI_TELE=办公电话,FAMI_TELE=家庭电话,'+
     'OCCUPATION=职业,JOBUNIT=工作单位,REMARK=备注';
 
     FormatString =
-    '0=CUST_CODE,1=CUST_NAME,2=CUST_SPELL,3=SEX,4=SORT_ID,5=PRICE_ID,6=REGION_ID,7=SHOP_ID,8=MOVE_TELE,9=BIRTHDAY,10=FAMI_ADDR,'+
-    '11=POSTALCODE,12=ID_NUMBER,13=IDN_TYPE,14=SND_DATE,15=CON_DATE,16=QQ,17=MSN,18=END_DATE,19=MONTH_PAY,20=DEGREES,21=EMAIL,22=OFFI_TELE,'+
-    '23=FAMI_TELE,24=OCCUPATION,25=JOBUNIT,26=REMARK';
-
+    '0=CUST_CODE,1=CUST_NAME,2=PRICE_ID,3=SEX,4=REGION_ID,5=SHOP_ID,6=MOVE_TELE,7=BIRTHDAY,8=FAMI_ADDR,'+
+    '9=POSTALCODE,10=ID_NUMBER,11=IDN_TYPE,12=SND_DATE,13=CON_DATE,14=QQ,15=MSN,16=END_DATE,17=MONTH_PAY,18=DEGREES,19=EMAIL,20=OFFI_TELE,'+
+    '21=FAMI_TELE,22=OCCUPATION,23=JOBUNIT,24=REMARK';
 
 implementation
 
@@ -58,7 +57,6 @@ uses udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
 procedure TfrmCustomerExcel.CreateUseDataSet;
 begin
   inherited; 
-  
 end;
 
 function TfrmCustomerExcel.SaveExcel(dsExcel:TZQuery):Boolean;
@@ -94,12 +92,13 @@ begin
      strWhere:=strWhere+',''15'' '
     else
      strWhere:='''15'' ';
+
   if strWhere <> '' then
   begin
     cs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE in('+strWhere+') and COMM not in (''02'',''12'') ';
     dataFactory.Open(cs);
   end;
-  
+
   try
     dsExcel.First;
     while not dsExcel.Eof do
@@ -134,6 +133,11 @@ begin
         dsExcel.Edit;
         dsExcel.FieldByName('SEX').AsString:=str;
         dsExcel.Post;
+      end else
+      begin
+        dsExcel.Edit;
+        dsExcel.FieldByName('SEX').AsString:='2';
+        dsExcel.Post;
       end;
 
       Field:=dsExcel.FindField('SHOP_ID');
@@ -145,15 +149,16 @@ begin
           dsExcel.fieldByName('SHOP_ID').AsString:=ss.fieldByName('SHOP_ID').AsString;
           dsExcel.Post;
         end;
-      end;
-
-      Field:=dsExcel.FindField('SORT_ID');
-      if (Field <> nil) and (Field.AsString = '') then
+      end else
       begin
         dsExcel.Edit;
-        dsExcel.fieldByName('SORT_ID').AsString:='#';
+        dsExcel.fieldByName('SHOP_ID').AsString:=token.shopId;
         dsExcel.Post;
       end;
+
+      dsExcel.Edit;
+      dsExcel.fieldByName('SORT_ID').AsString:='#';
+      dsExcel.Post;
 
       Field:=dsExcel.FindField('PRICE_ID');
       if (Field <> nil) and (Field.AsString <> '') then
@@ -171,9 +176,22 @@ begin
       begin
         dsExcel.Edit;
         if pr.Locate('CODE_NAME',dsExcel.fieldByName('REGION_ID').AsString,[]) then
-          dsExcel.fieldByName('REGION_ID').AsString:=pr.fieldByName('CODE_ID').AsString
+           dsExcel.fieldByName('REGION_ID').AsString:=pr.fieldByName('CODE_ID').AsString
         else
-          dsExcel.fieldByName('REGION_ID').AsString:='#';
+           begin
+             if ss.fieldByName('REGION_ID').AsString = '' then
+                dsExcel.fieldByName('REGION_ID').AsString:='#'
+             else
+                dsExcel.fieldByName('REGION_ID').AsString:=ss.fieldByName('REGION_ID').AsString;
+           end;
+        dsExcel.Post;
+      end else
+      begin
+        dsExcel.Edit;
+        if ss.fieldByName('REGION_ID').AsString = '' then
+           dsExcel.fieldByName('REGION_ID').AsString:='#'
+        else
+           dsExcel.fieldByName('REGION_ID').AsString:=ss.fieldByName('REGION_ID').AsString;
         dsExcel.Post;
       end;
 
@@ -351,8 +369,8 @@ end;
 function TfrmCustomerExcel.FindColumn2(vStr:string):Boolean;
 var strError:string;
 begin
-   Result := True;
-   strError:='';
+  Result := True;
+  strError:='';
   if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
     Result := False;
@@ -366,22 +384,6 @@ begin
     else
       strError:='会员名称';
   end;
-  if (cdsColumn.Locate('FieldName','SHOP_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'入会门店'
-    else
-    strError:='入会门店';
-  end;
-  if (cdsColumn.Locate('FieldName','SEX',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'性别'
-    else
-    strError:='性别';
-  end;
   if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
     Result := False;
@@ -390,15 +392,6 @@ begin
     else
     strError:='会员等级';
   end;
-  if (cdsColumn.Locate('FieldName','REGION_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'地区'
-    else
-    strError:='地区';
-  end;
-
   if (strError<>'') then
   begin
     cdsColumn.RecNo:=LastcdsColumnIndex;
@@ -443,23 +436,23 @@ begin
       end;
     4:begin
         //if str='' then
-         // strError:='会员类别为空;';
+        // strError:='会员类别为空;';
       end;
     5:begin
-         if (str<>'') and (FieldType[5]=0) then
+        if (str<>'') and (FieldType[5]=0) then
           strError:='会员等级不存在;';
       end;
     6:begin
-        if str='' then
-          strError:='地区为空;'
-        else if FieldType[6]=0 then
-          strError:='地区不存在;';
+        //if str='' then
+        //  strError:='地区为空;'
+        //else if FieldType[6]=0 then
+        //  strError:='地区不存在;';
       end;
     7:begin
-        if str='' then
-          strError:='入会门店为空;'
-        else if FieldType[7]=0 then
-          strError:='入会门店不存在;';
+        //if str='' then
+        //  strError:='入会门店为空;'
+        //else if FieldType[7]=0 then
+        //  strError:='入会门店不存在;';
       end;
     8:begin    //移动电话
 
@@ -544,7 +537,6 @@ begin
     26:begin    //备注
 
       end;
-
   end;
   if strError<>'' then
     cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+strError;
@@ -1004,8 +996,7 @@ end;
 function TfrmCustomerExcel.IsRequiredFiled(strFiled: string): Boolean;
 begin
   result:=false;
-  if (strFiled='CUST_CODE') or (strFiled='CUST_NAME') or (strFiled='SHOP_ID') or
-     (strFiled='SEX') or (strFiled='PRICE_ID') or (strFiled='REGION_ID')then
+  if (strFiled='CUST_CODE') or (strFiled='CUST_NAME') or (strFiled='PRICE_ID') then
     result:=true;
 end;
 

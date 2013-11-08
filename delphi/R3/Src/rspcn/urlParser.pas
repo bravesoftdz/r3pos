@@ -105,18 +105,24 @@ begin
                    wb := UcFactory.scWeb;
                  end
               else
+              if pos('xsmst',urltoken.path)>0 then
+                 begin
+                   if UcFactory.xsmUC='' then Raise Exception.Create('新商盟st地址配置有误...');
+                   wb := UcFactory.xsmUC;
+                 end
+              else
                  Raise Exception.Create('无效的新商盟地址...');
               delete(urltoken.path,1,6);
               if wb[length(wb)]='/' then
                  begin
-                   if urltoken.path='/' then
+                   if (urltoken.path='/') or (urltoken.path='') then
                       result := wb+urltoken.path+urltoken.moduname
                    else
                       result := wb+urltoken.path+'/'+urltoken.moduname;
                  end
               else
                  begin
-                   if urltoken.path='/' then
+                   if (urltoken.path='/') or (urltoken.path='') then
                       result := wb+'/'+urltoken.path+urltoken.moduname
                    else
                       result := wb+'/'+urltoken.path+'/'+urltoken.moduname;

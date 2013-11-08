@@ -135,7 +135,9 @@ begin
   us:=dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   ss:=dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
   cs:=dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
-
+  ss.Filtered := false;
+  ss.Filter := 'RELATION_ID=0';
+  ss.Filtered := true;
   try
     cl.Close;
     cl.SQL.Text:='select COLOR_ID,COLOR_NAME,SORT_ID7S from VIW_COLOR_INFO where tenant_id='+token.tenantId+
@@ -252,8 +254,9 @@ begin
         ProgressBar1.Visible:=false;
         Raise;
       end;
-
   finally
+    ss.Filter := '';
+    ss.Filtered := false;
     DsGoods.Free;
     DsBarcode.Free;
     DsGoodsPrice.Free;
@@ -812,7 +815,7 @@ begin
       FieldName:=cdsColumn.fieldByName('FileName').AsString;
       strWhere:=DeleteDuplicateString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strList);
       rs.Close;
-      rs.SQL.Text:='select distinct SORT_NAME from VIW_GOODSSORT where tenant_id='+token.tenantId+' and sort_type=1 and comm not in(''02'',''12'') and SORT_NAME in ('+strWhere+')';
+      rs.SQL.Text:='select distinct SORT_NAME from PUB_GOODSSORT where tenant_id='+token.tenantId+' and sort_type=1 and comm not in(''02'',''12'') and SORT_NAME in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
       begin
@@ -922,7 +925,7 @@ end;
 procedure TfrmGoodsExcel.RzLabel17Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载商品导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then Exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -930,7 +933,7 @@ begin
     if FileExists(SaveDialog1.FileName) then
     begin
       if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-        exit;
+         Exit;
       DeleteFile(SaveDialog1.FileName);
     end;
     try

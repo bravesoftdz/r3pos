@@ -7,7 +7,7 @@
 <script src="js/rspcn.js" type="text/javascript"></script>
 <script src="js/jquery-1.6.1.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-$(function(){
+$(document).ready(function() {
 	$("#username").focus();
 	var username = rsp.getLocalJson('rmbUser');
 	if(username!=''){
@@ -15,7 +15,35 @@ $(function(){
 		$("#rmbUser").attr("checked",true);
 		$("#password").focus();
 	}
-})
+});
+
+function inputPress(val, flag) {
+	if (event.keyCode == 13) {
+		if ($.trim(val) != "") {
+			if (flag == 1) {
+				$("#password").focus();
+			} else if (flag == 2) {
+				doLogin();
+			}
+		}
+	}
+}
+
+function clickoffline() {
+	if (document.getElementById("offline").checked) {
+		document.getElementById("offline").checked = false;
+	} else {
+		document.getElementById("offline").checked = true;
+	}
+}
+
+function clickrmbUser() {
+	if (document.getElementById("rmbUser").checked) {
+		document.getElementById("rmbUser").checked = false;
+	} else {
+		document.getElementById("rmbUser").checked = true;
+	}
+}
 </script>
 </head>
 
@@ -31,12 +59,12 @@ $(function(){
 <div class="loginContent">
 <ul>
 	<li class="FontUserName">用户名：</li>
-	<li><input type="text" class="input" id="username"></li>
+	<li><input type="text" class="input" id="username" name="username" onKeyPress="javascript:inputPress(this.value,1);"></li>
 	<li class="FontPassword" style="margin-top: 10px;">登录密码：</li>
-	<li><input type="password" class="input" id="password"></li>
+	<li><input type="password" class="input" id="password" name="password" onKeyPress="javascript:inputPress(this.value,2);"></li>
 	<li class="FontCheckBox" style="padding: 5px 0 15px 15px;">
-	<input type="checkbox" id="offline">&nbsp;离线登录 &nbsp;&nbsp;&nbsp;
-	<input type="checkbox" id="rmbUser">&nbsp;记住账号</li>
+	<input type="checkbox" id="offline"><a href="javascript:clickoffline();">&nbsp;离线登录&nbsp;&nbsp;</a>
+	<input type="checkbox" id="rmbUser"><a href="javascript:clickrmbUser();">&nbsp;记住账号</a></li>
 	<li><a href="javascript:doLogin()"><img src="images/loginBtn.jpg" /></a></li>
 </ul>
 </div>
@@ -49,6 +77,7 @@ $(function(){
 </html>
 <script>
 function doLogin() {
+	$("#username").val($.trim($("#username").val()));
 	var username = document.getElementById('username').value;
 	var password = document.getElementById('password').value;
 	if (username == '' || username == '用户名') {

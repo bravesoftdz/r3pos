@@ -22,8 +22,10 @@ img {
 }
 
 a {
-	color: inherit;
+	color: #000000;
 	text-decoration: none;
+	hide-focus: expression(this.hideFocus=true);
+	outline: none;
 }
 
 .FontTitle {

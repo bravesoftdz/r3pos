@@ -1838,6 +1838,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Color = clBtnFace
             Caption = #23548#20837#12299
             TabOrder = 8
+            Visible = False
             OnClick = RzBmpButton8Click
           end
         end

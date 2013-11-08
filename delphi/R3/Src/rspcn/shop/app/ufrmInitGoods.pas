@@ -2350,7 +2350,7 @@ begin
   rzPage.ActivePageIndex := 0;
   btnPrev.Visible := false;
   btnPrev.Caption := '上一步';
-  btnNext.Caption := '上一步';
+  btnNext.Caption := '下一步';
 end;
 
 procedure TfrmInitGoods.WebUpdater1Error(Sender: TObject;
@@ -2360,8 +2360,7 @@ begin
   rzPage.ActivePageIndex := 0;
   btnPrev.Visible := false;
   btnPrev.Caption := '上一步';
-  btnNext.Caption := '上一步';
-
+  btnNext.Caption := '下一步';
 end;
 
 procedure TfrmInitGoods.upgrade(var Message: TMessage);

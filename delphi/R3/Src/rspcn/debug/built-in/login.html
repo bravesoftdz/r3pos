@@ -15,6 +15,13 @@ $(document).ready(function() {
 		$("#rmbUser").attr("checked",true);
 		$("#password").focus();
 	}
+	if ($.browser.msie) {
+		if ($.browser.version == '7.0') {
+			$("#placeholder").html("&nbsp;&nbsp;&nbsp;");
+		} else {
+			$("#placeholder").html("&#12288;&#12288;");
+		}
+	}
 });
 
 function inputPress(val, flag) {
@@ -63,8 +70,9 @@ function clickrmbUser() {
 	<li class="FontPassword" style="margin-top: 10px;">登录密码：</li>
 	<li><input type="password" class="input" id="password" name="password" onKeyPress="javascript:inputPress(this.value,2);"></li>
 	<li class="FontCheckBox" style="padding: 15px 0 10px 15px;">
-	<input type="checkbox" id="offline"><a href="javascript:clickoffline();">&nbsp;离线登录&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-	<input type="checkbox" id="rmbUser"><a href="javascript:clickrmbUser();">&nbsp;记住账号</a>
+		<input type="checkbox" id="offline"><a href="javascript:clickoffline();">&nbsp;离线登录</a>
+		<span id="placeholder"></span>
+		<input type="checkbox" id="rmbUser"><a href="javascript:clickrmbUser();">&nbsp;记住账号</a>
 	</li>
 	<li><a href="javascript:doLogin()"><img src="images/loginBtn.jpg" /></a></li>
 </ul>
@@ -77,18 +85,25 @@ function clickrmbUser() {
 </body>
 </html>
 <script>
+var loading = false;
 function doLogin() {
+	if (loading) {
+		return;
+	}
+	loading = true;
 	$("#username").val($.trim($("#username").val()));
 	var username = document.getElementById('username').value;
 	var password = document.getElementById('password').value;
 	if (username == '' || username == '用户名') {
 		alert('请输入用户名');
 		document.getElementById('username').focus();
+		loading = false;
 		return;
 	}
 	if (password == '' || password == '密码') {
 		alert('请输入密码');
 		document.getElementById('password').focus();
+		loading = false;
 		return;
 	}
 	//记住用户名 start
@@ -105,12 +120,15 @@ function doLogin() {
 		var ret = rsp.signIn(username, password, '123456', !offline);
 	} catch (e) {
 		alert(e.message);
+		loading = false;
 		return;
 	}
 	if (ret) {
 		this.location = 'index.html';
 	} else {
+		loading = false;
 		alert('登录失败');
 	}
+	loading = false;
 }
 </script>

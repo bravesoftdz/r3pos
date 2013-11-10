@@ -857,6 +857,7 @@ begin
   inherited;
   SObj := TRecord_(rzTree.Selected.Data);
   if (SObj = nil) then Raise Exception.Create('该等级不允许修改...');
+  if (SObj.FieldByName('PRICE_ID').AsString = '#') then Raise Exception.Create('该等级不允许修改...');
   if TfrmPriceGrade.ShowDialog(self,SObj.FieldByName('PRICE_ID').AsString) then
      begin
        rzTree.OnChange := nil;

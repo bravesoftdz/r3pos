@@ -1209,6 +1209,7 @@ inherited frmCustomer: TfrmCustomer
             Color = clBtnFace
             Caption = #23548#20837
             TabOrder = 4
+            Visible = False
             OnClick = RzBmpButton8Click
           end
         end

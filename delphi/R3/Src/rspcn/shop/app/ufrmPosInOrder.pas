@@ -838,7 +838,7 @@ begin
        Raise Exception.Create('结束条件不能为空！');
      end;
   cdsList.Close;
-  cdsList.SQL.Text := 'select A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,B.CLIENT_NAME,A.STOCK_MNY,A.STOCK_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
+  cdsList.SQL.Text := 'select A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,B.CLIENT_NAME,A.STOCK_MNY,A.STOCK_MNY-A.PAY_ZERO as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK,A.COMM_ID '+
     'from STK_STOCKORDER A '+
     'left outer join VIW_CLIENTINFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
@@ -954,6 +954,7 @@ end;
 procedure TfrmPosInOrder.RzToolButton2Click(Sender: TObject);
 begin
   if cdsList.IsEmpty then Exit;
+  if cdsList.FieldByName('COMM_ID').AsString <> '' then Raise Exception.Create('卷烟订单不允许修改...');
   open(cdsList.FieldbyName('STOCK_ID').AsString);
   EditOrder;
   PageControl.ActivePageIndex := 0;

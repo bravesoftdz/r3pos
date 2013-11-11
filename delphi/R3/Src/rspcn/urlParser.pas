@@ -111,6 +111,12 @@ begin
                    wb := UcFactory.xsmUC;
                  end
               else
+              if pos('xsmwb',urltoken.path)>0 then
+                 begin
+                   if UcFactory.xsmWB='' then Raise Exception.Create('新商盟web地址配置有误...');
+                   wb := UcFactory.xsmWB;
+                 end
+              else
                  Raise Exception.Create('无效的新商盟地址...');
               delete(urltoken.path,1,6);
               if wb[length(wb)]='/' then

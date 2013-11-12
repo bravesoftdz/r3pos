@@ -874,7 +874,6 @@ begin
   ClearBuf;
   for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
   FList.Free;
-  unLoadTuxedo;
   inherited;
 end;
 
@@ -1427,6 +1426,6 @@ end;
 initialization
   dllHandle := 0;
 finalization
-
+  unLoadTuxedo;
 end.
                                                                                             .

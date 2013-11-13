@@ -15,7 +15,7 @@ uses
 
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
-function initApp(appWnd:Thandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
+function initApp(app:TApplication;scr:TScreen;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
 //2.打开应用
 //说明：打开应用中指定的模块
 function openApp(hWnd:Thandle;moduId:pchar):boolean;stdcall;
@@ -77,7 +77,8 @@ uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory
 
 var
   webForm:TStringList;
-  oldHandle:THandle;
+  _dllApplication:TApplication;
+  _dllScreen:TScreen;
 
 procedure Halt0;
 begin
@@ -88,7 +89,8 @@ procedure DLLEntryPoint(dwReason: DWord);
 begin
   if (dwReason = DLL_PROCESS_DETACH) Then
   Begin
-    Application.Handle := oldHandle;
+    Application := _dllApplication;
+    Screen := _dllScreen;
     eraseApp(false);
     asm
       xor edx, edx
@@ -107,22 +109,25 @@ end;
 
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
-function initApp(appWnd:Thandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
+function initApp(app:TApplication;scr:TScreen;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
 begin
   try
     DllProc := @DLLEntryPoint;
     DllProcEX := @DLLEntryPoint;
+    if _dllApplication=nil then
+       _dllApplication := Application;
+    if _dllScreen=nil then
+       _dllScreen := Screen;
+    Application := app;
+//    Screen := scr;
     webForm := TStringList.Create;
-    oldHandle := Application.Handle;
-    dllApplication.handle := appWnd;
-    Application.OnException := dllApplication.dllException;
-    Application.Handle := appWnd;
+    //Application.OnException := dllApplication.dllException;
     token.decode(strpas(_token));
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
     result := true;
     dataFactory.MoveToDefault;
-    SyncFactory.LoginSync(appWnd);
+    SyncFactory.LoginSync(Application.MainForm.handle);
     dllApplication.inited := true;
     result := true;
   except
@@ -239,8 +244,6 @@ begin
     if assigned(token) then FreeAndNil(token);
     FreeAndNil(webForm);
     dbHelp := nil;
-    Application.OnException := nil;
-    Application.Handle := oldHandle;
   except
     on E:Exception do
        begin
@@ -453,6 +456,8 @@ end;
 
 initialization
   dllApplication := TdllApplication.create;
+  _dllApplication := nil;
+  _dllScreen := nil;
 finalization
   if assigned(dllApplication) then FreeAndNil(dllApplication);
 end.

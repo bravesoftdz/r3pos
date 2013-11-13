@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=..\debug
+OutputDir=D:\r6
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -134,6 +134,8 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+[Excluded Packages]
+c:\program files\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
@@ -142,6 +144,6 @@ Count=1
 Item0=$(RMHome)\Source\Components\zlib123
 [HistoryLists\hlOutputDirectorry]
 Count=3
-Item0=..\debug
-Item1=D:\r6
+Item0=D:\r6
+Item1=..\debug
 Item2=D:\ต๗สิ\shop_tuxedo

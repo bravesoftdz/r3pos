@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=debug
+OutputDir=D:\r6
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -134,12 +134,14 @@ OriginalFilename=
 ProductName=现代卷烟零售终端营销管理系统
 ProductVersion=6.0.0.0
 Comments=
+[Excluded Packages]
+c:\program files\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
 Count=4
-Item0=debug
-Item1=D:\r6
+Item0=D:\r6
+Item1=debug
 Item2=D:\调试\shop_tuxedo
 Item3=D:\myWork\Delphi\R3\Src\rspcn\debug

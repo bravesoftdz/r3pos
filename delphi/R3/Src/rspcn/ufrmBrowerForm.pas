@@ -279,6 +279,7 @@ var
   StartupInfo: TStartupInfo;
 var
   whKeyboard: HHook;
+procedure SwitchToThisWindow(hWnd:THandle;bRestore:boolean);stdcall; external user32 name 'SwitchToThisWindow';
 
 function KeyboardHookCallBack(Code: integer; Msg: WPARAM;
   KeyboardHook: LPARAM): LRESULT; stdcall;

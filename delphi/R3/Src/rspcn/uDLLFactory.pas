@@ -6,7 +6,7 @@ uses
 type
   //1.初始化应用
   //说明：传入appId与令牌，初始化成功后返回true
-  TinitApp=function(appWnd:Thandle;_dbHelp:IdbDllHelp;token:pchar):boolean;stdcall;
+  TinitApp=function(app:TApplication;scr:TScreen;_dbHelp:IdbDllHelp;token:pchar):boolean;stdcall;
   //2.打开应用
   //说明：打开应用中指定的模块
   TopenApp=function(hWnd:Thandle;moduId:pchar):boolean;stdcall;
@@ -779,7 +779,7 @@ end;
 
 procedure TDLLPlugin.Init;
 begin
-  if not initApp(dllFactory.appWnd,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+appId+'应用失败,错误：'+strPas(getLastError));
+  if not initApp(Application,Screen,dllFactory.getDBHelp,pchar(token.encode)) then Raise Exception.Create('初始化'+appId+'应用失败,错误：'+strPas(getLastError));
 end;
 
 procedure TDLLPlugin.SetappId(const Value: string);

@@ -468,32 +468,37 @@ procedure TfrmDownStockOrder.showForm;
 var rs,ss:TZQuery;
 begin
   inherited;
-  ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
-  licenseCode := ss.FieldByName('LICENSE_CODE').AsString;
-  shopName := ss.FieldByName('SHOP_NAME').AsString;
-  ShowHeader;
-  downOrderMode := GetDownOrderMode;
-  if downOrderMode = '1' then
-     begin
-       rimUrl := GetRimUrl;
-       rs := TZQuery.Create(nil);
-       try
-         rs.SQL.Text := 'select COM_ID,CUST_ID from RM_CUST a,CA_SHOP_INFO b where a.LICENSE_CODE = b.LICENSE_CODE and b.SHOP_ID = :SHOP_ID';
-         rs.ParamByName('SHOP_ID').AsString := token.shopId;
-         dataFactory.MoveToRemote;
+  if not token.online then Raise Exception.Create('离线登录时不能使用此功能...');
+  try 
+    ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
+    licenseCode := ss.FieldByName('LICENSE_CODE').AsString;
+    shopName := ss.FieldByName('SHOP_NAME').AsString;
+    ShowHeader;
+    downOrderMode := GetDownOrderMode;
+    if downOrderMode = '1' then
+       begin
+         rimUrl := GetRimUrl;
+         rs := TZQuery.Create(nil);
          try
-           dataFactory.Open(rs);
+           rs.SQL.Text := 'select COM_ID,CUST_ID from RM_CUST a,CA_SHOP_INFO b where a.LICENSE_CODE = b.LICENSE_CODE and b.SHOP_ID = :SHOP_ID';
+           rs.ParamByName('SHOP_ID').AsString := token.shopId;
+           dataFactory.MoveToRemote;
+           try
+             dataFactory.Open(rs);
+           finally
+             dataFactory.MoveToDefault;
+           end;
+           if rs.IsEmpty then Raise Exception.Create('rim中找不到对应零售户...');
+           comId := rs.FieldByName('COM_ID').AsString;
+           custId := rs.FieldByName('CUST_ID').AsString;
          finally
-           dataFactory.MoveToDefault;
+           rs.Free;
          end;
-         if rs.IsEmpty then Raise Exception.Create('rim中找不到对应零售户...');
-         comId := rs.FieldByName('COM_ID').AsString;
-         custId := rs.FieldByName('CUST_ID').AsString;
-       finally
-         rs.Free;
        end;
-     end;
-  Open;
+    Open;
+  except
+    Raise Exception.Create('连接服务器失败，请稍后重试...');
+  end;
 end;
 
 function TfrmDownStockOrder.GetDownOrderMode: string;

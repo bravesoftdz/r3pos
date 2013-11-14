@@ -15,7 +15,7 @@ uses
 
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
-function initApp(app:TApplication;scr:TScreen;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
+function initApp(app:TApplication;scr:TScreen;hWnd:THandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
 //2.打开应用
 //说明：打开应用中指定的模块
 function openApp(hWnd:Thandle;moduId:pchar):boolean;stdcall;
@@ -109,7 +109,7 @@ end;
 
 //1.初始化应用
 //说明：传入appId与令牌，初始化成功后返回true
-function initApp(app:TApplication;scr:TScreen;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
+function initApp(app:TApplication;scr:TScreen;hWnd:THandle;_dbHelp:IdbDllHelp;_token:pchar):boolean;stdcall;
 begin
   try
     DllProc := @DLLEntryPoint;
@@ -127,7 +127,7 @@ begin
     rspFactory := TrspFactory.Create(nil);
     result := true;
     dataFactory.MoveToDefault;
-    SyncFactory.LoginSync(Application.MainForm.handle);
+    SyncFactory.LoginSync(hWnd);
     dllApplication.inited := true;
     result := true;
   except

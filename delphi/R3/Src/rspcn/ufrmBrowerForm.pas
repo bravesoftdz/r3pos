@@ -1,4 +1,4 @@
- //*************************************************************
+//*************************************************************
 //                    EmbeddedWB - Tabs Demo                  *
 //                                                            *
 //                            by                              *
@@ -1226,7 +1226,6 @@ begin
        lblUserName.Caption := '»¶Ó­Äú£¡'+token.username
     else
        lblUserName.Caption := '';;
-    lblSignOut.Visible := token.logined;
     if token.logined and not dllFactory.Inited and not frmUpdate.Visible then
        begin
          try
@@ -1237,6 +1236,7 @@ begin
            Raise;
          end;
        end;
+    lblSignOut.Visible := token.logined;
   finally
     Timer1.Enabled := true;
   end;
@@ -1919,8 +1919,12 @@ begin
 end;
 
 initialization
+  oleinitialize(nil);
   iCaptSize := GetSystemMetrics(SM_CYCAPTION);
   iBorderSize := GetSystemMetrics(SM_CXBORDER);
   iBorderThick := GetSystemMetrics(SM_CXSIZEFRAME);
+finalization
+  oleuninitialize;
+
 end.
 

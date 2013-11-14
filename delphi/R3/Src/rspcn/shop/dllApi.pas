@@ -119,9 +119,8 @@ begin
     if _dllScreen=nil then
        _dllScreen := Screen;
     Application := app;
-    // Screen := scr;
+    dllApplication.handle := hWnd;
     webForm := TStringList.Create;
-    // Application.OnException := dllApplication.dllException;
     token.decode(strpas(_token));
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);

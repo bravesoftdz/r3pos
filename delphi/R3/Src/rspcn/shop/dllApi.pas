@@ -119,9 +119,9 @@ begin
     if _dllScreen=nil then
        _dllScreen := Screen;
     Application := app;
-//    Screen := scr;
+    // Screen := scr;
     webForm := TStringList.Create;
-    //Application.OnException := dllApplication.dllException;
+    // Application.OnException := dllApplication.dllException;
     token.decode(strpas(_token));
     dbHelp:= _dbHelp;
     rspFactory := TrspFactory.Create(nil);
@@ -290,9 +290,9 @@ var
 begin
   try
     for i:=webForm.Count -1 downto 0 do
-       begin
-         TfrmWebForm(webForm.Objects[i]).ajustPostion;
-       end;
+      begin
+        TfrmWebForm(webForm.Objects[i]).ajustPostion;
+      end;
     result := true;
   except
     on E:Exception do
@@ -345,8 +345,7 @@ begin
 end;
 
 constructor TdllApplication.Create;
-var
-  F:TIniFile;
+var F:TIniFile;
 begin
   InitializeCriticalSection(ThreadLock);
   EvtHandle := CreateEvent(nil, True, False, nil);
@@ -355,7 +354,6 @@ begin
   timer.OnTimer := onTimer;
   timer.Enabled := false;
   timer.Interval := 30*60*1000;
-  //timer.Interval := 2*1000;
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
   try
     mode := F.ReadString('soft','mode','release');

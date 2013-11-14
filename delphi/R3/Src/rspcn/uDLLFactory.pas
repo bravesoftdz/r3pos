@@ -1,8 +1,9 @@
 unit uDLLFactory;
 
 interface
-uses
-  Classes,SysUtils,windows,forms,urlParser,ZIntf,ZDataSet,ZBase,Variants;
+
+uses Classes,SysUtils,windows,forms,urlParser,ZIntf,ZDataSet,ZBase,Variants;
+
 type
   //1.初始化应用
   //说明：传入appId与令牌，初始化成功后返回true
@@ -71,10 +72,8 @@ type
     procedure RollbackTrans;stdcall;
     //是否已经在事务中 True 在事务中
     function  InTransaction:boolean;stdcall;
-
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
     function  iDbType:Integer;stdcall;
-
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
     function OpenSQL(SQL:WideString;Params:WideString):OleVariant;OverLoad;stdcall;
     function OpenNS(NS:WideString;Params:WideString):OleVariant;OverLoad;stdcall;
@@ -89,11 +88,9 @@ type
     procedure CancelBatch; stdcall;
     procedure MoveToDefault; stdcall;
     function getLastError:pchar; stdcall;
-
     //执行远程方式，返回结果
     function ExecProc(NS:String;Params:WideString):pchar;stdcall;
     function DBLock(locked:boolean):boolean;stdcall;
-
   public
     constructor Create;
     destructor Destroy; override;
@@ -126,12 +123,10 @@ var dllFactory:TDLLFactory;
 
 implementation
 
-uses udataFactory,utokenFactory,encDec;
+uses udataFactory,utokenFactory,EncDec;
 
-{ TDLLFactory }
 
-procedure TDLLFactory.AddBatch(ds: OleVariant; const ns,
-  Params: WideString);
+procedure TDLLFactory.AddBatch(ds: OleVariant; const ns, Params: WideString);
 var
   rs:TZQuery;
 begin
@@ -472,8 +467,7 @@ begin
   end;
 end;
 
-function TDLLFactory.UpdateBatch(ds: OleVariant; NS,
-  Params: WideString): boolean;
+function TDLLFactory.UpdateBatch(ds: OleVariant; NS, Params: WideString): boolean;
 var
   rs:TZQuery;
 begin
@@ -608,7 +602,6 @@ begin
        end;
   end;
 end;
-
 
 procedure TDLLFactory.send(urltoken: TurlToken;msg:string);
 var

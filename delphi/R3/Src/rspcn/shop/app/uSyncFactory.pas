@@ -1475,6 +1475,8 @@ begin
                 begin
                   if MessageBox(PHWnd,'系统检测到上次退出未进行数据同步，是否立即执行?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
                      begin
+                       if dllGlobal.GetSFVersion = '.LCL' then
+                          TfrmStocksCalc.Calc(Application.MainForm,now());
                        SyncFactory.SyncBizData;
                        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
                      end;

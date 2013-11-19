@@ -1558,6 +1558,11 @@ begin
        if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
        Raise Exception.Create('system为系统内置账号，不允许新增！');
      end;
+  if trim(LowerCase(edtACCOUNT.Text)) = trim(LowerCase(token.xsmCode)) then
+     begin
+       if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+       Raise Exception.Create(edtACCOUNT.Text+'为新商盟账号，不允许新增！');
+     end;
 end;
 
 procedure TfrmSysDefine.GrantRights;

@@ -1808,40 +1808,20 @@ begin
   if edtSORT_ID1.Properties.ReadOnly then Exit;
   Obj := TRecord_.Create;
   try
-    if edtGOODS_OPTION1.Checked and (not Finded) then
-      begin
-        frmSortDropFrom.RelationId := FY_RELATION_ID;
-        if frmSortDropFrom.DropForm(edtSORT_ID, Obj) then
-          begin
-            if Obj.Count > 0 then
+    frmSortDropFrom.ShowCgtSort := false;
+    if frmSortDropFrom.DropForm(edtSORT_ID, Obj) then
+       begin
+         if Obj.Count > 0 then
             begin
               edtSORT_ID1.Text := Obj.FieldbyName('SORT_ID').AsString;
               edtSORT_ID.Text := Obj.FieldbyName('SORT_NAME').AsString;
             end
-            else
+         else
             begin
               edtSORT_ID1.Text := '';
               edtSORT_ID.Text := '';
             end;
-          end;
-      end
-    else
-      begin
-        frmSortDropFrom.ShowCgtSort := false;
-        if frmSortDropFrom.DropForm(edtSORT_ID, Obj) then
-          begin
-            if Obj.Count > 0 then
-            begin
-              edtSORT_ID1.Text := Obj.FieldbyName('SORT_ID').AsString;
-              edtSORT_ID.Text := Obj.FieldbyName('SORT_NAME').AsString;
-            end
-            else
-            begin
-              edtSORT_ID1.Text := '';
-              edtSORT_ID.Text := '';
-            end;
-          end;
-      end;
+       end;
   finally
     Obj.Free;
   end;

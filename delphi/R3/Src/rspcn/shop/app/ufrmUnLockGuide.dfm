@@ -773,7 +773,7 @@ inherited frmUnLockGuide: TfrmUnLockGuide
             Height = 27
             Align = alClient
             Alignment = taCenter
-            Caption = #26032#21830#30431#36134#21495
+            Caption = #32593#35746#36134#21495
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -15
@@ -829,7 +829,7 @@ inherited frmUnLockGuide: TfrmUnLockGuide
             Height = 27
             Align = alClient
             Alignment = taCenter
-            Caption = #26032#21830#30431#23494#30721
+            Caption = #32593#35746#23494#30721
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -15

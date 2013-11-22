@@ -100,7 +100,6 @@ type
     RzBackground1: TRzBackground;
     lblStatus: TRzLabel;
     RzBmpButton3: TRzBmpButton;
-    RzLabel1: TRzLabel;
     RzPanel1: TRzPanel;
     RzProgressBar1: TRzProgressBar;
     Panel1: TPanel;

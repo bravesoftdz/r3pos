@@ -1851,23 +1851,6 @@ object frmBrowerForm: TfrmBrowerForm
         27F6F5FFD9}
       Transparent = True
     end
-    object RzLabel1: TRzLabel
-      Left = 76
-      Top = 7
-      Width = 73
-      Height = 25
-      Caption = #26032#21830#30431
-      Font.Charset = GB2312_CHARSET
-      Font.Color = 8815985
-      Font.Height = -24
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-      Transparent = True
-      ShadowColor = clSilver
-      ShadowDepth = 1
-      TextStyle = tsShadow
-    end
     object RzFormShape1: TRzFormShape
       Left = 0
       Top = 1
@@ -1879,13 +1862,13 @@ object frmBrowerForm: TfrmBrowerForm
     end
     object RzLabel3: TRzLabel
       Left = 77
-      Top = 36
-      Width = 235
-      Height = 16
-      Caption = #29616#20195#21367#28895#38646#21806#32456#31471#33829#38144#31649#29702#31995#32479' V6'
+      Top = 20
+      Width = 253
+      Height = 22
+      Caption = #29616#20195#21367#28895#38646#21806#32456#31471#31649#29702#31995#32479
       Font.Charset = GB2312_CHARSET
       Font.Color = 8815985
-      Font.Height = -15
+      Font.Height = -21
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False

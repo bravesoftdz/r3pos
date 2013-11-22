@@ -965,6 +965,7 @@ begin
                         if urlToken.appId='xsm-in' then
                            begin
                               frmLogo.hWnd := MainPanel.Handle;
+                              frmLogo.showCaption := '正在登录网上订货...';
                               frmLogo.ShowForm;
                               try
                                 UCFactory.getModule;
@@ -1764,13 +1765,13 @@ begin
   frmLogo.hWnd := MainPanel.Handle;
   frmLogo.ShowForm;
   try
-  frmLogo.showCaption := '正在检测资源包..';
+  frmLogo.showCaption := '正在检测资源包...';
   if token.online then
      begin
        if resFactory.checkAndDownRes then
           OpenHome;
      end;
-  frmLogo.showCaption := '正在检测新版本..';
+  frmLogo.showCaption := '正在检测新版本...';
   if token.online and frmUpdate.CheckUpgrade then
      frmUpdate.Show;
   finally

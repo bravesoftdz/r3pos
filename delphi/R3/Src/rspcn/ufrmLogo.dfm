@@ -6470,7 +6470,7 @@ object frmLogo: TfrmLogo
         Height = 26
         Alignment = taCenter
         AutoSize = False
-        Caption = #27491#22312#30331#24405#26032#21830#30431'...'
+        Caption = #27491#22312#30331#24405#32593#19978#35746#36135'...'
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -15

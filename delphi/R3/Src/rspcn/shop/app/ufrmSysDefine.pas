@@ -1561,7 +1561,7 @@ begin
   if trim(LowerCase(edtACCOUNT.Text)) = trim(LowerCase(token.xsmCode)) then
      begin
        if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
-       Raise Exception.Create(edtACCOUNT.Text+'为新商盟账号，不允许新增！');
+       Raise Exception.Create(edtACCOUNT.Text+'为网上订货账号，不允许新增！');
      end;
 end;
 

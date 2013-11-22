@@ -74,13 +74,13 @@ begin
      end;
   if XsmCode = '' then
      begin
-        MessageBox(Handle,pchar('请输入新商盟账号...'),'友情提示..',MB_OK);
+        MessageBox(Handle,pchar('请输入网订账号...'),'友情提示..',MB_OK);
         if edtXSM_CODE.CanFocus then edtXSM_CODE.SetFocus;
         Exit;
      end;
   if XsmPswd = '' then
      begin
-        MessageBox(Handle,pchar('请输入新商盟密码...'),'友情提示..',MB_OK);
+        MessageBox(Handle,pchar('请输入网订密码...'),'友情提示..',MB_OK);
         if edtXSM_PSWD.CanFocus then edtXSM_PSWD.SetFocus;
         Exit;
      end;
@@ -98,7 +98,7 @@ begin
        end; 
     if not ((XsmCode = rs.FieldByName('XSM_CODE').AsString) and (XsmPswd = DecStr(rs.FieldByName('XSM_PSWD').AsString,ENC_KEY))) then
        begin
-         MessageBox(Handle,pchar('新商盟账号密码验证失败，无法解锁...'),'友情提示..',MB_OK);
+         MessageBox(Handle,pchar('网订账号密码验证失败，无法解锁...'),'友情提示..',MB_OK);
          Exit;
        end;
     if MessageBox(Handle,pchar('确认要解除门店【'+ShopName+'】的锁定状态?'),'友情提醒',MB_YESNO+MB_ICONQUESTION) <> 6 then

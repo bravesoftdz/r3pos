@@ -521,6 +521,7 @@ begin
          if trim(str) <> '' then
             begin
               str := trim(str);
+              if Copy(str,1,4) = 'http' then delete(str,1,4);
               delete(str,1,3);
               delete(str,length(str)-1,2);
               result := str;

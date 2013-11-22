@@ -2138,7 +2138,7 @@ begin
              if pos('卷烟供应链', E.Message) > 0 then
                 MessageBox(Handle,pchar('当前企业尚未加盟卷烟供应链，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK)
              else
-                MessageBox(Handle,pchar('当前企业尚未开通门店管理功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
+                MessageBox(Handle,pchar('当前企业尚未开通零售终端功能，请联系客户经理...'+dllGlobal.GetServiceInfo),'友情提示..',MB_OK);
              Exit;
            end;
       end;

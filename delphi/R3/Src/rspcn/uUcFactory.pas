@@ -574,7 +574,7 @@ begin
     rs.ParamByName('LOWER_XSM_CODE').AsString := LowerCase(username);
     remote.Open(rs);
 
-    if rs.IsEmpty then Raise Exception.Create('错误的登录名...');
+    if rs.IsEmpty then Raise Exception.Create('该账号尚未开通零售终端功能...');
     if (Copy(rs.FieldByName('COMM_1').AsString,2,1) = '2') or (Copy(rs.FieldByName('COMM_2').AsString,2,1) = '2') then Raise Exception.Create('该用户已注销...');
     if rs.FieldByName('PROD_ID').AsString = '' then Raise Exception.Create('该用户尚未分配产品信息...');
     if rs.FieldByName('DEF_SRVR_ID').AsString = '' then Raise Exception.Create('该用户尚未分配默认应用服务器信息...');

@@ -412,6 +412,7 @@ begin
   if dbState = dsBrowse then Exit;
 
   if edtSTOCK_DATE.EditValue = null then Raise Exception.Create('进货日期不能为空');
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
 
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');

@@ -181,7 +181,10 @@ begin
     on E:Exception do
     begin
       LogFile.AddLogFile(0,'错误了,访问:'+url);
-      Raise;
+      if pos('Socket Error # 11004', E.Message) > 0 then
+         Raise Exception.Create('网络连接异常，请检查网络后重试...')
+      else
+         Raise;
     end;
   end;
 end;

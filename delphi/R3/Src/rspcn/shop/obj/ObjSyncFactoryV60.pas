@@ -156,7 +156,9 @@ begin
       if (i=(TIME_STAMPIdx-1)) then
          begin
            if ZQuery.Params[i].Value>2808566734 then
-              ZQuery.Params[i].Value := 5497000;
+              ZQuery.Params[i].Value := 5497000
+           else
+              ZQuery.Params[i].Value := StrtoInt64Def(ZQuery.Params[i].asString,0);
            if (Params.FindParam('TIME_STAMP_NOCHG')<>nil) and (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('TIME_STAMP').Value) then
               ZQuery.Params[i].Value := Params.ParamByName('TIME_STAMP').Value;
          end;

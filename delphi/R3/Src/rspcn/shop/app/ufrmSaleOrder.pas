@@ -1067,7 +1067,6 @@ begin
 
        AObj.FieldbyName('PAY_ZERO').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
        MarqueeStatus.Caption := '实收:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat);
-
      end;
   end;
   result := true;
@@ -1121,6 +1120,7 @@ begin
   w := 0;
   payInfo := '';
   payment.Caption := '本次收款';
+  AObj.FieldbyName('CASH_MNY').asFloat := AObj.FieldByName('PAY_A').asFloat;
   if AObj.FieldbyName('PAY_A').asFloat<>0 then
      begin
        s[1] := '1';

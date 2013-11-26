@@ -1068,9 +1068,8 @@ begin
        if AObj.FieldbyName('CASH_MNY').AsFloat=0 then AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldbyName('PAY_A').AsFloat;
 
        AObj.FieldbyName('PAY_ZERO').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
-       
-       MarqueeStatus.Caption := '实收现金:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat);
 
+       MarqueeStatus.Caption := '实收现金:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat);
      end;
   end;
   result := true;
@@ -1096,7 +1095,7 @@ begin
   salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
   case dbState of
   dsBrowse:begin
-//      edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+      // edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
       edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payDibs));
       if TotalFee<>0 then
          edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
@@ -1105,12 +1104,12 @@ begin
     end;
   else
     begin
-//      if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
-//         begin
-//           edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat);
-//         end
-//      else
-//         edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+      // if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
+      //    begin
+      //      edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat);
+      //    end
+      // else
+      //    edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
       edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payDibs));
       if TotalFee<>0 then
          edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
@@ -1123,77 +1122,78 @@ begin
   s := '0000000000';
   w := 0;
   payInfo := '';
+  AObj.FieldbyName('CASH_MNY').asFloat := AObj.FieldByName('PAY_A').asFloat;
   if AObj.FieldbyName('PAY_A').asFloat<>0 then
      begin
        s[1] := '1';
-//       payment.Caption := '现金收款';
+       // payment.Caption := '现金收款';
        inc(w);
        payInfo := payInfo +'现金:'+formatFloat('#0.0#',AObj.FieldbyName('PAY_A').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_B').asFloat<>0 then
      begin
        s[2] := '1';
-//       payment.Caption := getPaymentTitle('B')+'收款';
+       // payment.Caption := getPaymentTitle('B')+'收款';
        inc(w);
        payInfo := payInfo +getPaymentTitle('B')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_B').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_C').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('C')+'收款';
+       // payment.Caption := getPaymentTitle('C')+'收款';
        inc(w);
        s[3] := '1';
        payInfo := payInfo +getPaymentTitle('C')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_C').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_D').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('D')+'欠款';
+        // payment.Caption := getPaymentTitle('D')+'欠款';
        inc(w);
        s[4] := '0';
        payInfo := payInfo +getPaymentTitle('D')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_D').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_E').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('E')+'收款';
+       // payment.Caption := getPaymentTitle('E')+'收款';
        inc(w);
        s[5] := '1';
        payInfo := payInfo +getPaymentTitle('E')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_E').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_F').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('F')+'收款';
+       // payment.Caption := getPaymentTitle('F')+'收款';
        inc(w);
        s[6] := '1';
        payInfo := payInfo +getPaymentTitle('F')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_F').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_G').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('G')+'收款';
+       // payment.Caption := getPaymentTitle('G')+'收款';
        inc(w);
        s[7] := '1';
        payInfo := payInfo +getPaymentTitle('G')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_G').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_H').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('H')+'收款';
+       // payment.Caption := getPaymentTitle('H')+'收款';
        inc(w);
        s[8] := '1';
        payInfo := payInfo +getPaymentTitle('H')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_H').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_I').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('I')+'收款';
+       // payment.Caption := getPaymentTitle('I')+'收款';
        inc(w);
        s[9] := '1';
        payInfo := payInfo +getPaymentTitle('I')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_I').asFloat)+ ' ';
      end;
   if AObj.FieldbyName('PAY_J').asFloat<>0 then
      begin
-//       payment.Caption := getPaymentTitle('J')+'收款';
+       // payment.Caption := getPaymentTitle('J')+'收款';
        inc(w);
        s[10] := '1';
        payInfo := payInfo +getPaymentTitle('J')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_J').asFloat)+ ' ';
      end;
-//  if w>1 then payment.Caption := '组合收款';
+  // if w>1 then payment.Caption := '组合收款';
   if totalAmt<>0 then
      begin
         case inputFlag of

@@ -2242,20 +2242,13 @@ begin
 end;
 
 procedure TfrmSysDefine.GetLocalPrintes;
-var ptStr:TStringList;
-    i:integer;
+var i:integer;
 begin
-  try
-    ptStr:=TStringList.Create;
-    ptStr.AddStrings(printer.Printers);
-    cxSaveCodePrintName.Properties.Items.Clear;
+  cxSaveCodePrintName.Properties.Items.Clear;
 
-    for i:=0 to ptStr.Count-1 do
-    begin
-      cxSaveCodePrintName.Properties.Items.Add(ptStr[i]);
-    end;
-  finally
-    ptStr.Free;
+  for i:=0 to printer.Printers.Count-1 do
+  begin
+    cxSaveCodePrintName.Properties.Items.Add(printer.Printers[i]);
   end;
 end;
 

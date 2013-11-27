@@ -9,7 +9,7 @@ uses
   ComCtrls, RzPrgres, cxMaskEdit, cxButtonEdit, zrComboBoxList, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, msxml,
   cxDropDownEdit, cxCalendar, cxCheckBox, cxMemo, cxSpinEdit, IniFiles,
-  Grids, DBGridEh, RzBckgnd, RzBorder, ObjCommon, cxRadioGroup;
+  Grids, DBGridEh, RzBckgnd, RzBorder, ObjCommon, cxRadioGroup, printers;
 
 type
   TfrmSysDefine = class(TfrmWebToolForm)
@@ -256,6 +256,16 @@ type
     edtXSM_CODE: TcxTextEdit;
     edtXSM_PSWD: TcxTextEdit;
     cxSaveCodePrint: TcxCheckBox;
+    Bevel9: TBevel;
+    RzLabel57: TRzLabel;
+    RzPanel4: TRzPanel;
+    RzPanel6: TRzPanel;
+    RzLabel58: TRzLabel;
+    cxSaveCodePrintName: TcxComboBox;
+    RzPanel7: TRzPanel;
+    RzPanel20: TRzPanel;
+    RzLabel59: TRzLabel;
+    cxSaveCodePrintType: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveShopInfoClick(Sender: TObject);
@@ -429,7 +439,19 @@ begin
      RzBmpButton4.Visible := false;
 
   if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
+  begin
      cxSaveCodePrint.Visible := true;
+     RzPanel7.Visible := true;
+     RzPanel4.Visible := true;
+     cxSaveCodePrintName.Properties.Items := printer.Printers;
+     RzLabel57.Visible := true;
+     Bevel9.Visible := true;
+  end
+  else
+  begin
+     btnDefault.Top := 525;
+     btnSaveSysdefine.Top :=525;
+  end;
 
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then
      Photo.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'built-in\images\user.png');
@@ -1056,6 +1078,10 @@ var
   Params:TftParamList;
   tmpSysDefine:TZQuery;
 begin
+  if (cxSaveCodePrint.Visible) and (cxSaveCodePrint.Checked) and
+     (cxSaveCodePrintType.ItemIndex=1) and(cxSaveCodePrintName.Text='') then
+     Raise Exception.Create('请选择二维码打印机名称！');
+     
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
   try
     F.WriteString('SYS_DEFINE','PRINTNULL',cxNullRow.Value);
@@ -1075,9 +1101,17 @@ begin
        F.WriteString('SYS_DEFINE','SAVEPRINT','0');
 
     if cxSaveCodePrint.Checked then
-       F.WriteString('SYS_DEFINE','SAVECODEPRINT','1')
+    begin
+       F.WriteString('SYS_DEFINE','SAVECODEPRINT','1');
+       F.WriteString('SYS_DEFINE','SAVECODEPRINTTYPE',inttostr(cxSaveCodePrintType.ItemIndex));
+       F.WriteString('SYS_DEFINE','SAVECODEPRINTNAME',EncStr(cxSaveCodePrintName.Text,ENC_KEY));
+    end
     else
+    begin
        F.WriteString('SYS_DEFINE','SAVECODEPRINT','0');
+       F.WriteString('SYS_DEFINE','SAVECODEPRINTTYPE','');
+       F.WriteString('SYS_DEFINE','SAVECODEPRINTNAME',EncStr('',ENC_KEY));
+    end;
     F.WriteString('SYS_DEFINE','PRINTFORMAT',Inttostr(cxPrintFormat.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOX',Inttostr(cxCashBox.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOXRATE',cxCashBoxRate.Text);
@@ -1222,6 +1256,8 @@ begin
        edtPRINTERWIDTH.ItemIndex := 0;
     cxSavePrint.Checked := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
     cxSaveCodePrint.Checked := F.ReadString('SYS_DEFINE','SAVECODEPRINT','0')='1';
+    cxSaveCodePrintType.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','SAVECODEPRINTTYPE','0'),0);
+    cxSaveCodePrintName.Text := DecStr(F.ReadString('SYS_DEFINE','SAVECODEPRINTNAME',EncStr('',ENC_KEY)),ENC_KEY);
     cxPrintFormat.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTFORMAT','0'),0);
     cxCashBox.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','CASHBOX','0'),0);
     cxCashBoxRate.ItemIndex := cxCashBoxRate.Properties.Items.IndexOf(F.ReadString('SYS_DEFINE','CASHBOXRATE','0'));
@@ -1296,6 +1332,8 @@ begin
   edtFOOTER.Text := '敬请保留小票,以作售后依据';
   cxSavePrint.checked := false;
   cxSaveCodePrint.checked := false;
+  cxSaveCodePrintType.ItemIndex:= 0;
+  cxSaveCodePrintName.Text:= '';
   cxPrintFormat.ItemIndex := 0;
 
   cxCashBox.ItemIndex := 0;

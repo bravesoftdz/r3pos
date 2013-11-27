@@ -248,7 +248,7 @@ implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,
      uCacheFactory,ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,
-     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory,ufrmCodeScan;
+     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory,ufrmCodeScan,uZebraPrinterFactory;
 
 {$R *.dfm}
 
@@ -641,7 +641,11 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
-  if DevFactory.SaveCodePrint then CodePrinterFactory.PrintCode(cdsDetail.Data,self.Handle);
+  if DevFactory.SaveCodePrint then
+    case DevFactory.SaveCodePrintType of
+      0: CodePrinterFactory.PrintCode(cdsDetail.Data,self.Handle);
+      1: ZebraPrinterFactory.PrintCode(cdsDetail.Data,self.Handle,DevFactory.SaveCodePrintName);
+    end;
   if DevFactory.SavePrint then
      begin
        DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);

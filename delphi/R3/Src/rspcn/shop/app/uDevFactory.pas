@@ -25,6 +25,8 @@ type
     FSavePrint: boolean;
     FPrintFormat: integer;
     FSaveCodePrint: Boolean;
+    FSaveCodePrintType: integer;
+    FSaveCodePrintName: string;
     FCloseDayPrintFlag: integer;
 
     procedure SetTicket_PrintComm(const Value: integer);
@@ -42,6 +44,8 @@ type
     procedure SetPrintFormat(const Value: integer);
     procedure SetSavePrint(const Value: boolean);
     procedure SetSaveCodePrint(const Value: Boolean);
+    procedure SetSaveCodePrintType(const Value: integer);
+    procedure SetSaveCodePrintName(const Value: string);
     function FormatText(s:string;pWidth:Integer):string;
     function FormatTitle(s:string):string;
     function GetPayText(id: string): string;
@@ -78,6 +82,8 @@ type
     property Ticket_PrintName:integer read FTicket_PrintName write SetTicket_PrintName;
 
     property SaveCodePrint:Boolean read FSaveCodePrint write SetSaveCodePrint;
+    property SaveCodePrintType:integer read FSaveCodePrintType write SetSaveCodePrintType;
+    property SaveCodePrintName:string read FSaveCodePrintName write SetSaveCodePrintName;
     property SavePrint:boolean read FSavePrint write SetSavePrint;
     property PrintFormat:integer read FPrintFormat write SetPrintFormat;
     //交班关账时打印类型 0只打金额 1打商品明细
@@ -125,6 +131,8 @@ begin
      Ticket_Copy := F.ReadInteger('SYS_DEFINE','TICKETCOPY',1);
 
      SaveCodePrint := F.ReadString('SYS_DEFINE','SAVECODEPRINT','0')='1';
+     SaveCodePrintType := F.ReadInteger('SYS_DEFINE','SAVECODEPRINTTYPE',0);
+     SaveCodePrintName := DecStr(F.ReadString('SYS_DEFINE','SAVECODEPRINTNAME',EncStr('',ENC_KEY)),ENC_KEY);
      CloseDayPrintFlag :=  F.ReadInteger('SYS_DEFINE','CLOSEDAYPRINTFLAG',0);
      SavePrint := F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
      PrintFormat := F.ReadInteger('SYS_DEFINE','PRINTFORMAT',0);
@@ -757,6 +765,16 @@ end;
 procedure TDevFactory.SetCloseDayPrintFlag(const Value: integer);
 begin
   FCloseDayPrintFlag := Value;
+end;
+
+procedure TDevFactory.SetSaveCodePrintName(const Value: string);
+begin
+  FSaveCodePrintName := Value;
+end;
+
+procedure TDevFactory.SetSaveCodePrintType(const Value: integer);
+begin
+  FSaveCodePrintType := Value;
 end;
 
 initialization

@@ -308,7 +308,7 @@ type
     procedure CheckInfoPercent;
 
     procedure SyncData;
-    
+
     procedure OpenSysDefine;
     procedure ReadSysDefine;
     procedure ReadBarCodeRule;
@@ -1078,10 +1078,9 @@ var
   Params:TftParamList;
   tmpSysDefine:TZQuery;
 begin
-  if (cxSaveCodePrint.Visible) and (cxSaveCodePrint.Checked) and
-     (cxSaveCodePrintType.ItemIndex=1) and(cxSaveCodePrintName.Text='') then
+  if (cxSaveCodePrint.Visible) and (cxSaveCodePrint.Checked) and (cxSaveCodePrintType.ItemIndex=1) and(cxSaveCodePrintName.Text='') then
      Raise Exception.Create('请选择二维码打印机名称！');
-     
+
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
   try
     F.WriteString('SYS_DEFINE','PRINTNULL',cxNullRow.Value);

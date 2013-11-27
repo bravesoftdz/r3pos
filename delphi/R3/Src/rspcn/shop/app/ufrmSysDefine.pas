@@ -334,6 +334,7 @@ type
     procedure FileRecovery(src:string;AppHandle:HWnd);
     procedure RemoteRecovery(recType:string;AppHandle:HWnd);
     procedure RtcSyncClose;
+    procedure GetLocalPrintes;
   public
     AObj:TRecord_;
     procedure GetShopInfo;
@@ -443,7 +444,7 @@ begin
      cxSaveCodePrint.Visible := true;
      RzPanel7.Visible := true;
      RzPanel4.Visible := true;
-     cxSaveCodePrintName.Properties.Items := printer.Printers;
+     GetLocalPrintes;
      RzLabel57.Visible := true;
      Bevel9.Visible := true;
   end
@@ -2238,6 +2239,24 @@ begin
   if trim(edtXSM_PSWD.Text) <> '' then inc(i);
   if trim(edtADDRESS.Text) <> '' then inc(i);
   RzProgressBar1.Percent := i * 100 div 10;
+end;
+
+procedure TfrmSysDefine.GetLocalPrintes;
+var ptStr:TStringList;
+    i:integer;
+begin
+  try
+    ptStr:=TStringList.Create;
+    ptStr.AddStrings(printer.Printers);
+    cxSaveCodePrintName.Properties.Items.Clear;
+
+    for i:=0 to ptStr.Count-1 do
+    begin
+      cxSaveCodePrintName.Properties.Items.Add(ptStr[i]);
+    end;
+  finally
+    ptStr.Free;
+  end;
 end;
 
 initialization

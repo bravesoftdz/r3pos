@@ -1010,7 +1010,7 @@ begin
   token.username := cdsShopInfo.FieldbyName('LINKMAN').AsString;
   token.address := cdsShopInfo.FieldbyName('ADDRESS').AsString;
   token.xsmCode := cdsShopInfo.FieldbyName('XSM_CODE').AsString;
-  token.xsmPWD := cdsShopInfo.FieldbyName('XSM_PSWD').AsString;
+  // token.xsmPWD := cdsShopInfo.FieldbyName('XSM_PSWD').AsString;
   token.licenseCode := cdsShopInfo.FieldbyName('LICENSE_CODE').AsString;
   token.legal := cdsShopInfo.FieldbyName('LINKMAN').AsString;
   token.mobile := cdsShopInfo.FieldbyName('TELEPHONE').AsString;
@@ -1032,6 +1032,7 @@ procedure TfrmSysDefine.SaveRegisterParams;
 begin
   dataFactory.MoveToSqlite;
   try
+    dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(token.xsmPWD,ENC_KEY)+''' where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
     if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+token.tenantId+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''')=0 then
        dataFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+token.tenantId+''',0,''00'',5497000)');
     if dataFactory.ExecSQL('update SYS_DEFINE set VALUE='''+token.tenantId+''' where TENANT_ID='+token.tenantId+' and DEFINE=''TENANT_ID''')=0 then

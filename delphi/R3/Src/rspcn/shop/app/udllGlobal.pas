@@ -567,6 +567,8 @@ begin
           (list[i]<>'BIGTO_CALC')
           and
           (list[i]<>'GODS_TYPE')
+          and
+          (list[i]<>'UNIT_ID')
         then
            begin
            if list[i]='TENANT_ID' then

@@ -217,6 +217,8 @@ type
     procedure RefreshMeaUnits;
     procedure SetShopOutPricePlace;
     procedure AddUnits(Sender: TObject);
+    procedure DealAidUnits;
+    function GetAidUnits(DataSet: TZQuery):string;
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
@@ -347,7 +349,7 @@ begin
       column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
       rs.Next;
-    end;
+    end; 
   Open;
 end;
 
@@ -356,11 +358,11 @@ begin
   cdsList.Close;
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,
-   'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
-   'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.PRICE_ID,j.COMM,c.AMOUNT,'+
+   'select 0 as A,'''' as AID_UNIT,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
+   'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.UNIT_ID,j.CALC_UNITS,j.SMALL_UNITS,j.BIG_UNITS,j.SMALLTO_CALC,j.BIGTO_CALC,j.PRICE_ID,j.COMM,c.AMOUNT,'+
    'isnull(ext.NEW_INPRICE,j.NEW_INPRICE) as NEW_INPRICE,'+
    'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P,ext.LOWER_AMOUNT,ext.UPPER_AMOUNT '+
-   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID,COMM',true)+') j '+
+   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID,COMM',true)+') j '+
    'left outer join (select TENANT_ID,GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+''' group by TENANT_ID,GODS_ID) c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
    'left outer join  PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID '+
    'left outer join  PUB_GOODSPRICE prc on j.TENANT_ID=prc.TENANT_ID and j.GODS_ID=prc.GODS_ID and j.SHOP_ID=prc.SHOP_ID and j.PRICE_ID=trim(prc.PRICE_ID) ) jp '+
@@ -368,6 +370,7 @@ begin
   );
   cdsList.SQL.Text := cdsList.SQL.Text + ' order by GODS_CODE';
   dataFactory.Open(cdsList);
+  DealAidUnits;
 end;
 
 function TfrmGoodsStorage.FindColumn(fieldname: string): TColumnEh;
@@ -570,6 +573,7 @@ begin
        cdsList.FieldByName('AMOUNT').AsString := edtAMOUNT.Text;
        cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
        cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
+       cdsList.FieldByName('AID_UNIT').AsString :=GetAidUnits(cdsList);
        cdsList.Post;
      end;
 end;
@@ -2349,6 +2353,7 @@ begin
     rs:=TZQuery.Create(nil);
     if TfrmStorageExcel.ExcelFactory(self,rs,'','',true) then
       SaveChangeOrder(rs);
+    open;
   finally
     rs.Free;
   end;
@@ -2515,6 +2520,79 @@ procedure TfrmGoodsStorage.edtCALC_UNITSAddClick(Sender: TObject);
 begin
   inherited;
   AddUnits(Sender);
+end;
+
+procedure TfrmGoodsStorage.DealAidUnits;
+var str: string;
+begin
+  cdsList.DisableControls; 
+  cdsList.First;
+  while not cdsList.Eof do
+  begin
+    str:= GetAidUnits(cdsList);
+    if str <> '' then
+    begin
+      cdsList.Edit;
+      cdsList.fieldByName('AID_UNIT').AsString := str;
+      cdsList.Post;
+    end;
+    str:= '';
+    cdsList.Next;
+  end;
+  cdsList.First;
+  cdsList.EnableControls;
+end;
+
+function TfrmGoodsStorage.GetAidUnits(DataSet: TZQuery): string;
+var columnUnit: TColumnEh;
+    str,aidName,calcName,unitId,calcUnit: string;
+    calcAmt,calcParam: Real;
+begin
+  try
+    if DataSet.IsEmpty then exit;
+    if DataSet.fieldByName('AMOUNT').AsString ='' then exit;
+    str:= '';
+    columnUnit := FindColumn('CALC_UNITS');
+
+    unitId:= DataSet.fieldByName('UNIT_ID').AsString;
+    calcUnit:= DataSet.fieldByName('CALC_UNITS').AsString;
+    calcAmt:= DataSet.fieldByName('AMOUNT').AsFloat;
+    aidName:= columnUnit.PickList[columnUnit.KeyList.IndexOf(unitId)];
+    calcName:= columnUnit.PickList[columnUnit.KeyList.IndexOf(calcUnit)];
+
+    if (calcName <> '') and (aidName <> '') then
+    begin
+      if calcAmt < 0 then
+      begin
+        str:='(¸º)';
+        calcAmt:= -calcAmt;
+      end;
+      if unitId = calcUnit then
+        str:= str + floattostr(calcAmt) + calcName
+      else
+      begin
+        if unitId = DataSet.fieldByName('SMALL_UNITS').AsString then
+          calcparam:= DataSet.fieldByName('SMALLTO_CALC').asFloat
+        else if unitId = DataSet.fieldByName('BIG_UNITS').AsString then
+          calcparam:= DataSet.fieldByName('BIGTO_CALC').asFloat;
+
+        if (calcAmt > 0) and (calcAmt < calcparam) then
+          str:= str + floattostr(calcAmt) + calcName
+        else if calcAmt > calcparam  then
+          str:= str + inttostr(trunc(calcAmt/calcparam)) + aidName + floattostr(((calcAmt/calcparam)- trunc(calcAmt/calcparam))*calcparam) + calcName;
+      end;
+    end;
+    if (str <> '') and (str = '(¸º)') then
+      begin
+        //if not (DataSet.State in [dsEdit,dsInsert]) then DataSet.Edit;
+        //DataSet.fieldByName('AID_UNIT').AsString := str;
+        //DataSet.Post;
+        str:= '';
+      end;
+    result:= str;
+  except
+    raise;
+  end;
 end;
 
 initialization

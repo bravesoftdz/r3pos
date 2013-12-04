@@ -349,7 +349,6 @@ begin
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   edtGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   edtReportType.ItemIndex := 1;
-
 end;
 
 procedure TfrmProfitReport.DBGridEh1DrawColumnCell(Sender: TObject;

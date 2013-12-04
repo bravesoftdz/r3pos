@@ -72,25 +72,22 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    { Private declarations }
     WTitle1:TStringList;
     WTitle2:TStringList;
     procedure DBGridPrint;override;
   public
-    { Public declarations }
     procedure OpenReport1;
     procedure OpenReport2(all:boolean=true);
     procedure showForm;override;
   end;
 
-var
-  frmStockReport: TfrmStockReport;
+var frmStockReport: TfrmStockReport;
 
 implementation
-uses udataFactory,utokenFactory,uFnUtil, udllGlobal;
-{$R *.dfm}
 
-{ TfrmSaleReport }
+uses udataFactory,utokenFactory,uFnUtil, udllGlobal;
+
+{$R *.dfm}
 
 procedure TfrmStockReport.OpenReport1;
 begin

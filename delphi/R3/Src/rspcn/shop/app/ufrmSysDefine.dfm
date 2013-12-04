@@ -8969,8 +8969,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel39: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 63
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #35282'    '#33394
@@ -9022,8 +9022,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel35: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #29992#25143#36134#21495
@@ -9076,8 +9076,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel36: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #29992#25143#22995#21517
@@ -9570,8 +9570,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel37: TRzLabel
                 Left = 1
                 Top = 1
-                Width = 73
-                Height = 20
+                Width = 53
+                Height = 14
                 Align = alClient
                 Alignment = taCenter
                 Caption = #20462#25913#23494#30721
@@ -9628,8 +9628,8 @@ inherited frmSysDefine: TfrmSysDefine
                   object RzLabel46: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 102
-                    Height = 27
+                    Width = 46
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26087#23494#30721
@@ -9683,8 +9683,8 @@ inherited frmSysDefine: TfrmSysDefine
                   object RzLabel47: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 102
-                    Height = 27
+                    Width = 46
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #26032#23494#30721
@@ -9738,8 +9738,8 @@ inherited frmSysDefine: TfrmSysDefine
                   object RzLabel48: TRzLabel
                     Left = 0
                     Top = 0
-                    Width = 102
-                    Height = 27
+                    Width = 61
+                    Height = 16
                     Align = alClient
                     Alignment = taCenter
                     Caption = #37325#26032#36755#20837
@@ -10225,8 +10225,8 @@ inherited frmSysDefine: TfrmSysDefine
                 object RzLabel38: TRzLabel
                   Left = 0
                   Top = 0
-                  Width = 102
-                  Height = 27
+                  Width = 61
+                  Height = 16
                   Align = alClient
                   Alignment = taCenter
                   Caption = #31227#21160#30005#35805
@@ -10376,8 +10376,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel40: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 51
-                Height = 26
+                Width = 31
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #27983#35272
@@ -10751,8 +10751,8 @@ inherited frmSysDefine: TfrmSysDefine
               object RzLabel41: TRzLabel
                 Left = 0
                 Top = 0
-                Width = 52
-                Height = 26
+                Width = 31
+                Height = 16
                 Align = alClient
                 Alignment = taCenter
                 Caption = #27983#35272

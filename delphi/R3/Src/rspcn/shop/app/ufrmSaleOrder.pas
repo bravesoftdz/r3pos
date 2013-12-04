@@ -650,8 +650,6 @@ end;
 procedure TfrmSaleOrder.showForm;
 begin
   inherited;
-  if not dllGlobal.GetChkRight('TfrmSaleOrder') then Raise Exception.Create('您没有"商品销售"的权限...');
-
   RtlRate2 := StrtoFloatDef(dllGlobal.GetParameter('RTL_RATE2'),0.05);
   RtlRate3 := StrtoFloatDef(dllGlobal.GetParameter('RTL_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(dllGlobal.GetParameter('RTL_INV_FLAG'),1);

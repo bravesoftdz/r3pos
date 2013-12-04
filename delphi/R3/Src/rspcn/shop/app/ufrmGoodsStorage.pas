@@ -322,8 +322,6 @@ var
   column:TColumnEh;
 begin
   inherited;
-  if not dllGlobal.GetChkRight('TfrmGoodsStorage') then Raise Exception.Create('您没有"商品库存"的权限...');
-
   storFlag := 0;
   dllGlobal.CreateGoodsSortTree(rzTree,true);
   rzTree.Items.Add(nil,'回收站');

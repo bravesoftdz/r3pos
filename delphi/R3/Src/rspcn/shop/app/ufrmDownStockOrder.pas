@@ -468,8 +468,6 @@ procedure TfrmDownStockOrder.showForm;
 var rs,ss:TZQuery;
 begin
   inherited;
-  if not dllGlobal.GetChkRight('TfrmDownStockOrder') then Raise Exception.Create('您没有"卷烟入库"的权限...');
-
   if not token.online then Raise Exception.Create('离线登录时不能使用此功能...');
   try 
     ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');

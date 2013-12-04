@@ -42,8 +42,7 @@ type
     function GetGodsFromBarcode(ds:TZQuery;barcode:string):boolean;
     function GetGodsFromGodsCode(ds:TZQuery;godsCode:string):boolean;
     function getMyDeptId:string;
-    function GetChkRight(MID:string;userid:string=''):boolean;overload;
-    function GetChkRight(MID:string;SequNo:integer;userid:string=''):boolean;overload;
+    function GetChkRight(MID:string;SequNo:integer=1;userid:string=''):boolean;
 
     function GetQQ:string;
     function GetTelephone:string;
@@ -93,57 +92,6 @@ uses utokenFactory,udataFactory,iniFiles,uTreeUtil,uFnUtil;
 function TdllGlobal.GetChkRight(MID:string;SequNo:integer;userid:string):boolean;
 begin
   result := true;
-end;
-
-function TdllGlobal.GetChkRight(MID:string;userid:string=''):boolean;
-var
-  rs:TZQuery;
-  uid,roleIds:string;
-begin
-  result := true;
-  if userid = '' then uid := token.userId else uid := userId;
-  if (uid = 'admin') or (uid='system') or (token.userId=token.xsmCode) then Exit;
-  rs := dllGlobal.GetZQueryFromName('CA_USERS');
-  if not rs.Locate('USER_ID',uid,[]) then
-     begin
-       result := false;
-       Exit;
-     end;
-  roleIds := rs.FieldByName('ROLE_IDS').AsString;
-  if roleIds = 'xsm' then Exit;
-  roleIds := ','+roleIds+',';
-
-  result := false;
-
-  if pos(',410500002001,', roleIds) > 0 then //老板-所有权限
-     begin
-       result := true;
-       Exit;
-     end;
-
-  if pos(',410500002002,', roleIds) > 0 then //店长
-     begin
-       result := not ((MID='TfrmXsmNet') or (MID='TfrmRimNet'));
-       Exit;
-     end;
-
-  if MID = 'TfrmSaleOrder' then
-     begin
-       result := pos(',410500002003,', roleIds) > 0;
-       Exit;
-     end;
-
-  if (MID = 'TfrmStockOrder') or (MID = 'TfrmDownStockOrder') then
-     begin
-       result := pos(',410500002006,', roleIds) > 0;
-       Exit;
-     end;
-
-  if Copy(MID,Length(MID)-5,6) = 'Report' then
-     begin
-       result := pos(',410500002005,', roleIds) > 0;
-       Exit;
-     end;
 end;
 
 function TdllGlobal.GetGodsFromBarcode(ds: TZQuery; barcode: string): boolean;

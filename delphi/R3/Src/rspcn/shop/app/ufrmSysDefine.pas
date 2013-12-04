@@ -443,8 +443,6 @@ end;
 procedure TfrmSysDefine.showForm;
 begin
   inherited;
-  if not dllGlobal.GetChkRight('TfrmSysDefine') then Raise Exception.Create('您没有"系统设置"的权限...');
-
   if dllGlobal.GetSFVersion <> '.LCL' then
      RzBmpButton4.Visible := false;
 

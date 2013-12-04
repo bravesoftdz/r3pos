@@ -6,7 +6,7 @@ uses
   SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
   HttpApp, Forms,ZBase,ZLogFile, IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB,
   EncDec, IniFiles, IdCookieManager, IdCookie, WinInet, ZDataSet, ZdbFactory,
-  uRspFactory;
+  uRspFactory, urlParser;
 
 type
   TUcFactory = class(TDataModule)
@@ -69,8 +69,10 @@ type
     function getConnStr:string;
     //获取db.cfg参数
     function getDBConfig(username,connstr:string):boolean;
-    // 检测版本升级
+    //检测版本升级
     function CheckUpgrade(tenantId,prodId,CurVeraion:string):TCaUpgrade;
+    //检测模块权限
+    function GetChkRight(urlToken:TurlToken):boolean;
     //认证方式 1:rsp 2:xsm
     property AuthMode:integer read FAuthMode write SetAuthMode;
     property xsmUC:string read FxsmUC write SetxsmUC;
@@ -805,6 +807,68 @@ begin
     dataFactory.MoveToDefault;
     rs.Free;
   end;
+end;
+
+function TUcFactory.GetChkRight(urlToken:TurlToken): boolean;
+var
+  rs:TZQuery;
+  mid,uid,roleIds:string;
+begin
+  result := true;
+  if token.tenantId = '' then Exit;
+  if token.userId = '' then Exit;
+  uid := token.userId;
+  if (uid = 'admin') or (uid='system') or (token.userId=token.xsmCode) then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select ROLE_IDS from VIW_USERS where TENANT_ID=:TENANT_ID and USER_ID=:USER_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('USER_ID').AsString := token.userId;
+    dataFactory.sqlite.Open(rs);
+    if rs.IsEmpty then
+       begin
+         result := false;
+         Exit;
+       end;
+    roleIds := rs.FieldByName('ROLE_IDS').AsString;
+    if roleIds = 'xsm' then Exit;
+    roleIds := ','+roleIds+',';
+  finally
+    rs.Free;
+  end;
+
+  result := false;
+  mid := LowerCase(urlToken.moduname);
+
+  if pos(',410500002001,', roleIds) > 0 then //老板-所有权限
+     begin
+       result := true;
+       Exit;
+     end;
+
+  if pos(',410500002002,', roleIds) > 0 then //店长
+     begin
+       result := not ((urlToken.appId='xsm-in') or (urlToken.appId='rim-in'));
+       Exit;
+     end;
+
+  if (mid = 'tfrmsaleorder') or (mid = 'tfrmposoutorder') then
+     begin
+       result := pos(',410500002003,', roleIds) > 0;
+       Exit;
+     end;
+
+  if (mid = 'tfrmstockorder') or (mid = 'tfrmposinorder') or (mid = 'tfrmdownstockorder') then
+     begin
+       result := pos(',410500002006,', roleIds) > 0;
+       Exit;
+     end;
+
+  if (mid = 'report.html') then
+     begin
+       result := pos(',410500002005,', roleIds) > 0;
+       Exit;
+     end;
 end;
 
 end.

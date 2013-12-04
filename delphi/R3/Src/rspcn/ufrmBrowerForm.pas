@@ -40,6 +40,7 @@ uses
   IEAddress, EwbCore,ImgList,urlMon, ActiveX, EmbeddedWB, ShDocVw_Ewb, MSHTML_EWB, EWBAcc, RzTabs, RzBmpBtn,
   RzPanel, Messages, MSHTML, IEConst, RzPrgres,shop_TLB,EncDec, msxml, ComObj, urlParser,TLHelp32,
   Graphics, jpeg, RzForms, RzTray, RzLabel, Menus, RzBckgnd,IniFiles,ufrmUpdate,HTTPApp, WinInet;
+
 const
   WM_BROWSER_INIT =WM_USER+1000;
   WM_SEND_INPUT =WM_USER+9001;
@@ -954,6 +955,7 @@ begin
           if IsRspcn(bstrUrl) then
              begin
                urlToken := decodeUrl(bstrUrl);
+               if not UcFactory.GetChkRight(urlToken) then Raise Exception.Create('您没有操作此模块的权限...');
                if CheckUrlExists(urlToken) then Exit;
                curSheet := CreateNewTabBrowser(urlToken);
                if Assigned(curSheet) then

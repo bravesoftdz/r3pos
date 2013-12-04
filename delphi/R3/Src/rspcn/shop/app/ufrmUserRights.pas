@@ -134,6 +134,7 @@ begin
   finally
     Params.Free;
   end;
+  dllGlobal.Refresh('CA_USERS');
 end;
 
 class function TfrmUserRights.ShowUserRight(userId, userName, account: string; var roleIds, roleNames:string): boolean;

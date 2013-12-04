@@ -463,6 +463,8 @@ end;
 procedure TfrmPosInOrder.showForm;
 begin
   inherited;
+  if not dllGlobal.GetChkRight('TfrmStockOrder') then Raise Exception.Create('您没有"商品入库"的权限...');
+
   InRate2 := StrtoFloatDef(dllGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(dllGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(dllGlobal.GetParameter('IN_INV_FLAG'),1);

@@ -2068,13 +2068,6 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   Width = 56
                 end
                 item
-                  EditButtons = <>
-                  FieldName = 'AID_UNIT'
-                  Footers = <>
-                  Title.Caption = #36741#21161#21333#20301
-                  Width = 50
-                end
-                item
                   Alignment = taRightJustify
                   DisplayFormat = '#0.00#'
                   EditButtons = <>

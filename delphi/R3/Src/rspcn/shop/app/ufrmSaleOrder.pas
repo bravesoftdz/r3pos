@@ -650,14 +650,14 @@ end;
 procedure TfrmSaleOrder.showForm;
 begin
   inherited;
+  if not dllGlobal.GetChkRight('TfrmSaleOrder') then Raise Exception.Create('您没有"商品销售"的权限...');
+
   RtlRate2 := StrtoFloatDef(dllGlobal.GetParameter('RTL_RATE2'),0.05);
   RtlRate3 := StrtoFloatDef(dllGlobal.GetParameter('RTL_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(dllGlobal.GetParameter('RTL_INV_FLAG'),1);
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   edtGUIDE_USER.DataSet := dllGlobal.GetZQueryFromName('CA_USERS');
   NewOrder;
-//  if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
-//     RzBmpButton4.Visible := true;
 end;
 
 procedure TfrmSaleOrder.DBGridEh1Columns1BeforeShowControl(

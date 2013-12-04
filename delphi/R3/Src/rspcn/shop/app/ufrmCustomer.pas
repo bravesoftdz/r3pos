@@ -244,6 +244,8 @@ end;
 procedure TfrmCustomer.showForm;
 begin
   inherited;
+  if not dllGlobal.GetChkRight('TfrmCustomer') then Raise Exception.Create('您没有"会员管理"的权限...');
+
   CreatePriceGrade;
   Open;
 end;

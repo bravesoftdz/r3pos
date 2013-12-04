@@ -113,6 +113,8 @@ begin
   if roleIds = 'xsm' then Exit;
   roleIds := ','+roleIds+',';
 
+  result := false;
+
   if pos(',410500002001,', roleIds) > 0 then //老板-所有权限
      begin
        result := true;

@@ -392,9 +392,16 @@ begin
   OpenBackUpDialog.InitialDir := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId;
 
   if (token.userId <> 'admin') and (token.userId <> 'system') and (token.account <> token.xsmCode) then
-     Tool_Reset.Visible := false
+     begin
+       Tool_Right.Visible := false;
+       Tool_Reset.Visible := false;
+     end
   else
-     Tool_Reset.Visible := true;
+     begin
+       Tool_Right.Visible := true;
+       Tool_Reset.Visible := true;
+     end;
+
   PageControl.ActivePageIndex := 0;
 
   if (token.account = 'admin') or (token.account = 'system') then

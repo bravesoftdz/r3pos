@@ -129,6 +129,8 @@ begin
     RE_ROLE_IDS:=Params.ParamByName('ROLE_IDS').AsString;
     RE_ROLE_NAMES:=Params.ParamByName('ROLE_NAMES').AsString;
     dataFactory.ExecProc('TUserRolesListV60',Params);
+    if dataFactory.iDbType <> 5 then
+       dataFactory.sqlite.ExecProc('TUserRolesListV60',Params);
   finally
     Params.Free;
   end;

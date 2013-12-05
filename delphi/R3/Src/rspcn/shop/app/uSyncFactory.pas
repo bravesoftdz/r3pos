@@ -146,7 +146,7 @@ type
     procedure RecoveryClose(CloseDate:string);
     // 数据库锁定
     function  DBLocked:boolean;
-    function  SyncLockCheck(PHWnd:THandle):boolean;
+    function  SyncLockCheck(PHWnd:THandle;tip:string=''):boolean;
     function  SyncLockDb:boolean;
     //同步心跳
     procedure TimerSync;
@@ -2455,7 +2455,7 @@ begin
   end;
 end;
 
-function TSyncFactory.SyncLockCheck(PHWnd:THandle): boolean;
+function TSyncFactory.SyncLockCheck(PHWnd:THandle;tip:string): boolean;
 var
   i:integer;
   rs:TZQuery;
@@ -2507,7 +2507,8 @@ begin
 
   if not result then
      begin
-       if MessageBox(PHWnd,'系统检测到当前使用的电脑不是您常用的电脑，无法上传数据...'+#10#13+'是否立即解锁?','友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
+       if tip = '' then tip := '无法上传数据...';
+       if MessageBox(PHWnd,pchar('系统检测到当前使用的电脑不是您常用的电脑，'+tip+#10#13+'是否立即解锁?'),'友情提醒',MB_YESNO+MB_ICONQUESTION) = 6 then
           begin
             result := TfrmUnLockGuide.ShowDialog(Application.MainForm);
             if result then SyncLockDb;

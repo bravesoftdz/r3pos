@@ -65,7 +65,8 @@ type
 
 implementation
 
-uses uTokenFactory,udllGlobal,uFnUtil,udataFactory,udllDsUtil,uDownOrderFactory;
+uses uTokenFactory,udllGlobal,uFnUtil,udataFactory,udllDsUtil,uDownOrderFactory,
+     uSyncFactory;
 
 {$R *.dfm}
 
@@ -469,6 +470,7 @@ var rs,ss:TZQuery;
 begin
   inherited;
   if not token.online then Raise Exception.Create('离线登录时不能使用此功能...');
+  if not SyncFactory.SyncLockCheck(self.Handle,'无法卷烟入库...') then Raise Exception.Create('非门店常用电脑不能进行卷烟入库...');
   try 
     ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
     licenseCode := ss.FieldByName('LICENSE_CODE').AsString;

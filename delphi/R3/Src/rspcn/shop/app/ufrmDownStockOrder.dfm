@@ -3082,7 +3082,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
             Height = 30
             Align = alClient
             Alignment = taCenter
-            Caption = #24403#21069#26377' 1 '#24352#35746#21333
+            Caption = #24403#21069#26377' 0 '#24352#35746#21333
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -15

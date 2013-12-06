@@ -53,7 +53,7 @@ type
     //读取验校码
     function getChallenge:boolean;
     //用户密码方式登录
-    function xsmLogin(username,password:string):boolean;
+    function xsmLogin(username,password:string;login:boolean=true):boolean;
     function autoLogin(tenantId,username,password:string):boolean;
     //登录RIM
     function rimLogin:boolean;
@@ -226,7 +226,7 @@ begin
   FxsmWB := Value;
 end;
 
-function TUcFactory.xsmLogin(username,password:string): boolean;
+function TUcFactory.xsmLogin(username,password:string;login:boolean): boolean;
 const
   dec='{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}';
 function md5(s:string):string;
@@ -254,7 +254,7 @@ begin
     if (Root.attributes.getNamedItem('code').text<>'0000') then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
     xsmComId := Root.selectSingleNode('comId').text;
 
-    if AuthMode = 2 then
+    if login and (AuthMode = 2) then
        begin
          conn := getConnstr;
          getDBConfig(username,conn);

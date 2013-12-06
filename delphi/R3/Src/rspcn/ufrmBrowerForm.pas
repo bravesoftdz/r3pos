@@ -972,7 +972,7 @@ begin
                               try
                                 UCFactory.getModule;
                                 xsmLogined := false;
-                                if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
+                                if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD,false);
                                 w := 0;
                                 while w<3 do
                                 begin
@@ -1285,7 +1285,7 @@ begin
              frmLogo.hWnd := mainPanel.Handle;
              frmLogo.ShowForm;
              try
-                if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD);
+                if not UcFactory.xsmLogined then UcFactory.xsmLogin(token.xsmCode,token.xsmPWD,false);
                 w := 0;
                 while w<3 do
                 begin

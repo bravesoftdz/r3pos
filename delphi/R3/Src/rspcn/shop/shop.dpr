@@ -111,7 +111,8 @@ uses
   ufrmCodeScan in 'app\ufrmCodeScan.pas' {frmCodeScan},
   uCommand in 'app\uCommand.pas',
   ufrmHintMsg in 'app\ufrmHintMsg.pas' {frmHintMsg},
-  ufrmNewPaperReader in 'app\ufrmNewPaperReader.pas' {frmNewPaperReader};
+  ufrmNewPaperReader in 'app\ufrmNewPaperReader.pas' {frmNewPaperReader},
+  uZebraPrinterFactory in 'app\uZebraPrinterFactory.pas';
 
 {$R *.res}
 exports

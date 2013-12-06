@@ -818,7 +818,7 @@ begin
   if token.tenantId = '' then Exit;
   if token.userId = '' then Exit;
   uid := token.userId;
-  if (uid = 'admin') or (uid='system') or (token.userId=token.xsmCode) then Exit;
+  if (uid = 'admin') or (uid='system') or (token.userId=token.xsmCode) or (token.account=token.xsmCode) then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select ROLE_IDS from VIW_USERS where TENANT_ID=:TENANT_ID and USER_ID=:USER_ID';

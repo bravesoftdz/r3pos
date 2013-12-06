@@ -676,7 +676,7 @@ begin
 
   new(n);
   n^.tbname := 'CA_RELATIONS';
-  n^.keyFields := 'RELATION_ID;RELATI_ID';
+  n^.keyFields := 'RELATION_ID;TENANT_ID;RELATI_ID';
   n^.whereStr := '(TENANT_ID = :TENANT_ID or RELATI_ID = :TENANT_ID) and TIME_STAMP > :TIME_STAMP';
   n^.synFlag := 1;
   n^.keyFlag := 1;

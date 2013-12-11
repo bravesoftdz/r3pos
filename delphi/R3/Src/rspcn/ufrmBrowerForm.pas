@@ -950,7 +950,7 @@ begin
   btnClose.Enabled := false;
   try
     curSheet := (PageControl1.ActivePage as TTabSheetEx);
-    if assigned(curSheet) and assigned(curSheet.EWB) and ((dwFlags=6) or (dwFlags=262150)) then
+    if assigned(curSheet) and assigned(curSheet.EWB) and ((dwFlags=6) or (dwFlags=262150) or (dwFlags=0)) then
        begin
           if IsRspcn(bstrUrl) then
              begin

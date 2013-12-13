@@ -1027,13 +1027,13 @@ begin
           else
              begin
                 urlToken.appFlag := 0;
-                urlToken.url := curSheet.EWB.LocationURL;
-                urlToken.showUrl := curSheet.EWB.LocationURL;
+                urlToken.url := bstrUrl;
+                urlToken.showUrl := bstrUrl;
                 curSheet := CreateNewTabBrowser(urlToken);
                 if Assigned(curSheet) then
                    begin
-                      ppdisp := curSheet.EWB.Application;
-                      curSheet.EWB.Go(urlToken.url,15000);
+                     ppdisp := curSheet.EWB.Application;
+                     // curSheet.EWB.Go(urlToken.url,15000);
                    end;
              end;
        end

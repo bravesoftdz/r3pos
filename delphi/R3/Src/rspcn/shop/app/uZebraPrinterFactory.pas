@@ -29,7 +29,7 @@ TZebraPrinterFactory=class
     function Setup(LabelFlag,LabelWidth,LabelHeight,LabelGap :Integer): boolean;
     function ClearBuffer: boolean;
     function WindowsFont(X,Y,FontSize,xmf,ymf: integer;Font,Chnstr: String): boolean;
-    function WindowsAztex(X, Y, mf1,mf2: integer; pstr1,pstr2,Chnstr: String): boolean;
+    function WindowsAztex(X, Y, mf2: integer;mf1: real; pstr1,pstr2,Chnstr: String): boolean;
     function GetPrintStart:boolean;
     function GetPrintEnd:boolean;
     function SetPrintFrequency(num: Integer):boolean;
@@ -62,6 +62,7 @@ begin
   dllLoaded := false;
   dllValid := false;
 
+  { //不打印汉字时不用加 fnthex32.dll
   if not FileExists(ExtractFilePath(ParamStr(0)) + dllname) then Exit;
   CodePrinterHandle := LoadLibrary(Pchar(ExtractFilePath(ParamStr(0)) + dllname));
   if CodePrinterHandle = 0 then Exit;
@@ -69,6 +70,7 @@ begin
   
   @GetFontHEX := GetProcAddress(CodePrinterHandle, 'GETFONTHEX');
   if @GetFontHEX = nil then Exit;
+   }
 
   dllValid := true;
 end;
@@ -95,8 +97,8 @@ var str: string;
 begin
   result:= false;
   if zplStr<>'' then zplStr:= '';
-  str:= '^XA~JA^XZ';
-  zplStr:= zplStr + str;
+//  str:= '^XA~JA^XZ';
+//  zplStr:= zplStr + str;
   result:= true;
 end;
 
@@ -104,7 +106,7 @@ function TZebraPrinterFactory.PrintCode(data: OleVariant;FHandle: HWnd; pName:St
 var
   printTime: TDateTime;
   rs,cs,ss,gs: TZQuery;
-  LinkMan,ShopName,LicenseCode,GodsId,GodsName,BarCode,UnitId: string;
+  LinkMan,ShopName,LicenseCode,GodsId,GodsName,BarCode,UnitId,Address,Telphone: string;
   Aprice,Amt,UnitRate: Currency;
   i,SeqNo: integer;
   pHandle: THandle;
@@ -123,9 +125,17 @@ begin
      ShopName := cs.FieldByName('SHORT_TENANT_NAME').AsString;
 
   if ss.Locate('SHOP_ID',token.shopId,[]) then
-     LinkMan := ss.FieldByName('LINKMAN').AsString
+  begin
+     LinkMan := ss.FieldByName('LINKMAN').AsString;
+     Address := ss.FieldByName('ADDRESS').AsString;
+     Telphone := ss.FieldByName('TELEPHONE').AsString;
+  end
   else
+  begin
      LinkMan := '未知';
+     Address := '未知';
+     Telphone := '未知';
+  end;
 
   LicenseCode := ss.FieldByName('LICENSE_CODE').AsString;
 
@@ -134,9 +144,9 @@ begin
   try
     rs.Data := data;
     printTime := now();
-    if OpenPriterZ(PrinterName,pHandle) then    
-    if true then         //Setup('40', '10', '1', '15', '0', '2', '0')
+    if OpenPriterZ(PrinterName,pHandle) then
     begin
+      try
       rs.First;
       while not rs.Eof do
         begin
@@ -165,16 +175,15 @@ begin
 
           ClearBuffer;
           GetPrintStart;
-          WindowsFont(325, 4, 16, 1, 1, 'Arial','店名:'+ShopName);
-          WindowsFont(325,22, 16, 1, 1, 'Arial','卷烟:'+GodsName);
-          WindowsFont(325,40, 16, 1, 1, 'Arial','价格:'+FormatFloat('#0.00',Aprice)+'元');
-          WindowsFont(325,58, 16, 1, 1, 'Arial','时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
-          WindowsAztex(270, 14, 2, 26,'','',EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime));
+          //zebra不打印汉字
+          //WindowsFont(325, 4, 16, 1, 1, 'Arial','店名:'+ShopName);
+          //WindowsFont(325,22, 16, 1, 1, 'Arial','卷烟:'+GodsName);
+          //WindowsFont(325,40, 16, 1, 1, 'Arial','价格:'+FormatFloat('#0.00',Aprice)+'元');
+          //WindowsFont(325,58, 16, 1, 1, 'Arial','时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));     //
+          WindowsAztex(364, 3, 26, 3,'','',EncStr(ShopName,ENC_KEY)+'|'+EncStr(Address,ENC_KEY)+'|'+EncStr(Telphone,ENC_KEY)+'|'+LicenseCode+'|'+EncStr(GodsName,ENC_KEY)+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime));
           SetPrintFrequency(Trunc(Amt));
           GetPrintEnd;
-          //WriteRawStringToPrinter(PrinterName,zplStr);
           WriteRawStringToPrinter(pHandle,zplStr);
-
 
           if (Amt - Trunc(Amt)) <> 0 then //处理小数部分
             begin
@@ -185,17 +194,16 @@ begin
               else
                 begin
                   Amt := (Amt - Trunc(Amt)) * UnitRate;
-
                   ClearBuffer;
                   GetPrintStart;
-                  WindowsFont(325, 4, 16, 1, 1, 'Arial','店名:'+ShopName);
-                  WindowsFont(325,22, 16, 1, 1, 'Arial','卷烟:'+GodsName);
-                  WindowsFont(325,40, 16, 1, 1, 'Arial','价格:'+FormatFloat('#0.00',Aprice/UnitRate)+'元');
-                  WindowsFont(325,58, 16, 1, 1, 'Arial','时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
-                  WindowsAztex(270, 14, 2, 26,'','',EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice/UnitRate)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime));
+                  //zebra不打印汉字
+                  //WindowsFont(325, 4, 16, 1, 1, 'Arial','店名:'+ShopName);
+                  //WindowsFont(325,22, 16, 1, 1, 'Arial','卷烟:'+GodsName);
+                  //WindowsFont(325,40, 16, 1, 1, 'Arial','价格:'+FormatFloat('#0.00',Aprice/UnitRate)+'元');
+                  //WindowsFont(325,58, 16, 1, 1, 'Arial','时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
+                  WindowsAztex(364, 3, 26, 3,'','',EncStr(ShopName,ENC_KEY)+'|'+EncStr(Address,ENC_KEY)+'|'+EncStr(Telphone,ENC_KEY)+'|'+LicenseCode+'|'+EncStr(GodsName,ENC_KEY)+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime));
                   SetPrintFrequency(Trunc(Amt));
                   GetPrintEnd;
-                  //WriteRawStringToPrinter(PrinterName,zplStr);
                   WriteRawStringToPrinter(pHandle,zplStr);
 
                   if (Amt - Trunc(Amt)) <> 0 then MessageBox(FHandle,pchar('第'+IntToStr(SeqNo)+'行商品【'+GodsName+'】数量不是有效数量！'),'友情提示..',MB_OK);
@@ -203,11 +211,12 @@ begin
             end;
           rs.Next;
         end;
+    finally
       ClosePrintZ(pHandle);
-      result := true;
+    end;
     end;
   finally
-    rs.Free; 
+    rs.Free;
   end;
 end;
 
@@ -242,7 +251,7 @@ begin
   zplStr:=zplStr+str;
 end;
 
-function TZebraPrinterFactory.WindowsAztex(X, Y, mf1,mf2: integer; pstr1,pstr2,Chnstr: String): boolean;
+function TZebraPrinterFactory.WindowsAztex(X, Y, mf2: integer;mf1: real; pstr1,pstr2,Chnstr: String): boolean;
 var str:  string;
 begin
   result := false;
@@ -251,7 +260,7 @@ begin
   begin
     str:=str+'^LH'+ inttostr(x) + ',' + inttostr(y) ;
     //mf1 设置大小； mf2 设置需要编码的列
-    str:=str + '^BXN,'+inttostr(mf1)+',200,'+inttostr(mf2)+','+inttostr(mf2)+'^FD' + Chnstr + '^FS';
+    str:=str + '^BXN,'+floattostr(mf1)+',200'+'^FD' + Chnstr + '^FS';  //+inttostr(mf2)+','+inttostr(mf2)
     result:= true;
   end;
   zplStr:=zplStr+str;

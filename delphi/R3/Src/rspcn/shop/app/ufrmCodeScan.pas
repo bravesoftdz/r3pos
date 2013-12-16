@@ -54,7 +54,7 @@ begin
   try
     List.Delimiter := '|';
     List.DelimitedText := code;
-    if List.Count <> 5 then
+    if (List.Count <> 5) or (List.Count <> 9) then
       begin
         edtInput.Text := '';
         if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;

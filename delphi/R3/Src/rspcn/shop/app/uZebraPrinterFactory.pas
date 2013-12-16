@@ -180,7 +180,7 @@ begin
           //WindowsFont(325,22, 16, 1, 1, 'Arial','卷烟:'+GodsName);
           //WindowsFont(325,40, 16, 1, 1, 'Arial','价格:'+FormatFloat('#0.00',Aprice)+'元');
           //WindowsFont(325,58, 16, 1, 1, 'Arial','时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));     //
-          WindowsAztex(364, 3, 26, 3,'','',EncStr(ShopName,ENC_KEY)+'|'+EncStr(Address,ENC_KEY)+'|'+EncStr(Telphone,ENC_KEY)+'|'+LicenseCode+'|'+EncStr(GodsName,ENC_KEY)+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime));
+          WindowsAztex(364, 3, 26, 3,'','',EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime)+'|'+EncStr(ShopName,ENC_KEY)+'|'+EncStr(Address,ENC_KEY)+'|'+EncStr(Telphone,ENC_KEY)+'|'+EncStr(GodsName,ENC_KEY));
           SetPrintFrequency(Trunc(Amt));
           GetPrintEnd;
           WriteRawStringToPrinter(pHandle,zplStr);
@@ -201,7 +201,7 @@ begin
                   //WindowsFont(325,22, 16, 1, 1, 'Arial','卷烟:'+GodsName);
                   //WindowsFont(325,40, 16, 1, 1, 'Arial','价格:'+FormatFloat('#0.00',Aprice/UnitRate)+'元');
                   //WindowsFont(325,58, 16, 1, 1, 'Arial','时间:'+FormatDateTime('YYYY年MM月DD日HH点NN分',printTime));
-                  WindowsAztex(364, 3, 26, 3,'','',EncStr(ShopName,ENC_KEY)+'|'+EncStr(Address,ENC_KEY)+'|'+EncStr(Telphone,ENC_KEY)+'|'+LicenseCode+'|'+EncStr(GodsName,ENC_KEY)+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime));
+                  WindowsAztex(364, 3, 26, 3,'','',EncStr(LinkMan,ENC_KEY)+'|'+LicenseCode+'|'+BarCode+'|'+FormatFloat('#0.00',Aprice)+'|'+FormatDateTime('YYYYMMDDHHNNSSZZZ',printTime)+'|'+EncStr(ShopName,ENC_KEY)+'|'+EncStr(Address,ENC_KEY)+'|'+EncStr(Telphone,ENC_KEY)+'|'+EncStr(GodsName,ENC_KEY));
                   SetPrintFrequency(Trunc(Amt));
                   GetPrintEnd;
                   WriteRawStringToPrinter(pHandle,zplStr);

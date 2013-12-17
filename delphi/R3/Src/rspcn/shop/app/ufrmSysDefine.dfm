@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 286
-  Top = 125
+  Left = 152
+  Top = 4
   Caption = #31995#32479#35774#32622
   ClientHeight = 688
   ClientWidth = 1006
@@ -7955,7 +7955,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object btnDefault: TRzBmpButton
               Left = 432
-              Top = 556
+              Top = 555
               Width = 106
               Height = 29
               Bitmaps.TransparentColor = clFuchsia
@@ -8259,7 +8259,7 @@ inherited frmSysDefine: TfrmSysDefine
             end
             object btnSaveSysDefine: TRzBmpButton
               Left = 555
-              Top = 556
+              Top = 555
               Width = 72
               Bitmaps.TransparentColor = clFuchsia
               Bitmaps.Up.Data = {

@@ -948,6 +948,7 @@ var
 begin
   btnPageClose.Enabled := false;
   btnClose.Enabled := false;
+  lblSignOut.Enabled := false;
   try
     curSheet := (PageControl1.ActivePage as TTabSheetEx);
     if assigned(curSheet) and assigned(curSheet.EWB) and ((dwFlags=6) or (dwFlags=262150) or (dwFlags=0)) then
@@ -1042,6 +1043,7 @@ begin
   finally
     btnPageClose.Enabled := true;
     btnClose.Enabled := true;
+    lblSignOut.Enabled := true;
   end;
 end;
 

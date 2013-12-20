@@ -872,10 +872,7 @@ begin
                  if cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsString <> '' then
                     edtNEW_OUTPRICE.Text := cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsString;
 
-                 if (cdsGoodsRelation.FieldByName('SORT_ID1').AsString = '')
-                    or
-                    (cdsGoodsRelation.FieldByName('SORT_ID1').AsString = '#')
-                    then
+                 if cdsGoodsRelation.FieldByName('SORT_ID1').AsString = '' then
                     InitSort(cdsGoodsInfo.FieldByName('SORT_ID1').AsString)
                  else
                     InitSort(cdsGoodsRelation.FieldByName('SORT_ID1').AsString);

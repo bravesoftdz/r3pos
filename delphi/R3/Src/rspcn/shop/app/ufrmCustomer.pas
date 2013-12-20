@@ -706,12 +706,22 @@ begin
 end;
 
 procedure TfrmCustomer.NewInfo;
+var SObj:TRecord_;
 begin
   OpenInfo('');
   dbState := dsInsert;
   edtSEX2.Checked := true;
-  cmbPRICE_ID.KeyValue := cmbPRICE_ID.DataSet.FieldbyName('PRICE_ID').asString;
-  cmbPRICE_ID.Text := cmbPRICE_ID.DataSet.FieldbyName('PRICE_NAME').asString;
+  SObj := TRecord_(rzTree.Selected.Data);
+  if SObj = nil then
+     begin
+       cmbPRICE_ID.KeyValue := cmbPRICE_ID.DataSet.FieldbyName('PRICE_ID').AsString;
+       cmbPRICE_ID.Text := cmbPRICE_ID.DataSet.FieldbyName('PRICE_NAME').AsString;
+     end
+  else
+     begin
+       cmbPRICE_ID.KeyValue := SObj.FieldbyName('PRICE_ID').AsString;
+       cmbPRICE_ID.Text := SObj.FieldbyName('PRICE_NAME').AsString;
+     end;
 end;
 
 procedure TfrmCustomer.btnFindClick(Sender: TObject);

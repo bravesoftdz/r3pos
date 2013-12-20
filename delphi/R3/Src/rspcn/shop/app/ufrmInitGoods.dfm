@@ -3131,7 +3131,7 @@ inherited frmInitGoods: TfrmInitGoods
     UpdatesFolder = 'barcode\'
     WebInfoFileName = 'barcode.xml'
     WebURL = 'http://'
-    Left = 328
-    Top = 124
+    Left = 75
+    Top = 383
   end
 end

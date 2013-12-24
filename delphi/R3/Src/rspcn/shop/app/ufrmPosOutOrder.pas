@@ -2535,7 +2535,7 @@ begin
           begin
             if (r mod 2 = 0) and (trim(GodsArray[r,c]) <> '') then
                begin
-                 F.WriteString(Section,'GODS_'+inttostr(idx),trim(GodsArray[r,c]));
+                 F.WriteString(Section,'GODS_'+inttostr(idx),GodsArray[r,c]);
                  inc(idx);
                end; 
           end;

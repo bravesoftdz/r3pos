@@ -3760,6 +3760,7 @@ inherited frmPosInOrder: TfrmPosInOrder
     PageHeader.Font.Name = #23435#20307
     PageHeader.Font.Style = [fsBold]
     Units = MM
+    ParamsFile = 'Seting.Ini'
     Left = 720
     Top = 232
     BeforeGridText_Data = {

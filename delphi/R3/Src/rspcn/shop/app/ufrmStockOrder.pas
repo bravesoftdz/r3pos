@@ -138,6 +138,8 @@ type
     procedure btnImportClick(Sender: TObject);
     procedure DBGridEh1Columns10UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1737,6 +1739,33 @@ begin
        Value := null;
        Exit;
      end;
+end;
+
+procedure TfrmStockOrder.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var CurPrice,OrgPrice:real;
+begin
+  inherited;
+  try
+    if not edtTable.Active then Exit;
+    if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
+    if Column.FieldName = 'APRICE' then
+       begin
+         CurPrice := edtTable.FieldByName('APRICE').AsFloat;
+         OrgPrice := edtTable.FieldByName('ORG_PRICE').AsFloat;
+         if (FnNumber.CompareFloat(CurPrice, OrgPrice) > 0)
+            or
+            (FnNumber.CompareFloat(CurPrice, OrgPrice * 0.3) < 0) then
+            begin
+              DBGridEh1.Canvas.Brush.Color := clRed;
+              DBGridEh1.Canvas.Font.Color := clwhite;
+              DBGridEh1.Canvas.Font.Style := [fsBold];
+            end;
+         DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+       end;
+  except
+  end;
 end;
 
 initialization

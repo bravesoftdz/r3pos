@@ -161,6 +161,8 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
     procedure btnPickUpClick(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -2806,6 +2808,33 @@ begin
   if CheckNotChangePrice(edtTable.FieldByName('GODS_ID').AsString) then
      Raise Exception.Create('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！');
   inherited;
+end;
+
+procedure TfrmPosOutOrder.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var CurPrice,OrgPrice:real;
+begin
+  inherited;
+  try
+    if not edtTable.Active then Exit;
+    if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
+    if Column.FieldName = 'APRICE' then
+       begin
+         CurPrice := edtTable.FieldByName('APRICE').AsFloat;
+         OrgPrice := edtTable.FieldByName('ORG_PRICE').AsFloat;
+         if (FnNumber.CompareFloat(CurPrice, OrgPrice * 1.2) > 0)
+            or
+            (FnNumber.CompareFloat(CurPrice, OrgPrice * 0.8) < 0) then
+            begin
+              DBGridEh1.Canvas.Brush.Color := clRed;
+              DBGridEh1.Canvas.Font.Color := clwhite;
+              DBGridEh1.Canvas.Font.Style := [fsBold];
+            end;
+         DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+       end;
+  except
+  end;
 end;
 
 initialization

@@ -1903,7 +1903,7 @@ begin
   except
     Raise Exception.Create('输入的数量无效，请正确输入');
   end;
-  if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的数量过大，请确认是否输入正确');
+  if abs(StrToFloat(s))>999999 then Raise Exception.Create('输入的数量过大，请确认是否输入正确');
   Field := edtTable.FindField('AMOUNT');
   if Field=nil then Exit;
   edtTable.Edit;
@@ -1930,10 +1930,16 @@ begin
   except
     Raise Exception.Create('输入的单价无效，请正确输入');
   end;
+
   if IsAgio then
-     if abs(StrToFloat(s))>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确')
+     begin
+       if abs(StrToFloat(s))>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确');
+     end
   else
-     if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
+     begin
+       if abs(StrToFloat(s))>999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
+     end;
+
   if not IsAgio then
      begin
         Field := edtTable.FindField('APRICE');

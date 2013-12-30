@@ -217,6 +217,7 @@ type
     procedure RefreshMeaUnits;
     procedure SetShopOutPricePlace;
     procedure AddUnits(Sender: TObject);
+    function  GetAidUnits(DataSet: TZQuery): string;
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
@@ -352,22 +353,52 @@ begin
 end;
 
 procedure TfrmGoodsStorage.Open;
+var str:string;
 begin
   cdsList.Close;
-  cdsList.SQL.Text :=
-    ParseSQL(dataFactory.iDbType,
-   'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE from ('+
-   'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.PRICE_ID,j.COMM,c.AMOUNT,'+
+  if dataFactory.iDbType <> 4 then
+     str := 'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE,jp.AID_AMT'+GetStrJoin(dataFactory.iDbType)+'jp.AID_NAME as AID_AMOUNT from ('
+  else
+     str := 'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE,'''' as AID_AMOUNT from (';
+
+  str := str +
+   'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.SMALL_UNITS,j.BIG_UNITS,j.UNIT_ID,j.SMALLTO_CALC,j.BIGTO_CALC,j.PRICE_ID,j.COMM,'+
+   'c.AMOUNT,'+
+   'c.AMOUNT * 1.0 / (cast((case when j.UNIT_ID=j.CALC_UNITS then 1.0 when j.UNIT_ID=j.SMALL_UNITS then j.SMALLTO_CALC when j.UNIT_ID=j.BIG_UNITS then j.BIGTO_CALC else 1.0 end) as decimal(18,3))) as AID_AMT,'+
+   'u.UNIT_NAME as AID_NAME,'+
    'isnull(ext.NEW_INPRICE,j.NEW_INPRICE) as NEW_INPRICE,'+
    'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P,ext.LOWER_AMOUNT,ext.UPPER_AMOUNT '+
-   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID,COMM',true)+') j '+
+   'from ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS,SMALL_UNITS,BIG_UNITS,UNIT_ID,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE,NEW_OUTPRICE,RELATION_ID,PRICE_ID,COMM',true)+') j '+
+   'left outer join  VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
    'left outer join (select TENANT_ID,GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+''' group by TENANT_ID,GODS_ID) c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
    'left outer join  PUB_GOODSINFOEXT ext on j.TENANT_ID=ext.TENANT_ID and j.GODS_ID=ext.GODS_ID '+
    'left outer join  PUB_GOODSPRICE prc on j.TENANT_ID=prc.TENANT_ID and j.GODS_ID=prc.GODS_ID and j.SHOP_ID=prc.SHOP_ID and j.PRICE_ID=trim(prc.PRICE_ID) and prc.COMM not in (''02'',''12'') ) jp '+
-   'left outer join  PUB_GOODSPRICE shp on jp.TENANT_ID=shp.TENANT_ID and jp.GODS_ID=shp.GODS_ID and jp.CUR_SHOP_ID=shp.SHOP_ID and jp.PRICE_ID=trim(shp.PRICE_ID) and shp.COMM not in (''02'',''12'') '+GetOpenWhere + ' '
-  );
+   'left outer join  PUB_GOODSPRICE shp on jp.TENANT_ID=shp.TENANT_ID and jp.GODS_ID=shp.GODS_ID and jp.CUR_SHOP_ID=shp.SHOP_ID and jp.PRICE_ID=trim(shp.PRICE_ID) and shp.COMM not in (''02'',''12'') '+GetOpenWhere + ' ';
+
+  cdsList.SQL.Text := ParseSQL(dataFactory.iDbType, str);
   cdsList.SQL.Text := cdsList.SQL.Text + ' order by GODS_CODE';
   dataFactory.Open(cdsList);
+
+  if dataFactory.iDbType = 4 then
+     begin
+       cdsList.DisableControls;
+       try
+         cdsList.First;
+         while not cdsList.Eof do
+           begin
+             if cdsList.FieldByName('AID_AMT').AsString <> '' then
+                begin
+                  cdsList.Edit;
+                  cdsList.FieldByName('AID_AMOUNT').AsString := cdsList.FieldByName('AID_AMT').AsString + cdsList.FieldByName('AID_NAME').AsString;
+                  cdsList.Post;
+                end;
+             cdsList.Next;
+           end;
+         cdsList.First;
+       finally;
+         cdsList.EnableControls;
+       end;
+     end;
 end;
 
 function TfrmGoodsStorage.FindColumn(fieldname: string): TColumnEh;
@@ -568,6 +599,7 @@ begin
        cdsList.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
        cdsList.FieldByName('BARCODE').AsString := edtBARCODE.Text;
        cdsList.FieldByName('AMOUNT').AsString := edtAMOUNT.Text;
+       cdsList.FieldByName('AID_AMOUNT').AsString := GetAidUnits(cdsList);
        cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
        cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
        cdsList.Post;
@@ -1941,6 +1973,7 @@ begin
       dataFactory.AddBatch(tmpGoodsRelation,'TGoodsRelationV60',Params);
       Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsPrice.FieldByName('TENANT_ID').AsInteger;
       dataFactory.AddBatch(tmpGoodsPrice,'TGoodsPriceV60',Params);
+      Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsExt.FieldByName('TENANT_ID').AsInteger;
       dataFactory.AddBatch(tmpGoodsExt,'TGoodsInfoExtV60',Params);
       dataFactory.OpenBatch;
     except
@@ -2515,6 +2548,34 @@ procedure TfrmGoodsStorage.edtCALC_UNITSAddClick(Sender: TObject);
 begin
   inherited;
   AddUnits(Sender);
+end;
+
+function TfrmGoodsStorage.GetAidUnits(DataSet: TZQuery): string;
+var
+  str,UnitId,CalcUnit,SmallUnit,BigUnit,AidName: string;
+  CalcAmt,SmalltoCalc,BigtoCalc: real;
+begin
+  str := '';
+  result := '';
+  if DataSet.IsEmpty then Exit;
+  if DataSet.FieldByName('AMOUNT').AsString = '' then Exit;
+  UnitId := DataSet.FieldByName('UNIT_ID').AsString;
+  CalcUnit := DataSet.FieldByName('CALC_UNITS').AsString;
+  SmallUnit := DataSet.FieldByName('SMALL_UNITS').AsString;
+  BigUnit := DataSet.FieldByName('BIG_UNITS').AsString;
+  CalcAmt := DataSet.FieldByName('AMOUNT').AsFloat;
+  SmalltoCalc := DataSet.FieldByName('SMALLTO_CALC').AsFloat;
+  BigtoCalc := DataSet.FieldByName('BIGTO_CALC').AsFloat;
+  AidName := DataSet.FieldByName('AID_NAME').AsString;
+  if UnitId = CalcUnit then
+     str := FloattoStr(CalcAmt) + AidName
+  else if UnitId = SmallUnit then
+     str := FloattoStr(CalcAmt/SmalltoCalc) + AidName
+  else if UnitId = BigUnit then
+     str := FloattoStr(CalcAmt/BigtoCalc) + AidName
+  else
+     str := FloattoStr(CalcAmt) + AidName;
+  result := str;
 end;
 
 initialization

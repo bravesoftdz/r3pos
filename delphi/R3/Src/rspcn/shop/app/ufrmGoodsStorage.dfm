@@ -2069,6 +2069,14 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                 end
                 item
                   Alignment = taRightJustify
+                  EditButtons = <>
+                  FieldName = 'AID_AMOUNT'
+                  Footers = <>
+                  Title.Caption = #36741#21161#21333#20301
+                  Width = 75
+                end
+                item
+                  Alignment = taRightJustify
                   DisplayFormat = '#0.00#'
                   EditButtons = <>
                   FieldName = 'NEW_INPRICE'

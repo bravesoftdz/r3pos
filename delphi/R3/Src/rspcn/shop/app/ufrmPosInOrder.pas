@@ -484,7 +484,7 @@ procedure TfrmPosInOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
-   if length(Text)>10 then
+   if length(Text)>6 then
       begin
          Text := TColumnEh(Sender).Field.AsString;
          Value := TColumnEh(Sender).Field.asFloat;
@@ -524,7 +524,7 @@ procedure TfrmPosInOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
-  if length(Text)>10 then
+  if length(Text)>6 then
      begin
        Text := TColumnEh(Sender).Field.AsString;
        Value := TColumnEh(Sender).Field.asFloat;

@@ -505,9 +505,9 @@ begin
          inc(i)
       else
          begin
-           if Trim(edtTable.FieldbyName('GODS_ID').asString)='' then
+           if Trim(edtTable.FieldbyName('GODS_ID').AsString)='' then
               i := 1;
-           if (i=1) and (Trim(edtTable.FieldbyName('GODS_ID').asString)<>'') then
+           if (i=1) and (Trim(edtTable.FieldbyName('GODS_ID').AsString)<>'') then
               begin
                  edtTable.Next ;
                  if edtTable.Eof then
@@ -539,7 +539,7 @@ begin
       edtTable.FieldByName('GODS_ID').Value := null;
       edtTable.FieldByName('IS_PRESENT').Value := 0;
       if edtTable.FindField('SEQNO')<> nil then
-         edtTable.FindField('SEQNO').asInteger := RowID;
+         edtTable.FindField('SEQNO').AsInteger := RowID;
     end;
     DbGridEh1.Col := 1 ;
     if DBGridEh1.CanFocus and Visible and not edtInput.Focused and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
@@ -576,9 +576,9 @@ begin
     edtTable.First;
     while not edtTable.eof do
       begin
-        if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
-        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FindField('BATCH_NO')<>nil) and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
-        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FieldbyName('AMOUNT').AsCurrency<>edtTable.FieldbyName('AMOUNT').AsInteger) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品不能输入小数的数量。');
+        if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').AsString+'在经营商品中没有找到.');
+        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FindField('BATCH_NO')<>nil) and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').AsString+'商品必须输入商品批号。');
+        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FieldbyName('AMOUNT').AsCurrency<>edtTable.FieldbyName('AMOUNT').AsInteger) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').AsString+'商品不能输入小数的数量。');
         edtTable.Next;
       end;
     if r>0 then edtTable.RecNo := r;
@@ -632,12 +632,12 @@ begin
     rs.SQL.Text := 'select BARCODE,UNIT_ID from PUB_BARCODE where TENANT_ID in ('+dllGlobal.GetRelatTenantInWhere+') and GODS_ID=:GODS_ID and BARCODE_TYPE in (''0'',''1'',''2'') order by BARCODE_TYPE';
     rs.ParamByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
     dllGlobal.OpenSqlite(rs);
-    if rs.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').asString,[]) then
-       result := rs.FieldbyName('BARCODE').asString
+    if rs.Locate('UNIT_ID',edtTable.FieldbyName('UNIT_ID').AsString,[]) then
+       result := rs.FieldbyName('BARCODE').AsString
     else
        begin
          rs.First;
-         result := rs.FieldbyName('BARCODE').asString;
+         result := rs.FieldbyName('BARCODE').AsString;
        end;
   finally
     rs.free;
@@ -653,12 +653,12 @@ begin
   r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt,null,null]),[]);
   if not r then begin
   inc(RowID);
-  if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+  if (edtTable.FieldbyName('GODS_ID').AsString='') and (edtTable.FieldbyName('SEQNO').AsString<>'') then
   edtTable.Edit else InitRecord;
   edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
   edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
   edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-  edtTable.FieldByName('IS_PRESENT').asInteger := 0;
+  edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
   if UNIT_ID='' then
      edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
   else
@@ -679,7 +679,7 @@ var
     Field:TField;
 begin
   if MyField=nil then Exit;
-  DataSet.FieldByName(MyField.FieldName).asFloat := MyField.asFloat;
+  DataSet.FieldByName(MyField.FieldName).AsFloat := MyField.AsFloat;
   if MyField.FieldName <> 'AMOUNT' then Exit;
   if Locked then Exit;
   Locked := true;
@@ -687,7 +687,7 @@ begin
       Field := edtTable.FindField('APRICE');
       if Field=nil then Exit;
       //取单价
-      APrice := Field.asFloat;
+      APrice := Field.AsFloat;
       //算金额
       AMoney := APrice * MyField.AsFloat;
       Field := edtTable.FindField('AMONEY');
@@ -776,20 +776,20 @@ begin
     begin
       if hasPrice then
          r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
-                        DataSet.FieldbyName('BATCH_NO').asString,
-                        DataSet.FieldbyName('UNIT_ID').asString,
+              VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
+                        DataSet.FieldbyName('BATCH_NO').AsString,
+                        DataSet.FieldbyName('UNIT_ID').AsString,
                         DataSet.FieldbyName('BOM_ID').Value,
                         DataSet.FieldbyName('LOCUS_NO').Value,
-                        DataSet.FieldbyName('IS_PRESENT').asInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+                        DataSet.FieldbyName('IS_PRESENT').AsInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
       else
          r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').asString,
-                        DataSet.FieldbyName('BATCH_NO').asString,
-                        DataSet.FieldbyName('UNIT_ID').asString,
+              VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
+                        DataSet.FieldbyName('BATCH_NO').AsString,
+                        DataSet.FieldbyName('UNIT_ID').AsString,
                         DataSet.FieldbyName('BOM_ID').Value,
                         DataSet.FieldbyName('LOCUS_NO').Value,
-                        DataSet.FieldbyName('IS_PRESENT').asInteger]),[]);
+                        DataSet.FieldbyName('IS_PRESENT').AsInteger]),[]);
       if r then
       begin
         edtTable.Edit;
@@ -843,7 +843,7 @@ var Field:TField;
 begin
   // if edtTable.State = dsBrowse then
      begin
-       if edtTable.FieldbyName('SEQNO').asString='' then
+       if edtTable.FieldbyName('SEQNO').AsString='' then
           InitRecord else edtTable.Edit;
      end;
   edtTable.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
@@ -936,7 +936,7 @@ begin
       else
          begin
            edtProperty.Filtered := false;
-           edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').asString;
+           edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
            edtProperty.Filtered := true;
            edtProperty.First;
            while not edtProperty.Eof do
@@ -993,12 +993,12 @@ begin
       else
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
          begin
-          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+          SourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
          end
       else
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
          begin
-          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+          SourceScale := rs.FieldByName('SMALLTO_CALC').AsFloat;
          end
       else
          begin
@@ -1034,7 +1034,7 @@ begin
       if Field=nil then Exit;
       Field.AsString := FormatFloat('#0.000',Field.AsFloat);
       //取单价
-      APrice := Field.asFloat;
+      APrice := Field.AsFloat;
       //算金额
       AMoney := StrtoFloat(FormatFloat('#0.00',APrice * AMount));
       Field := edtTable.FindField('AMONEY');
@@ -1097,12 +1097,12 @@ begin
       Field.AsString := FormatFloat('#0.000',APrice);
       APrice := Field.AsFloat;
       if (APrice<>0) and (edtTable.FindField('IS_PRESENT')<>nil) then
-         edtTable.FieldbyName('IS_PRESENT').asInteger := 0;
+         edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
 
       Field := edtTable.FindField('AMOUNT');
       if Field=nil then Exit;
       //取数量
-      AMount := Field.asFloat;
+      AMount := Field.AsFloat;
       //金额
       AMoney := StrtoFloat(FormatFloat('#0.00',AMount * APrice));
       Field := edtTable.FindField('AMONEY');
@@ -1172,7 +1172,7 @@ begin
                   Agio_Rate := Agio / 100;
                Field.AsString := FormatFloat('#0.000',edtTable.FindField('ORG_PRICE').AsFloat * Agio_Rate);
                Locked := false;
-               PriceToCalc(Field.asFloat);
+               PriceToCalc(Field.AsFloat);
              end;
         end;
   finally
@@ -1196,7 +1196,7 @@ begin
       Field := edtTable.FindField('AMOUNT');
       if Field=nil then Exit;
       //取数量
-      AMount := Field.asFloat;
+      AMount := Field.AsFloat;
       //单价
       if AMount =0 then
          APrice := 0
@@ -1274,7 +1274,7 @@ begin
       if Field=nil then Exit;
       //取数量
       Field.AsString := formatFloat('#0.00',AMoney/APrice);
-      Amount := Field.asFloat;
+      Amount := Field.AsFloat;
       rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
       if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
 
@@ -1285,12 +1285,12 @@ begin
       else
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
          begin
-          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+          SourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
          end
       else
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
          begin
-          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+          SourceScale := rs.FieldByName('SMALLTO_CALC').AsFloat;
          end
       else
          begin
@@ -1390,7 +1390,7 @@ begin
       if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
       Field := edtTable.FindField('AMOUNT');
       if Field=nil then Exit;
-      AMount := Field.asFloat;
+      AMount := Field.AsFloat;
       if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
       edtTable.FieldByName('UNIT_ID').AsString := UNIT_ID;
       edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
@@ -1401,12 +1401,12 @@ begin
       else
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
          begin
-          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+          SourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
          end
       else
       if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
          begin
-          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+          SourceScale := rs.FieldByName('SMALLTO_CALC').AsFloat;
          end
       else
          begin
@@ -1438,7 +1438,7 @@ begin
       end;
       if edtTable.FindField('APRICE')<>nil then
          begin
-           InitPrice(edtTable.FieldByName('GODS_ID').asString,UNIT_ID);
+           InitPrice(edtTable.FieldByName('GODS_ID').AsString,UNIT_ID);
            Locked := false;
            AMountToCalc(AMount);
          end;
@@ -1628,7 +1628,7 @@ begin
                      vP1  := '#';
                      vP2  := '#';
                      vBtNo := '#';
-                     uid := rs.FieldbyName('UNIT_ID').asString;
+                     uid := rs.FieldbyName('UNIT_ID').AsString;
                    end;
              end;
         end
@@ -1641,7 +1641,7 @@ begin
                     while not rs.eof do
                       begin
                         if fndStr<>'' then fndStr := fndStr+',';
-                        fndStr := fndStr + ''''+rs.FieldbyName('GODS_ID').asString+'''';
+                        fndStr := fndStr + ''''+rs.FieldbyName('GODS_ID').AsString+'''';
                         rs.next;
                       end;
                     if not TfrmFindDialog.FindSQLDialog('select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID='+token.tenantId+' and GODS_ID in ('+fndStr+') and COMM not in (''02'',''12'')',AObj,'GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价') then
@@ -1679,7 +1679,7 @@ begin
             AObj.ReadFromDataSet(rs)
          else
             Exit;
-         uid := rs.FieldbyName('CALC_UNITS').asString;
+         uid := rs.FieldbyName('CALC_UNITS').AsString;
        end
     else
        begin
@@ -1690,7 +1690,7 @@ begin
        end;
     result := 0;
     AddRecord(AObj,uid);
-    if AObj.FieldbyName('GODS_ID').asString=edtTable.FieldbyName('GODS_ID').asString then
+    if AObj.FieldbyName('GODS_ID').AsString=edtTable.FieldbyName('GODS_ID').AsString then
     begin
       edtTable.Edit;
       edtTable.FieldbyName('BATCH_NO').AsString := vBtNo;
@@ -1833,7 +1833,7 @@ begin
       if ((length(s) in [1,2,3,4]) and FnString.IsNumberChar(s)) or IsNumber then
          begin
              if trim(s)='' then Exit;
-             if edtTable.FieldbyName('GODS_ID').asString='' then Exit;
+             if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
              if not IsNumber then amt := StrtoFloatDef(s,0);
              if amt=0 then
                 begin
@@ -1896,7 +1896,7 @@ var
   s:string;
 begin
   if dbState = dsBrowse then Exit;
-  if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('请选择商品后再执行此操作');
   s := trim(id);
   try
     StrToFloat(s);
@@ -1919,7 +1919,7 @@ var
   IsAgio:boolean;
 begin
   if dbState = dsBrowse then Exit;
-  if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  if edtTable.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('请选择商品后再执行此操作');
   if (edtTable.FindField('IS_PRESENT')<>nil) and (edtTable.FieldbyName('IS_PRESENT').AsInteger=1) then Raise Exception.Create('已赠送的商品不能修改单价');
   s := trim(id);
   IsAgio := (s[1]='/');
@@ -1968,7 +1968,7 @@ begin
   inherited;
 //  if not fndGODS_ID.Focused then Exit;
   if not edtTable.Active then Exit;
-  if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then exit;
+  if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then Exit;
   edtTable.DisableControls;
   try
   if edtTable.FieldbyName('GODS_ID').AsString <> '' then
@@ -2079,7 +2079,7 @@ begin
       end;
     if c>0 then
       begin
-        if (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经录入，是否继续添加商品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+        if (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').AsString+'('+AObj.FieldbyName('GODS_CODE').AsString+')已经录入，是否继续添加商品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
            result := false else result := true;
       end;
   finally
@@ -2457,7 +2457,7 @@ begin
     edtTable.FieldByName('GODS_ID').Value := null;
     edtTable.FieldByName('IS_PRESENT').Value := 0;
     if edtTable.FindField('SEQNO')<> nil then
-       edtTable.FindField('SEQNO').asInteger := r;
+       edtTable.FindField('SEQNO').AsInteger := r;
     edtTable.Post;
     edtTable.SortedFields := 'SEQNO';
     edtTable.Locate('SEQNO',r,[]); 
@@ -2606,7 +2606,7 @@ begin
   if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
   if dbState = dsBrowse then
      begin
-       if edtTable.FieldbyName('AMOUNT').asFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
+       if edtTable.FieldbyName('AMOUNT').AsFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
        if (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
        _obj := TRecord_.Create;
        rs := TZQuery.Create(nil);
@@ -2619,8 +2619,8 @@ begin
          _obj.WriteToDataSet(edtTable,false);
          inc(ROWID);
          edtTable.FieldByName('SEQNO').AsInteger := ROWID;
-         edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
-         AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+         edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
+         AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
          edtTable.Post;
          rs.Filtered := false;
          rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
@@ -2632,8 +2632,8 @@ begin
              edtProperty.Append;
              _obj.ReadFromDataSet(rs);
              _obj.WriteToDataSet(edtProperty,false);
-             edtProperty.FieldbyName('AMOUNT').asFloat := - edtProperty.FieldbyName('AMOUNT').asFloat;
-             edtProperty.FieldbyName('CALC_AMOUNT').asFloat := - edtProperty.FieldbyName('CALC_AMOUNT').asFloat;
+             edtProperty.FieldbyName('AMOUNT').AsFloat := - edtProperty.FieldbyName('AMOUNT').AsFloat;
+             edtProperty.FieldbyName('CALC_AMOUNT').AsFloat := - edtProperty.FieldbyName('CALC_AMOUNT').AsFloat;
              edtProperty.Post;
              rs.Next;
            end;
@@ -2647,8 +2647,8 @@ begin
   if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        edtTable.Edit;
-       edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
-       AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+       edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
+       AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
        edtTable.Post;
      end;
 end;
@@ -2660,8 +2660,8 @@ begin
   if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        edtTable.Edit;
-       edtTable.FieldbyName('AMOUNT').asFloat := - edtTable.FieldbyName('AMOUNT').asFloat;
-       AmountToCalc(edtTable.FieldbyName('AMOUNT').asFloat);
+       edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
+       AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
        edtTable.Post;
      end;
 end;

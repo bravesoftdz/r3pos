@@ -750,7 +750,7 @@ end;
 function TfrmPosInOrder.doShortCut(s: string): boolean;
 begin
   result := inherited doShortCut(s);
-  if result then exit;
+  if result then Exit;
   result := true;
   case InputFlag of
   5:begin
@@ -1909,12 +1909,12 @@ begin
     if AObj.FieldByName('STOCK_AMT').AsFloat<0 then
     begin
       MessageBox(Handle,'当前单据已经是退货状态，不能再添加商品！','友情提示...',MB_OK+MB_ICONQUESTION);
-      exit;
+      Exit;
     end;
     if MessageBox(Handle,'已做单据不能添加商品，是否启用编辑并添加商品？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
       EditOrder
     else
-      exit;
+      Exit;
   end;
   gs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   col := ACol;

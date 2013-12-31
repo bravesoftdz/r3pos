@@ -725,7 +725,7 @@ end;
 function TfrmStockOrder.doShortCut(s: string): boolean;
 begin
   result := inherited doShortCut(s);
-  if result then exit;
+  if result then Exit;
   result := true;
   case InputFlag of
   5:begin

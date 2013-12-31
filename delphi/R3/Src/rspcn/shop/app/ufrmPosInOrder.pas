@@ -2103,17 +2103,20 @@ begin
     if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
     if Column.FieldName = 'APRICE' then
        begin
-         CurPrice := edtTable.FieldByName('APRICE').AsFloat;
-         OrgPrice := edtTable.FieldByName('ORG_PRICE').AsFloat;
-         if (FnNumber.CompareFloat(CurPrice, OrgPrice) > 0)
-            or
-            (FnNumber.CompareFloat(CurPrice, OrgPrice * 0.3) < 0) then
+         if edtTable.FieldByName('IS_PRESENT').AsInteger = 0 then
             begin
-              DBGridEh1.Canvas.Brush.Color := clRed;
-              DBGridEh1.Canvas.Font.Color := clwhite;
-              DBGridEh1.Canvas.Font.Style := [fsBold];
+              CurPrice := edtTable.FieldByName('APRICE').AsFloat;
+              OrgPrice := edtTable.FieldByName('ORG_PRICE').AsFloat;
+              if (FnNumber.CompareFloat(CurPrice, OrgPrice) > 0)
+                 or
+                 (FnNumber.CompareFloat(CurPrice, OrgPrice * 0.3) < 0) then
+                 begin
+                   DBGridEh1.Canvas.Brush.Color := clRed;
+                   DBGridEh1.Canvas.Font.Color := clwhite;
+                   DBGridEh1.Canvas.Font.Style := [fsBold];
+                 end;
+              DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
             end;
-         DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
        end;
   except
   end;

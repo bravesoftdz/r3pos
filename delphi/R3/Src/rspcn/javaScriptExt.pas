@@ -510,6 +510,7 @@ var
   F:TextFile;
   s:string;
 begin
+  ForceDirectories(ExtractFilePath(Application.ExeName)+'temp');
   AssignFile(F,ExtractFilePath(Application.ExeName)+'temp\'+doMain+'.dat');
   rewrite(F);
   try

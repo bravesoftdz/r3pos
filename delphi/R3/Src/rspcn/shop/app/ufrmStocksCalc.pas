@@ -556,6 +556,10 @@ begin
     'CREA_USER'+varchar+'(36) '+null+' '+  priKey +
     ')';
   createSQLTable(sql,tmpTable);
+
+  sql := 'create index IX_TMP_SC on '+tmpTable+' (SHOP_ID,GODS_ID,BATCH_NO)';
+  createSQLTable(sql,tmpTable);
+
   if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK'+seqTable+' PRIMARY KEY (ID)';
   dropSQLTable(seqTable);
   sql :=

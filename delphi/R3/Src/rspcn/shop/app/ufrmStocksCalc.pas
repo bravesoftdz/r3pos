@@ -385,7 +385,7 @@ begin
      copyToRck;
      RzProgressBar1.Percent := 100;
    finally
-//     dropSQLTable(tmpTable);
+     // dropSQLTable(tmpTable);
      dropSQLTable(seqTable);
      dropSQLTable(prcTable);
    end;
@@ -557,8 +557,7 @@ begin
     ')';
   createSQLTable(sql,tmpTable);
 
-  sql := 'create index IX_TMP_SC on '+tmpTable+' (SHOP_ID,GODS_ID,BATCH_NO)';
-  createSQLTable(sql,tmpTable);
+  createSQLTable('create index IX_TMP_SC on '+tmpTable+' (SHOP_ID,GODS_ID,BATCH_NO)', tmpTable);
 
   if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK'+seqTable+' PRIMARY KEY (ID)';
   dropSQLTable(seqTable);

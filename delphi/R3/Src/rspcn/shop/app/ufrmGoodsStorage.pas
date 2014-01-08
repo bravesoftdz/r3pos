@@ -611,7 +611,10 @@ begin
   AObj.ReadFromDataSet(cdsGoodsInfo);
   ReadFromObject(AObj,self);
   ESortId := AObj.FieldByName('SORT_ID1').AsString;
-  edtSORT_ID1.Text := TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',AObj.FieldByName('SORT_ID1').AsString);
+  if ESortId = '#' then
+     edtSORT_ID1.Text := '无 分 类'
+  else
+     edtSORT_ID1.Text := TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',AObj.FieldByName('SORT_ID1').AsString);
   if (AObj.FieldByName('TENANT_ID').AsString<>token.tenantId) and not cdsGodsRelation.IsEmpty then //如果是经销商加盟的商品，可能重命名。
      begin
        if cdsGodsRelation.FieldByName('GODS_CODE').AsString <> '' then
@@ -623,7 +626,10 @@ begin
        if cdsGodsRelation.FieldByName('SORT_ID1').AsString <> '' then
           begin
             ESortId := cdsGodsRelation.FieldByName('SORT_ID1').AsString;
-            edtSORT_ID1.Text := TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',cdsGodsRelation.FieldByName('SORT_ID1').AsString);
+            if ESortId = '#' then
+               edtSORT_ID1.Text := '无 分 类'
+            else
+               edtSORT_ID1.Text := TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',cdsGodsRelation.FieldByName('SORT_ID1').AsString);
           end;
        if cdsGodsRelation.FieldByName('NEW_INPRICE').AsString <> '' then
           edtNEW_INPRICE.Text := cdsGodsRelation.FieldByName('NEW_INPRICE').AsString;
@@ -837,6 +843,9 @@ begin
         edtNEW_OUTPRICE.Properties.ReadOnly := true;
      end;
   if relationType=1 then Exit;
+  SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);
+  edtBK_NEW_INPRICE.Color := edtNEW_INPRICE.Style.Color;
+  edtNEW_INPRICE.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtNEW_OUTPRICE.Style);
   edtBK_NEW_OUTPRICE.Color := edtNEW_OUTPRICE.Style.Color;
   edtNEW_OUTPRICE.Properties.ReadOnly := true;

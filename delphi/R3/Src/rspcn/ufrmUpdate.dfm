@@ -43,9 +43,9 @@ inherited frmUpdate: TfrmUpdate
     object RzLabel2: TRzLabel
       Left = 22
       Top = 17
-      Width = 108
+      Width = 229
       Height = 20
-      Caption = #26032#21830#30431'-V6.0'
+      Caption = #29616#20195#21367#28895#38646#21806#32456#31471#31649#29702#31995#32479
       Color = 2228224
       Font.Charset = GB2312_CHARSET
       Font.Color = 2818069
@@ -404,9 +404,11 @@ inherited frmUpdate: TfrmUpdate
     OnSuccess = WebUpdater1Success
     ProgressBar = ProgressBar1
     ShowUpdateFilesList = True
+    Left = 360
+    Top = 36
   end
   object RzVersionInfo1: TRzVersionInfo
-    Left = 160
-    Top = 52
+    Left = 328
+    Top = 36
   end
 end

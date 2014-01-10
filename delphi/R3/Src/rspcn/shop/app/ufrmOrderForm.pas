@@ -1541,7 +1541,6 @@ var
   mny:currency;
   Pri:currency;
 begin
-       LogFile.AddLogFile(0,'ÎÒµÄÌõÂë'+BarCode);
   result := 2;
   if BarCode='' then Exit;
   fndStr := BarCode;

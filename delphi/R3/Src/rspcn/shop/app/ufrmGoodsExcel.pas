@@ -1056,7 +1056,7 @@ begin
             begin
               id:=EncStr(trim(tmpList[i]),ENC_KEY);
               w:=36-length(id);
-              for j:=0 to w do
+              for j:=1 to w do
                 id:='0'+id;
               cdsUnits.Append;
               cdsUnits.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);

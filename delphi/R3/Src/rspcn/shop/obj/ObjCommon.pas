@@ -101,7 +101,7 @@ public
 end;
 
 const
-  ComVersion='3.0.2.62';
+  ComVersion='3.0.2.68';
 var
   FldXdict:TZReadonlyQuery;
   NearSyncDate:TDatetime;
@@ -1147,6 +1147,12 @@ begin
   if PUpdateStorage(Item1)^.GODS_ID< PUpdateStorage(Item2)^.GODS_ID then
      result := -1
   else
+  if PUpdateStorage(Item1)^.BATCH_NO> PUpdateStorage(Item2)^.BATCH_NO then
+     result := 1
+  else
+  if PUpdateStorage(Item1)^.BATCH_NO< PUpdateStorage(Item2)^.BATCH_NO then
+     result := -1
+  else
   if PUpdateStorage(Item1)^.PROPERTY_01> PUpdateStorage(Item2)^.PROPERTY_01 then
      result := 1
   else
@@ -1157,12 +1163,6 @@ begin
      result := 1
   else
   if PUpdateStorage(Item1)^.PROPERTY_02< PUpdateStorage(Item2)^.PROPERTY_02 then
-     result := -1
-  else
-  if PUpdateStorage(Item1)^.BATCH_NO> PUpdateStorage(Item2)^.BATCH_NO then
-     result := 1
-  else
-  if PUpdateStorage(Item1)^.BATCH_NO< PUpdateStorage(Item2)^.BATCH_NO then
      result := -1
   else
      result :=  0;

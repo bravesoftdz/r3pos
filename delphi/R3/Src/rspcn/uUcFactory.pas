@@ -726,6 +726,7 @@ begin
      '        and A.TENANT_ID='+tenantId+
      '        and A.COMM not in (''02'',''12'') ';
     dataFactory.sqlite.Open(Temp);
+    if Temp.IsEmpty then Raise Exception.Create('ÎÞÐ§µÇÂ¼Ãû.');
     if Temp.FieldbyName('ROLE_IDS').AsString = 'xsm' then
        begin
          isXsm := true;

@@ -1432,6 +1432,7 @@ begin
         if token.online then dataFactory.remote.DBLock(true);
         ReadTimeStamp;
         AddLoginLog;
+        if token.tenantId <> '' then PlayerFactory.OpenPlayer;
         if not token.online then Exit;
         CommandPush.ExecuteCommand;
         hWnd := PHWnd;
@@ -1466,7 +1467,6 @@ begin
            end
         else
            begin
-             PlayerFactory.OpenPlayer;
              if not CheckNeedLoginSync then Exit;
              if not SyncLockCheck(PHWnd) then Exit;
              SyncFactory.BackUpDBFile;

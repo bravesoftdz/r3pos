@@ -163,6 +163,8 @@ type
     procedure btnPickUpClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure fndGODS_IDSaveValue(Sender: TObject);
+    procedure toolDeleteClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -232,6 +234,8 @@ type
     procedure showForm;override;
     procedure ajustPostion;override;
 
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string);override;
+
     procedure NewOrder;override;
     procedure EditOrder;override;
     procedure DeleteOrder;override;
@@ -243,6 +247,8 @@ type
     procedure PrintOrder;override;
     procedure PreviewOrder;override;
 
+    procedure ShowCgtPic(GodsId:string);
+
     procedure OpenList;
   end;
 
@@ -250,10 +256,10 @@ implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,
      uCacheFactory,ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,
-     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory,ufrmCodeScan,uZebraPrinterFactory;
+     ufrmSelectGoods,ufrmCustomerDialog,uCodePrinterFactory,ufrmCodeScan,
+     uZebraPrinterFactory,uPlayerFactory;
 
 {$R *.dfm}
-
 
 procedure TfrmPosOutOrder.Calc;
 var
@@ -332,6 +338,16 @@ begin
     DoShowPayment;
     AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := TotalBarter;
   end;
+  if dllGlobal.GetDoubleScreen = '2' then
+     begin
+       if not edtTable.IsEmpty then
+          begin
+            PlayerFactory.ResetCustomer;
+            PlayerFactory.ShowGodsInfo(edtTable.FieldByName('GODS_NAME').AsString,
+                                       edtTable.FieldByName('APRICE').AsString,
+                                       FloatToStr(TotalFee-AObj.FieldbyName('PAY_DIBS').AsFloat));
+          end;
+     end;
 end;
 
 procedure TfrmPosOutOrder.CancelOrder;
@@ -488,6 +504,8 @@ begin
   ReadFromObject(AObj,self);
   ReadFrom(cdsDetail);
   dbState := dsBrowse;
+  if dllGlobal.GetDoubleScreen = '2' then
+     PlayerFactory.ResetScreen;
 end;
 
 destructor TfrmPosOutOrder.Destroy;
@@ -592,7 +610,10 @@ begin
 end;
 
 procedure TfrmPosOutOrder.SaveOrder;
-var Printed:boolean;
+var
+  ps:TZQuery;
+  Printed:boolean;
+  PriceName:string;
 begin
   if dbState = dsBrowse then Exit;
 
@@ -653,6 +674,28 @@ begin
        DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
        DevFactory.OpenCashBox(self.Font);
      end;
+  if dllGlobal.GetDoubleScreen = '2' then
+     begin
+       PlayerFactory.TimerResetScreen;
+       if AObj.FieldByName('CLIENT_ID').AsString <> '' then
+          begin
+            ps := dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
+            if ps.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
+               begin
+                 PriceName := ps.FieldByName('PRICE_NAME').AsString;
+               end
+            else
+               begin
+                 PriceName := '普通客户';
+               end;
+            PlayerFactory.SetCustomerInfo(AObj.FieldByName('CLIENT_CODE').AsString,
+                                          AObj.FieldByName('CLIENT_ID_TEXT').AsString,
+                                          PriceName,
+                                          inttostr(AObj.FieldbyName('INTEGRAL').AsInteger
+                                                    + AObj.FieldbyName('ACCU_INTEGRAL').AsInteger
+                                                    - AObj.FieldbyName('BARTER_INTEGRAL').AsInteger));
+          end;
+     end;
 end;
 
 procedure TfrmPosOutOrder.edtTableAfterPost(DataSet: TDataSet);
@@ -674,6 +717,7 @@ begin
      RzBmpButton4.Visible := true
   else
      RzBmpButton4.Visible := false;
+  if dllGlobal.GetDoubleScreen = '2' then PlayerFactory.SetFocusHwnd(self.Handle);
 end;
 
 procedure TfrmPosOutOrder.DBGridEh1Columns1BeforeShowControl(
@@ -1077,6 +1121,11 @@ begin
        AObj.FieldbyName('PAY_ZERO').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
 
        MarqueeStatus.Caption := '实收现金:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat);
+
+       if dllGlobal.GetDoubleScreen = '2' then
+          begin
+            PlayerFactory.ShowOddChange(FloatToStr(TotalFee-payDibs),FloatToStr(AObj.FieldbyName('CASH_MNY').AsFloat),FormatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat));
+          end;
      end;
   end;
   result := true;
@@ -1446,6 +1495,8 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
+  if dllGlobal.GetDoubleScreen = '2' then
+     PlayerFactory.ResetScreen;
   MessageBox(Handle,'挂单成功，取单请按F10键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   NewOrder;
 end;
@@ -2139,6 +2190,7 @@ begin
   if bs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then
      begin
         AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
+        AObj.FieldbyName('CLIENT_CODE').AsString := bs.FieldbyName('CLIENT_CODE').AsString;
         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
         AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
         CalcPrice;
@@ -2762,6 +2814,7 @@ begin
          edtCLIENT_ID.Text := SObj.FieldByName('CUST_NAME').AsString;
          AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldByName('PRICE_ID').AsString;
          AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CUST_ID').AsString;
+         AObj.FieldbyName('CLIENT_CODE').AsString := SObj.FieldbyName('CUST_CODE').AsString;
          AObj.FieldbyName('CLIENT_ID_TEXT').AsString := SObj.FieldbyName('CUST_NAME').AsString; 
          CalcPrice;
        end;
@@ -2838,6 +2891,54 @@ begin
        end;
   except
   end;
+end;
+
+procedure TfrmPosOutOrder.AddRecord(AObj: TRecord_; UNIT_ID: string);
+begin
+  inherited;
+  ShowCgtPic(AObj.FieldbyName('GODS_ID').AsString);
+end;
+
+procedure TfrmPosOutOrder.fndGODS_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  ShowCgtPic(fndGODS_ID.AsString);
+end;
+
+procedure TfrmPosOutOrder.ShowCgtPic(GodsId:string);
+var
+  bs,rs:TZQuery;
+  UnitId:string;
+begin
+  if dllGlobal.GetDoubleScreen <> '2' then Exit;
+  bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if bs.Locate('GODS_ID',GodsId,[]) then
+     begin
+       if bs.FieldByName('RELATION_ID').AsInteger = 1000006 then
+          begin
+            UnitId := bs.FieldByName('UNIT_ID').AsString;
+            if UnitId = '' then UnitId := bs.FieldByName('CALC_UNITS').AsString;
+            rs := TZQuery.Create(nil);
+            try
+              rs.SQL.Text := 'select BARCODE from PUB_BARCODE where GODS_ID=:GODS_ID and UNIT_ID=:UNIT_ID';
+              rs.ParamByName('GODS_ID').AsString := GodsId;
+              rs.ParamByName('UNIT_ID').AsString := UnitId;
+              dllGlobal.OpenSqlite(rs);
+              if not rs.IsEmpty then
+                 begin
+                   PlayerFactory.ShowCgtPic(rs.FieldByName('BARCODE').AsString);
+                 end;
+            finally
+              rs.Free;
+            end;
+          end;
+     end;
+end;
+
+procedure TfrmPosOutOrder.toolDeleteClick(Sender: TObject);
+begin
+  inherited;
+  if dllGlobal.GetDoubleScreen = '2' then PlayerFactory.ResetCgtPic;
 end;
 
 initialization

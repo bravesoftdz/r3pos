@@ -51,8 +51,10 @@ TPlayerFactory=class
     function ShowGodsInfo(godsName,aprice,totalFee:string): boolean;
     function ShowOddChange(totalFee,realPay,oddChange:string): boolean;
     function ResetScreen: boolean;
+    function TimerResetScreen: boolean;
     function SetCustomerInfo(cardNo,name,priceName,inte:string): boolean;
     function ResetCustomer: boolean;
+    function ResetCgtPic: boolean;
     function SetFocusHwnd(hwndFocus:HWND): boolean;
   end;
 
@@ -293,6 +295,16 @@ begin
   result := CallJs(2, pchar('loadDefault()')) and CallJs(3, pchar('loadDefault()'));
 end;
 
+function TPlayerFactory.TimerResetScreen: boolean;
+begin
+  if not dllValid then
+    begin
+      result := false;
+      Exit;
+    end;
+  result := CallJs(2, pchar('timerDefault()')) and CallJs(3, pchar('loadDefault()'));
+end;
+
 function TPlayerFactory.ShowOddChange(totalFee, realPay, oddChange: string): boolean;
 var
   s:string;
@@ -347,6 +359,16 @@ begin
     end;
   code := PlayerSetFocusHwnd(hwndFocus);
   result := (code = success);
+end;
+
+function TPlayerFactory.ResetCgtPic: boolean;
+begin
+  if not dllValid then
+    begin
+      result := false;
+      Exit;
+    end;
+  result := CallJs(3, pchar('loadDefault()'));
 end;
 
 initialization

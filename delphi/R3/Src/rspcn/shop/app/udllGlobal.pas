@@ -30,6 +30,7 @@ type
     QQ,Telephone:string;
     SFVersion: string;
     ProductId: string;
+    DoubleScreen: string;
     FAuthMode: integer;
     procedure OpenPubGoodsInfo;
     procedure SetAuthMode(const Value: integer);
@@ -50,6 +51,7 @@ type
     function GetProductId:string;
     function GetSFVersion:string;
     function GetVersionFlag:integer;
+    function GetDoubleScreen:string;
     function sysDate:TDatetime;
     function GetParameter(paramname:string):string;
     //获取服务端时间戳
@@ -727,6 +729,21 @@ begin
     dataFactory.MoveToDefault;
     rs.Free;
   end;
+end;
+
+function TdllGlobal.GetDoubleScreen: string;
+var F:TIniFile;
+begin
+  if DoubleScreen = '' then
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+       try
+         DoubleScreen := F.ReadString('soft','doubleScreen','0');
+       finally
+         F.Free;
+       end;
+     end;
+  result := DoubleScreen;
 end;
 
 initialization

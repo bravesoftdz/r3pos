@@ -112,7 +112,8 @@ uses
   uCommand in 'app\uCommand.pas',
   ufrmHintMsg in 'app\ufrmHintMsg.pas' {frmHintMsg},
   ufrmNewPaperReader in 'app\ufrmNewPaperReader.pas' {frmNewPaperReader},
-  uZebraPrinterFactory in 'app\uZebraPrinterFactory.pas';
+  uZebraPrinterFactory in 'app\uZebraPrinterFactory.pas',
+  uPlayerFactory in 'app\uPlayerFactory.pas';
 
 {$R *.res}
 exports

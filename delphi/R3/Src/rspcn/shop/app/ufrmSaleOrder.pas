@@ -198,6 +198,10 @@ type
     procedure DBGridPrint;
 
     procedure BarcodeInput(_Buf:string);override;
+
+    procedure ShowCgtPic(GodsId:string);
+
+    function  GetCustIntegral:integer;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -216,8 +220,6 @@ type
     procedure PrintTicket;
     procedure PrintOrder;override;
     procedure PreviewOrder;override;
-
-    procedure ShowCgtPic(GodsId:string);
 
     procedure OpenList;
   end;
@@ -1407,7 +1409,12 @@ begin
             begin
                AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
                AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
+               AObj.FieldbyName('CLIENT_CODE').AsString := bs.FieldbyName('CLIENT_CODE').AsString;
                AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+               if dllGlobal.GetDoubleScreen = '2' then
+                  begin
+                    AObj.FieldbyName('ACCU_INTEGRAL').AsInteger := GetCustIntegral;
+                  end;
             end;
        end
     else
@@ -2131,6 +2138,10 @@ begin
         AObj.FieldbyName('CLIENT_CODE').AsString := bs.FieldbyName('CLIENT_CODE').AsString;
         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
         AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+        if dllGlobal.GetDoubleScreen = '2' then
+           begin
+             AObj.FieldbyName('ACCU_INTEGRAL').AsInteger := GetCustIntegral;
+           end;
         CalcPrice;
      end;
 end;
@@ -2547,6 +2558,22 @@ procedure TfrmSaleOrder.toolDeleteClick(Sender: TObject);
 begin
   inherited;
   if dllGlobal.GetDoubleScreen = '2' then PlayerFactory.ResetCgtPic;
+end;
+
+function TfrmSaleOrder.GetCustIntegral: integer;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select INTEGRAL from PUB_IC_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and UNION_ID=:UNION_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    rs.ParamByName('CLIENT_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
+    rs.ParamByName('UNION_ID').AsString := '#';
+    dataFactory.Open(rs);
+    result := rs.FieldbyName('INTEGRAL').AsInteger;
+  finally
+    rs.Free;
+  end;
 end;
 
 initialization

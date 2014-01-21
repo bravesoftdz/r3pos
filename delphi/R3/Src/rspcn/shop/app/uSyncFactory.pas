@@ -181,7 +181,8 @@ implementation
 
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
-     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand,ufrmHintMsg;
+     ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand,ufrmHintMsg,
+     uPlayerFactory;
 
 function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
 
@@ -1444,6 +1445,7 @@ begin
              firstLogin := true;
              TfrmSysDefine.AutoRegister;
              if token.tenantId = '' then Exit;
+             PlayerFactory.OpenPlayer;
              flag := SyncFactory.CheckRemoteData(PHWnd);
              if flag = 0 then // 没有还原
                 begin
@@ -1464,6 +1466,7 @@ begin
            end
         else
            begin
+             PlayerFactory.OpenPlayer;
              if not CheckNeedLoginSync then Exit;
              if not SyncLockCheck(PHWnd) then Exit;
              SyncFactory.BackUpDBFile;
@@ -1497,6 +1500,7 @@ procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
   timered := true;
   try
+    PlayerFactory.ClosePlayer;
     if dllApplication.mode = 'demo' then Exit;
     if token.tenantId = '' then Exit;
     with TfrmSyncData.Create(nil) do

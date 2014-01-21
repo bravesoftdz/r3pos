@@ -54,6 +54,7 @@ type
     function GetDoubleScreen:string;
     function sysDate:TDatetime;
     function GetParameter(paramname:string):string;
+    function GetRimUrl:string;
     //获取服务端时间戳
     function GetDBTimeStamp:int64;
     //得到供应链企业 in ();
@@ -744,6 +745,30 @@ begin
        end;
      end;
   result := DoubleScreen;
+end;
+
+function TdllGlobal.GetRimUrl: string;
+var
+  F:TIniFile;
+  List:TStringList;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  List := TStringList.Create;
+  try
+    result := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
+    List.CommaText := result;
+    result := List.Values['rim'];
+    if result<>'' then
+       begin
+         if result[Length(result)]<>'/' then result := result+'/';
+       end;
+  finally
+    List.free;
+    try
+      F.Free;
+    except
+    end;
+  end;
 end;
 
 initialization

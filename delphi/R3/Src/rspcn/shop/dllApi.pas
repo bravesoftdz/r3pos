@@ -73,7 +73,7 @@ implementation
 
 uses udllGlobal,uSyncFactory,IniFiles,uDevFactory,uRightsFactory,uRspSyncFactory,
      uCacheFactory,udllXDictFactory,ufrmSortDropFrom,uRtcSyncFactory,uRtcLibFactory,
-     uCodePrinterFactory,ufrmHintMsg;
+     uCodePrinterFactory,ufrmHintMsg,uPlayerFactory;
 
 var
   webForm:TStringList;
@@ -230,6 +230,7 @@ begin
     if assigned(MsgFactory) then FreeAndNil(MsgFactory);
     if assigned(DevFactory) then FreeAndNil(DevFactory);
     if assigned(CodePrinterFactory) then FreeAndNil(CodePrinterFactory);
+    if assigned(PlayerFactory) then FreeAndNil(PlayerFactory);
     if assigned(RightsFactory) then FreeAndNil(RightsFactory);
     if assigned(RtcLibFactory) then FreeAndNil(RtcLibFactory);
     if assigned(RtcSyncFactory) then FreeAndNil(RtcSyncFactory);

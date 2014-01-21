@@ -55,7 +55,6 @@ type
     licenseCode,shopName,comId,custId,rimUrl,downOrderMode:string;
     procedure ShowHeader;
     function GetDownOrderMode: string;
-    function GetRimUrl: string;
   public
     procedure Open;
     procedure Save;
@@ -479,7 +478,7 @@ begin
     downOrderMode := GetDownOrderMode;
     if downOrderMode = '1' then
        begin
-         rimUrl := GetRimUrl;
+         rimUrl := dllGlobal.GetRimUrl;
          rs := TZQuery.Create(nil);
          try
            rs.SQL.Text := 'select COM_ID,CUST_ID from RM_CUST a,CA_SHOP_INFO b where a.LICENSE_CODE = b.LICENSE_CODE and b.SHOP_ID = :SHOP_ID';
@@ -510,30 +509,6 @@ begin
   try
     result := F.ReadString('soft','downOrderMode','0');
   finally
-    try
-      F.Free;
-    except
-    end;
-  end;
-end;
-
-function TfrmDownStockOrder.GetRimUrl: string;
-var
-  F:TIniFile;
-  List:TStringList;
-begin
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
-  List := TStringList.Create;
-  try
-    result := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
-    List.CommaText := result;
-    result := List.Values['rim'];
-    if result<>'' then
-       begin
-         if result[Length(result)]<>'/' then result := result+'/';
-       end;
-  finally
-    List.free;
     try
       F.Free;
     except

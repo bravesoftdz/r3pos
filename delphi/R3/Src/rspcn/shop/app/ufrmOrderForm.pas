@@ -1366,11 +1366,30 @@ begin
        edtTable.FieldByName('GODS_NAME').AsString := '【赠送】'+rs.FieldbyName('GODS_NAME').AsString;
        PriceToCalc(0);
      end
-  else
+  else if Present=0 then
      begin
-       edtTable.FieldByName('GODS_NAME').AsString := rs.FieldbyName('GODS_NAME').AsString; 
+       edtTable.FieldByName('GODS_NAME').AsString := rs.FieldbyName('GODS_NAME').AsString;
        InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
        PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+     end
+  else if Present=2 then
+     begin
+       if rs.FieldByName('USING_BARTER').AsInteger in [2,3] then
+          begin
+            edtTable.Edit;
+            edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+            edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := rs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+            if rs.FieldByName('USING_BARTER').AsInteger=2 then
+               begin
+                 edtTable.FieldByName('APRICE').AsFloat := 0;
+                 PriceToCalc(0);
+               end;
+          end
+       else
+          begin
+            MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+            PresentToCalc(0);
+          end;
      end;
   if edtTable.State in [dsInsert,dsEdit] then edtTable.Post;
   edtTable.Edit;

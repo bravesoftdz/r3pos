@@ -633,10 +633,10 @@ begin
   if PageControl.ActivePageIndex <> 0 then Exit;
   if Key = VK_F5 then
      begin
-       if edtTable.FieldbyName('IS_PRESENT').AsString = '1' then
-          DoIsPresent('1')
+       if edtTable.FieldbyName('IS_PRESENT').AsString = '0' then
+          DoIsPresent('2')
        else
-          DoIsPresent('2');
+          DoIsPresent('1');
      end;
   if Key = VK_F6 then
      begin

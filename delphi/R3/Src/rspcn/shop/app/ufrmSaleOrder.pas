@@ -627,7 +627,7 @@ begin
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   if not checkPayment then Exit;
 
-  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
+  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换的商品.');
 
   dataFactory.BeginBatch;
   try

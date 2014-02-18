@@ -1,8 +1,8 @@
 inherited frmMemberPrice: TfrmMemberPrice
-  Left = 289
-  Top = 208
+  Left = 337
+  Top = 145
   Caption = #20250#21592#20215#26684
-  ClientHeight = 385
+  ClientHeight = 433
   ClientWidth = 576
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -11,12 +11,12 @@ inherited frmMemberPrice: TfrmMemberPrice
   TextHeight = 15
   inherited RzPanel1: TRzPanel
     Width = 576
-    Height = 357
+    Height = 405
     object RzPanel2: TRzPanel
       Left = 1
       Top = 1
       Width = 574
-      Height = 355
+      Height = 403
       Align = alClient
       BorderOuter = fsNone
       BorderColor = 15461355
@@ -25,7 +25,7 @@ inherited frmMemberPrice: TfrmMemberPrice
       TabOrder = 0
       object RzPanel13: TRzPanel
         Left = 5
-        Top = 57
+        Top = 105
         Width = 564
         Height = 293
         Align = alClient
@@ -283,7 +283,7 @@ inherited frmMemberPrice: TfrmMemberPrice
           end
         end
         object btnSave: TRzBmpButton
-          Left = 144
+          Left = 152
           Top = 254
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -499,7 +499,7 @@ inherited frmMemberPrice: TfrmMemberPrice
           OnClick = btnSaveClick
         end
         object btnCancel: TRzBmpButton
-          Left = 323
+          Left = 331
           Top = 254
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -719,7 +719,7 @@ inherited frmMemberPrice: TfrmMemberPrice
         Left = 5
         Top = 5
         Width = 564
-        Height = 52
+        Height = 100
         Align = alTop
         BorderOuter = fsGroove
         BorderSides = [sdBottom]
@@ -856,6 +856,114 @@ inherited frmMemberPrice: TfrmMemberPrice
             TabOrder = 1
           end
         end
+        object RzPanel4: TRzPanel
+          Left = 20
+          Top = 56
+          Width = 520
+          Height = 31
+          BorderOuter = fsStatus
+          BorderWidth = 1
+          Color = clWhite
+          FlatColor = 9145227
+          TabOrder = 2
+          object RzPanel6: TRzPanel
+            Left = 2
+            Top = 2
+            Width = 103
+            Height = 27
+            Align = alLeft
+            BorderOuter = fsFlat
+            BorderSides = [sdRight, sdBottom]
+            FlatColor = clGray
+            TabOrder = 0
+            object RzBackground2: TRzBackground
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 26
+              Active = True
+              Align = alClient
+              FrameColor = 9145227
+              GradientColorStart = clWhite
+              GradientColorStop = 14277081
+              ImageStyle = isStretch
+              ShowGradient = True
+              ShowImage = False
+              ShowTexture = False
+            end
+            object RzLabel3: TRzLabel
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 26
+              Align = alClient
+              Alignment = taCenter
+              Caption = #31215#20998#25442#36141
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object rbUSING_BARTER2: TcxRadioButton
+            Left = 205
+            Top = 8
+            Width = 85
+            Height = 17
+            Caption = #31215#20998#20817#25442
+            TabOrder = 1
+            OnClick = rbUSING_BARTER2Click
+          end
+          object rbUSING_BARTER1: TcxRadioButton
+            Left = 116
+            Top = 8
+            Width = 55
+            Height = 17
+            Caption = #31105#29992
+            Checked = True
+            TabOrder = 2
+            TabStop = True
+            OnClick = rbUSING_BARTER1Click
+          end
+          object edtBARTER_INTEGRAL1: TcxSpinEdit
+            Left = 290
+            Top = 5
+            Width = 50
+            Height = 23
+            Properties.ImmediatePost = True
+            Properties.MaxValue = 99999999.000000000000000000
+            Properties.ValueType = vtFloat
+            TabOrder = 3
+            ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
+          end
+          object rbUSING_BARTER3: TcxRadioButton
+            Left = 373
+            Top = 8
+            Width = 85
+            Height = 17
+            Caption = #31215#20998#25442#36141
+            TabOrder = 4
+            OnClick = rbUSING_BARTER3Click
+          end
+          object edtBARTER_INTEGRAL2: TcxSpinEdit
+            Left = 458
+            Top = 5
+            Width = 50
+            Height = 23
+            Properties.ImmediatePost = True
+            Properties.MaxValue = 99999999.000000000000000000
+            Properties.ValueType = vtFloat
+            TabOrder = 5
+            ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
+          end
+        end
       end
     end
   end
@@ -899,41 +1007,20 @@ inherited frmMemberPrice: TfrmMemberPrice
   object cdsMemberPrice: TZQuery
     FieldDefs = <>
     CachedUpdates = True
-    SQL.Strings = (
-      
-        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
-        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      
-        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
-        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
-        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
-        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
-        'TYPE=2) and COMP_TYPE=2)'
-      ') order by ACCOUNT')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
+    Params = <>
     Left = 465
-    Top = 341
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
+    Top = 389
   end
   object PriceDataSource: TDataSource
     DataSet = cdsMemberPrice
     Left = 435
-    Top = 342
+    Top = 390
+  end
+  object cdsGoods: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 495
+    Top = 389
   end
 end

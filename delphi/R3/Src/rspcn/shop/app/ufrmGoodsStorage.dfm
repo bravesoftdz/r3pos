@@ -3660,7 +3660,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         object RzPanel9: TRzPanel
           Left = 746
           Top = 226
-          Width = 100
+          Width = 75
           Height = 22
           BorderOuter = fsFlat
           FlatColor = clGray
@@ -3674,7 +3674,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           object RzBackground29: TRzBackground
             Left = 1
             Top = 1
-            Width = 98
+            Width = 73
             Height = 20
             Active = True
             Align = alClient
@@ -3689,11 +3689,11 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           object RzLabel37: TRzLabel
             Left = 1
             Top = 1
-            Width = 98
+            Width = 73
             Height = 20
             Align = alClient
             Alignment = taCenter
-            Caption = #35774#32622#20250#21592#20215
+            Caption = #20250#21592#35774#32622
             Font.Charset = GB2312_CHARSET
             Font.Color = clNavy
             Font.Height = -13

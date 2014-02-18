@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmWebDialog, RzBmpBtn, RzForms, StdCtrls, RzLabel, ExtCtrls,
   RzPanel, RzButton, cxButtonEdit, Grids, DBGridEh, cxSpinEdit, cxMaskEdit,
   cxDropDownEdit, cxControls, cxContainer, cxEdit, cxTextEdit, RzBckgnd,
-  DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase;
+  DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, cxRadioGroup;
 
 type
   TfrmMemberPrice = class(TfrmWebDialog)
@@ -42,6 +42,16 @@ type
     RzBackground1: TRzBackground;
     RzLabel2: TRzLabel;
     edtGODS_NAME: TcxTextEdit;
+    RzPanel4: TRzPanel;
+    RzPanel6: TRzPanel;
+    RzBackground2: TRzBackground;
+    RzLabel3: TRzLabel;
+    rbUSING_BARTER2: TcxRadioButton;
+    rbUSING_BARTER1: TcxRadioButton;
+    edtBARTER_INTEGRAL1: TcxSpinEdit;
+    rbUSING_BARTER3: TcxRadioButton;
+    edtBARTER_INTEGRAL2: TcxSpinEdit;
+    cdsGoods: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -57,10 +67,14 @@ type
     procedure PriceGridColumns5UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure btnSaveClick(Sender: TObject);
+    procedure rbUSING_BARTER1Click(Sender: TObject);
+    procedure rbUSING_BARTER2Click(Sender: TObject);
+    procedure rbUSING_BARTER3Click(Sender: TObject);
   private
     CarryRule,Deci:integer;
     GodsId,GodsCode,GodsName:string;
-    procedure Open(DataSet:TZQuery=nil);
+    RelationId,RelationType,UsingBarter,BarterIntegral:integer;
+    procedure Open;
     procedure Save;
     procedure WriteMemberPrice;
     procedure CheckGoodPriceColumnVisible;
@@ -69,12 +83,12 @@ type
     procedure CalcMemberProfitPrice(cdsMemberPrice:TZQuery;CalcType:integer;IsAll:Boolean=false);
     function  FindColumn(DBGrid: TDBGridEh; FieldName:string):TColumnEh;
   public
-    class function ShowDialog(AOwner:TForm;gid,gcode,gname:string):boolean;
+    class function ShowDialog(AOwner:TForm;SObj:TRecord_):boolean;
   end;
 
 implementation
 
-uses udataFactory,uTokenFactory,udllGlobal,udllShopUtil,uFnUtil;
+uses udataFactory,uTokenFactory,udllGlobal,udllShopUtil,uFnUtil,ObjCommon;
 
 {$R *.dfm}
 
@@ -117,10 +131,11 @@ begin
   end;
 end;
 
-procedure TfrmMemberPrice.Open(DataSet:TZQuery=nil);
-var sql:string;
+procedure TfrmMemberPrice.Open;
+var
+  sql:string;
+  Params:TftParamList;
 begin
-  if DataSet = nil then DataSet := cdsMemberPrice;
   sql := 'select  PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2, '+
          '        case when B.PRICE_ID is null then ''insert'' else ''update'' end as STATE,B.COMM '+
          ' from   (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_ID<>''#'' and COMM not in (''02'',''12'')) A '+
@@ -131,43 +146,52 @@ begin
          '          where P.TENANT_ID=G.TENANT_ID and P.GODS_ID=G.GODS_ID and P.SHOP_ID=G.SHOP_ID and P.TENANT_ID=:TENANT_ID and P.SHOP_ID=:SHOP_ID and P.GODS_ID=:GODS_ID '+
          '        ) B on A.PRICE_ID=B.PRICE_ID '+
          ' order by A.PRICE_ID';
-  DataSet.Close;
-  DataSet.SQL.Text := sql;
-  DataSet.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-  DataSet.ParamByName('SHOP_ID').AsString := token.shopId;
-  DataSet.ParamByName('GODS_ID').AsString := GodsId;
-  dataFactory.Open(DataSet);
-  DataSet.DisableControls;
+  cdsMemberPrice.Close;
+  cdsMemberPrice.SQL.Text := sql;
+  cdsMemberPrice.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+  cdsMemberPrice.ParamByName('SHOP_ID').AsString := token.shopId;
+  cdsMemberPrice.ParamByName('GODS_ID').AsString := GodsId;
+  dataFactory.Open(cdsMemberPrice);
+  cdsMemberPrice.DisableControls;
   try
-    DataSet.First;
-    while not DataSet.Eof do
+    cdsMemberPrice.First;
+    while not cdsMemberPrice.Eof do
       begin
-        if (DataSet.FieldByName('COMM').AsString = '02') or (DataSet.FieldByName('COMM').AsString = '12') then
+        if (cdsMemberPrice.FieldByName('COMM').AsString = '02') or (cdsMemberPrice.FieldByName('COMM').AsString = '12') then
            begin
-             DataSet.Edit;
-             DataSet.FieldByName('PROFIT_RATE').Value := null;
-             DataSet.FieldByName('NEW_OUTPRICE').Value := null;
-             DataSet.FieldByName('NEW_OUTPRICE1').Value := null;
-             DataSet.FieldByName('NEW_OUTPRICE2').Value := null;
-             DataSet.Post;
+             cdsMemberPrice.Edit;
+             cdsMemberPrice.FieldByName('PROFIT_RATE').Value := null;
+             cdsMemberPrice.FieldByName('NEW_OUTPRICE').Value := null;
+             cdsMemberPrice.FieldByName('NEW_OUTPRICE1').Value := null;
+             cdsMemberPrice.FieldByName('NEW_OUTPRICE2').Value := null;
+             cdsMemberPrice.Post;
            end;
-        DataSet.Next;
+        cdsMemberPrice.Next;
       end;
   finally
-    DataSet.EnableControls;
+    cdsMemberPrice.EnableControls;
   end;
-  if DataSet = cdsMemberPrice then CheckGoodPriceColumnVisible;
+  CheckGoodPriceColumnVisible;
 end;
 
-class function TfrmMemberPrice.ShowDialog(AOwner:TForm;gid,gcode,gname:string): boolean;
+class function TfrmMemberPrice.ShowDialog(AOwner:TForm;SObj:TRecord_): boolean;
 begin
   with TfrmMemberPrice.Create(AOwner) do
     begin
       try
-        GodsId := gid;
-        GodsCode := gcode;
-        GodsName := gname;
+        GodsId := SObj.FieldByName('GODS_ID').AsString;
+        GodsCode := SObj.FieldByName('GODS_CODE').AsString;
+        GodsName := SObj.FieldByName('GODS_NAME').AsString;
+        RelationId := SObj.FieldByName('RELATION_ID').AsInteger;
+        RelationType := SObj.FieldByName('RELATION_TYPE').AsInteger;
+        UsingBarter := SObj.FieldByName('USING_BARTER').AsInteger;
+        BarterIntegral := SObj.FieldByName('BARTER_INTEGRAL').AsInteger;
         result := (ShowModal = MROK);
+        if result then
+           begin
+             SObj.FieldByName('USING_BARTER').AsInteger := UsingBarter;
+             SObj.FieldByName('BARTER_INTEGRAL').AsInteger := BarterIntegral;
+           end;
       finally
         Free;
       end;
@@ -177,8 +201,6 @@ end;
 procedure TfrmMemberPrice.FormShow(Sender: TObject);
 begin
   inherited;
-  dbState := dsInsert;
-
   edtGODS_NAME.Text := GodsName;
   edtGODS_NAME.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtGODS_NAME.Style);
@@ -189,6 +211,34 @@ begin
   SetEditStyle(dsBrowse,edtGODS_CODE.Style);
   edtBK_GODS_CODE.Color := edtGODS_CODE.Style.Color;
 
+  RzPanel3.Height := 52;
+  self.ClientHeight := 385;
+
+  if (RelationId=0) or (RelationType=1) then
+     begin
+       RzPanel3.Height := 100;
+       self.ClientHeight := 433;
+       if UsingBarter = 1 then
+          begin
+            rbUSING_BARTER1.Checked := true;
+            edtBARTER_INTEGRAL1.Enabled := false;
+            edtBARTER_INTEGRAL2.Enabled := false;
+          end
+       else if UsingBarter = 2 then
+          begin
+            rbUSING_BARTER2.Checked := true;
+            edtBARTER_INTEGRAL1.Value := BarterIntegral;
+            edtBARTER_INTEGRAL1.Enabled := true;
+            edtBARTER_INTEGRAL2.Enabled := false;
+          end
+       else
+          begin
+            rbUSING_BARTER3.Checked := true;
+            edtBARTER_INTEGRAL2.Value := BarterIntegral;
+            edtBARTER_INTEGRAL1.Enabled := false;
+            edtBARTER_INTEGRAL2.Enabled := true;
+          end;
+     end;
   Open;
 end;
 
@@ -458,13 +508,56 @@ end;
 
 procedure TfrmMemberPrice.Save;
 var
+  str:string;
   Params:TftParamList;
   saveMemberPrice,tmpMemberPrice:TZQuery;
 begin
+  if rbUSING_BARTER2.Checked then
+     begin
+       UsingBarter := 2;
+       if edtBARTER_INTEGRAL1.Value = 0 then Raise Exception.Create('积分兑换关系的不能为0..');
+       BarterIntegral := edtBARTER_INTEGRAL1.Value;
+     end
+  else if rbUSING_BARTER3.Checked then
+     begin
+       UsingBarter := 3;
+       if edtBARTER_INTEGRAL2.Value = 0 then Raise Exception.Create('积分兑换关系的不能为0..');
+       BarterIntegral := edtBARTER_INTEGRAL2.Value;
+     end
+  else
+     begin
+       UsingBarter := 1;
+       BarterIntegral := 0;
+     end;
+
   WriteMemberPrice;
   dataFactory.UpdateBatch(cdsMemberPrice,'TGoodsPriceV60');
 
-  // 本地同步
+  if RelationId=0 then
+     begin
+       str := 'update PUB_GOODSINFO set USING_BARTER='+inttostr(UsingBarter)+',BARTER_INTEGRAL='+inttostr(BarterIntegral)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and GODS_ID='''+GodsId+'''';
+       dataFactory.ExecSQL(str);
+     end
+  else if RelationType=1 then
+     begin
+       str := 'update PUB_GOODS_RELATION set USING_BARTER='+inttostr(UsingBarter)+',BARTER_INTEGRAL='+inttostr(BarterIntegral)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and GODS_ID='''+GodsId+''' and RELATION_ID='+inttostr(RelationId);
+       dataFactory.ExecSQL(str);
+     end;
+
+  if dataFactory.iDbType <> 5 then
+     begin
+       if RelationId=0 then
+          begin
+            str := 'update PUB_GOODSINFO set USING_BARTER='+inttostr(UsingBarter)+',BARTER_INTEGRAL='+inttostr(BarterIntegral)+' where TENANT_ID='+token.tenantId+' and GODS_ID='''+GodsId+'''';
+            dataFactory.sqlite.ExecSQL(str);
+          end
+       else if RelationType=1 then
+          begin
+            str := 'update PUB_GOODS_RELATION set USING_BARTER='+inttostr(UsingBarter)+',BARTER_INTEGRAL='+inttostr(BarterIntegral)+' where TENANT_ID='+token.tenantId+' and GODS_ID='''+GodsId+''' and RELATION_ID='+inttostr(RelationId);
+            dataFactory.sqlite.ExecSQL(str);
+          end;
+     end;
+
   if dataFactory.iDbType <> 5 then
      begin
        tmpMemberPrice := TZQuery.Create(nil);
@@ -577,6 +670,33 @@ begin
   finally
     CurObj.Free;
   end;
+end;
+
+procedure TfrmMemberPrice.rbUSING_BARTER1Click(Sender: TObject);
+begin
+  inherited;
+  edtBARTER_INTEGRAL1.Value := 0;
+  edtBARTER_INTEGRAL2.Value := 0;
+  edtBARTER_INTEGRAL1.Enabled := false;
+  edtBARTER_INTEGRAL2.Enabled := false;
+end;
+
+procedure TfrmMemberPrice.rbUSING_BARTER2Click(Sender: TObject);
+begin
+  inherited;
+  edtBARTER_INTEGRAL1.Value := 0;
+  edtBARTER_INTEGRAL2.Value := 0;
+  edtBARTER_INTEGRAL1.Enabled := true;
+  edtBARTER_INTEGRAL2.Enabled := false;
+end;
+
+procedure TfrmMemberPrice.rbUSING_BARTER3Click(Sender: TObject);
+begin
+  inherited;
+  edtBARTER_INTEGRAL1.Value := 0;
+  edtBARTER_INTEGRAL2.Value := 0;
+  edtBARTER_INTEGRAL1.Enabled := false;
+  edtBARTER_INTEGRAL2.Enabled := true;
 end;
 
 end.

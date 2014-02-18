@@ -2211,9 +2211,68 @@ begin
 end;
 
 procedure TfrmGoodsStorage.RzLabel37Click(Sender: TObject);
+var
+  rs:TZQuery;
+  SObj:TRecord_;
 begin
   inherited;
-  TfrmMemberPrice.ShowDialog(self,AObj.FieldByName('GODS_ID').AsString,AObj.FieldByName('GODS_CODE').AsString,AObj.FieldByName('GODS_NAME').AsString);
+  SObj := TRecord_.Create;
+  try
+    SObj.AddField('GODS_ID',AObj.FieldByName('GODS_ID').AsString);
+    SObj.AddField('GODS_CODE',AObj.FieldByName('GODS_CODE').AsString);
+    SObj.AddField('GODS_NAME',AObj.FieldByName('GODS_NAME').AsString);
+    if cdsGoodsInfo.FieldByName('TENANT_ID').AsString = token.tenantId then
+       begin
+         SObj.AddField('RELATION_ID',0,ftInteger);
+         SObj.AddField('RELATION_TYPE',1,ftInteger);
+         SObj.AddField('USING_BARTER',cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger,ftInteger);
+         SObj.AddField('BARTER_INTEGRAL',cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger,ftInteger);
+       end
+    else
+       begin
+         SObj.AddField('RELATION_ID',cdsGodsRelation.FieldByName('RELATION_ID').AsInteger,ftInteger);
+         SObj.AddField('USING_BARTER',cdsGodsRelation.FieldByName('USING_BARTER').AsInteger,ftInteger);
+         SObj.AddField('BARTER_INTEGRAL',cdsGodsRelation.FieldByName('BARTER_INTEGRAL').AsInteger,ftInteger);
+         if cdsGodsRelation.FieldByName('TENANT_ID').AsString = token.tenantId then
+            begin
+              SObj.AddField('RELATION_TYPE',1,ftInteger);
+            end
+         else
+            begin
+              SObj.AddField('RELATION_TYPE',2,ftInteger);
+            end;
+       end;
+    if TfrmMemberPrice.ShowDialog(self,SObj) then
+       begin
+        rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+        if (SObj.FieldByName('RELATION_ID').AsInteger=0) or (SObj.FieldByName('RELATION_TYPE').AsInteger=1) then
+           begin
+             if rs.Locate('GODS_ID',AObj.FieldByName('GODS_ID').AsString,[]) then
+                begin
+                  rs.Edit;
+                  rs.FieldByName('USING_BARTER').AsInteger := SObj.FieldByName('USING_BARTER').AsInteger;
+                  rs.FieldByName('BARTER_INTEGRAL').AsInteger := SObj.FieldByName('BARTER_INTEGRAL').AsInteger;
+                  rs.Post;
+                end;
+             if SObj.FieldByName('RELATION_ID').AsInteger=0 then
+                begin
+                  cdsGoodsInfo.Edit;
+                  cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := SObj.FieldByName('USING_BARTER').AsInteger;
+                  cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := SObj.FieldByName('BARTER_INTEGRAL').AsInteger;
+                  cdsGoodsInfo.Post;
+                end
+             else if SObj.FieldByName('RELATION_TYPE').AsInteger=1 then
+                begin
+                  cdsGodsRelation.Edit;
+                  cdsGodsRelation.FieldByName('USING_BARTER').AsInteger := SObj.FieldByName('USING_BARTER').AsInteger;
+                  cdsGodsRelation.FieldByName('BARTER_INTEGRAL').AsInteger := SObj.FieldByName('BARTER_INTEGRAL').AsInteger;
+                  cdsGodsRelation.Post;
+                end;
+           end;
+       end;
+  finally
+    SObj.Free;
+  end;
 end;
 
 procedure TfrmGoodsStorage.VIPPriceImportClick(Sender: TObject);

@@ -1096,7 +1096,7 @@ begin
       if Field=nil then Exit;
       Field.AsString := FormatFloat('#0.000',APrice);
       APrice := Field.AsFloat;
-      if (APrice<>0) and (edtTable.FindField('IS_PRESENT')<>nil) then
+      if (APrice<>0) and (edtTable.FindField('IS_PRESENT')<>nil) and (edtTable.FindField('IS_PRESENT').AsInteger<>2) then
          edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
 
       Field := edtTable.FindField('AMOUNT');

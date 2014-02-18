@@ -218,26 +218,26 @@ begin
      begin
        RzPanel3.Height := 100;
        self.ClientHeight := 433;
-       if UsingBarter = 1 then
-          begin
-            rbUSING_BARTER1.Checked := true;
-            edtBARTER_INTEGRAL1.Enabled := false;
-            edtBARTER_INTEGRAL2.Enabled := false;
-          end
-       else if UsingBarter = 2 then
+       if UsingBarter = 2 then
           begin
             rbUSING_BARTER2.Checked := true;
             edtBARTER_INTEGRAL1.Value := BarterIntegral;
             edtBARTER_INTEGRAL1.Enabled := true;
             edtBARTER_INTEGRAL2.Enabled := false;
           end
-       else
+       else if UsingBarter = 3 then
           begin
             rbUSING_BARTER3.Checked := true;
             edtBARTER_INTEGRAL2.Value := BarterIntegral;
             edtBARTER_INTEGRAL1.Enabled := false;
             edtBARTER_INTEGRAL2.Enabled := true;
-          end;
+          end
+       else
+          begin
+            rbUSING_BARTER1.Checked := true;
+            edtBARTER_INTEGRAL1.Enabled := false;
+            edtBARTER_INTEGRAL2.Enabled := false;
+          end
      end;
   Open;
 end;
@@ -332,7 +332,6 @@ var
   ColIdx: integer;
   NewOutPrice,ProfitRate,SmallToCalc,BigToCalc:real;
 begin
-  if not (dbState in [dsInsert, dsEdit]) then Exit;
   rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   if not rs.Locate('GODS_ID',GodsId,[]) then Raise Exception.Create('经营商品中没有找到'+GodsName+'...');
   NewOutPrice := rs.FieldByName('NEW_OUTPRICE').AsFloat;

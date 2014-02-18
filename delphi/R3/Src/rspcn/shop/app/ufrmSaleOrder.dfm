@@ -3784,6 +3784,10 @@ inherited frmSaleOrder: TfrmSaleOrder
   inherited PopupMenu1: TPopupMenu
     Left = 865
     Top = 263
+    object N7: TMenuItem [7]
+      Caption = #20817#25442#27492#21830#21697
+      OnClick = N7Click
+    end
   end
   object cdsHeader: TZQuery [7]
     FieldDefs = <>

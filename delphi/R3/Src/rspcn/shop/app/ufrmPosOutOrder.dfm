@@ -4399,6 +4399,10 @@ inherited frmPosOutOrder: TfrmPosOutOrder
   inherited PopupMenu1: TPopupMenu
     Left = 856
     Top = 160
+    object N7: TMenuItem [7]
+      Caption = #20817#25442#27492#21830#21697
+      OnClick = N7Click
+    end
   end
   object cdsHeader: TZQuery [7]
     FieldDefs = <>

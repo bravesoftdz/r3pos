@@ -92,6 +92,7 @@ type
     btnSave: TRzBmpButton;
     btnNew: TRzBmpButton;
     btnImport: TRzBmpButton;
+    N7: TMenuItem;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -145,6 +146,7 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure fndGODS_IDSaveValue(Sender: TObject);
     procedure toolDeleteClick(Sender: TObject);
+    procedure N7Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1759,10 +1761,10 @@ begin
      begin
        bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
        if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
-       //看是否换购商品
        if bs.FieldByName('USING_BARTER').AsInteger in [2,3] then
           begin
             edtTable.Edit;
+            edtTable.FieldByName('GODS_NAME').AsString := '【兑换】'+bs.FieldbyName('GODS_NAME').AsString;
             edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
             edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
             if bs.FieldByName('USING_BARTER').AsInteger=2 then
@@ -1777,14 +1779,16 @@ begin
             Exit;
           end;
      end;
-
 end;
 
 procedure TfrmSaleOrder.CalcPrice;
-var r:integer;
+var
+  r:integer;
+  rs:TZQuery;
 begin
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
   r := edtTable.RecNo;
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   edtTable.DisableControls;
   try
     edtTable.First;
@@ -1792,6 +1796,12 @@ begin
       begin
         if (edtTable.FieldbyName('GODS_ID').AsString <> '') and (edtTable.FieldbyName('BOM_ID').AsString = '') and (edtTable.FieldByName('POLICY_TYPE').AsInteger<>4) then
         begin
+          if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
+             begin
+               edtTable.Edit;
+               edtTable.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
+               edtTable.Post;
+             end;
           InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
           PriceToCalc(edtTable.FieldbyName('APrice').AsFloat);
         end;
@@ -2574,6 +2584,12 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmSaleOrder.N7Click(Sender: TObject);
+begin
+  inherited;
+  DoIsPresent('3');
 end;
 
 initialization

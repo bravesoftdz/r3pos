@@ -79,11 +79,14 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      edtTable.Append;
-      edtTable.FieldbyName('CODE_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-      edtTable.FieldbyName('CODE_NAME').AsString := rs.FieldbyName('CODE_NAME').AsString;
-      edtTable.FieldByName('PAY_MNY').AsFloat := _AObj.FieldbyName('PAY_'+rs.FieldbyName('CODE_ID').AsString).asFloat;
-      edtTable.Post;
+      if rs.FieldByName('CODE_ID').AsString <> 'D' then //过滤掉记账、暂不支持此功能
+         begin
+           edtTable.Append;
+           edtTable.FieldbyName('CODE_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+           edtTable.FieldbyName('CODE_NAME').AsString := rs.FieldbyName('CODE_NAME').AsString;
+           edtTable.FieldByName('PAY_MNY').AsFloat := _AObj.FieldbyName('PAY_'+rs.FieldbyName('CODE_ID').AsString).asFloat;
+           edtTable.Post;
+         end;
       rs.Next;
     end;
   edtTable.First;

@@ -1062,6 +1062,7 @@ begin
     if bs.FieldByName('USING_BARTER').AsInteger=3 then
        begin
          edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+         edtTable.FieldByName('GODS_NAME').AsString := '¡¾¶Ò»»¡¿'+bs.FieldbyName('GODS_NAME').AsString;
          edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
        end
     else

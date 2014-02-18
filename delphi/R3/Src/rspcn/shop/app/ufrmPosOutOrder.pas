@@ -1063,6 +1063,7 @@ begin
     if bs.FieldByName('USING_BARTER').AsInteger=3 then
        begin
          edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+         edtTable.FieldByName('GODS_NAME').AsString := '¡¾¶Ò»»¡¿'+bs.FieldbyName('GODS_NAME').AsString;
          edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
        end
     else
@@ -2139,7 +2140,8 @@ procedure TfrmPosOutOrder.getGodsInfo(godsId: string);
 //  rs:TZQuery;
 //  SourceScale:real;
 begin
-{  CacheFactory.getGodsPngImage(edtTable.FieldbyName('GODS_ID').AsString,godsPhoto.Picture);
+{
+  CacheFactory.getGodsPngImage(edtTable.FieldbyName('GODS_ID').AsString,godsPhoto.Picture);
   godsPhoto.Top := 0;
   godsPhoto.Left := (godsPhotoBk.Width-godsPhoto.Width) div 2-1;
 

@@ -258,8 +258,6 @@ uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,uFnUtil,udllDsUtil
 
 {$R *.dfm}
 
-{ TfrmOrderForm }
-
 procedure TfrmOrderForm.SetinputFlag(const Value: integer);
 begin
   FinputFlag := Value;
@@ -297,7 +295,7 @@ begin
      order_input.Height := 147
   else
      order_input.Height := 66;
-//  ajustPostion;
+  // ajustPostion;
 end;
 
 procedure TfrmOrderForm.SetinputMode(const Value: integer);
@@ -348,16 +346,15 @@ end;
 procedure TfrmOrderForm.edtInputExit(Sender: TObject);
 begin
   inherited;
-//  edtInput.Text := edtInput.Hint;
-//  inputMode := 0;
-
+  // edtInput.Text := edtInput.Hint;
+  // inputMode := 0;
 end;
 
 procedure TfrmOrderForm.edtInputEnter(Sender: TObject);
 begin
   inherited;
   inputMode := 1;
-//  edtInput.Text := '';
+  // edtInput.Text := '';
   edtInput.selectAll;
 end;
 
@@ -401,14 +398,12 @@ procedure TfrmOrderForm.fndGODS_IDEnter(Sender: TObject);
 begin
   inherited;
   fndGODS_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
-
 end;
 
 procedure TfrmOrderForm.fndGODS_IDExit(Sender: TObject);
 begin
   inherited;
   if not fndGODS_ID.DropListed then fndGODS_ID.Visible := false;
-
 end;
 
 procedure TfrmOrderForm.fndGODS_IDKeyDown(Sender: TObject; var Key: Word;
@@ -442,7 +437,6 @@ begin
             Key := 0
        end;
      end;
-
 end;
 
 procedure TfrmOrderForm.fndGODS_IDKeyPress(Sender: TObject; var Key: Char);
@@ -548,6 +542,7 @@ begin
     edtTable.Edit;
   end;
 end;
+
 procedure TfrmOrderForm.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
@@ -558,7 +553,6 @@ begin
   toolReturn.Visible := (Value=dsBrowse);
   toolPresent.Visible := (Value<>dsBrowse);
   if FindColumn('TOOL_NAV')<>nil then FindColumn('TOOL_NAV').Width := 58;
-
 end;
 
 procedure TfrmOrderForm.CheckInvaid;
@@ -643,6 +637,7 @@ begin
     rs.free;
   end;
 end;
+
 procedure TfrmOrderForm.AddRecord(AObj: TRecord_; UNIT_ID: string);
 var
   Pt:integer;
@@ -745,7 +740,6 @@ end;
 procedure TfrmOrderForm.DelRecord(AObj: TRecord_);
 begin
   if not edtTable.IsEmpty then edtTable.Delete;
-
 end;
 
 procedure TfrmOrderForm.EraseRecord;
@@ -1965,7 +1959,7 @@ var AObj:TRecord_;
   pt:boolean;
 begin
   inherited;
-//  if not fndGODS_ID.Focused then Exit;
+  // if not fndGODS_ID.Focused then Exit;
   if not edtTable.Active then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then Exit;
   edtTable.DisableControls;
@@ -2155,14 +2149,12 @@ procedure TfrmOrderForm.fndUNIT_IDEnter(Sender: TObject);
 begin
   inherited;
   fndUNIT_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
-
 end;
 
 procedure TfrmOrderForm.fndUNIT_IDExit(Sender: TObject);
 begin
   inherited;
   fndUNIT_ID.Visible := false;
-
 end;
 
 procedure TfrmOrderForm.fndUNIT_IDKeyDown(Sender: TObject; var Key: Word;
@@ -2216,18 +2208,19 @@ begin
        FocusNextColumn;
        Key := #0;
      end;
-
 end;
 
 procedure TfrmOrderForm.DBGridEh1KeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-{  if Key=VK_SHIFT then
+{
+  if Key=VK_SHIFT then
     begin
       if edtTable.IsEmpty then Exit;
       ConvertPresent;
-    end;  }
+    end;
+}
 end;
 
 procedure TfrmOrderForm.ConvertPresent;
@@ -2410,7 +2403,6 @@ begin
         if edtInput.CanFocus and Visible then
            edtInput.SetFocus;
      end;
-
 end;
 
 procedure TfrmOrderForm.N1Click(Sender: TObject);
@@ -2516,7 +2508,6 @@ end;
 procedure TfrmOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if not edtInput.Focused then inherited;
-
 end;
 
 procedure TfrmOrderForm.FormResize(Sender: TObject);
@@ -2675,7 +2666,6 @@ procedure TfrmOrderForm.edtTableAfterOpen(DataSet: TDataSet);
 begin
   inherited;
   row_order_nav.Visible := not DataSet.IsEmpty;
-
 end;
 
 procedure TfrmOrderForm.SetdefUnit(const Value: integer);

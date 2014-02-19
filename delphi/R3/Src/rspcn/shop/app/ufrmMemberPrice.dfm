@@ -283,7 +283,7 @@ inherited frmMemberPrice: TfrmMemberPrice
           end
         end
         object btnSave: TRzBmpButton
-          Left = 152
+          Left = 360
           Top = 254
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -499,7 +499,7 @@ inherited frmMemberPrice: TfrmMemberPrice
           OnClick = btnSaveClick
         end
         object btnCancel: TRzBmpButton
-          Left = 331
+          Left = 467
           Top = 254
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
@@ -1008,19 +1008,19 @@ inherited frmMemberPrice: TfrmMemberPrice
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 465
+    Left = 57
     Top = 389
   end
   object PriceDataSource: TDataSource
     DataSet = cdsMemberPrice
-    Left = 435
+    Left = 27
     Top = 390
   end
   object cdsGoods: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 495
+    Left = 87
     Top = 389
   end
 end

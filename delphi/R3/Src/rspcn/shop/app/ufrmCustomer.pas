@@ -175,7 +175,7 @@ var frmCustomer: TfrmCustomer;
 implementation
 
 uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,uCtrlUtil,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,
-     ufrmDBGridPreview,ufrmCustomerExcel,uSyncFactory;
+     ufrmDBGridPreview,ufrmCustomerExcel,uSyncFactory,ufrmIntegralGlideAdd;
 
 {$R *.dfm}
 
@@ -743,9 +743,24 @@ begin
 end;
 
 procedure TfrmCustomer.RzLabel12Click(Sender: TObject);
+var SObj:TRecord_;
 begin
   inherited;
-  MessageBox(Handle,'当前功能还没有开通，敬请期待','友情提示..',MB_OK+MB_ICONINFORMATION);
+  SObj := TRecord_.Create;
+  try
+    if TfrmIntegralGlideAdd.IntegralGlide(self,AObj.FieldbyName('CUST_ID').AsString,SObj) then
+       begin
+         cmbINTEGRAL.Text := FormatFloat('#0.##',StrtoFloatDef(cmbINTEGRAL.Text,0) + SObj.FieldByName('INTEGRAL').AsFloat);
+         if cdsList.Locate('CUST_ID',AObj.FieldbyName('CUST_ID').AsString,[]) then
+            begin
+              cdsList.Edit;
+              cdsList.FieldByName('INTEGRAL').AsFloat := cdsList.FieldByName('INTEGRAL').AsFloat + SObj.FieldByName('INTEGRAL').AsFloat;
+              cdsList.Post;
+            end;
+       end;
+  finally
+    SObj.Free;
+  end;
 end;
 
 procedure TfrmCustomer.edtCUST_NAMEPropertiesChange(Sender: TObject);

@@ -2808,7 +2808,6 @@ inherited frmCustomer: TfrmCustomer
           BorderOuter = fsFlat
           FlatColor = clGray
           TabOrder = 15
-          Visible = False
           object RzBackground13: TRzBackground
             Left = 1
             Top = 1

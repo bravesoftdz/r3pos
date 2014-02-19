@@ -12,7 +12,12 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  
+
+  TIntegralGlideV60=class(TZFactory)
+  private
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure InitClass;override;
+  end;
 
 implementation
 
@@ -184,9 +189,50 @@ begin
   DeleteSQL.Add( Str);
 end;
 
+{ TIntegralGlide }
+
+function TIntegralGlideV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs:TZQuery;
+  Str:String;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    if FieldByName('INTEGRAL_FLAG').AsString = '1' then
+       Str := 'update PUB_IC_INFO set INTEGRAL=ifnull(INTEGRAL,0)+:INTEGRAL,ACCU_INTEGRAL=ifnull(ACCU_INTEGRAL,0)+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO '
+    else
+       Str := 'update PUB_IC_INFO set INTEGRAL=ifnull(INTEGRAL,0)-:INTEGRAL,RULE_INTEGRAL=ifnull(RULE_INTEGRAL,0)+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO ';
+    AGlobal.ExecSQL(ParseSQL(iDbType,Str),self);
+    if FieldByName('INTEGRAL_FLAG').AsString <> '1' then
+       begin
+         rs.SQL.Text := 'select INTEGRAL from PUB_IC_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and CLIENT_ID='''+FieldbyName('CLIENT_ID').AsString+'''';
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsInteger<0 then Raise Exception.Create('可用积分不足，不能完成对换。');
+       end;
+  finally
+    rs.Free;
+  end;
+  result := true;
+end;
+
+procedure TIntegralGlideV60.InitClass;
+begin
+  inherited;
+  SelectSQL.Text :=
+    ' select GLIDE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,IC_CARDNO,CREA_DATE,CREA_USER,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,GLIDE_AMT,GODS_ID,INTEGRAL_GOODS '+
+    ' from SAL_INTEGRAL_GLIDE where TENANT_ID=:TENANT_ID and GLIDE_ID=:GLIDE_ID and COMM not in (''02'',''12'') ';
+
+  IsSQLUpdate := true;
+
+  InsertSQL.Text :=
+    ' insert into SAL_INTEGRAL_GLIDE(GLIDE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,IC_CARDNO,CREA_DATE,CREA_USER,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,GLIDE_AMT,GODS_ID,INTEGRAL_GOODS,COMM,TIME_STAMP)'+
+    ' values (:GLIDE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,:IC_CARDNO,:CREA_DATE,:CREA_USER,:INTEGRAL_FLAG,:GLIDE_INFO,:INTEGRAL,:GLIDE_AMT,:GODS_ID,:INTEGRAL_GOODS,''00'','+GetTimeStamp(iDbType)+')';
+end;
 
 initialization
   RegisterClass(TCustomerV60);
+  RegisterClass(TIntegralGlideV60);
 finalization
   UnRegisterClass(TCustomerV60);
+  UnRegisterClass(TIntegralGlideV60);
 end.

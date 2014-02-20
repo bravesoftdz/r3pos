@@ -768,7 +768,9 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
   end;
 
   procedure InitList0;
-  var n:PSynTableInfo;
+  var
+    rs:TZQuery;
+    n:PSynTableInfo;
   begin
     new(n);
     n^.tbname := 'CA_SHOP_INFO';
@@ -842,14 +844,23 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
-    new(n);
-    n^.tbname := 'PUB_UNION_INDEX';
-    n^.keyFields := 'TENANT_ID;UNION_ID;INDEX_ID';
-    n^.keyFlag := 0;
-    n^.synFlag := 0;
-    n^.tbtitle := '商盟指标';
-    InitSyncBasicUpAndDown(n);
-    FList.Add(n);
+    if dllGlobal.GetSFVersion = '.LCL' then
+       begin
+         rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+         if rs.Locate('RELATION_ID',1000006,[]) then
+            begin
+              new(n);
+              n^.tbname := 'PUB_UNION_INDEX';
+              n^.keyFields := 'TENANT_ID;UNION_ID;INDEX_ID';
+              n^.keyFlag := 0;
+              n^.synFlag := 0;
+              n^.tbtitle := '商盟指标';
+              n^.whereStr := 'TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+' and TIME_STAMP>:TIME_STAMP';
+              n^.syncTenantId := rs.FieldByName('P_TENANT_ID').AsString;
+              n^.isSyncDown := '1';
+              FList.Add(n);
+            end;
+       end;
 
     new(n);
     n^.tbname := 'PUB_CLIENTINFO';

@@ -2015,6 +2015,7 @@ inherited frmCustomer: TfrmCustomer
           BorderOuter = fsFlat
           FlatColor = clGray
           TabOrder = 11
+          Visible = False
           object RzBackground7: TRzBackground
             Left = 1
             Top = 1

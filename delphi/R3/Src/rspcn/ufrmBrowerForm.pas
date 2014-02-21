@@ -121,6 +121,8 @@ type
     RzBmpButton2: TRzBmpButton;
     Image5: TImage;
     RzBmpButton5: TRzBmpButton;
+    N2: TMenuItem;
+    N3: TMenuItem;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -1720,15 +1722,18 @@ begin
   if frmUpdate.Visible then Exit;
   if DLLFactory.isBusy then Exit;
   btnClose.Enabled := false;
+  lblSignOut.Enabled := false;
+  N1.Enabled := false;
+  N3.Enabled := false;
   try
     dllFactory.Clear(true);
     btnClose.Enabled := true;
   except
     on E:Exception do
-      begin
-        btnClose.Enabled := true;
-        CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
-      end;
+       begin
+         btnClose.Enabled := true;
+         CanClose := (MessageBox(handle,pchar('退出系统出错了是否强制退出，原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+       end;
   end;
 end;
 
@@ -1853,9 +1858,20 @@ end;
 procedure TfrmBrowerForm.N3Click(Sender: TObject);
 begin
   if not token.logined then Exit;
-  ClearPage;
-  dllFactory.Clear(true);
-  dllFactory.Init(mainPanel.Handle);
+  btnClose.Enabled := false;
+  lblSignOut.Enabled := false;
+  N1.Enabled := false;
+  N3.Enabled := false;
+  try
+    ClearPage;
+    dllFactory.Clear(true);
+    dllFactory.Init(mainPanel.Handle);
+  finally
+    btnClose.Enabled := true;
+    lblSignOut.Enabled := true;
+    N1.Enabled := true;
+    N3.Enabled := true;
+  end;
 end;
 
 procedure TfrmBrowerForm.RzBmpButton5Click(Sender: TObject);

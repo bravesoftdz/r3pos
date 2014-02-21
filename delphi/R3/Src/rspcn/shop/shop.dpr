@@ -109,9 +109,10 @@ uses
   ObjUtilsV60 in 'obj\ObjUtilsV60.pas',
   uCodePrinterFactory in 'app\uCodePrinterFactory.pas',
   ufrmCodeScan in 'app\ufrmCodeScan.pas' {frmCodeScan},
-  uCommand in 'app\uCommand.pas',
   ufrmHintMsg in 'app\ufrmHintMsg.pas' {frmHintMsg},
   ufrmNewPaperReader in 'app\ufrmNewPaperReader.pas' {frmNewPaperReader},
+  ufrmIntegralGlideAdd in 'app\ufrmIntegralGlideAdd.pas' {frmIntegralGlideAdd},
+  uCommand in 'app\uCommand.pas',
   uZebraPrinterFactory in 'app\uZebraPrinterFactory.pas',
   uPlayerFactory in 'app\uPlayerFactory.pas';
 

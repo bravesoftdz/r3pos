@@ -6,7 +6,7 @@ uses
   SysUtils, windows, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
   HttpApp, Forms,ZBase,ZLogFile, IdTCPClient, IdHTTP, msxml, ComObj, EmbeddedWB,
   EncDec, IniFiles, IdCookieManager, IdCookie, WinInet, ZDataSet, ZdbFactory,
-  uRspFactory, urlParser;
+  uRspFactory, urlParser, ZTuXeDo, EncdDecd;
 
 type
   TUcFactory = class(TDataModule)
@@ -469,8 +469,10 @@ end;
 
 function TUcFactory.rimLogin: boolean;
 var
+  Msg:string;
   Params:TftParamList;
-  msg:string;
+  ss:TStringStream;
+  CoParams:TcoParamList;
 begin
   if not dllFactory.getTokenInfo then Raise Exception.Create('读取用户信息失败，请重新登录...');
   Params := TftParamList.Create(nil);
@@ -478,9 +480,25 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
     Msg := dataFactory.Remote.ExecProc('TRimWsdlService',Params);
-    Params.Decode(Params,Msg);
-    rimComId := Params.ParambyName('rimcid').AsString;
-    rimCustId := Params.ParambyName('xsmuid').AsString;
+    case dataFactory.Remote.ConnMode of
+     2:begin
+         Params.Decode(Params,Msg);
+         rimComId := Params.ParambyName('rimcid').AsString;
+         rimCustId := Params.ParambyName('xsmuid').AsString;
+       end;
+     3:begin
+         CoParams := TcoParamList.Create(nil);
+         ss := TStringStream.Create(DecodeString(Msg));
+         try
+           CoParams.Decode(CoParams,ss);
+           rimComId := CoParams.ParambyName('rimcid').AsString;
+           rimCustId := CoParams.ParambyName('xsmuid').AsString;
+         finally
+           CoParams.Free;
+           ss.Free;
+         end;
+       end;
+    end;
     if rimCustId='' then rimCustId := Params.ParambyName('rimuid').AsString;
     if rimCustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
     result := true;

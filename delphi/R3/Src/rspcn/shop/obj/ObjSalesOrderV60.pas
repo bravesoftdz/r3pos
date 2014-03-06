@@ -577,6 +577,11 @@ function TSyncSalesOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
   procedure InsertIntegralInfo;
   var rs:TZQuery;
   begin
+    if self.Params.FindParam('UPDATE_INTEGRAL')<>nil then
+       begin
+         if not self.Params.ParamByName('UPDATE_INTEGRAL').AsBoolean then Exit;
+       end;
+
     //更新积分
     if length(FieldbyName('CLIENT_ID').AsString)>0 then
     begin
@@ -636,6 +641,15 @@ function TSyncSalesOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
     rs:TZQuery;
     Params:TftParamList;
   begin
+    if self.Params.FindParam('UPDATE_INTEGRAL')<>nil then
+       begin
+         if not self.Params.ParamByName('UPDATE_INTEGRAL').AsBoolean then
+            begin
+              result := true;
+              Exit;
+            end;
+       end;
+
     rs := TZQuery.Create(nil);
     Params := TftParamList.Create(nil);
     try

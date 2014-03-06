@@ -859,13 +859,13 @@ begin
   result := false;
   mid := LowerCase(urlToken.moduname);
 
-  if pos(',410500002001,', roleIds) > 0 then //老板-所有权限
+  if pos(','+token.tenantId+'001,', roleIds) > 0 then //老板-所有权限
      begin
        result := true;
        Exit;
      end;
 
-  if pos(',410500002002,', roleIds) > 0 then //店长
+  if pos(','+token.tenantId+'002,', roleIds) > 0 then //店长
      begin
        result := not ((urlToken.appId='xsm-in') or (urlToken.appId='rim-in'));
        Exit;
@@ -873,19 +873,19 @@ begin
 
   if (mid = 'tfrmsaleorder') or (mid = 'tfrmposoutorder') then
      begin
-       result := pos(',410500002003,', roleIds) > 0;
+       result := pos(','+token.tenantId+'003,', roleIds) > 0;
        Exit;
      end;
 
   if (mid = 'tfrmstockorder') or (mid = 'tfrmposinorder') or (mid = 'tfrmdownstockorder') then
      begin
-       result := pos(',410500002006,', roleIds) > 0;
+       result := pos(','+token.tenantId+'006,', roleIds) > 0;
        Exit;
      end;
 
   if (mid = 'report.html') then
      begin
-       result := pos(',410500002005,', roleIds) > 0;
+       result := pos(','+token.tenantId+'005,', roleIds) > 0;
        Exit;
      end;
 end;

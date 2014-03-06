@@ -1092,7 +1092,9 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     new(n);
     n^.tbname := 'PUB_IC_INFO';
     n^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
-    n^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,COMM,TIME_STAMP';
+    // 数据恢复时恢复所有字段，普通同步时只同步基础字段
+    if (SyncType = 0) or (SyncType = 2) then
+       n^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,COMM,TIME_STAMP';
     n^.synFlag := 4;
     n^.keyFlag := 1;
     n^.tbtitle := 'IC档案';
@@ -1817,9 +1819,15 @@ begin
     else
        begin
          if BeginDate = '' then
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
+            begin
+              Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
+              Params.ParamByName('UPDATE_INTEGRAL').AsBoolean := false;
+            end
          else
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
+            begin
+              Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
+              Params.ParamByName('UPDATE_INTEGRAL').AsBoolean := false;
+            end;
        end;
 
     SetTicket;

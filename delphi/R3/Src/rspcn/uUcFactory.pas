@@ -671,6 +671,7 @@ begin
         else
            db.WriteString('H_'+rs.FieldbyName('SRVR_ID').asString,'srvrStatus','正常');
         end;
+{       // r6暂时没有选择应用服务器的功能，每次登陆都取默认地址 20140312
         if srvrId = rs.FieldbyName('SRVR_ID').asString then isSrvr := true;
         if not finded then
            begin
@@ -680,6 +681,7 @@ begin
                   finded := true;
                 end;
            end;
+}
         if defSrvrId = rs.FieldbyName('SRVR_ID').AsString then
            begin
              defStr := 'connmode='+rs.FieldbyName('CONN_MODE').asString+';hostname='+rs.FieldbyName('HOST_NAME').asString+';port='+rs.FieldbyName('SRVR_PORT').asString+';dbid='+dbId;

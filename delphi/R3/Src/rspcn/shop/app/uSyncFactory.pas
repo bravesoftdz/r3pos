@@ -835,19 +835,32 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     InitSyncBasicUpAndDown(n);
     FList.Add(n);
 
-    new(n);
-    n^.tbname := 'PUB_UNION_INFO';
-    n^.keyFields := 'TENANT_ID;UNION_ID';
-    n^.synFlag := 0;
-    n^.keyFlag := 0;
-    n^.tbtitle := '商盟档案';
-    InitSyncBasicUpAndDown(n);
-    FList.Add(n);
-
-    if dllGlobal.GetSFVersion = '.LCL' then
+    rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
+    if rs.Locate('RELATION_ID',1000006,[]) then
        begin
-         rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
-         if rs.Locate('RELATION_ID',1000006,[]) then
+         new(n);
+         n^.tbname := 'PUB_PRICEGRADE';
+         n^.keyFields := 'TENANT_ID;PRICE_ID';
+         n^.synFlag := 0;
+         n^.keyFlag := 0;
+         n^.tbtitle := '客户等级';
+         n^.whereStr := 'TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+' and TIME_STAMP>:TIME_STAMP';
+         n^.syncTenantId := rs.FieldByName('P_TENANT_ID').AsString;
+         n^.isSyncDown := '1';
+         FList.Add(n);
+
+         new(n);
+         n^.tbname := 'PUB_UNION_INFO';
+         n^.keyFields := 'TENANT_ID;UNION_ID';
+         n^.synFlag := 0;
+         n^.keyFlag := 0;
+         n^.tbtitle := '商盟档案';
+         n^.whereStr := 'UNION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+') and TIME_STAMP>:TIME_STAMP';
+         n^.syncTenantId := rs.FieldByName('P_TENANT_ID').AsString;
+         n^.isSyncDown := '1';
+         FList.Add(n);
+
+         if dllGlobal.GetSFVersion = '.LCL' then
             begin
               new(n);
               n^.tbname := 'PUB_UNION_INDEX';
@@ -855,12 +868,12 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
               n^.keyFlag := 0;
               n^.synFlag := 0;
               n^.tbtitle := '商盟指标';
-              n^.whereStr := 'TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+' and TIME_STAMP>:TIME_STAMP';
+              n^.whereStr := 'UNION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID='+rs.FieldByName('P_TENANT_ID').AsString+') and TIME_STAMP>:TIME_STAMP';
               n^.syncTenantId := rs.FieldByName('P_TENANT_ID').AsString;
               n^.isSyncDown := '1';
               FList.Add(n);
             end;
-       end;
+      end;
 
     new(n);
     n^.tbname := 'PUB_CLIENTINFO';

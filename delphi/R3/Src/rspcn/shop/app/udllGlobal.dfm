@@ -283,9 +283,10 @@ object dllGlobal: TdllGlobal
     SQL.Strings = (
       
         'select TENANT_ID,UNION_ID,UNION_NAME from PUB_UNION_INFO where U' +
-        'NION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID=' +
-        ':TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') )  and COMM not in ('#39'02'#39',' +
-        #39'12'#39') ')
+        'NION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID ' +
+        'in (select TENANT_ID from CA_RELATIONS where RELATION_ID=1000006' +
+        ' and RELATI_ID=:TENANT_ID) and COMM not in ('#39'02'#39','#39'12'#39')) and COMM' +
+        ' not in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown

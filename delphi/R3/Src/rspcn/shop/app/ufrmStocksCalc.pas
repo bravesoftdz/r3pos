@@ -557,7 +557,7 @@ begin
     ')';
   createSQLTable(sql,tmpTable);
 
-  createSQLTable('create index IX_TMP_SC on '+tmpTable+' (SHOP_ID,GODS_ID,BATCH_NO)', tmpTable);
+  createSQLTable('create index I_TMP_SC_'+token.tenantId+' on '+tmpTable+' (SHOP_ID,GODS_ID,BATCH_NO)', tmpTable);
 
   if dataFactory.iDbType in [1,4] then priKey := ',CONSTRAINT PK'+seqTable+' PRIMARY KEY (ID)';
   dropSQLTable(seqTable);

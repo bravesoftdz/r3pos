@@ -1524,7 +1524,7 @@ begin
          end;
       rs.Next;
     end;
-  result := (r<>1);
+  result := (r<>0);
 end;
 var
   rs:TZQuery;

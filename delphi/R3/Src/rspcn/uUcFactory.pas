@@ -879,7 +879,7 @@ begin
        Exit;
      end;
 
-  if (mid = 'tfrmstockorder') or (mid = 'tfrmposinorder') or (mid = 'tfrmdownstockorder') then
+  if (mid = 'tfrmstockorder') or (mid = 'tfrmposinorder') or (mid = 'tfrmdownstockorder') or (mid = 'tfrmgoodsstorage') then
      begin
        result := pos(','+token.tenantId+'006,', roleIds) > 0;
        Exit;

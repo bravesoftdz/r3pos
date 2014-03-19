@@ -1106,10 +1106,14 @@ begin
      end
   else
      begin
+{
        if dbState = dsInsert then
           allFee := fee
        else
           allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
+}
+       allFee := fee;
+
        if abs(allFee)>abs(TotalFee-payDibs) then
           begin
             Raise Exception.Create('你已经超额支付了,请正确输入收款金额');
@@ -1119,6 +1123,7 @@ begin
           AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat
        else
           AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payDibs)-fee-AObj.FieldbyName('PAY_D').AsFloat;
+
        if AObj.FieldbyName('CASH_MNY').AsFloat=0 then AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldbyName('PAY_A').AsFloat;
 
        AObj.FieldbyName('PAY_ZERO').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;

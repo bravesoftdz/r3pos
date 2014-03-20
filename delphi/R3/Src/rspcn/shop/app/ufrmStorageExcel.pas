@@ -654,9 +654,19 @@ begin
   cs.Close;
   cs.SQL.Text:=
               'select distinct VG.GODS_CODE,VG.GODS_ID,VM1.UNIT_NAME CALC_UNITS_NAME,VG.USING_BATCH_NO,VG.SORT_ID7,VG.SORT_ID8 '+
-              'from ('+GetViwGoodsInfo('USING_BATCH_NO,SORT_ID7,SORT_ID8')+') VG '+
+              'from ('+GetViwGoodsInfo('CALC_UNITS,USING_BATCH_NO,SORT_ID7,SORT_ID8')+') VG '+
               'left join VIW_MEAUNITS VM1 on VG.TENANT_ID=VM1.TENANT_ID and VG.CALC_UNITS=VM1.UNIT_ID '+
               'where VG.tenant_id='+token.tenantId+' and VG.GODS_CODE in ('+FieldCheckSet[index]+')';
+  {
+  try
+    strLog:=TStringList.Create;
+    strLog.Add(cs.SQL.Text);
+    strLog.SaveToFile('D:\SQL.txt');
+  finally
+    strLog.Free;
+  end;
+  }
+
   dataFactory.Open(cs);
 
   strCode:=codeField;

@@ -225,7 +225,8 @@ var frmPosInOrder: TfrmPosInOrder;
 implementation
 
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,uCacheFactory,
-     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,ufrmSelectGoods,ufrmSupplierDialog;
+     ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,ufrmSelectGoods,ufrmSupplierDialog,
+     ufrmHangUpFile;
 
 {$R *.dfm}
 
@@ -1293,34 +1294,38 @@ end;
 
 procedure TfrmPosInOrder.DoPickUp;
 var
-  sr:TSearchRec;
-  FileAttrs:Integer;
-  s,tmp:string;
+  s:string;
   h:TZQuery;
   mm:TMemoryStream;
   PayZero:real;
 begin
-  FileAttrs := 0;
-  FileAttrs := FileAttrs + faAnyFile;
-  s:= '';
-  if FindFirst(ExtractFilePath(ParamStr(0))+'temp\stock\*.dat', FileAttrs, sr) = 0 then
-    begin
-      repeat
-        if (sr.Attr and FileAttrs) = sr.Attr then
-        begin
-        if (copy(sr.Name,1,1)='H') then
-           begin
-             tmp := extractFileName(sr.Name);
-             delete(tmp,1,1);
-             if tmp>s then s := tmp;
-           end;
-        end;
-      until FindNext(sr) <> 0;
-      FindClose(sr);
-    end;
-  if trim(s) = '' then Raise Exception.Create('未检测到挂单记录...');
   ClearInvaid;
   if not edtTable.IsEmpty and (MessageBox(Handle,'是否清空当前录入的所有商品？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+  with TfrmHangUpFile.Create(self) do
+    begin
+      try
+        LoadFile('H','temp\stock\');
+        if cdsTable.RecordCount = 0 then
+           begin
+             MessageBox(self.Handle,pchar('未检测到挂单记录..'),'友情提示..',MB_OK);
+             Exit;
+           end
+        else if cdsTable.RecordCount = 1 then
+           s := cdsTable.FieldbyName('FILENAME').AsString
+        else
+           begin
+             if ShowModal=MROK then
+                begin
+                  s := cdsTable.FieldbyName('FILENAME').AsString
+                end
+             else
+                Exit;
+           end;
+      finally
+        Free;
+      end;
+    end;
+  s := copy(s,2,255);
   NewOrder;
   mm := TMemoryStream.Create;
   h := TZQuery.Create(nil);

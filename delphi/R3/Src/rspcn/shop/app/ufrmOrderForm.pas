@@ -552,6 +552,11 @@ begin
   toolDelete.Visible := (Value<>dsBrowse);
   toolReturn.Visible := (Value=dsBrowse);
   toolPresent.Visible := (Value<>dsBrowse);
+  if PageControl.ActivePageIndex = 0 then
+     begin
+       btnPrint.Visible := (Value=dsBrowse);
+       btnPreview.Visible := (Value=dsBrowse);
+     end;
   if FindColumn('TOOL_NAV')<>nil then FindColumn('TOOL_NAV').Width := 58;
 end;
 
@@ -2386,10 +2391,14 @@ begin
   0:begin
        btnNav.Caption := '历史单据';
        lblCaption.Caption := Caption;
+       btnPrint.Visible := (dbState=dsBrowse);
+       btnPreview.Visible := (dbState=dsBrowse);
     end;
   1:begin
        btnNav.Caption := '返回';
        lblCaption.Caption := Caption+'列表';
+       btnPrint.Visible := true;
+       btnPreview.Visible := true;
     end;
   end;
 end;

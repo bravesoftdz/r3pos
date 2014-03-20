@@ -790,7 +790,7 @@ begin
           end;
        Key := #0;
      end;
-  if char(Key) = '+' then
+  if (char(Key) = '+') or (char(Key) = ' ') then
      begin
         key := #0;
         try

@@ -1369,6 +1369,10 @@ begin
        inputFlag := 11;
        edtInput.SetFocus;
      end;
+  if Key = VK_HOME then
+     begin
+       DevFactory.OpenCashBox(self.Font);
+     end;
 end;
 
 procedure TfrmSaleOrder.DoCustId(s:string);
@@ -1706,7 +1710,7 @@ begin
           end;
        Key := #0;
      end;
-  if char(Key) = '+' then
+  if (char(Key) = '+') or (char(Key) = ' ') then
      begin
        key := #0;
        if edtInput.CanFocus then edtInput.SetFocus;

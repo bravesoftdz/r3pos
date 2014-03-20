@@ -198,6 +198,7 @@ type
   private
     ESortId:string;
     FSortId:string;
+    FUnitId:string;
     searchTxt:string;
     relationId:integer;
     relationType:integer;
@@ -217,6 +218,7 @@ type
     procedure RefreshMeaUnits;
     procedure SetShopOutPricePlace;
     procedure AddUnits(Sender: TObject);
+    function  GetAidName(DataSet: TZQuery): string;
     function  GetAidUnits(DataSet: TZQuery): string;
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
@@ -364,7 +366,7 @@ begin
   str := str +
    'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.SMALL_UNITS,j.BIG_UNITS,j.UNIT_ID,j.SMALLTO_CALC,j.BIGTO_CALC,j.PRICE_ID,j.COMM,'+
    'c.AMOUNT,'+
-   'c.AMOUNT * 1.0 / (cast((case when j.UNIT_ID=j.CALC_UNITS then 1.0 when j.UNIT_ID=j.SMALL_UNITS then j.SMALLTO_CALC when j.UNIT_ID=j.BIG_UNITS then j.BIGTO_CALC else 1.0 end) as decimal(18,3))) as AID_AMT,'+
+   'round((c.AMOUNT * 1.000 / (cast((case when j.UNIT_ID=j.CALC_UNITS then 1.0 when j.UNIT_ID=j.SMALL_UNITS then j.SMALLTO_CALC when j.UNIT_ID=j.BIG_UNITS then j.BIGTO_CALC else 1.0 end) as decimal(18,3)))),3) as AID_AMT,'+
    'u.UNIT_NAME as AID_NAME,'+
    'isnull(ext.NEW_INPRICE,j.NEW_INPRICE) as NEW_INPRICE,'+
    'isnull(prc.NEW_OUTPRICE,j.NEW_OUTPRICE) as NEW_OUTPRICE_P,ext.LOWER_AMOUNT,ext.UPPER_AMOUNT '+
@@ -566,6 +568,13 @@ begin
   finally
     Params.Free;
   end;
+
+  if cdsGoodsInfo.FieldByName('UNIT_ID').AsString = cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString then
+     FUnitId := '2'
+  else if cdsGoodsInfo.FieldByName('UNIT_ID').AsString = cdsGoodsInfo.FieldByName('BIG_UNITS').AsString then
+     FUnitId := '3'
+  else
+     FUnitId := '1';
 end;
 
 procedure TfrmGoodsStorage.SaveInfo;
@@ -595,10 +604,16 @@ begin
        cdsList.FieldByName('GODS_CODE').AsString := edtGODS_CODE.Text;
        cdsList.FieldByName('SORT_ID1').AsString := ESortId;
        cdsList.FieldByName('CALC_UNITS').AsString := edtCALC_UNITS.AsString;
+       cdsList.FieldByName('SMALL_UNITS').AsString := edtSMALL_UNITS.AsString;
+       cdsList.FieldByName('BIG_UNITS').AsString := edtBIG_UNITS.AsString;
+       cdsList.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('UNIT_ID').AsString;
+       cdsList.FieldByName('SMALLTO_CALC').AsFloat := cdsGoodsInfo.FieldByName('SMALLTO_CALC').AsFloat;
+       cdsList.FieldByName('BIGTO_CALC').AsFloat := cdsGoodsInfo.FieldByName('BIGTO_CALC').AsFloat;
        cdsList.FieldByName('NEW_INPRICE').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0);
        cdsList.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
        cdsList.FieldByName('BARCODE').AsString := edtBARCODE.Text;
        cdsList.FieldByName('AMOUNT').AsString := edtAMOUNT.Text;
+       cdsList.FieldByName('AID_NAME').AsString := GetAidName(cdsList);
        cdsList.FieldByName('AID_AMOUNT').AsString := GetAidUnits(cdsList);
        cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
        cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
@@ -733,7 +748,26 @@ begin
         cdsGoodsInfo.FieldbyName('BIG_UNITS').AsString := AObj.FieldbyName('BIG_UNITS').asString;
         cdsGoodsInfo.FieldbyName('SMALLTO_CALC').AsString := AObj.FieldbyName('SMALLTO_CALC').asString;
         cdsGoodsInfo.FieldbyName('BIGTO_CALC').AsString := AObj.FieldbyName('BIGTO_CALC').asString;
+        if FUnitId = '2' then
+           begin
+             if cdsGoodsinfo.FieldByName('SMALL_UNITS').AsString <> '' then
+                cdsGoodsinfo.FieldByName('UNIT_ID').AsString := cdsGoodsinfo.FieldByName('SMALL_UNITS').AsString
+             else
+                cdsGoodsinfo.FieldByName('UNIT_ID').AsString := cdsGoodsinfo.FieldByName('CALC_UNITS').AsString;
+           end
+        else if FUnitId = '3' then
+           begin
+             if cdsGoodsinfo.FieldByName('BIG_UNITS').AsString <> '' then
+                cdsGoodsinfo.FieldByName('UNIT_ID').AsString := cdsGoodsinfo.FieldByName('BIG_UNITS').AsString
+             else
+                cdsGoodsinfo.FieldByName('UNIT_ID').AsString := cdsGoodsinfo.FieldByName('CALC_UNITS').AsString;
+           end
+        else
+           begin
+             cdsGoodsinfo.FieldByName('UNIT_ID').AsString := cdsGoodsinfo.FieldByName('CALC_UNITS').AsString;
+           end;
         cdsGoodsInfo.Post;
+
         if (relationType=1) and not cdsGodsRelation.IsEmpty then //经销商加盟
            begin
              cdsGodsRelation.Edit;
@@ -2636,14 +2670,29 @@ begin
   BigtoCalc := DataSet.FieldByName('BIGTO_CALC').AsFloat;
   AidName := DataSet.FieldByName('AID_NAME').AsString;
   if UnitId = CalcUnit then
-     str := FloattoStr(CalcAmt) + AidName
+     str := FormatFloat('#0.###',CalcAmt) + AidName
   else if UnitId = SmallUnit then
-     str := FloattoStr(CalcAmt/SmalltoCalc) + AidName
+     str := FormatFloat('#0.###',CalcAmt/SmalltoCalc) + AidName
   else if UnitId = BigUnit then
-     str := FloattoStr(CalcAmt/BigtoCalc) + AidName
+     str := FormatFloat('#0.###',CalcAmt/BigtoCalc) + AidName
   else
-     str := FloattoStr(CalcAmt) + AidName;
+     str := FormatFloat('#0.###',CalcAmt) + AidName;
   result := str;
+end;
+
+function TfrmGoodsStorage.GetAidName(DataSet: TZQuery): string;
+var
+  UnitId:string;
+  rs:TZQuery;
+begin
+  if DataSet.IsEmpty then Exit;
+  if DataSet.FieldByName('GODS_ID').AsString = '' then Exit;
+  UnitId := DataSet.FieldByName('UNIT_ID').AsString;
+  if UnitId = '' then
+     UnitId := DataSet.FieldByName('CALC_UNITS').AsString;
+  rs := dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
+  if rs.Locate('UNIT_ID',UnitId,[]) then
+     result := rs.FieldByName('UNIT_NAME').AsString;
 end;
 
 initialization

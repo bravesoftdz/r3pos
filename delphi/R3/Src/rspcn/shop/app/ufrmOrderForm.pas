@@ -372,8 +372,9 @@ begin
      end;
   if Key = VK_F2 then
      begin
-       inputMode := 1;
-       inputFlag := 2;
+       //inputMode := 1;
+       //inputFlag := 2;
+       ConvertUnit;
        edtInput.SetFocus;
      end;
   if Key = VK_F3 then

@@ -175,7 +175,7 @@ type
     procedure SetdbState(const Value: TDataSetState);virtual;
     procedure SetinputFlag(const Value: integer);virtual;
     procedure InitRecord;
-    function EnCodeBarcode: string;
+    function  EnCodeBarcode: string;
 
     function  CheckNoData:boolean; virtual;
 
@@ -191,12 +191,12 @@ type
 
     function PropertyEnabled:boolean;
     //检测是否是汇总字段
-    function CheckSumField(FieldName:string):boolean;virtual;
+    function  CheckSumField(FieldName:string):boolean;virtual;
     procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string);virtual;
     procedure DelRecord(AObj:TRecord_);virtual;
     procedure EraseRecord;virtual;
     procedure InitPrice(GODS_ID,UNIT_ID:string);virtual;
-    function CheckRepeat(AObj:TRecord_):boolean;virtual;
+    function  CheckRepeat(AObj:TRecord_):boolean;virtual;
 
     procedure AMoneyToCalc(AMoney:currency);virtual;
     procedure BulkToCalc(AMoney:currency);virtual;
@@ -223,6 +223,9 @@ type
     procedure BarcodeInput(_Buf:string);override;
 
     procedure Calc;virtual; //2011.06.09判断是否限量
+
+    procedure DeleteGods;virtual;
+    procedure ReturnGods;virtual;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -2517,6 +2520,11 @@ end;
 procedure TfrmOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if not edtInput.Focused then inherited;
+  if char(Key) = '-' then
+     begin
+       DeleteGods;
+       Key := #0;
+     end;
 end;
 
 procedure TfrmOrderForm.FormResize(Sender: TObject);
@@ -2581,75 +2589,12 @@ end;
 procedure TfrmOrderForm.toolDeleteClick(Sender: TObject);
 begin
   inherited;
-  if DBGridEh1.ReadOnly then Exit;
-  if dbState = dsBrowse then Exit;
-  if not edtTable.IsEmpty then
-     begin
-       if (edtTable.FieldByName('GODS_ID').AsString = '') or
-          (MessageBox(Handle,pchar('确认删除商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
-          begin
-            fndGODS_ID.Visible := false;
-            edtTable.Delete;
-            Calc;
-            DBGridEh1.SetFocus;
-          end;
-     end;
+  DeleteGods;
 end;
 
 procedure TfrmOrderForm.toolReturnClick(Sender: TObject);
-var
-  _obj:TRecord_;
-  rs:TZQuery;
 begin
-  inherited;
-  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
-  if dbState = dsBrowse then
-     begin
-       if edtTable.FieldbyName('AMOUNT').AsFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
-       if (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
-       _obj := TRecord_.Create;
-       rs := TZQuery.Create(nil);
-       try
-         _obj.ReadFromDataSet(edtTable);
-         rs.Data := edtProperty.Data;
-         NewOrder;
-         InitRecord;
-         edtTable.Edit;
-         _obj.WriteToDataSet(edtTable,false);
-         inc(ROWID);
-         edtTable.FieldByName('SEQNO').AsInteger := ROWID;
-         edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
-         AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
-         edtTable.Post;
-         rs.Filtered := false;
-         rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
-         rs.Filtered := true;
-         _obj.Clear;
-         rs.First;
-         while not rs.Eof do
-           begin
-             edtProperty.Append;
-             _obj.ReadFromDataSet(rs);
-             _obj.WriteToDataSet(edtProperty,false);
-             edtProperty.FieldbyName('AMOUNT').AsFloat := - edtProperty.FieldbyName('AMOUNT').AsFloat;
-             edtProperty.FieldbyName('CALC_AMOUNT').AsFloat := - edtProperty.FieldbyName('CALC_AMOUNT').AsFloat;
-             edtProperty.Post;
-             rs.Next;
-           end;
-       finally
-         rs.Free;
-         _obj.Free;
-       end;
-       Exit;
-     end;
-  if DBGridEh1.ReadOnly then Exit;
-  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
-     begin
-       edtTable.Edit;
-       edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
-       AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
-       edtTable.Post;
-     end;
+  ReturnGods;
 end;
 
 procedure TfrmOrderForm.mnuReturnClick(Sender: TObject);
@@ -2829,6 +2774,79 @@ function TfrmOrderForm.CheckNoData: boolean;
 begin
   ClearInvaid;
   result := edtTable.IsEmpty;
+end;
+
+procedure TfrmOrderForm.DeleteGods;
+begin
+  if dbState = dsBrowse then Exit;
+  if DBGridEh1.ReadOnly then Exit;
+  if not edtTable.IsEmpty then
+     begin
+       if (edtTable.FieldByName('GODS_ID').AsString = '') or
+          (MessageBox(Handle,pchar('确认删除商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+          begin
+            fndGODS_ID.Visible := false;
+            edtTable.Delete;
+            Calc;
+            DBGridEh1.SetFocus;
+          end;
+     end;
+end;
+
+procedure TfrmOrderForm.ReturnGods;
+var
+  _obj:TRecord_;
+  rs:TZQuery;
+begin
+  inherited;
+  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
+  if dbState = dsBrowse then
+     begin
+       if edtTable.FieldbyName('AMOUNT').AsFloat<0 then Raise Exception.Create('当前商品已经是退货状态，不能再退货了。');
+       if (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+       _obj := TRecord_.Create;
+       rs := TZQuery.Create(nil);
+       try
+         _obj.ReadFromDataSet(edtTable);
+         rs.Data := edtProperty.Data;
+         NewOrder;
+         InitRecord;
+         edtTable.Edit;
+         _obj.WriteToDataSet(edtTable,false);
+         inc(ROWID);
+         edtTable.FieldByName('SEQNO').AsInteger := ROWID;
+         edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
+         AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+         edtTable.Post;
+         rs.Filtered := false;
+         rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
+         rs.Filtered := true;
+         _obj.Clear;
+         rs.First;
+         while not rs.Eof do
+           begin
+             edtProperty.Append;
+             _obj.ReadFromDataSet(rs);
+             _obj.WriteToDataSet(edtProperty,false);
+             edtProperty.FieldbyName('AMOUNT').AsFloat := - edtProperty.FieldbyName('AMOUNT').AsFloat;
+             edtProperty.FieldbyName('CALC_AMOUNT').AsFloat := - edtProperty.FieldbyName('CALC_AMOUNT').AsFloat;
+             edtProperty.Post;
+             rs.Next;
+           end;
+       finally
+         rs.Free;
+         _obj.Free;
+       end;
+       Exit;
+     end;
+  if DBGridEh1.ReadOnly then Exit;
+  if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认对商品"'+edtTable.FieldbyName('GODS_NAME').AsString+'"进行退货或换货？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       edtTable.Edit;
+       edtTable.FieldbyName('AMOUNT').AsFloat := - edtTable.FieldbyName('AMOUNT').AsFloat;
+       AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+       edtTable.Post;
+     end;
 end;
 
 end.

@@ -19,7 +19,6 @@ type
     RzPanel3: TRzPanel;
     RzBmpButton4: TRzBmpButton;
     btnWindow: TRzBmpButton;
-    WebUpdater1: TWebUpdater;
     procedure btnCloseClick(Sender: TObject);
   end;
 

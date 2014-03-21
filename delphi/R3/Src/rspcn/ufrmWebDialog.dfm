@@ -442,24 +442,4 @@ object frmWebDialog: TfrmWebDialog
     FlatColor = 3618615
     TabOrder = 1
   end
-  object WebUpdater1: TWebUpdater
-    About = 'Application Updater by bsalsa : bsalsa@gmail.com'
-    AbortMessage = #29616#22312#27491#24537#65292#20197#21518#20877#21319#32423#65281
-    ApplicationName = 'rsico'
-    Author = '24hsc'
-    BackupFolder = 'Backup\'
-    Caption = #27491#22312#26816#27979#26032#29256#26412#65292#35831#31245#31561'...'
-    ErrorMessage = #20986#38169#20102#65292#21407#22240#65306
-    LogAddTime = True
-    LogFileName = 'Updater.txt'
-    QuitOnError = False
-    ShowPersonalDetails = False
-    SuccessMessageText = #21319#32423#23436#27605#20102
-    UpdatesFolder = 'Updates\'
-    WebInfoFileName = 'Update.xml'
-    WebURL = 'http://'
-    hWnd = 0
-    Left = 328
-    Top = 124
-  end
 end

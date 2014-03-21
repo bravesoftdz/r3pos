@@ -733,8 +733,4 @@ inherited frmPswdModify: TfrmPswdModify
       OnClick = btnChangeClick
     end
   end
-  inherited WebUpdater1: TWebUpdater
-    Left = 408
-    Top = 4
-  end
 end

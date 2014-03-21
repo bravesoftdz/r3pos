@@ -16,6 +16,7 @@ type
     RzPanel1: TRzPanel;
     btn24hsc: TRzBmpButton;
     RzVersionInfo1: TRzVersionInfo;
+    WebUpdater1: TWebUpdater;
     procedure WebUpdater1Success(Sender: TObject;
       SuccessCode: TSuccessMessage; Parameter, SuccessMessage: String);
     procedure WebUpdater1Error(Sender: TObject; ErrorCode: TErrorMessage;

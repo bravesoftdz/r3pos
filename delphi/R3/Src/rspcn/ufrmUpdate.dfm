@@ -6,7 +6,6 @@ inherited frmUpdate: TfrmUpdate
   Font.Height = -15
   Font.Name = #23435#20307
   OldCreateOrder = True
-  Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -393,10 +392,17 @@ inherited frmUpdate: TfrmUpdate
       end
     end
   end
-  inherited WebUpdater1: TWebUpdater
+  object WebUpdater1: TWebUpdater
+    About = 'Application Updater by bsalsa : bsalsa@gmail.com'
+    AbortMessage = #29616#22312#27491#24537#65292#20197#21518#20877#21319#32423#65281
     ApplicationName = 'shop'
     Author = 'rspcn'
+    BackupFolder = 'backup\'
+    Caption = #27491#22312#26816#27979#29256#26412#65292#35831#31245#31561'.'
     DeleteBatchFileOnComplete = False
+    ErrorMessage = #20986#38169#20102#65292#21407#22240#65306
+    LogAddTime = True
+    LogFileName = 'Updater.txt'
     MatchDetails = False
     MailErrorReport = False
     OnChangeText = WebUpdater1ChangeText
@@ -404,6 +410,11 @@ inherited frmUpdate: TfrmUpdate
     OnSuccess = WebUpdater1Success
     ProgressBar = ProgressBar1
     ShowUpdateFilesList = True
+    SuccessMessageText = #21319#32423#23436#27605#20102
+    UpdatesFolder = 'Updates\'
+    WebInfoFileName = 'Update.xml'
+    WebURL = 'http://'
+    hWnd = 0
     Left = 360
     Top = 36
   end

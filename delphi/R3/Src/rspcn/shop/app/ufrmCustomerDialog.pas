@@ -47,6 +47,7 @@ type
     RzPanel2: TRzPanel;
     btnSave: TRzBmpButton;
     btnCancel: TRzBmpButton;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -171,6 +172,11 @@ begin
      begin
        if cmbPRICE_ID.CanFocus then cmbPRICE_ID.SetFocus;
        Raise Exception.Create('会员等级不能为空...');
+     end;
+  if trim(edtMOVE_TELE.Text) = '' then
+     begin
+       if edtMOVE_TELE.CanFocus then edtMOVE_TELE.SetFocus;
+       Raise Exception.Create('手机号码不能为空...');
      end;
 
   WriteInfo;

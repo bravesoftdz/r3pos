@@ -54,6 +54,20 @@ inherited frmCustomerDialog: TfrmCustomerDialog
       Font.Style = []
       ParentFont = False
     end
+    object Label3: TLabel
+      Left = 389
+      Top = 157
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clRed
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
     object edtBK_CUST_CODE: TRzPanel
       Left = 150
       Top = 25

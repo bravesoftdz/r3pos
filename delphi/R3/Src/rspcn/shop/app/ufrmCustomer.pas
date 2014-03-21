@@ -117,6 +117,7 @@ type
     red1: TLabel;
     red2: TLabel;
     RzBmpButton8: TRzBmpButton;
+    Label1: TLabel;
     procedure RzBmpButton2Click(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure serachTextChange(Sender: TObject);
@@ -444,6 +445,11 @@ begin
      begin
        if cmbPRICE_ID.CanFocus then cmbPRICE_ID.SetFocus;
        Raise Exception.Create('会员等级不能为空...');
+     end;
+  if trim(edtMOVE_TELE.Text) = '' then
+     begin
+       if edtMOVE_TELE.CanFocus then edtMOVE_TELE.SetFocus;
+       Raise Exception.Create('手机号码不能为空...');
      end;
   WriteInfo;
   dataFactory.BeginBatch;

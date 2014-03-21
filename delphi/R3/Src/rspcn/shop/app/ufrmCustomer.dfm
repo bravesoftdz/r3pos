@@ -1573,6 +1573,20 @@ inherited frmCustomer: TfrmCustomer
           Font.Style = []
           ParentFont = False
         end
+        object Label1: TLabel
+          Left = 641
+          Top = 141
+          Width = 6
+          Height = 12
+          Alignment = taRightJustify
+          Caption = '*'
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+        end
         object btnSave: TRzBmpButton
           Left = 1092
           Top = 291

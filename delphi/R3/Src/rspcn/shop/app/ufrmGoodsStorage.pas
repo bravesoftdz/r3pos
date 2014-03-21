@@ -575,6 +575,26 @@ begin
      FUnitId := '3'
   else
      FUnitId := '1';
+
+  if not (
+     (token.account = 'admin')
+     or
+     (token.account = 'system')
+     or
+     (token.account = token.xsmCode)
+     or
+     (pos(','+token.tenantId+'001,', ','+token.roleIds+',') > 0)) then
+     begin
+       edtAMOUNT.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse,edtAMOUNT.Style);
+       edtBK_AMOUNT.Color := edtAMOUNT.Style.Color;
+     end
+  else
+     begin
+       edtAMOUNT.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert,edtAMOUNT.Style);
+       edtBK_AMOUNT.Color := edtAMOUNT.Style.Color;
+     end;
 end;
 
 procedure TfrmGoodsStorage.SaveInfo;
@@ -1446,7 +1466,7 @@ begin
   inherited;
   if TfrmInitGoods.ShowDialog(self,'',gid) then
      begin
-       editPanel.Visible := false;
+       EditPanel.Visible := false;
        RefreshMeaUnits;
        open;
        cdsList.Locate('GODS_ID',gid,[]); 

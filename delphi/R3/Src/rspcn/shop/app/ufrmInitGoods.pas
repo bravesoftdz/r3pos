@@ -2324,6 +2324,7 @@ end;
 
 procedure TfrmInitGoods.upgrade(var Message: TMessage);
 begin
+  if not token.online then Exit;
   if checkBarcode then
      begin
        if MessageBox(handle,'系统检测条码库有更新,是立即下载？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then

@@ -3707,6 +3707,132 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TextStyle = tsShadow
           end
         end
+        object edtBK_BARCODE1: TRzPanel
+          Left = 330
+          Top = 132
+          Width = 295
+          Height = 31
+          BorderOuter = fsStatus
+          BorderWidth = 1
+          Color = clWhite
+          FlatColor = 9145227
+          TabOrder = 16
+          Visible = False
+          object RzPanel17: TRzPanel
+            Left = 2
+            Top = 2
+            Width = 103
+            Height = 27
+            Align = alLeft
+            BorderOuter = fsFlat
+            BorderSides = [sdRight]
+            FlatColor = clGray
+            TabOrder = 0
+            object RzLabel12: TRzLabel
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 27
+              Align = alClient
+              Alignment = taCenter
+              Caption = #23567#20214#26465#30721
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object edtBARCODE1: TcxTextEdit
+            Left = 105
+            Top = 4
+            Width = 160
+            Height = 23
+            TabStop = False
+            TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object edtDefault1: TcxCheckBox
+            Left = 266
+            Top = 4
+            Width = 21
+            Height = 23
+            Properties.DisplayUnchecked = 'False'
+            Properties.OnChange = edtDefault1PropertiesChange
+            Properties.Caption = ''
+            TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+        end
+        object edtBK_BARCODE2: TRzPanel
+          Left = 633
+          Top = 132
+          Width = 294
+          Height = 31
+          BorderOuter = fsStatus
+          BorderWidth = 1
+          Color = clWhite
+          FlatColor = 9145227
+          TabOrder = 17
+          Visible = False
+          object RzPanel22: TRzPanel
+            Left = 2
+            Top = 2
+            Width = 103
+            Height = 27
+            Align = alLeft
+            BorderOuter = fsFlat
+            BorderSides = [sdRight]
+            FlatColor = clGray
+            TabOrder = 0
+            object RzLabel18: TRzLabel
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 27
+              Align = alClient
+              Alignment = taCenter
+              Caption = #22823#20214#21333#20301
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object edtBARCODE2: TcxTextEdit
+            Left = 105
+            Top = 4
+            Width = 160
+            Height = 23
+            TabStop = False
+            TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object edtDefault2: TcxCheckBox
+            Left = 266
+            Top = 4
+            Width = 21
+            Height = 23
+            Properties.DisplayUnchecked = 'False'
+            Properties.OnChange = edtDefault2PropertiesChange
+            Properties.Caption = ''
+            TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+        end
       end
     end
   end

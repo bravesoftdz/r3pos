@@ -100,6 +100,7 @@ begin
         if (UcFactory.AuthMode = 1) and not rspFactory.xsmLogin(username,3) then Raise Exception.Create('当前账号没有开通零售终端，请联系客户经理申请。'); 
         if UcFactory.xsmLogin(username,password) then
            begin
+             SaveTimeStamp;
              dataFactory.signined := true;
              token.shoped := false;
              token.tenantId := '';
@@ -115,7 +116,6 @@ begin
              dataFactory.MoveToDefault;
              dataFactory.connect;
              dataFactory.signined := true;
-             SaveTimeStamp;
              result := true;
              Exit;
            end;
@@ -200,6 +200,7 @@ begin
     token.shopId := rs.FieldbyName('SHOP_ID').AsString;
     token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
     token.username := rs.FieldbyName('USER_NAME').AsString;
+    token.roleIds := rs.FieldbyName('ROLE_IDS').AsString;
     rs.Close;
     rs.SQL.Text := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
@@ -769,6 +770,7 @@ begin
     token.shopId := rs.FieldbyName('SHOP_ID').AsString;
     token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
     token.username := rs.FieldbyName('USER_NAME').AsString;
+    token.roleIds := rs.FieldbyName('ROLE_IDS').AsString;
     rs.Close;
     rs.SQL.Text := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);

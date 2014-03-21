@@ -570,6 +570,7 @@ begin
         token.shopId := rs.FieldbyName('SHOP_ID').AsString;
         token.shopName := rs.FieldbyName('SHOP_NAME').AsString;
         token.username := rs.FieldbyName('USER_NAME').AsString;
+        token.roleIds := rs.FieldbyName('ROLE_IDS').AsString;
         rs.Close;
         rs.SQL.Text := 'select XSM_CODE,XSM_PSWD,ADDRESS,LICENSE_CODE,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
         rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);

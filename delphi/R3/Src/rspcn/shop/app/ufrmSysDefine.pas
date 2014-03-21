@@ -1014,6 +1014,7 @@ begin
   token.tenantName := cdsTenant.FieldbyName('TENANT_NAME').AsString;
   token.shopId := cdsShopInfo.FieldbyName('SHOP_ID').AsString;
   token.shopName := cdsShopInfo.FieldbyName('SHOP_NAME').AsString;
+  token.roleIds := 'xsm';
   token.username := cdsShopInfo.FieldbyName('LINKMAN').AsString;
   token.address := cdsShopInfo.FieldbyName('ADDRESS').AsString;
   token.xsmCode := cdsShopInfo.FieldbyName('XSM_CODE').AsString;

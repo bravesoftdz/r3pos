@@ -839,7 +839,9 @@ begin
   if token.tenantId = '' then Exit;
   if token.userId = '' then Exit;
   uid := token.userId;
+  roleIds := ','+token.roleIds+',';
   if (uid = 'admin') or (uid='system') or (token.userId=token.xsmCode) or (token.account=token.xsmCode) then Exit;
+{
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select ROLE_IDS from VIW_USERS where TENANT_ID=:TENANT_ID and USER_ID=:USER_ID';
@@ -857,7 +859,7 @@ begin
   finally
     rs.Free;
   end;
-
+}
   result := false;
   mid := LowerCase(urlToken.moduname);
 
@@ -882,6 +884,7 @@ begin
   if (urlToken.appId='xsm-in') or (urlToken.appId='rim-in') then
      begin
        result := pos(','+token.tenantId+'004,', roleIds) > 0;
+       Exit;
      end;
 
   if (mid = 'report.html') then

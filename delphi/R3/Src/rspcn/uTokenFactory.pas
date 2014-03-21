@@ -1,7 +1,9 @@
 unit uTokenFactory;
 
 interface
+
 uses SysUtils, Classes,Des,EncDec,msxml,windows,EncdDecd,Comobj;
+
 type
   TToken=class
   private
@@ -24,6 +26,7 @@ type
     Flogined: boolean;
     Fusername: string;
     FlDate: integer;
+    FroleIds: string;
     procedure Setaccount(const Value: string);
     procedure Setaddress(const Value: string);
     procedure SetidCard(const Value: string);
@@ -43,6 +46,7 @@ type
     procedure Setlogined(const Value: boolean);
     procedure Setusername(const Value: string);
     procedure SetlDate(const Value: integer);
+    procedure SetroleIds(const Value: string);
   public
     function encode:string;
     function encodeJson:string;
@@ -55,6 +59,7 @@ type
     property tenantName:string read FtenantName write SettenantName;
     property shopId:string read FshopId write SetshopId;
     property shopName:string read FshopName write SetshopName;
+    property roleIds:string read FroleIds write SetroleIds;
     property address:string read Faddress write Setaddress;
     property xsmCode:string read FxsmCode write SetxsmCode;
     property xsmAlias:string read FxsmAlias write SetxsmAlias;
@@ -244,6 +249,11 @@ end;
 procedure TToken.Setonline(const Value: boolean);
 begin
   Fonline := Value;
+end;
+
+procedure TToken.SetroleIds(const Value: string);
+begin
+  FroleIds := Value;
 end;
 
 procedure TToken.Setshoped(const Value: boolean);

@@ -22,15 +22,19 @@ type
     RzPanel76: TRzPanel;
     RzLabel48: TRzLabel;
     edtNEW_PSWD2: TcxTextEdit;
-    btnChange: TRzBmpButton;
     btnCancel: TRzBmpButton;
     edtBK_ACCOUNT: TRzPanel;
     RzPanel64: TRzPanel;
     RzLabel35: TRzLabel;
     edtACCOUNT: TcxTextEdit;
+    btnChange: TRzBmpButton;
     procedure btnCancelClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnChangeClick(Sender: TObject);
+    procedure edtOLD_PSWDKeyPress(Sender: TObject; var Key: Char);
+    procedure edtNEW_PSWD1KeyPress(Sender: TObject; var Key: Char);
+    procedure edtNEW_PSWD2KeyPress(Sender: TObject; var Key: Char);
+    procedure edtACCOUNTKeyPress(Sender: TObject; var Key: Char);
   private
     FUSER_ID: string;
     FACCOUNT: string;
@@ -124,6 +128,7 @@ begin
   edtACCOUNT.Properties.ReadOnly := true;
   SetEditStyle(dsBrowse,edtACCOUNT.Style);
   edtBK_ACCOUNT.Color := edtACCOUNT.Style.Color;
+  if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
 end;
 
 procedure TfrmPswdModify.SetACCOUNT(const Value: string);
@@ -204,6 +209,71 @@ begin
   dataFactory.ExecSQL(str);
   MessageBox(Handle,'密码修改成功...','友情提示..',MB_OK);
   ModalResult := MROK;
+end;
+
+procedure TfrmPswdModify.edtACCOUNTKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
+       Key := #0;
+     end;
+end;
+
+procedure TfrmPswdModify.edtOLD_PSWDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if trim(edtOLD_PSWD.Text) = '' then
+          begin
+            if edtOLD_PSWD.CanFocus then edtOLD_PSWD.SetFocus;
+          end
+       else
+          begin
+            if edtNEW_PSWD1.CanFocus then edtNEW_PSWD1.SetFocus;
+          end;
+       Key := #0;
+     end;
+end;
+
+procedure TfrmPswdModify.edtNEW_PSWD1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if trim(edtNEW_PSWD1.Text) = '' then
+          begin
+            if edtNEW_PSWD1.CanFocus then edtNEW_PSWD1.SetFocus;
+          end
+       else
+          begin
+            if edtNEW_PSWD2.CanFocus then edtNEW_PSWD2.SetFocus;
+          end;
+       Key := #0;
+     end;
+end;
+
+procedure TfrmPswdModify.edtNEW_PSWD2KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+     begin
+       if trim(edtNEW_PSWD2.Text) = '' then
+          begin
+            if edtNEW_PSWD2.CanFocus then edtNEW_PSWD2.SetFocus;
+          end
+       else
+          begin
+            btnChange.Click;
+          end;
+       Key := #0;
+     end;
 end;
 
 end.

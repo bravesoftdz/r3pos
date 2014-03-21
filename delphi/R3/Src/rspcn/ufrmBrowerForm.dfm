@@ -4821,6 +4821,7 @@ object frmBrowerForm: TfrmBrowerForm
     Top = 112
   end
   object PopupMenu1: TPopupMenu
+    OnPopup = PopupMenu1Popup
     Left = 704
     Top = 144
     object N1: TMenuItem
@@ -4833,6 +4834,13 @@ object frmBrowerForm: TfrmBrowerForm
     object N3: TMenuItem
       Caption = #25968#25454#21516#27493
       OnClick = N3Click
+    end
+    object N4: TMenuItem
+      Caption = '-'
+    end
+    object N5: TMenuItem
+      Caption = #20462#25913#23494#30721
+      OnClick = N5Click
     end
   end
   object Timer1: TTimer

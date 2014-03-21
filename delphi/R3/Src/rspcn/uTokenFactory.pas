@@ -68,11 +68,10 @@ type
     property logined:boolean read Flogined write Setlogined;
     property lDate:integer read FlDate write SetlDate;
   end;
-var
-  token:TToken;
-implementation
 
-{ TToken }
+var token:TToken;
+
+implementation
 
 procedure TToken.decode(_token: string);
 var

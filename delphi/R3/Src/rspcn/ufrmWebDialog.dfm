@@ -14,6 +14,7 @@ object frmWebDialog: TfrmWebDialog
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Position = poOwnerFormCenter
   PixelsPerInch = 96
   TextHeight = 13
   object pnlAddressBar: TPanel
@@ -457,6 +458,7 @@ object frmWebDialog: TfrmWebDialog
     UpdatesFolder = 'Updates\'
     WebInfoFileName = 'Update.xml'
     WebURL = 'http://'
+    hWnd = 0
     Left = 328
     Top = 124
   end

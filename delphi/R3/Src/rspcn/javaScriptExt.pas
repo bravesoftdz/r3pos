@@ -184,7 +184,7 @@ begin
                if (UcFactory.AuthMode <> 2) and not UcFactory.xsmLogin(username,password) then Raise Exception.Create('输入的密码无效,请重新输入。');
                dataFactory.MoveToSqlite;
                dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(password,ENC_KEY)+''' where TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and SHOP_ID='''+rs.FieldbyName('SHOP_ID').asString+'''');
-               dataFactory.movetoDefault;
+               dataFactory.MovetoDefault;
                dataFactory.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(password,ENC_KEY)+''' where TENANT_ID='+rs.FieldbyName('TENANT_ID').asString+' and SHOP_ID='''+rs.FieldbyName('SHOP_ID').asString+'''');
              end
           else

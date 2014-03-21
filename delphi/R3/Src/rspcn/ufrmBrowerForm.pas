@@ -123,6 +123,8 @@ type
     RzBmpButton5: TRzBmpButton;
     N2: TMenuItem;
     N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -157,6 +159,8 @@ type
     procedure N1Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
+    procedure N5Click(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
   private
     FWindowState: TWindowState;
     FInitialized: boolean;
@@ -259,12 +263,15 @@ type
     property Initialized:boolean read FInitialized write SetInitialized;
   end;
 
-var
-  frmBrowerForm: TfrmBrowerForm;
+var frmBrowerForm: TfrmBrowerForm;
 
 implementation
-uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,webMultInst,ufrmLogo,uResFactory;
+
+uses  javaScriptExt,NSHandler,uUCFactory,uDLLFactory,uTokenFactory,WinSvc,uAppMgr,
+      webMultInst,ufrmLogo,uResFactory,ufrmPswdModify;
+
 {$R *.dfm}
+
 const
   SZ_BOOL: array[boolean] of string = ('False', 'True');
 var
@@ -1938,6 +1945,42 @@ begin
      end;
 end;
 
+procedure TfrmBrowerForm.N5Click(Sender: TObject);
+begin
+  if not token.logined then Exit;
+  if token.account = '' then Exit;
+  if token.account = 'system' then Exit;
+  if token.account = token.xsmCode then Exit;
+  TfrmPswdModify.ShowExecute(self,token.userId,token.account);
+end;
+
+procedure TfrmBrowerForm.PopupMenu1Popup(Sender: TObject);
+begin
+  N2.Visible := false;
+  N3.Visible := false;
+  N4.Visible := false;
+  N5.Visible := false;
+
+  if token.logined then
+     begin
+       N2.Visible := true;
+       N3.Visible := true;
+     end;
+
+  if token.logined then
+     begin
+       if (token.tenantId <> '')
+          and
+          (token.account <> 'system')
+          and
+          (token.account <> token.xsmCode) then
+          begin
+            N4.Visible := true;
+            N5.Visible := true;
+          end;
+     end;
+end;
+
 initialization
   oleinitialize(nil);
   iCaptSize := GetSystemMetrics(SM_CYCAPTION);
@@ -1945,6 +1988,5 @@ initialization
   iBorderThick := GetSystemMetrics(SM_CXSIZEFRAME);
 finalization
   oleuninitialize;
-
 end.
 

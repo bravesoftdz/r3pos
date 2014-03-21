@@ -662,10 +662,10 @@ begin
       0: CodePrinterFactory.PrintCode(cdsDetail.Data,self.Handle);
       1: ZebraPrinterFactory.PrintCode(cdsDetail.Data,self.Handle,DevFactory.SaveCodePrintName);
     end;
+  DevFactory.OpenCashBox(self.Font);
   if DevFactory.SavePrint then
      begin
        DevFactory.PrintSaleTicket(token.tenantId,AObj.FieldByName('SALES_ID').AsString,self.Font);
-       DevFactory.OpenCashBox(self.Font);
      end;
   if dllGlobal.GetDoubleScreen = '2' then
      begin

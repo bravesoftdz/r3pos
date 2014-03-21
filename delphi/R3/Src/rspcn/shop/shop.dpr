@@ -114,7 +114,8 @@ uses
   ufrmIntegralGlideAdd in 'app\ufrmIntegralGlideAdd.pas' {frmIntegralGlideAdd},
   uCommand in 'app\uCommand.pas',
   uZebraPrinterFactory in 'app\uZebraPrinterFactory.pas',
-  uPlayerFactory in 'app\uPlayerFactory.pas';
+  uPlayerFactory in 'app\uPlayerFactory.pas',
+  ufrmHangUpFile in 'app\ufrmHangUpFile.pas' {frmHangUpFile};
 
 {$R *.res}
 exports

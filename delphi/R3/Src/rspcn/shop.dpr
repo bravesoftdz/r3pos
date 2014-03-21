@@ -18,7 +18,8 @@ uses
   ufrmUpdate in 'ufrmUpdate.pas',
   ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
   ufrmLogo in 'ufrmLogo.pas' {frmLogo},
-  uResFactory in 'uResFactory.pas';
+  uResFactory in 'uResFactory.pas',
+  ufrmPswdModify in 'ufrmPswdModify.pas' {frmPswdModify};
 
 {$R *.TLB}
 

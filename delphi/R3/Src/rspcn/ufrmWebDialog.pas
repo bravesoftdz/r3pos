@@ -21,10 +21,6 @@ type
     btnWindow: TRzBmpButton;
     WebUpdater1: TWebUpdater;
     procedure btnCloseClick(Sender: TObject);
-  private
-    { Private declarations }
-  public
-    { Public declarations }
   end;
 
 implementation
@@ -33,7 +29,7 @@ implementation
 
 procedure TfrmWebDialog.btnCloseClick(Sender: TObject);
 begin
-  close;
+  Close;
 end;
 
 end.

@@ -12,10 +12,10 @@ unit shop_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2013/11/13 15:06:09 from Type Library described below.
+// File generated on 2014/3/20 17:07:39 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: D:\myWork\Delphi\R3\Src\rspcn\shop.tlb (1)
+// Type Lib: D:\r3pos\R3\Src\rspcn\shop.tlb (1)
 // LIBID: {0DA3C686-11D6-4090-89BC-FB6E37712AFF}
 // LCID: 0
 // Helpfile: 

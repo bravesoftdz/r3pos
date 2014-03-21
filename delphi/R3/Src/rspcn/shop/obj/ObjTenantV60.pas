@@ -290,6 +290,9 @@ begin
       ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'003'+''',''收银'',''SY'',''拥有销售及收款开单所需相关权限'',''00'',5497000)';
       AGlobal.ExecSQL(Str,Params);
       Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
+      ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'004'+''',''网订'',''WD'',''拥有网上订货的相关权限'',''00'',5497000)';
+      AGlobal.ExecSQL(Str,Params);
+      Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
       ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'005'+''',''财务'',''CW'',''拥有财务管理所需相关权限'',''00'',5497000)';
       AGlobal.ExecSQL(Str,Params);
       Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+

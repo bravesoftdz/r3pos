@@ -879,15 +879,20 @@ begin
        Exit;
      end;
 
-  if (mid = 'tfrmstockorder') or (mid = 'tfrmposinorder') or (mid = 'tfrmdownstockorder') or (mid = 'tfrmgoodsstorage') then
+  if (urlToken.appId='xsm-in') or (urlToken.appId='rim-in') then
      begin
-       result := pos(','+token.tenantId+'006,', roleIds) > 0;
-       Exit;
+       result := pos(','+token.tenantId+'004,', roleIds) > 0;
      end;
 
   if (mid = 'report.html') then
      begin
        result := pos(','+token.tenantId+'005,', roleIds) > 0;
+       Exit;
+     end;
+
+  if (mid = 'tfrmstockorder') or (mid = 'tfrmposinorder') or (mid = 'tfrmdownstockorder') or (mid = 'tfrmgoodsstorage') then
+     begin
+       result := pos(','+token.tenantId+'006,', roleIds) > 0;
        Exit;
      end;
 end;

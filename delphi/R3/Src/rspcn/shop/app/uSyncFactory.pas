@@ -1440,7 +1440,7 @@ begin
   finally
     Params.Free;
   end;
-  RightsFactory.InitialRights;
+  // RightsFactory.InitialRights;
 end;
 
 procedure TSyncFactory.LoginSync(PHWnd: THandle);

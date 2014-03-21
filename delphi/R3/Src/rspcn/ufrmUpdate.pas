@@ -130,6 +130,7 @@ var
   url:TStringList;
 begin
   result := false;
+  if not token.online then Exit;
   CaUpgrade.UpGrade := 3;
   F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
@@ -137,7 +138,7 @@ begin
   finally
     F.Free;
   end;
-  myVersion := '0.0.0.0';// inttostr(WebUpdater1.ApplicationVersion.MajorVersion)+'.'+inttostr(WebUpdater1.ApplicationVersion.MinorVersion)+'.'+inttostr(WebUpdater1.ApplicationVersion.ReleaseVersion)+'.'+inttostr(WebUpdater1.ApplicationVersion.BuildVersion);
+  myVersion := '0.0.0.0';
   if UcFactory.AuthMode = 2 then
      CaUpgrade := UcFactory.CheckUpgrade(token.tenantId,ProductId,myVersion)
   else

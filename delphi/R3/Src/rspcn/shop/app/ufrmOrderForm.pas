@@ -2521,11 +2521,6 @@ end;
 procedure TfrmOrderForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if not edtInput.Focused then inherited;
-  if char(Key) = '-' then
-     begin
-       DeleteGods;
-       Key := #0;
-     end;
 end;
 
 procedure TfrmOrderForm.FormResize(Sender: TObject);

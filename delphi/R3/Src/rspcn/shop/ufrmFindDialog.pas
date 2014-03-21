@@ -29,27 +29,27 @@ type
     procedure serachTextExit(Sender: TObject);
     procedure rsFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure serachTextKeyPress(Sender: TObject; var Key: Char);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure serachTextChange(Sender: TObject);
+    procedure DBGridEh1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure serachTextKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FMuiltSelect: boolean;
     serachTxt:string;
-    { Private declarations }
     procedure decodeFields(str:string);
     procedure SetMuiltSelect(const Value: boolean);
   public
-    { Public declarations }
     class function FindDsDialog(ds:TZQuery;var AObj:TRecord_;listFields:string):boolean;
     class function FindSQLDialog(SQL:string;var AObj:TRecord_;listFields:string):boolean;
     property MuiltSelect:boolean read FMuiltSelect write SetMuiltSelect;
   end;
 
 implementation
-uses udllGlobal;
-{$R *.dfm}
 
-{ TfrmFindDialog }
+uses udllGlobal;
+
+{$R *.dfm}
 
 procedure TfrmFindDialog.decodeFields(str: string);
 var
@@ -132,7 +132,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   br := TBrush.Create;
   br.Assign(DBGridEh1.Canvas.Brush);
@@ -171,9 +170,8 @@ end;
 procedure TfrmFindDialog.btnFindClick(Sender: TObject);
 begin
   inherited;
-  if DataSource1.DataSet.IsEmpty then Raise Exception.Create('没有数据在选择列表');
+  if DataSource1.DataSet.IsEmpty then Raise Exception.Create('没有选择任何记录...');
   ModalResult := MROK;
-
 end;
 
 procedure TfrmFindDialog.serachTextEnter(Sender: TObject);
@@ -181,14 +179,12 @@ begin
   inherited;
   serachText.Text := serachTxt;
   serachText.SelectAll;
-
 end;
 
 procedure TfrmFindDialog.serachTextExit(Sender: TObject);
 begin
   inherited;
   if serachTxt='' then serachText.Text := serachText.Hint;
-
 end;
 
 procedure TfrmFindDialog.rsFilterRecord(DataSet: TDataSet;
@@ -218,19 +214,35 @@ begin
      end;
 end;
 
-procedure TfrmFindDialog.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  inherited;
-  if Key=VK_UP then DataSource1.DataSet.Prior;
-  if Key=VK_DOWN then DataSource1.DataSet.Next;
-end;
-
 procedure TfrmFindDialog.serachTextChange(Sender: TObject);
 begin
   inherited;
   if serachText.Focused then serachTxt := serachText.Text;
+end;
 
+procedure TfrmFindDialog.DBGridEh1KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key=13 then
+     begin
+       Key := 0;
+       btnFindClick(nil);
+     end;
+end;
+
+procedure TfrmFindDialog.serachTextKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_UP then
+     begin
+       DataSource1.DataSet.Prior;
+     end;
+  if Key = VK_DOWN then
+     begin
+       DataSource1.DataSet.Next;
+     end;
 end;
 
 end.

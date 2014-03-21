@@ -35,6 +35,7 @@ inherited frmFindDialog: TfrmFindDialog
         FrozenCols = 2
         Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghHighlightFocus, dghClearSelection]
+        ReadOnly = True
         RowHeight = 25
         TabOrder = 0
         TitleFont.Charset = GB2312_CHARSET
@@ -49,12 +50,12 @@ inherited frmFindDialog: TfrmFindDialog
         DecimalNumber = 2
         DigitalNumber = 12
         OnDrawColumnCell = DBGridEh1DrawColumnCell
+        OnKeyDown = DBGridEh1KeyDown
         Columns = <
           item
             EditButtons = <>
             FieldName = 'SEQNO'
             Footers = <>
-            ReadOnly = True
             Tag = 1
             Title.Caption = #24207#21495
             Width = 30
@@ -63,7 +64,6 @@ inherited frmFindDialog: TfrmFindDialog
             EditButtons = <>
             FieldName = 'CODE_ID'
             Footers = <>
-            ReadOnly = True
             Tag = 1
             Title.Caption = #32534#30721
             Width = 123
@@ -400,16 +400,17 @@ inherited frmFindDialog: TfrmFindDialog
         Top = 6
         Width = 308
         Height = 18
-        Hint = #35831#36755#20837#21333#21495#25110#23458#25143#21517#31216#25110#22791#27880#35828#26126
+        Hint = #35831#36755#20837#25628#32034#20869#23481'...'
         Anchors = [akLeft, akTop, akRight]
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
         TabOrder = 0
-        Text = #35831#36755#20837#25628#32034#20869#23481
+        Text = #35831#36755#20837#25628#32034#20869#23481'...'
         OnChange = serachTextChange
         OnEnter = serachTextEnter
         OnExit = serachTextExit
+        OnKeyDown = serachTextKeyDown
         OnKeyPress = serachTextKeyPress
       end
     end

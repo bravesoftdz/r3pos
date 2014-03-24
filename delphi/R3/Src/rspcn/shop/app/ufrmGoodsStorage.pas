@@ -578,6 +578,25 @@ begin
   finally
     Params.Free;
   end;
+  if not (
+     (token.account = 'admin')
+     or
+     (token.account = 'system')
+     or
+     (token.account = token.xsmCode)
+     or
+     (pos(','+token.tenantId+'001,', ','+token.roleIds+',') > 0)) then
+     begin
+       edtAMOUNT.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse,edtAMOUNT.Style);
+       edtBK_AMOUNT.Color := edtAMOUNT.Style.Color;
+     end
+  else
+     begin
+       edtAMOUNT.Properties.ReadOnly := false;
+       SetEditStyle(dsInsert,edtAMOUNT.Style);
+       edtBK_AMOUNT.Color := edtAMOUNT.Style.Color;
+     end;
 end;
 
 procedure TfrmGoodsStorage.SaveInfo;
@@ -660,26 +679,6 @@ begin
        edtBARCODE2.Text := '';
      end;
 
-  if not (
-     (token.account = 'admin')
-     or
-     (token.account = 'system')
-     or
-     (token.account = token.xsmCode)
-     or
-     (pos(','+token.tenantId+'001,', ','+token.roleIds+',') > 0)) then
-     begin
-       edtAMOUNT.Properties.ReadOnly := true;
-       SetEditStyle(dsBrowse,edtAMOUNT.Style);
-       edtBK_AMOUNT.Color := edtAMOUNT.Style.Color;
-     end
-  else
-     begin
-       edtAMOUNT.Properties.ReadOnly := false;
-       SetEditStyle(dsInsert,edtAMOUNT.Style);
-       edtBK_AMOUNT.Color := edtAMOUNT.Style.Color;
-     end;
-
   AObj.ReadFromDataSet(cdsGoodsInfo);
   ReadFromObject(AObj,self);
   ESortId := AObj.FieldByName('SORT_ID1').AsString;
@@ -753,9 +752,10 @@ begin
     end;
 
   if cdsList.FieldbyName('AMOUNT').AsString<>'' then
-    storAmt := cdsList.FieldbyName('AMOUNT').AsFloat
+     storAmt := cdsList.FieldbyName('AMOUNT').AsFloat
   else
-    storAmt:=0;
+     storAmt:=0;
+
   edtAMOUNT.Text := formatFloat('#0.###',storAmt);
 end;
 
@@ -866,6 +866,7 @@ begin
   if cdsBarcode.Locate('BARCODE_TYPE','0',[]) then
      begin
        cdsBarcode.Edit;
+       cdsBarcode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldbyName('CALC_UNITS').AsString;
        cdsBarcode.FieldbyName('BARCODE').AsString := edtBARCODE.Text;
        cdsBarcode.Post;
      end;
@@ -875,6 +876,7 @@ begin
        if trim(edtBARCODE1.Text) <> '' then
           begin
             cdsBarcode.Edit;
+            cdsBarcode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldbyName('SMALL_UNITS').AsString;
             cdsBarcode.FieldbyName('BARCODE').AsString := edtBARCODE1.Text;
             cdsBarcode.Post;
           end
@@ -902,6 +904,7 @@ begin
        if trim(edtBARCODE2.Text) <> '' then
           begin
             cdsBarcode.Edit;
+            cdsBarcode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldbyName('BIG_UNITS').AsString;
             cdsBarcode.FieldbyName('BARCODE').AsString := edtBARCODE2.Text;
             cdsBarcode.Post;
           end
@@ -1018,7 +1021,8 @@ begin
     SetEditStyle(dsBrowse,edtBARCODE2.Style);
     edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
     edtBARCODE2.Properties.ReadOnly := true;
-  end
+  end;
+{
   else
     begin
       edtUNIT_ID_USING.Properties.ReadOnly := false;
@@ -1027,6 +1031,7 @@ begin
       if (edtBIG_UNITS.Text='') or (strtofloatdef(edtBIGTO_CALC.Text,0)=0) then
          edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=true;
     end;
+}
   if not dllGlobal.checkChangePrice(relationId) then
      begin
        SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);

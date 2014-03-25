@@ -211,17 +211,21 @@ begin
         if dsExcel.FieldByName('BARCODE2').AsString <> '' then
           begin
             if us.Locate('UNIT_NAME',dsExcel.FieldByName('SMALL_UNITS').AsString,[]) then
-            DsGoods.FieldByName('SMALL_UNITS').AsString := us.FieldByName('UNIT_ID').AsString;
-            DsGoods.FieldByName('SMALLTO_CALC').AsString := dsExcel.FieldByName('SMALLTO_CALC').AsString;
-            WriteToBarcode(DsBarcode,GodsId,DsGoods.FieldByName('SMALL_UNITS').AsString,dsExcel.FieldByName('BARCODE2').AsString,'1');
+            begin
+              DsGoods.FieldByName('SMALL_UNITS').AsString := us.FieldByName('UNIT_ID').AsString;
+              DsGoods.FieldByName('SMALLTO_CALC').AsString := dsExcel.FieldByName('SMALLTO_CALC').AsString;
+              WriteToBarcode(DsBarcode,GodsId,DsGoods.FieldByName('SMALL_UNITS').AsString,dsExcel.FieldByName('BARCODE2').AsString,'1');
+            end;
           end;
 
         if dsExcel.FieldByName('BARCODE3').AsString <> '' then
           begin
             if us.Locate('UNIT_NAME',dsExcel.FieldByName('BIG_UNITS').AsString,[]) then
-            DsGoods.FieldByName('BIG_UNITS').AsString := us.FieldByName('UNIT_ID').AsString;
-            DsGoods.FieldByName('BIGTO_CALC').AsString := dsExcel.FieldByName('BIGTO_CALC').AsString;
-            WriteToBarcode(DsBarcode,GodsId,DsGoods.FieldByName('BIG_UNITS').AsString,dsExcel.FieldByName('BARCODE3').AsString,'2');
+            begin
+              DsGoods.FieldByName('BIG_UNITS').AsString := us.FieldByName('UNIT_ID').AsString;
+              DsGoods.FieldByName('BIGTO_CALC').AsString := dsExcel.FieldByName('BIGTO_CALC').AsString;
+              WriteToBarcode(DsBarcode,GodsId,DsGoods.FieldByName('BIG_UNITS').AsString,dsExcel.FieldByName('BARCODE3').AsString,'2');
+            end;
           end;
 
         DsGoods.FieldByName('NEW_INPRICE').AsFloat := dsExcel.FieldByName('NEW_INPRICE').AsFloat;

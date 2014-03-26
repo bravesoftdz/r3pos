@@ -188,7 +188,7 @@ begin
   WTitle2.add('商品：'+edtGODS_ID.Text);
   cdsReport2.SQL.Text :=
      'select A.TENANT_ID,A.SHOP_ID,''期初'' as BILL_O_NAME,0 as BILL_DATE,''期初结存'' as CLIENT_NAME,0 as SEQNO,2 as flag,BAL_AMOUNT as IN_AMOUNT,BAL_PRICE as IN_PRICE,BAL_MONEY as IN_MONEY,0.00 as OUT_AMOUNT,0.000 as OUT_PRICE,0.00 as OUT_MONEY,'+
-     '0.00 as BAL_AMOUNT,0.000 as BAL_PRICE,0.00 as BAL_MONEY '+
+     '0.00 as BAL_AMOUNT,0.000 as BAL_PRICE,0.00 as BAL_MONEY,'''' as CREA_NAME '+
      'from RCK_STOCKS_DATA A,(select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,max(SEQNO) as SEQNO '+
      'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>='+formatDatetime('YYYYMM01',D1.Date)+' and BILL_DATE<:D1 and GODS_ID=:GODS_ID '+
      'group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO) B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO and A.SEQNO=B.SEQNO ';
@@ -206,7 +206,7 @@ begin
      'case when BILL_TYPE in (11,12,13) then 0.00 else OUT_AMOUNT end as OUT_AMOUNT,'+
      'case when BILL_TYPE in (11,12,13) then 0.000 else OUT_PRICE end as OUT_PRICE,'+
      'case when BILL_TYPE in (11,12,13) then 0.00 else OUT_MONEY end as OUT_MONEY,'+
-     'BAL_AMOUNT,BAL_PRICE,BAL_MONEY '+
+     'BAL_AMOUNT,BAL_PRICE,BAL_MONEY,CREA_NAME '+
      'from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and BILL_DATE>=:D1 and BILL_DATE<=:D2 and BILL_TYPE not in (1) ';
      
   if FnString.TrimRight(token.shopId,4)<>'0001' then
@@ -220,6 +220,7 @@ begin
      'left outer join CA_SHOP_INFO b on j.TENANT_ID=b.TENANT_ID and j.SHOP_ID=b.SHOP_ID '+
      'order by j.SHOP_ID,j.SHOP_ID,j.SEQNO'
      );
+
   cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsReport2.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));

@@ -383,7 +383,14 @@ inherited frmStorageReport: TfrmStorageReport
                     FieldName = 'CLIENT_NAME'
                     Footers = <>
                     Title.Caption = #23458#25143#21517#31216
-                    Width = 149
+                    Width = 120
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_NAME'
+                    Footers = <>
+                    Title.Caption = #25805#20316#21592
+                    Width = 80
                   end
                   item
                     Alignment = taRightJustify

@@ -805,6 +805,17 @@ begin
     rs.Free;
   end;
 
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToSqlite;
+  try
+    rs.SQL.Text := 'select 1 from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID='+token.tenantId;
+    dataFactory.Open(rs);
+    if not rs.IsEmpty then Exit;
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
+
   timeStamp := dllGlobal.GetDBTimeStamp;
 
   rs := TZQuery.Create(nil);

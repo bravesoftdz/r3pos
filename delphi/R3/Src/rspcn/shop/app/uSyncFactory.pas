@@ -2850,6 +2850,8 @@ end;
 
 procedure TSyncFactory.SyncStorage;
 var
+  i:integer;
+  tmpObj:TRecord_;
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
   Params:TftParamList;
@@ -2876,9 +2878,38 @@ begin
     Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
-    rs_r.SyncDelta := rs_l.SyncDelta;
     dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+    if rs_l.RecordCount <= MAX_SYNC_RECORD_COUNT then
+       begin
+         rs_r.SyncDelta := rs_l.SyncDelta;
+         dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+       end
+    else
+       begin
+         i := 0;
+         rs_l.First;
+         tmpObj := TRecord_.Create;
+         try
+           rs_r.FieldDefs.Assign(rs_l.FieldDefs);
+           rs_r.CreateDataSet;
+           while not rs_l.Eof do
+             begin
+               rs_r.Append;
+               tmpObj.ReadFromDataSet(rs_l);
+               tmpObj.WriteToDataSet(rs_r);
+               inc(i);
+               rs_l.Next;
+               if (i >= MAX_SYNC_RECORD_COUNT) or (rs_l.Eof) then
+                  begin
+                    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+                    i := 0;
+                    rs_r.EmptyDataSet;
+                  end;
+             end;
+         finally
+           tmpObj.Free;
+         end;
+       end;
   finally
     dispose(n);
     Params.Free;
@@ -3269,6 +3300,8 @@ end;
 
 procedure TSyncFactory.TimerSyncStorage;
 var
+  i:integer;
+  tmpObj:TRecord_;
   n:PSynTableInfo;
   rs_l,rs_r:TZQuery;
   Params:TftParamList;
@@ -3297,9 +3330,40 @@ begin
     Params.ParamByName('Transed').AsBoolean := false;
     dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
     if timerTerminted then Exit;
-    rs_r.SyncDelta := rs_l.SyncDelta;
     dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+    if rs_l.RecordCount <= MAX_SYNC_RECORD_COUNT then
+       begin
+         rs_r.SyncDelta := rs_l.SyncDelta;
+         dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+       end
+    else
+       begin
+         i := 0;
+         rs_l.First;
+         tmpObj := TRecord_.Create;
+         try
+           rs_r.FieldDefs.Assign(rs_l.FieldDefs);
+           rs_r.CreateDataSet;
+           while not rs_l.Eof do
+             begin
+               if timerTerminted then Exit;
+
+               rs_r.Append;
+               tmpObj.ReadFromDataSet(rs_l);
+               tmpObj.WriteToDataSet(rs_r);
+               inc(i);
+               rs_l.Next;
+               if (i >= MAX_SYNC_RECORD_COUNT) or (rs_l.Eof) then
+                  begin
+                    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+                    i := 0;
+                    rs_r.EmptyDataSet;
+                  end;
+             end;
+         finally
+           tmpObj.Free;
+         end;
+       end;
   finally
     dispose(n);
     Params.Free;

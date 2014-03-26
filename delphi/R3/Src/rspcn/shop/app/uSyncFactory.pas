@@ -19,6 +19,8 @@ const
   MAX_ADAPTER_DESCRIPTION_LENGTH = 128;
   MAX_ADAPTER_ADDRESS_LENGTH = 8;
 
+  MAX_SYNC_RECORD_COUNT = 500;
+
 type
   TIPAddressString = array[0..4 * 4 - 1] of Char;
   PIPAddrString = ^TIPAddrString;
@@ -430,14 +432,19 @@ end;
 
 procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
   procedure UploadSingleTable(rs_l:TZQuery;ZClassName:string;n:PSynTableInfo;Params:TftParamList);
-  var ss:TZQuery;
+  var
+    i:integer;
+    ss:TZQuery;
+    tmpObj:TRecord_;
   begin
     ss := TZQuery.Create(nil);
     try
-      ss.Close;
-      if not rs_l.IsEmpty then
+      if rs_l.IsEmpty then Exit;
+
+      SetTicket;
+
+      if rs_l.RecordCount <= MAX_SYNC_RECORD_COUNT then
          begin
-           SetTicket;
            ss.SyncDelta := rs_l.SyncDelta;
            if not ss.IsEmpty then
               begin
@@ -447,31 +454,95 @@ procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;
                   Raise Exception.Create(StrPas(dbHelp.getLastError));
                 end;
               end;
+         end
+      else //分包处理
+         begin
+           i := 0;
+           rs_l.First;
+           tmpObj := TRecord_.Create;
+           try
+             ss.FieldDefs.Assign(rs_l.FieldDefs);
+             ss.CreateDataSet;
+             while not rs_l.Eof do
+               begin
+                 ss.Append;
+                 tmpObj.ReadFromDataSet(rs_l);
+                 tmpObj.WriteToDataSet(ss);
+                 inc(i);
+                 rs_l.Next;
+                 if (i >= MAX_SYNC_RECORD_COUNT) or (rs_l.Eof) then
+                    begin
+                      try
+                        dataFactory.remote.UpdateBatch(TZQuery(ss).Delta,ZClassName,TftParamList.Encode(Params));
+                      except
+                        Raise Exception.Create(StrPas(dbHelp.getLastError));
+                      end;
+                      LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>本次提交记录数:'+inttostr(ss.RecordCount));
+                      i := 0;
+                      ss.EmptyDataSet;
+                    end;
+               end;
+           finally
+             tmpObj.Free;
+           end;
+        end;
 
-           rs_l.Delete;
-           dataFactory.sqlite.UpdateBatch(rs_l,ZClassName,Params);
+      rs_l.Delete;
+      dataFactory.sqlite.UpdateBatch(rs_l,ZClassName,Params);
 
-           LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
-         end;
+      LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
     finally
       ss.Free;
     end;
   end;
 
   procedure DownloadSingleTable(rs_r:TZQuery;ZClassName:string;n:PSynTableInfo;Params:TftParamList);
-  var ss:TZQuery;
+  var
+    i:integer;
+    ss:TZQuery;
+    tmpObj:TRecord_;
   begin
     ss := TZQuery.Create(nil);
     try
-      ss.Close;
-      if not rs_r.IsEmpty then
+      if rs_r.IsEmpty then Exit;
+
+      SetTicket;
+
+      if rs_r.RecordCount <= MAX_SYNC_RECORD_COUNT then
          begin
-           SetTicket;
            ss.SyncDelta := rs_r.SyncDelta;
            if not ss.IsEmpty then
               dataFactory.sqlite.UpdateBatch(ss,ZClassName,Params);
-           LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
-         end;
+         end
+     else //分包处理
+         begin
+           i := 0;
+           rs_r.First;
+           tmpObj := TRecord_.Create;
+           try
+             ss.FieldDefs.Assign(rs_r.FieldDefs);
+             ss.CreateDataSet;
+             while not rs_r.Eof do
+               begin
+                 ss.Append;
+                 tmpObj.ReadFromDataSet(rs_r);
+                 tmpObj.WriteToDataSet(ss);
+                 inc(i);
+                 rs_r.Next;
+                 if (i >= MAX_SYNC_RECORD_COUNT) or (rs_r.Eof) then
+                    begin
+                      dataFactory.sqlite.UpdateBatch(ss,ZClassName,Params);
+                      LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>本次提交记录数:'+inttostr(ss.RecordCount));
+                      i := 0;
+                      ss.EmptyDataSet;
+                    end;
+               end;
+           finally
+             tmpObj.Free;
+           end;
+        end;
+
+      LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+':'+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
     finally
       ss.Free;
     end;

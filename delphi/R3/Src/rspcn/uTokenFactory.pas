@@ -96,6 +96,7 @@ begin
     tenantName := rspcn.selectSingleNode('/rspcn/userInfo/tenantName').text;
     shopId := rspcn.selectSingleNode('/rspcn/userInfo/shopId').text;
     shopName := rspcn.selectSingleNode('/rspcn/userInfo/shopName').text;
+    roleIds := rspcn.selectSingleNode('/rspcn/userInfo/roleIds').text;
     address := rspcn.selectSingleNode('/rspcn/userInfo/address').text;
     xsmCode := rspcn.selectSingleNode('/rspcn/userInfo/xsmCode').text;
     xsmPWD := rspcn.selectSingleNode('/rspcn/userInfo/xsmPWD').text;
@@ -146,6 +147,9 @@ begin
     node := doc.createElement('shopName');
     node.text := shopName;
     userinfo.appendChild(node);
+    node := doc.createElement('roleIds');
+    node.text := roleIds;
+    userinfo.appendChild(node);
     node := doc.createElement('address');
     node.text := address;
     userinfo.appendChild(node);
@@ -194,6 +198,7 @@ begin
    '"tenantName":"'+tenantName+'",'+
    '"shopId":"'+shopId+'",'+
    '"shopName":"'+shopName+'",'+
+   '"roleIds":"'+roleIds+'",'+
    '"address":"'+address+'",'+
    '"xsmCode":"'+xsmCode+'",'+
    '"xsmAlias":"'+xsmAlias+'",'+

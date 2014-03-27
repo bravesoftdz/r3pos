@@ -88,7 +88,7 @@ inherited frmStockReport: TfrmStockReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #24207#21495
-                    Width = 28
+                    Width = 30
                   end
                   item
                     EditButtons = <>
@@ -99,7 +99,7 @@ inherited frmStockReport: TfrmStockReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21830#21697#21517#31216
-                    Width = 272
+                    Width = 275
                   end
                   item
                     EditButtons = <>
@@ -115,7 +115,7 @@ inherited frmStockReport: TfrmStockReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #26465#30721
-                    Width = 104
+                    Width = 105
                   end
                   item
                     EditButtons = <>
@@ -123,7 +123,7 @@ inherited frmStockReport: TfrmStockReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21830#21697#20998#31867
-                    Width = 66
+                    Width = 70
                   end
                   item
                     EditButtons = <>
@@ -395,7 +395,7 @@ inherited frmStockReport: TfrmStockReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #24207#21495
-                    Width = 28
+                    Width = 30
                   end
                   item
                     DisplayFormat = '0000-00-00'
@@ -406,21 +406,29 @@ inherited frmStockReport: TfrmStockReport
                     Footer.ValueType = fvtStaticText
                     Footers = <>
                     Title.Caption = #26085#26399
-                    Width = 81
+                    Width = 80
                   end
                   item
                     EditButtons = <>
                     FieldName = 'GLIDE_NO'
                     Footers = <>
                     Title.Caption = #21333#25454
-                    Width = 107
+                    Width = 100
                   end
                   item
                     EditButtons = <>
                     FieldName = 'CLIENT_NAME'
                     Footers = <>
                     Title.Caption = #20379#24212#21830
-                    Width = 131
+                    Width = 130
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_DATE'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #21046#21333#26085#26399
+                    Width = 120
                   end
                   item
                     EditButtons = <>
@@ -429,7 +437,7 @@ inherited frmStockReport: TfrmStockReport
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21830#21697#21517#31216
-                    Width = 159
+                    Width = 160
                   end
                   item
                     EditButtons = <>
@@ -438,14 +446,6 @@ inherited frmStockReport: TfrmStockReport
                     ReadOnly = True
                     Title.Caption = #36135#21495
                     Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'BARCODE'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #26465#30721
-                    Width = 104
                   end
                   item
                     EditButtons = <>

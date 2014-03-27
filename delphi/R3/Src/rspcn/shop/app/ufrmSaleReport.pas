@@ -235,7 +235,7 @@ begin
   WTitle2.add('ÈÕÆÚ£º'+formatDatetime('YYYY-MM-DD',D1.Date)+' ÖÁ '+formatDatetime('YYYY-MM-DD',D2.Date));
 
   cdsReport2.SQL.Text :=
-    'select TENANT_ID,GODS_ID,SALES_DATE,CLIENT_ID,CREA_USER,GLIDE_NO,AMOUNT,APRICE,CALC_MONEY,UNIT_ID '+
+    'select TENANT_ID,GODS_ID,SALES_DATE,CLIENT_ID,CREA_USER,GLIDE_NO,AMOUNT,APRICE,CALC_MONEY,UNIT_ID,CREA_DATE '+
     'from VIW_SALESDATA where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2';
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and SHOP_ID=:SHOP_ID';

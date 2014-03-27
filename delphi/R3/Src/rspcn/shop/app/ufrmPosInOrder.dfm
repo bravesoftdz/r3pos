@@ -385,24 +385,10 @@ inherited frmPosInOrder: TfrmPosInOrder
             Top = 149
             Width = 900
             Height = 31
-            object customerInfo: TLabel
-              Left = 324
-              Top = 10
-              Width = 337
-              Height = 12
-              Anchors = [akLeft, akTop, akRight]
-              AutoSize = False
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clRed
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
             object edtBK_CLIENT_ID: TRzPanel
               Left = 10
               Top = 0
-              Width = 499
+              Width = 319
               Height = 31
               Anchors = [akLeft, akTop, akRight]
               BorderOuter = fsStatus
@@ -564,6 +550,32 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Style.HotTrack = False
                 Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
+              end
+            end
+            object RzPanel10: TRzPanel
+              Left = 329
+              Top = 0
+              Width = 180
+              Height = 31
+              Anchors = [akLeft, akTop, akRight]
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              object godsAmount: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 176
+                Height = 27
+                Hint = ' '#24211#23384':'
+                Align = alClient
+                Alignment = taLeftJustify
+                BorderOuter = fsFlat
+                BorderSides = []
+                Caption = ' '#24211#23384':'
+                FlatColor = clGray
+                TabOrder = 0
               end
             end
           end

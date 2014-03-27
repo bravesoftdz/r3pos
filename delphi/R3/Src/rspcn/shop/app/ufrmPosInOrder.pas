@@ -16,7 +16,6 @@ type
     TabSheet2: TRzTabSheet;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    customerInfo: TLabel;
     RzPanel11: TRzPanel;
     RzPanel14: TRzPanel;
     zrComboBoxList1: TzrComboBoxList;
@@ -92,6 +91,8 @@ type
     btnPickUp: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
     btnNew: TRzBmpButton;
+    RzPanel10: TRzPanel;
+    godsAmount: TRzPanel;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -334,6 +335,7 @@ var
   rs:TZQuery;
 begin
   inherited;
+  godsAmount.Caption := godsAmount.Hint;
   Open('');
   dbState := dsInsert;
   AObj.FieldByName('TENANT_ID').AsString := token.tenantId;
@@ -1472,7 +1474,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
     rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
     dataFactory.Open(rs);
-    // godAmount.Caption := ' '+edtTable.FieldByName('GODS_NAME').AsString+' ¿â´æ:'+FormatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
+    godsAmount.Caption := ' '+edtTable.FieldByName('GODS_NAME').AsString+' ¿â´æ:'+FormatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
   finally
     rs.Free;
   end;

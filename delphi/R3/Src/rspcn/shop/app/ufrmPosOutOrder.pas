@@ -278,10 +278,10 @@ var
   orgFee:Currency;
 begin
   ps := dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
-  if ps.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
+  if ps.Locate('PRICE_ID',AObj.FieldByName('PRICE_ID').AsString,[]) then
      begin
-       t := ps.FieldbyName('INTE_TYPE').AsInteger;
-       amt := ps.FieldbyName('INTE_AMOUNT').AsFloat;
+       t := ps.FieldByName('INTE_TYPE').AsInteger;
+       amt := ps.FieldByName('INTE_AMOUNT').AsFloat;
      end
   else
      begin
@@ -290,7 +290,7 @@ begin
      end;
   edtTable.DisableControls;
   try
-    r := edtTable.FieldbyName('SEQNO').AsInteger;
+    r := edtTable.FieldByName('SEQNO').AsInteger;
     orgFee := TotalFee;
     TotalFee := 0;
     TotalAmt := 0;
@@ -301,16 +301,16 @@ begin
     edtTable.First;
     while not edtTable.Eof do
       begin
-        TotalFee := TotalFee + edtTable.FieldbyName('CALC_MONEY').AsFloat;
-        TotalAmt := TotalAmt + edtTable.FieldbyName('AMOUNT').AsFloat;
-        if (edtTable.FieldbyName('HAS_INTEGRAL').AsInteger =1 ) and (edtTable.FieldbyName('IS_PRESENT').AsInteger=0) then
+        TotalFee := TotalFee + edtTable.FieldByName('CALC_MONEY').AsFloat;
+        TotalAmt := TotalAmt + edtTable.FieldByName('AMOUNT').AsFloat;
+        if (edtTable.FieldByName('HAS_INTEGRAL').AsInteger =1 ) and (edtTable.FieldByName('IS_PRESENT').AsInteger=0) then
         begin
-        prf := prf + edtTable.FieldbyName('CALC_MONEY').AsFloat-(edtTable.FieldbyName('COST_PRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
-        mny := mny + edtTable.FieldbyName('AMONEY').AsFloat;
-        ago := ago + edtTable.FieldbyName('AGIO_MONEY').AsFloat;
+        prf := prf + edtTable.FieldByName('CALC_MONEY').AsFloat-(edtTable.FieldByName('COST_PRICE').AsFloat*edtTable.FieldByName('CALC_AMOUNT').AsFloat);
+        mny := mny + edtTable.FieldByName('AMONEY').AsFloat;
+        ago := ago + edtTable.FieldByName('AGIO_MONEY').AsFloat;
         end;
-        if edtTable.FieldbyName('IS_PRESENT').AsInteger = 2 then
-           TotalBarter := TotalBarter + trunc(edtTable.FieldbyName('CALC_AMOUNT').AsFloat*edtTable.FieldbyName('BARTER_INTEGRAL').AsFloat);
+        if edtTable.FieldByName('IS_PRESENT').AsInteger = 2 then
+           TotalBarter := TotalBarter + trunc(edtTable.FieldByName('CALC_AMOUNT').AsFloat*edtTable.FieldByName('BARTER_INTEGRAL').AsFloat);
         edtTable.Next;
       end;
   finally
@@ -322,25 +322,25 @@ begin
     if (amt<>0) then
        begin
          case t of
-         1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee / amt);
-         2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf / amt);
-         3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
+         1:AObj.FieldByName('INTEGRAL').AsInteger := trunc(TotalFee / amt);
+         2:AObj.FieldByName('INTEGRAL').AsInteger := trunc(prf / amt);
+         3:AObj.FieldByName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
          end;
        end;
        
-    AObj.FieldbyName('SALE_AMT').AsFloat := TotalAmt;
-    AObj.FieldbyName('SALE_MNY').AsFloat := TotalFee;
+    AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
+    AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
     if orgFee<>TotalFee then
     begin
-      AObj.FieldbyName('PAY_DIBS').AsFloat := 0;
-      AObj.FieldbyName('CASH_MNY').AsFloat := TotalFee;
-      AObj.FieldbyName('PAY_ZERO').AsFloat := 0;
+      AObj.FieldByName('PAY_DIBS').AsFloat := 0;
+      AObj.FieldByName('CASH_MNY').AsFloat := TotalFee;
+      AObj.FieldByName('PAY_ZERO').AsFloat := 0;
     end;
 
-    edtACCT_MNY.Text := formatFloat('#0.00',TotalFee);
+    edtACCT_MNY.Text := FormatFloat('#0.00',TotalFee);
     edtAGIO_RATE.Text := '100.0';
     DoShowPayment;
-    AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := TotalBarter;
+    AObj.FieldByName('BARTER_INTEGRAL').AsInteger := TotalBarter;
   end;
   if dllGlobal.GetDoubleScreen = '2' then
      begin
@@ -349,7 +349,7 @@ begin
             PlayerFactory.ResetCustomer;
             PlayerFactory.ShowGodsInfo(edtTable.FieldByName('GODS_NAME').AsString,
                                        edtTable.FieldByName('APRICE').AsString,
-                                       FloatToStr(TotalFee-AObj.FieldbyName('PAY_DIBS').AsFloat));
+                                       FloatToStr(TotalFee-AObj.FieldByName('PAY_DIBS').AsFloat));
           end;
      end;
 end;
@@ -360,7 +360,7 @@ begin
   if dbState = dsInsert then
      NewOrder
   else
-     Open(AObj.FieldbyName('SALES_ID').AsString);
+     Open(AObj.FieldByName('SALES_ID').AsString);
 end;
 
 function TfrmPosOutOrder.CheckSale_Limit: Boolean;
@@ -536,14 +536,14 @@ begin
   inherited;
   Open('');
   dbState := dsInsert;
-  AObj.FieldbyName('TENANT_ID').AsString := token.tenantId;
-  AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
+  AObj.FieldByName('TENANT_ID').AsString := token.tenantId;
+  AObj.FieldByName('SHOP_ID').AsString := token.shopId;
 
-  AObj.FieldbyName('DEPT_ID').AsString := dllGlobal.getMyDeptId;
+  AObj.FieldByName('DEPT_ID').AsString := dllGlobal.getMyDeptId;
 
-  AObj.FieldbyName('SALES_ID').AsString := TSequence.NewId();
-  AObj.FieldbyName('UNION_ID').AsString := '#';
-  AObj.FieldbyName('PRICE_ID').AsString := '#';
+  AObj.FieldByName('SALES_ID').AsString := TSequence.NewId();
+  AObj.FieldByName('UNION_ID').AsString := '#';
+  AObj.FieldByName('PRICE_ID').AsString := '#';
   edtCLIENT_ID.KeyValue := '';
   edtCLIENT_ID.Text := '普通客户';
   AObj.FieldByName('SALE_AMT').AsFloat := 0;
@@ -565,13 +565,13 @@ begin
 
   edtSALES_DATE.Date := dllGlobal.SysDate;
 
-  AObj.FieldbyName('PLAN_DATE').AsString := formatdatetime('YYYYMMDD',dllGlobal.SysDate);
+  AObj.FieldByName('PLAN_DATE').AsString := formatdatetime('YYYYMMDD',dllGlobal.SysDate);
 
-  AObj.FieldbyName('INVOICE_FLAG').AsInteger := DefInvFlag;
+  AObj.FieldByName('INVOICE_FLAG').AsInteger := DefInvFlag;
   case DefInvFlag of
-  1: AObj.FieldbyName('TAX_RATE').AsFloat := 0;
-  2: AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
-  3: AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
+  1: AObj.FieldByName('TAX_RATE').AsFloat := 0;
+  2: AObj.FieldByName('TAX_RATE').AsFloat := RtlRate2;
+  3: AObj.FieldByName('TAX_RATE').AsFloat := RtlRate3;
   end;
   InitRecord;
   if edtInput.CanFocus and Visible then
@@ -603,8 +603,8 @@ begin
     dbState := dsBrowse; 
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
-    RzPanel10.Visible := (AObj.FieldbyName('CLIENT_ID').AsString='');
-    edtCARD_NO.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
+    RzPanel10.Visible := (AObj.FieldByName('CLIENT_ID').AsString='');
+    edtCARD_NO.Text := AObj.FieldByName('CLIENT_CODE').AsString;
     Calc;
     DoShowPayment;
   finally
@@ -631,9 +631,9 @@ begin
   WriteToObject(AObj,self);
 
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
-  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+  AObj.FieldByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.userId;
-  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
+  AObj.FieldByName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   if not checkPayment then Exit;
@@ -650,9 +650,9 @@ begin
     while not cdsDetail.Eof do
        begin
          cdsDetail.Edit;
-         cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
-         cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-         cdsDetail.FieldByName('SALES_ID').AsString := cdsHeader.FieldbyName('SALES_ID').AsString;
+         cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldByName('TENANT_ID').AsInteger;
+         cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldByName('SHOP_ID').AsString;
+         cdsDetail.FieldByName('SALES_ID').AsString := cdsHeader.FieldByName('SALES_ID').AsString;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
@@ -684,7 +684,7 @@ begin
        if AObj.FieldByName('CLIENT_ID').AsString <> '' then
           begin
             ps := dllGlobal.GetZQueryFromName('PUB_PRICEGRADE');
-            if ps.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
+            if ps.Locate('PRICE_ID',AObj.FieldByName('PRICE_ID').AsString,[]) then
                begin
                  PriceName := ps.FieldByName('PRICE_NAME').AsString;
                end
@@ -695,9 +695,9 @@ begin
             PlayerFactory.SetCustomerInfo(AObj.FieldByName('CLIENT_CODE').AsString,
                                           AObj.FieldByName('CLIENT_ID_TEXT').AsString,
                                           PriceName,
-                                          inttostr(AObj.FieldbyName('INTEGRAL').AsInteger
-                                                    + AObj.FieldbyName('ACCU_INTEGRAL').AsInteger
-                                                    - AObj.FieldbyName('BARTER_INTEGRAL').AsInteger));
+                                          inttostr(AObj.FieldByName('INTEGRAL').AsInteger
+                                                    + AObj.FieldByName('ACCU_INTEGRAL').AsInteger
+                                                    - AObj.FieldByName('BARTER_INTEGRAL').AsInteger));
           end;
      end;
 end;
@@ -728,8 +728,8 @@ procedure TfrmPosOutOrder.DBGridEh1Columns1BeforeShowControl(
   Sender: TObject);
 begin
   inherited;
-  fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
-  fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+  fndGODS_ID.Text := edtTable.FieldByName('GODS_NAME').AsString;
+  fndGODS_ID.KeyValue := edtTable.FieldByName('GODS_ID').AsString;
   fndGODS_ID.SaveStatus;
 end;
 
@@ -744,7 +744,7 @@ begin
        Exit;
      end;
 
-  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+  if edtTable.FieldByName('GODS_ID').AsString = '' then
      begin
        Text := '';
        Value := null;
@@ -790,7 +790,7 @@ begin
        Exit;
      end;
 
-  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+  if edtTable.FieldByName('GODS_ID').AsString = '' then
      begin
        Text := '';
        Value := null;
@@ -838,34 +838,34 @@ begin
     op := TColumnEh(Sender).Field.AsFloat;
     TColumnEh(Sender).Field.AsFloat := r;
     PriceToCalc(r);
-    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+    if edtTable.FieldByName('AGIO_RATE').AsFloat < agioLower then
        begin
          edtTable.Edit;
-         edtTable.FieldbyName('APRICE').AsFloat := op;
-         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         edtTable.FieldByName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldByName('APRICE').AsFloat);
          Text := TColumnEh(Sender).Field.AsString;
          Value := TColumnEh(Sender).Field.AsFloat;
          edtTable.Edit;
-         MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         MessageBox(Handle,pchar('调价最低不能低于'+FormatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
          Exit;
        end;
     bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+    if bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
        begin
          if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
          begin
            edtTable.Edit;
-           edtTable.FieldbyName('APRICE').AsFloat := op;
+           edtTable.FieldByName('APRICE').AsFloat := op;
            PriceToCalc(op);
            Text := TColumnEh(Sender).Field.AsString;
            Value := TColumnEh(Sender).Field.AsFloat;
            edtTable.Edit;
-           MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           MessageBox(Handle,pchar('调价最低不能低于'+FormatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
            Exit;
          end;
        end;
     edtTable.Edit;
-    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
+    edtTable.FieldByName('POLICY_TYPE').AsInteger := 4;
   end
   else
   begin
@@ -919,38 +919,38 @@ begin
             Exit;
          end;
     end;
-    op := edtTable.FieldbyName('APRICE').AsFloat;
+    op := edtTable.FieldByName('APRICE').AsFloat;
     TColumnEh(Sender).Field.AsFloat := r;
     AgioToCalc(r);
 
-    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+    if edtTable.FieldByName('AGIO_RATE').AsFloat < agioLower then
        begin
          edtTable.Edit;
-         edtTable.FieldbyName('APRICE').AsFloat := op;
-         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         edtTable.FieldByName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldByName('APRICE').AsFloat);
          Text := TColumnEh(Sender).Field.AsString;
          Value := TColumnEh(Sender).Field.AsFloat;
          edtTable.Edit;
-         MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         MessageBox(Handle,pchar('调价最低不能低于'+FormatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
          Exit;
        end;
     bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+    if bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
        begin
          if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
          begin
            edtTable.Edit;
-           edtTable.FieldbyName('APRICE').AsFloat := op;
+           edtTable.FieldByName('APRICE').AsFloat := op;
            PriceToCalc(op);
            Text := TColumnEh(Sender).Field.AsString;
            Value := TColumnEh(Sender).Field.AsFloat;
            edtTable.Edit;
-           MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           MessageBox(Handle,pchar('调价最低不能低于'+FormatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
            Exit;
          end;
        end;
     edtTable.Edit;
-    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
+    edtTable.FieldByName('POLICY_TYPE').AsInteger := 4;
   end
   else
   begin
@@ -991,7 +991,7 @@ begin
       // if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
          NewOrder
       // else
-      //    Open(AObj.FieldbyName('SALES_ID').AsString);
+      //    Open(AObj.FieldByName('SALES_ID').AsString);
     end;
   end;
 end;
@@ -1015,7 +1015,7 @@ begin
        begin
          bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
          if bs.Locate('GODS_ID',GODS_ID,[]) then
-            result := bs.FieldbyName('NEW_INPRICE').AsFloat
+            result := bs.FieldByName('NEW_INPRICE').AsFloat
          else
             Raise Exception.Create('没找到经营商品');
        end
@@ -1043,9 +1043,9 @@ begin
     Params.ParamByName('TENANT_ID').AsString := token.tenantId;
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
     Params.ParamByName('GODS_ID').AsString := GODS_ID;
-    if AObj.FieldbyName('PRICE_ID').AsString='' then
+    if AObj.FieldByName('PRICE_ID').AsString='' then
     Params.ParamByName('PRICE_ID').AsString := '#' else
-    Params.ParamByName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
+    Params.ParamByName('PRICE_ID').AsString := AObj.FieldByName('PRICE_ID').AsString;
     Params.ParamByName('UNIT_ID').AsString := UNIT_ID;
     dataFactory.MoveToSqlite;
     try
@@ -1054,17 +1054,17 @@ begin
       dataFactory.MoveToDefault;
     end;
     if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
-    edtTable.FieldByName('APRICE').AsFloat := rs.FieldbyName('V_APRICE').AsFloat;
-    edtTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('V_ORG_PRICE').AsFloat;
-    edtTable.FieldbyName('COST_PRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;// GetCostPrice(GODS_ID,edtTable.FieldbyName('BATCH_NO').AsString);
-    edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
-    edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
+    edtTable.FieldByName('APRICE').AsFloat := rs.FieldByName('V_APRICE').AsFloat;
+    edtTable.FieldByName('ORG_PRICE').AsFloat := rs.FieldByName('V_ORG_PRICE').AsFloat;
+    edtTable.FieldByName('COST_PRICE').AsFloat := bs.FieldByName('NEW_INPRICE').AsFloat;// GetCostPrice(GODS_ID,edtTable.FieldByName('BATCH_NO').AsString);
+    edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldByName('V_POLICY_TYPE').AsInteger;
+    edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldByName('V_HAS_INTEGRAL').AsInteger;
     //看是否换购商品
     if bs.FieldByName('USING_BARTER').AsInteger=3 then
        begin
          edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
-         edtTable.FieldByName('GODS_NAME').AsString := '【兑换】'+bs.FieldbyName('GODS_NAME').AsString;
-         edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+         edtTable.FieldByName('GODS_NAME').AsString := '【兑换】'+bs.FieldByName('GODS_NAME').AsString;
+         edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldByName('BARTER_INTEGRAL').AsInteger;
        end
     else
        begin
@@ -1072,11 +1072,11 @@ begin
          edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
        end;
     case DefInvFlag of
-    1: edtTable.FieldbyName('TAX_RATE').AsFloat := 0;
-    2: edtTable.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
-    3: edtTable.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
+    1: edtTable.FieldByName('TAX_RATE').AsFloat := 0;
+    2: edtTable.FieldByName('TAX_RATE').AsFloat := RtlRate2;
+    3: edtTable.FieldByName('TAX_RATE').AsFloat := RtlRate3;
     end;
-    getGodsInfo(edtTable.FieldbyName('GODS_ID').AsString);
+    getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
   finally
     Params.Free;
     rs.Free;
@@ -1087,24 +1087,24 @@ function TfrmPosOutOrder.checkPayment:boolean;
 var fee,allFee,payDibs,salMny:currency;
 begin
   fee :=
-    AObj.FieldbyName('PAY_B').AsFloat+
-    AObj.FieldbyName('PAY_C').AsFloat+
-    AObj.FieldbyName('PAY_E').AsFloat+
-    AObj.FieldbyName('PAY_F').AsFloat+
-    AObj.FieldbyName('PAY_G').AsFloat+
-    AObj.FieldbyName('PAY_H').AsFloat+
-    AObj.FieldbyName('PAY_I').AsFloat+
-    AObj.FieldbyName('PAY_J').AsFloat;
+    AObj.FieldByName('PAY_B').AsFloat+
+    AObj.FieldByName('PAY_C').AsFloat+
+    AObj.FieldByName('PAY_E').AsFloat+
+    AObj.FieldByName('PAY_F').AsFloat+
+    AObj.FieldByName('PAY_G').AsFloat+
+    AObj.FieldByName('PAY_H').AsFloat+
+    AObj.FieldByName('PAY_I').AsFloat+
+    AObj.FieldByName('PAY_J').AsFloat;
 
-  payDibs := AObj.FieldbyName('PAY_DIBS').AsFloat;
-  salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
+  payDibs := AObj.FieldByName('PAY_DIBS').AsFloat;
+  salMny := AObj.FieldByName('SALE_MNY').AsFloat;
 
   case InputFlag of
   13,14:
      begin
        if (TotalFee-payDibs)-fee=0 then
        edtInput.Text := '' else
-       edtInput.Text := formatFloat('#0.00',(TotalFee-payDibs)-fee);
+       edtInput.Text := FormatFloat('#0.00',(TotalFee-payDibs)-fee);
      end
   else
      begin
@@ -1112,7 +1112,7 @@ begin
        if dbState = dsInsert then
           allFee := fee
        else
-          allFee := fee + AObj.FieldbyName('PAY_A').AsFloat;
+          allFee := fee + AObj.FieldByName('PAY_A').AsFloat;
 }
        allFee := fee;
 
@@ -1122,19 +1122,19 @@ begin
           end;
 
        if fee=0 then
-          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat
+          AObj.FieldByName('PAY_A').AsFloat := (TotalFee-payDibs)-AObj.FieldByName('PAY_D').AsFloat
        else
-          AObj.FieldbyName('PAY_A').AsFloat := (TotalFee-payDibs)-fee-AObj.FieldbyName('PAY_D').AsFloat;
+          AObj.FieldByName('PAY_A').AsFloat := (TotalFee-payDibs)-fee-AObj.FieldByName('PAY_D').AsFloat;
 
-       if AObj.FieldbyName('CASH_MNY').AsFloat=0 then AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldbyName('PAY_A').AsFloat;
+       if AObj.FieldByName('CASH_MNY').AsFloat=0 then AObj.FieldByName('CASH_MNY').AsFloat := AObj.FieldByName('PAY_A').AsFloat;
 
-       AObj.FieldbyName('PAY_ZERO').AsFloat := AObj.FieldbyName('CASH_MNY').AsFloat-AObj.FieldbyName('PAY_A').AsFloat;
+       AObj.FieldByName('PAY_ZERO').AsFloat := AObj.FieldByName('CASH_MNY').AsFloat-AObj.FieldByName('PAY_A').AsFloat;
 
-       MarqueeStatus.Caption := '实收现金:'+formatFloat('#0.00',AObj.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+formatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat);
+       MarqueeStatus.Caption := '实收现金:'+FormatFloat('#0.00',AObj.FieldByName('CASH_MNY').AsFloat)+'  找零:'+FormatFloat('#0.0',AObj.FieldByName('PAY_ZERO').AsFloat);
 
        if dllGlobal.GetDoubleScreen = '2' then
           begin
-            PlayerFactory.ShowOddChange(FloatToStr(TotalFee-payDibs),FloatToStr(AObj.FieldbyName('CASH_MNY').AsFloat),FormatFloat('#0.0',AObj.FieldbyName('PAY_ZERO').AsFloat));
+            PlayerFactory.ShowOddChange(FloatToStr(TotalFee-payDibs),FloatToStr(AObj.FieldByName('CASH_MNY').AsFloat),FormatFloat('#0.0',AObj.FieldByName('PAY_ZERO').AsFloat));
           end;
      end;
   end;
@@ -1148,116 +1148,116 @@ var
   w:integer;
 begin
   fee :=
-    AObj.FieldbyName('PAY_B').AsFloat+
-    AObj.FieldbyName('PAY_C').AsFloat+
-    // AObj.FieldbyName('PAY_D').AsFloat+
-    AObj.FieldbyName('PAY_E').AsFloat+
-    AObj.FieldbyName('PAY_F').AsFloat+
-    AObj.FieldbyName('PAY_G').AsFloat+
-    AObj.FieldbyName('PAY_H').AsFloat+
-    AObj.FieldbyName('PAY_I').AsFloat+
-    AObj.FieldbyName('PAY_J').AsFloat;
-  payDibs := AObj.FieldbyName('PAY_DIBS').AsFloat;
-  salMny := AObj.FieldbyName('SALE_MNY').AsFloat;
+    AObj.FieldByName('PAY_B').AsFloat+
+    AObj.FieldByName('PAY_C').AsFloat+
+    // AObj.FieldByName('PAY_D').AsFloat+
+    AObj.FieldByName('PAY_E').AsFloat+
+    AObj.FieldByName('PAY_F').AsFloat+
+    AObj.FieldByName('PAY_G').AsFloat+
+    AObj.FieldByName('PAY_H').AsFloat+
+    AObj.FieldByName('PAY_I').AsFloat+
+    AObj.FieldByName('PAY_J').AsFloat;
+  payDibs := AObj.FieldByName('PAY_DIBS').AsFloat;
+  salMny := AObj.FieldByName('SALE_MNY').AsFloat;
   case dbState of
   dsBrowse:begin
-      // edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
-      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payDibs));
+      // edtPAY_TOTAL.Text := FormatFloat('#0.00',fee+AObj.FieldByName('PAY_A').AsFloat);
+      edtACCT_MNY.Text := FormatFloat('#0.00',(TotalFee-payDibs));
       if TotalFee<>0 then
-         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
+         edtAGIO_RATE.Text := FormatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
       else
          edtAGIO_RATE.Text := '';
     end;
   else
     begin
-      // if (fee=0) and (fnNumber.CompareFloat(AObj.FieldbyName('PAY_A').AsFloat,0)=0) then
+      // if (fee=0) and (fnNumber.CompareFloat(AObj.FieldByName('PAY_A').AsFloat,0)=0) then
       //    begin
-      //      edtPAY_TOTAL.Text := formatFloat('#0.00',(TotalFee-payDibs)-AObj.FieldbyName('PAY_D').AsFloat);
+      //      edtPAY_TOTAL.Text := FormatFloat('#0.00',(TotalFee-payDibs)-AObj.FieldByName('PAY_D').AsFloat);
       //    end
       // else
-      //    edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
-      edtACCT_MNY.Text := formatFloat('#0.00',(TotalFee-payDibs));
+      //    edtPAY_TOTAL.Text := FormatFloat('#0.00',fee+AObj.FieldByName('PAY_A').AsFloat);
+      edtACCT_MNY.Text := FormatFloat('#0.00',(TotalFee-payDibs));
       if TotalFee<>0 then
-         edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
+         edtAGIO_RATE.Text := FormatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)
       else
          edtAGIO_RATE.Text := '';
       if inputFlag in [13,14] then
-         edtInput.Text := formatFloat('#0.00#',(TotalFee-payDibs)-(fee+AObj.FieldbyName('PAY_A').AsFloat));
+         edtInput.Text := FormatFloat('#0.00#',(TotalFee-payDibs)-(fee+AObj.FieldByName('PAY_A').AsFloat));
     end;
   end;
   s := '0000000000';
   w := 0;
   payInfo := '';
-  AObj.FieldbyName('CASH_MNY').AsFloat := AObj.FieldByName('PAY_A').AsFloat;
-  if AObj.FieldbyName('PAY_A').AsFloat<>0 then
+  AObj.FieldByName('CASH_MNY').AsFloat := AObj.FieldByName('PAY_A').AsFloat;
+  if AObj.FieldByName('PAY_A').AsFloat<>0 then
      begin
        s[1] := '1';
        // payment.Caption := '现金收款';
        inc(w);
-       payInfo := payInfo +'现金:'+formatFloat('#0.0#',AObj.FieldbyName('PAY_A').AsFloat)+ ' ';
+       payInfo := payInfo +'现金:'+FormatFloat('#0.0#',AObj.FieldByName('PAY_A').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_B').AsFloat<>0 then
+  if AObj.FieldByName('PAY_B').AsFloat<>0 then
      begin
        s[2] := '1';
        // payment.Caption := getPaymentTitle('B')+'收款';
        inc(w);
-       payInfo := payInfo +getPaymentTitle('B')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_B').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('B')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_B').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_C').AsFloat<>0 then
+  if AObj.FieldByName('PAY_C').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('C')+'收款';
        inc(w);
        s[3] := '1';
-       payInfo := payInfo +getPaymentTitle('C')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_C').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('C')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_C').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_D').AsFloat<>0 then
+  if AObj.FieldByName('PAY_D').AsFloat<>0 then
      begin
         // payment.Caption := getPaymentTitle('D')+'欠款';
        inc(w);
        s[4] := '0';
-       payInfo := payInfo +getPaymentTitle('D')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_D').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('D')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_D').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_E').AsFloat<>0 then
+  if AObj.FieldByName('PAY_E').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('E')+'收款';
        inc(w);
        s[5] := '1';
-       payInfo := payInfo +getPaymentTitle('E')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_E').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('E')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_E').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_F').AsFloat<>0 then
+  if AObj.FieldByName('PAY_F').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('F')+'收款';
        inc(w);
        s[6] := '1';
-       payInfo := payInfo +getPaymentTitle('F')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_F').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('F')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_F').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_G').AsFloat<>0 then
+  if AObj.FieldByName('PAY_G').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('G')+'收款';
        inc(w);
        s[7] := '1';
-       payInfo := payInfo +getPaymentTitle('G')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_G').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('G')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_G').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_H').AsFloat<>0 then
+  if AObj.FieldByName('PAY_H').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('H')+'收款';
        inc(w);
        s[8] := '1';
-       payInfo := payInfo +getPaymentTitle('H')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_H').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('H')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_H').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_I').AsFloat<>0 then
+  if AObj.FieldByName('PAY_I').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('I')+'收款';
        inc(w);
        s[9] := '1';
-       payInfo := payInfo +getPaymentTitle('I')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_I').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('I')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_I').AsFloat)+ ' ';
      end;
-  if AObj.FieldbyName('PAY_J').AsFloat<>0 then
+  if AObj.FieldByName('PAY_J').AsFloat<>0 then
      begin
        // payment.Caption := getPaymentTitle('J')+'收款';
        inc(w);
        s[10] := '1';
-       payInfo := payInfo +getPaymentTitle('J')+':'+formatFloat('#0.0#',AObj.FieldbyName('PAY_J').AsFloat)+ ' ';
+       payInfo := payInfo +getPaymentTitle('J')+':'+FormatFloat('#0.0#',AObj.FieldByName('PAY_J').AsFloat)+ ' ';
      end;
   // if w>1 then payment.Caption := '组合收款';
   if totalAmt<>0 then
@@ -1267,7 +1267,7 @@ begin
         else
            begin
             if TotalFee<>0 then
-               MarqueeStatus.Caption := '应收:'+formatFloat('#0.00',(TotalFee-payDibs))+'  折扣:'+formatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)+'%'
+               MarqueeStatus.Caption := '应收:'+FormatFloat('#0.00',(TotalFee-payDibs))+'  折扣:'+FormatFloat('#0.0',(TotalFee-payDibs)*100/TotalFee)+'%'
             else
                MarqueeStatus.Caption := '';
            end;
@@ -1285,7 +1285,7 @@ begin
   while not rs.Eof do
     begin
       if result <> '' then result := result+' ';
-      result := result +rs.FieldbyName('CODE_ID').AsString+'.'+rs.FieldbyName('CODE_NAME').AsString;
+      result := result +rs.FieldByName('CODE_ID').AsString+'.'+rs.FieldByName('CODE_NAME').AsString;
       rs.Next;
     end;
 end;
@@ -1332,7 +1332,7 @@ begin
   if PageControl.ActivePageIndex <> 0 then Exit;
   if Key = VK_F5 then
      begin
-       if edtTable.FieldbyName('IS_PRESENT').AsString = '0' then
+       if edtTable.FieldByName('IS_PRESENT').AsString = '0' then
           DoIsPresent('2')
        else
           DoIsPresent('1');
@@ -1415,38 +1415,38 @@ begin
        begin
          rs.Locate('UNION_ID','#',[]); 
        end;
-    if rs.FieldbyName('TENANT_ID').AsString=token.tenantId then
+    if rs.FieldByName('TENANT_ID').AsString=token.tenantId then
        begin
-         AObj.FieldbyName('UNION_ID').AsString := '#';
+         AObj.FieldByName('UNION_ID').AsString := '#';
          bs := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
-         if bs.Locate('CLIENT_ID',rs.FieldbyName('CLIENT_ID').AsString,[]) then
+         if bs.Locate('CLIENT_ID',rs.FieldByName('CLIENT_ID').AsString,[]) then
             begin
-               AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
-               AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
-               AObj.FieldbyName('CLIENT_CODE').AsString := bs.FieldbyName('CLIENT_CODE').AsString;
-               AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+               AObj.FieldByName('CLIENT_ID').AsString := bs.FieldByName('CLIENT_ID').AsString;
+               AObj.FieldByName('CLIENT_ID_TEXT').AsString := bs.FieldByName('CLIENT_NAME').AsString;
+               AObj.FieldByName('CLIENT_CODE').AsString := bs.FieldByName('CLIENT_CODE').AsString;
+               AObj.FieldByName('PRICE_ID').AsString := bs.FieldByName('PRICE_ID').AsString;
                if dllGlobal.GetDoubleScreen = '2' then
                   begin
-                    AObj.FieldbyName('ACCU_INTEGRAL').AsInteger := GetCustIntegral;
+                    AObj.FieldByName('ACCU_INTEGRAL').AsInteger := GetCustIntegral;
                   end;
             end;
        end
     else
        begin
          if not token.online then Raise Exception.Create('脱机状态不能使用商盟卡');  
-         AObj.FieldbyName('UNION_ID').AsString := rs.FieldbyName('UNION_ID').AsString;
-         AObj.FieldbyName('PRICE_ID').AsString := rs.FieldbyName('UNION_ID').AsString;
-         AObj.FieldbyName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
+         AObj.FieldByName('UNION_ID').AsString := rs.FieldByName('UNION_ID').AsString;
+         AObj.FieldByName('PRICE_ID').AsString := rs.FieldByName('UNION_ID').AsString;
+         AObj.FieldByName('CLIENT_ID').AsString := rs.FieldByName('CLIENT_ID').AsString;
          rs.Close;
          rs.SQL.Text := 'select CUST_NAME,CUST_CODE from PUB_CUSTOMER where TENANT_ID in ('+dllGlobal.GetUnionTenantInWhere+') and CUST_ID=:CUST_ID';
-         rs.ParamByName('CUST_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
+         rs.ParamByName('CUST_ID').AsString := AObj.FieldByName('CLIENT_ID').AsString;
          dllGlobal.OpenRemote(rs);
-         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CUST_NAME').AsString;
-         AObj.FieldbyName('CLIENT_CODE').AsString := rs.FieldbyName('CUST_CODE').AsString;
+         AObj.FieldByName('CLIENT_ID_TEXT').AsString := rs.FieldByName('CUST_NAME').AsString;
+         AObj.FieldByName('CLIENT_CODE').AsString := rs.FieldByName('CUST_CODE').AsString;
        end;
-    edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
-    edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
-    edtCARD_NO.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
+    edtCLIENT_ID.KeyValue := AObj.FieldByName('CLIENT_ID').AsString;
+    edtCLIENT_ID.Text := AObj.FieldByName('CLIENT_ID_TEXT').AsString;
+    edtCARD_NO.Text := AObj.FieldByName('CLIENT_CODE').AsString;
     CalcPrice;
   finally
     rs.Free;
@@ -1459,7 +1459,7 @@ begin
   rs := dllGlobal.GetZQueryFromName('CA_USERS');
   if rs.Locate('ACCOUNT',s,[]) then
      begin
-       AObj.FieldByName('GUIDE_USER').AsString := rs.FieldbyName('USER_ID').AsString;
+       AObj.FieldByName('GUIDE_USER').AsString := rs.FieldByName('USER_ID').AsString;
      end;
 end;
 
@@ -1473,12 +1473,12 @@ begin
   if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...');
   if TotalAmt=0 then Raise Exception.Create('不能挂一张空单据...');
   WriteToObject(AObj,self);
-  AObj.FieldbyName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
-  AObj.FieldbyName('SHOP_ID').AsString := token.shopId;
+  AObj.FieldByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
+  AObj.FieldByName('SHOP_ID').AsString := token.shopId;
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
-  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+  AObj.FieldByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := token.UserID;
-  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
+  AObj.FieldByName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',dllGlobal.SysDate);
   AObj.FieldByName('CHK_USER').AsString := token.userId;
   AObj.FieldByName('LOCUS_STATUS').AsString := '3';
   edtTable.DisableControls;
@@ -1564,16 +1564,16 @@ begin
      end;
   if not IsAgio then
      begin
-       AObj.FieldbyName('PAY_DIBS').AsFloat := totalFee-mny;
-       edtACCT_MNY.Text := formatFloat('#0.00',mny);
+       AObj.FieldByName('PAY_DIBS').AsFloat := totalFee-mny;
+       edtACCT_MNY.Text := FormatFloat('#0.00',mny);
      end
   else
      begin
-       AObj.FieldbyName('PAY_DIBS').AsString := formatFloat('#0.00',totalfee-(totalFee*mny/100));
-       edtACCT_MNY.Text := formatFloat('#0.00',totalfee-AObj.FieldbyName('PAY_DIBS').AsFloat);
+       AObj.FieldByName('PAY_DIBS').AsString := FormatFloat('#0.00',totalfee-(totalFee*mny/100));
+       edtACCT_MNY.Text := FormatFloat('#0.00',totalfee-AObj.FieldByName('PAY_DIBS').AsFloat);
      end;
   if TotalFee<>0 then
-     edtAGIO_RATE.Text := formatFloat('#0.0',(TotalFee-AObj.FieldbyName('PAY_DIBS').AsFloat)*100/TotalFee)
+     edtAGIO_RATE.Text := FormatFloat('#0.0',(TotalFee-AObj.FieldByName('PAY_DIBS').AsFloat)*100/TotalFee)
   else
      edtAGIO_RATE.Text := '';
   DoShowPayment;
@@ -1598,12 +1598,12 @@ begin
              Exit;
            end
         else if cdsTable.RecordCount = 1 then
-           s := cdsTable.FieldbyName('FILENAME').AsString
+           s := cdsTable.FieldByName('FILENAME').AsString
         else
            begin
              if ShowModal=MROK then
                 begin
-                  s := cdsTable.FieldbyName('FILENAME').AsString
+                  s := cdsTable.FieldByName('FILENAME').AsString
                 end
              else
                 Exit;
@@ -1629,7 +1629,7 @@ begin
     mm.Free;
   end;
   edtTable.Last;
-  RowId := edtTable.FieldbyName('SEQNO').AsInteger;
+  RowId := edtTable.FieldByName('SEQNO').AsInteger;
   payDibs := AObj.FieldByName('PAY_DIBS').AsFloat;
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\H'+s);
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\sales\D'+s);
@@ -1705,7 +1705,7 @@ begin
      begin
        if edtInput.CanFocus then edtInput.SetFocus;
        if CheckNoData then raise Exception.Create('您还没有输入商品，不能做此操作。');
-       if TfrmPayMent.payment(self,totalFee-AObj.FieldbyName('PAY_DIBS').AsFloat,AObj) then
+       if TfrmPayMent.payment(self,totalFee-AObj.FieldByName('PAY_DIBS').AsFloat,AObj) then
           begin
             inputFlag := 13;
             try
@@ -1778,13 +1778,13 @@ begin
   if Present in [2] then
      begin
        bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldByName('GODS_NAME').AsString+'”');
        if bs.FieldByName('USING_BARTER').AsInteger in [2,3] then
           begin
             edtTable.Edit;
-            edtTable.FieldByName('GODS_NAME').AsString := '【兑换】'+bs.FieldbyName('GODS_NAME').AsString;
+            edtTable.FieldByName('GODS_NAME').AsString := '【兑换】'+bs.FieldByName('GODS_NAME').AsString;
             edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
-            edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+            edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldByName('BARTER_INTEGRAL').AsInteger;
             if bs.FieldByName('USING_BARTER').AsInteger=2 then
                begin
                  edtTable.FieldByName('APRICE').AsFloat := 0;
@@ -1812,16 +1812,16 @@ begin
     edtTable.First;
     while not edtTable.Eof do
       begin
-        if (edtTable.FieldbyName('GODS_ID').AsString <> '') and (edtTable.FieldbyName('BOM_ID').AsString = '') and (edtTable.FieldByName('POLICY_TYPE').AsInteger<>4) then
+        if (edtTable.FieldByName('GODS_ID').AsString <> '') and (edtTable.FieldByName('BOM_ID').AsString = '') and (edtTable.FieldByName('POLICY_TYPE').AsInteger<>4) then
         begin
-          if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
+          if rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then
              begin
                edtTable.Edit;
                edtTable.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
                edtTable.Post;
              end;
-          InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
-          PriceToCalc(edtTable.FieldbyName('APrice').AsFloat);
+          InitPrice(edtTable.FieldByName('GODS_ID').AsString,edtTable.FieldByName('UNIT_ID').AsString);
+          PriceToCalc(edtTable.FieldByName('APrice').AsFloat);
         end;
         edtTable.Next;
       end;
@@ -1941,7 +1941,7 @@ procedure TfrmPosOutOrder.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  open(cdsList.FieldbyName('SALES_ID').AsString);
+  open(cdsList.FieldByName('SALES_ID').AsString);
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
 end;
@@ -1998,7 +1998,7 @@ var
 begin
   rs := dllGlobal.GetZQueryFromName('PUB_PAYMENT');
   if rs.Locate('CODE_ID',pay,[]) then
-     result := rs.FieldbyName('CODE_NAME').AsString
+     result := rs.FieldByName('CODE_NAME').AsString
   else
      Raise Exception.Create('不支持的收款方式'); 
 end;
@@ -2006,7 +2006,7 @@ end;
 procedure TfrmPosOutOrder.RzToolButton2Click(Sender: TObject);
 begin
   if cdsList.IsEmpty then Exit;
-  open(cdsList.FieldbyName('SALES_ID').AsString);
+  open(cdsList.FieldByName('SALES_ID').AsString);
   EditOrder;
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
@@ -2016,7 +2016,7 @@ procedure TfrmPosOutOrder.RzToolButton3Click(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  open(cdsList.FieldbyName('SALES_ID').AsString);
+  open(cdsList.FieldByName('SALES_ID').AsString);
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
 end;
@@ -2025,7 +2025,7 @@ procedure TfrmPosOutOrder.RzToolButton1Click(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  open(cdsList.FieldbyName('SALES_ID').AsString);
+  open(cdsList.FieldByName('SALES_ID').AsString);
   DeleteOrder;
   NewOrder;
 end;
@@ -2040,16 +2040,16 @@ var r:currency;
     fee,A:currency;
 begin
   fee :=
-    AObj.FieldbyName('PAY_B').AsFloat+
-    AObj.FieldbyName('PAY_C').AsFloat+
-    AObj.FieldbyName('PAY_D').AsFloat+
-    AObj.FieldbyName('PAY_E').AsFloat+
-    AObj.FieldbyName('PAY_F').AsFloat+
-    AObj.FieldbyName('PAY_G').AsFloat+
-    AObj.FieldbyName('PAY_H').AsFloat+
-    AObj.FieldbyName('PAY_I').AsFloat+
-    AObj.FieldbyName('PAY_J').AsFloat;
-  A := (AObj.FieldbyName('SALE_MNY').AsFloat-AObj.FieldbyName('PAY_DIBS').AsFloat)-fee;
+    AObj.FieldByName('PAY_B').AsFloat+
+    AObj.FieldByName('PAY_C').AsFloat+
+    AObj.FieldByName('PAY_D').AsFloat+
+    AObj.FieldByName('PAY_E').AsFloat+
+    AObj.FieldByName('PAY_F').AsFloat+
+    AObj.FieldByName('PAY_G').AsFloat+
+    AObj.FieldByName('PAY_H').AsFloat+
+    AObj.FieldByName('PAY_I').AsFloat+
+    AObj.FieldByName('PAY_J').AsFloat;
+  A := (AObj.FieldByName('SALE_MNY').AsFloat-AObj.FieldByName('PAY_DIBS').AsFloat)-fee;
   try
     r := strtoFloat(s);
   except
@@ -2146,12 +2146,12 @@ procedure TfrmPosOutOrder.getGodsInfo(godsId: string);
 //  SourceScale:real;
 begin
 {
-  CacheFactory.getGodsPngImage(edtTable.FieldbyName('GODS_ID').AsString,godsPhoto.Picture);
+  CacheFactory.getGodsPngImage(edtTable.FieldByName('GODS_ID').AsString,godsPhoto.Picture);
   godsPhoto.Top := 0;
   godsPhoto.Left := (godsPhotoBk.Width-godsPhoto.Width) div 2-1;
 
-  godsName.Caption := '品名:'+edtTable.FieldbyName('GODS_NAME').AsString;
-  godsPrice.Caption := '价格:'+edtTable.FieldbyName('APRICE').AsString;
+  godsName.Caption := '品名:'+edtTable.FieldByName('GODS_NAME').AsString;
+  godsPrice.Caption := '价格:'+edtTable.FieldByName('APRICE').AsString;
   rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Exit;
   if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
@@ -2178,7 +2178,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
     rs.ParamByName('GODS_ID').AsString := godsId;
     dataFactory.Open(rs);
-    godsAmount.Caption := '库存:'+formatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
+    godsAmount.Caption := '库存:'+FormatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
   finally
     rs.Free;
   end;
@@ -2188,7 +2188,7 @@ end;
 procedure TfrmPosOutOrder.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
-  getGodsInfo(edtTable.FieldbyName('GODS_ID').AsString);
+  getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
 end;
 
 procedure TfrmPosOutOrder.cdsListBeforeOpen(DataSet: TDataSet);
@@ -2213,13 +2213,13 @@ begin
   bs := dllGlobal.GetZQueryFromName('PUB_CUSTOMER');
   if bs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then
      begin
-        AObj.FieldbyName('CLIENT_ID').AsString := bs.FieldbyName('CLIENT_ID').AsString;
-        AObj.FieldbyName('CLIENT_CODE').AsString := bs.FieldbyName('CLIENT_CODE').AsString;
-        AObj.FieldbyName('CLIENT_ID_TEXT').AsString := bs.FieldbyName('CLIENT_NAME').AsString;
-        AObj.FieldbyName('PRICE_ID').AsString := bs.FieldbyName('PRICE_ID').AsString;
+        AObj.FieldByName('CLIENT_ID').AsString := bs.FieldByName('CLIENT_ID').AsString;
+        AObj.FieldByName('CLIENT_CODE').AsString := bs.FieldByName('CLIENT_CODE').AsString;
+        AObj.FieldByName('CLIENT_ID_TEXT').AsString := bs.FieldByName('CLIENT_NAME').AsString;
+        AObj.FieldByName('PRICE_ID').AsString := bs.FieldByName('PRICE_ID').AsString;
         if dllGlobal.GetDoubleScreen = '2' then
            begin
-             AObj.FieldbyName('ACCU_INTEGRAL').AsInteger := GetCustIntegral;
+             AObj.FieldByName('ACCU_INTEGRAL').AsInteger := GetCustIntegral;
            end;
         CalcPrice;
      end
@@ -2279,9 +2279,9 @@ var tid,oid:string;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请在历史单据中打印...');
-  if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
+  if AObj.FieldByName('SALES_ID').AsString = '' then Exit;
   tid := token.tenantId;
-  oid := AObj.FieldbyName('SALES_ID').AsString;
+  oid := AObj.FieldByName('SALES_ID').AsString;
   DevFactory.PrintSaleTicket(tid,oid,self.Font);
 end;
 
@@ -2290,9 +2290,9 @@ var tid,oid:string;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请在历史单据中打印...');
-  if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
+  if AObj.FieldByName('SALES_ID').AsString = '' then Exit;
   tid := token.tenantId;
-  oid := AObj.FieldbyName('SALES_ID').AsString;
+  oid := AObj.FieldByName('SALES_ID').AsString;
   TfrmOrderPreview.PrintReport(self,1,frfSalesOrder,tid,oid);
 end;
 
@@ -2303,12 +2303,12 @@ var
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请在历史单据中预览...');
-  if AObj.FieldbyName('SALES_ID').AsString = '' then Exit;
+  if AObj.FieldByName('SALES_ID').AsString = '' then Exit;
   r := TfrmSaveDesigner.ShowDialog(self,'frfSalesOrder',nil);
   if r < 0 then Exit;
   GlobalIndex := r;
   tid := token.tenantId;
-  oid := AObj.FieldbyName('SALES_ID').AsString;
+  oid := AObj.FieldByName('SALES_ID').AsString;
   TfrmOrderPreview.ShowReport(self,1,frfSalesOrder,tid,oid,'销售单');
 end;
 
@@ -2353,25 +2353,25 @@ begin
      begin
        if abs(StrtoFloatDef(edtACCT_MNY.Text,0))>TotalFee then edtACCT_MNY.Text := FloatToStr(TotalFee);
        r := StrtoFloatDef(edtACCT_MNY.Text,0);
-       AObj.FieldbyName('PAY_DIBS').AsFloat := TotalFee-r;
+       AObj.FieldByName('PAY_DIBS').AsFloat := TotalFee-r;
        if TotalFee<>0 then
-          edtAGIO_RATE.Text := formatFloat('#0.0',r*100/TotalFee)
+          edtAGIO_RATE.Text := FormatFloat('#0.0',r*100/TotalFee)
        else
           edtAGIO_RATE.Text := '';
        fee :=
-        AObj.FieldbyName('PAY_B').AsFloat+
-        AObj.FieldbyName('PAY_C').AsFloat+
-        AObj.FieldbyName('PAY_D').AsFloat+
-        AObj.FieldbyName('PAY_E').AsFloat+
-        AObj.FieldbyName('PAY_F').AsFloat+
-        AObj.FieldbyName('PAY_G').AsFloat+
-        AObj.FieldbyName('PAY_H').AsFloat+
-        AObj.FieldbyName('PAY_I').AsFloat+
-        AObj.FieldbyName('PAY_J').AsFloat;
+        AObj.FieldByName('PAY_B').AsFloat+
+        AObj.FieldByName('PAY_C').AsFloat+
+        AObj.FieldByName('PAY_D').AsFloat+
+        AObj.FieldByName('PAY_E').AsFloat+
+        AObj.FieldByName('PAY_F').AsFloat+
+        AObj.FieldByName('PAY_G').AsFloat+
+        AObj.FieldByName('PAY_H').AsFloat+
+        AObj.FieldByName('PAY_I').AsFloat+
+        AObj.FieldByName('PAY_J').AsFloat;
 //       if fee=0 then
-//          edtPAY_TOTAL.Text := formatFloat('#0.00',r)
+//          edtPAY_TOTAL.Text := FormatFloat('#0.00',r)
 //       else
-//          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+//          edtPAY_TOTAL.Text := FormatFloat('#0.00',fee+AObj.FieldByName('PAY_A').AsFloat);
        DoShowPayment;
      end;
 end;
@@ -2384,22 +2384,22 @@ begin
   if Key=#13 then
      begin
        r := StrtoFloatDef(edtAGIO_RATE.Text,0);
-       AObj.FieldbyName('PAY_DIBS').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
-       edtACCT_MNY.Text := formatFloat('#0.00',TotalFee-AObj.FieldbyName('PAY_DIBS').AsFloat);
+       AObj.FieldByName('PAY_DIBS').AsFloat := TotalFee-roundTo(TotalFee*r/100,-2);
+       edtACCT_MNY.Text := FormatFloat('#0.00',TotalFee-AObj.FieldByName('PAY_DIBS').AsFloat);
        fee :=
-        AObj.FieldbyName('PAY_B').AsFloat+
-        AObj.FieldbyName('PAY_C').AsFloat+
-        AObj.FieldbyName('PAY_D').AsFloat+
-        AObj.FieldbyName('PAY_E').AsFloat+
-        AObj.FieldbyName('PAY_F').AsFloat+
-        AObj.FieldbyName('PAY_G').AsFloat+
-        AObj.FieldbyName('PAY_H').AsFloat+
-        AObj.FieldbyName('PAY_I').AsFloat+
-        AObj.FieldbyName('PAY_J').AsFloat;
+        AObj.FieldByName('PAY_B').AsFloat+
+        AObj.FieldByName('PAY_C').AsFloat+
+        AObj.FieldByName('PAY_D').AsFloat+
+        AObj.FieldByName('PAY_E').AsFloat+
+        AObj.FieldByName('PAY_F').AsFloat+
+        AObj.FieldByName('PAY_G').AsFloat+
+        AObj.FieldByName('PAY_H').AsFloat+
+        AObj.FieldByName('PAY_I').AsFloat+
+        AObj.FieldByName('PAY_J').AsFloat;
 //       if fee=0 then
 //          edtPAY_TOTAL.Text := edtACCT_MNY.Text
 //       else
-//          edtPAY_TOTAL.Text := formatFloat('#0.00',fee+AObj.FieldbyName('PAY_A').AsFloat);
+//          edtPAY_TOTAL.Text := FormatFloat('#0.00',fee+AObj.FieldByName('PAY_A').AsFloat);
        DoShowPayment;
      end;
 end;
@@ -2757,7 +2757,7 @@ var
    rs,edt:TZQuery;
 begin
    inherited;
-   Open(cdsList.FieldbyName('SALES_ID').AsString);
+   Open(cdsList.FieldByName('SALES_ID').AsString);
    if (MessageBox(Handle,pchar('是否进行退货或换货操作？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
    _obj := TRecord_.Create;
    rs := TZQuery.Create(nil);
@@ -2771,15 +2771,15 @@ begin
      NewOrder;
      edtTable.First;
      while not edtTable.Eof do edtTable.Delete;
-     AObj.FieldbyName('CLIENT_ID').AsString := hdr.FieldbyName('CLIENT_ID').AsString;
-     AObj.FieldbyName('CLIENT_ID_TEXT').AsString := hdr.FieldbyName('CLIENT_ID_TEXT').AsString;
-     AObj.FieldbyName('CLIENT_CODE').AsString := hdr.FieldbyName('CLIENT_CODE').AsString;
-     AObj.FieldbyName('UNION_ID').AsString := hdr.FieldbyName('UNION_ID').AsString;
-     AObj.FieldbyName('PRICE_ID').AsString := hdr.FieldbyName('PRICE_ID').AsString;
-     AObj.FieldbyName('PAY_DIBS').AsString := hdr.FieldbyName('PAY_DIBS').AsString;
-     edtCLIENT_ID.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
-     edtCLIENT_ID.KeyValue := AObj.FieldbyName('CLIENT_ID').AsString;
-     edtCARD_NO.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
+     AObj.FieldByName('CLIENT_ID').AsString := hdr.FieldByName('CLIENT_ID').AsString;
+     AObj.FieldByName('CLIENT_ID_TEXT').AsString := hdr.FieldByName('CLIENT_ID_TEXT').AsString;
+     AObj.FieldByName('CLIENT_CODE').AsString := hdr.FieldByName('CLIENT_CODE').AsString;
+     AObj.FieldByName('UNION_ID').AsString := hdr.FieldByName('UNION_ID').AsString;
+     AObj.FieldByName('PRICE_ID').AsString := hdr.FieldByName('PRICE_ID').AsString;
+     AObj.FieldByName('PAY_DIBS').AsString := hdr.FieldByName('PAY_DIBS').AsString;
+     edtCLIENT_ID.Text := AObj.FieldByName('CLIENT_ID_TEXT').AsString;
+     edtCLIENT_ID.KeyValue := AObj.FieldByName('CLIENT_ID').AsString;
+     edtCARD_NO.Text := AObj.FieldByName('CLIENT_CODE').AsString;
      edt.First;
      while not edt.Eof do
         begin
@@ -2789,11 +2789,11 @@ begin
          _obj.WriteToDataSet(edtTable,false);
          inc(ROWID);
          edtTable.FieldByName('SEQNO').AsInteger := ROWID;
-         edtTable.FieldbyName('AMOUNT').AsFloat := - edt.FieldbyName('AMOUNT').AsFloat;
-         AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+         edtTable.FieldByName('AMOUNT').AsFloat := - edt.FieldByName('AMOUNT').AsFloat;
+         AmountToCalc(edtTable.FieldByName('AMOUNT').AsFloat);
          edtTable.Post;
          rs.Filtered := false;
-         rs.Filter := 'SEQNO='+_obj.FieldbyName('SEQNO').AsString;
+         rs.Filter := 'SEQNO='+_obj.FieldByName('SEQNO').AsString;
          rs.Filtered := true;
          _obj.Clear;
          rs.First;
@@ -2802,17 +2802,17 @@ begin
              edtProperty.Append;
              _obj.ReadFromDataSet(rs);
              _obj.WriteToDataSet(edtProperty,false);
-             edtProperty.FieldbyName('AMOUNT').AsFloat := - edtProperty.FieldbyName('AMOUNT').AsFloat;
-             edtProperty.FieldbyName('CALC_AMOUNT').AsFloat := - edtProperty.FieldbyName('CALC_AMOUNT').AsFloat;
+             edtProperty.FieldByName('AMOUNT').AsFloat := - edtProperty.FieldByName('AMOUNT').AsFloat;
+             edtProperty.FieldByName('CALC_AMOUNT').AsFloat := - edtProperty.FieldByName('CALC_AMOUNT').AsFloat;
              edtProperty.Post;
              rs.Next;
            end;
         edt.Next;
      end;
      InitRecord;
-     RzPanel10.Visible := (AObj.FieldbyName('CLIENT_ID').AsString='');
+     RzPanel10.Visible := (AObj.FieldByName('CLIENT_ID').AsString='');
      Calc;
-     AObj.FieldbyName('PAY_DIBS').AsFloat := -hdr.FieldbyName('PAY_DIBS').AsFloat;
+     AObj.FieldByName('PAY_DIBS').AsFloat := -hdr.FieldByName('PAY_DIBS').AsFloat;
      DoShowPayment;
    finally
      rs.Free;
@@ -2840,10 +2840,10 @@ begin
        begin
          edtCLIENT_ID.KeyValue := SObj.FieldByName('CUST_ID').AsString;
          edtCLIENT_ID.Text := SObj.FieldByName('CUST_NAME').AsString;
-         AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldByName('PRICE_ID').AsString;
-         AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CUST_ID').AsString;
-         AObj.FieldbyName('CLIENT_CODE').AsString := SObj.FieldbyName('CUST_CODE').AsString;
-         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := SObj.FieldbyName('CUST_NAME').AsString; 
+         AObj.FieldByName('PRICE_ID').AsString := SObj.FieldByName('PRICE_ID').AsString;
+         AObj.FieldByName('CLIENT_ID').AsString := SObj.FieldByName('CUST_ID').AsString;
+         AObj.FieldByName('CLIENT_CODE').AsString := SObj.FieldByName('CUST_CODE').AsString;
+         AObj.FieldByName('CLIENT_ID_TEXT').AsString := SObj.FieldByName('CUST_NAME').AsString; 
          CalcPrice;
        end;
   finally
@@ -2885,7 +2885,7 @@ end;
 procedure TfrmPosOutOrder.PriceToGods(id: string);
 begin
   if dbState = dsBrowse then Exit;
-  if edtTable.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  if edtTable.FieldByName('GODS_ID').AsString='' then Raise Exception.Create('请选择商品后再执行此操作');
   if CheckNotChangePrice(edtTable.FieldByName('GODS_ID').AsString) then
      Raise Exception.Create('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！');
   inherited;
@@ -2924,7 +2924,7 @@ end;
 procedure TfrmPosOutOrder.AddRecord(AObj: TRecord_; UNIT_ID: string);
 begin
   inherited;
-  ShowCgtPic(AObj.FieldbyName('GODS_ID').AsString);
+  ShowCgtPic(AObj.FieldByName('GODS_ID').AsString);
 end;
 
 procedure TfrmPosOutOrder.fndGODS_IDSaveValue(Sender: TObject);
@@ -2976,10 +2976,10 @@ begin
   try
     rs.SQL.Text := 'select INTEGRAL from PUB_IC_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and UNION_ID=:UNION_ID';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    rs.ParamByName('CLIENT_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
+    rs.ParamByName('CLIENT_ID').AsString := AObj.FieldByName('CLIENT_ID').AsString;
     rs.ParamByName('UNION_ID').AsString := '#';
     dataFactory.Open(rs);
-    result := rs.FieldbyName('INTEGRAL').AsInteger;
+    result := rs.FieldByName('INTEGRAL').AsInteger;
   finally
     rs.Free;
   end;

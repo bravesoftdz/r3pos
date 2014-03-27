@@ -100,17 +100,16 @@ var
   vBegDate,            //查询开始日期
   vEndDate: integer;   //查询结束日期
   RckMaxDate: integer; //台帐最大日期
+  SortWhere: string;
 begin
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-  // if RckMaxDate < vEndDate then
-     begin
-       //没有计算，需重计算流水
-       if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
-     end;
+
+  if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
+
   cdsReport1.close;
   WTitle1.Clear;
   WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
@@ -131,8 +130,22 @@ begin
      begin
        cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID';
      end;
-  if FSortId <> '' then
-     cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SORT_ID=:SORT_ID';
+
+  if FSortId = '1000006' then
+     begin
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and RELATION_ID=1000006';
+       SortWhere := ' where b.RELATION_ID=1000006 ';
+     end
+  else if FSortId = '0000000' then
+     begin
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and RELATION_ID<>1000006';
+       SortWhere := ' where b.RELATION_ID<>1000006 ';
+     end
+  else if FSortId <> '' then
+     begin
+       SortWhere := ' where b.SORT_ID1=:SORT_ID1 ';
+     end;
+
   cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID,BATCH_NO';
 
   if FSortId = '' then
@@ -143,7 +156,8 @@ begin
         'j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
         'b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID from ('+cdsReport1.SQL.Text+') j '+
         'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,CALC_UNITS',true)+
-        ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID order by b.GODS_CODE'
+        ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+        'order by b.GODS_CODE'
         )
   else
      cdsReport1.SQL.Text :=
@@ -152,16 +166,17 @@ begin
         'j.BEG_AMOUNT+j.IN_AMOUNT-j.OUT_AMOUNT as BAL_AMOUNT,'+
         'j.BEG_MONEY+j.IN_MONEY-j.OUT_MONEY as BAL_MONEY,'+
         'b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID from ('+cdsReport1.SQL.Text+') j '+
-        'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,CALC_UNITS,SORT_ID1',true)+
-        ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where b.SORT_ID1=:SORT_ID1 order by b.GODS_CODE'
+        'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,CALC_UNITS,SORT_ID1,RELATION_ID',true)+
+        ') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+SortWhere+
+        'order by b.GODS_CODE'
         );
   cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport1.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMM01',D1.Date));
   cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
+  if cdsReport1.Params.FindParam('SORT_ID')<>nil then cdsReport1.ParamByName('SORT_ID').AsString := FSortID;
   if cdsReport1.Params.FindParam('SORT_ID1')<>nil then cdsReport1.ParamByName('SORT_ID1').AsString := FSortId;
   if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
   if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
-  if cdsReport1.Params.FindParam('SORT_ID')<>nil then cdsReport1.ParamByName('SORT_ID').AsString := FSortID;
   dataFactory.Open(cdsReport1);
 end;
 
@@ -434,7 +449,8 @@ begin
   inherited;
   Obj := TRecord_.Create;
   try
-    if frmSortDropFrom.DropForm(sortDrop,obj) then
+    frmSortDropFrom.SelectRootOrLeaf := true;
+    if frmSortDropFrom.DropForm(sortDrop,Obj) then
     begin
       if Obj.Count>0 then
          begin

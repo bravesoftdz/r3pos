@@ -4,7 +4,6 @@ inherited frmSaleOrder: TfrmSaleOrder
   Caption = #38144#21806#21333
   ClientHeight = 499
   ClientWidth = 1039
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -3356,7 +3355,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   Title.Caption = #24207#21495
                   Title.Color = 15787416
-                  Width = 29
+                  Width = 30
                 end
                 item
                   Alignment = taCenter
@@ -3368,7 +3367,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   Title.Caption = #21333#21495
                   Title.Color = 15787416
-                  Width = 107
+                  Width = 100
                 end
                 item
                   DisplayFormat = '0000-00-00'
@@ -3385,7 +3384,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   Title.Caption = #23458#25143#21517#31216
                   Title.Color = 15787416
-                  Width = 160
+                  Width = 110
                 end
                 item
                   Alignment = taRightJustify
@@ -3398,6 +3397,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   Title.Caption = #38144#21806#37329#39069
                   Title.Color = 15787416
+                  Width = 65
                 end
                 item
                   Alignment = taRightJustify
@@ -3410,6 +3410,7 @@ inherited frmSaleOrder: TfrmSaleOrder
                   Footers = <>
                   Title.Caption = #24212#25910#37329#39069
                   Title.Color = 15787416
+                  Width = 65
                 end
                 item
                   Alignment = taRightJustify
@@ -3434,11 +3435,19 @@ inherited frmSaleOrder: TfrmSaleOrder
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'CREA_DATE'
+                  Footers = <>
+                  Title.Caption = #21046#21333#26085#26399
+                  Title.Color = 15787416
+                  Width = 135
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #35828#26126
                   Title.Color = 15787416
-                  Width = 84
+                  Width = 85
                 end
                 item
                   EditButtons = <>

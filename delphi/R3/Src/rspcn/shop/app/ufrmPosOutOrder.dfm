@@ -5,7 +5,6 @@ inherited frmPosOutOrder: TfrmPosOutOrder
   ClientHeight = 558
   ClientWidth = 997
   Color = 15461355
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -3977,7 +3976,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Footers = <>
                   Title.Caption = #24207#21495
                   Title.Color = 15787416
-                  Width = 29
+                  Width = 30
                 end
                 item
                   Alignment = taCenter
@@ -3989,7 +3988,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Footers = <>
                   Title.Caption = #21333#21495
                   Title.Color = 15787416
-                  Width = 107
+                  Width = 100
                 end
                 item
                   DisplayFormat = '0000-00-00'
@@ -4006,7 +4005,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Footers = <>
                   Title.Caption = #23458#25143#21517#31216
                   Title.Color = 15787416
-                  Width = 160
+                  Width = 110
                 end
                 item
                   Alignment = taRightJustify
@@ -4019,6 +4018,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Footers = <>
                   Title.Caption = #38144#21806#37329#39069
                   Title.Color = 15787416
+                  Width = 65
                 end
                 item
                   Alignment = taRightJustify
@@ -4031,6 +4031,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Footers = <>
                   Title.Caption = #32467#31639#37329#39069
                   Title.Color = 15787416
+                  Width = 65
                 end
                 item
                   Alignment = taRightJustify
@@ -4055,11 +4056,19 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'CREA_DATE'
+                  Footers = <>
+                  Title.Caption = #21046#21333#26085#26399
+                  Title.Color = 15787416
+                  Width = 135
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #35828#26126
                   Title.Color = 15787416
-                  Width = 84
+                  Width = 85
                 end
                 item
                   EditButtons = <>
@@ -4067,7 +4076,7 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   Footers = <>
                   Title.Caption = #25805#20316
                   Title.Color = 15787416
-                  Width = 137
+                  Width = 120
                 end>
             end
             object rowToolNav: TRzToolbar

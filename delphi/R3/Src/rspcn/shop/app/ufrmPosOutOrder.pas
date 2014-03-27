@@ -1886,15 +1886,15 @@ begin
   cdsList.Close;
   cdsList.SQL.Text :=
     ParseSQL(dataFactory.iDbType,
-    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户'') as CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_DIBS as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK '+
+    'select A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,isnull(B.CLIENT_NAME,''普通客户'') as CLIENT_NAME,A.SALE_MNY,A.SALE_MNY-A.PAY_DIBS as ACCT_MNY,PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as RECV_MNY,C.USER_NAME as GUIDE_USER_TEXT,A.REMARK,A.CREA_DATE '+
     'from SAL_SALESORDER A '+
     'left outer join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
     'left outer join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.GUIDE_USER=C.USER_ID '+
     'where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and A.SALES_TYPE=4 '
     );
   if trim(searchTxt)<>'' then
-    cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(searchTxt)+'%'' or REMARK like ''%'+trim(searchTxt)+'%'' or GLIDE_NO like ''%'+trim(searchTxt)+'%''';
-  cdsList.SQL.Text := cdsList.SQL.Text + ' order by SALES_DATE,GLIDE_NO';
+     cdsList.SQL.Text := 'select j.* from ('+cdsList.SQL.Text+') j where CLIENT_NAME like ''%'+trim(searchTxt)+'%'' or REMARK like ''%'+trim(searchTxt)+'%'' or GLIDE_NO like ''%'+trim(searchTxt)+'%''';
+  cdsList.SQL.Text := cdsList.SQL.Text + ' order by SALES_DATE desc,GLIDE_NO';
   cdsList.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
   cdsList.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsList.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
@@ -1908,27 +1908,19 @@ begin
   0:begin
       D1.Date := dllGlobal.SysDate;
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := false;
-      //D2.Properties.ReadOnly := false;
     end;
   1:begin
       D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',dllGlobal.SysDate));
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := false;
-      //D2.Properties.ReadOnly := false;
     end;
   2:begin
       D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',dllGlobal.SysDate));
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := false;
-      //D2.Properties.ReadOnly := false;
     end;
   else
     begin
       D1.Date := dllGlobal.SysDate;
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := false;
-      //D2.Properties.ReadOnly := false;
     end;
   end;
 end;
@@ -1936,7 +1928,7 @@ end;
 procedure TfrmPosOutOrder.FormCreate(Sender: TObject);
 begin
   inherited;
-  dateFlag.ItemIndex := 1;
+  dateFlag.ItemIndex := 0;
 end;
 
 procedure TfrmPosOutOrder.btnFindClick(Sender: TObject);

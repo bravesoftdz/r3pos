@@ -4,7 +4,6 @@ inherited frmPosInOrder: TfrmPosInOrder
   Caption = #21830#21697#20837#24211
   ClientHeight = 593
   ClientWidth = 1100
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -3289,7 +3288,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #24207#21495
                   Title.Color = 15787416
-                  Width = 29
+                  Width = 30
                 end
                 item
                   Alignment = taCenter
@@ -3301,7 +3300,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #21333#21495
                   Title.Color = 15787416
-                  Width = 106
+                  Width = 100
                 end
                 item
                   DisplayFormat = '0000-00-00'
@@ -3310,7 +3309,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #36827#36135#26085#26399
                   Title.Color = 15787416
-                  Width = 71
+                  Width = 75
                 end
                 item
                   EditButtons = <>
@@ -3318,7 +3317,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #23458#25143#21517#31216
                   Title.Color = 15787416
-                  Width = 160
+                  Width = 110
                 end
                 item
                   Alignment = taRightJustify
@@ -3331,6 +3330,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #36827#36135#37329#39069
                   Title.Color = 15787416
+                  Width = 65
                 end
                 item
                   Alignment = taRightJustify
@@ -3343,6 +3343,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #24212#20184#37329#39069
                   Title.Color = 15787416
+                  Width = 65
                 end
                 item
                   Alignment = taRightJustify
@@ -3363,7 +3364,15 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #25910#36135#21592
                   Title.Color = 15787416
-                  Width = 49
+                  Width = 50
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CREA_DATE'
+                  Footers = <>
+                  Title.Caption = #21046#21333#26085#26399
+                  Title.Color = 15787416
+                  Width = 135
                 end
                 item
                   EditButtons = <>
@@ -3371,7 +3380,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #35828#26126
                   Title.Color = 15787416
-                  Width = 221
+                  Width = 85
                 end
                 item
                   EditButtons = <>
@@ -3379,7 +3388,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Footers = <>
                   Title.Caption = #25805#20316
                   Title.Color = 15787416
-                  Width = 165
+                  Width = 145
                 end>
             end
             object rowToolNav: TRzToolbar

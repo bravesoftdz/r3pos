@@ -145,6 +145,7 @@ type
     procedure ImportExcelClick(Sender: TObject);
     procedure fndGODS_IDAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -258,7 +259,7 @@ var frmOrderForm: TfrmOrderForm;
 implementation
 
 uses udllGlobal,ufrmFindDialog,udllXDictFactory,utokenFactory,uFnUtil,udllDsUtil,udllShopUtil,
-     udataFactory,uCacheFactory,ufrmInitGoods,ufrmSelectGoods,ufrmOrderExcel;
+     udataFactory,uCacheFactory,ufrmInitGoods,ufrmSelectGoods,ufrmOrderExcel,udllCtrlUtil;
 
 {$R *.dfm}
 
@@ -2849,6 +2850,7 @@ end;
 procedure TfrmOrderForm.FormCreate(Sender: TObject);
 begin
   inherited;
+  TDbGridEhSort.InitForm(self);
   BulkiFlag := dllGlobal.GetParameter('BUIK_FLAG');
   BulkId := StrtoIntDef(dllGlobal.GetParameter('BUIK_ID'),5)+1;
   Bulk1Flag := StrtoIntDef(dllGlobal.GetParameter('BUIK_ID1'),0);
@@ -2863,6 +2865,12 @@ begin
      Bulk2Len := StrtoIntDef(dllGlobal.GetParameter('BUIK_LEN2'),4)+1;
   Bulk1Dec := StrtoIntDef(dllGlobal.GetParameter('BUIK_DEC1'),2);
   Bulk2Dec := StrtoIntDef(dllGlobal.GetParameter('BUIK_DEC2'),2);
+end;
+
+procedure TfrmOrderForm.FormDestroy(Sender: TObject);
+begin
+  TDbGridEhSort.FreeForm(self);
+  inherited;
 end;
 
 end.

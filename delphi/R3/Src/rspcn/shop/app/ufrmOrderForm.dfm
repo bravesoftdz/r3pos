@@ -5,6 +5,7 @@ inherited frmOrderForm: TfrmOrderForm
   ClientHeight = 522
   ClientWidth = 904
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   PixelsPerInch = 96
@@ -385,6 +386,7 @@ inherited frmOrderForm: TfrmOrderForm
             GridColor = 10591380
             TabOrder = 2
             object DBGridEh1: TDBGridEh
+              Tag = 1
               Left = 11
               Top = 11
               Width = 682

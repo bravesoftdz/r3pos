@@ -4,6 +4,7 @@ inherited frmOrderForm: TfrmOrderForm
   Caption = #21333#25454#22522#31867
   ClientHeight = 522
   ClientWidth = 904
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   PixelsPerInch = 96

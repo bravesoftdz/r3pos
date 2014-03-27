@@ -144,6 +144,7 @@ type
     procedure toolPresentClick(Sender: TObject);
     procedure ImportExcelClick(Sender: TObject);
     procedure fndGODS_IDAddClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -2843,6 +2844,25 @@ begin
        AmountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
        edtTable.Post;
      end;
+end;
+
+procedure TfrmOrderForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  BulkiFlag := dllGlobal.GetParameter('BUIK_FLAG');
+  BulkId := StrtoIntDef(dllGlobal.GetParameter('BUIK_ID'),5)+1;
+  Bulk1Flag := StrtoIntDef(dllGlobal.GetParameter('BUIK_ID1'),0);
+  Bulk2Flag := StrtoIntDef(dllGlobal.GetParameter('BUIK_ID2'),0);
+  if Bulk1Flag=0 then
+     Bulk1Len :=0
+  else
+     Bulk1Len := StrtoIntDef(dllGlobal.GetParameter('BUIK_LEN1'),4)+1;
+  if Bulk2Flag=0 then
+     Bulk2Len :=0
+  else
+     Bulk2Len := StrtoIntDef(dllGlobal.GetParameter('BUIK_LEN2'),4)+1;
+  Bulk1Dec := StrtoIntDef(dllGlobal.GetParameter('BUIK_DEC1'),2);
+  Bulk2Dec := StrtoIntDef(dllGlobal.GetParameter('BUIK_DEC2'),2);
 end;
 
 end.

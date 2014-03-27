@@ -571,6 +571,7 @@ inherited frmStockOrder: TfrmStockOrder
               FixedColor = 16448239
               FooterColor = 8643839
               FrozenCols = 1
+              OnCellClick = DBGridEh1CellClick
               Columns = <
                 item
                   EditButtons = <>

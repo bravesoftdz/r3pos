@@ -25,6 +25,7 @@ type
     ShowSelfRoot:boolean;
     SelectAll:boolean;
     SelectChildren:boolean;
+    SelectRootOrLeaf:boolean;
     function showForm:boolean;override;
   end;
 
@@ -48,19 +49,27 @@ end;
 procedure TfrmSortDropFrom.rzTreeClick(Sender: TObject);
 begin
   inherited;
+  if not Assigned(rzTree.Selected) then Exit;
+  if not Assigned(rzTree.Selected.Data) then Exit;
+
   if SelectAll then
      begin
-      if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data) then
-         begin
-           SaveObj.Clear;
-           TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
-           ModalResult := MROK;
-         end;
+       SaveObj.Clear;
+       TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
+       ModalResult := MROK;
      end
-  else
-  if SelectChildren then
+  else if SelectRootOrLeaf then
      begin
-       if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data) and (rzTree.Selected.Parent <> nil) then
+       if (not rzTree.Selected.HasChildren) or (rzTree.Selected.Parent = nil) then
+          begin
+            SaveObj.Clear;
+            TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
+            ModalResult := MROK;
+          end;
+     end
+  else if SelectChildren then
+     begin
+       if rzTree.Selected.Parent <> nil then
           begin
             SaveObj.Clear;
             TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
@@ -69,7 +78,7 @@ begin
      end
   else
      begin
-       if assigned(rzTree.Selected) and assigned(rzTree.Selected.Data) and (not rzTree.Selected.HasChildren) then
+       if not rzTree.Selected.HasChildren then
           begin
             SaveObj.Clear;
             TRecord_(rzTree.Selected.Data).CopyTo(SaveObj);
@@ -102,6 +111,7 @@ begin
   ShowSelfRoot := false;
   SelectAll := false;
   SelectChildren := false;
+  SelectRootOrLeaf := false;
 end;
 
 procedure TfrmSortDropFrom.FormCreate(Sender: TObject);
@@ -113,6 +123,7 @@ begin
   ShowSelfRoot := false;
   SelectAll := false;
   SelectChildren := false;
+  SelectRootOrLeaf := false;
 end;
 
 initialization

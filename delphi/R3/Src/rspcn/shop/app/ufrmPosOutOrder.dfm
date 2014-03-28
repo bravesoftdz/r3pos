@@ -458,17 +458,13 @@ inherited frmPosOutOrder: TfrmPosOutOrder
             object edtBK_CLIENT_ID: TRzPanel
               Left = 10
               Top = 1
-              Width = 396
+              Width = 430
               Height = 31
-              Anchors = [akLeft, akTop, akRight]
               BorderOuter = fsStatus
               BorderWidth = 1
               Color = clWhite
               FlatColor = 9145227
               TabOrder = 1
-              DesignSize = (
-                396
-                31)
               object edtBK_CARD_NO: TRzPanel
                 Left = 2
                 Top = 2
@@ -600,9 +596,8 @@ inherited frmPosOutOrder: TfrmPosOutOrder
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 2
-                Width = 394
+                Width = 428
                 Height = 27
-                Anchors = [akLeft, akTop, akRight]
                 BorderOuter = fsFlat
                 BorderSides = [sdLeft]
                 FlatColor = clGray
@@ -927,6 +922,31 @@ inherited frmPosOutOrder: TfrmPosOutOrder
                   TabOrder = 0
                   OnClick = intoCustomerClick
                 end
+              end
+            end
+            object RzPanel13: TRzPanel
+              Left = 440
+              Top = 1
+              Width = 180
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              object godsAmount: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 176
+                Height = 27
+                Hint = ' '#24211#23384':'
+                Align = alClient
+                Alignment = taLeftJustify
+                BorderOuter = fsFlat
+                BorderSides = []
+                Caption = ' '#24211#23384':'
+                FlatColor = clGray
+                TabOrder = 0
               end
             end
           end

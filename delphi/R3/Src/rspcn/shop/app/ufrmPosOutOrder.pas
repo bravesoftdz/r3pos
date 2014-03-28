@@ -100,6 +100,8 @@ type
     RzLabel5: TRzLabel;
     RzBmpButton4: TRzBmpButton;
     N7: TMenuItem;
+    RzPanel13: TRzPanel;
+    godsAmount: TRzPanel;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -534,6 +536,7 @@ procedure TfrmPosOutOrder.NewOrder;
 var rs:TZQuery;
 begin
   inherited;
+  godsAmount.Caption := godsAmount.Hint;
   Open('');
   dbState := dsInsert;
   AObj.FieldByName('TENANT_ID').AsString := token.tenantId;
@@ -1076,11 +1079,11 @@ begin
     2: edtTable.FieldByName('TAX_RATE').AsFloat := RtlRate2;
     3: edtTable.FieldByName('TAX_RATE').AsFloat := RtlRate3;
     end;
-    getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
   finally
     Params.Free;
     rs.Free;
   end;
+  getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
 end;
 
 function TfrmPosOutOrder.checkPayment:boolean;
@@ -2141,48 +2144,40 @@ begin
 end;
 
 procedure TfrmPosOutOrder.getGodsInfo(godsId: string);
-//var
-//  rs:TZQuery;
-//  SourceScale:real;
+var
+  rs:TZQuery;
+  SourceScale:real;
 begin
-{
-  CacheFactory.getGodsPngImage(edtTable.FieldByName('GODS_ID').AsString,godsPhoto.Picture);
-  godsPhoto.Top := 0;
-  godsPhoto.Left := (godsPhotoBk.Width-godsPhoto.Width) div 2-1;
-
-  godsName.Caption := '品名:'+edtTable.FieldByName('GODS_NAME').AsString;
-  godsPrice.Caption := '价格:'+edtTable.FieldByName('APRICE').AsString;
   rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Exit;
   if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
      begin
-      SourceScale := 1;
+       SourceScale := 1;
      end
   else
   if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
      begin
-      SourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
+       SourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
      end
   else
   if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
      begin
-      SourceScale := rs.FieldByName('SMALLTO_CALC').AsFloat;
+       SourceScale := rs.FieldByName('SMALLTO_CALC').AsFloat;
      end
   else
      begin
-      SourceScale := 1;
+       SourceScale := 1;
      end;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select sum(amount) from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
     rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
-    rs.ParamByName('GODS_ID').AsString := godsId;
+    rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
     dataFactory.Open(rs);
-    godsAmount.Caption := '库存:'+FormatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
+    godsAmount.Caption := ' '+edtTable.FieldByName('GODS_NAME').AsString+' 库存:'+FormatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
   finally
     rs.Free;
   end;
-}
 end;
 
 procedure TfrmPosOutOrder.DBGridEh1CellClick(Column: TColumnEh);
@@ -2710,9 +2705,20 @@ begin
 end;
 
 procedure TfrmPosOutOrder.ajustPostion;
+var wdh:integer;
 begin
   inherited;
   AdjustGodsStringGrid;
+  wdh := DBGridEh1.Left + DBGridEh1.Width - RzPanel13.Left;
+  if wdh <= 100 then
+     begin
+       RzPanel13.Visible := false;
+     end
+  else
+     begin
+       RzPanel13.Visible := true;
+       RzPanel13.Width := wdh;
+     end;
 end;
 
 procedure TfrmPosOutOrder.intoCustomerClick(Sender: TObject);

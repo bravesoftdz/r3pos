@@ -69,6 +69,7 @@ type
     syncShopId:string;//时间戳控制SHOP_ID
     isSyncUp:string;//是否上传
     isSyncDown:string;//是否下载
+    isUpdComm:string;//上传后是否更新本地comm
   end;
 
   TSyncFactory=class
@@ -487,8 +488,11 @@ procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;
            end;
         end;
 
-      rs_l.Delete;
-      dataFactory.sqlite.UpdateBatch(rs_l,ZClassName,Params);
+      if n^.isUpdComm <> '0' then
+         begin
+           rs_l.Delete;
+           dataFactory.sqlite.UpdateBatch(rs_l,ZClassName,Params);
+         end;
 
       LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>保存时长:'+inttostr(GetTicket));
     finally
@@ -778,6 +782,7 @@ begin
   n^.tbtitle := '供应链';
   if dllGlobal.AuthMode = 1 then n^.isSyncUp := '1';
   n^.isSyncDown := '1';
+  n^.isUpdComm := '0';
   FList.Add(n);
 end;
 
@@ -1134,6 +1139,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
         n^.keyFlag := 1;
         n^.tbtitle := '条码表';
         n^.syncTenantId := cid;
+        n^.isUpdComm := '0';
         if SyncType = 1 then
            begin
              n^.isSyncDown := '1';
@@ -1192,7 +1198,9 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
     new(n);
     n^.tbname := 'ACC_ACCOUNT_INFO';
     n^.keyFields := 'TENANT_ID;ACCOUNT_ID';
-    n^.tableFields := 'TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,COMM,TIME_STAMP';
+    // 数据恢复时恢复所有字段，普通同步时只同步基础字段
+    if (SyncType = 0) or (SyncType = 2) then
+       n^.tableFields := 'TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,COMM,TIME_STAMP';
     n^.synFlag := 10;
     n^.keyFlag := 0;
     n^.tbtitle := '账户资料';
@@ -1333,6 +1341,7 @@ procedure TSyncFactory.InitSyncBasicList(SyncType:integer=0);
         n^.keyFlag := 0;
         n^.tbtitle := '商品档案';
         n^.syncTenantId := cid;
+        n^.isUpdComm := '0';
         if SyncType = 1 then
            begin
              n^.isSyncDown := '1';
@@ -2860,61 +2869,18 @@ begin
   new(n);
   n^.tbname := 'STO_STORAGE';
   n^.keyFields := 'TENANT_ID;SHOP_ID;GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02';
-  n^.whereStr :=  'TENANT_ID = :TENANT_ID and AMOUNT<>0';
   n^.synFlag := 1;
   n^.keyFlag := 1;
   n^.tbtitle := '当前库存';
   n^.isSyncUp := '1';
-  rs_l := TZQuery.Create(nil);
-  rs_r := TZQuery.Create(nil);
-  Params := TftParamList.Create(nil);
   try
-    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-    Params.ParamByName('SHOP_ID').AsString := token.shopId;
-    Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
-    Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
-    Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
-    Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
-    Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
-    Params.ParamByName('SYN_COMM').AsBoolean := false;
-    dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
-    if rs_l.RecordCount <= MAX_SYNC_RECORD_COUNT then
+    if GetSynTimeStamp(token.tenantId,'STO_STORAGE','#') <= 5497000 then
        begin
-         rs_r.SyncDelta := rs_l.SyncDelta;
-         dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
-       end
-    else
-       begin
-         i := 0;
-         rs_l.First;
-         tmpObj := TRecord_.Create;
-         try
-           rs_r.FieldDefs.Assign(rs_l.FieldDefs);
-           rs_r.CreateDataSet;
-           while not rs_l.Eof do
-             begin
-               rs_r.Append;
-               tmpObj.ReadFromDataSet(rs_l);
-               tmpObj.WriteToDataSet(rs_r);
-               inc(i);
-               rs_l.Next;
-               if (i >= MAX_SYNC_RECORD_COUNT) or (rs_l.Eof) then
-                  begin
-                    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
-                    i := 0;
-                    rs_r.EmptyDataSet;
-                  end;
-             end;
-         finally
-           tmpObj.Free;
-         end;
+         dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
        end;
+    SyncSingleTable(n);
   finally
     dispose(n);
-    Params.Free;
-    rs_l.Free;
-    rs_r.Free;
   end;
 end;
 

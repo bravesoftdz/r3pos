@@ -362,6 +362,22 @@ begin
       rs.Next;
     end;
   Open;
+
+  if not (
+     (token.account = 'admin')
+     or
+     (token.account = 'system')
+     or
+     (token.account = token.xsmCode)
+     or
+     (pos(','+token.tenantId+'001,', ','+token.roleIds+',') > 0)) then
+     begin
+       RzBmpButton4.Visible := false;
+       ClearStorage.Visible := false;
+       RzBmpButton8.Left := RzBmpButton8.Left - 120;
+       RzBmpButton7.Left := RzBmpButton7.Left - 120;
+       RzPanel1.Left := RzPanel1.Left - 120;
+     end;
 end;
 
 procedure TfrmGoodsStorage.Open;

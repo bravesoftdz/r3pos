@@ -85,13 +85,21 @@ type
 implementation
 
 function TSyncSingleTableV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var js:string;
+var js,str:string;
 begin
   case AGlobal.iDbType of
   0:js := '+';
   1,4,5:js := '||';
   end;
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP'),Params);
+
+  str := 'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) ';
+
+  if (Params.FindParam('WHERE_STR') <> nil) and (trim(Params.ParamByName('WHERE_STR').AsString) <> '') then
+     str := str + ' where ' + Params.ParamByName('WHERE_STR').AsString
+  else
+     str := str + ' where TENANT_ID = :TENANT_ID and TIME_STAMP > :TIME_STAMP';
+
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType, str),Params);
 end;
 
 procedure TSyncSingleTableV60.FillParams(ZQuery:TZQuery);

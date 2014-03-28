@@ -209,7 +209,6 @@ end;
 //4.สอทลืสิด
 function eraseApp(synced:boolean):boolean;stdcall;
 var
-  i:integer;
   Form:TForm;
 begin
   try

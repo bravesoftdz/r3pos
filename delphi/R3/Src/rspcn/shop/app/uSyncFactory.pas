@@ -536,7 +536,7 @@ procedure TSyncFactory.SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;
                  if (i >= MAX_SYNC_RECORD_COUNT) or (rs_r.Eof) then
                     begin
                       dataFactory.sqlite.UpdateBatch(ss,ZClassName,Params);
-                      LogFile.AddLogFile(0,'上传<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>本次提交记录数:'+inttostr(ss.RecordCount));
+                      LogFile.AddLogFile(0,'下载<'+n^.tbName+'><'+n^.syncTenantId+' '+n^.syncShopId+'>本次提交记录数:'+inttostr(ss.RecordCount));
                       i := 0;
                       ss.EmptyDataSet;
                     end;

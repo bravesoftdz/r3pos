@@ -404,7 +404,7 @@ inherited frmSaleOrder: TfrmSaleOrder
             Width = 839
             object edtBK_CLIENT_ID: TRzPanel
               Left = 10
-              Top = 1
+              Top = 0
               Width = 319
               Height = 31
               BorderOuter = fsStatus
@@ -571,6 +571,31 @@ inherited frmSaleOrder: TfrmSaleOrder
                 TabOrder = 1
               end
             end
+            object RzPanel13: TRzPanel
+              Left = 329
+              Top = 0
+              Width = 275
+              Height = 31
+              BorderOuter = fsStatus
+              BorderWidth = 1
+              Color = clWhite
+              FlatColor = 9145227
+              TabOrder = 2
+              object godsAmount: TRzPanel
+                Left = 2
+                Top = 2
+                Width = 271
+                Height = 27
+                Hint = ' '#24211#23384':'
+                Align = alClient
+                Alignment = taLeftJustify
+                BorderOuter = fsFlat
+                BorderSides = []
+                Caption = ' '#24211#23384':'
+                FlatColor = clGray
+                TabOrder = 0
+              end
+            end
           end
           inherited order_grid: TRzPanel
             Top = 181
@@ -582,6 +607,7 @@ inherited frmSaleOrder: TfrmSaleOrder
               FixedColor = 16448239
               FooterColor = 8643839
               FrozenCols = 1
+              OnCellClick = DBGridEh1CellClick
               Columns = <
                 item
                   Color = clWhite

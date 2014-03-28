@@ -93,6 +93,8 @@ type
     btnNew: TRzBmpButton;
     btnImport: TRzBmpButton;
     N7: TMenuItem;
+    RzPanel13: TRzPanel;
+    godsAmount: TRzPanel;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -147,6 +149,7 @@ type
     procedure fndGODS_IDSaveValue(Sender: TObject);
     procedure toolDeleteClick(Sender: TObject);
     procedure N7Click(Sender: TObject);
+    procedure DBGridEh1CellClick(Column: TColumnEh);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -173,6 +176,7 @@ type
     procedure SetdbState(const Value: TDataSetState);override;
     procedure PresentToCalc(Present:integer);override;
     procedure SetinputFlag(const Value: integer);override;
+    procedure getGodsInfo(godsId:string);
     function  CheckSale_Limit: Boolean;
     function  checkPayment:boolean;
     function  payCashMny(s:string):boolean;
@@ -515,6 +519,7 @@ procedure TfrmSaleOrder.NewOrder;
 var rs:TZQuery;
 begin
   inherited;
+  godsAmount.Caption := godsAmount.Hint;
   Open('');
   dbState := dsInsert;
   AObj.FieldByName('TENANT_ID').AsString := token.tenantId;
@@ -1079,6 +1084,7 @@ begin
     Params.Free;
     rs.Free;
   end;
+  getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
 end;
 
 function TfrmSaleOrder.checkPayment:boolean;
@@ -2596,6 +2602,49 @@ procedure TfrmSaleOrder.N7Click(Sender: TObject);
 begin
   inherited;
   DoIsPresent('3');
+end;
+
+procedure TfrmSaleOrder.getGodsInfo(godsId: string);
+var
+  rs:TZQuery;
+  SourceScale:real;
+begin
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Exit;
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+     begin
+       SourceScale := 1;
+     end
+  else
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+     begin
+       SourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
+     end
+  else
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+     begin
+       SourceScale := rs.FieldByName('SMALLTO_CALC').AsFloat;
+     end
+  else
+     begin
+       SourceScale := 1;
+     end;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select sum(amount) from STO_STORAGE where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
+    rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+    dataFactory.Open(rs);
+    godsAmount.Caption := ' '+edtTable.FieldByName('GODS_NAME').AsString+' 库存:'+FormatFloat('#0.###',rs.Fields[0].AsFloat/SourceScale)+''+TdsFind.GetNameByID(dllGlobal.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',edtTable.FieldByName('UNIT_ID').AsString);
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmSaleOrder.DBGridEh1CellClick(Column: TColumnEh);
+begin
+  inherited;
+  getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
 end;
 
 initialization

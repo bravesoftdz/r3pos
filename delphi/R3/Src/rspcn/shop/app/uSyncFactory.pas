@@ -3300,14 +3300,14 @@ begin
 
     if timerTerminted then Exit;
 
-    if rs_l.IsEmpty then Exit;
-
     if LastTimeStamp <= 5497000 then
        begin
          dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
        end;
 
     if timerTerminted then Exit;
+
+    if rs_l.IsEmpty then Exit;
 
     if rs_l.RecordCount <= MAX_SYNC_RECORD_COUNT then
        begin

@@ -2805,7 +2805,6 @@ begin
 end;
 
 function TSyncFactory.CheckBackUpDBFile(PHWnd:THandle): boolean;
-var rs:TZQuery;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
   if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
@@ -2859,11 +2858,7 @@ end;
 
 procedure TSyncFactory.SyncStorage;
 var
-  i:integer;
-  tmpObj:TRecord_;
   n:PSynTableInfo;
-  rs_l,rs_r:TZQuery;
-  Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
   new(n);
@@ -2914,7 +2909,6 @@ end;
 
 procedure TTimeSyncThread.Execute;
 var
-  db:TdbFactory;
   sql:string;
 begin
   inherited;
@@ -3268,70 +3262,83 @@ procedure TSyncFactory.TimerSyncStorage;
 var
   i:integer;
   tmpObj:TRecord_;
-  n:PSynTableInfo;
+  ZClassName:string;
   rs_l,rs_r:TZQuery;
+  LastTimeStamp:int64;
   Params:TftParamList;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
-  new(n);
-  n^.tbname := 'STO_STORAGE';
-  n^.keyFields := 'TENANT_ID;SHOP_ID;GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02';
-  n^.whereStr :=  'TENANT_ID = :TENANT_ID and AMOUNT<>0';
-  n^.synFlag := 1;
-  n^.keyFlag := 1;
-  n^.tbtitle := 'µ±Ç°¿â´æ';
-  n^.isSyncUp := '1';
+
+  if timerTerminted then Exit;
+
+  tmpObj := TRecord_.Create;
   rs_l := TZQuery.Create(nil);
   rs_r := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
   try
+    ZClassName := 'TSyncSingleTableV60';
+    LastTimeStamp := GetSynTimeStamp(token.tenantId,'STO_STORAGE','#');
+
+    if timerTerminted then Exit;
+
+    rs_l.Close;
+    rs_r.Close;
+
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString := token.shopId;
-    Params.ParamByName('KEY_FLAG').AsInteger := n^.keyFlag;
-    Params.ParamByName('TABLE_NAME').AsString := n^.tbName;
-    Params.ParamByName('KEY_FIELDS').AsString := n^.keyFields;
-    Params.ParamByName('WHERE_STR').AsString := n^.whereStr;
-    Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields(n^.tbName);
-    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Params.ParamByName('KEY_FLAG').AsInteger := 1;
+    Params.ParamByName('TABLE_NAME').AsString := 'STO_STORAGE';
+    Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SHOP_ID;GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02';
+    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
+    Params.ParamByName('LAST_TIME_STAMP').Value := LastTimeStamp;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
     Params.ParamByName('Transed').AsBoolean := false;
-    dataFactory.sqlite.Open(rs_l,'TSyncSingleTableV60',Params);
+    Params.ParamByName('TABLE_FIELDS').AsString := GetTableFields('STO_STORAGE');
+
+    dataFactory.sqlite.Open(rs_l,ZClassName,Params);
+
     if timerTerminted then Exit;
-    dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
+
+    if rs_l.IsEmpty then Exit;
+
+    if LastTimeStamp <= 5497000 then
+       begin
+         dataFactory.remote.ExecSQL('update STO_STORAGE set AMOUNT=0,AMONEY=0 where TENANT_ID='+token.tenantId+' and SHOP_ID='''+token.shopId+'''');
+       end;
+
+    if timerTerminted then Exit;
+
     if rs_l.RecordCount <= MAX_SYNC_RECORD_COUNT then
        begin
          rs_r.SyncDelta := rs_l.SyncDelta;
-         dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
+         dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,ZClassName,TftParamList.Encode(Params));
        end
     else
        begin
          i := 0;
          rs_l.First;
-         tmpObj := TRecord_.Create;
-         try
-           rs_r.FieldDefs.Assign(rs_l.FieldDefs);
-           rs_r.CreateDataSet;
-           while not rs_l.Eof do
-             begin
-               if timerTerminted then Exit;
+         rs_r.FieldDefs.Assign(rs_l.FieldDefs);
+         rs_r.CreateDataSet;
+         while not rs_l.Eof do
+           begin
+             if timerTerminted then Exit;
 
-               rs_r.Append;
-               tmpObj.ReadFromDataSet(rs_l);
-               tmpObj.WriteToDataSet(rs_r);
-               inc(i);
-               rs_l.Next;
-               if (i >= MAX_SYNC_RECORD_COUNT) or (rs_l.Eof) then
-                  begin
-                    dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,'TSyncSingleTableV60',TftParamList.Encode(Params));
-                    i := 0;
-                    rs_r.EmptyDataSet;
-                  end;
-             end;
-         finally
-           tmpObj.Free;
-         end;
-       end;
+             rs_r.Append;
+             tmpObj.ReadFromDataSet(rs_l);
+             tmpObj.WriteToDataSet(rs_r);
+             inc(i);
+             rs_l.Next;
+             if (i >= MAX_SYNC_RECORD_COUNT) or (rs_l.Eof) then
+                begin
+                  dataFactory.remote.UpdateBatch(TZQuery(rs_r).Delta,ZClassName,TftParamList.Encode(Params));
+                  i := 0;
+                  rs_r.EmptyDataSet;
+                end;
+           end;
+      end;
   finally
-    dispose(n);
+    tmpObj.Free;
     Params.Free;
     rs_l.Free;
     rs_r.Free;

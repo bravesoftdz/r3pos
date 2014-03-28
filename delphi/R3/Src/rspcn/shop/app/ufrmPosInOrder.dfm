@@ -390,7 +390,6 @@ inherited frmPosInOrder: TfrmPosInOrder
               Top = 0
               Width = 319
               Height = 31
-              Anchors = [akLeft, akTop, akRight]
               BorderOuter = fsStatus
               BorderWidth = 1
               Color = clWhite

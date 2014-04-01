@@ -125,6 +125,8 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
     procedure PageControl1Change(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
@@ -161,6 +163,7 @@ type
     procedure RzBmpButton5Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
+    procedure N7Click(Sender: TObject);
   private
     FWindowState: TWindowState;
     FInitialized: boolean;
@@ -1095,11 +1098,6 @@ function md5(s:string):string;
 begin
   result := md5Encode(s+dec);
 end;
-var
-  Doc:IXMLDomDocument;
-  Root:IXMLDOMElement;
-  xml:string;
-  url:string;
 begin
   IEAddress1.Text := UCFactory.xsmUC+'users/dologin/up?j_username=620902102160&j_password='+md5(md5('1')+serachText.Text);
 end;
@@ -1574,8 +1572,6 @@ procedure TfrmBrowerForm.WMSendInput(var Msg: TMessage);
 var
   tabEx:TTabSheetEx;
   isIcon:boolean;
-  childWnd:THandle;
-  Message: TWMKeyDown;
 begin
   case Msg.WParam of
   1:code1 := inttostr(Msg.LParam);
@@ -1955,6 +1951,9 @@ begin
 end;
 
 procedure TfrmBrowerForm.PopupMenu1Popup(Sender: TObject);
+var
+  F:TIniFile;
+  codehk:string;
 begin
   N2.Visible := false;
   N3.Visible := false;
@@ -1979,6 +1978,34 @@ begin
             N5.Visible := true;
           end;
      end;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    codehk := F.ReadString('codehk', 'on-off', '1');
+  finally
+    F.Free;
+  end;
+  if codehk = '1' then
+     N7.Caption := '关闭监控'
+  else
+     N7.Caption := '开启监控';
+end;
+
+procedure TfrmBrowerForm.N7Click(Sender: TObject);
+var
+  F:TIniFile;
+  codehk:string;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    codehk := F.ReadString('codehk', 'on-off', '1');
+    if codehk = '1' then
+       F.WriteString('codehk', 'on-off', '0')
+    else
+       F.WriteString('codehk', 'on-off', '1');
+  finally
+    F.Free;
+  end;
+  MessageBox(Handle,pchar('设置成功,重新登录后生效!'),'友情提示..',MB_OK+MB_ICONQUESTION);
 end;
 
 initialization

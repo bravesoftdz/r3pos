@@ -4842,6 +4842,13 @@ object frmBrowerForm: TfrmBrowerForm
       Caption = #20462#25913#23494#30721
       OnClick = N5Click
     end
+    object N6: TMenuItem
+      Caption = '-'
+    end
+    object N7: TMenuItem
+      Caption = #24320#21551#30417#25511
+      OnClick = N7Click
+    end
   end
   object Timer1: TTimer
     Enabled = False

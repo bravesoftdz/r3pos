@@ -593,9 +593,8 @@ begin
   RegisterHotKey(Handle,hotKeyid,0,VK_PAUSE);
   WriteHookConfig;
   Initialized := true;
-//  whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
-//    HInstance, 0);
-//  if whKeyboard=0 then MessageBox(handle,pchar('条码枪配置安装不成功。'+#13+#13+'1.扫码时请注意输入光标所在位置是否正确'+#13+'2.找不到输入光标时请按【Pause】一健进入扫码状态'),'友情提示..',MB_OK+MB_ICONQUESTION);
+  // whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack, HInstance, 0);
+  // if whKeyboard=0 then MessageBox(handle,pchar('条码枪配置安装不成功。'+#13+#13+'1.扫码时请注意输入光标所在位置是否正确'+#13+'2.找不到输入光标时请按【Pause】一健进入扫码状态'),'友情提示..',MB_OK+MB_ICONQUESTION);
   Runed := false;
   Timer1.Enabled := true;
   m_bFullScreen := false;
@@ -1890,9 +1889,17 @@ end;
 
 procedure TfrmBrowerForm.WriteHookConfig;
 var
-  F:TextFile;
   Res:DWord;
+  F:TextFile;
+  R:TIniFile;
 begin
+  R := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    if R.ReadString('codehk', 'on-off', '1') = '0' then Exit;
+  finally
+    R.Free;
+  end;
+
   AssignFile(F,ExtractFilePath(ParamStr(0))+'hook.cfg');
   rewrite(F);
   try
@@ -1903,8 +1910,7 @@ begin
   FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
   StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
   StartupInfo.wShowWindow := SW_HIDE;
-  if CreateProcess(nil, PChar(ExtractFilePath(ParamStr(0))+'codehk.exe'), nil, nil, False,
-    IDLE_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo) then
+  if CreateProcess(nil, PChar(ExtractFilePath(ParamStr(0))+'codehk.exe'), nil, nil, False, IDLE_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo) then
   begin
     CloseHandle(ProcessInfo.hThread);
     GetExitCodeProcess(ProcessInfo.hProcess, Res);
@@ -2005,7 +2011,7 @@ begin
   finally
     F.Free;
   end;
-  MessageBox(Handle,pchar('设置成功,重新登录后生效!'),'友情提示..',MB_OK+MB_ICONQUESTION);
+  MessageBox(Handle,pchar('设置成功，重新登录后生效..'),'友情提示..',MB_OK+MB_ICONQUESTION);
 end;
 
 initialization

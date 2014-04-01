@@ -1,13 +1,56 @@
 unit udllShopUtil;
 
 interface
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, RzPanel, 
   Dialogs, ExtCtrls, StdCtrls, cxMaskEdit, cxDropDownEdit, cxControls, cxContainer,
-  cxEdit, cxTextEdit,ZDataSet,ZBase,Grids,DBGrids,DB,DBGridEh,cxButtonEdit, cxCalendar,cxMemo,zrComboBoxList,
-  cxRadioGroup,cxSpinEdit,cxCheckBox,RzTreeVw;
+  cxEdit, cxTextEdit, ZDataSet, ZBase, Grids, DBGrids, DB, DBGridEh, cxButtonEdit,
+  cxCalendar, cxMemo, zrComboBoxList, cxRadioGroup, cxSpinEdit, cxCheckBox, RzTreeVw,
+  Registry, Nb30, WinSock;
+
 const
   ColumnTitleColor=$00F0E598;
+
+  MAX_HOSTNAME_LEN = 128;
+  MAX_DOMAIN_NAME_LEN = 128;
+  MAX_SCOPE_ID_LEN = 256;
+  MAX_ADAPTER_NAME_LENGTH = 256;
+  MAX_ADAPTER_DESCRIPTION_LENGTH = 128;
+  MAX_ADAPTER_ADDRESS_LENGTH = 8;
+
+type
+  TIPAddressString = array[0..4 * 4 - 1] of Char;
+  PIPAddrString = ^TIPAddrString;
+  TIPAddrString = record
+    Next: PIPAddrString;
+    IPAddress: TIPAddressString;
+    IPMask: TIPAddressString;
+    Context: Integer;
+  end;
+
+  PIPAdapterInfo = ^TIPAdapterInfo;
+  TIPAdapterInfo = record
+    Next: PIPAdapterInfo;
+    ComboIndex: Integer;
+    AdapterName: array[0..MAX_ADAPTER_NAME_LENGTH + 3] of Char;
+    Description: array[0..MAX_ADAPTER_DESCRIPTION_LENGTH + 3] of Char;
+    AddressLength: Integer;
+    Address: array[1..MAX_ADAPTER_ADDRESS_LENGTH] of Byte;
+    Index: Integer;
+    _Type: Integer;
+    DHCPEnabled: Integer;
+    CurrentIPAddress: PIPAddrString;
+    IPAddressList: TIPAddrString;
+    GatewayList: TIPAddrString;
+    DHCPServer: TIPAddrString;
+    HaveWINS: Bool;
+    PrimaryWINSServer: TIPAddrString;
+    SecondaryWINSServer: TIPAddrString;
+    LeaseObtained: Integer;
+    LeaseExpires: Integer;
+  end;
+
 //添加下拉选择框
 procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TZQuery=nil);
 //清除下拉选择框
@@ -36,10 +79,8 @@ procedure WriteToObject(AObj:TRecord_;form:Tform;_tag:string='');
 function EncodeNumber(field:string;value:string):string;
 //字符条件解悉
 function EncodeString(field:string;value:string):string;
-
 //打开界面资源
 procedure LoadFormRes(Form:TForm);
-
 //自编条码
 function GetBarCode(ID:string;Size,Color:string;Len:Integer=13;flag:string='9'):string;
 function GetBarCodeID(BarCode:string):string;
@@ -49,10 +90,23 @@ function GetBarCodeSize(BarCode:string):string;
 function GetRegionId(id:string):string;
 //截取定长字符:
 function GetTrimStr(const srcStr: string; vLen: integer): string;
-
+//获取Mac地址
+function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
+//获取Mac地址
+function GetMacAddrInfo:string;
+//获取计算机名
+function GetComputerName:string;
+//获取系统信息
+function GetSystemInfo:string;
+//获取Mac地址
+function GetMacAddr(idx:integer=0):string;
+//获取IP地址
+function GetIpAddr:string;
 
 implementation
+
 uses uFnUtil,udllDsUtil,udllGlobal,udllXDictFactory,uTreeUtil;
+
 function GetRegionId(id:string):string;
 begin
   result := id;
@@ -61,6 +115,7 @@ begin
   if copy(result,length(result)-1,2)='00' then
      delete(result,length(result)-1,2);
 end;
+
 //截取定长字符:
 function GetTrimStr(const srcStr: string; vLen: integer): string;
 var
@@ -78,6 +133,7 @@ function GetBarCodeID(BarCode:string):string;
 begin
   Result := copy(BarCode,2,6);
 end;
+
 function GetBarCodeColor(BarCode:string):string;
 begin
   if Length(BarCode)<13 then
@@ -89,6 +145,7 @@ begin
   result := result;
   if Result = '000' then Result := '#';
 end;
+
 function GetBarCodeSize(BarCode:string):string;
 begin
   if Length(BarCode)<13 then
@@ -99,6 +156,7 @@ begin
   Result := copy(BarCode,8,2);
   if Result = '00' then Result := '#';
 end;
+
 //自编条码
 function GetBarCode(ID:string;Size,Color:string;Len:Integer=13;flag:string='9'):string;
   function GetCodeFlag(data:String): String;
@@ -178,6 +236,7 @@ begin
     rs.Filter := '';
   end;
 end;
+
 procedure Initframe(frame:Tframe);
 var i:integer;
 begin
@@ -187,6 +246,7 @@ begin
          AddCbxPickList(TcxComboBox(frame.Components[i]));
     end;
 end;
+
 procedure Freeframe(frame:Tframe);
 var i:integer;
 begin
@@ -196,6 +256,7 @@ begin
          ClearCbxPickList(TcxComboBox(frame.Components[i]));
     end;
 end;
+
 //初始form窗体
 procedure Initform(form:Tform);
 var i,j:integer;
@@ -219,7 +280,8 @@ begin
          end;                                                            
     end;
 end;
-//悉放form窗体
+
+//释放form窗体
 procedure Freeform(form:Tform);
 var i:integer;
 begin
@@ -237,6 +299,7 @@ begin
          end;
     end;
 end;
+
 procedure SetEditStyle(dbState:TDataSetState;AStyle:TcxCustomEditStyle);
 begin
   if dbState = dsBrowse then
@@ -256,6 +319,7 @@ begin
        AStyle.ButtonTransParency := ebtInactive;
      end;
 end;
+
 procedure SetFrameEditStatus(frame:Tframe;dbState:TDataSetState);
 var i:integer;
 begin
@@ -394,6 +458,7 @@ begin
          end;
     end;
 end;
+
 //设置form状态
 procedure SetFormEditStatus(form:TForm;dbState:TDataSetState);
 var i:integer;
@@ -536,6 +601,7 @@ begin
          end;
     end;
 end;
+
 //设置DBGridEh参数
 procedure InitGridPickList(Grid:TDBGridEh);
 var
@@ -805,6 +871,7 @@ begin
        result := field+'='+FloatToStr(StrToFloatDef(s,0))
      end;
 end;
+
 //字符条件解悉
 function EncodeString(field:string;value:string):string;
 var
@@ -850,6 +917,7 @@ begin
        result := field+'='''+FloatToStr(StrToFloatDef(s,0))+'''';
      end;
 end;
+
 procedure LoadFormRes(Form:TForm);
 function FindColumn(FieldName:string;DBGrid:TDBGridEh):TColumnEh;
 var i:integer;
@@ -879,6 +947,119 @@ begin
       end;
     end;
   end;
+end;
+
+function GetMacAddrInfo:string;
+var
+  AI, Work: PIPAdapterInfo;
+  Size: Integer;
+  Res: Integer;
+  I: Integer;
+  function MACToStr(ByteArr: PByte; Len: Integer): string;
+  begin
+    result := '';
+    while (Len > 0) do
+    begin
+      result := result + IntToHex(ByteArr^, 2);
+      ByteArr := Pointer(Integer(ByteArr) + SizeOf(Byte));
+      Dec(Len);
+    end;
+  end;
+begin
+  Size := 5120;
+  GetMem(AI, Size);
+  Res := GetAdaptersInfo(AI, Size);
+  if (Res <> ERROR_SUCCESS) then Exit;
+
+  Work := AI;
+  I := 1;
+  repeat
+    if result <> '' then result := result + ',';
+    result := result + MACToStr(@Work^.Address, Work^.AddressLength);
+    Inc(I);
+    Work := Work^.Next;
+  until (Work = nil);
+
+  FreeMem(AI);
+end;
+
+function GetSystemInfo: string;
+var Reg:TRegistry;
+begin
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey:=HKEY_LOCAL_MACHINE;
+    if Reg.OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion',false) then
+    begin
+      result:=Reg.ReadString('ProductName');
+      Reg.CloseKey;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
+
+function GetComputerName: string;
+var
+  s: array [0..MAX_COMPUTERNAME_LENGTH] of Char;
+  w:dword;
+begin
+  w := MAX_COMPUTERNAME_LENGTH+1;
+  Windows.GetComputerName(s,w);
+  result := string(s);
+end;
+
+function GetMacAddr(idx:integer=0): string;
+var
+  NCB: TNCB;
+  ADAPTER: TADAPTERSTATUS;
+  LANAENUM: TLANAENUM;
+  intIdx: Integer;
+  cRC: Char;
+  strTemp: string;
+begin
+  result := '';
+  ZeroMemory(@NCB, SizeOf(NCB));
+  NCB.ncb_command := Chr(NCBENUM);
+  cRC := NetBios(@NCB);
+  NCB.ncb_buffer := @LANAENUM;
+  NCB.ncb_length := SizeOf(LANAENUM);
+  cRC := NetBios(@NCB);
+  if Ord(cRC) <> 0 then Exit;
+  ZeroMemory(@NCB, SizeOf(NCB));
+  NCB.ncb_command := Chr(NCBRESET);
+  NCB.ncb_lana_num := LANAENUM.lana[idx];
+  cRC := NetBios(@NCB);
+  if Ord(cRC) <> 0 then Exit;
+  ZeroMemory(@NCB, SizeOf(NCB));
+  NCB.ncb_command := Chr(NCBASTAT);
+  NCB.ncb_lana_num := LANAENUM.lana[idx];
+  StrPCopy(NCB.ncb_callname, '*');
+  NCB.ncb_buffer := @ADAPTER;
+  NCB.ncb_length := SizeOf(ADAPTER);
+  cRC := NetBios(@NCB);
+  strTemp := '';
+  for intIdx := 0 to 5 do
+      strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
+  result := strTemp;
+end;
+
+function GetIpAddr:string;
+var
+  WSAData: TWSAData;
+  HostEnt: PHostEnt;
+  s: string;
+  size: Cardinal;
+begin
+  result := '';
+  s := GetComputerName;
+  WSAStartup(2, WSAData);
+  HostEnt := GetHostByName(PChar(s));
+  if HostEnt <> nil then
+  begin
+    with HostEnt^ do result := Format('%d.%d.%d.%d', [Byte(h_addr^[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
+  end;
+  WSACleanup;
 end;
 
 end.

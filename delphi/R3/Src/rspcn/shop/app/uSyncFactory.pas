@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
-  ObjCommon, ZLogFile, Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock,ActiveX;
+  ObjCommon, ZLogFile, Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock,
+  ActiveX;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -12,47 +13,9 @@ const
   MSC_SET_CAPTION=WM_USER+3;
   MSC_SET_CLOSE=WM_USER+4;
 
-  MAX_HOSTNAME_LEN = 128;
-  MAX_DOMAIN_NAME_LEN = 128;
-  MAX_SCOPE_ID_LEN = 256;
-  MAX_ADAPTER_NAME_LENGTH = 256;
-  MAX_ADAPTER_DESCRIPTION_LENGTH = 128;
-  MAX_ADAPTER_ADDRESS_LENGTH = 8;
-
   MAX_SYNC_RECORD_COUNT = 500;
 
 type
-  TIPAddressString = array[0..4 * 4 - 1] of Char;
-  PIPAddrString = ^TIPAddrString;
-  TIPAddrString = record
-    Next: PIPAddrString;
-    IPAddress: TIPAddressString;
-    IPMask: TIPAddressString;
-    Context: Integer;
-  end;
-
-  PIPAdapterInfo = ^TIPAdapterInfo;
-  TIPAdapterInfo = record
-    Next: PIPAdapterInfo;
-    ComboIndex: Integer;
-    AdapterName: array[0..MAX_ADAPTER_NAME_LENGTH + 3] of Char;
-    Description: array[0..MAX_ADAPTER_DESCRIPTION_LENGTH + 3] of Char;
-    AddressLength: Integer;
-    Address: array[1..MAX_ADAPTER_ADDRESS_LENGTH] of Byte;
-    Index: Integer;
-    _Type: Integer;
-    DHCPEnabled: Integer;
-    CurrentIPAddress: PIPAddrString;
-    IPAddressList: TIPAddrString;
-    GatewayList: TIPAddrString;
-    DHCPServer: TIPAddrString;
-    HaveWINS: Bool;
-    PrimaryWINSServer: TIPAddrString;
-    SecondaryWINSServer: TIPAddrString;
-    LeaseObtained: Integer;
-    LeaseExpires: Integer;
-  end;
-
   PSynTableInfo=^TSynTableInfo;
   TSynTableInfo=record
     tbName:string;//±íÃû
@@ -185,122 +148,7 @@ implementation
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
      ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand,ufrmHintMsg,
-     uPlayerFactory;
-
-function GetAdaptersInfo(AI: PIPAdapterInfo; var BufLen: Integer): Integer; stdcall; external 'iphlpapi.dll' Name 'GetAdaptersInfo';
-
-function GetMacAddrInfo:string;
-var
-  AI, Work: PIPAdapterInfo;
-  Size: Integer;
-  Res: Integer;
-  I: Integer;
-  function MACToStr(ByteArr: PByte; Len: Integer): string;
-  begin
-    result := '';
-    while (Len > 0) do
-    begin
-      result := result + IntToHex(ByteArr^, 2);
-      ByteArr := Pointer(Integer(ByteArr) + SizeOf(Byte));
-      Dec(Len);
-    end;
-  end;
-begin
-  Size := 5120;
-  GetMem(AI, Size);
-  Res := GetAdaptersInfo(AI, Size);
-  if (Res <> ERROR_SUCCESS) then Exit;
-
-  Work := AI;
-  I := 1;
-  repeat
-    if result <> '' then result := result + ',';
-    result := result + MACToStr(@Work^.Address, Work^.AddressLength);
-    Inc(I);
-    Work := Work^.Next;
-  until (Work = nil);
-
-  FreeMem(AI);
-end;
-
-function GetSystemInfo: string;
-var Reg:TRegistry;
-begin
-  Reg := TRegistry.Create;
-  try
-    Reg.RootKey:=HKEY_LOCAL_MACHINE;
-    if Reg.OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion',false) then
-    begin
-      result:=Reg.ReadString('ProductName');
-      Reg.CloseKey;
-    end;
-  finally
-    Reg.Free;
-  end;
-end;
-
-function GetComputerName: string;
-var
-  s: array [0..MAX_COMPUTERNAME_LENGTH] of Char;
-  w:dword;
-begin
-  w := MAX_COMPUTERNAME_LENGTH+1;
-  Windows.GetComputerName(s,w);
-  result := string(s);
-end;
-
-function GetMacAddr(idx:integer=0): string;
-var
-  NCB: TNCB;
-  ADAPTER: TADAPTERSTATUS;
-  LANAENUM: TLANAENUM;
-  intIdx: Integer;
-  cRC: Char;
-  strTemp: string;
-begin
-  result := '';
-  ZeroMemory(@NCB, SizeOf(NCB));
-  NCB.ncb_command := Chr(NCBENUM);
-  cRC := NetBios(@NCB);
-  NCB.ncb_buffer := @LANAENUM;
-  NCB.ncb_length := SizeOf(LANAENUM);
-  cRC := NetBios(@NCB);
-  if Ord(cRC) <> 0 then Exit;
-  ZeroMemory(@NCB, SizeOf(NCB));
-  NCB.ncb_command := Chr(NCBRESET);
-  NCB.ncb_lana_num := LANAENUM.lana[idx];
-  cRC := NetBios(@NCB);
-  if Ord(cRC) <> 0 then Exit;
-  ZeroMemory(@NCB, SizeOf(NCB));
-  NCB.ncb_command := Chr(NCBASTAT);
-  NCB.ncb_lana_num := LANAENUM.lana[idx];
-  StrPCopy(NCB.ncb_callname, '*');
-  NCB.ncb_buffer := @ADAPTER;
-  NCB.ncb_length := SizeOf(ADAPTER);
-  cRC := NetBios(@NCB);
-  strTemp := '';
-  for intIdx := 0 to 5 do
-      strTemp := strTemp + InttoHex(Integer(ADAPTER.adapter_address[intIdx]), 2);
-  result := strTemp;
-end;
-
-function GetIpAddr:string;
-var
-  WSAData: TWSAData;
-  HostEnt: PHostEnt;
-  s: string;
-  size: Cardinal;
-begin
-  result := '';
-  s := GetComputerName;
-  WSAStartup(2, WSAData);
-  HostEnt := GetHostByName(PChar(s));
-  if HostEnt <> nil then
-  begin
-    with HostEnt^ do result := Format('%d.%d.%d.%d', [Byte(h_addr^[0]), Byte(h_addr^[1]), Byte(h_addr^[2]), Byte(h_addr^[3])]);
-  end;
-  WSACleanup;
-end;
+     uPlayerFactory,udllShopUtil;
 
 constructor TSyncFactory.Create;
 begin

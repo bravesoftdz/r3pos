@@ -1,20 +1,20 @@
 inherited frmClearStorage: TfrmClearStorage
   Caption = 'frmClearStorage'
-  ClientHeight = 239
-  ClientWidth = 344
+  ClientHeight = 269
+  ClientWidth = 331
   OldCreateOrder = True
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 15
   inherited RzPanel1: TRzPanel
-    Width = 344
-    Height = 211
+    Width = 331
+    Height = 241
     object RzLabel3: TRzLabel
-      Left = 45
+      Left = 37
       Top = 28
-      Width = 270
+      Width = 252
       Height = 15
-      Caption = #27492#25805#20316#20250#23558#24744#24403#21069#30340#24211#23384#37327#20840#37096#28165#38646
+      Caption = #27492#25805#20316#20250#23558#24744#25152#36873#21830#21697#30340#24211#23384#37327#28165#38646
       Font.Charset = GB2312_CHARSET
       Font.Color = clBlack
       Font.Height = -15
@@ -24,9 +24,9 @@ inherited frmClearStorage: TfrmClearStorage
       WordWrap = True
     end
     object RzLabel2: TRzLabel
-      Left = 45
+      Left = 37
       Top = 68
-      Width = 270
+      Width = 255
       Height = 15
       Caption = #28165#29702#23436#25104#21518#35831#37325#26032#30424#28857#24182#24405#20837#21021#22987#24211#23384
       Font.Charset = GB2312_CHARSET
@@ -38,8 +38,8 @@ inherited frmClearStorage: TfrmClearStorage
       WordWrap = True
     end
     object RzLabel4: TRzLabel
-      Left = 77
-      Top = 116
+      Left = 69
+      Top = 156
       Width = 195
       Height = 15
       Caption = #27492#25805#20316#19981#33021#25764#38144#65292#26159#21542#32487#32493#65311
@@ -55,8 +55,8 @@ inherited frmClearStorage: TfrmClearStorage
       OnClick = RzLabel4Click
     end
     object Cancel: TRzBmpButton
-      Left = 197
-      Top = 156
+      Left = 189
+      Top = 196
       Width = 72
       Bitmaps.TransparentColor = clFuchsia
       Bitmaps.Up.Data = {
@@ -271,8 +271,8 @@ inherited frmClearStorage: TfrmClearStorage
       OnClick = CancelClick
     end
     object Save: TRzBmpButton
-      Left = 60
-      Top = 156
+      Left = 52
+      Top = 196
       Width = 72
       Bitmaps.TransparentColor = clFuchsia
       Bitmaps.Up.Data = {
@@ -487,8 +487,8 @@ inherited frmClearStorage: TfrmClearStorage
       OnClick = SaveClick
     end
     object chkContinue: TcxCheckBox
-      Left = 55
-      Top = 112
+      Left = 47
+      Top = 152
       Width = 21
       Height = 23
       Properties.DisplayUnchecked = 'False'
@@ -498,18 +498,81 @@ inherited frmClearStorage: TfrmClearStorage
       TabOrder = 2
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
+    object edtBK_INDUSTRY_TYPE: TRzPanel
+      Left = 37
+      Top = 102
+      Width = 260
+      Height = 31
+      BorderOuter = fsStatus
+      BorderWidth = 1
+      Color = clWhite
+      FlatColor = 9145227
+      TabOrder = 3
+      object RzPanel81: TRzPanel
+        Left = 2
+        Top = 2
+        Width = 103
+        Height = 27
+        Align = alLeft
+        BorderOuter = fsFlat
+        BorderSides = [sdRight]
+        FlatColor = clGray
+        TabOrder = 0
+        object RzLabel50: TRzLabel
+          Left = 0
+          Top = 0
+          Width = 102
+          Height = 27
+          Align = alClient
+          Alignment = taCenter
+          Caption = #21830#21697#20998#31867
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clBlack
+          Font.Height = -15
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+          Transparent = True
+          Layout = tlCenter
+          ShadowColor = 16250871
+          ShadowDepth = 1
+          TextStyle = tsShadow
+        end
+      end
+      object sortDrop: TcxButtonEdit
+        Tag = -1
+        Left = 111
+        Top = 4
+        Width = 146
+        Height = 23
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        Properties.OnButtonClick = sortDropPropertiesButtonClick
+        Style.BorderStyle = ebsUltraFlat
+        Style.Edges = []
+        Style.HotTrack = False
+        Style.ButtonStyle = btsUltraFlat
+        Style.ButtonTransparency = ebtInactive
+        TabOrder = 1
+        Text = #20840#37096#20998#31867
+        OnExit = sortDropExit
+      end
+    end
   end
   inherited pnlAddressBar: TPanel
-    Width = 344
+    Width = 331
     inherited Image3: TImage
-      Width = 336
+      Width = 323
     end
     inherited RzLabel1: TRzLabel
       Width = 7
       Caption = ''
     end
     inherited Image1: TImage
-      Left = 340
+      Left = 327
     end
     object RzLabel26: TRzLabel [5]
       Left = 10
@@ -525,14 +588,14 @@ inherited frmClearStorage: TfrmClearStorage
       TextStyle = tsShadow
     end
     inherited btnClose: TRzBmpButton
-      Left = 312
+      Left = 299
     end
     inherited RzBmpButton4: TRzBmpButton
-      Left = 260
+      Left = 247
       Visible = False
     end
     inherited btnWindow: TRzBmpButton
-      Left = 286
+      Left = 273
       Visible = False
     end
   end

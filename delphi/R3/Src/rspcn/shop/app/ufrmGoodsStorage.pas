@@ -2635,13 +2635,46 @@ begin
 end;
 
 procedure TfrmGoodsStorage.ClearStorageClick(Sender: TObject);
-var rs:TZQuery;
+var
+  rs:TZQuery;
+  SObj:TRecord_;
+  SortId:string;
 begin
   inherited;
-  if not TfrmClearStorage.ShowDialog(self) then Exit;
+  SObj := TRecord_.Create;
+  try
+    if not TfrmClearStorage.ShowDialog(self, SObj) then Exit;
+    SortId := trim(SObj.FieldByName('SORT_ID').AsString);
+  finally
+    SObj.Free;
+  end;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and AMOUNT<>0';
+    if SortId = '' then
+       begin
+         rs.SQL.Text := 'select GODS_ID,AMOUNT,BATCH_NO,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and AMOUNT<>0';
+       end
+    else if SortId = '1000006' then
+       begin
+         rs.SQL.Text := 'select a.GODS_ID,a.AMOUNT,a.BATCH_NO,a.PROPERTY_01,a.PROPERTY_02 '+
+                        'from   STO_STORAGE a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID')+') b '+
+                        'where  a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and a.AMOUNT<>0'+
+                        '       and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and b.RELATION_ID=1000006';
+       end
+    else if SortId = '0000000' then
+       begin
+         rs.SQL.Text := 'select a.GODS_ID,a.AMOUNT,a.BATCH_NO,a.PROPERTY_01,a.PROPERTY_02 '+
+                        'from   STO_STORAGE a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID')+') b '+
+                        'where  a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and a.AMOUNT<>0'+
+                        '       and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and b.RELATION_ID<>1000006';
+       end
+    else
+       begin
+         rs.SQL.Text := 'select a.GODS_ID,a.AMOUNT,a.BATCH_NO,a.PROPERTY_01,a.PROPERTY_02 '+
+                        'from   STO_STORAGE a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,SORT_ID1')+') b '+
+                        'where  a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and a.AMOUNT<>0'+
+                        '       and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and b.SORT_ID1='''+SortId+'''';
+       end;
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
     rs.ParamByName('SHOP_ID').AsString := token.shopId;
     dataFactory.Open(rs);

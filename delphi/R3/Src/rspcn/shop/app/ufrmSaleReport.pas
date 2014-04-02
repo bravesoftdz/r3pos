@@ -59,6 +59,11 @@ type
     RzPanel16: TRzPanel;
     edtUSER_ID: TzrComboBoxList;
     edtSTAT_ID: TzrComboBoxList;
+    RzPanel10: TRzPanel;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    sortDrop: TcxButtonEdit;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -83,7 +88,11 @@ type
     procedure edtGODS_IDExit(Sender: TObject);
     procedure edtSTAT_IDClearValue(Sender: TObject);
     procedure edtSTAT_IDExit(Sender: TObject);
+    procedure sortDropPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure sortDropExit(Sender: TObject);
   private
+    FSortId:string;
     WTitle1:TStringList;
     WTitle2:TStringList;
     ReportItemIndex:integer;
@@ -99,7 +108,8 @@ var frmSaleReport: TfrmSaleReport;
 
 implementation
 
-uses udataFactory,utokenFactory,uFnUtil,udllGlobal,udllShopUtil,ObjCommon;
+uses udataFactory,utokenFactory,uFnUtil,udllGlobal,udllShopUtil,ObjCommon,
+  ufrmSortDropFrom;
 
 {$R *.dfm}
 
@@ -242,12 +252,18 @@ begin
 
   if not all then
      begin
+       edtReportType.ItemIndex := ReportItemIndex;
+
        if ReportItemIndex = 0 then
           begin
             WTitle2.add('客户：'+cdsReport1.FieldbyName('CLIENT_NAME').AsString);
+
+            edtCLIENT_ID.KeyValue := cdsReport1.FieldbyName('CLIENT_ID').AsString;
+            edtCLIENT_ID.Text := cdsReport1.FieldbyName('CLIENT_NAME').AsString; 
+
             if cdsReport1.FieldbyName('CLIENT_ID').AsString = '' then
                begin
-                 cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID is null'
+                 cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID is null';
                end
             else
                begin
@@ -258,12 +274,20 @@ begin
        else if ReportItemIndex = 1 then
           begin
             WTitle2.add('商品：'+cdsReport1.FieldbyName('GODS_NAME').AsString);
+
+            edtGODS_ID.KeyValue := cdsReport1.FieldbyName('GODS_ID').AsString;
+            edtGODS_ID.Text := cdsReport1.FieldbyName('GODS_NAME').AsString;
+
             cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
             cdsReport2.ParamByName('GODS_ID').AsString := cdsReport1.FieldbyName('GODS_ID').AsString;
           end
        else if ReportItemIndex = 2 then
           begin
             WTitle2.add('店员：'+cdsReport1.FieldbyName('USER_NAME').AsString);
+
+            edtUSER_ID.KeyValue := cdsReport1.FieldbyName('CREA_USER').AsString;
+            edtUSER_ID.Text := cdsReport1.FieldbyName('USER_NAME').AsString;
+
             cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CREA_USER=:USER_ID';
             cdsReport2.ParamByName('USER_ID').AsString := cdsReport1.FieldbyName('CREA_USER').AsString;
           end
@@ -274,6 +298,9 @@ begin
             SortName := 'SORT_ID'+CodeId;
             SortField := SortName+',';
             WTitle2.add(CodeName+'：'+cdsReport1.FieldbyName('SORT_NAME').AsString);
+
+            edtSTAT_ID.KeyValue := cdsReport1.FieldbyName('SORT_ID').AsString;
+            edtSTAT_ID.Text := cdsReport1.FieldbyName('SORT_NAME').AsString;
           end;
      end
   else
@@ -285,6 +312,10 @@ begin
                begin
                  cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
                  cdsReport2.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+               end
+            else
+               begin
+                 edtCLIENT_ID.Text := '所有客户';
                end;
           end
        else if edtReportType.ItemIndex = 1 then
@@ -345,6 +376,10 @@ begin
                begin
                  cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.'+SortName+'=:SORT_ID';
                  cdsReport2.ParamByName('SORT_ID').AsString := edtSTAT_ID.AsString;
+               end
+            else
+               begin
+                 edtSTAT_ID.Text := '所有指标';
                end;
           end;
      end;
@@ -446,7 +481,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsReport1.IsEmpty;
   br := TBrush.Create;
@@ -505,7 +539,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   br := TBrush.Create;
   br.Assign(DBGridEh2.Canvas.Brush);
@@ -901,6 +934,42 @@ begin
            Column.KeyList.Add(rs.FieldbyName('SORT_ID').AsString);
            rs.Next;
          end;
+     end;
+end;
+
+procedure TfrmSaleReport.sortDropPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var Obj:TRecord_;
+begin
+  inherited;
+  Obj := TRecord_.Create;
+  try
+    frmSortDropFrom.SelectRootOrLeaf := true;
+    if frmSortDropFrom.DropForm(sortDrop,Obj) then
+    begin
+      if Obj.Count>0 then
+         begin
+            FSortId := Obj.FieldbyName('SORT_ID').AsString;
+            sortDrop.Text := Obj.FieldbyName('SORT_NAME').AsString;
+         end
+      else
+         begin
+            FSortId := '';
+            sortDrop.Text := '全部分类';
+         end;
+    end;
+  finally
+    Obj.Free;
+  end;
+end;
+
+procedure TfrmSaleReport.sortDropExit(Sender: TObject);
+begin
+  inherited;
+  if trim(sortDrop.Text)='' then
+     begin
+       FSortId := '';
+       sortDrop.Text := '全部分类';
      end;
 end;
 

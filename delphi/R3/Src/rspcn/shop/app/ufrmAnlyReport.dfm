@@ -3,7 +3,6 @@ inherited frmAnlyReport: TfrmAnlyReport
   Caption = #32463#33829#20998#26512#25253#34920
   ClientWidth = 979
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 15
   inherited ScrollBox: TScrollBox
@@ -102,8 +101,6 @@ inherited frmAnlyReport: TfrmAnlyReport
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
-                ToolbarControls = (
-                  )
                 object TRzToolButton
                   Left = 0
                   Top = 0

@@ -66,7 +66,6 @@ type
     procedure edtGODS_IDClearValue(Sender: TObject);
     procedure edtCLIENT_IDClearValue(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure edtReportTypePropertiesChange(Sender: TObject);
     procedure chartClick(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
@@ -80,7 +79,6 @@ type
       AButtonIndex: Integer);
   private
     FSortId:string;
-    WTitle1:TStringList;
   public
     procedure OpenReport1;
     procedure showForm;override;
@@ -218,16 +216,10 @@ begin
 
   case edtReportType.ItemIndex of
     0:begin
-        WTitle1.Clear;
-        WTitle1.add('日期：'+FormatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',D2.Date));
-        WTitle1.add(edtReportType.Text+'：'+edtCLIENT_ID.Text);
         if edtCLIENT_ID.AsString <> '' then
            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.CLIENT_ID=:CLIENT_ID ';
       end;
     1:begin
-        WTitle1.Clear;
-        WTitle1.add('日期：'+FormatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',D2.Date));
-        WTitle1.add(edtReportType.Text+'：'+edtGODS_ID.Text);
         if edtGODS_ID.AsString <> '' then
            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID ';
       end;
@@ -325,19 +317,12 @@ end;
 procedure TfrmAnlyReport.FormCreate(Sender: TObject);
 begin
   inherited;
-  WTitle1 := TStringList.Create;
   edtDataSource.Properties.Items.Clear;
   edtDataSource.Properties.Items.Add('客流量');
   edtDataSource.Properties.Items.Add('销售量');
   edtDataSource.Properties.Items.Add('销售额');
   edtDataSource.Properties.Items.Add('毛利');
   edtDataSource.ItemIndex := 0;
-end;
-
-procedure TfrmAnlyReport.FormDestroy(Sender: TObject);
-begin
-  WTitle1.Free;
-  inherited;
 end;
 
 procedure TfrmAnlyReport.CreateChartText;

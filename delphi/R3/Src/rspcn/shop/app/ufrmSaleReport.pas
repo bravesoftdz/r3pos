@@ -119,7 +119,7 @@ var
 begin
   PageControl.ActivePageIndex := 0;
   PageControlChange(nil);
-  cdsReport1.close;
+  cdsReport1.Close;
   CreateGrid1;
   WTitle1.Clear;
   WTitle1.add('ÈÕÆÚ£º'+formatDatetime('YYYY-MM-DD',D1.Date)+' ÖÁ '+formatDatetime('YYYY-MM-DD',D2.Date));

@@ -8,15 +8,13 @@ uses
   RzPanel, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,ZBase,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, TeeProcs, TeEngine,
-  Chart, Series, cxRadioGroup, RzBmpBtn, RzBckgnd, pngimage,udllShopUtil,
-  PrnDbgeh,Clipbrd;
+  Chart, Series, cxRadioGroup, RzBmpBtn, RzBckgnd, pngimage, udllShopUtil,
+  PrnDbgeh, Clipbrd;
 
 type
   TfrmAnlyReport = class(TfrmReportForm)
     cdsReport1: TZQuery;
     dsReport1: TDataSource;
-    cdsReport2: TZQuery;
-    dsReport2: TDataSource;
     barcode: TRzPanel;
     barcode_input_left: TImage;
     barcode_input_right: TImage;
@@ -31,14 +29,11 @@ type
     RzBackground8: TRzBackground;
     RzLabel16: TRzLabel;
     D2: TcxDateEdit;
-    btnPrior: TRzBmpButton;
     edtReportType: TcxComboBox;
     edtCLIENT_ID: TzrComboBoxList;
     edtGODS_ID: TzrComboBoxList;
     RzPanel16: TRzPanel;
     barcode_input_line: TImage;
-    list: TRzBmpButton;
-    chart: TRzBmpButton;
     RzPanel2: TRzPanel;
     RzPanel3: TRzPanel;
     RzPanel7: TRzPanel;
@@ -60,10 +55,14 @@ type
     RzLabel6: TRzLabel;
     edtDataSource: TcxComboBox;
     PrintDialog1: TPrintDialog;
+    RzPanel1: TRzPanel;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    sortDrop: TcxButtonEdit;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure btnPriorClick(Sender: TObject);
-    procedure PageControlChange(Sender: TObject);
     procedure edtGODS_IDClearValue(Sender: TObject);
     procedure edtCLIENT_IDClearValue(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -76,7 +75,11 @@ type
     procedure edtChar1TypeClick(Sender: TObject);
     procedure edtChar2TypeClick(Sender: TObject);
     procedure edtDataSourcePropertiesChange(Sender: TObject);
+    procedure sortDropExit(Sender: TObject);
+    procedure sortDropPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
+    FSortId:string;
     WTitle1:TStringList;
   public
     procedure OpenReport1;
@@ -84,9 +87,8 @@ type
     procedure CreateChart;
     procedure CreateChartText;
     procedure OpenChart;
-    procedure CalcClientNum(var rs:TZQuery;filterStr:string);
-    procedure CalcWeek(var rs:TZQuery;filterStr:string);
-    function IsProfit:Boolean;
+    procedure CalcWeek(var rs:TZQuery);
+    function  IsProfit:Boolean;
   end;
 
 const
@@ -96,172 +98,98 @@ var frmAnlyReport: TfrmAnlyReport;
 
 implementation
 
-uses udataFactory,utokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,objCommon,printers;
+uses udataFactory,uTokenFactory,uFnUtil,udllGlobal,ufrmStocksCalc,ObjCommon,printers,
+     ufrmSortDropFrom;
 
 {$R *.dfm}
 
 function TfrmAnlyReport.IsProfit:Boolean;
 begin
   result:=false;
-  if ((edtReportType.ItemIndex=0) and (edtDataSource.ItemIndex=2)) or ((edtReportType.ItemIndex=1) and (edtDataSource.ItemIndex=3)) then
-     result:=true;
+  if edtDataSource.ItemIndex=3 then result := true;
 end;
 
 procedure TfrmAnlyReport.OpenReport1;
-var
-  vBegDate,            //查询开始日期
-  vEndDate: integer;   //查询结束日期
-  RckMaxDate: integer; //台帐最大日期
-  vStr:string;
 begin
-  PageControl.ActivePageIndex := 0;
-  PageControlChange(nil);
-
   if D1.EditValue = null then Raise Exception.Create('日期条件不能为空!');
   if D2.EditValue = null then Raise Exception.Create('日期条件不能为空!');
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',D2.Date));  //结束日期
 
-  if IsProfit then
-  begin
-    RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-    //if RckMaxDate < vEndDate then
-    //   begin
-         //没有计算，需重计算流水
-         if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
-    //   end;
-  end;
-  cdsReport1.close;
+  if IsProfit then if not TfrmStocksCalc.Calc(self,D2.Date) then Exit;
+
+  cdsReport1.Close;
+
+  if edtChar1Type.Checked then
+     begin
+       if IsProfit then
+          cdsReport1.SQL.Text :=
+            ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,sum(b.SALE_MONEY-b.OUT_MONEY) as SALE_PRF '+
+            ' from   SAL_SALESORDER a,RCK_STOCKS_DATA b '+
+            ' where  a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.BILL_ID and a.SALES_DATE=b.BILL_DATE '+
+            '        and a.SALES_TYPE in (1,3,4) and b.BILL_TYPE in (21,23,24) '+
+            '        and a.TENANT_ID=:TENANT_ID '+
+            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 '
+       else
+          cdsReport1.SQL.Text :=
+            ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
+            ' from   VIW_SALESDATA a '+
+            ' where  a.TENANT_ID=:TENANT_ID '+
+            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+     end
+  else
+     begin
+       if IsProfit then
+          cdsReport1.SQL.Text :=
+            ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,sum(b.SALE_MONEY-b.OUT_MONEY) as SALE_PRF '+
+            ' from   SAL_SALESORDER a,RCK_STOCKS_DATA b '+
+            ' where  a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.BILL_ID and a.SALES_DATE=b.BILL_DATE '+
+            '        and a.SALES_TYPE in (1,3,4) and b.BILL_TYPE in (21,23,24) '+
+            '        and a.TENANT_ID=:TENANT_ID '+
+            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 '
+       else
+          cdsReport1.SQL.Text :=
+            ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
+            ' from   VIW_SALESDATA a '+
+            ' where  a.TENANT_ID=:TENANT_ID '+
+            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+     end;
+
+  if FnString.TrimRight(token.shopId,4)<>'0001' then
+     cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.SHOP_ID=:SHOP_ID ';
+
   case edtReportType.ItemIndex of
-  0:begin
-      WTitle1.Clear;
-      WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
-      WTitle1.add(edtReportType.Text+'：'+edtCLIENT_ID.Text);
-      if edtChar1Type.Checked then
-      begin
-        if IsProfit then
-        cdsReport1.SQL.Text :=
-           'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
-           'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
-           'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
-           'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
-           'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 and RS.TENANT_ID=:TENANT_ID and RS.BILL_DATE>=:D1 and RS.BILL_DATE<=:D2 '
-        else
-        cdsReport1.SQL.Text :=
-           'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
-           'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+
-           'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
-           'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=4 '+
-           'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 ';
-
-        if FnString.TrimRight(token.shopId,4)<>'0001' then
-           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SO.SHOP_ID=:SHOP_ID ';
+    0:begin
+        WTitle1.Clear;
+        WTitle1.add('日期：'+FormatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',D2.Date));
+        WTitle1.add(edtReportType.Text+'：'+edtCLIENT_ID.Text);
         if edtCLIENT_ID.AsString <> '' then
-           begin
-             cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SO.CLIENT_ID=:CLIENT_ID ';
-           end;
-        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by SO.TENANT_ID,SO.SHOP_ID,SUBSTR(CREA_DATE,12,2) ';
-      end else
-      begin
-        if IsProfit then
-        cdsReport1.SQL.Text :=
-         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
-         'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
-         'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
-         'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
-         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 and RS.TENANT_ID=:TENANT_ID and RS.BILL_DATE>=:D1 and RS.BILL_DATE<=:D2 '
-        else
-        cdsReport1.SQL.Text :=
-         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
-         'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+
-         'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
-         'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=4 '+
-         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 ';
-
-        if FnString.TrimRight(token.shopId,4)<>'0001' then
-           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SO.SHOP_ID=:SHOP_ID ';
-        if edtCLIENT_ID.AsString <> '' then
-           begin
-             cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SO.CLIENT_ID=:CLIENT_ID ';
-           end;
-        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by SO.TENANT_ID,SO.SHOP_ID,SALES_DATE ';
+           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.CLIENT_ID=:CLIENT_ID ';
       end;
-
-      cdsReport1.SQL.Text :=ParseSQL(dataFactory.iDbType,cdsReport1.SQL.Text);
-      cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
-      cdsReport1.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
-      cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
-      if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
-      if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
-    end;
-  1:begin 
-      WTitle1.Clear;
-      WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
-      WTitle1.add(edtReportType.Text+'：'+edtGODS_ID.Text);
-      if edtDataSource.ItemIndex=0 then
-        vStr:=',SO.SALES_ID,SO.CLIENT_ID '
-      else
-        vStr:='';
-
-      if edtChar1Type.Checked then
-      begin
-      if IsProfit then
-      cdsReport1.SQL.Text :=
-         'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
-         'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
-         'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
-         'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
-         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 AND RS.TENANT_ID=:TENANT_ID AND RS.BILL_DATE>=:D1 AND RS.BILL_DATE<=:D2 '
-      else
-      cdsReport1.SQL.Text :=
-         'SELECT SUBSTR(CREA_DATE,12,2) as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,'''' AS SALES_DATE,'+
-         'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+ vStr+
-         'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
-         'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=4 '+
-         'AND SO.TENANT_ID=:TENANT_ID AND SO.SALES_DATE>=:D1 AND SO.SALES_DATE<=:D2 ';
-
-      if FnString.TrimRight(token.shopId,4)<>'0001' then
-         cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SD.SHOP_ID=:SHOP_ID ';
-      if edtGODS_ID.AsString <> '' then
-         begin
+    1:begin
+        WTitle1.Clear;
+        WTitle1.add('日期：'+FormatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',D2.Date));
+        WTitle1.add(edtReportType.Text+'：'+edtGODS_ID.Text);
+        if edtGODS_ID.AsString <> '' then
            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID ';
-         end;
-      cdsReport1.SQL.Text := cdsReport1.SQL.Text +'GROUP BY SO.TENANT_ID,SO.SHOP_ID,SUBSTR(CREA_DATE,12,2)'+vStr+' ORDER BY SUBSTR(CREA_DATE,12,2) ';
-      end else
-      begin
-        if IsProfit then
-        cdsReport1.SQL.Text :=
-         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
-         'SUM(RS.SALE_MONEY-RS.OUT_MONEY) as SALE_PRF '+
-         'FROM SAL_SALESORDER SO,RCK_STOCKS_DATA RS '+
-         'WHERE SO.TENANT_ID=RS.TENANT_ID AND SO.SHOP_ID=RS.SHOP_ID AND SO.SALES_ID=RS.BILL_ID AND RS.BILL_TYPE in (21,23,24) '+
-         'AND SO.TENANT_ID=:TENANT_ID and SO.SALES_DATE>=:D1 and SO.SALES_DATE<=:D2 and RS.TENANT_ID=:TENANT_ID and RS.BILL_DATE>=:D1 and RS.BILL_DATE<=:D2  '
-        else
-        cdsReport1.SQL.Text :=
-         'SELECT '''' as HOUR,'''' as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
-         'SUM(CALC_AMOUNT) AS SALE_AMOUNT,SUM(CALC_MONEY) AS SALE_MONEY '+vStr+
-         'FROM SAL_SALESORDER SO,SAL_SALESDATA SD '+
-         'WHERE SO.TENANT_ID=SD.TENANT_ID AND SO.SHOP_ID=SD.SHOP_ID AND SO.SALES_ID=SD.SALES_ID AND SO.SALES_TYPE=4 '+
-         'AND SO.TENANT_ID=:TENANT_ID and SO.SALES_DATE>=:D1 and SO.SALES_DATE<=:D2 ';
-
-      if FnString.TrimRight(token.shopId,4)<>'0001' then
-         cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SD.SHOP_ID=:SHOP_ID ';
-      if edtGODS_ID.AsString <> '' then
-         begin
-           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID ';
-         end;
-      cdsReport1.SQL.Text := cdsReport1.SQL.Text +'GROUP BY SO.TENANT_ID,SO.SHOP_ID,SO.SALES_DATE'+vStr+' ORDER BY SO.SALES_DATE ';
       end;
-
-      cdsReport1.SQL.Text :=ParseSQL(dataFactory.iDbType,cdsReport1.SQL.Text);
-
-      cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
-      cdsReport1.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
-      cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
-      if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
-      if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
-    end;
   end;
+
+  if edtChar1Type.Checked then
+     begin
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.SHOP_ID,substr(a.CREA_DATE,12,2) ';
+     end
+  else
+     begin
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.SHOP_ID,a.SALES_DATE ';
+     end;
+
+  cdsReport1.SQL.Text := ParseSQL(dataFactory.iDbType, cdsReport1.SQL.Text);
+  cdsReport1.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+  cdsReport1.ParamByName('D1').AsInteger := StrtoInt(FormatDatetime('YYYYMMDD',D1.Date));
+  cdsReport1.ParamByName('D2').AsInteger := StrtoInt(FormatDatetime('YYYYMMDD',D2.Date));
+  if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
+  if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+  if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
+
   dataFactory.Open(cdsReport1);
 end;
 
@@ -272,27 +200,19 @@ begin
   0:begin
       D1.Date := dllGlobal.SysDate;
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := true;
-      //D2.Properties.ReadOnly := true;
     end;
   1:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYYMM01',dllGlobal.SysDate));
+      D1.Date := fnTime.fnStrtoDate(FormatDatetime('YYYYMM01',dllGlobal.SysDate));
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := true;
-      //D2.Properties.ReadOnly := true;
     end;
   2:begin
-      D1.Date := fnTime.fnStrtoDate(formatDatetime('YYYY0101',dllGlobal.SysDate));
+      D1.Date := fnTime.fnStrtoDate(FormatDatetime('YYYY0101',dllGlobal.SysDate));
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := true;
-      //D2.Properties.ReadOnly := true;
     end;
   else
     begin
       D1.Date := dllGlobal.SysDate;
       D2.Date := dllGlobal.SysDate;
-      //D1.Properties.ReadOnly := false;
-      //D2.Properties.ReadOnly := false;
     end;
   end;
 end;
@@ -318,8 +238,6 @@ procedure TfrmAnlyReport.btnPriorClick(Sender: TObject);
 begin
   inherited;
   PageControl.ActivePageIndex := 0;
-  PageControlChange(nil);
-  list.Down := (PageControl.ActivePageIndex<>1);
   RzPanel11.Visible := true;
   edtCLIENT_ID.Properties.ReadOnly := false;
   edtGODS_ID.Properties.ReadOnly := false;
@@ -328,12 +246,6 @@ begin
   D1.Properties.ReadOnly := false;
   D2.Properties.ReadOnly := false;
   RzBmpButton4.Caption := '统计';
-end;
-
-procedure TfrmAnlyReport.PageControlChange(Sender: TObject);
-begin
-  inherited;
-  btnPrior.Visible := PageControl.ActivePageIndex>0;
 end;
 
 procedure TfrmAnlyReport.edtGODS_IDClearValue(Sender: TObject);
@@ -354,6 +266,12 @@ procedure TfrmAnlyReport.FormCreate(Sender: TObject);
 begin
   inherited;
   WTitle1 := TStringList.Create;
+  edtDataSource.Properties.Items.Clear;
+  edtDataSource.Properties.Items.Add('客流量');
+  edtDataSource.Properties.Items.Add('销售量');
+  edtDataSource.Properties.Items.Add('销售额');
+  edtDataSource.Properties.Items.Add('毛利');
+  edtDataSource.ItemIndex := 0;
 end;
 
 procedure TfrmAnlyReport.FormDestroy(Sender: TObject);
@@ -363,141 +281,112 @@ begin
 end;
 
 procedure TfrmAnlyReport.CreateChartText;
-var i:integer;
 begin
-  if edtReportType.ItemIndex= 0 then
-     i:=1
-  else
-     i:=0;
-
   if edtChar1Type.Checked then
-    begin
+     begin
        Chart2.BottomAxis.Title.Caption:='时点(小时)';
-       case edtDataSource.ItemIndex+i of
+       case edtDataSource.ItemIndex of
          0:begin
-           Chart2.Title.Text.Text:='时段客流量分析表';
-           Chart2.LeftAxis.Title.Caption:='客流量';
+             Chart2.Title.Text.Text:='时段客流量分析表';
+             Chart2.LeftAxis.Title.Caption:='客流量';
            end;
          1:begin
-           Chart2.Title.Text.Text:='时段销售量分析表';
-           Chart2.LeftAxis.Title.Caption:='销售量';
+             Chart2.Title.Text.Text:='时段销售量分析表';
+             Chart2.LeftAxis.Title.Caption:='销售量';
            end;
          2:begin
-           Chart2.Title.Text.Text:='时段销售额分析表';
-           Chart2.LeftAxis.Title.Caption:='销售额';
+             Chart2.Title.Text.Text:='时段销售额分析表';
+             Chart2.LeftAxis.Title.Caption:='销售额';
+           end;
+         3:begin
+             Chart2.Title.Text.Text:='时段毛利分析表';
+             Chart2.LeftAxis.Title.Caption:='毛利';
            end;
        end;
-    end
-    else
-    begin
+     end
+  else
+     begin
        Chart2.BottomAxis.Title.Caption:='';
-       case edtDataSource.ItemIndex+i of
+       case edtDataSource.ItemIndex of
          0:begin
-           Chart2.Title.Text.Text:='周客流量分析表';
-           Chart2.LeftAxis.Title.Caption:='客流量';
+             Chart2.Title.Text.Text:='周客流量分析表';
+             Chart2.LeftAxis.Title.Caption:='客流量';
            end;
          1:begin
-           Chart2.Title.Text.Text:='周销售量分析表';
-           Chart2.LeftAxis.Title.Caption:='销售量';
+             Chart2.Title.Text.Text:='周销售量分析表';
+             Chart2.LeftAxis.Title.Caption:='销售量';
            end;
          2:begin
-           Chart2.Title.Text.Text:='周销售额分析表';
-           Chart2.LeftAxis.Title.Caption:='销售额';
+             Chart2.Title.Text.Text:='周销售额分析表';
+             Chart2.LeftAxis.Title.Caption:='销售额';
+           end;
+         3:begin
+             Chart2.Title.Text.Text:='周毛利分析表';
+             Chart2.LeftAxis.Title.Caption:='毛利';
            end;
        end;
     end;
 end;
 
 procedure TfrmAnlyReport.CreateChart;
-var
-  rs:TZQuery;
-  recNo:integer;
-  i:integer;
-begin
-  rs := TZQuery.Create(nil);
-  try
-    Chart2.Series[0].Clear;
-    if cdsReport1.RecordCOunt=0 then exit;
-
-    rs.Data := cdsReport1.Data;
-    if edtChar1Type.Checked then
-       rs.SortedFields := 'HOUR'
-    else
-       rs.SortedFields := 'SALES_DATE';
-
-    if (edtReportType.ItemIndex=1) and (edtDataSource.ItemIndex=0) then
-       CalcClientNum(rs,rs.SortedFields);
-
-    if edtChar2Type.Checked then
-    begin
-       CalcWeek(rs,rs.SortedFields);
-    end;
-
-    CreateChartText;
+  procedure doCreate(rs:TZQuery);
+  var i:integer;
+  begin
     rs.First;
     while not rs.Eof do
       begin
-        case edtReportType.ItemIndex of
-          1:
-          if edtChar1Type.Checked then
-          begin
-             case edtDataSource.ItemIndex of
-               0:Chart2.Series[0].Add(rs.FieldbyName('CLIENTNUM').AsFloat,rs.FieldbyName('HOUR').AsString);
-               1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,rs.FieldbyName('HOUR').AsString);
-               2:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,rs.FieldbyName('HOUR').AsString);
-               3:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,rs.FieldbyName('HOUR').AsString);
-             end;
-          end
+         if edtChar1Type.Checked then
+            begin
+               case edtDataSource.ItemIndex of
+                 0:Chart2.Series[0].Add(rs.FieldbyName('CLIENT_NUM').AsFloat,rs.FieldbyName('HOUR').AsString);
+                 1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,rs.FieldbyName('HOUR').AsString);
+                 2:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,rs.FieldbyName('HOUR').AsString);
+                 3:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,rs.FieldbyName('HOUR').AsString);
+               end;
+             end
           else
-          begin
-             i:=rs.FieldbyName('WEEK').AsInteger;
-             case edtDataSource.ItemIndex of
-               0:Chart2.Series[0].Add(rs.FieldbyName('CLIENTNUM').AsFloat,weekList[i-1]);
-               1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
-               2:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,weekList[i-1]);
-               3:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,weekList[i-1]);
+             begin
+               i := rs.FieldbyName('WEEK').AsInteger;
+               case edtDataSource.ItemIndex of
+                 0:Chart2.Series[0].Add(rs.FieldbyName('CLIENT_NUM').AsFloat,weekList[i-1]);
+                 1:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
+                 2:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,weekList[i-1]);
+                 3:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,weekList[i-1]);
+               end;
              end;
-          end;
-          0:
-          if edtChar1Type.Checked then
-          begin
-             case edtDataSource.ItemIndex of
-               0:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,rs.FieldbyName('HOUR').AsString);
-               1:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,rs.FieldbyName('HOUR').AsString);
-               2:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,rs.FieldbyName('HOUR').AsString);
-             end;
-          end
-          else
-          begin
-             //i:=DayofWeek(FnTime.fnStrtoDate(rs.FieldbyName('SALES_DATE').AsString));
-             i:=rs.FieldbyName('WEEK').AsInteger;
-             case edtDataSource.ItemIndex of
-               0:Chart2.Series[0].Add(rs.FieldbyName('SALE_AMOUNT').AsFloat,weekList[i-1]);
-               1:Chart2.Series[0].Add(rs.FieldbyName('SALE_MONEY').AsFloat,weekList[i-1]);
-               2:Chart2.Series[0].Add(rs.FieldbyName('SALE_PRF').AsFloat,weekList[i-1]);
-             end;
-          end;
-        end;
         rs.Next;
       end;
-  finally
-    rs.Free;
   end;
+var
+  rs:TZQuery;
+begin
+  Chart2.Series[0].Clear;
+
+  if cdsReport1.IsEmpty then Exit;
+
+  CreateChartText;
+
+  if edtChar2Type.Checked then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         CalcWeek(rs);
+         doCreate(rs);
+       finally
+         rs.Free;
+       end;
+     end
+  else
+     begin
+       doCreate(cdsReport1);
+     end;
 end;
 
 procedure TfrmAnlyReport.edtReportTypePropertiesChange(Sender: TObject);
-var index:integer;
 begin
   inherited;
   edtCLIENT_ID.Visible := (edtReportType.ItemIndex=0);
   edtGODS_ID.Visible := (edtReportType.ItemIndex>0);
-  edtDataSource.Properties.Items.Clear;
-  if edtReportType.ItemIndex=1 then
-    edtDataSource.Properties.Items.Add('客流量');
-  edtDataSource.Properties.Items.Add('销售量');
-  edtDataSource.Properties.Items.Add('销售额');
-  edtDataSource.Properties.Items.Add('毛利');
-  edtDataSource.ItemIndex:=0;
 end;
 
 procedure TfrmAnlyReport.chartClick(Sender: TObject);
@@ -508,107 +397,57 @@ end;
 
 procedure TfrmAnlyReport.OpenChart;
 begin
-  openReport1;
+  OpenReport1;
   CreateChart;
 end;
 
-procedure TfrmAnlyReport.CalcClientNum(var rs: TZQuery;filterStr:string);
+procedure TfrmAnlyReport.CalcWeek(var rs:TZQuery);
 var
-  ss:TZQuery;
-  item:TRecord_;
-begin
-  if cdsReport1.IsEmpty then exit;
-  ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT 0 as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,'+
-         '0 AS SALE_AMOUNT,0 AS SALE_MONEY '+
-         'FROM SAL_SALESORDER SO '+
-         'WHERE  1=2 ';
-  dataFactory.Open(ss);
-
-  cdsReport1.First;
-  while not cdsReport1.Eof do
-  begin
-    rs.Filtered:=False;
-    rs.Filter:=filterStr+ '='''+cdsReport1.fieldByName(filterStr).AsString+'''';
-    rs.Filtered:=True;
-
-    if (ss.IsEmpty) or (not ss.Locate(filterStr,cdsReport1.fieldByName(filterStr).AsString,[])) then
-    begin
-      ss.Append;
-      item:=TRecord_.Create;
-      item.ReadFromDataSet(cdsReport1);
-      item.FieldByName('CLIENTNUM').AsString:=inttostr(rs.RecordCount);
-      item.WriteToDataSet(ss);
-      ss.Post;
-    end;
-    cdsReport1.Next;
-  end;
-  rs.Filtered:=False;
-  
-  rs.Close;
-  rs.Data:=ss.Data;
-  ss.Free;
-end;
-
-procedure TfrmAnlyReport.CalcWeek(var rs: TZQuery; filterStr: string);
-var
-  ss:TZQuery;
-  item:TRecord_;
   i:integer;
+  SObj:TRecord_;
 begin
-  ss:=TZQuery.Create(nil);
-  ss.SQL.Text:='SELECT 0 as HOUR,0 as WEEK,SO.TENANT_ID,SO.SHOP_ID,0 AS CLIENTNUM,SO.SALES_DATE,';
-
-  if IsProfit then
-    ss.SQL.Text:=ss.SQL.Text+'0 AS SALE_PRF '
-  else
-    ss.SQL.Text:=ss.SQL.Text+'0 AS SALE_AMOUNT,0 AS SALE_MONEY ';
-
-  ss.SQL.Text:=ss.SQL.Text+
-         'FROM SAL_SALESORDER SO '+
-         'WHERE  1=2 ';
-  dataFactory.Open(ss);
-
-  rs.First;
-  while not rs.Eof do
-  begin
-    i:=DayofWeek(FnTime.fnStrtoDate(rs.FieldbyName('SALES_DATE').AsString));
-    if (ss.IsEmpty) or (not ss.Locate('WEEK',i,[])) then
-    begin
-      ss.Append;
-      item:=TRecord_.Create;
-      item.ReadFromDataSet(rs);
-      item.FieldByName('WEEK').AsString:=inttostr(i);
-      item.WriteToDataSet(ss);
-      ss.Post;
-    end
-    else
-    begin
-      ss.Edit;
-      if IsProfit then
-        ss.FieldByName('SALE_PRF').AsFloat:=ss.FieldByName('SALE_PRF').AsFloat+rs.FieldByName('SALE_PRF').AsFloat
-      else begin
-        ss.FieldByName('SALE_AMOUNT').AsFloat:=ss.FieldByName('SALE_AMOUNT').AsFloat+rs.FieldByName('SALE_AMOUNT').AsFloat;
-        ss.FieldByName('SALE_MONEY').AsFloat:=ss.FieldByName('SALE_MONEY').AsFloat+rs.FieldByName('SALE_MONEY').AsFloat;
-        ss.FieldByName('CLIENTNUM').AsFloat:=ss.FieldByName('CLIENTNUM').AsFloat+rs.FieldByName('CLIENTNUM').AsFloat;
+  SObj := TRecord_.Create;
+  try
+    rs.FieldDefs.Assign(cdsReport1.FieldDefs);
+    rs.CreateDataSet;
+    cdsReport1.First;
+    while not cdsReport1.Eof do
+      begin
+        i := DayofWeek(FnTime.fnStrtoDate(cdsReport1.FieldbyName('WEEK').AsString));
+        if not rs.Locate('WEEK', i, []) then
+           begin
+             rs.Append;
+             SObj.ReadFromDataSet(cdsReport1);
+             SObj.FieldByName('WEEK').AsInteger := i;
+             SObj.WriteToDataSet(rs);
+             rs.Post;
+           end
+        else
+           begin
+             rs.Edit;
+             if IsProfit then
+                rs.FieldByName('SALE_PRF').AsFloat := rs.FieldByName('SALE_PRF').AsFloat + cdsReport1.FieldByName('SALE_PRF').AsFloat
+             else
+                begin
+                  rs.FieldByName('SALE_AMOUNT').AsFloat := rs.FieldByName('SALE_AMOUNT').AsFloat + cdsReport1.FieldByName('SALE_AMOUNT').AsFloat;
+                  rs.FieldByName('SALE_MONEY').AsFloat := rs.FieldByName('SALE_MONEY').AsFloat + cdsReport1.FieldByName('SALE_MONEY').AsFloat;
+                  rs.FieldByName('CLIENT_NUM').AsFloat := rs.FieldByName('CLIENT_NUM').AsFloat + cdsReport1.FieldByName('CLIENT_NUM').AsFloat;
+                end;
+             rs.Post;
+          end;
+        cdsReport1.Next;
       end;
-      ss.Post;
-    end;
-    rs.Next;
+  finally
+    SObj.Free;
   end;
-  rs.Close;
-  ss.SortedFields:='WEEK';
-  rs.Data:=ss.Data;
-  ss.Free;
 end;
 
 procedure TfrmAnlyReport.RzBmpButton2Click(Sender: TObject);
 var
   formImage:TBitmap;
   myImage:TImage;
-  saveDialog:TSaveDialog;
 begin
-  //inherited;
+  inherited;
   saveDialog1.DefaultExt:='*.bmp';
   saveDialog1.Filter:='图片格式(*.bmp)';
   if saveDialog1.Execute then
@@ -616,7 +455,7 @@ begin
     if FileExists(SaveDialog1.FileName) then
     begin
       if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-        exit;
+        Exit;
       DeleteFile(SaveDialog1.FileName);
     end;
   end;
@@ -637,7 +476,6 @@ var
   formImage:TBitmap;
   myImage:TImage;
 begin
-  //inherited;
   formImage:=GetFormImage;
   myImage:=TImage.Create(nil);
   try
@@ -658,7 +496,6 @@ var
   strect:Trect; //定义打印输出矩形框的大小
   temhi,temwd:integer;
 begin
-  //inherited;
   formImage:=GetFormImage;
   myImage:=TImage.Create(nil);
   try
@@ -707,6 +544,42 @@ procedure TfrmAnlyReport.edtDataSourcePropertiesChange(Sender: TObject);
 begin
   inherited;
   if cdsReport1.Active then OpenChart;
+end;
+
+procedure TfrmAnlyReport.sortDropExit(Sender: TObject);
+begin
+  inherited;
+  if trim(sortDrop.Text)='' then
+     begin
+       FSortId := '';
+       sortDrop.Text := '全部分类';
+     end;
+end;
+
+procedure TfrmAnlyReport.sortDropPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var Obj:TRecord_;
+begin
+  inherited;
+  Obj := TRecord_.Create;
+  try
+    frmSortDropFrom.SelectRootOrLeaf := true;
+    if frmSortDropFrom.DropForm(sortDrop,Obj) then
+    begin
+      if Obj.Count>0 then
+         begin
+           FSortId := Obj.FieldbyName('SORT_ID').AsString;
+           sortDrop.Text := Obj.FieldbyName('SORT_NAME').AsString;
+         end
+      else
+         begin
+           FSortId := '';
+           sortDrop.Text := '全部分类';
+         end;
+    end;
+  finally
+    Obj.Free;
+  end;
 end;
 
 initialization

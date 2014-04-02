@@ -8,7 +8,7 @@ uses
   RzPanel, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, Grids, DBGridEh,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBmpBtn, RzBckgnd,
-  pngimage, PrnDbgeh;
+  pngimage, PrnDbgeh, ZBase;
 
 type
   TfrmStockReport = class(TfrmReportForm)
@@ -54,6 +54,11 @@ type
     linkToStock: TRzToolButton;
     RzPanel5: TRzPanel;
     RzLabel1: TRzLabel;
+    RzPanel10: TRzPanel;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    sortDrop: TcxButtonEdit;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -71,7 +76,11 @@ type
     procedure cdsReport2BeforeOpen(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure sortDropExit(Sender: TObject);
+    procedure sortDropPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
+    FSortId:string;
     WTitle1:TStringList;
     WTitle2:TStringList;
     procedure DBGridPrint;override;
@@ -85,7 +94,7 @@ var frmStockReport: TfrmStockReport;
 
 implementation
 
-uses udataFactory,utokenFactory,uFnUtil, udllGlobal;
+uses udataFactory,uTokenFactory,uFnUtil,udllGlobal,ufrmSortDropFrom;
 
 {$R *.dfm}
 
@@ -97,26 +106,43 @@ begin
   WTitle1.Clear;
   WTitle1.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
   WTitle1.add('供应商：'+edtCLIENT_ID.Text);
+
   cdsReport1.SQL.Text :=
      'select TENANT_ID,GODS_ID,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY '+
-     'from VIW_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_DATE>=:D1 and STOCK_DATE<=:D2';
+     'from   VIW_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_DATE>=:D1 and STOCK_DATE<=:D2';
+
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SHOP_ID=:SHOP_ID';
+
   if edtCLIENT_ID.AsString <> '' then
      begin
        cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
      end;
+
   cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID';
+
   cdsReport1.SQL.Text :=
      'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,b.SORT_ID1 from ('+cdsReport1.SQL.Text+') j '+
-     'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID order by b.GODS_CODE';
+     'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID ';
+
+  if FSortId <> '' then
+     begin
+       if FSortId = '1000006' then
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' where b.RELATION_ID=1000006 '
+       else if FSortId = '0000000' then
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' where b.RELATION_ID<>1000006 '
+       else
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' where b.SORT_ID1='''+FSortId+''''
+     end;
+
+  cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' order by b.GODS_CODE ';
+
   cdsReport1.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport1.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
   if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
   if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
   dataFactory.Open(cdsReport1);
-
 end;
 
 procedure TfrmStockReport.OpenReport2(all:boolean=true);
@@ -127,22 +153,40 @@ begin
   WTitle2.Clear;
   WTitle2.add('日期：'+formatDatetime('YYYY-MM-DD',D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',D2.Date));
   WTitle2.add('供应商：'+edtCLIENT_ID.Text);
+
   cdsReport2.SQL.Text :=
      'select TENANT_ID,GODS_ID,STOCK_DATE,CLIENT_ID,GLIDE_NO,AMOUNT,APRICE,CALC_MONEY,UNIT_ID,CREA_DATE '+
-     'from VIW_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_DATE>=:D1 and STOCK_DATE<=:D2';
+     'from   VIW_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_DATE>=:D1 and STOCK_DATE<=:D2';
+
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and SHOP_ID=:SHOP_ID';
+
   if edtCLIENT_ID.AsString <> '' then
      begin
        cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
      end;
+
   if not all then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
+
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
      'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,c.CLIENT_NAME from ('+cdsReport2.SQL.Text+') j '+
-     'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
-     'left outer join VIW_CLIENTINFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID order by j.STOCK_DATE,j.GLIDE_NO';
+     'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+     'left outer join VIW_CLIENTINFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID ';
+
+  if all and (FSortId<>'') then
+     begin
+       if FSortId = '1000006' then
+          cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.RELATION_ID=1000006 '
+       else if FSortId = '0000000' then
+          cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.RELATION_ID<>1000006 '
+       else
+          cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.SORT_ID1='''+FSortId+'''';
+     end;
+
+  cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' order by j.STOCK_DATE,j.GLIDE_NO ';
+
   cdsReport2.ParamByName('TENANT_ID').AsInteger := strtoInt(token.tenantId);
   cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsReport2.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
@@ -158,7 +202,6 @@ begin
   D1.Properties.ReadOnly := not all;
   D2.Properties.ReadOnly := not all;
   RzBmpButton4.Caption := '展开明细';
-  
 end;
 
 procedure TfrmStockReport.dateFlagPropertiesChange(Sender: TObject);
@@ -191,7 +234,6 @@ begin
       //D2.Properties.ReadOnly := false;
     end;
   end;
-
 end;
 
 procedure TfrmStockReport.showForm;
@@ -231,7 +273,6 @@ begin
       Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       rs.Next;
     end;
-    
 end;
 
 procedure TfrmStockReport.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -241,7 +282,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsReport1.IsEmpty;
   br := TBrush.Create;
@@ -300,7 +340,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   br := TBrush.Create;
   br.Assign(DBGridEh2.Canvas.Brush);
@@ -347,7 +386,6 @@ begin
   0:OpenReport1;
   1:OpenReport2;
   end;
-
 end;
 
 procedure TfrmStockReport.PageControlChange(Sender: TObject);
@@ -367,7 +405,6 @@ begin
   D1.Properties.ReadOnly := false;
   D2.Properties.ReadOnly := false;
   RzBmpButton4.Caption := '统计';
-  
 end;
 
 procedure TfrmStockReport.edtCLIENT_IDClearValue(Sender: TObject);
@@ -391,21 +428,18 @@ begin
        edtCLIENT_ID.KeyValue := null;
        edtCLIENT_ID.Text := '全部供应商';
      end;
-
 end;
 
 procedure TfrmStockReport.cdsReport1BeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav.Visible := false;
-
 end;
 
 procedure TfrmStockReport.cdsReport2BeforeOpen(DataSet: TDataSet);
 begin
   inherited;
   rowToolNav2.Visible := false;
-
 end;
 
 procedure TfrmStockReport.DBGridPrint;
@@ -439,7 +473,6 @@ begin
   inherited;
   WTitle1 := TStringList.Create;
   WTitle2 := TStringList.Create;
-
 end;
 
 procedure TfrmStockReport.FormDestroy(Sender: TObject);
@@ -447,7 +480,42 @@ begin
   WTitle1.Free;
   WTitle2.Free;
   inherited;
+end;
 
+procedure TfrmStockReport.sortDropExit(Sender: TObject);
+begin
+  inherited;
+  if trim(sortDrop.Text)='' then
+     begin
+       FSortId := '';
+       sortDrop.Text := '全部分类';
+     end;
+end;
+
+procedure TfrmStockReport.sortDropPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var Obj:TRecord_;
+begin
+  inherited;
+  Obj := TRecord_.Create;
+  try
+    frmSortDropFrom.SelectRootOrLeaf := true;
+    if frmSortDropFrom.DropForm(sortDrop,Obj) then
+    begin
+      if Obj.Count>0 then
+         begin
+            FSortId := Obj.FieldbyName('SORT_ID').AsString;
+            sortDrop.Text := Obj.FieldbyName('SORT_NAME').AsString;
+         end
+      else
+         begin
+            FSortId := '';
+            sortDrop.Text := '全部分类';
+         end;
+    end;
+  finally
+    Obj.Free;
+  end;
 end;
 
 initialization

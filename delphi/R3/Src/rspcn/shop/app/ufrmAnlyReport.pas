@@ -121,36 +121,96 @@ begin
   if edtChar1Type.Checked then
      begin
        if IsProfit then
-          cdsReport1.SQL.Text :=
-            ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,sum(b.SALE_MONEY-b.OUT_MONEY) as SALE_PRF '+
-            ' from   SAL_SALESORDER a,RCK_STOCKS_DATA b '+
-            ' where  a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.BILL_ID and a.SALES_DATE=b.BILL_DATE '+
-            '        and a.SALES_TYPE in (1,3,4) and b.BILL_TYPE in (21,23,24) '+
-            '        and a.TENANT_ID=:TENANT_ID '+
-            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 '
+          begin
+            cdsReport1.SQL.Text :=
+              ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,sum(b.SALE_MONEY-b.OUT_MONEY) as SALE_PRF '+
+              ' from   SAL_SALESORDER a,RCK_STOCKS_DATA b '+
+              ' where  a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.BILL_ID and a.SALES_DATE=b.BILL_DATE '+
+              '        and a.SALES_TYPE in (1,3,4) and b.BILL_TYPE in (21,23,24) '+
+              '        and a.TENANT_ID=:TENANT_ID '+
+              '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+            if FSortId <> '' then
+               begin
+                 if FSortId = '1000006' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006 '
+                 else if FSortId = '0000000' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006 '
+                 else
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID='''+FSortId+''' ';
+               end;
+          end
        else
-          cdsReport1.SQL.Text :=
-            ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
-            ' from   VIW_SALESDATA a '+
-            ' where  a.TENANT_ID=:TENANT_ID '+
-            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+          begin
+            if FSortId = '' then
+               begin
+                 cdsReport1.SQL.Text :=
+                   ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
+                   ' from   VIW_SALESDATA a '+
+                   ' where  a.TENANT_ID=:TENANT_ID '+
+                   '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+               end
+            else
+               begin
+                 cdsReport1.SQL.Text :=
+                   ' select substr(a.CREA_DATE,12,2) as HOUR,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
+                   ' from   VIW_SALESDATA a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID,SORT_ID1')+') b '+
+                   ' where  a.TENANT_ID=:TENANT_ID and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
+                   '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+                 if FSortId = '1000006' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006 '
+                 else if FSortId = '0000000' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006 '
+                 else
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID1='''+FSortId+''' ';
+               end;
+          end;
      end
   else
      begin
        if IsProfit then
-          cdsReport1.SQL.Text :=
-            ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,sum(b.SALE_MONEY-b.OUT_MONEY) as SALE_PRF '+
-            ' from   SAL_SALESORDER a,RCK_STOCKS_DATA b '+
-            ' where  a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.BILL_ID and a.SALES_DATE=b.BILL_DATE '+
-            '        and a.SALES_TYPE in (1,3,4) and b.BILL_TYPE in (21,23,24) '+
-            '        and a.TENANT_ID=:TENANT_ID '+
-            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 '
+          begin
+            cdsReport1.SQL.Text :=
+              ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,sum(b.SALE_MONEY-b.OUT_MONEY) as SALE_PRF '+
+              ' from   SAL_SALESORDER a,RCK_STOCKS_DATA b '+
+              ' where  a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.BILL_ID and a.SALES_DATE=b.BILL_DATE '+
+              '        and a.SALES_TYPE in (1,3,4) and b.BILL_TYPE in (21,23,24) '+
+              '        and a.TENANT_ID=:TENANT_ID '+
+              '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+            if FSortId <> '' then
+               begin
+                 if FSortId = '1000006' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006 '
+                 else if FSortId = '0000000' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006 '
+                 else
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID='''+FSortId+''' ';
+               end;
+          end
        else
-          cdsReport1.SQL.Text :=
-            ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
-            ' from   VIW_SALESDATA a '+
-            ' where  a.TENANT_ID=:TENANT_ID '+
-            '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+          begin
+            if FSortId = '' then
+               begin
+                 cdsReport1.SQL.Text :=
+                   ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
+                   ' from   VIW_SALESDATA a '+
+                   ' where  a.TENANT_ID=:TENANT_ID '+
+                   '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+               end
+            else
+               begin
+                 cdsReport1.SQL.Text :=
+                   ' select a.SALES_DATE as WEEK,a.TENANT_ID,a.SHOP_ID,count(distinct a.SALES_ID) as CLIENT_NUM,sum(a.CALC_AMOUNT) as SALE_AMOUNT,sum(a.CALC_MONEY) as SALE_MONEY '+
+                   ' from   VIW_SALESDATA a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID,SORT_ID1')+') b '+
+                   ' where  a.TENANT_ID=:TENANT_ID and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
+                   '        and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+                 if FSortId = '1000006' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006 '
+                 else if FSortId = '0000000' then
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006 '
+                 else
+                    cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID1='''+FSortId+''' ';
+               end;
+          end;
      end;
 
   if FnString.TrimRight(token.shopId,4)<>'0001' then

@@ -322,6 +322,7 @@ end;
 
 procedure TfrmSaleReport.OpenReport2(all:boolean=true);
 var
+  whereFlag:boolean;
   CodeId,CodeName,SortName,SortField:string;
 begin
   PageControl.ActivePageIndex := 1;
@@ -332,7 +333,8 @@ begin
 
   cdsReport2.SQL.Text :=
     'select TENANT_ID,GODS_ID,SALES_DATE,CLIENT_ID,CREA_USER,GLIDE_NO,AMOUNT,APRICE,CALC_MONEY,UNIT_ID,CREA_DATE '+
-    'from VIW_SALESDATA where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2';
+    'from   VIW_SALESDATA where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2';
+
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and SHOP_ID=:SHOP_ID';
 
@@ -435,7 +437,7 @@ begin
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
     'select j.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE,case when j.CLIENT_ID is null then ''普通客户'' else c.CLIENT_NAME end as CLIENT_NAME,d.USER_NAME from ('+cdsReport2.SQL.Text+') j '+
-    'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,'+SortField+'CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+    'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1,'+SortField+'CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
     'left outer join VIW_CUSTOMER c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID '+
     'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.CREA_USER=d.USER_ID ';
 
@@ -456,10 +458,12 @@ begin
      end
   else
      begin
+       whereFlag := false;
        if edtReportType.ItemIndex > 2 then
           begin
             if edtSTAT_ID.AsString <> '' then
                begin
+                 whereFlag := true;
                  cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where b.'+SortName+'=:SORT_ID';
                  cdsReport2.ParamByName('SORT_ID').AsString := edtSTAT_ID.AsString;
                end
@@ -467,6 +471,21 @@ begin
                begin
                  edtSTAT_ID.Text := '所有指标';
                end;
+          end;
+
+       if FSortId <> '' then
+          begin
+            if whereFlag then
+               cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and '
+            else
+               cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' where ';
+
+            if FSortId = '1000006' then
+               cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' b.RELATION_ID=1000006 '
+            else if FSortId = '0000000' then
+               cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' b.RELATION_ID<>1000006 '
+            else
+               cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' b.SORT_ID1='''+FSortId+'''';
           end;
      end;
 

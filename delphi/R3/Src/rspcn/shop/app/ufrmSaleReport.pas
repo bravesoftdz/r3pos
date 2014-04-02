@@ -129,19 +129,45 @@ begin
   if edtReportType.ItemIndex = 0 then
      begin
        WTitle1.add('客户：'+edtCLIENT_ID.Text);
-       cdsReport1.SQL.Text :=
-         'select TENANT_ID,CLIENT_ID,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY '+
-         'from VIW_SALESDATA where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2';
+
+       if FSortId = '' then
+          begin
+            cdsReport1.SQL.Text :=
+              'select a.TENANT_ID,a.CLIENT_ID,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+              'from   VIW_SALESDATA a '+
+              'where  a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2';
+          end
+       else
+          begin
+            cdsReport1.SQL.Text :=
+              'select a.TENANT_ID,a.CLIENT_ID,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+              'from   VIW_SALESDATA a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID,SORT_ID1',true)+') b '+
+              'where  a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 '+
+              '       and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID ';
+            if FSortId = '1000006' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006';
+               end
+            else if FSortId = '0000000' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006';
+               end
+            else
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID1='''+FSortId+'''';
+               end;
+          end;
 
        if FnString.TrimRight(token.shopId,4)<>'0001' then
-          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SHOP_ID=:SHOP_ID';
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.SHOP_ID=:SHOP_ID';
 
        if edtCLIENT_ID.AsString <> '' then
           begin
-            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
+            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.CLIENT_ID=:CLIENT_ID';
           end;
 
-       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,CLIENT_ID';
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.CLIENT_ID';
+
        cdsReport1.SQL.Text :=
          'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.CLIENT_CODE,ifnull(b.CLIENT_NAME,''普通客户'') CLIENT_NAME from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID order by b.CLIENT_CODE';
@@ -150,54 +176,114 @@ begin
      begin
        WTitle1.add('商品：'+edtGODS_ID.Text);
        cdsReport1.SQL.Text :=
-         'select TENANT_ID,GODS_ID,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY '+
-         'from VIW_SALESDATA where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2';
+         'select a.TENANT_ID,a.GODS_ID,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+         'from   VIW_SALESDATA a '+
+         'where  a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2';
 
        if FnString.TrimRight(token.shopId,4)<>'0001' then
-          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SHOP_ID=:SHOP_ID';
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.SHOP_ID=:SHOP_ID';
 
        if edtGODS_ID.AsString <> '' then
           begin
-            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID';
+            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.GODS_ID=:GODS_ID';
           end;
 
-       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID';
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.GODS_ID';
        cdsReport1.SQL.Text :=
          'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,b.SORT_ID1 from ('+cdsReport1.SQL.Text+') j '+
-         'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID order by b.GODS_CODE';
+         'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID ';
+
+       if FSortId <> '' then
+          begin
+            if FSortId = '1000006' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' where b.RELATION_ID=1000006';
+               end
+            else if FSortId = '0000000' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' where b.RELATION_ID<>1000006';
+               end
+            else
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' where b.SORT_ID1='''+FSortId+'''';
+               end;
+          end;
+
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text + 'order by b.GODS_CODE ';
      end
   else if edtReportType.ItemIndex = 2 then
      begin
        WTitle1.add('店员：'+edtUSER_ID.Text);
-       cdsReport1.SQL.Text :=
-         'select TENANT_ID,CREA_USER,sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY '+
-         'from VIW_SALESDATA where TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2';
+
+       if FSortId = '' then
+          begin
+            cdsReport1.SQL.Text :=
+              'select a.TENANT_ID,a.CREA_USER,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+              'from   VIW_SALESDATA a '+
+              'where  a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2';
+          end
+       else
+          begin
+            cdsReport1.SQL.Text :=
+              'select a.TENANT_ID,a.CREA_USER,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+              'from   VIW_SALESDATA a,('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID,SORT_ID1',true)+') b '+
+              'where  a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 '+
+              '       and a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID ';
+            if FSortId = '1000006' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006';
+               end
+            else if FSortId = '0000000' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006';
+               end
+            else
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID1='''+FSortId+'''';
+               end;
+          end;
 
        if FnString.TrimRight(token.shopId,4)<>'0001' then
-          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and SHOP_ID=:SHOP_ID';
+          cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.SHOP_ID=:SHOP_ID';
 
        if edtUSER_ID.AsString <> '' then
           begin
-            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and CREA_USER=:USER_ID';
+            cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.CREA_USER=:USER_ID';
           end;
 
-       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,CREA_USER';
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.CREA_USER';
        cdsReport1.SQL.Text :=
          'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.ACCOUNT,b.USER_NAME from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_USERS b on j.TENANT_ID=b.TENANT_ID and j.CREA_USER=b.USER_ID order by b.ACCOUNT';
      end
   else if edtReportType.ItemIndex > 2 then
      begin
-        CodeId := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_ID').AsString);
-        CodeName := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_NAME').AsString);
-        SortName := 'SORT_ID'+CodeId;
-        WTitle1.add(CodeName+'：'+edtSTAT_ID.Text);
+       CodeId := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_ID').AsString);
+       CodeName := trim(TRecord_(edtReportType.Properties.Items.Objects[edtReportType.ItemIndex]).FieldByName('CODE_NAME').AsString);
+       SortName := 'SORT_ID'+CodeId;
+       WTitle1.add(CodeName+'：'+edtSTAT_ID.Text);
 
-        cdsReport1.SQL.Text :=
-          'select a.TENANT_ID,b.'+SortName+' SORT_ID,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
-          'from VIW_SALESDATA a '+
-          'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,'+SortName,true)+') b on a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
-          'where a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2';
+       cdsReport1.SQL.Text :=
+         'select a.TENANT_ID,b.'+SortName+' SORT_ID,sum(a.CALC_AMOUNT) as CALC_AMOUNT,sum(a.CALC_MONEY) as CALC_MONEY '+
+         'from   VIW_SALESDATA a '+
+         '       left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,RELATION_ID,SORT_ID1,'+SortName,true)+') b on a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
+         'where  a.TENANT_ID=:TENANT_ID and a.SALES_DATE>=:D1 and a.SALES_DATE<=:D2 ';
+
+       if FSortId <> '' then
+          begin
+            if FSortId = '1000006' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID=1000006';
+               end
+            else if FSortId = '0000000' then
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.RELATION_ID<>1000006';
+               end
+            else
+               begin
+                 cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and b.SORT_ID1='''+FSortId+'''';
+               end;
+          end;
 
        if FnString.TrimRight(token.shopId,4)<>'0001' then
           cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and a.SHOP_ID=:SHOP_ID';

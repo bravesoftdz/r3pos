@@ -108,8 +108,6 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns6UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns8UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure btnSaveClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -274,7 +272,6 @@ var
   prf:Currency;
   t:integer;
   amt:Currency;
-  integral:integer;
   ps:TZQuery;
   orgFee:Currency;
 begin
@@ -373,14 +370,15 @@ var
 begin
   result:=False;
   edtTable.DisableControls;
+  CurIdx:=edtTable.RecNo;  //保存当前序号
+  GodsQry:=TZQuery.Create(nil);  //本单商品汇总
+  RelQry:=TZQuery.Create(nil);   //本单供应链汇总
   try
-    GodsQry:=TZQuery.Create(nil);  //本单商品汇总
     GodsQry.Close;
     GodsQry.FieldDefs.Add('GODS_ID',ftstring,36,true);
     GodsQry.FieldDefs.Add('GODS_NAME',ftstring,50,true);
     GodsQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
     GodsQry.CreateDataSet;
-    RelQry:=TZQuery.Create(nil);   //本单供应链汇总
     RelQry.Close;
     RelQry.FieldDefs.Add('RELATION_ID',ftInteger,0,true);
     RelQry.FieldDefs.Add('RELATION_NAME',ftstring,50,true);
@@ -389,7 +387,6 @@ begin
     RsGods:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO'); //商品档案
     RsRelation:=dllGlobal.GetZQueryFromName('CA_RELATIONS'); //供应链
     //开始循环[累计出本单单品和供应链汇总数据]：
-    CurIdx:=edtTable.RecNo;  //保存当前序号
     edtTable.First;
     while not edtTable.Eof do
     begin
@@ -532,7 +529,6 @@ begin
 end;
 
 procedure TfrmPosOutOrder.NewOrder;
-var rs:TZQuery;
 begin
   inherited;
   godsAmount.Caption := godsAmount.Hint;
@@ -877,91 +873,6 @@ begin
   end;
 end;
 
-procedure TfrmPosOutOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var
-  r,op:Currency;
-  allow :boolean;
-  bs:TZQuery;
-begin
-  //2011.06.08 Add 供应链限制改价：
-  if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '2' then
-     begin
-       Value := TColumnEh(Sender).Field.AsFloat;
-       Text := TColumnEh(Sender).Field.AsString;
-       MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-       Exit;
-     end;
-
-  if not dllGlobal.GetChkRight('12400001',5) then
-     begin
-      { if TfrmLogin.doLogin(Params) then
-          begin
-            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
-          end
-       else     }
-       allow := false;
-     end else allow := true;
-  if allow then
-  begin
-    try
-      if Text='' then
-         r := 0
-      else
-         r := StrtoFloat(Text);
-      if abs(r)>100 then Raise Exception.Create('输入的数值过大，无效');
-      edtTable.Edit;
-    except
-      on E:Exception do
-         begin
-            Text := TColumnEh(Sender).Field.AsString;
-            Value := TColumnEh(Sender).Field.AsFloat;
-            MessageBox(Handle,pchar('输入无效折扣率,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-            Exit;
-         end;
-    end;
-    op := edtTable.FieldByName('APRICE').AsFloat;
-    TColumnEh(Sender).Field.AsFloat := r;
-    AgioToCalc(r);
-
-    if edtTable.FieldByName('AGIO_RATE').AsFloat < agioLower then
-       begin
-         edtTable.Edit;
-         edtTable.FieldByName('APRICE').AsFloat := op;
-         PriceToCalc(edtTable.FieldByName('APRICE').AsFloat);
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.AsFloat;
-         edtTable.Edit;
-         MessageBox(Handle,pchar('调价最低不能低于'+FormatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-         Exit;
-       end;
-    bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-    if bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
-       begin
-         if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
-         begin
-           edtTable.Edit;
-           edtTable.FieldByName('APRICE').AsFloat := op;
-           PriceToCalc(op);
-           Text := TColumnEh(Sender).Field.AsString;
-           Value := TColumnEh(Sender).Field.AsFloat;
-           edtTable.Edit;
-           MessageBox(Handle,pchar('调价最低不能低于'+FormatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-           Exit;
-         end;
-       end;
-    edtTable.Edit;
-    edtTable.FieldByName('POLICY_TYPE').AsInteger := 4;
-  end
-  else
-  begin
-    Value := TColumnEh(Sender).Field.AsFloat;
-    Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('你没有修改销售单价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;
-end;
-
 procedure TfrmPosOutOrder.btnSaveClick(Sender: TObject);
 begin
   inherited;
@@ -972,10 +883,7 @@ begin
   else
     begin
       SaveOrder;
-      // if dllGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
-         NewOrder
-      // else
-      //    Open(AObj.FieldByName('SALES_ID').AsString);
+      NewOrder;
     end;
   end;
 end;
@@ -1014,7 +922,6 @@ procedure TfrmPosOutOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs,bs:TZQuery;
   Params:TftParamList;
-  str,OutLevel:string;
 begin
   rs := TZQuery.Create(nil);
   bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
@@ -1937,7 +1844,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;

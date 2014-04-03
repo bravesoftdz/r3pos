@@ -196,7 +196,7 @@ type
     procedure SetdbState(const Value: TDataSetState);override;
     procedure PresentToCalc(Present:integer);override;
     procedure SetinputFlag(const Value: integer);override;
-    function  CheckSale_Limit: Boolean;
+    function  CheckSaleLimit: Boolean;
     function  checkPayment:boolean;
     function  payCashMny(s:string):boolean;
     procedure DoShowPayment;
@@ -362,14 +362,14 @@ begin
      Open(AObj.FieldByName('SALES_ID').AsString);
 end;
 
-function TfrmPosOutOrder.CheckSale_Limit: Boolean;
+function TfrmPosOutOrder.CheckSaleLimit: Boolean;
 var
   CurIdx: integer;
-  GodsID, RelationID: string;
-  Singe_Litmit,All_Litmit: Real;  //单品限量，本单限量
+  GodsId, RelationId: string;
+  SingleLimit,AllLimit: real;  //单品限量，本单限量
   RsGods,RsRelation,GodsQry,RelQry: TZQuery;
 begin
-  result:=False;
+  result:=false;
   edtTable.DisableControls;
   CurIdx:=edtTable.RecNo;  //保存当前序号
   GodsQry:=TZQuery.Create(nil);  //本单商品汇总
@@ -390,76 +390,79 @@ begin
     //开始循环[累计出本单单品和供应链汇总数据]：
     edtTable.First;
     while not edtTable.Eof do
-    begin
-      GodsID:=trim(edtTable.FieldByName('GODS_ID').AsString);
-      //单项目累计
-      if GodsQry.Locate('GODS_ID',GodsID,[]) then //定位则累计数量
       begin
-        GodsQry.Edit;
-        GodsQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+edtTable.FieldByName('CALC_AMOUNT').AsFloat;
-        GodsQry.Post;
-      end else
-      begin
-        GodsQry.Append;
-        GodsQry.FieldByName('GODS_ID').AsString:=GodsID;
-        GodsQry.FieldByName('GODS_NAME').AsString:=trim(edtTable.FieldByName('GODS_NAME').AsString);
-        GodsQry.FieldByName('CalcSum').AsFloat:=edtTable.FieldByName('CALC_AMOUNT').AsFloat;
-        GodsQry.Post;
-      end;
-
-      if RsGods.Locate('GODS_ID',GodsID,[]) then
-      begin
-        RelationID:=trim(RsGods.FieldByName('RELATION_ID').AsString);
+        GodsId:=trim(edtTable.FieldByName('GODS_ID').AsString);
         //单项目累计
-        if RelQry.Locate('RELATION_ID',RelationID,[]) then //定位则累计数量
-        begin
-          RelQry.Edit;
-          RelQry.FieldByName('CalcSum').AsFloat:=RelQry.FieldByName('CalcSum').AsFloat+edtTable.FieldByName('CALC_AMOUNT').AsFloat;
-          RelQry.Post;
-        end else
-        begin
-          RelQry.Append;
-          RelQry.FieldByName('RELATION_ID').AsString:=RelationID;
-          if RsRelation.Locate('RELATION_ID',RelationID,[]) then
-            RelQry.FieldByName('RELATION_NAME').AsString:=trim(RsRelation.FieldByName('RELATION_NAME').AsString);
-          RelQry.FieldByName('CalcSum').AsFloat:=edtTable.FieldByName('CALC_AMOUNT').AsFloat;
-          RelQry.Post;
-        end;
+        if GodsQry.Locate('GODS_ID',GodsId,[]) then //定位则累计数量
+           begin
+             GodsQry.Edit;
+             GodsQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+edtTable.FieldByName('CALC_AMOUNT').AsFloat;
+             GodsQry.Post;
+           end
+        else
+           begin
+             GodsQry.Append;
+             GodsQry.FieldByName('GODS_ID').AsString:=GodsId;
+             GodsQry.FieldByName('GODS_NAME').AsString:=trim(edtTable.FieldByName('GODS_NAME').AsString);
+             GodsQry.FieldByName('CalcSum').AsFloat:=edtTable.FieldByName('CALC_AMOUNT').AsFloat;
+             GodsQry.Post;
+           end;
+
+        if RsGods.Locate('GODS_ID',GodsId,[]) then
+           begin
+             RelationId:=trim(RsGods.FieldByName('RELATION_ID').AsString);
+             //单项目累计
+             if RelQry.Locate('RELATION_ID',RelationId,[]) then //定位则累计数量
+                begin
+                  RelQry.Edit;
+                  RelQry.FieldByName('CalcSum').AsFloat:=RelQry.FieldByName('CalcSum').AsFloat+edtTable.FieldByName('CALC_AMOUNT').AsFloat;
+                  RelQry.Post;
+                end
+             else
+                begin
+                  RelQry.Append;
+                  RelQry.FieldByName('RELATION_ID').AsString:=RelationId;
+                  if RsRelation.Locate('RELATION_ID',RelationId,[]) then
+                     RelQry.FieldByName('RELATION_NAME').AsString:=trim(RsRelation.FieldByName('RELATION_NAME').AsString);
+                  RelQry.FieldByName('CalcSum').AsFloat:=edtTable.FieldByName('CALC_AMOUNT').AsFloat;
+                  RelQry.Post;
+                end;
+           end;
+
+        edtTable.Next;
       end;
-      edtTable.Next;
-    end;
 
     //判断单品是否超过
     GodsQry.First;
     while not GodsQry.Eof do
-    begin
-      GodsID:=trim(GodsQry.FieldByName('GODS_ID').AsString);
-      if RsGods.Locate('GODS_ID',GodsID,[]) then
       begin
-        RelationID:=trim(RsGods.FieldByName('RELATION_ID').AsString);
-        if RsRelation.Locate('RELATION_ID',RelationID,[]) then
-        begin
-          Singe_Litmit:=RsRelation.FieldByName('SINGLE_LIMIT').AsFloat; //单品限量
-          if (Singe_Litmit>0) and (GodsQry.FieldByName('CalcSum').AsFloat>Singe_Litmit) then
-            Raise Exception.Create('商品〖'+GodsQry.FieldByName('GODS_NAME').AsString+'〗数量'+FloattoStr(GodsQry.FieldByName('CalcSum').AsFloat)+'超过限量值'+FloattoStr(Singe_Litmit)+'！');
-        end;
+        GodsId:=trim(GodsQry.FieldByName('GODS_ID').AsString);
+        if RsGods.Locate('GODS_ID',GodsId,[]) then
+           begin
+             RelationId:=trim(RsGods.FieldByName('RELATION_ID').AsString);
+             if RsRelation.Locate('RELATION_ID',RelationId,[]) then
+                begin
+                  SingleLimit:=RsRelation.FieldByName('SINGLE_LIMIT').AsFloat; //单品限量
+                  if (SingleLimit>0) and (GodsQry.FieldByName('CalcSum').AsFloat>SingleLimit) then
+                     Raise Exception.Create('商品〖'+GodsQry.FieldByName('GODS_NAME').AsString+'〗数量'+FloattoStr(GodsQry.FieldByName('CalcSum').AsFloat)+'超过限量值'+FloattoStr(SingleLimit)+'！');
+                end;
+           end;
+        GodsQry.Next;
       end;
-      GodsQry.Next;
-    end;
 
     //判断供应链本单限量：
     RelQry.First;
     while not RelQry.Eof do
-    begin
-      RelationID:=trim(RelQry.FieldByName('RELATION_ID').AsString);
-      if RsRelation.Locate('RELATION_ID',RelationID,[]) then
       begin
-        All_Litmit:=RsRelation.FieldByName('SALE_LIMIT').AsFloat; //本单限量
-        if (All_Litmit>0) and (RelQry.FieldByName('CalcSum').AsFloat>All_Litmit) then
-          Raise Exception.Create('供应链〖'+RelQry.FieldByName('RELATION_NAME').AsString+'〗本单总量'+FloattoStr(RelQry.FieldByName('CalcSum').AsFloat)+' 超过限量值'+FloattoStr(All_Litmit)+'！');
+        RelationId:=trim(RelQry.FieldByName('RELATION_ID').AsString);
+        if RsRelation.Locate('RELATION_ID',RelationId,[]) then
+           begin
+             AllLimit:=RsRelation.FieldByName('SALE_LIMIT').AsFloat; //本单限量
+             if (AllLimit>0) and (RelQry.FieldByName('CalcSum').AsFloat>AllLimit) then
+                Raise Exception.Create('供应链〖'+RelQry.FieldByName('RELATION_NAME').AsString+'〗本单总量'+FloattoStr(RelQry.FieldByName('CalcSum').AsFloat)+' 超过限量值'+FloattoStr(AllLimit)+'！');
+           end;
+        RelQry.Next;
       end;
-      RelQry.Next;
-    end;
   finally
     edtTable.RecNo:=CurIdx;
     GodsQry.Free;
@@ -621,8 +624,8 @@ begin
   if dbState = dsBrowse then Exit;
 
   if edtSALES_DATE.EditValue = null then Raise Exception.Create('销售日期不能为空');
-  //2011.06.09 Add 判断是否限量
-  CheckSale_Limit;
+
+  CheckSaleLimit;
 
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');

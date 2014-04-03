@@ -182,7 +182,6 @@ type
     function  payCashMny(s:string):boolean;
     procedure DoShowPayment;
     procedure Calc;override; //2011.06.09判断是否限量
-    function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure PriceToGods(id:string);override;
     function  GetCostPrice(GODS_ID, BATCH_NO: string): real;
@@ -797,7 +796,7 @@ begin
      end;
 
   //供应链限制改价：
-  if CheckNotChangePrice(edtTable.FieldByName('GODS_ID').AsString) then
+  if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '2' then
      begin
        Value := TColumnEh(Sender).Field.AsFloat;
        Text := TColumnEh(Sender).Field.AsString;
@@ -878,6 +877,7 @@ begin
        Value := TColumnEh(Sender).Field.AsFloat;
        Exit;
      end;
+
   if edtTable.FieldByName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -885,14 +885,15 @@ begin
        FocusNextColumn;
        Exit;
      end;
+
   //2011.06.08 Add 供应链限制改价：
-  if CheckNotChangePrice(edtTable.FieldByName('GODS_ID').AsString) then
-  begin
-    Value := TColumnEh(Sender).Field.AsFloat;
-    Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    Exit;
-  end;
+  if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '2' then
+     begin
+       Value := TColumnEh(Sender).Field.AsFloat;
+       Text := TColumnEh(Sender).Field.AsString;
+       MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
 
   if not dllGlobal.GetChkRight('12400001',5) then
      begin
@@ -960,24 +961,6 @@ begin
     Value := TColumnEh(Sender).Field.AsFloat;
     Text := TColumnEh(Sender).Field.AsString;
     MessageBox(Handle,pchar('你没有修改销售单价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;
-end;
-
-function TfrmSaleOrder.CheckNotChangePrice(GodsID: string): Boolean;
-var
-  RelationID: string;
-  RsGods,Rs: TZQuery;
-begin
-  result:=False;
-  RsGods:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-  if RsGods.Locate('GODS_ID',trim(GodsID),[]) then
-  begin
-    RelationID:=trim(RsGods.FieldByName('RELATION_ID').AsString);
-  end;
-  Rs:=dllGlobal.GetZQueryFromName('CA_RELATIONS');
-  if Rs.Locate('RELATION_ID',RelationID,[]) then
-  begin
-    result:=(trim(Rs.FieldByName('CHANGE_PRICE').AsString)='2');
   end;
 end;
 
@@ -2487,7 +2470,7 @@ procedure TfrmSaleOrder.PriceToGods(id: string);
 begin
   if dbState = dsBrowse then Exit;
   if edtTable.FieldByName('GODS_ID').AsString='' then Raise Exception.Create('请选择商品后再执行此操作');
-  if CheckNotChangePrice(edtTable.FieldByName('GODS_ID').AsString) then
+  if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '2' then
      Raise Exception.Create('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！');
   inherited;
 end;

@@ -102,7 +102,7 @@ type
     RzPanel26: TRzPanel;
     RzLabel11: TRzLabel;
     edtNEW_OUTPRICE: TcxTextEdit;
-    edtBK_SHOW_NEW_OUTPRICE: TRzPanel;
+    edtBK_SHOP_OUTPRICE: TRzPanel;
     RzPanel27: TRzPanel;
     h_label: TRzLabel;
     edtBK_AMOUNT: TRzPanel;
@@ -134,15 +134,15 @@ type
     ChangeImport: TMenuItem;
     RzBmpButton8: TRzBmpButton;
     N1: TMenuItem;
-    t_panel: TRzPanel;
+    edtBK_SHOP_NEW_OUTPRICE1: TRzPanel;
     RzPanel10: TRzPanel;
     t_label: TRzLabel;
     edtSHOP_NEW_OUTPRICE1: TcxTextEdit;
-    x_panel: TRzPanel;
+    edtBK_SHOP_NEW_OUTPRICE2: TRzPanel;
     RzPanel12: TRzPanel;
     x_label: TRzLabel;
     edtSHOP_NEW_OUTPRICE2: TcxTextEdit;
-    RzPanel14: TRzPanel;
+    edtBK_SHOP_NEW_OUTPRICE: TRzPanel;
     edtSHOP_NEW_OUTPRICE: TcxTextEdit;
     N2: TMenuItem;
     N6: TMenuItem;
@@ -761,9 +761,9 @@ begin
     end
   else
     begin
-      t_panel.Visible:=false;
-      x_panel.Visible:=false;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=218;
+      edtBK_SHOP_NEW_OUTPRICE1.Visible:=false;
+      edtBK_SHOP_NEW_OUTPRICE2.Visible:=false;
+      edtBK_SHOP_OUTPRICE.Width:=218;
       RzPanel9.Left:=520;
     end;
 
@@ -1038,26 +1038,25 @@ begin
     edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
     edtBARCODE2.Properties.ReadOnly := true;
   end;
-{
-  else
-    begin
-      edtUNIT_ID_USING.Properties.ReadOnly := false;
-      if (edtSMALL_UNITS.Text='') or (strtofloatdef(edtSMALLTO_CALC.Text,0)=0) then
-         edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=true;
-      if (edtBIG_UNITS.Text='') or (strtofloatdef(edtBIGTO_CALC.Text,0)=0) then
-         edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=true;
-    end;
-}
-  if not dllGlobal.checkChangePrice(relationId) then
+
+  if dllGlobal.GetChangePrice(relationId) = '2' then
      begin
-       SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);
-       edtBK_NEW_INPRICE.Color := edtNEW_INPRICE.Style.Color;
-       edtNEW_INPRICE.Properties.ReadOnly := true;
-       SetEditStyle(dsBrowse,edtNEW_OUTPRICE.Style);
-       edtBK_NEW_OUTPRICE.Color := edtNEW_OUTPRICE.Style.Color;
-       edtNEW_OUTPRICE.Properties.ReadOnly := true;
+       SetEditStyle(dsBrowse,edtSHOP_NEW_OUTPRICE.Style);
+       edtSHOP_NEW_OUTPRICE.Properties.ReadOnly := true;
+
+       SetEditStyle(dsBrowse,edtSHOP_NEW_OUTPRICE1.Style);
+       edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly := true;
+
+       SetEditStyle(dsBrowse,edtSHOP_NEW_OUTPRICE2.Style);
+       edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly := true;
+
+       edtBK_SHOP_NEW_OUTPRICE.Color := edtSHOP_NEW_OUTPRICE.Style.Color;
+       edtBK_SHOP_NEW_OUTPRICE1.Color := edtSHOP_NEW_OUTPRICE1.Style.Color;
+       edtBK_SHOP_NEW_OUTPRICE2.Color := edtSHOP_NEW_OUTPRICE2.Style.Color;
      end;
+
   if relationType=1 then Exit;
+
   SetEditStyle(dsBrowse,edtNEW_INPRICE.Style);
   edtBK_NEW_INPRICE.Color := edtNEW_INPRICE.Style.Color;
   edtNEW_INPRICE.Properties.ReadOnly := true;
@@ -1173,9 +1172,9 @@ begin
     end
   else
     begin
-      t_panel.Visible:=false;
-      x_panel.Visible:=false;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=218;
+      edtBK_SHOP_NEW_OUTPRICE1.Visible:=false;
+      edtBK_SHOP_NEW_OUTPRICE2.Visible:=false;
+      edtBK_SHOP_OUTPRICE.Width:=218;
       RzPanel9.Left:=520;
     end;
 end;
@@ -2811,30 +2810,30 @@ procedure TfrmGoodsStorage.SetShopOutPricePlace;
 begin
   if (edtSHOP_NEW_OUTPRICE1.Text<>'') and (edtSHOP_NEW_OUTPRICE2.Text='') then
     begin
-      t_panel.Visible:=true;
-      x_panel.Visible:=false;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=332;
+      edtBK_SHOP_NEW_OUTPRICE1.Visible:=true;
+      edtBK_SHOP_NEW_OUTPRICE2.Visible:=false;
+      edtBK_SHOP_OUTPRICE.Width:=332;
       RzPanel9.Left:=625;
     end
   else if (edtSHOP_NEW_OUTPRICE1.Text='') and (edtSHOP_NEW_OUTPRICE2.Text<>'') then
     begin
-      t_panel.Visible:=false;
-      x_panel.Visible:=true;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=332;
+      edtBK_SHOP_NEW_OUTPRICE1.Visible:=false;
+      edtBK_SHOP_NEW_OUTPRICE2.Visible:=true;
+      edtBK_SHOP_OUTPRICE.Width:=332;
       RzPanel9.Left:=625;
     end
   else if (edtSHOP_NEW_OUTPRICE1.Text<>'') and (edtSHOP_NEW_OUTPRICE2.Text<>'') then
     begin
-      t_panel.Visible:=true;
-      x_panel.Visible:=true;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=466;
+      edtBK_SHOP_NEW_OUTPRICE1.Visible:=true;
+      edtBK_SHOP_NEW_OUTPRICE2.Visible:=true;
+      edtBK_SHOP_OUTPRICE.Width:=466;
       RzPanel9.Left:=746;
     end
   else
     begin
-      t_panel.Visible:=false;
-      x_panel.Visible:=false;
-      edtBK_SHOW_NEW_OUTPRICE.Width:=218;
+      edtBK_SHOP_NEW_OUTPRICE1.Visible:=false;
+      edtBK_SHOP_NEW_OUTPRICE2.Visible:=false;
+      edtBK_SHOP_OUTPRICE.Width:=218;
       RzPanel9.Left:=520;
     end;
 end;

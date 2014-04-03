@@ -441,24 +441,35 @@ begin
 end;
 
 procedure TfrmSysDefine.showForm;
+var F:TIniFile;
 begin
   inherited;
   if dllGlobal.GetSFVersion <> '.LCL' then
      RzBmpButton4.Visible := false;
 
   if FileExists(ExtractFilePath(Application.ExeName)+'TSCLIB.dll') then
-  begin
-     cxSaveCodePrint.Visible := true;
-     RzPanel7.Visible := true;
-     RzPanel4.Visible := true;
-     GetLocalPrintes;
-     RzLabel57.Visible := true;
-     Bevel9.Visible := true;
-  end
+     begin
+       cxSaveCodePrint.Visible := true;
+       RzPanel7.Visible := true;
+       RzPanel4.Visible := true;
+       GetLocalPrintes;
+       RzLabel57.Visible := true;
+       Bevel9.Visible := true;
+     end
   else
-  begin
-     btnDefault.Top := 525;
-     btnSaveSysdefine.Top :=525;
+     begin
+       btnDefault.Top := 525;
+       btnSaveSysdefine.Top :=525;
+     end;
+
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
+  try
+    if F.ReadString('soft','ZERO_OUT','1') = '0' then
+       begin
+         edtZERO_OUT.Visible := false;
+       end
+  finally
+    F.Free;
   end;
 
   if FileExists(ExtractFilePath(Application.ExeName)+'built-in\images\user.png') then

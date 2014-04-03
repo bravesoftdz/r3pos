@@ -70,7 +70,9 @@ type
     //读取成本价
     function GetCostPrice(GodsId:string):real;
     //检测供应链是否允许调价 还回true 允许调价
-    function checkChangePrice(relationId:integer):boolean;
+    function GetChangePrice(relationId:integer):string;overload;
+    //检测供应链商品价格限制
+    function GetChangePrice(GodsId:string):string;overload;
     //创建分类树
     function CreateGoodsSortTree(rzTree:TRzTreeView;IsAll:boolean;ShowCgtSort:boolean=true;ShowNoSort:boolean=true):boolean;overload;
     function CreateGoodsSortTree(rzTree:TRzTreeView;RelationId:string;ShowSelfRoot:boolean=false):boolean;overload;
@@ -644,16 +646,23 @@ begin
   result := ParseSQL(dataFactory.iDbType,sql);
 end;
 
-function TdllGlobal.checkChangePrice(relationId: integer): boolean;
+function TdllGlobal.GetChangePrice(relationId: integer): string;
 var rs: TZQuery;
 begin
-  result:=true;
+  result := '';
   if relationId=0 then Exit;
   rs := dllGlobal.GetZQueryFromName('CA_RELATIONS');
   if rs.Locate('RELATION_ID',relationId,[]) then
-  begin
-    result := (trim(Rs.FieldByName('CHANGE_PRICE').AsString)<>'2');
-  end;
+     result := rs.FieldByName('CHANGE_PRICE').AsString;
+end;
+
+function TdllGlobal.GetChangePrice(GodsId: string): string;
+var rs: TZQuery;
+begin
+  result := '';
+  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',GodsId,[]) then
+     result := GetChangePrice(rs.FieldByName('RELATION_ID').AsInteger);
 end;
 
 function TdllGlobal.GetCostPrice(GodsId: string): real;

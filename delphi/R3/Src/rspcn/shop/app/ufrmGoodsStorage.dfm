@@ -3336,7 +3336,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object edtBK_SHOW_NEW_OUTPRICE: TRzPanel
+        object edtBK_SHOP_OUTPRICE: TRzPanel
           Left = 272
           Top = 221
           Width = 466
@@ -3377,7 +3377,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               TextStyle = tsShadow
             end
           end
-          object t_panel: TRzPanel
+          object edtBK_SHOP_NEW_OUTPRICE1: TRzPanel
             Left = 196
             Top = 2
             Width = 135
@@ -3427,7 +3427,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
           end
-          object x_panel: TRzPanel
+          object edtBK_SHOP_NEW_OUTPRICE2: TRzPanel
             Left = 329
             Top = 2
             Width = 135
@@ -3476,7 +3476,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
           end
-          object RzPanel14: TRzPanel
+          object edtBK_SHOP_NEW_OUTPRICE: TRzPanel
             Left = 105
             Top = 2
             Width = 91

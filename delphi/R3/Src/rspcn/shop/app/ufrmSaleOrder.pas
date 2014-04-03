@@ -207,6 +207,7 @@ type
     procedure ShowCgtPic(GodsId:string);
 
     function  GetCustIntegral:integer;
+    function  CheckPriceLimit(r:real):integer;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -765,9 +766,10 @@ end;
 procedure TfrmSaleOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
+  limit:integer;
   r,op:Currency;
   allow:boolean;
-  rs,bs:TZQuery;
+  bs:TZQuery;
 begin
   if length(Text)>10 then
      begin
@@ -825,60 +827,21 @@ begin
    //供应链限制改价：
    if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '3' then
       begin
-        rs := TZQuery.Create(nil);
-        try
-          rs.SQL.Text := 'select NEW_INPRICE,NEW_OUTPRICE,SMALLTO_CALC,BIGTO_CALC,CALC_UNITS,SMALL_UNITS,BIG_UNITS from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
-          rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-          rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
-          dllGlobal.OpenSqlite(rs);
-          if not rs.IsEmpty then
-             begin
-               if (
-                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
-                    and
-                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) > 0)
-                  ) or
-                  (
-                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
-                    and
-                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) > 0)
-                  ) or
-                  (
-                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
-                    and
-                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat) > 0)
-                  ) then
-                  begin
-                    MessageBox(Handle,pchar('单价不能高于指导零售价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-                    Text := TColumnEh(Sender).Field.AsString;
-                    Value := TColumnEh(Sender).Field.AsFloat;
-                    Exit;
-                  end;
-               if (
-                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
-                    and
-                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) < 0)
-                  ) or
-                  (
-                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
-                    and
-                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) < 0)
-                  ) or
-                  (
-                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
-                    and
-                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat) < 0)
-                  ) then
-                  begin
-                    MessageBox(Handle,pchar('单价不能低于进价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-                    Text := TColumnEh(Sender).Field.AsString;
-                    Value := TColumnEh(Sender).Field.AsFloat;
-                    Exit;
-                  end;
-             end;
-        finally
-          rs.Free;
-        end;
+        limit := CheckPriceLimit(r);
+        if limit > 0 then
+           begin
+             MessageBox(Handle,pchar('单价不能高于指导零售价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+             Text := TColumnEh(Sender).Field.AsString;
+             Value := TColumnEh(Sender).Field.AsFloat;
+             Exit;
+           end;
+        if limit < 0 then
+           begin
+             MessageBox(Handle,pchar('单价不能低于进价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+             Text := TColumnEh(Sender).Field.AsString;
+             Value := TColumnEh(Sender).Field.AsFloat;
+             Exit;
+           end;
       end;
 
     op := TColumnEh(Sender).Field.AsFloat;
@@ -2683,6 +2646,61 @@ procedure TfrmSaleOrder.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
   getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
+end;
+
+function TfrmSaleOrder.CheckPriceLimit(r: real): integer;
+var
+  rs:TZQuery;
+begin
+  result := 0;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select NEW_INPRICE,NEW_OUTPRICE,SMALLTO_CALC,BIGTO_CALC,CALC_UNITS,SMALL_UNITS,BIG_UNITS from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+    rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+    dllGlobal.OpenSqlite(rs);
+    if not rs.IsEmpty then
+       begin
+         if (
+              (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
+              and
+              (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) > 0)
+            ) or
+            (
+              (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
+              and
+              (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) > 0)
+            ) or
+            (
+              (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
+              and
+              (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat) > 0)
+            ) then
+            begin
+              result := 1;
+            end;
+         if (
+              (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
+              and
+              (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) < 0)
+            ) or
+            (
+              (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
+              and
+              (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) < 0)
+            ) or
+            (
+              (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
+              and
+              (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat) < 0)
+            ) then
+            begin
+              result := -1;
+            end;
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 initialization

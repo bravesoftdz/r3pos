@@ -246,7 +246,6 @@ var
   prf:Currency;
   t:integer;
   amt:Currency;
-  integral:integer;
   ps:TZQuery;
   orgFee:Currency;
 begin
@@ -262,8 +261,8 @@ begin
        amt := 0;
      end;
   edtTable.DisableControls;
+  r := edtTable.FieldByName('SEQNO').AsInteger;
   try
-    r := edtTable.FieldByName('SEQNO').AsInteger;
     orgFee := TotalFee;
     TotalFee := 0;
     TotalAmt := 0;
@@ -356,14 +355,15 @@ var
 begin
   result:=False;
   edtTable.DisableControls;
+  GodsQry:=TZQuery.Create(nil);  //本单商品汇总
+  RelQry:=TZQuery.Create(nil);   //本单供应链汇总
+  CurIdx:=edtTable.RecNo;  //保存当前序号
   try
-    GodsQry:=TZQuery.Create(nil);  //本单商品汇总
     GodsQry.Close;
     GodsQry.FieldDefs.Add('GODS_ID',ftstring,36,true);
     GodsQry.FieldDefs.Add('GODS_NAME',ftstring,50,true);
     GodsQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
     GodsQry.CreateDataSet;
-    RelQry:=TZQuery.Create(nil);   //本单供应链汇总
     RelQry.Close;
     RelQry.FieldDefs.Add('RELATION_ID',ftInteger,0,true);
     RelQry.FieldDefs.Add('RELATION_NAME',ftstring,50,true);
@@ -372,7 +372,6 @@ begin
     RsGods:=dllGlobal.GetZQueryFromName('PUB_GOODSINFO'); //商品档案
     RsRelation:=dllGlobal.GetZQueryFromName('CA_RELATIONS'); //供应链
     //开始循环[累计出本单单品和供应链汇总数据]：
-    CurIdx:=edtTable.RecNo;  //保存当前序号
     edtTable.First;
     while not edtTable.Eof do
     begin
@@ -515,7 +514,6 @@ begin
 end;
 
 procedure TfrmSaleOrder.NewOrder;
-var rs:TZQuery;
 begin
   inherited;
   godsAmount.Caption := godsAmount.Hint;
@@ -604,7 +602,6 @@ end;
 procedure TfrmSaleOrder.SaveOrder;
 var
   ps:TZQuery;
-  Printed:boolean;
   PriceName:string;
 begin
   if dbState = dsBrowse then Exit;
@@ -769,8 +766,8 @@ procedure TfrmSaleOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
   r,op:Currency;
-  allow :boolean;
-  bs:TZQuery;
+  allow:boolean;
+  rs,bs:TZQuery;
 begin
   if length(Text)>10 then
      begin
@@ -824,6 +821,66 @@ begin
       Value := TColumnEh(Sender).Field.AsFloat;
       Exit;
     end;
+
+   //供应链限制改价：
+   if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '3' then
+      begin
+        rs := TZQuery.Create(nil);
+        try
+          rs.SQL.Text := 'select NEW_INPRICE,NEW_OUTPRICE,SMALLTO_CALC,BIGTO_CALC,CALC_UNITS,SMALL_UNITS,BIG_UNITS from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+          rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+          rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+          dllGlobal.OpenSqlite(rs);
+          if not rs.IsEmpty then
+             begin
+               if (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) > 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) > 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat) > 0)
+                  ) then
+                  begin
+                    MessageBox(Handle,pchar('单价不能高于指导零售价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+                    Text := TColumnEh(Sender).Field.AsString;
+                    Value := TColumnEh(Sender).Field.AsFloat;
+                    Exit;
+                  end;
+               if (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) < 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) < 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat) < 0)
+                  ) then
+                  begin
+                    MessageBox(Handle,pchar('单价不能低于进价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+                    Text := TColumnEh(Sender).Field.AsString;
+                    Value := TColumnEh(Sender).Field.AsFloat;
+                    Exit;
+                  end;
+             end;
+        finally
+          rs.Free;
+        end;
+      end;
+
     op := TColumnEh(Sender).Field.AsFloat;
     TColumnEh(Sender).Field.AsFloat := r;
     PriceToCalc(r);
@@ -1017,7 +1074,6 @@ procedure TfrmSaleOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs,bs:TZQuery;
   Params:TftParamList;
-  str,OutLevel:string;
 begin
   rs := TZQuery.Create(nil);
   bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
@@ -1938,7 +1994,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;

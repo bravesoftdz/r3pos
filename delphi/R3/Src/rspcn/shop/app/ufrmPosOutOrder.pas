@@ -287,8 +287,8 @@ begin
        amt := 0;
      end;
   edtTable.DisableControls;
+  r := edtTable.FieldByName('SEQNO').AsInteger;
   try
-    r := edtTable.FieldByName('SEQNO').AsInteger;
     orgFee := TotalFee;
     TotalFee := 0;
     TotalAmt := 0;
@@ -778,8 +778,8 @@ procedure TfrmPosOutOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
   r,op:Currency;
-  allow :boolean;
-  bs:TZQuery;
+  allow:boolean;
+  rs,bs:TZQuery;
 begin
   if length(Text)>10 then
      begin
@@ -828,11 +828,71 @@ begin
          r := StrtoFloat(Text);
       if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
     except
-      if length(Text)<10 then  MessageBox(Handle,pchar('您输入的单价无效，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+      if length(Text)<10 then MessageBox(Handle,pchar('您输入的单价无效，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
       Text := TColumnEh(Sender).Field.AsString;
       Value := TColumnEh(Sender).Field.AsFloat;
       Exit;
     end;
+
+   //供应链限制改价：
+   if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '3' then
+      begin
+        rs := TZQuery.Create(nil);
+        try
+          rs.SQL.Text := 'select NEW_INPRICE,NEW_OUTPRICE,SMALLTO_CALC,BIGTO_CALC,CALC_UNITS,SMALL_UNITS,BIG_UNITS from VIW_GOODSINFO where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID';
+          rs.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+          rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+          dllGlobal.OpenSqlite(rs);
+          if not rs.IsEmpty then
+             begin
+               if (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) > 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) > 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_OUTPRICE').AsFloat) > 0)
+                  ) then
+                  begin
+                    MessageBox(Handle,pchar('单价不能高于指导零售价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+                    Text := TColumnEh(Sender).Field.AsString;
+                    Value := TColumnEh(Sender).Field.AsFloat;
+                    Exit;
+                  end;
+               if (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('SMALLTO_CALC').AsFloat) < 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat*rs.FieldByName('BIGTO_CALC').AsFloat) < 0)
+                  ) or
+                  (
+                    (edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString)
+                    and
+                    (FnNumber.CompareFloat(r, rs.FieldByName('NEW_INPRICE').AsFloat) < 0)
+                  ) then
+                  begin
+                    MessageBox(Handle,pchar('单价不能低于进价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+                    Text := TColumnEh(Sender).Field.AsString;
+                    Value := TColumnEh(Sender).Field.AsFloat;
+                    Exit;
+                  end;
+             end;
+        finally
+          rs.Free;
+        end;
+      end;
+
     op := TColumnEh(Sender).Field.AsFloat;
     TColumnEh(Sender).Field.AsFloat := r;
     PriceToCalc(r);

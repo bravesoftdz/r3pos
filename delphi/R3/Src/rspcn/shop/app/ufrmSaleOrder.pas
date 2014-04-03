@@ -890,9 +890,10 @@ end;
 procedure TfrmSaleOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
+  bs:TZQuery;
+  limit:integer;
   r,op:Currency;
   allow :boolean;
-  bs:TZQuery;
 begin
   if length(Text)>10 then
      begin
@@ -906,6 +907,14 @@ begin
        Text := '';
        Value := null;
        FocusNextColumn;
+       Exit;
+     end;
+
+  if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
+     begin
+       Value := TColumnEh(Sender).Field.AsFloat;
+       Text := TColumnEh(Sender).Field.AsString;
+       MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗已经赠送，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
 
@@ -971,6 +980,25 @@ begin
            Exit;
          end;
        end;
+
+    if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '3' then
+       begin
+         limit := CheckPriceLimit(edtTable.FieldByName('APRICE').AsFloat);
+         if limit <> 0 then
+            begin
+              edtTable.Edit;
+              edtTable.FieldByName('APRICE').AsFloat := op;
+              PriceToCalc(edtTable.FieldByName('APRICE').AsFloat);
+              Text := TColumnEh(Sender).Field.AsString;
+              Value := TColumnEh(Sender).Field.AsFloat;
+              if limit > 0 then
+                 MessageBox(Handle,pchar('单价不能高于指导零售价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+              if limit < 0 then
+                 MessageBox(Handle,pchar('单价不能低于进价，请重新输入'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+              Exit;
+            end;
+       end;
+
     edtTable.Edit;
     edtTable.FieldByName('POLICY_TYPE').AsInteger := 4;
   end

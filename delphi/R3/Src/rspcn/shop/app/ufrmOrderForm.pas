@@ -8,7 +8,7 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList, ZLogFile;
+  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList;
 
 const
 
@@ -1382,10 +1382,10 @@ begin
 end;
 
 procedure TfrmOrderForm.UnitToCalc(UNIT_ID: string);
-var AMount,SourceScale:currency;
-    Field:TField;
-    rs:TZQuery;
-    u:integer;
+var
+  rs:TZQuery;
+  Field:TField;
+  AMount,SourceScale:currency;
 begin
   if Locked then Exit;
   if UNIT_ID=edtTable.FieldbyName('UNIT_ID').AsString  then Exit;
@@ -1540,7 +1540,7 @@ end;
 var
   rs:TZQuery;
   AObj:TRecord_;
-  r,bulk:Boolean;
+  bulk:Boolean;
   uid:string;
   amt:currency;
   mny:currency;
@@ -1806,9 +1806,9 @@ end;
 procedure TfrmOrderForm.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
   s:string;
-  IsNumber,IsFind,isAdd:Boolean;
   amt:currency;
   AObj:TRecord_;
+  IsNumber:Boolean;
 begin
   try
   if (Key=#13) and (edtInput.Focused) then
@@ -1965,9 +1965,9 @@ begin
 end;
 
 procedure TfrmOrderForm.fndGODS_IDSaveValue(Sender: TObject);
-var AObj:TRecord_;
+var
   rs:TZQuery;
-  pt:boolean;
+  AObj:TRecord_;
 begin
   inherited;
   // if not fndGODS_ID.Focused then Exit;
@@ -2283,7 +2283,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   br := TBrush.Create;
   br.Assign(DBGridEh1.Canvas.Brush);
@@ -2422,7 +2421,7 @@ end;
 
 procedure TfrmOrderForm.N1Click(Sender: TObject);
 var
-  r,sr:integer;
+  r:integer;
 begin
   inherited;
   if not edtTable.Active then Exit;

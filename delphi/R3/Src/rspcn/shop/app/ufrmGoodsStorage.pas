@@ -730,12 +730,12 @@ begin
   //店内售价
   edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
   if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
-     edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
-  if strtofloatdef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
+     edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloatDef(edtSMALLTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
+  if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
      edtSHOP_NEW_OUTPRICE1.Text:='';
   if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
-     edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
-  if strtofloatdef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
+     edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloatDef(edtBIGTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
+  if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
      edtSHOP_NEW_OUTPRICE2.Text:='';
 
   if not cdsGoodsPrice.IsEmpty then
@@ -745,10 +745,10 @@ begin
           begin
             edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
             edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
-            if strtofloatdef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
+            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
                edtSHOP_NEW_OUTPRICE1.Text:='';
             edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
-            if strtofloatdef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
+            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
                edtSHOP_NEW_OUTPRICE2.Text:='';
           end;
       end;
@@ -787,6 +787,7 @@ procedure TfrmGoodsStorage.WriteInfo;
   end;
 var
   isDel:boolean;
+  i,o,p,p1,p2:real;
 begin
   WriteToObject(AObj,self);
   edtBARCODE1.Text := trim(edtBARCODE1.Text);
@@ -810,23 +811,68 @@ begin
     end
   else
     begin
-      if (edtSMALL_UNITS.Text<>'') and (strtofloatdef(edtSMALLTO_CALC.Text,0)=0) then
+      if (edtSMALL_UNITS.Text<>'') and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)=0) then
          Raise Exception.Create('请输入非0的小件单位换算系数！');
       if (edtSMALL_UNITS.Text<>'') and (trim(edtBARCODE1.Text)='') then
          Raise Exception.Create('请输入小件单位条码！');
-      if (edtSMALL_UNITS.Text='') and (strtofloatdef(edtSMALLTO_CALC.Text,0)<>0) then
+      if (edtSMALL_UNITS.Text='') and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) then
          Raise Exception.Create('请选择小件单位！');
-      if (trim(edtBARCODE1.Text)='') and (strtofloatdef(edtSMALLTO_CALC.Text,0)<>0) then
+      if (trim(edtBARCODE1.Text)='') and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) then
          Raise Exception.Create('请输入小件单位条码！');
-      if (edtBIG_UNITS.Text<>'') and (strtofloatdef(edtBIGTO_CALC.Text,0)=0) then
+      if (edtBIG_UNITS.Text<>'') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)=0) then
          Raise Exception.Create('请输入非0的大件单位换算系数！');
       if (edtBIG_UNITS.Text<>'') and (trim(edtBARCODE2.Text)='') then
          Raise Exception.Create('请输入大件单位条码！');
-      if (edtBIG_UNITS.Text='') and (strtofloatdef(edtBIGTO_CALC.Text,0)<>0) then
+      if (edtBIG_UNITS.Text='') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) then
          Raise Exception.Create('请选择大件单位！');
-      if (trim(edtBARCODE2.Text)='') and (strtofloatdef(edtBIGTO_CALC.Text,0)<>0) then
+      if (trim(edtBARCODE2.Text)='') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) then
          Raise Exception.Create('请输入大件单位条码！');
     end;
+
+  if relationId = 1000006 then
+     begin
+       if dllGlobal.GetChangePrice(relationId) = '3' then
+          begin
+            i := StrtoFloatDef(edtNEW_INPRICE.Text,0);
+            o := StrtoFloatDef(edtNEW_OUTPRICE.Text,0);
+            p := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
+            p1 := StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0);
+            p2 := StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0);
+
+            if FnNumber.CompareFloat(p, o) > 0 then
+               begin
+                 Raise Exception.Create('计量单位售价不能高于指导零售价！');
+               end;
+            if FnNumber.CompareFloat(p, i) < 0 then
+               begin
+                 Raise Exception.Create('计量单位售价不能低于进价！');
+               end;
+
+            if AObj.FieldByName('SMALL_UNITS').AsString <> '' then
+               begin
+                 if FnNumber.CompareFloat(p1, o * AObj.FieldByName('SMALLTO_CALC').AsFloat) > 0 then
+                    begin
+                      Raise Exception.Create('小件单位售价不能高于指导零售价！');
+                    end;
+                 if FnNumber.CompareFloat(p1, i * AObj.FieldByName('SMALLTO_CALC').AsFloat) < 0 then
+                    begin
+                      Raise Exception.Create('小件单位售价不能低于进价！');
+                    end;
+               end;
+
+            if AObj.FieldByName('BIG_UNITS').AsString <> '' then
+               begin
+                 if FnNumber.CompareFloat(p2, o * AObj.FieldByName('BIGTO_CALC').AsFloat) > 0 then
+                    begin
+                      Raise Exception.Create('大件单位售价不能高于指导零售价！');
+                    end;
+                 if FnNumber.CompareFloat(p2, i * AObj.FieldByName('BIGTO_CALC').AsFloat) < 0 then
+                    begin
+                      Raise Exception.Create('大件单位售价不能低于进价！');
+                    end;
+               end;
+          end;
+     end;
 
   if relationId=0 then  //自经营
      begin
@@ -1126,9 +1172,9 @@ begin
         begin
           edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=false;
           t_label.Caption:=edtSMALL_UNITS.Text+'价';
-          edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
-          if strtofloatdef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-            edtSHOP_NEW_OUTPRICE1.Text:='';
+          edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloatDef(edtSMALLTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
+          if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
+             edtSHOP_NEW_OUTPRICE1.Text:='';
         end
       else
         begin
@@ -1141,9 +1187,9 @@ begin
         begin
           edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly:=false;
           x_label.Caption:=edtBIG_UNITS.Text+'价';
-          edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloatdef(edtBIGTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
-          if strtofloatdef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-            edtSHOP_NEW_OUTPRICE2.Text:='';
+          edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloatDef(edtBIGTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
+          if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
+             edtSHOP_NEW_OUTPRICE2.Text:='';
         end
       else
         begin
@@ -1160,11 +1206,11 @@ begin
           begin
             edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
             edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
-            if strtofloatdef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-              edtSHOP_NEW_OUTPRICE1.Text:='';
+            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
+               edtSHOP_NEW_OUTPRICE1.Text:='';
             edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
-            if strtofloatdef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-              edtSHOP_NEW_OUTPRICE2.Text:='';
+            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
+               edtSHOP_NEW_OUTPRICE2.Text:='';
           end;
       end;
 
@@ -2745,11 +2791,11 @@ procedure TfrmGoodsStorage.edtSMALL_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
   if (edtSMALL_UNITS.Text<>'') and (edtSMALL_UNITS.Focused) and
-     (strtofloatdef(edtSMALLTO_CALC.Text,0)<>0) and
-     (strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
+     (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) and
+     (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
     begin
       edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=false;
-      edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloatdef(edtSMALLTO_CALC.Text,0)*strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0));
+      edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloatDef(edtSMALLTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
     end;
   t_label.Caption:=edtSMALL_UNITS.Text+'价';
   SetShopOutPricePlace;
@@ -2759,11 +2805,11 @@ procedure TfrmGoodsStorage.edtBIG_UNITSPropertiesChange(Sender: TObject);
 begin
   inherited;
   if (edtBIG_UNITS.Text<>'') and (edtBIG_UNITS.Focused) and
-     (strtofloatdef(edtBIGTO_CALC.Text,0)<>0) and
-     (strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0)<>0)then
+     (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) and
+     (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0)then
     begin
        edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly:=false;
-       edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloat(edtBIGTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
+       edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(strtofloat(edtBIGTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
     end;
   x_label.Caption:=edtBIG_UNITS.Text+'价';
   SetShopOutPricePlace;
@@ -2773,12 +2819,12 @@ procedure TfrmGoodsStorage.edtSMALLTO_CALCPropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  if  (edtSMALLTO_CALC.Focused) and (strtofloatdef(edtSMALLTO_CALC.Text,0)<>0) and
+  if  (edtSMALLTO_CALC.Focused) and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) and
       (edtSMALL_UNITS.Text<>'') and
-      (strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
+      (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
     begin
       edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=false;
-      edtSHOP_NEW_OUTPRICE1.Text:=floattostr(strtofloat(edtSMALLTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
+      edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(strtofloat(edtSMALLTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
     end
   else
     begin
@@ -2791,12 +2837,12 @@ end;
 procedure TfrmGoodsStorage.edtBIGTO_CALCPropertiesChange(Sender: TObject);
 begin
   inherited;
-  if  (edtBIGTO_CALC.Focused) and (strtofloatdef(edtBIGTO_CALC.Text,0)<>0) and
+  if  (edtBIGTO_CALC.Focused) and (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) and
       (edtBIG_UNITS.Text<>'') and
-      (strtofloatdef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
+      (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
     begin
       edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly:=false;
-      edtSHOP_NEW_OUTPRICE2.Text:=floattostr(strtofloat(edtBIGTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
+      edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(strtofloat(edtBIGTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
     end
   else
     begin

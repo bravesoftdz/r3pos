@@ -2799,11 +2799,51 @@ begin
 end;
 
 procedure TfrmPosOutOrder.PriceToGods(id: string);
+var
+  r:real;
+  s:string;
+  limit:integer;
+  agio:currency;
+  IsAgio:boolean;
 begin
   if dbState = dsBrowse then Exit;
   if edtTable.FieldByName('GODS_ID').AsString='' then Raise Exception.Create('请选择商品后再执行此操作');
   if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '2' then
      Raise Exception.Create('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！');
+
+  if dllGlobal.GetChangePrice(edtTable.FieldByName('GODS_ID').AsString) = '3' then
+     begin
+       s := trim(id);
+       IsAgio := (s[1]='/');
+       if not IsAgio then
+          begin
+            try
+              r := StrToFloat(s);
+            except
+              Raise Exception.Create('输入的单价无效，请正确输入');
+            end;
+          end
+       else
+          begin
+            delete(s,1,1);
+            try
+              agio := StrToFloat(s);
+            except
+              Raise Exception.Create('输入的折扣无效，请正确输入');
+            end;
+            if abs(agio)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确');
+            if agio < 10 then agio := agio * 10;
+            if agio = 0 then
+               agio := 1
+            else
+               agio := agio / 100;
+            r := edtTable.FindField('ORG_PRICE').AsFloat * agio;
+          end;
+       limit := CheckPriceLimit(r);
+       if limit > 0 then Raise Exception.Create('单价不能高于指导零售价，请重新输入');
+       if limit < 0 then Raise Exception.Create('单价不能低于进价，请重新输入');
+     end;
+
   inherited;
 end;
 

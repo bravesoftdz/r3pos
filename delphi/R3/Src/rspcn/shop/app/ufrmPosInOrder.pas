@@ -331,8 +331,6 @@ begin
 end;
 
 procedure TfrmPosInOrder.NewOrder;
-var
-  rs:TZQuery;
 begin
   inherited;
   godsAmount.Caption := godsAmount.Hint;
@@ -411,8 +409,6 @@ begin
 end;
 
 procedure TfrmPosInOrder.SaveOrder;
-var
-  Printed:boolean;
 begin
   if dbState = dsBrowse then Exit;
 
@@ -916,7 +912,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;

@@ -309,7 +309,6 @@ begin
 end;
 
 procedure TfrmStockOrder.NewOrder;
-var rs:TZQuery;
 begin
   inherited;
   godsAmount.Caption := godsAmount.Hint;
@@ -389,7 +388,6 @@ begin
 end;
 
 procedure TfrmStockOrder.SaveOrder;
-var Printed:boolean;
 begin
   if dbState = dsBrowse then Exit;
 
@@ -893,7 +891,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;
@@ -976,6 +973,7 @@ begin
        Value := TColumnEh(Sender).Field.AsFloat;
        Exit;
      end;
+
   if edtTable.FieldByName('GODS_ID').AsString = '' then
      begin
        Text := '';
@@ -983,6 +981,15 @@ begin
        FocusNextColumn;
        Exit;
      end;
+
+  if edtTable.FieldByName('IS_PRESENT').AsInteger = 1 then
+     begin
+       Value := TColumnEh(Sender).Field.AsFloat;
+       Text := TColumnEh(Sender).Field.AsString;
+       MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗已经赠送，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+
   try
     if Text='' then
        r := 0

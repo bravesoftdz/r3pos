@@ -469,7 +469,6 @@ inherited frmSaleReport: TfrmSaleReport
                     FieldName = 'AMOUNT'
                     Footer.Alignment = taRightJustify
                     Footer.DisplayFormat = '#0.###'
-                    Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #38144#37327

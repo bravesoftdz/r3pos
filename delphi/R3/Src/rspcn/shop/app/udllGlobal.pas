@@ -35,6 +35,7 @@ type
     procedure OpenPubGoodsInfo;
     procedure SetAuthMode(const Value: integer);
   public
+    XsmCenterUrl:string;
     function GetZQueryFromName(Name:string):TZQuery;
     function Refresh(Name:string):boolean;
     function OpenSqlite(DataSet:TZQuery):boolean;
@@ -704,7 +705,11 @@ begin
          delete(uc,1,1);
          uc := DecStr(uc,ENC_KEY);
        end;
-    if uc <> '' then AuthMode := 2;
+    if uc <> '' then
+       begin
+         AuthMode := 2;
+         XsmCenterUrl := uc;
+       end;
   finally
     F.Free;
   end;

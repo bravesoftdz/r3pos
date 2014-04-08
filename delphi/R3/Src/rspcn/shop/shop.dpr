@@ -115,7 +115,9 @@ uses
   uCommand in 'app\uCommand.pas',
   uZebraPrinterFactory in 'app\uZebraPrinterFactory.pas',
   uPlayerFactory in 'app\uPlayerFactory.pas',
-  ufrmHangUpFile in 'app\ufrmHangUpFile.pas' {frmHangUpFile};
+  ufrmHangUpFile in 'app\ufrmHangUpFile.pas' {frmHangUpFile},
+  uXsmFactory in 'app\uXsmFactory.pas',
+  ObjMessage in 'obj\ObjMessage.pas';
 
 {$R *.res}
 exports

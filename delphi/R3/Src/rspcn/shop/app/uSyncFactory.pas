@@ -148,7 +148,7 @@ implementation
 uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
      uRspSyncFactory,uRightsFactory,dllApi,ufrmSysDefine,uRtcSyncFactory,
      ufrmStocksCalc,ufrmSelectRecType,ufrmUnLockGuide,uCommand,ufrmHintMsg,
-     uPlayerFactory,udllShopUtil;
+     uPlayerFactory,udllShopUtil,uXsmFactory;
 
 constructor TSyncFactory.Create;
 begin
@@ -1436,6 +1436,13 @@ begin
                        SyncFactory.SyncBizData;
                        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
                      end;
+                end;
+             XsmFactory.getXsmMessage;
+             if Assigned(MsgFactory) then
+                begin
+                  MsgFactory.Load;
+                  MsgFactory.GetUnRead;
+                  MsgFactory.ShowHintMsg;
                 end;
            end;
         SyncFactory.LoginSyncDate := token.lDate;

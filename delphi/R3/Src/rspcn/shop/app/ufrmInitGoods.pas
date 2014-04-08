@@ -193,11 +193,11 @@ type
     function BarcodeFactory(rs:TZQuery;code:string):boolean;
 
     function  GetFinded:boolean;
-    function  CanFocus(Control:TControl):Boolean;
+    function  CanFocus(Control:TControl):boolean;
     function  CheckUnit(unitName:string):string;
-    procedure GetGoodsInfo;
+    function  GetGoodsInfo:boolean;
     procedure UploadGoodsInfo;
-    function  IsChinese(str:string):Boolean;
+    function  IsChinese(str:string):boolean;
     procedure RefreshUnits;
     procedure RefreshUnitsList;
     procedure AddUnits(Sender: TObject);
@@ -282,7 +282,7 @@ begin
        if edtGOODS_OPTION1.Checked then
           begin
             if dllApplication.mode = 'demo' then Raise Exception.Create('演示模式下不允许新增供应链商品！');
-            GetGoodsInfo;
+            if not GetGoodsInfo then Exit;
             edtBARCODE1.Text := '';
             edtBARCODE2.Text := '';
             edtBARCODE3.Text := '';
@@ -398,7 +398,7 @@ begin
   result := RspFinded or RemoteFinded or LocalFinded;
 end;
 
-function TfrmInitGoods.CanFocus(Control: TControl): Boolean;
+function TfrmInitGoods.CanFocus(Control: TControl): boolean;
 begin
   result := false;
   if Control is TcxTextEdit then
@@ -409,13 +409,15 @@ begin
      result := (self.Visible) and TcxButtonEdit(Control).CanFocus;
 end;
 
-procedure TfrmInitGoods.GetGoodsInfo;
+function TfrmInitGoods.GetGoodsInfo:boolean;
 var
   i:integer;
   hasGoods:TZQuery;
   xxbarcode:TZQuery;
   barcode,godsId,gid:string;
 begin
+  result := true;
+
   xxbarcode := nil;
   barcode := trim(edtInput.Text);
 
@@ -430,6 +432,7 @@ begin
        if MessageBox(Handle,'系统检测到您输入的条形码非13位数字，请确认条形码是否正确?','友情提醒',MB_YESNO+MB_ICONQUESTION) <> 6 then
           begin
             if CanFocus(edtInput) then edtInput.SetFocus;
+            result := false;
             Exit;
           end;
      end;
@@ -1583,7 +1586,7 @@ begin
   ModalResult := MROK;
 end;
 
-function TfrmInitGoods.IsChinese(str: string): Boolean;
+function TfrmInitGoods.IsChinese(str: string): boolean;
 var i:integer;
 begin
   result:=false;

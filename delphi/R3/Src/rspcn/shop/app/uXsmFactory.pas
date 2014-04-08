@@ -3,8 +3,8 @@ unit uXsmFactory;
 interface
 
 uses Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
-     ObjCommon, ZLogFile, Dialogs, DB, IdHTTP ,EncDec, MSHTML, ActiveX, OleCtrls,
-     msxml, Variants, ComObj, uFnUtil, StrUtils, IniFiles;
+     ObjCommon, Dialogs, DB, IdHTTP ,EncDec, MSHTML, ActiveX, OleCtrls, msxml,
+     Variants, ComObj, uFnUtil, StrUtils, IniFiles, ZLogFile;
 
 type
   TXsmFactory=class
@@ -18,6 +18,8 @@ type
     XsmComId:string;
     XsmChallenge:string;
     function  XsmAuth:boolean;
+    function  getMail_Scnotice(var hs,ls:TZQuery;cs:TZQuery):boolean;
+    function  getMail_ScnoticeDetail(comId,seq: string):string;
     function  getBBS_SlsmanWorkAct(var hs,ls:TZQuery;cs:TZQuery):boolean;
     function  getBBS_SlsmanWorkActDetail(blockId,bbsType,org_code,bbsId:string):string;
     function  getChallenge:boolean;
@@ -50,7 +52,7 @@ begin
     V[0] := HtmlText;
     Document.Write(PSafeArray(TVarData(v).VArray));
     Document.Close;
-    result := Trim(Document.body.outerText);
+    result := trim(Document.body.outerText);
   finally
     Document := nil;
     CoUninitialize;
@@ -178,12 +180,8 @@ begin
 
   url := HttpAddr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId='+ blockId + '&bbsType='+ bbsType + '&orgCode='+ XsmComId + '&refId='+ XsmRefId + '&firstRow='+ inttostr(firstRow) + '&maxRows=' + inttostr(maxRows) + '&status=1&userType=1000';
 
-  LogFile.AddLogFile(0, url);
-
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
-
-  LogFile.AddLogFile(0, xml);
 
   doc := CreateXML(xml);
 
@@ -201,7 +199,7 @@ begin
   Child := Node.firstChild;
   while Child <> nil do
     begin
-      if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-300) then
+      if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-6) then
          begin
            pageCount := 1;
            break;
@@ -275,7 +273,7 @@ begin
            Child := Node.firstChild;
            while Child <> nil do
              begin
-               if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-300) then
+               if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-6) then
                   begin
                     pageCount := 1;
                     break;
@@ -384,58 +382,81 @@ var
   hs,ls,cs:TZQuery;
   Params:TftParamList;
 begin
-  getParentInfo;
-  hs := TZQuery.Create(nil);
-  ls := TZQuery.Create(nil);
-  cs := TZQuery.Create(nil);
-  Params := TftParamList.Create(nil);
   try
-    Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-    Params.ParamByName('SHOP_ID').AsString := token.shopId;
-    Params.ParamByName('MSG_ID').AsString := '';
-    dataFactory.BeginBatch;
+    getParentInfo;
+    hs := TZQuery.Create(nil);
+    ls := TZQuery.Create(nil);
+    cs := TZQuery.Create(nil);
+    Params := TftParamList.Create(nil);
     try
-      dataFactory.AddBatch(hs,'TMessage',Params);
-      dataFactory.AddBatch(ls,'TMessageList',Params);
-      dataFactory.OpenBatch;
-    except
-      dataFactory.CancelBatch;
-      Raise;
-    end;
+      Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+      Params.ParamByName('SHOP_ID').AsString := token.shopId;
+      Params.ParamByName('MSG_ID').AsString := '';
+      dataFactory.BeginBatch;
+      try
+        dataFactory.AddBatch(hs,'TMessage',Params);
+        dataFactory.AddBatch(ls,'TMessageList',Params);
+        dataFactory.OpenBatch;
+      except
+        dataFactory.CancelBatch;
+        Raise;
+      end;
 
-    cs.SQL.Text :=
-      ' select A.MSG_ID as MSG_ID,A.MSG_CLASS as MSG_CLASS '+
-      ' from MSC_MESSAGE A '+
-      ' left outer join (select MSG_ID from MSC_MESSAGE_LIST where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID) B on A.MSG_ID=B.MSG_ID '+
-      ' where A.TENANT_ID=:TENANT_ID and A.ISSUE_TENANT_ID=:ISSUE_TENANT_ID and A.ISSUE_DATE>=:ISSUE_DATE and A.MSG_CLASS in (''0'',''1'',''2'',''4'')';
-    cs.Params.ParamByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
-    cs.Params.ParamByName('ISSUE_DATE').AsString := FormatDatetime('YYYYMMDD',Date()-300);
-    dataFactory.Open(cs);
+      cs.SQL.Text :=
+        ' select A.MSG_ID as MSG_ID,A.MSG_CLASS as MSG_CLASS '+
+        ' from MSC_MESSAGE A '+
+        ' left outer join (select MSG_ID from MSC_MESSAGE_LIST where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID) B on A.MSG_ID=B.MSG_ID '+
+        ' where A.TENANT_ID=:TENANT_ID and A.ISSUE_TENANT_ID=:ISSUE_TENANT_ID and A.ISSUE_DATE>=:ISSUE_DATE and A.MSG_CLASS in (''0'',''1'',''2'',''4'')';
+      cs.Params.ParamByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
+      cs.Params.ParamByName('ISSUE_DATE').AsString := FormatDatetime('YYYYMMDD',Date()-6);
+      dataFactory.Open(cs);
 
-    if XsmAuth then
-       begin
-         getBBS_SlsmanWorkAct(hs,ls,cs);
-       end;
+      if XsmAuth then
+         begin
+           try
+             getMail_Scnotice(hs,ls,cs);
+           except
+             on E:Exception do
+                begin
+                  LogFile.AddLogFile(0, '获取公共信息失败,' + E.Message);
+                end;
+           end;
 
-    if hs.State in [dsEdit,dsInsert] then hs.Post;
-    if ls.State in [dsEdit,dsInsert] then ls.Post;
-    if (not hs.IsEmpty) or (not ls.IsEmpty) then
-       begin
-         dataFactory.BeginBatch;
-         try
-           dataFactory.AddBatch(hs,'TMessage');
-           dataFactory.AddBatch(ls,'TMessageList');
-           dataFactory.CommitBatch;
-         except
-           dataFactory.CancelBatch;
-           Raise;
+           try
+             getBBS_SlsmanWorkAct(hs,ls,cs);
+           except
+             on E:Exception do
+                begin
+                  LogFile.AddLogFile(0, '获取营销建议失败,' + E.Message);
+                end;
+           end;
          end;
+
+      if hs.State in [dsEdit,dsInsert] then hs.Post;
+      if ls.State in [dsEdit,dsInsert] then ls.Post;
+      if (not hs.IsEmpty) or (not ls.IsEmpty) then
+         begin
+           dataFactory.BeginBatch;
+           try
+             dataFactory.AddBatch(hs,'TMessage');
+             dataFactory.AddBatch(ls,'TMessageList');
+             dataFactory.CommitBatch;
+           except
+             dataFactory.CancelBatch;
+             Raise;
+           end;
+         end;
+    finally
+      Params.Free;
+      cs.Free;
+      hs.Free;
+      ls.Free;
+    end;
+  except
+    on E:Exception do
+       begin
+         LogFile.AddLogFile(0, '获取新商盟消息失败,' + E.Message);
        end;
-  finally
-    Params.Free;
-    cs.Free;
-    hs.Free;
-    ls.Free;
   end;
 end;
 
@@ -465,14 +486,14 @@ begin
     else XsmCenter := dllGlobal.XsmCenterUrl;
 
     url := XsmCenter+'users/forlogin';
-    xml := idHTTP.Get(url);
+    xml := idHttp.Get(url);
     xml := Utf8ToAnsi(xml);
     doc := CreateXML(xml);
-    if not Assigned(doc) then Exit;
+    if not Assigned(doc) then Raise Exception.Create('获取验证码失败...');
     root := doc.DocumentElement;
-    if not Assigned(root) then Exit;
-    if root.attributes.getNamedItem('code')=nil then Exit;
-    if root.attributes.getNamedItem('code').text<>'0000' then Exit;
+    if not Assigned(root) then Raise Exception.Create('url地址返回无效xml文档，获取验证码失败...');
+    if root.attributes.getNamedItem('code')=nil then Raise Exception.Create('url地址返回无效xml文档，获取验证码失败...');
+    if root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('获取校验码失败,错误:'+root.attributes.getNamedItem('msg').text);
     XsmChallenge := root.selectSingleNode('challenge').text;
     result := true;
   finally
@@ -498,11 +519,11 @@ begin
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
   doc := CreateXML(xml);
-  if not Assigned(doc) then Exit;
+  if not Assigned(doc) then Raise Exception.Create('用户名密码验证失败...');
   root := doc.DocumentElement;
-  if not Assigned(root) then Exit;
-  if root.attributes.getNamedItem('code')=nil then Exit;
-  if root.attributes.getNamedItem('code').text<>'0000' then Exit;
+  if not Assigned(root) then Raise Exception.Create('url地址返回无效xml文档，用户名密码验证失败...');
+  if root.attributes.getNamedItem('code')=nil then Raise Exception.Create('url地址返回无效xml文档，用户名密码验证失败...');
+  if root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('用户名密码验证失败，错误:'+root.attributes.getNamedItem('msg').text);
   XsmComId := root.selectSingleNode('comId').text;
   XsmRefId := root.selectSingleNode('refId').text;
   result := true;
@@ -520,11 +541,11 @@ begin
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
   doc := CreateXML(xml);
-  if not Assigned(doc) then Exit;
+  if not Assigned(doc) then Raise Exception.Create('获取新商盟配置信息失败...');
   root := doc.DocumentElement;
-  if not Assigned(root) then Exit;
-  if root.attributes.getNamedItem('code')=nil then Exit;
-  if root.attributes.getNamedItem('code').text<>'0000' then Exit;
+  if not Assigned(root) then Raise Exception.Create('url地址返回无效xml文档，获取新商盟配置信息失败...');
+  if root.attributes.getNamedItem('code')=nil then Raise Exception.Create('url地址返回无效xml文档，获取新商盟配置信息失败...');
+  if root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('获取新商盟配置信息失败,错误:'+root.attributes.getNamedItem('msg').text);
   Node := FindNode(doc,'server_info\web_server');
   if Node = nil then Exit;
   HttpAddr := Node.attributes.getNamedItem('web_url').text;
@@ -534,7 +555,119 @@ end;
 function TXsmFactory.XsmAuth: boolean;
 begin
   result := false;
-  if getChallenge then if doLogin then result := getXsmConfig;
+  try
+    if getChallenge then if doLogin then result := getXsmConfig;
+  except
+    on E:Exception do
+       begin
+         LogFile.AddLogFile(0,'新商盟认证失败，'+E.Message);
+       end;
+  end;
+end;
+
+function TXsmFactory.getMail_Scnotice(var hs, ls: TZQuery; cs: TZQuery): boolean;
+var
+  url,strTemp:string;
+  doc:IXMLDomDocument;
+  root:IXMLDOMElement;
+  Child:IXMLDOMNode;
+  xml:string;
+  vMSG_ID:string;
+  vMSG_CONTENT:string;
+begin
+  url := HttpAddr+'/mail/scnotice/getNoticeToShowInterface';
+  xml := idHttp.Get(url);
+  xml := Utf8ToAnsi(xml);
+  doc := CreateXML(xml);
+
+  if not Assigned(doc) then Raise Exception.Create('获得公告列表失败...');
+  root := doc.DocumentElement;
+  if not Assigned(root) then Raise Exception.Create('Url地址返回无效XML文档，获得公告列表失败...');
+  if root.attributes.getNamedItem('retCode').text <> '0000' then Raise Exception.Create('获得公告列表失败,错误:'+root.attributes.getNamedItem('retCode').text);
+
+  Child := root.firstChild;
+  while Child <> nil do
+    begin
+      if Child.attributes.getNamedItem('status').text = '20' then
+         begin
+           if trim(Child.attributes.getNamedItem('effectTime').text) <= FormatDatetime('YYYYMMDD',now()-6) then
+              begin
+                break;
+              end;
+
+           if (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('noticeId').text))) > 36)
+              or
+              (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('sendUserName').text))) > 36)
+              or
+              (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('noticeTitle').text))) > 50)
+              then
+              begin
+                Child := Child.nextSibling;
+                continue;
+              end;
+
+           vMSG_ID:=Child.attributes.getNamedItem('noticeId').text;
+           vMSG_CONTENT:=getMail_ScnoticeDetail(Child.attributes.getNamedItem('comId').text,Child.attributes.getNamedItem('seq').text);
+
+           if (not cs.Locate('MSG_ID',vMSG_ID,[])) and (vMSG_CONTENT<>'') then
+              begin
+                hs.Append;
+                hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+                hs.FieldByName('MSG_ID').AsString := vMSG_ID;
+                hs.FieldByName('MSG_CLASS').AsString := '1';
+                hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('effectTime').text));
+                hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
+                hs.FieldByName('MSG_SOURCE').AsString := ParentName;
+                hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('sendUserName').text;
+                hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('noticeTitle').text;
+                hs.FieldByName('MSG_CONTENT').AsString := vMSG_CONTENT;
+                strTemp := trim(Child.attributes.getNamedItem('expireTime').text);
+                if Length(strTemp)>=8 then
+                   hs.FieldByName('END_DATE').AsString := Copy(strTemp,1,4)+'-'+Copy(strTemp,5,2)+'-'+Copy(strTemp,7,2)
+                else
+                   hs.FieldByName('END_DATE').AsString := strTemp;
+                hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('noticeId').text;
+                hs.Post;
+
+                ls.Append;
+                ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+                ls.FieldByName('MSG_ID').AsString := vMSG_ID;
+                ls.FieldByName('SHOP_ID').AsString := token.shopId;
+                ls.FieldByName('READ_DATE').AsString := '';
+                ls.FieldByName('READ_USER').AsString := '';
+                ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
+                ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
+                ls.Post;
+              end;
+         end;
+      Child := Child.nextSibling;
+    end;
+  result := true;
+end;
+
+function TXsmFactory.getMail_ScnoticeDetail(comId, seq: string): string;
+var
+  url:string;
+  doc:IXMLDomDocument;
+  root:IXMLDOMElement;
+  Child:IXMLDOMNode;
+  xml:string;
+begin
+  result := '';
+  url := HttpAddr+'/mail/scnotice/detail?comId=' + comId+'&seq='+seq;
+  xml := idHttp.Get(url);
+  xml := Utf8ToAnsi(xml);
+  doc := CreateXML(xml);
+  if not Assigned(doc) then Raise Exception.Create('获得公告明细失败...');
+  root := doc.DocumentElement;
+  if not Assigned(root) then Raise Exception.Create('Url地址返回无效XML文档，获得公告明细失败....');
+  if root.attributes.getNamedItem('retCode').text <> '0000' then Raise Exception.Create('获得公告明细失败,错误:'+root.attributes.getNamedItem('retCode').text);
+  Child := root.firstChild;
+  if Child <> nil then
+     begin
+       result := HtmlToText(URLDecode(Child.attributes.getNamedItem('noticeContent').text));
+       if Length(result) >500 then result := LeftStr(result,494)+'......';
+     end;
 end;
 
 initialization

@@ -2,12 +2,10 @@ unit uRspSyncFactory;
 
 interface
 
-uses
-  Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase, ObjCommon, ZLogFile,
-  Dialogs, uSyncFactory, DB;
+uses Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
+     ObjCommon, ZLogFile, Dialogs, uSyncFactory, DB;
 
 type
-
   TRspSyncFactory=class
   private
     FProTitle:string;
@@ -37,8 +35,8 @@ var RspSyncFactory:TRspSyncFactory;
 
 implementation
 
-uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,msxml,uRspFactory,EncDec,
-     ufrmSyncData;
+uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,msxml,uRspFactory,
+     EncDec,ufrmSyncData;
 
 procedure TRspSyncFactory.downloadTenants;
 var

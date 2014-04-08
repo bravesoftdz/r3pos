@@ -242,7 +242,6 @@ uses udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
 procedure TfrmInitGoods.FormCreate(Sender: TObject);
 var
   i: integer;
-  rs: TZQuery;
 begin
   inherited;
   Simple := false;
@@ -412,24 +411,27 @@ end;
 
 procedure TfrmInitGoods.GetGoodsInfo;
 var
-  barcode,godsId,gid:string;
-  hasGoods:TZQuery;
-  tmpGoodsInfo,tmpBarCode,xxbarcode:TZQuery;
-  Params:TftParamList;
-  tmpObj:TRecord_;
   i:integer;
+  hasGoods:TZQuery;
+  xxbarcode:TZQuery;
+  barcode,godsId,gid:string;
 begin
   xxbarcode := nil;
   barcode := trim(edtInput.Text);
+
   if barcode = '' then
      begin
        if CanFocus(edtInput) then edtInput.SetFocus;
        Raise Exception.Create('请输入条形码！');
      end;
+
   if IsChinese(barcode) or (Length(barcode) <> 13) then
      begin
-       if CanFocus(edtInput) then edtInput.SetFocus;
-       Raise Exception.Create('条形码格式不合法！');
+       if MessageBox(Handle,'系统检测到您输入的条形码非13位数字，请确认条形码是否正确?','友情提醒',MB_YESNO+MB_ICONQUESTION) <> 6 then
+          begin
+            if CanFocus(edtInput) then edtInput.SetFocus;
+            Exit;
+          end;
      end;
 
   // 查询自经营商品
@@ -1105,7 +1107,6 @@ begin
 end;
 
 procedure TfrmInitGoods.WriteToObject;
-var rs:TZQuery;
 begin
   if not edtMoreUnits.Checked then
      begin

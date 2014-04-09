@@ -9,14 +9,15 @@ uses Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
 type
   TXsmFactory=class
   private
-    idHttp: TIdHTTP;
+    idHttp:TIdHTTP;
     ParentCode:integer;
     ParentName:string;
-    XsmCenter:string;
-    HttpAddr:string;
-    XsmRefId:string;
-    XsmComId:string;
-    XsmChallenge:string;
+    xsm_center:string;
+    http_addr:string;
+    xsm_refId:string;
+    xsm_comId:string;
+    xsm_challenge:string;
+    days_diff:integer;
     function  XsmAuth:boolean;
     function  getMail_Scnotice(var hs,ls:TZQuery;cs:TZQuery):boolean;
     function  getMail_ScnoticeDetail(comId,seq: string):string;
@@ -153,6 +154,7 @@ constructor TXsmFactory.Create;
 begin
   idHttp := TIdHTTP.Create(nil);
   idHttp.HandleRedirects := true;
+  days_diff := 300;
 end;
 
 destructor TXsmFactory.Destroy;
@@ -178,11 +180,9 @@ begin
   firstRow := 0;
   maxRows  := 10;
 
-  url := HttpAddr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId='+ blockId + '&bbsType='+ bbsType + '&orgCode='+ XsmComId + '&refId='+ XsmRefId + '&firstRow='+ inttostr(firstRow) + '&maxRows=' + inttostr(maxRows) + '&status=1&userType=1000';
-
+  url := http_addr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId='+blockId+'&bbsType='+bbsType+'&orgCode='+xsm_comId+'&refId='+xsm_refId+'&firstRow='+inttostr(firstRow)+'&maxRows='+inttostr(maxRows)+'&status=1&userType=1000';
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
-
   doc := CreateXML(xml);
 
   if not Assigned(doc) then Exit;
@@ -199,7 +199,7 @@ begin
   Child := Node.firstChild;
   while Child <> nil do
     begin
-      if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-6) then
+      if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-days_diff) then
          begin
            pageCount := 1;
            break;
@@ -217,7 +217,7 @@ begin
          end;
 
       vMSG_ID := Child.attributes.getNamedItem('bbsId').text;
-      vMSG_CONTENT := getBBS_SlsmanWorkActDetail(blockId, bbsType,XsmComId,Child.attributes.getNamedItem('bbsId').text);
+      vMSG_CONTENT := getBBS_SlsmanWorkActDetail(blockId, bbsType,xsm_comId,Child.attributes.getNamedItem('bbsId').text);
           
       if (not cs.Locate('MSG_ID', vMSG_ID, [])) and (vMSG_CONTENT<>'') then
          begin
@@ -257,7 +257,7 @@ begin
            pageCurr := pageCurr +1;
            firstRow := firstRow + maxRows;
 
-           url := HttpAddr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId=' + blockId + '&bbsType='+ bbsType + '&orgCode='+ XsmComId+ '&refId='+ XsmRefId + '&firstRow='+ inttostr(firstRow) + '&maxRows=' + inttostr(maxRows) + '&status=1&userType=1000';
+           url := http_addr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId='+blockId+'&bbsType='+bbsType+'&orgCode='+xsm_comId+'&refId='+xsm_refId+'&firstRow='+inttostr(firstRow)+'&maxRows='+inttostr(maxRows)+'&status=1&userType=1000';
            xml := idHTTP.Get(url);
            xml := Utf8ToAnsi(xml);
            doc := CreateXML(xml);
@@ -273,7 +273,7 @@ begin
            Child := Node.firstChild;
            while Child <> nil do
              begin
-               if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-6) then
+               if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-days_diff) then
                   begin
                     pageCount := 1;
                     break;
@@ -291,7 +291,7 @@ begin
                   end;
 
                vMSG_ID := Child.attributes.getNamedItem('bbsId').text;
-               vMSG_CONTENT := getBBS_SlsmanWorkActDetail(blockId,bbsType,XsmComId,Child.attributes.getNamedItem('bbsId').text);
+               vMSG_CONTENT := getBBS_SlsmanWorkActDetail(blockId,bbsType,xsm_comId,Child.attributes.getNamedItem('bbsId').text);
 
                if (not cs.Locate('MSG_ID', vMSG_ID, [])) and (vMSG_CONTENT<>'') then
                   begin
@@ -337,7 +337,7 @@ var
   Child,Node:IXMLDOMNode;
   xml:string;
 begin
-  url := HttpAddr+'/bbs/ecbbsflex/getBbsInterface?blockId=' + blockId + '&bbsType='+ bbsType + '&orgCode='+ org_code + '&bbsId='+ bbsId + '&status=1';
+  url := http_addr+'/bbs/ecbbsflex/getBbsInterface?blockId='+blockId+'&bbsType='+bbsType+'&orgCode='+org_code+'&bbsId='+bbsId+'&status=1';
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
   doc := CreateXML(xml);
@@ -353,6 +353,111 @@ begin
   else
      begin
        result := HtmlToText(URLDecode(Child.attributes.getNamedItem('bbsContent').text));
+       if Length(result) >500 then result := LeftStr(result,494)+'......';
+     end;
+end;
+
+function TXsmFactory.getMail_Scnotice(var hs, ls: TZQuery; cs: TZQuery): boolean;
+var
+  url,strTemp:string;
+  doc:IXMLDomDocument;
+  root:IXMLDOMElement;
+  Child:IXMLDOMNode;
+  xml:string;
+  vMSG_ID:string;
+  vMSG_CONTENT:string;
+begin
+  url := http_addr+'/mail/scnotice/getNoticeToShowInterface';
+  xml := idHttp.Get(url);
+  xml := Utf8ToAnsi(xml);
+  doc := CreateXML(xml);
+
+  if not Assigned(doc) then Raise Exception.Create('获得公告列表失败...');
+  root := doc.DocumentElement;
+  if not Assigned(root) then Raise Exception.Create('Url地址返回无效XML文档，获得公告列表失败...');
+  if root.attributes.getNamedItem('retCode').text <> '0000' then Raise Exception.Create('获得公告列表失败,错误:'+root.attributes.getNamedItem('retCode').text);
+
+  Child := root.firstChild;
+  while Child <> nil do
+    begin
+      if Child.attributes.getNamedItem('status').text = '20' then
+         begin
+           if trim(Child.attributes.getNamedItem('effectTime').text) <= FormatDatetime('YYYYMMDD',now()-days_diff) then
+              begin
+                break;
+              end;
+
+           if (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('noticeId').text))) > 36)
+              or
+              (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('sendUserName').text))) > 36)
+              or
+              (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('noticeTitle').text))) > 50)
+              then
+              begin
+                Child := Child.nextSibling;
+                continue;
+              end;
+
+           vMSG_ID:=Child.attributes.getNamedItem('noticeId').text;
+           vMSG_CONTENT:=getMail_ScnoticeDetail(Child.attributes.getNamedItem('comId').text,Child.attributes.getNamedItem('seq').text);
+
+           if (not cs.Locate('MSG_ID',vMSG_ID,[])) and (vMSG_CONTENT<>'') then
+              begin
+                hs.Append;
+                hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+                hs.FieldByName('MSG_ID').AsString := vMSG_ID;
+                hs.FieldByName('MSG_CLASS').AsString := '1';
+                hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('effectTime').text));
+                hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
+                hs.FieldByName('MSG_SOURCE').AsString := ParentName;
+                hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('sendUserName').text;
+                hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('noticeTitle').text;
+                hs.FieldByName('MSG_CONTENT').AsString := vMSG_CONTENT;
+                strTemp := trim(Child.attributes.getNamedItem('expireTime').text);
+                if Length(strTemp)>=8 then
+                   hs.FieldByName('END_DATE').AsString := Copy(strTemp,1,4)+'-'+Copy(strTemp,5,2)+'-'+Copy(strTemp,7,2)
+                else
+                   hs.FieldByName('END_DATE').AsString := strTemp;
+                hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('noticeId').text;
+                hs.Post;
+
+                ls.Append;
+                ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+                ls.FieldByName('MSG_ID').AsString := vMSG_ID;
+                ls.FieldByName('SHOP_ID').AsString := token.shopId;
+                ls.FieldByName('READ_DATE').AsString := '';
+                ls.FieldByName('READ_USER').AsString := '';
+                ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
+                ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
+                ls.Post;
+              end;
+         end;
+      Child := Child.nextSibling;
+    end;
+  result := true;
+end;
+
+function TXsmFactory.getMail_ScnoticeDetail(comId, seq: string): string;
+var
+  url:string;
+  doc:IXMLDomDocument;
+  root:IXMLDOMElement;
+  Child:IXMLDOMNode;
+  xml:string;
+begin
+  result := '';
+  url := http_addr+'/mail/scnotice/detail?comId='+comId+'&seq='+seq;
+  xml := idHttp.Get(url);
+  xml := Utf8ToAnsi(xml);
+  doc := CreateXML(xml);
+  if not Assigned(doc) then Raise Exception.Create('获得公告明细失败...');
+  root := doc.DocumentElement;
+  if not Assigned(root) then Raise Exception.Create('Url地址返回无效XML文档，获得公告明细失败....');
+  if root.attributes.getNamedItem('retCode').text <> '0000' then Raise Exception.Create('获得公告明细失败,错误:'+root.attributes.getNamedItem('retCode').text);
+  Child := root.firstChild;
+  if Child <> nil then
+     begin
+       result := HtmlToText(URLDecode(Child.attributes.getNamedItem('noticeContent').text));
        if Length(result) >500 then result := LeftStr(result,494)+'......';
      end;
 end;
@@ -408,7 +513,7 @@ begin
         ' left outer join (select MSG_ID from MSC_MESSAGE_LIST where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID) B on A.MSG_ID=B.MSG_ID '+
         ' where A.TENANT_ID=:TENANT_ID and A.ISSUE_TENANT_ID=:ISSUE_TENANT_ID and A.ISSUE_DATE>=:ISSUE_DATE and A.MSG_CLASS in (''0'',''1'',''2'',''4'')';
       cs.Params.ParamByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
-      cs.Params.ParamByName('ISSUE_DATE').AsString := FormatDatetime('YYYYMMDD',Date()-6);
+      cs.Params.ParamByName('ISSUE_DATE').AsString := FormatDatetime('YYYYMMDD',Date()-days_diff);
       dataFactory.Open(cs);
 
       if XsmAuth then
@@ -474,18 +579,18 @@ begin
   try
     if dllGlobal.AuthMode <> 2 then
        begin
-         XsmCenter := F.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
-         if XsmCenter = '' then
-            XsmCenter := ''
+         xsm_center := F.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
+         if xsm_center = '' then
+            xsm_center := ''
          else
             begin
-              List.CommaText := XsmCenter;
-              XsmCenter := List.Values['xsmc'];
+              List.CommaText := xsm_center;
+              xsm_center := List.Values['xsmc'];
             end;
        end
-    else XsmCenter := dllGlobal.XsmCenterUrl;
+    else xsm_center := dllGlobal.XsmCenterUrl;
 
-    url := XsmCenter+'users/forlogin';
+    url := xsm_center+'users/forlogin';
     xml := idHttp.Get(url);
     xml := Utf8ToAnsi(xml);
     doc := CreateXML(xml);
@@ -494,7 +599,7 @@ begin
     if not Assigned(root) then Raise Exception.Create('url地址返回无效xml文档，获取验证码失败...');
     if root.attributes.getNamedItem('code')=nil then Raise Exception.Create('url地址返回无效xml文档，获取验证码失败...');
     if root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('获取校验码失败,错误:'+root.attributes.getNamedItem('msg').text);
-    XsmChallenge := root.selectSingleNode('challenge').text;
+    xsm_challenge := root.selectSingleNode('challenge').text;
     result := true;
   finally
     List.free;
@@ -515,7 +620,7 @@ var
   xml,url:string;
 begin
   result := false;
-  url := XsmCenter+'users/dologin/up?j_username='+token.xsmCode+'&j_password='+md5(md5(token.xsmPWD)+XsmChallenge);
+  url := xsm_center+'users/dologin/up?j_username='+token.xsmCode+'&j_password='+md5(md5(token.xsmPWD)+xsm_challenge);
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
   doc := CreateXML(xml);
@@ -524,8 +629,8 @@ begin
   if not Assigned(root) then Raise Exception.Create('url地址返回无效xml文档，用户名密码验证失败...');
   if root.attributes.getNamedItem('code')=nil then Raise Exception.Create('url地址返回无效xml文档，用户名密码验证失败...');
   if root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('用户名密码验证失败，错误:'+root.attributes.getNamedItem('msg').text);
-  XsmComId := root.selectSingleNode('comId').text;
-  XsmRefId := root.selectSingleNode('refId').text;
+  xsm_comId := root.selectSingleNode('comId').text;
+  xsm_refId := root.selectSingleNode('refId').text;
   result := true;
 end;
 
@@ -537,7 +642,7 @@ var
   xml,url:string;
 begin
   result := false;
-  url := XsmCenter+'navi/donavi/a?userId='+token.xsmCode+'&isFirst=0&comId='+XsmComId+'&zoneId=GWGC';
+  url := xsm_center+'navi/donavi/a?userId='+token.xsmCode+'&isFirst=0&comId='+xsm_comId+'&zoneId=GWGC';
   xml := idHttp.Get(url);
   xml := Utf8ToAnsi(xml);
   doc := CreateXML(xml);
@@ -548,7 +653,7 @@ begin
   if root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('获取新商盟配置信息失败,错误:'+root.attributes.getNamedItem('msg').text);
   Node := FindNode(doc,'server_info\web_server');
   if Node = nil then Exit;
-  HttpAddr := Node.attributes.getNamedItem('web_url').text;
+  http_addr := Node.attributes.getNamedItem('web_url').text;
   result := true;
 end;
 
@@ -563,111 +668,6 @@ begin
          LogFile.AddLogFile(0,'新商盟认证失败，'+E.Message);
        end;
   end;
-end;
-
-function TXsmFactory.getMail_Scnotice(var hs, ls: TZQuery; cs: TZQuery): boolean;
-var
-  url,strTemp:string;
-  doc:IXMLDomDocument;
-  root:IXMLDOMElement;
-  Child:IXMLDOMNode;
-  xml:string;
-  vMSG_ID:string;
-  vMSG_CONTENT:string;
-begin
-  url := HttpAddr+'/mail/scnotice/getNoticeToShowInterface';
-  xml := idHttp.Get(url);
-  xml := Utf8ToAnsi(xml);
-  doc := CreateXML(xml);
-
-  if not Assigned(doc) then Raise Exception.Create('获得公告列表失败...');
-  root := doc.DocumentElement;
-  if not Assigned(root) then Raise Exception.Create('Url地址返回无效XML文档，获得公告列表失败...');
-  if root.attributes.getNamedItem('retCode').text <> '0000' then Raise Exception.Create('获得公告列表失败,错误:'+root.attributes.getNamedItem('retCode').text);
-
-  Child := root.firstChild;
-  while Child <> nil do
-    begin
-      if Child.attributes.getNamedItem('status').text = '20' then
-         begin
-           if trim(Child.attributes.getNamedItem('effectTime').text) <= FormatDatetime('YYYYMMDD',now()-6) then
-              begin
-                break;
-              end;
-
-           if (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('noticeId').text))) > 36)
-              or
-              (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('sendUserName').text))) > 36)
-              or
-              (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('noticeTitle').text))) > 50)
-              then
-              begin
-                Child := Child.nextSibling;
-                continue;
-              end;
-
-           vMSG_ID:=Child.attributes.getNamedItem('noticeId').text;
-           vMSG_CONTENT:=getMail_ScnoticeDetail(Child.attributes.getNamedItem('comId').text,Child.attributes.getNamedItem('seq').text);
-
-           if (not cs.Locate('MSG_ID',vMSG_ID,[])) and (vMSG_CONTENT<>'') then
-              begin
-                hs.Append;
-                hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-                hs.FieldByName('MSG_ID').AsString := vMSG_ID;
-                hs.FieldByName('MSG_CLASS').AsString := '1';
-                hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('effectTime').text));
-                hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
-                hs.FieldByName('MSG_SOURCE').AsString := ParentName;
-                hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('sendUserName').text;
-                hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('noticeTitle').text;
-                hs.FieldByName('MSG_CONTENT').AsString := vMSG_CONTENT;
-                strTemp := trim(Child.attributes.getNamedItem('expireTime').text);
-                if Length(strTemp)>=8 then
-                   hs.FieldByName('END_DATE').AsString := Copy(strTemp,1,4)+'-'+Copy(strTemp,5,2)+'-'+Copy(strTemp,7,2)
-                else
-                   hs.FieldByName('END_DATE').AsString := strTemp;
-                hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('noticeId').text;
-                hs.Post;
-
-                ls.Append;
-                ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-                ls.FieldByName('MSG_ID').AsString := vMSG_ID;
-                ls.FieldByName('SHOP_ID').AsString := token.shopId;
-                ls.FieldByName('READ_DATE').AsString := '';
-                ls.FieldByName('READ_USER').AsString := '';
-                ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
-                ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
-                ls.Post;
-              end;
-         end;
-      Child := Child.nextSibling;
-    end;
-  result := true;
-end;
-
-function TXsmFactory.getMail_ScnoticeDetail(comId, seq: string): string;
-var
-  url:string;
-  doc:IXMLDomDocument;
-  root:IXMLDOMElement;
-  Child:IXMLDOMNode;
-  xml:string;
-begin
-  result := '';
-  url := HttpAddr+'/mail/scnotice/detail?comId=' + comId+'&seq='+seq;
-  xml := idHttp.Get(url);
-  xml := Utf8ToAnsi(xml);
-  doc := CreateXML(xml);
-  if not Assigned(doc) then Raise Exception.Create('获得公告明细失败...');
-  root := doc.DocumentElement;
-  if not Assigned(root) then Raise Exception.Create('Url地址返回无效XML文档，获得公告明细失败....');
-  if root.attributes.getNamedItem('retCode').text <> '0000' then Raise Exception.Create('获得公告明细失败,错误:'+root.attributes.getNamedItem('retCode').text);
-  Child := root.firstChild;
-  if Child <> nil then
-     begin
-       result := HtmlToText(URLDecode(Child.attributes.getNamedItem('noticeContent').text));
-       if Length(result) >500 then result := LeftStr(result,494)+'......';
-     end;
 end;
 
 initialization

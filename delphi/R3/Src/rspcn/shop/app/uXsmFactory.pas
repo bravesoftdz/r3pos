@@ -154,7 +154,7 @@ constructor TXsmFactory.Create;
 begin
   idHttp := TIdHTTP.Create(nil);
   idHttp.HandleRedirects := true;
-  days_diff := 300;
+  days_diff := 6;
 end;
 
 destructor TXsmFactory.Destroy;
@@ -353,7 +353,7 @@ begin
   else
      begin
        result := HtmlToText(URLDecode(Child.attributes.getNamedItem('bbsContent').text));
-       if Length(result) >500 then result := LeftStr(result,494)+'......';
+       if Length(result) > 500 then result := LeftStr(result,494) + '......';
      end;
 end;
 
@@ -458,7 +458,7 @@ begin
   if Child <> nil then
      begin
        result := HtmlToText(URLDecode(Child.attributes.getNamedItem('noticeContent').text));
-       if Length(result) >500 then result := LeftStr(result,494)+'......';
+       if Length(result) > 500 then result := LeftStr(result,494) + '......';
      end;
 end;
 
@@ -487,6 +487,7 @@ var
   hs,ls,cs:TZQuery;
   Params:TftParamList;
 begin
+  result := false;
   try
     getParentInfo;
     hs := TZQuery.Create(nil);
@@ -539,7 +540,10 @@ begin
 
       if hs.State in [dsEdit,dsInsert] then hs.Post;
       if ls.State in [dsEdit,dsInsert] then ls.Post;
-      if (not hs.IsEmpty) or (not ls.IsEmpty) then
+
+      result := (not hs.IsEmpty) and (not ls.IsEmpty);
+ 
+      if (not hs.IsEmpty) and (not ls.IsEmpty) then
          begin
            dataFactory.BeginBatch;
            try

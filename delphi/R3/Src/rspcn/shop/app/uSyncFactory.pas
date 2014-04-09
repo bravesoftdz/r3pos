@@ -1437,8 +1437,7 @@ begin
                        SyncFactory.SetSynTimeStamp(token.tenantId,'LOGOUT_SYNC',LastLoginSyncDate,'#');
                      end;
                 end;
-             XsmFactory.getXsmMessage;
-             if Assigned(MsgFactory) then
+             if XsmFactory.getXsmMessage and Assigned(MsgFactory) then
                 begin
                   MsgFactory.Load;
                   MsgFactory.GetUnRead;

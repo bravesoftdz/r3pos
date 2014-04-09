@@ -21,16 +21,14 @@ type
     function  XsmAuth:boolean;
     function  getMail_Scnotice(var hs,ls:TZQuery;cs:TZQuery):boolean;
     function  getMail_ScnoticeDetail(comId,seq: string):string;
-    function  getBBS_SlsmanWorkAct(var hs,ls:TZQuery;cs:TZQuery):boolean;
-    function  getBBS_SlsmanWorkActDetail(blockId,bbsType,org_code,bbsId:string):string;
     function  getChallenge:boolean;
     function  doLogin:boolean;
     function  getXsmConfig:boolean;
     procedure getParentInfo;
   public
     constructor Create;
-    destructor  Destroy;override;
-    function  getXsmMessage:boolean;
+    destructor Destroy;override;
+    function getXsmMessage:boolean;
   end;
 
 var XsmFactory:TXsmFactory;
@@ -163,200 +161,6 @@ begin
   inherited;
 end;
 
-function TXsmFactory.getBBS_SlsmanWorkAct(var hs, ls: TZQuery; cs: TZQuery): boolean;
-var
-  url,blockId,bbsType:string;
-  firstRow,maxRows,pageCount,pageCurr:Integer;
-  doc:IXMLDomDocument;
-  root:IXMLDOMElement;
-  Child,Node:IXMLDOMNode;
-  xml:string;
-  strTemp:string;
-  vMSG_ID:string;
-  vMSG_CONTENT:string;
-begin
-  blockId := 'SlsmanWorkAct';
-  bbsType := '10';
-  firstRow := 0;
-  maxRows  := 10;
-
-  url := http_addr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId='+blockId+'&bbsType='+bbsType+'&orgCode='+xsm_comId+'&refId='+xsm_refId+'&firstRow='+inttostr(firstRow)+'&maxRows='+inttostr(maxRows)+'&status=1&userType=1000';
-  xml := idHttp.Get(url);
-  xml := Utf8ToAnsi(xml);
-  doc := CreateXML(xml);
-
-  if not Assigned(doc) then Exit;
-  root := doc.DocumentElement;
-  if not Assigned(root) then Exit;
-  if root.attributes.getNamedItem('code').text <> '0000' then Exit;
-
-  pageCount := strtoint(root.attributes.getNamedItem('pageCount').text) ;
-
-  Node := FindNode(doc,'XSM_OUT_INFO');
-
-  if Node = nil then Exit;
-
-  Child := Node.firstChild;
-  while Child <> nil do
-    begin
-      if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-days_diff) then
-         begin
-           pageCount := 1;
-           break;
-         end;
-
-      if (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('bbsId').text))) > 36)
-         or
-         (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('userName').text))) > 36)
-         or
-         (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('bbsTitle').text))) > 50)
-         then
-         begin
-           Child := Child.nextSibling;
-           continue;
-         end;
-
-      vMSG_ID := Child.attributes.getNamedItem('bbsId').text;
-      vMSG_CONTENT := getBBS_SlsmanWorkActDetail(blockId, bbsType,xsm_comId,Child.attributes.getNamedItem('bbsId').text);
-          
-      if (not cs.Locate('MSG_ID', vMSG_ID, [])) and (vMSG_CONTENT<>'') then
-         begin
-           hs.Append;
-           hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-           hs.FieldByName('MSG_ID').AsString := vMSG_ID;
-           hs.FieldByName('MSG_CLASS').AsString := '2';
-           hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('bbsDate').text));
-           hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
-           hs.FieldByName('MSG_SOURCE').AsString := ParentName;
-           hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('userName').text;
-           hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('bbsTitle').text;
-           hs.FieldByName('MSG_CONTENT').AsString :=vMSG_CONTENT;
-           strTemp := Child.attributes.getNamedItem('updateDate').text;
-           hs.FieldByName('END_DATE').AsString := FormatDatetime('YYYY-MM-DD',incMonth(fnTime.fnStrtoDate(strTemp),1));;
-           hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('bbsId').text;
-           hs.Post;
-
-           ls.Append;
-           ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-           ls.FieldByName('MSG_ID').AsString := vMSG_ID;
-           ls.FieldByName('SHOP_ID').AsString := token.shopId;
-           ls.FieldByName('READ_DATE').AsString := '';
-           ls.FieldByName('READ_USER').AsString := '';
-           ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
-           ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
-           ls.Post;
-         end;
-      Child := Child.nextSibling;
-    end;
-
-  if pageCount > 1 then
-     begin
-       pageCurr := 2;
-       while pageCount >= pageCurr do
-         begin
-           pageCurr := pageCurr +1;
-           firstRow := firstRow + maxRows;
-
-           url := http_addr+'/bbs/ecbbsflex/getBbsListByPageInterface?blockId='+blockId+'&bbsType='+bbsType+'&orgCode='+xsm_comId+'&refId='+xsm_refId+'&firstRow='+inttostr(firstRow)+'&maxRows='+inttostr(maxRows)+'&status=1&userType=1000';
-           xml := idHTTP.Get(url);
-           xml := Utf8ToAnsi(xml);
-           doc := CreateXML(xml);
-           if not Assigned(doc) then continue;
-           root := doc.DocumentElement;
-           if not Assigned(root) then continue;
-           if root.attributes.getNamedItem('code').text <> '0000' then continue;
-
-           Node := FindNode(doc,'XSM_OUT_INFO');
-
-           if Node = nil then Exit;
-
-           Child := Node.firstChild;
-           while Child <> nil do
-             begin
-               if trim(Child.attributes.getNamedItem('bbsDate').text) <= FormatDatetime('YYYYMMDD',now()-days_diff) then
-                  begin
-                    pageCount := 1;
-                    break;
-                  end;
-
-               if (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('bbsId').text))) > 36)
-                  or
-                  (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('userName').text))) > 36)
-                  or
-                  (Length(WideCharToString(PWideChar(Child.attributes.getNamedItem('bbsTitle').text))) > 50)
-                  then
-                  begin
-                    Child := Child.nextSibling;
-                    continue;
-                  end;
-
-               vMSG_ID := Child.attributes.getNamedItem('bbsId').text;
-               vMSG_CONTENT := getBBS_SlsmanWorkActDetail(blockId,bbsType,xsm_comId,Child.attributes.getNamedItem('bbsId').text);
-
-               if (not cs.Locate('MSG_ID', vMSG_ID, [])) and (vMSG_CONTENT<>'') then
-                  begin
-                    hs.Append;
-                    hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-                    hs.FieldByName('MSG_ID').AsString := vMSG_ID;
-                    hs.FieldByName('MSG_CLASS').AsString := '4';
-                    hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('bbsDate').text));
-                    hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
-                    hs.FieldByName('MSG_SOURCE').AsString := ParentName;
-                    hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('userName').text;
-                    hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('bbsTitle').text;
-                    hs.FieldByName('MSG_CONTENT').AsString := vMSG_CONTENT;
-                    strTemp := Child.attributes.getNamedItem('updateDate').text;
-                    hs.FieldByName('END_DATE').AsString := FormatDatetime('YYYY-MM-DD',incMonth(fnTime.fnStrtoDate(strTemp),1));;
-                    hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('bbsId').text;
-                    hs.Post;
-
-                    ls.Append;
-                    ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-                    ls.FieldByName('MSG_ID').AsString := vMSG_ID;
-                    ls.FieldByName('SHOP_ID').AsString := token.shopId;
-                    ls.FieldByName('READ_DATE').AsString := '';
-                    ls.FieldByName('READ_USER').AsString := '';
-                    ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
-                    ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
-                    ls.Post;
-                  end;
-
-               Child := Child.nextSibling;
-            end;
-         end;
-     end;
-
-  result := true;
-end;
-
-function TXsmFactory.getBBS_SlsmanWorkActDetail(blockId, bbsType, org_code, bbsId: string): string;
-var
-  url:string;
-  doc:IXMLDomDocument;
-  root:IXMLDOMElement;
-  Child,Node:IXMLDOMNode;
-  xml:string;
-begin
-  url := http_addr+'/bbs/ecbbsflex/getBbsInterface?blockId='+blockId+'&bbsType='+bbsType+'&orgCode='+org_code+'&bbsId='+bbsId+'&status=1';
-  xml := idHttp.Get(url);
-  xml := Utf8ToAnsi(xml);
-  doc := CreateXML(xml);
-  if not Assigned(doc) then Exit;
-  root := doc.DocumentElement;
-  if not Assigned(root) then Exit;
-  if root.attributes.getNamedItem('code').text <> '0000' then Exit;
-  Node := FindNode(doc,'XSM_OUT_INFO');
-  if Node = nil then Exit;
-  Child := Node.firstChild;
-  if Child = nil then
-     result := ''
-  else
-     begin
-       result := HtmlToText(URLDecode(Child.attributes.getNamedItem('bbsContent').text));
-       if Length(result) > 500 then result := LeftStr(result,494) + '......';
-     end;
-end;
-
 function TXsmFactory.getMail_Scnotice(var hs, ls: TZQuery; cs: TZQuery): boolean;
 var
   url,strTemp:string;
@@ -398,38 +202,41 @@ begin
                 continue;
               end;
 
-           vMSG_ID:=Child.attributes.getNamedItem('noticeId').text;
-           vMSG_CONTENT:=getMail_ScnoticeDetail(Child.attributes.getNamedItem('comId').text,Child.attributes.getNamedItem('seq').text);
+           vMSG_ID := Child.attributes.getNamedItem('noticeId').text;
 
-           if (not cs.Locate('MSG_ID',vMSG_ID,[])) and (vMSG_CONTENT<>'') then
+           if not cs.Locate('MSG_ID',vMSG_ID,[]) then
               begin
-                hs.Append;
-                hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-                hs.FieldByName('MSG_ID').AsString := vMSG_ID;
-                hs.FieldByName('MSG_CLASS').AsString := '1';
-                hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('effectTime').text));
-                hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
-                hs.FieldByName('MSG_SOURCE').AsString := ParentName;
-                hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('sendUserName').text;
-                hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('noticeTitle').text;
-                hs.FieldByName('MSG_CONTENT').AsString := vMSG_CONTENT;
-                strTemp := trim(Child.attributes.getNamedItem('expireTime').text);
-                if Length(strTemp)>=8 then
-                   hs.FieldByName('END_DATE').AsString := Copy(strTemp,1,4)+'-'+Copy(strTemp,5,2)+'-'+Copy(strTemp,7,2)
-                else
-                   hs.FieldByName('END_DATE').AsString := strTemp;
-                hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('noticeId').text;
-                hs.Post;
+                vMSG_CONTENT := getMail_ScnoticeDetail(Child.attributes.getNamedItem('comId').text,Child.attributes.getNamedItem('seq').text);
+                if vMSG_CONTENT <> '' then
+                   begin
+                     hs.Append;
+                     hs.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+                     hs.FieldByName('MSG_ID').AsString := vMSG_ID;
+                     hs.FieldByName('MSG_CLASS').AsString := '1';
+                     hs.FieldByName('ISSUE_DATE').AsInteger := strtoint(trim(Child.attributes.getNamedItem('effectTime').text));
+                     hs.FieldByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
+                     hs.FieldByName('MSG_SOURCE').AsString := ParentName;
+                     hs.FieldByName('ISSUE_USER').AsString := Child.attributes.getNamedItem('sendUserName').text;
+                     hs.FieldByName('MSG_TITLE').AsString := Child.attributes.getNamedItem('noticeTitle').text;
+                     hs.FieldByName('MSG_CONTENT').AsString := vMSG_CONTENT;
+                     strTemp := trim(Child.attributes.getNamedItem('expireTime').text);
+                     if Length(strTemp)>=8 then
+                        hs.FieldByName('END_DATE').AsString := Copy(strTemp,1,4)+'-'+Copy(strTemp,5,2)+'-'+Copy(strTemp,7,2)
+                     else
+                        hs.FieldByName('END_DATE').AsString := strTemp;
+                     hs.FieldByName('COMM_ID').AsString := Child.attributes.getNamedItem('noticeId').text;
+                     hs.Post;
 
-                ls.Append;
-                ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
-                ls.FieldByName('MSG_ID').AsString := vMSG_ID;
-                ls.FieldByName('SHOP_ID').AsString := token.shopId;
-                ls.FieldByName('READ_DATE').AsString := '';
-                ls.FieldByName('READ_USER').AsString := '';
-                ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
-                ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
-                ls.Post;
+                     ls.Append;
+                     ls.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+                     ls.FieldByName('MSG_ID').AsString := vMSG_ID;
+                     ls.FieldByName('SHOP_ID').AsString := token.shopId;
+                     ls.FieldByName('READ_DATE').AsString := '';
+                     ls.FieldByName('READ_USER').AsString := '';
+                     ls.FieldByName('MSG_FEEDBACK_STATUS').AsInteger := 1;
+                     ls.FieldByName('MSG_READ_STATUS').AsInteger := 1;
+                     ls.Post;
+                   end;
               end;
          end;
       Child := Child.nextSibling;
@@ -467,15 +274,15 @@ var
   rs:TZQuery;
 begin
   ParentCode := 0;
-  ParentName := '市公司';
+  ParentName := '市烟草公司';
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select TENANT_ID,SHORT_TENANT_NAME from CA_TENANT where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID = ' + token.tenantId +' and RELATION_ID = 1000006 )';
     dataFactory.Open(rs);
     if not rs.IsEmpty then
        begin
-         ParentCode := rs.fieldbyName('TENANT_ID').AsInteger;
-         ParentName := rs.fieldbyName('SHORT_TENANT_NAME').AsString;
+         ParentCode := rs.FieldByName('TENANT_ID').AsInteger;
+         ParentName := rs.FieldByName('SHORT_TENANT_NAME').AsString;
        end;
   finally
     rs.Free;
@@ -512,7 +319,9 @@ begin
         ' select A.MSG_ID as MSG_ID,A.MSG_CLASS as MSG_CLASS '+
         ' from MSC_MESSAGE A '+
         ' left outer join (select MSG_ID from MSC_MESSAGE_LIST where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID) B on A.MSG_ID=B.MSG_ID '+
-        ' where A.TENANT_ID=:TENANT_ID and A.ISSUE_TENANT_ID=:ISSUE_TENANT_ID and A.ISSUE_DATE>=:ISSUE_DATE and A.MSG_CLASS in (''0'',''1'',''2'',''4'')';
+        ' where A.TENANT_ID=:TENANT_ID and A.ISSUE_TENANT_ID=:ISSUE_TENANT_ID and A.ISSUE_DATE>=:ISSUE_DATE ';
+      cs.Params.ParamByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
+      cs.Params.ParamByName('SHOP_ID').AsString := token.shopId;
       cs.Params.ParamByName('ISSUE_TENANT_ID').AsInteger := ParentCode;
       cs.Params.ParamByName('ISSUE_DATE').AsString := FormatDatetime('YYYYMMDD',Date()-days_diff);
       dataFactory.Open(cs);
@@ -524,16 +333,7 @@ begin
            except
              on E:Exception do
                 begin
-                  LogFile.AddLogFile(0, '获取公共信息失败,' + E.Message);
-                end;
-           end;
-
-           try
-             getBBS_SlsmanWorkAct(hs,ls,cs);
-           except
-             on E:Exception do
-                begin
-                  LogFile.AddLogFile(0, '获取营销建议失败,' + E.Message);
+                  LogFile.AddLogFile(0, '获取系统公告失败,' + E.Message);
                 end;
            end;
          end;

@@ -2096,12 +2096,39 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   Width = 53
                 end
                 item
+                  DisplayFormat = '#0.00#'
+                  EditButtons = <>
+                  FieldName = 'STOCK_MNY'
+                  Footer.DisplayFormat = '#0.00#'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #36827#36135#37329#39069
+                end
+                item
+                  DisplayFormat = '#0.00#'
+                  EditButtons = <>
+                  FieldName = 'SALE_MNY'
+                  Footer.DisplayFormat = '#0.00#'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #21487#38144#21806#39069
+                end
+                item
+                  DisplayFormat = '#0.00#'
+                  EditButtons = <>
+                  FieldName = 'PROFIT_MNY'
+                  Footer.DisplayFormat = '#0.00#'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #39044#35745#27611#21033
+                end
+                item
                   EditButtons = <>
                   FieldName = 'TOOL_NAV'
                   Footers = <>
                   ReadOnly = True
                   Title.Caption = #25805#20316
-                  Width = 79
+                  Width = 75
                 end>
             end
             object rowToolNav: TRzToolbar

@@ -6,9 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmWebToolForm, ExtCtrls, RzPanel, StdCtrls, RzLabel, RzButton,
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
-  cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, ObjCommon,
-  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd, Menus, PrnDbgeh;
+  cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB, Menus,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, ObjCommon, PrnDbgeh,
+  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd;
 
 type
   TfrmGoodsStorage = class(TfrmWebToolForm)
@@ -384,10 +384,15 @@ procedure TfrmGoodsStorage.Open;
 var str:string;
 begin
   cdsList.Close;
+
+  str := 'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE,isnull(SHP.NEW_OUTPRICE,JP.NEW_OUTPRICE_P) * JP.AMOUNT as SALE_MNY,JP.NEW_INPRICE * JP.AMOUNT as STOCK_MNY,';
+
+  str := str + '(isnull(SHP.NEW_OUTPRICE,JP.NEW_OUTPRICE_P) - JP.NEW_INPRICE) * JP.AMOUNT as PROFIT_MNY,';
+
   if dataFactory.iDbType <> 4 then
-     str := 'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE,jp.AID_AMT'+GetStrJoin(dataFactory.iDbType)+'jp.AID_NAME as AID_AMOUNT from ('
+     str := str + 'jp.AID_AMT'+GetStrJoin(dataFactory.iDbType)+'jp.AID_NAME as AID_AMOUNT from ('
   else
-     str := 'select 0 as A,jp.*,isnull(shp.NEW_OUTPRICE,jp.NEW_OUTPRICE_P) as NEW_OUTPRICE,'''' as AID_AMOUNT from (';
+     str := str + ''''' as AID_AMOUNT from (';
 
   str := str +
    'select j.TENANT_ID,'''+token.shopId+''' as CUR_SHOP_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.SORT_ID1,j.RELATION_ID,j.CALC_UNITS,j.SMALL_UNITS,j.BIG_UNITS,j.UNIT_ID,j.SMALLTO_CALC,j.BIGTO_CALC,j.PRICE_ID,j.COMM,'+
@@ -655,6 +660,9 @@ begin
        cdsList.FieldByName('AID_AMOUNT').AsString := GetAidUnits(cdsList);
        cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
        cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
+       cdsList.FieldByName('SALE_MNY').AsFloat := cdsList.FieldByName('AMOUNT').AsFloat * cdsList.FieldByName('NEW_OUTPRICE').AsFloat;
+       cdsList.FieldByName('STOCK_MNY').AsFloat := cdsList.FieldByName('AMOUNT').AsFloat * cdsList.FieldByName('NEW_INPRICE').AsFloat;
+       cdsList.FieldByName('PROFIT_MNY').AsFloat := (cdsList.FieldByName('NEW_OUTPRICE').AsFloat - cdsList.FieldByName('NEW_INPRICE').AsFloat) * cdsList.FieldByName('AMOUNT').AsFloat;
        cdsList.Post;
      end;
 end;

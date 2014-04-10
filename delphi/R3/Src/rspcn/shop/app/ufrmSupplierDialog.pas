@@ -19,9 +19,6 @@ type
     RzPanel7: TRzPanel;
     RzPanel10: TRzPanel;
     Image4: TImage;
-    RzPanel9: TRzPanel;
-    RzBackground7: TRzBackground;
-    RzLabel17: TRzLabel;
     RzPanel2: TRzPanel;
     edtBK_CLIENT_CODE: TRzPanel;
     RzPanel30: TRzPanel;
@@ -65,7 +62,6 @@ type
     procedure edtREGION_IDKeyPress(Sender: TObject; var Key: Char);
     procedure edtCLIENT_CODEExit(Sender: TObject);
     procedure edtCLIENT_NAMEPropertiesChange(Sender: TObject);
-    procedure RzLabel17Click(Sender: TObject);
   private
     AObj:TRecord_;
     procedure Open(id:string);
@@ -332,12 +328,6 @@ procedure TfrmSupplierDialog.edtCLIENT_NAMEPropertiesChange(
 begin
   inherited;
   if edtCLIENT_NAME.Focused then edtCLIENT_SPELL.Text := FnString.GetWordSpell(edtCLIENT_NAME.Text,3) ;
-end;
-
-procedure TfrmSupplierDialog.RzLabel17Click(Sender: TObject);
-begin
-  inherited;
-  MessageBox(Handle,'当前功能还没有开通，敬请期待','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 end.

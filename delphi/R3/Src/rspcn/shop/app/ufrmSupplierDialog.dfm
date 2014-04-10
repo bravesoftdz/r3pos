@@ -633,51 +633,6 @@ inherited frmSupplierDialog: TfrmSupplierDialog
           Transparent = True
         end
       end
-      object RzPanel9: TRzPanel
-        Left = 22
-        Top = 110
-        Width = 85
-        Height = 22
-        BorderOuter = fsFlat
-        FlatColor = clGray
-        TabOrder = 1
-        object RzBackground7: TRzBackground
-          Left = 1
-          Top = 1
-          Width = 83
-          Height = 20
-          Active = True
-          Align = alClient
-          FrameColor = 9145227
-          GradientColorStart = clWhite
-          GradientColorStop = 14277081
-          ImageStyle = isStretch
-          ShowGradient = True
-          ShowImage = False
-          ShowTexture = False
-        end
-        object RzLabel17: TRzLabel
-          Left = 1
-          Top = 1
-          Width = 83
-          Height = 20
-          Align = alClient
-          Alignment = taCenter
-          Caption = #21152#36733#22836#20687
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clNavy
-          Font.Height = -13
-          Font.Name = #23435#20307
-          Font.Style = [fsUnderline]
-          ParentFont = False
-          Transparent = True
-          Layout = tlCenter
-          OnClick = RzLabel17Click
-          ShadowColor = 16250871
-          ShadowDepth = 1
-          TextStyle = tsShadow
-        end
-      end
     end
     object RzPanel2: TRzPanel
       Left = 129

@@ -2589,8 +2589,27 @@ begin
     dataFactory.MoveToDefault;
     rs.Free;
   end;
+
   if not NeedRecovery then Exit;
 
+  //远程数据还原
+  if MessageBox(AppHandle,pchar('系统检测到服务端存在备份的数据，是否立即还原？'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then
+     begin
+       recType := TfrmSelectRecType.ShowDialog(Application.MainForm);
+       if recType <> '' then
+          begin
+            try
+              TfrmSysDefine.DBRemoteRecovery(recType,AppHandle);
+              result := 2;
+            except
+              on E:Exception do
+                 begin
+                   MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                 end;
+            end;
+          end;
+     end;
+{
   // 检测文件恢复
   try
     Folder := ExtractFilePath(Application.ExeName)+'backup\'+token.tenantId;
@@ -2638,24 +2657,8 @@ begin
      end
   else
      begin
-       //远程数据还原
-       if MessageBox(AppHandle,pchar('系统检测到服务端存在备份的数据，是否立即还原？'),'友情提示',MB_YESNO+MB_ICONQUESTION) = 6 then
-          begin
-            recType := TfrmSelectRecType.ShowDialog(Application.MainForm);
-            if recType <> '' then
-               begin
-                 try
-                   TfrmSysDefine.DBRemoteRecovery(recType,AppHandle);
-                   result := 2;
-                 except
-                   on E:Exception do
-                      begin
-                        MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
-                      end;
-                 end;
-               end;
-          end;
      end;
+}
 end;
 
 function TSyncFactory.CheckBackUpDBFile(PHWnd:THandle): boolean;

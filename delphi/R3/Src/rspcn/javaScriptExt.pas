@@ -105,6 +105,7 @@ begin
              token.shoped := false;
              token.tenantId := '';
              token.online := online;
+             token.shopName := username;
              token.account := username;
              token.xsmCode := username;
              token.xsmPWD := password;

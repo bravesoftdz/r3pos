@@ -152,6 +152,7 @@ constructor TXsmFactory.Create;
 begin
   idHttp := TIdHTTP.Create(nil);
   idHttp.HandleRedirects := true;
+  idHttp.ReadTimeout := 5000;
   days_diff := 6;
 end;
 

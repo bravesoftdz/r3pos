@@ -1067,6 +1067,7 @@ begin
               new(n2);
               n2^.tbname := 'PUB_IC_INFO';
               n2^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
+              n2^.tableFields := 'CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,COMM,TIME_STAMP';
               n2^.synFlag := 4;
               n2^.keyFlag := 1;
               n2^.tbtitle := 'ICµµ°¸';

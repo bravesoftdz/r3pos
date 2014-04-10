@@ -175,8 +175,9 @@ var frmCustomer: TfrmCustomer;
 
 implementation
 
-uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,uCtrlUtil,udllShopUtil,udllDsUtil,uFnUtil,ufrmPriceGrade,
-     ufrmDBGridPreview,ufrmCustomerExcel,uSyncFactory,ufrmIntegralGlideAdd;
+uses udllGlobal,uTreeUtil,udataFactory,utokenFactory,udllCtrlUtil,udllShopUtil,
+     udllDsUtil,uFnUtil,ufrmPriceGrade,ufrmDBGridPreview,ufrmCustomerExcel,
+     uSyncFactory,ufrmIntegralGlideAdd;
 
 {$R *.dfm}
 

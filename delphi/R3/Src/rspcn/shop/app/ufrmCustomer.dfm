@@ -1319,7 +1319,6 @@ inherited frmCustomer: TfrmCustomer
             BorderSides = [sdLeft]
             TabOrder = 2
             object DBGridEh1: TDBGridEh
-              Tag = -1
               Left = 1
               Top = 0
               Width = 1075

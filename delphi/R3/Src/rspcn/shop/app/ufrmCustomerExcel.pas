@@ -417,11 +417,11 @@ end;
 
 function TfrmCustomerExcel.Check(columnIndex:integer): boolean;
 var
-  str,strError,fieldName:string;
+  str,strError,FieldName:string;
 begin
   strError:='';
-  fieldName:=cdsColumn.FieldByName('FileName').AsString;
-  str:=cdsExcel.FieldByName(fieldName).AsString;
+  FieldName:=cdsColumn.FieldByName('FileName').AsString;
+  str:=cdsExcel.FieldByName(FieldName).AsString;
   case columnIndex of
     0: begin
          if str='' then
@@ -547,7 +547,7 @@ end;
 function TfrmCustomerExcel.SelfCheckExcute: boolean;
 var isSort:boolean;
     rs:TZQuery;
-    fieldName,FileName:string;
+    FieldName,FileName:string;
     preId:integer;
     strPre,strNext:string;
 begin
@@ -559,16 +559,16 @@ begin
     while not cdsColumn.Eof do
     begin
       isSort:=false;
-      fieldName:=cdsColumn.FieldbyName('FieldName').AsString;
+      FieldName:=cdsColumn.FieldByName('FieldName').AsString;
       FileName:=cdsColumn.FieldByName('FileName').AsString;
-      if (fieldName <> '') and (FileName<>'') then
+      if (FieldName <> '') and (FileName<>'') then
       begin
-        if (fieldName='CUST_CODE') or (fieldName='SHOP_ID') or
-           (fieldName='SORT_ID') or (fieldName='PRICE_ID') or
-           (fieldName='REGION_ID') or (fieldName='IDN_TYPE') or
-           (fieldName='DEGREES') or (fieldName='OCCUPATION') then
+        if (FieldName='CUST_CODE') or (FieldName='SHOP_ID') or
+           (FieldName='SORT_ID') or (FieldName='PRICE_ID') or
+           (FieldName='REGION_ID') or (FieldName='IDN_TYPE') or
+           (FieldName='DEGREES') or (FieldName='OCCUPATION') then
         begin
-          if (fieldName='CUST_CODE') then
+          if (FieldName='CUST_CODE') then
           begin
             isSort:=true;
             rs.SortedFields:=cdsColumn.FieldByName('FileName').AsString;

@@ -143,7 +143,6 @@ type
     procedure TransformtoString(vList:TStringList;var vStr:widestring);overload;
     procedure TransformtoString(var vList:string;vStr:string);overload;
     function DeleteDuplicateString(vStr:string;var vStrList:TStringList):string;
-
     procedure CreateUseDataSet;virtual;
     procedure CreateParams;virtual;
     function CheckExcute:Boolean;virtual;
@@ -204,7 +203,6 @@ end;
 
 //解析程序中需要的固定的字段
 procedure TfrmExcelFactory.DecodeFields2(s: string);
-var i:integer;
 begin
   if s='' then Raise Exception.Create('没有定义要导入的字段');
   vList.CommaText := s;
@@ -240,14 +238,14 @@ begin
   cdsColumn.First;
   while not cdsColumn.Eof do
     begin
-        if cdsColumn.FieldbyName('FileName').AsString <> '' then
+        if cdsColumn.FieldByName('FileName').AsString <> '' then
         begin
-          if Check(cdsColumn.FieldbyName('ID').AsInteger) then
+          if Check(cdsColumn.FieldByName('ID').AsInteger) then
           begin
-           if DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).DataType in [ftString,ftWideString,ftFixedChar] then
-              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := trim(cdsExcel.fieldByName(cdsColumn.FieldbyName('FileName').AsString).AsString)
+           if DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).DataType in [ftString,ftWideString,ftFixedChar] then
+              DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Value := trim(cdsExcel.FieldByName(cdsColumn.FieldByName('FileName').AsString).AsString)
            else
-              DataSet.FieldbyName(cdsColumn.FieldbyName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.fieldByName(cdsColumn.FieldbyName('FileName').AsString).AsString),0);
+              DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.FieldByName(cdsColumn.FieldByName('FileName').AsString).AsString),0);
          end;
         end;
       cdsColumn.Next;
@@ -269,7 +267,7 @@ begin
 end;
 var Excel,excelWorkBook: Variant;
   r,n,i:Integer;
-  excelRow,excelCol:integer;
+  excelRow:integer;
   V:array [1..50] of string;
 begin
   cdsExcel.Close;
@@ -345,7 +343,6 @@ end;
 
 procedure TfrmExcelFactory.IsHeader;
 var i:integer;
-    Column: TColumnEh;
 begin
   inherited;
   cdsExcel.First;
@@ -581,7 +578,6 @@ end;
 
 procedure TfrmExcelFactory.CreateColumn;
 var i,n,index:integer;
-  FieldName:string;
 begin
   cdsColumn.Close;
   cdsColumn.CreateDataSet;
@@ -631,8 +627,7 @@ begin
 end;
 
 procedure TfrmExcelFactory.CreateColumn2;
-var i,n,index:integer;
-  FieldName:string;
+var i,n:integer;
 begin
   cdsColumn.Close;
   cdsColumn.CreateDataSet;
@@ -817,7 +812,6 @@ end;
 
 procedure TfrmExcelFactory.CreateDbGridEhTitle;
 var i:integer;
-    FieldName:string;
 begin
   for i:=1 to DBGridEh1.Columns.Count-2 do
   begin

@@ -23,16 +23,16 @@ type
     FieldType:array [0..FieldCount] of integer;
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
-    function FindColumn(vStr:string):Boolean;override;
-    function FindColumn2(vStr:string):Boolean;override;
-    function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
-    function OutCheckExcute:Boolean;             //导入文件与库中数据对比
-    function Check(columnIndex:integer):Boolean;override;
-    function SaveExcel(dsExcel:TZQuery):Boolean;override;
-    function IsRequiredFiled(strFiled:string):Boolean;override;
+    function FindColumn(vStr:string):boolean;override;
+    function FindColumn2(vStr:string):boolean;override;
+    function SelfCheckExcute:boolean;override;   //导入文件内部判断有无重复
+    function OutCheckExcute:boolean;             //导入文件与库中数据对比
+    function Check(columnIndex:integer):boolean;override;
+    function SaveExcel(dsExcel:TZQuery):boolean;override;
+    function IsRequiredFiled(strFiled:string):boolean;override;
     procedure ClearParams;
   public
-    class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
+    class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:boolean=false):boolean;override;
   end;
 
 const
@@ -59,7 +59,7 @@ begin
   inherited; 
 end;
 
-function TfrmCustomerExcel.SaveExcel(dsExcel:TZQuery):Boolean;
+function TfrmCustomerExcel.SaveExcel(dsExcel:TZQuery):boolean;
 var
   Field:TField;
   ss,ps,pr,cs:TZQuery;
@@ -77,26 +77,26 @@ begin
   if cdsColumn.Locate('FieldName','IDN_TYPE',[]) then
      strWhere:=strWhere+' ''11'' ';
   if cdsColumn.Locate('FieldName','DEGREES',[]) then
-    if strWhere<>'' then
-     strWhere:=strWhere+',''14'' '
-    else
-     strWhere:='''14'' ';
+     if strWhere<>'' then
+        strWhere:=strWhere+',''14'' '
+     else
+        strWhere:='''14'' ';
   if cdsColumn.Locate('FieldName','MONTH_PAY',[]) then
      if strWhere<>'' then
-     strWhere:=strWhere+',''13'' '
-    else
-     strWhere:='''13'' ';
+        strWhere:=strWhere+',''13'' '
+     else
+        strWhere:='''13'' ';
   if cdsColumn.Locate('FieldName','OCCUPATION',[]) then
      if strWhere<>'' then
-     strWhere:=strWhere+',''15'' '
-    else
-     strWhere:='''15'' ';
+        strWhere:=strWhere+',''15'' '
+     else
+        strWhere:='''15'' ';
 
   if strWhere <> '' then
-  begin
-    cs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE in('+strWhere+') and COMM not in (''02'',''12'') ';
-    dataFactory.Open(cs);
-  end;
+     begin
+       cs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE in('+strWhere+') and COMM not in (''02'',''12'') ';
+       dataFactory.Open(cs);
+     end;
 
   try
     dsExcel.First;
@@ -114,178 +114,179 @@ begin
 
       Field:=dsExcel.FindField('CUST_SPELL');
       if (Field <> nil) and (dsExcel.FieldByName('CUST_NAME').AsString<> '') then
-      begin
-        dsExcel.Edit;
-        dsExcel.FieldByName('CUST_SPELL').AsString:=FnString.GetWordSpell(dsExcel.FieldByName('CUST_NAME').AsString);
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('CUST_SPELL').AsString:=FnString.GetWordSpell(dsExcel.FieldByName('CUST_NAME').AsString);
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('SEX');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        if Field.AsString='男' then
-           str:='1'
-        else if Field.AsString='女' then
-          str:='0'
-        else
-          str:='2';
-        dsExcel.Edit;
-        dsExcel.FieldByName('SEX').AsString:=str;
-        dsExcel.Post;
-      end else
-      begin
-        dsExcel.Edit;
-        dsExcel.FieldByName('SEX').AsString:='2';
-        dsExcel.Post;
-      end;
+         begin
+           if Field.AsString='男' then
+              str:='1'
+           else if Field.AsString='女' then
+              str:='0'
+           else
+              str:='2';
+           dsExcel.Edit;
+           dsExcel.FieldByName('SEX').AsString:=str;
+           dsExcel.Post;
+         end
+      else
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('SEX').AsString:='2';
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('SHOP_ID');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        if ss.Locate('SHOP_NAME',dsExcel.fieldByName('SHOP_ID').AsString,[]) then
-        begin
-          dsExcel.Edit;
-          dsExcel.fieldByName('SHOP_ID').AsString:=ss.fieldByName('SHOP_ID').AsString;
-          dsExcel.Post;
-        end;
-      end else
-      begin
-        dsExcel.Edit;
-        dsExcel.fieldByName('SHOP_ID').AsString:=token.shopId;
-        dsExcel.Post;
-      end;
+         begin
+           if ss.Locate('SHOP_NAME',dsExcel.FieldByName('SHOP_ID').AsString,[]) then
+              begin
+                dsExcel.Edit;
+                dsExcel.FieldByName('SHOP_ID').AsString:=ss.FieldByName('SHOP_ID').AsString;
+                dsExcel.Post;
+              end;
+         end
+      else
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('SHOP_ID').AsString:=token.shopId;
+           dsExcel.Post;
+         end;
 
       dsExcel.Edit;
-      dsExcel.fieldByName('SORT_ID').AsString:='#';
+      dsExcel.FieldByName('SORT_ID').AsString:='#';
       dsExcel.Post;
 
       Field:=dsExcel.FindField('PRICE_ID');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        if ps.Locate('PRICE_NAME',dsExcel.fieldByName('PRICE_ID').AsString,[]) then
-        begin
-          dsExcel.Edit;
-          dsExcel.fieldByName('PRICE_ID').AsString:=ps.fieldByName('PRICE_ID').AsString;
-          dsExcel.Post;
-        end;
-      end;
+         begin
+           if ps.Locate('PRICE_NAME',dsExcel.FieldByName('PRICE_ID').AsString,[]) then
+              begin
+                dsExcel.Edit;
+                dsExcel.FieldByName('PRICE_ID').AsString:=ps.FieldByName('PRICE_ID').AsString;
+                dsExcel.Post;
+              end
+           else
+              begin
+                dsExcel.Edit;
+                dsExcel.FieldByName('PRICE_ID').AsString:='#';
+                dsExcel.Post;
+              end;
+         end;
 
       Field:=dsExcel.FindField('REGION_ID');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        if pr.Locate('CODE_NAME',dsExcel.fieldByName('REGION_ID').AsString,[]) then
-           dsExcel.fieldByName('REGION_ID').AsString:=pr.fieldByName('CODE_ID').AsString
-        else
-           begin
-             if ss.fieldByName('REGION_ID').AsString = '' then
-                dsExcel.fieldByName('REGION_ID').AsString:='#'
-             else
-                dsExcel.fieldByName('REGION_ID').AsString:=ss.fieldByName('REGION_ID').AsString;
-           end;
-        dsExcel.Post;
-      end else
-      begin
-        dsExcel.Edit;
-        if ss.fieldByName('REGION_ID').AsString = '' then
-           dsExcel.fieldByName('REGION_ID').AsString:='#'
-        else
-           dsExcel.fieldByName('REGION_ID').AsString:=ss.fieldByName('REGION_ID').AsString;
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           if pr.Locate('CODE_NAME',dsExcel.FieldByName('REGION_ID').AsString,[]) then
+              dsExcel.FieldByName('REGION_ID').AsString:=pr.FieldByName('CODE_ID').AsString
+           else
+              begin
+                if ss.FieldByName('REGION_ID').AsString = '' then
+                   dsExcel.FieldByName('REGION_ID').AsString:='#'
+                else
+                   dsExcel.FieldByName('REGION_ID').AsString:=ss.FieldByName('REGION_ID').AsString;
+              end;
+           dsExcel.Post;
+         end
+      else
+         begin
+           dsExcel.Edit;
+           if ss.FieldByName('REGION_ID').AsString = '' then
+              dsExcel.FieldByName('REGION_ID').AsString:='#'
+           else
+              dsExcel.FieldByName('REGION_ID').AsString:=ss.FieldByName('REGION_ID').AsString;
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('IDN_TYPE');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        if cs.Locate('CODE_NAME',dsExcel.fieldByName('IDN_TYPE').AsString,[]) then
-          dsExcel.fieldByName('IDN_TYPE').AsString:=cs.fieldByName('CODE_ID').AsString
-        else
-          dsExcel.fieldByName('IDN_TYPE').AsString:='';
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           if cs.Locate('CODE_NAME',dsExcel.FieldByName('IDN_TYPE').AsString,[]) then
+              dsExcel.FieldByName('IDN_TYPE').AsString:=cs.FieldByName('CODE_ID').AsString
+           else
+              dsExcel.FieldByName('IDN_TYPE').AsString:='';
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('DEGREES');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        if cs.Locate('CODE_NAME',dsExcel.fieldByName('DEGREES').AsString,[]) then
-          dsExcel.fieldByName('DEGREES').AsString:=cs.fieldByName('CODE_ID').AsString
-        else
-          dsExcel.fieldByName('DEGREES').AsString:='';
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           if cs.Locate('CODE_NAME',dsExcel.FieldByName('DEGREES').AsString,[]) then
+              dsExcel.FieldByName('DEGREES').AsString:=cs.FieldByName('CODE_ID').AsString
+           else
+              dsExcel.FieldByName('DEGREES').AsString:='';
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('MONTH_PAY');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        {
-        num:=dsExcel.fieldByName('MONTH_PAY').AsFloat;
-        if num>5000 then
-          dsExcel.fieldByName('MONTH_PAY').AsString:='6'
-        else if (num>4000) and (num<=5000) then
-          dsExcel.fieldByName('MONTH_PAY').AsString:='5'
-        else if (num>3000) and (num<=4000) then
-          dsExcel.fieldByName('MONTH_PAY').AsString:='4'
-        else if (num>2000) and (num<=3000) then
-          dsExcel.fieldByName('MONTH_PAY').AsString:='3'
-        else if (num>1000) and (num<=2000) then
-          dsExcel.fieldByName('MONTH_PAY').AsString:='2'
-        else
-          dsExcel.fieldByName('MONTH_PAY').AsString:='1';
-        }
-
-        if cs.Locate('CODE_NAME',dsExcel.fieldByName('MONTH_PAY').AsString,[]) then
-          dsExcel.fieldByName('MONTH_PAY').AsString:=cs.fieldByName('CODE_ID').AsString
-        else
-          dsExcel.fieldByName('MONTH_PAY').AsString:='';
-        
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           if cs.Locate('CODE_NAME',dsExcel.FieldByName('MONTH_PAY').AsString,[]) then
+              dsExcel.FieldByName('MONTH_PAY').AsString:=cs.FieldByName('CODE_ID').AsString
+           else
+              dsExcel.FieldByName('MONTH_PAY').AsString:='';
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('OCCUPATION');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        if cs.Locate('CODE_NAME',dsExcel.fieldByName('OCCUPATION').AsString,[]) then
-          dsExcel.fieldByName('OCCUPATION').AsString:=cs.fieldByName('CODE_ID').AsString
-        else
-          dsExcel.fieldByName('OCCUPATION').AsString:='';
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           if cs.Locate('CODE_NAME',dsExcel.FieldByName('OCCUPATION').AsString,[]) then
+              dsExcel.FieldByName('OCCUPATION').AsString:=cs.FieldByName('CODE_ID').AsString
+           else
+              dsExcel.FieldByName('OCCUPATION').AsString:='';
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('BIRTHDAY');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        dsExcel.fieldByName('BIRTHDAY').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.fieldByName('BIRTHDAY').AsString));
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('BIRTHDAY').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.FieldByName('BIRTHDAY').AsString));
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('SND_DATE');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        dsExcel.fieldByName('SND_DATE').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.fieldByName('SND_DATE').AsString));
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('SND_DATE').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.FieldByName('SND_DATE').AsString));
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('CON_DATE');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        dsExcel.fieldByName('CON_DATE').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.fieldByName('CON_DATE').AsString));
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('CON_DATE').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.FieldByName('CON_DATE').AsString));
+           dsExcel.Post;
+         end;
 
       Field:=dsExcel.FindField('END_DATE');
       if (Field <> nil) and (Field.AsString <> '') then
-      begin
-        dsExcel.Edit;
-        dsExcel.fieldByName('END_DATE').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.fieldByName('END_DATE').AsString));
-        dsExcel.Post;
-      end;
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('END_DATE').AsString:=FormatDateTime('YYYY-MM-DD',fntime.fnStrtoDate(dsExcel.FieldByName('END_DATE').AsString));
+           dsExcel.Post;
+         end;
+
+      Field:=dsExcel.FindField('INTEGRAL');
+      if (Field <> nil) and (Field.AsString <> '') then
+         begin
+           dsExcel.Edit;
+           dsExcel.FieldByName('INTEGRAL').AsFloat:=dsExcel.FieldByName('INTEGRAL').AsFloat;
+           dsExcel.FieldByName('ACCU_INTEGRAL').AsFloat:=dsExcel.FieldByName('INTEGRAL').AsFloat;
+           dsExcel.Post;
+         end;
 
       dsExcel.Next;
     end;
@@ -302,102 +303,111 @@ begin
     ProgressBar1.Visible:=false;
   end;
 
-  Result := True;
+  result := true;
 end;
 
-function TfrmCustomerExcel.FindColumn(vStr:string):Boolean;
+function TfrmCustomerExcel.FindColumn(vStr:string):boolean;
 var strError:string;
 begin
-   Result := True;
-   strError:='';
+  result := true;
+  strError:='';
+
   if not cdsColumn.Locate('FieldName','CUST_CODE',[]) then
-  begin
-    Result := False;
-    strError:='会员卡号';
-  end;
-  if not cdsColumn.Locate('FieldName','CUST_NAME',[]) then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'会员名称'
-    else
-      strError:='会员名称';
-  end;
-  if not cdsColumn.Locate('FieldName','SHOP_ID',[]) then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'入会门店'
-    else
-    strError:='入会门店';
-  end;
-  if not cdsColumn.Locate('FieldName','SEX',[]) then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'性别'
-    else
-    strError:='性别';
-  end;
-  if not cdsColumn.Locate('FieldName','PRICE_ID',[]) then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'会员等级'
-    else
-    strError:='会员等级';
-  end;
-  if not cdsColumn.Locate('FieldName','REGION_ID',[]) then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'地区'
-    else
-    strError:='地区';
-  end;
+     begin
+       result := False;
+       strError:='会员卡号';
+     end;
 
-  if (strError<>'') then
-  begin
-    cdsColumn.RecNo:=LastcdsColumnIndex;
-    cdsColumn.EnableControls;
-    cdsExcel.EnableControls;
-    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
-  end;
+  if not cdsColumn.Locate('FieldName','CUST_NAME',[]) then
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'会员名称'
+       else
+          strError:='会员名称';
+     end;
+
+  if not cdsColumn.Locate('FieldName','SHOP_ID',[]) then
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'入会门店'
+       else
+          strError:='入会门店';
+     end;
+
+  if not cdsColumn.Locate('FieldName','SEX',[]) then
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'性别'
+       else
+          strError:='性别';
+     end;
+
+  if not cdsColumn.Locate('FieldName','PRICE_ID',[]) then
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'会员等级'
+       else
+          strError:='会员等级';
+     end;
+
+  if not cdsColumn.Locate('FieldName','REGION_ID',[]) then
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'地区'
+       else
+          strError:='地区';
+     end;
+
+  if strError<>'' then
+     begin
+       cdsColumn.RecNo:=LastcdsColumnIndex;
+       cdsColumn.EnableControls;
+       cdsExcel.EnableControls;
+       Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
+     end;
 end;
 
-function TfrmCustomerExcel.FindColumn2(vStr:string):Boolean;
+function TfrmCustomerExcel.FindColumn2(vStr:string):boolean;
 var strError:string;
 begin
-  Result := True;
+  result := true;
   strError:='';
   if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
-  begin
-    Result := False;
-    strError:='会员卡号';
-  end;
+     begin
+       result := False;
+       strError:='会员卡号';
+     end;
+
   if (cdsColumn.Locate('FieldName','CUST_NAME',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'会员名称'
-    else
-      strError:='会员名称';
-  end;
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'会员名称'
+       else
+          strError:='会员名称';
+     end;
+
   if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
-  begin
-    Result := False;
-    if strError<>'' then
-      strError:=strError+'、'+'会员等级'
-    else
-    strError:='会员等级';
-  end;
-  if (strError<>'') then
-  begin
-    cdsColumn.RecNo:=LastcdsColumnIndex;
-    cdsColumn.EnableControls;
-    cdsExcel.EnableControls;
-    Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
-  end;
+     begin
+       result := False;
+       if strError<>'' then
+          strError:=strError+'、'+'会员等级'
+       else
+          strError:='会员等级';
+     end;
+
+  if strError<>'' then
+     begin
+       cdsColumn.RecNo:=LastcdsColumnIndex;
+       cdsColumn.EnableControls;
+       cdsExcel.EnableControls;
+       Raise Exception.Create('缺少'+strError+'字段对应关系，请检查对应关系设置或导入文件！');
+     end;
 end;
 
 procedure TfrmCustomerExcel.CreateParams;
@@ -405,136 +415,124 @@ begin
   inherited;
 end;
 
-function TfrmCustomerExcel.Check(columnIndex:integer): Boolean;
+function TfrmCustomerExcel.Check(columnIndex:integer): boolean;
 var
   str,strError,fieldName:string;
 begin
   strError:='';
   fieldName:=cdsColumn.FieldByName('FileName').AsString;
-  str:=cdsExcel.fieldByName(fieldName).AsString;
+  str:=cdsExcel.FieldByName(fieldName).AsString;
   case columnIndex of
-    0:begin
+    0: begin
          if str='' then
-         strError:='会员卡号为空;';
+            strError:='会员卡号为空;';
        end;
-    1:begin
+    1: begin
          if str='' then
-         strError:='会员名称为空;';
+            strError:='会员名称为空;';
        end;
-    2:begin
-       if str='' then
-         strError:='拼音码为空;';
-      end;
-    3:begin
-       if str='' then
-         strError:='性别为空;';
-      end;
-    4:begin
-        //if str='' then
-        // strError:='会员类别为空;';
-      end;
-    5:begin
-        if (str<>'') and (FieldType[5]=0) then
-          strError:='会员等级不存在;';
-      end;
-    6:begin
-        //if str='' then
-        //  strError:='地区为空;'
-        //else if FieldType[6]=0 then
-        //  strError:='地区不存在;';
-      end;
-    7:begin
-        //if str='' then
-        //  strError:='入会门店为空;'
-        //else if FieldType[7]=0 then
-        //  strError:='入会门店不存在;';
-      end;
-    8:begin    //移动电话
-
-      end;
-    9:begin    //会员生日
-        if str<>'' then
-         begin
-           try
-             fntime.fnStrtoDate(str);
-           except
-             strError:='无效的会员生日;';
-           end;
-         end;
-      end;
+    2: begin
+         if str='' then
+            strError:='拼音码为空;';
+       end;
+    3: begin
+         if str='' then
+            strError:='性别为空;';
+       end;
+    4: begin
+         // if str='' then
+         // strError:='会员类别为空;';
+       end;
+    5: begin
+         if (str<>'') and (FieldType[5]=0) then
+            strError:='会员等级不存在;';
+       end;
+    6: begin
+         //if str='' then
+         //  strError:='地区为空;'
+         //else if FieldType[6]=0 then
+         //  strError:='地区不存在;';
+       end;
+    7: begin
+         //if str='' then
+         //  strError:='入会门店为空;'
+         //else if FieldType[7]=0 then
+         //  strError:='入会门店不存在;';
+       end;
+    8: begin    //移动电话
+       end;
+    9: begin    //会员生日
+         if str<>'' then
+            begin
+              try
+                fntime.fnStrtoDate(str);
+              except
+                strError:='无效的会员生日;';
+              end;
+            end;
+       end;
     10:begin     //地址
-      end;
+       end;
     11:begin    //邮编
-      end;
+       end;
     12:begin    //证件号码
-
-      end;
+       end;
     13:begin    //证件类型
-
-      end;
+       end;
     14:begin    //入会日期
          if str<>'' then
-         begin
-           try
-             fntime.fnStrtoDate(str);
-           except
-             strError:='无效的入会日期;';
-           end;
-         end;
-      end;
+            begin
+              try
+                fntime.fnStrtoDate(str);
+              except
+                strError:='无效的入会日期;';
+              end;
+            end;
+       end;
     15:begin   //续会日期
          if str<>'' then
-         begin
-           try
-             fntime.fnStrtoDate(str);
-           except
-             strError:='无效的续会日期;';
-           end;
-         end;
-      end;
+            begin
+              try
+                fntime.fnStrtoDate(str);
+              except
+                strError:='无效的续会日期;';
+              end;
+            end;
+       end;
     16:begin     //QQ
-
-      end;
+       end;
     17:begin    //MSN
-
-      end;
+       end;
     18:begin    //有效截止日期
          if str<>'' then
-         begin
-           try
-             fntime.fnStrtoDate(str);
-           except
-             strError:='无效的有效截止日期;';
-           end;
-         end;
-      end;
+            begin
+              try
+                fntime.fnStrtoDate(str);
+              except
+                strError:='无效的有效截止日期;';
+              end;
+            end;
+       end;
     19:begin    //月收入
-
-      end;
+       end;
     20:begin    //学历
-
-      end;
+       end;
     21:begin    //电子邮件
-
-      end;
+       end;
     22:begin    //办公电话
-
-      end;
+       end;
     23:begin    //家庭电话
-
-      end;
+       end;
     24:begin    //职业
-
-      end;
+       end;
     25:begin    //工作单位
-
-      end;
+       end;
     26:begin    //备注
-
-      end;
+       end;
   end;
+
   if strError<>'' then
-    cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+strError;
+     cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+strError;
 
   result:=true;
 end;
@@ -546,8 +544,8 @@ begin
     FieldCheckSet[i]:='';
 end;
 
-function TfrmCustomerExcel.SelfCheckExcute: Boolean;
-var isSort:Boolean;
+function TfrmCustomerExcel.SelfCheckExcute: boolean;
+var isSort:boolean;
     rs:TZQuery;
     fieldName,FileName:string;
     preId:integer;
@@ -562,7 +560,7 @@ begin
     begin
       isSort:=false;
       fieldName:=cdsColumn.FieldbyName('FieldName').AsString;
-      FileName:=cdsColumn.fieldByName('FileName').AsString;
+      FileName:=cdsColumn.FieldByName('FileName').AsString;
       if (fieldName <> '') and (FileName<>'') then
       begin
         if (fieldName='CUST_CODE') or (fieldName='SHOP_ID') or
@@ -573,33 +571,32 @@ begin
           if (fieldName='CUST_CODE') then
           begin
             isSort:=true;
-            rs.SortedFields:=cdsColumn.fieldByName('FileName').AsString;
+            rs.SortedFields:=cdsColumn.FieldByName('FileName').AsString;
           end;
 
           if isSort then
           begin
             rs.First;
-            strPre:=rs.fieldByName(FileName).AsString;
-            preId:=rs.fieldByName('ID').AsInteger;
+            strPre:=rs.FieldByName(FileName).AsString;
+            preId:=rs.FieldByName('ID').AsInteger;
             //if strPre<>'' then
             TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
             rs.Next;
             while not rs.Eof do
             begin
-              strNext:=rs.fieldByName(FileName).AsString;
+              strNext:=rs.FieldByName(FileName).AsString;
               if (strPre<>'') and (strPre=strNext) then
               begin
-                cdsExcel.Locate('ID',rs.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',rs.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据'+cdsColumn.fieldByName('DestTitle').asstring+'重复;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据'+cdsColumn.FieldByName('DestTitle').asstring+'重复;';
                 cdsExcel.Post;
               end
               else if (strPre<>strNext) then
               begin
                 strPre:=strNext;
-                preID:=rs.fieldByName('ID').AsInteger;
+                preID:=rs.FieldByName('ID').AsInteger;
               end;
-              //if strNext<>'' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
             end;
@@ -608,7 +605,7 @@ begin
             rs.First;
             while not rs.Eof do
             begin
-              strNext:=rs.fieldByName(FileName).AsString;
+              strNext:=rs.FieldByName(FileName).AsString;
               if strNext<> '' then
               TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
               rs.Next;
@@ -624,7 +621,7 @@ begin
   end;
 end;
 
-function TfrmCustomerExcel.OutCheckExcute: Boolean;
+function TfrmCustomerExcel.OutCheckExcute: boolean;
 var
   rs,ss:TZQuery;
   FieldName:string;
@@ -641,7 +638,7 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.SQL.Text:='select distinct CLIENT_CODE from VIW_CUSTOMER where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and CLIENT_CODE in ('+strWhere+')';
@@ -657,9 +654,9 @@ begin
           ss.First;
           while not ss.Eof do
           begin
-            cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+            cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
             cdsExcel.Edit;
-            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'已存在;';
+            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'已存在;';
             cdsExcel.Post;
             ss.Next;
           end;
@@ -673,12 +670,10 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','SHOP_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
-      //rs.SQL.Text:='select distinct CS.SHOP_NAME from VIW_CUSTOMER VC,CA_SHOP_INFO CS where VC.TENANT_ID=CS.TENANT_ID and VC.SHOP_ID=CS.SHOP_ID and VC.tenant_id='+token.tenantId+
-      //             ' and VC.comm not in(''02'',''12'') and CS.SHOP_NAME in ('+strWhere+')';
       rs.SQL.Text:='select SHOP_NAME from CA_SHOP_INFO where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and SHOP_NAME in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
@@ -700,9 +695,9 @@ begin
               ss.First;
               while not ss.Eof do
               begin
-                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -719,11 +714,11 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
-      rs.SQL.Text:='select distinct CS.PRICE_NAME from VIW_CUSTOMER VC,PUB_PRICEGRADE CS where VC.TENANT_ID=CS.TENANT_ID and VC.PRICE_ID=CS.PRICE_ID and VC.tenant_id='+token.tenantId+
+      rs.SQL.Text:=' select distinct CS.PRICE_NAME from VIW_CUSTOMER VC,PUB_PRICEGRADE CS where VC.TENANT_ID=CS.TENANT_ID and VC.PRICE_ID=CS.PRICE_ID and VC.tenant_id='+token.tenantId+
                    ' and VC.comm not in(''02'',''12'') and CS.PRICE_NAME in ('+strWhere+')';
       dataFactory.Open(rs);
       if not rs.IsEmpty then
@@ -745,9 +740,9 @@ begin
               ss.First;
               while not ss.Eof do
               begin
-                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -766,7 +761,7 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','REGION_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
@@ -791,9 +786,9 @@ begin
               ss.First;
               while not ss.Eof do
               begin
-                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -810,7 +805,7 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','IDN_TYPE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
@@ -835,9 +830,9 @@ begin
               ss.First;
               while not ss.Eof do
               begin
-                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -854,7 +849,7 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','DEGREES',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
@@ -879,9 +874,9 @@ begin
               ss.First;
               while not ss.Eof do
               begin
-                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -898,7 +893,7 @@ begin
     FieldName:='';
     if (cdsColumn.Locate('FieldName','OCCUPATION',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
     begin
-      FieldName:=cdsColumn.fieldByName('FileName').AsString;
+      FieldName:=cdsColumn.FieldByName('FileName').AsString;
       FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
       strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
       rs.Close;
@@ -923,9 +918,9 @@ begin
               ss.First;
               while not ss.Eof do
               begin
-                cdsExcel.Locate('ID',ss.fieldByName('ID').AsInteger,[]);
+                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
                 cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.fieldByName('DestTitle').AsString+'不存在;';
+                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
                 cdsExcel.Post;
                 ss.Next;
               end;
@@ -944,7 +939,7 @@ begin
 end;
 
 class function TfrmCustomerExcel.ExcelFactory(Owner: TForm; vDataSet: TZQuery;Fields,Formats:string;
-  isSelfCheck: Boolean): Boolean;
+  isSelfCheck: boolean): boolean;
 begin
   with TfrmCustomerExcel.Create(Owner) do
     begin
@@ -986,7 +981,7 @@ begin
   end;
 end;
 
-function TfrmCustomerExcel.IsRequiredFiled(strFiled: string): Boolean;
+function TfrmCustomerExcel.IsRequiredFiled(strFiled: string): boolean;
 begin
   result:=false;
   if (strFiled='CUST_CODE') or (strFiled='CUST_NAME') or (strFiled='PRICE_ID') then

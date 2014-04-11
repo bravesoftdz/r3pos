@@ -13,8 +13,7 @@ uses
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
   Menus, RzPrgres;
 
-  const
-    FieldCount=20;
+const FieldCount=20;
 
 type
   TfrmGoodsExcel = class(TfrmExcelFactory)
@@ -39,20 +38,21 @@ type
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
   end;
 
-  const
-    FieldsString =
+const
+  FieldsString =
     'BARCODE1=条形码,GODS_CODE=货号,GODS_NAME=商品名称,GODS_SPELL=拼音码,CALC_UNITS=计量单位,SORT_ID1=商品分类,NEW_OUTPRICE=标准售价,'+
     'NEW_INPRICE=最新进价,NEW_LOWPRICE=最低售价,MY_OUTPRICE=本店售价,SORT_ID7=颜色组,SORT_ID8=尺码组,SMALL_UNITS=小包装单位,SMALLTO_CALC=小包装换算系数,'+
     'BARCODE2=小包装条码,MY_OUTPRICE1=小包装本店售价,BIG_UNITS=大包装单位,BIGTO_CALC=大包装换算系数,BARCODE3=大包装条码,MY_OUTPRICE2=大包装本店售价,SORT_ID3=供应商';
 
-    FormatString =
+  FormatString =
     '0=BARCODE1,1=GODS_CODE,2=GODS_NAME,3=GODS_SPELL,4=CALC_UNITS,5=SORT_ID1,6=NEW_OUTPRICE,7=NEW_INPRICE,8=NEW_LOWPRICE,9=MY_OUTPRICE,'+
     '10=SORT_ID7,11=SORT_ID8,12=SMALL_UNITS,13=SMALLTO_CALC,14=BARCODE2,15=MY_OUTPRICE1,16=BIG_UNITS,17=BIGTO_CALC,18=BARCODE3,19=MY_OUTPRICE2,20=SORT_ID3';
 
 implementation
 
 uses udllDsUtil,uFnUtil,udllShopUtil,uTokenFactory,udllGlobal,ufrmSortDropFrom,
-     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,ufrmProgressBar,EncDec;
+     uCacheFactory,uSyncFactory,uRspSyncFactory,dllApi,ufrmMeaUnits,ufrmProgressBar,
+     EncDec;
 
 {$R *.dfm}
 
@@ -61,33 +61,33 @@ begin
   inherited; 
   with DataSet.FieldDefs do
     begin
-      Add('BARCODE1',ftString,30,False);
-      Add('GODS_CODE',ftString,20,False);
-      Add('GODS_NAME',ftString,50,False);
-      Add('GODS_SPELL',ftString,50,False);
-      Add('CALC_UNITS',ftString,36,False);
-      Add('SORT_ID1',ftString,36,False);
-      Add('NEW_OUTPRICE',ftFloat,0,False);
-      Add('NEW_INPRICE',ftFloat,0,False);
-      Add('NEW_LOWPRICE',ftFloat,0,False);
-      Add('MY_OUTPRICE',ftFloat,0,False);
-      Add('SORT_ID7',ftString,36,False);
-      Add('SORT_ID8',ftString,36,False);
-      Add('SMALL_UNITS',ftString,36,False);
-      Add('SMALLTO_CALC',ftFloat,0,False);
-      Add('BARCODE2',ftString,30,False);
-      Add('MY_OUTPRICE1',ftFloat,0,False);
-      Add('BIG_UNITS',ftString,36,False);
-      Add('BIGTO_CALC',ftFloat,0,False);
-      Add('BARCODE3',ftString,30,False);
-      Add('MY_OUTPRICE2',ftFloat,0,False);
-      Add('SORT_ID3',ftString,36,False);
+      Add('BARCODE1',ftString,30,false);
+      Add('GODS_CODE',ftString,20,false);
+      Add('GODS_NAME',ftString,50,false);
+      Add('GODS_SPELL',ftString,50,false);
+      Add('CALC_UNITS',ftString,36,false);
+      Add('SORT_ID1',ftString,36,false);
+      Add('NEW_OUTPRICE',ftFloat,0,false);
+      Add('NEW_INPRICE',ftFloat,0,false);
+      Add('NEW_LOWPRICE',ftFloat,0,false);
+      Add('MY_OUTPRICE',ftFloat,0,false);
+      Add('SORT_ID7',ftString,36,false);
+      Add('SORT_ID8',ftString,36,false);
+      Add('SMALL_UNITS',ftString,36,false);
+      Add('SMALLTO_CALC',ftFloat,0,false);
+      Add('BARCODE2',ftString,30,false);
+      Add('MY_OUTPRICE1',ftFloat,0,false);
+      Add('BIG_UNITS',ftString,36,false);
+      Add('BIGTO_CALC',ftFloat,0,false);
+      Add('BARCODE3',ftString,30,false);
+      Add('MY_OUTPRICE2',ftFloat,0,false);
+      Add('SORT_ID3',ftString,36,false);
     end;
   DataSet.CreateDataSet;
 end;
 
 function TfrmGoodsExcel.SaveExcel(dsExcel:TZQuery):Boolean;
-procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode,BarcodeType:String);
+procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode,BarcodeType:string);
   begin
     Data_Bar.Append;
     //Data_Bar.FieldByName('RELATION_FLAG').AsString := '2';
@@ -115,15 +115,14 @@ procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode,BarcodeType:St
     Data_Price.FieldByName('NEW_OUTPRICE2').AsString:=floattostr(OutPrice2);
     Data_Price.Post;
   end;
-var DsGoods,DsBarcode,DsGoodsPrice,rs,us,ss,cs:TZQuery;
-    GodsId,Bar,Code,Name,Error_Info:String;
-    SumBarcode,SumCode,SumName:Integer;
+var DsGoods,DsBarcode,DsGoodsPrice:TZQuery;
+    GodsId,Bar,Code,Name:string;
     Params:TftParamList;
-    cl,sl:TZQuery;
+    cl,sl,us,ss,cs:TZQuery;
 begin
-  if dsExcel.RecordCount=0 then exit;
+  if dsExcel.RecordCount=0 then Exit;
   ProgressBar1.Visible:=true;
-  Result := False;
+  result := false;
 
   DsGoods := TZQuery.Create(nil);
   DsBarcode := TZQuery.Create(nil);
@@ -131,13 +130,13 @@ begin
   cl:=TZQuery.Create(nil);
   sl:=TZQuery.Create(nil);
 
-  rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   us:=dllGlobal.GetZQueryFromName('PUB_MEAUNITS');
   ss:=dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
   cs:=dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
   ss.Filtered := false;
   ss.Filter := 'RELATION_ID=0';
   ss.Filtered := true;
+  Params := TftParamList.Create(nil);
   try
     cl.Close;
     cl.SQL.Text:='select COLOR_ID,COLOR_NAME,SORT_ID7S from VIW_COLOR_INFO where tenant_id='+token.tenantId+
@@ -148,7 +147,6 @@ begin
                  ' and comm not in(''02'',''12'') ';
     dataFactory.Open(sl);
 
-    Params := TftParamList.Create(nil);
     Params.ParamByName('TENANT_ID').asInteger := strtoint(token.tenantId);
     Params.ParamByName('SHOP_ID').AsString :=token.shopId;
     Params.ParamByName('GODS_ID').asString :='';
@@ -269,76 +267,76 @@ begin
     Params.Free;
     ProgressBar1.Visible:=false;
   end;
-  Result := True;
+  result := true;
 end;
 
 function TfrmGoodsExcel.FindColumn(vStr:string):Boolean;
 var strError:string;
 begin
-   Result := True;
-   strError:='';
+  result := true;
+  strError:='';
   if not cdsColumn.Locate('FieldName','BARCODE1',[]) then
   begin
-    Result := False;
+    result := false;
     strError:='条形码';
   end;
   if not cdsColumn.Locate('FieldName','GODS_CODE',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'货号'
+       strError:=strError+'、'+'货号'
     else
-      strError:='货号';
+       strError:='货号';
   end;
   if not cdsColumn.Locate('FieldName','GODS_NAME',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'商品名称'
+       strError:=strError+'、'+'商品名称'
     else
-    strError:='商品名称';
+       strError:='商品名称';
   end;
   if not cdsColumn.Locate('FieldName','CALC_UNITS',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'计量单位'
+       strError:=strError+'、'+'计量单位'
     else
-    strError:='计量单位';
+       strError:='计量单位';
   end;
   if not cdsColumn.Locate('FieldName','SORT_ID1',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'商品分类'
+       strError:=strError+'、'+'商品分类'
     else
-    strError:='商品分类';
+       strError:='商品分类';
   end;
   if not cdsColumn.Locate('FieldName','NEW_OUTPRICE',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'标准售价'
+       strError:=strError+'、'+'标准售价'
     else
-    strError:='标准售价';
+       strError:='标准售价';
   end;
   if not cdsColumn.Locate('FieldName','NEW_INPRICE',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'最新进价'
+       strError:=strError+'、'+'最新进价'
     else
-    strError:='最新进价';
+       strError:='最新进价';
   end;
   if not cdsColumn.Locate('FieldName','MY_OUTPRICE',[]) then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'本店售价'
+       strError:=strError+'、'+'本店售价'
     else
-    strError:='本店售价';
+       strError:='本店售价';
   end;
-  
+
   if (strError<>'') then
   begin
     cdsColumn.RecNo:=LastcdsColumnIndex;
@@ -351,68 +349,68 @@ end;
 function TfrmGoodsExcel.FindColumn2(vStr:string):Boolean;
 var strError:string;
 begin
-   Result := True;
-   strError:='';
+  result := true;
+  strError:='';
   if (cdsColumn.Locate('FieldName','BARCODE1',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     strError:='条形码';
   end;
   if (cdsColumn.Locate('FieldName','GODS_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'货号'
+       strError:=strError+'、'+'货号'
     else
-      strError:='货号';
+       strError:='货号';
   end;
   if (cdsColumn.Locate('FieldName','GODS_NAME',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'商品名称'
+       strError:=strError+'、'+'商品名称'
     else
-    strError:='商品名称';
+       strError:='商品名称';
   end;
   if (cdsColumn.Locate('FieldName','CALC_UNITS',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'计量单位'
+       strError:=strError+'、'+'计量单位'
     else
-    strError:='计量单位';
+       strError:='计量单位';
   end;
   if (cdsColumn.Locate('FieldName','SORT_ID1',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'商品分类'
+       strError:=strError+'、'+'商品分类'
     else
-    strError:='商品分类';
+       strError:='商品分类';
   end;
   if (cdsColumn.Locate('FieldName','NEW_OUTPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'标准售价'
+       strError:=strError+'、'+'标准售价'
     else
-    strError:='标准售价';
+       strError:='标准售价';
   end;
   if (cdsColumn.Locate('FieldName','NEW_INPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'最新进价'
+       strError:=strError+'、'+'最新进价'
     else
-    strError:='最新进价';
+       strError:='最新进价';
   end;
   if (cdsColumn.Locate('FieldName','MY_OUTPRICE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
   begin
-    Result := False;
+    result := false;
     if strError<>'' then
-      strError:=strError+'、'+'本店售价'
+       strError:=strError+'、'+'本店售价'
     else
-    strError:='本店售价';
+       strError:='本店售价';
   end;
 
   if (strError<>'') then
@@ -425,9 +423,6 @@ begin
 end;
 
 procedure TfrmGoodsExcel.CreateParams;
-var rs:TZQuery;
-    str:string;
-    i:integer;
 begin
   inherited;
 end;
@@ -440,144 +435,149 @@ begin
   fieldName:=cdsColumn.FieldByName('FileName').AsString;
   str:=cdsExcel.fieldByName(fieldName).AsString;
   case columnIndex of
-    0:begin
+    0: begin
          if str='' then
-         strError:='条形码为空;';
+            strError:='条形码为空;';
        end;
-    1:begin
+    1: begin
          if str='' then
-         strError:='货号为空;';
+            strError:='货号为空;';
        end;
-    2:begin
-       if str='' then
-         strError:='商品名称为空;';
-      end;
-    3:begin
-       if str='' then
-         strError:='拼音码为空;';
-      end;
-    4:begin
-        if str='' then
-          strError:='计量单位为空;'
-        else begin
-          if FUnitType[0]=0 then
-            strError:='计量单位不存在;';
-        end;
-      end;
-    5:begin
-        if str='' then
-          strError:='商品分类为空;'
-        else begin
-          if FSortType=0 then
-            strError:='商品分类不存在;';
-        end;
-      end;
-    6:begin
-        try
-          if str<>'' then
-            num:=strtofloat(str)
-          else
-            strError:='标准售价为空;';
+    2: begin
+         if str='' then
+            strError:='商品名称为空;';
+       end;
+    3: begin
+         if str='' then
+            strError:='拼音码为空;';
+       end;
+    4: begin
+         if str='' then
+            strError:='计量单位为空;'
+         else
+            begin
+              if FUnitType[0]=0 then
+                 strError:='计量单位不存在;';
+            end;
+       end;
+    5: begin
+         if str='' then
+            strError:='商品分类为空;'
+         else
+            begin
+              if FSortType=0 then
+                 strError:='商品分类不存在;';
+            end;
+       end;
+    6: begin
+         try
+           if str<>'' then
+              num:=strtofloat(str)
+           else
+              strError:='标准售价为空;';
          except
-          strError:='无效的标准售价;'
-        end;
-      end;
-    7:begin
-        try
-          if str<>'' then
-            num:=strtofloat(str)
-          else
-            strError:='最新进价为空;';
-        except
-          strError:='无效的最新进价;'
-        end;
-      end;
-    8:begin
-        try
-          if str<>'' then
-            num:=strtofloat(str);
-        except
-          strError:='无效的最低售价;'
-        end;
-      end;
-    9:begin
-        try
-          if str<>'' then
-            num:=strtofloat(str)
-          else
-            strError:='本店售价为空;';
-        except
-          strError:='无效的本店售价;'
-        end;
-      end;
+           strError:='无效的标准售价;'
+         end;
+       end;
+    7: begin
+         try
+           if str<>'' then
+              num:=strtofloat(str)
+           else
+              strError:='最新进价为空;';
+         except
+           strError:='无效的最新进价;'
+         end;
+       end;
+    8: begin
+         try
+           if str<>'' then
+              num:=strtofloat(str);
+         except
+           strError:='无效的最低售价;'
+         end;
+       end;
+    9: begin
+         try
+           if str<>'' then
+              num:=strtofloat(str)
+           else
+              strError:='本店售价为空;';
+         except
+           strError:='无效的本店售价;'
+         end;
+       end;
     10:begin     //Color
-      end;
+       end;
     11:begin    //size
-      end;
+       end;
     12:begin
          if str='' then
-          //strError:='小包装单位为空;'
-        else begin
-          if FUnitType[1]=0 then
-            strError:='小包装单位不存在;';
-        end;
-      end;
+            //strError:='小包装单位为空;'
+         else
+           begin
+             if FUnitType[1]=0 then
+                strError:='小包装单位不存在;';
+           end;
+       end;
     13:begin
-        try
-          if str<>''then
-            num:=strtofloat(str);
-        except
-          strError:='无效的小包装换算系数;'
-        end;
-      end;
+         try
+           if str<>''then
+              num:=strtofloat(str);
+         except
+           strError:='无效的小包装换算系数;'
+         end;
+       end;
     14:begin
-        // if str='' then
-        // strError:='小包装条形码为空;';
-      end;
+         // if str='' then
+         // strError:='小包装条形码为空;';
+       end;
     15:begin
-        try
-          if str<> '' then
-            num:=strtofloat(str);
-        except
-          strError:='无效的小包装本店售价;'
-        end;
-      end;
+         try
+           if str<> '' then
+              num:=strtofloat(str);
+         except
+           strError:='无效的小包装本店售价;'
+         end;
+       end;
     16:begin
          if str='' then
-          //strError:='大包装单位为空;'
-        else begin
-          if FUnitType[2]=0 then
-            strError:='大包装单位不存在;';
-        end;
-      end;
+            //strError:='大包装单位为空;'
+         else
+           begin
+             if FUnitType[2]=0 then
+                strError:='大包装单位不存在;';
+           end;
+       end;
     17:begin
-        try
-          if str<> '' then
-            num:=strtofloat(str);
-        except
-          strError:='无效的大包装换算系数;'
-        end;
-      end;
+         try
+           if str<> '' then
+              num:=strtofloat(str);
+         except
+           strError:='无效的大包装换算系数;'
+         end;
+       end;
     18:begin
-        //if str='' then
-        // strError:='大包装条形码为空;';
-      end;
+         //if str='' then
+         // strError:='大包装条形码为空;';
+       end;
     19:begin
-        try
-          if str<> '' then
-           num:=strtofloat(str);
-        except
-          strError:='无效的大包装本店售价;'
-        end;
-      end;
+         try
+           if str<> '' then
+              num:=strtofloat(str);
+         except
+           strError:='无效的大包装本店售价;'
+         end;
+       end;
     20:begin
-        if str='' then
-         //strError:='供应商为空;'
-        else begin
-          if FieldType[20]=0 then
-            strError:='供应商不存在;';
-        end;
-      end;
+         if str='' then
+            //strError:='供应商为空;'
+         else
+           begin
+             if FieldType[20]=0 then
+                strError:='供应商不存在;';
+           end;
+       end;
   end;
   if strError<>'' then
   cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+strError;
@@ -599,10 +599,9 @@ var isSort:Boolean;
     preId:integer;
     strPre,strNext:string;
 begin
+  rs:=TZQuery.Create(nil);
   try
-    rs:=TZQuery.Create(nil);
     rs.Data:=cdsExcel.Data;
-
     ClearParams;
     cdsColumn.First;
     while not cdsColumn.Eof do
@@ -676,14 +675,14 @@ end;
 
 function TfrmGoodsExcel.OutCheckExcute: Boolean;
 var rs,ss:TZQuery;
-    FieldName,tempField,strError:string;
+    FieldName,tempField:string;
     i,c,FieldIndex:integer;
     strWhere:string;
     strList:TStringList;
 begin
+  rs:=TZQuery.Create(nil);
+  ss:=TZQuery.Create(nil);
   try
-    rs:=TZQuery.Create(nil);
-    ss:=TZQuery.Create(nil);
     ss.Data:=cdsExcel.Data;
 
     //*********************条码*****************************
@@ -763,11 +762,11 @@ begin
     for c:=0 to 2 do
     begin
       if c=0 then
-        tempField:='CALC_UNITS'
+         tempField:='CALC_UNITS'
       else if c=1 then
-        tempField:='SMALL_UNITS'
+         tempField:='SMALL_UNITS'
       else if c=2 then
-        tempField:='BIG_UNITS';
+         tempField:='BIG_UNITS';
 
       FieldName:='';
       if (cdsColumn.Locate('FieldName',tempField,[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
@@ -977,10 +976,10 @@ var unitField,tempField,strWhere,strUnits:string;
     SeqNo:integer;
 begin
   result:=false;
+  rs:=TZQuery.Create(nil);
+  tmpList:=TStringList.Create;
   try
-    rs:=TZQuery.Create(nil);
     CreateStringList(unitList);
-    tmpList:=TStringList.Create;
 
     //计量单位、小包装单位、大包装单位
     for c:=0 to 2 do
@@ -1038,13 +1037,13 @@ begin
 
     if strUnits<>'' then
     begin
+      cdsUnits:=TZQuery.Create(nil);
       try
         if MessageBox(Handle,pchar('检索到系统中没有以下单位：'''+strUnits+'''，是否新增单位？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)=6 then
         begin
           tmpList.Clear;
           tmpList.CommaText:=strUnits;
 
-          cdsUnits:=TZQuery.Create(nil);
           Params := TftParamList.Create(nil);
           cdsUnits.Close;
           try

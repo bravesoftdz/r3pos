@@ -25,17 +25,17 @@ type
     FUnitType:array[0..2] of integer; //同FSortType
     procedure CreateUseDataSet;override;
     procedure CreateParams;override;
-    function FindColumn(vStr:string):Boolean;override;
-    function FindColumn2(vStr:string):Boolean;override;
-    function SelfCheckExcute:Boolean;override;   //导入文件内部判断有无重复
-    function OutCheckExcute:Boolean;             //导入文件与库中数据对比
-    function Check(columnIndex:integer):Boolean;override;
-    function SaveExcel(dsExcel:TZQuery):Boolean;override;
+    function FindColumn(vStr:string):boolean;override;
+    function FindColumn2(vStr:string):boolean;override;
+    function SelfCheckExcute:boolean;override;   //导入文件内部判断有无重复
+    function OutCheckExcute:boolean;             //导入文件与库中数据对比
+    function Check(columnIndex:integer):boolean;override;
+    function SaveExcel(dsExcel:TZQuery):boolean;override;
     procedure ClearParams;
-    function AddUnits:Boolean;
-    function IsRequiredFiled(strFiled:string):Boolean;override;
+    function AddUnits:boolean;
+    function IsRequiredFiled(strFiled:string):boolean;override;
   public
-    class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
+    class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:boolean=false):boolean;override;
   end;
 
 const
@@ -86,7 +86,7 @@ begin
   DataSet.CreateDataSet;
 end;
 
-function TfrmGoodsExcel.SaveExcel(dsExcel:TZQuery):Boolean;
+function TfrmGoodsExcel.SaveExcel(dsExcel:TZQuery):boolean;
 procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode,BarcodeType:string);
   begin
     Data_Bar.Append;
@@ -270,7 +270,7 @@ begin
   result := true;
 end;
 
-function TfrmGoodsExcel.FindColumn(vStr:string):Boolean;
+function TfrmGoodsExcel.FindColumn(vStr:string):boolean;
 var strError:string;
 begin
   result := true;
@@ -346,7 +346,7 @@ begin
   end;
 end;
 
-function TfrmGoodsExcel.FindColumn2(vStr:string):Boolean;
+function TfrmGoodsExcel.FindColumn2(vStr:string):boolean;
 var strError:string;
 begin
   result := true;
@@ -427,7 +427,7 @@ begin
   inherited;
 end;
 
-function TfrmGoodsExcel.Check(columnIndex:integer): Boolean;
+function TfrmGoodsExcel.Check(columnIndex:integer): boolean;
 var str,strError,fieldName:string;
     num:double;
 begin
@@ -592,8 +592,8 @@ begin
     FieldCheckSet[i]:='';
 end; 
 
-function TfrmGoodsExcel.SelfCheckExcute: Boolean;
-var isSort:Boolean;
+function TfrmGoodsExcel.SelfCheckExcute: boolean;
+var isSort:boolean;
     rs:TZQuery;
     fieldName,FileName:string;
     preId:integer;
@@ -673,7 +673,7 @@ begin
   end;
 end;
 
-function TfrmGoodsExcel.OutCheckExcute: Boolean;
+function TfrmGoodsExcel.OutCheckExcute: boolean;
 var rs,ss:TZQuery;
     FieldName,tempField:string;
     i,c,FieldIndex:integer;
@@ -907,7 +907,7 @@ begin
 end;
 
 class function TfrmGoodsExcel.ExcelFactory(Owner: TForm; vDataSet: TZQuery;Fields,Formats:string;
-  isSelfCheck: Boolean): Boolean;
+  isSelfCheck: boolean): boolean;
 begin
   with TfrmGoodsExcel.Create(Owner) do
     begin
@@ -950,7 +950,7 @@ begin
   end;
 end;
 
-function TfrmGoodsExcel.AddUnits: Boolean;
+function TfrmGoodsExcel.AddUnits: boolean;
   function GetSeqNo(tenantId:string):integer;
   var rs:TZQuery;
   begin
@@ -1121,7 +1121,6 @@ begin
       end;
       dllGlobal.Refresh('PUB_MEAUNITS');
     end;
-
   finally
     rs.Free;
     unitList.Free;
@@ -1130,14 +1129,13 @@ begin
   result:=true;
 end;
 
-function TfrmGoodsExcel.IsRequiredFiled(strFiled:string):Boolean;
+function TfrmGoodsExcel.IsRequiredFiled(strFiled:string):boolean;
 begin
   result:=false;
   if (strFiled='BARCODE1') or (strFiled='GODS_CODE') or (strFiled='GODS_NAME') or
      (strFiled='CALC_UNITS') or (strFiled='SORT_ID1') or (strFiled='NEW_OUTPRICE') or
      (strFiled='NEW_INPRICE') or (strFiled='MY_OUTPRICE')then
-    result:=true;
-
+     result:=true;
 end;
 
 end.

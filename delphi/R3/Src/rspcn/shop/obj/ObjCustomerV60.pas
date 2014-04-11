@@ -80,6 +80,9 @@ begin
           Tmp.Next;
         end;
 
+      if FieldByName('ACCU_INTEGRAL').AsString = '' then FieldByName('ACCU_INTEGRAL').AsFloat := 0;
+      if FieldByName('INTEGRAL').AsString = '' then FieldByName('INTEGRAL').AsFloat := 0;
+
       Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
              'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,''#'',:CUST_CODE,:CREA_DATE,:CREA_USER,'+
              '''∆Û“µø®'',''1'',''0'',:ACCU_INTEGRAL,0,:INTEGRAL,0,:PASSWRD,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';

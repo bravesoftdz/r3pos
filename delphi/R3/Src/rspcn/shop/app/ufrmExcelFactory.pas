@@ -181,9 +181,10 @@ begin
 end;
 
 procedure TfrmExcelFactory.DecodeFields(s: string);
-var vList1:TStringList;
+var
   i:integer;
   Field:TField;
+  vList1:TStringList;
 begin
   if s='' then Raise Exception.Create('没有定义要导入的字段');
   vList1 := TStringList.Create;
@@ -204,28 +205,29 @@ end;
 //解析程序中需要的固定的字段
 procedure TfrmExcelFactory.DecodeFields2(s: string);
 begin
-  if s='' then Raise Exception.Create('没有定义要导入的字段');
+  if s = '' then Raise Exception.Create('没有定义要导入的字段');
   vList.CommaText := s;
-  mxCol:=vList.Count+5;
+  mxCol := vList.Count + 5;
 end;
 
 //组织文件的表头信息
 procedure TfrmExcelFactory.DecodeFormats2(s: string);
-var i:integer;
+var
+  i:integer;
 begin
   cdsDropColumn.Properties.Items.Clear;
   vColumnList.Clear;
   for i:=1 to DBGridEh1.Columns.Count-1 do
-  begin
-    if i>FSumCol then exit;
-    vColumnList.Add(DBGridEh1.Columns[i].FieldName+'='+DBGridEh1.Columns[i].Title.Caption);
-    cdsDropColumn.Properties.Items.Add(DBGridEh1.Columns[i].Title.Caption);
-  end;
+    begin
+      if i > FSumCol then Exit;
+      vColumnList.Add(DBGridEh1.Columns[i].FieldName+'='+DBGridEh1.Columns[i].Title.Caption);
+      cdsDropColumn.Properties.Items.Add(DBGridEh1.Columns[i].Title.Caption);
+    end;
 end;
 
 procedure TfrmExcelFactory.DecodeFormats(s: string);
 begin
-  if s='' then Raise Exception.Create('没有定义要导入的字段');
+  if s = '' then Raise Exception.Create('没有定义要导入的字段');
   vList.CommaText := s;
   if s<>'' then
      mxCol := StrtoInt(vList.Names[vList.Count-1])+1
@@ -238,16 +240,16 @@ begin
   cdsColumn.First;
   while not cdsColumn.Eof do
     begin
-        if cdsColumn.FieldByName('FileName').AsString <> '' then
-        begin
-          if Check(cdsColumn.FieldByName('ID').AsInteger) then
-          begin
-           if DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).DataType in [ftString,ftWideString,ftFixedChar] then
-              DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Value := trim(cdsExcel.FieldByName(cdsColumn.FieldByName('FileName').AsString).AsString)
-           else
-              DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.FieldByName(cdsColumn.FieldByName('FileName').AsString).AsString),0);
+      if cdsColumn.FieldByName('FileName').AsString <> '' then
+         begin
+           if Check(cdsColumn.FieldByName('ID').AsInteger) then
+              begin
+                if DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).DataType in [ftString,ftWideString,ftFixedChar] then
+                   DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Value := trim(cdsExcel.FieldByName(cdsColumn.FieldByName('FileName').AsString).AsString)
+                else
+                   DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Value := StrtoFloatDef(trim(cdsExcel.FieldByName(cdsColumn.FieldByName('FileName').AsString).AsString),0);
+              end;
          end;
-        end;
       cdsColumn.Next;
     end;
 end;
@@ -258,24 +260,25 @@ begin
 end;
 
 procedure TfrmExcelFactory.OpenExecl(FileName: string);
-function CheckNull(V:array of string):Boolean;
-var i:integer;
-begin
-  result := true;
-  for i:=0 to 3 do
-    result := result and (trim(V[i])='');
-end;
-var Excel,excelWorkBook: Variant;
+  function CheckNull(V:array of string):Boolean;
+  var i:integer;
+  begin
+    result := true;
+    for i:=0 to 3 do
+      result := result and (trim(V[i])='');
+  end;
+var
   r,n,i:Integer;
   excelRow:integer;
   V:array [1..50] of string;
+  Excel,excelWorkBook: Variant;
 begin
   cdsExcel.Close;
   cdsExcel.CreateDataSet;
   cdsExcel.DisableControls;
   try
-  RzStatus.Caption := '正在打开Excel';
-  RzStatus.Update;
+    RzStatus.Caption := '正在打开Excel';
+    RzStatus.Update;
     try
       Excel := CreateOleObject('Excel.Application');
     except
@@ -290,30 +293,32 @@ begin
       n := 0;
       //遇到两条空行之后才认为结束
       while true do
-      begin
-        inc(r);
-        if r<StartRow then Continue;
-        if (r mod 10)=0 then
         begin
-          RzStatus.Caption := '打开'+inttostr(r)+'行...';
-          RzStatus.Update;
-        end;
-        for i:= 1 to mxCol do
-          V[i] := Excel.Cells.Item[r, i].Value;
-        if CheckNull(v) then
-        begin
-          inc(n);
-          if n>=2 then Exit;
-          Continue;
-        end;
-        cdsExcel.Append;
+          inc(r);
+          if r < StartRow then Continue;
+          if (r mod 10)=0 then
+             begin
+               RzStatus.Caption := '打开'+inttostr(r)+'行...';
+               RzStatus.Update;
+             end;
+          for i:= 1 to mxCol do
+             V[i] := Excel.Cells.Item[r, i].Value;
 
-        cdsExcel.FieldByName('ID').AsInteger := r;
-        for i:=1 to mxCol do
-          cdsExcel.Fields[i].AsString := trim(V[i]);
-        cdsExcel.Post;
-      end;
-      {直接获取Excel行
+          if CheckNull(v) then
+             begin
+               inc(n);
+               if n>=2 then Exit;
+               Continue;
+             end;
+
+          cdsExcel.Append;
+          cdsExcel.FieldByName('ID').AsInteger := r;
+          for i:=1 to mxCol do
+            cdsExcel.Fields[i].AsString := trim(V[i]);
+          cdsExcel.Post;
+        end;
+      {
+      直接获取Excel行
       while r< excelRow do
       begin
         inc(r);
@@ -347,22 +352,22 @@ begin
   inherited;
   cdsExcel.First;
   if not chkHeader.Checked then
-  begin
-    cdsExcel.Filtered := false;
-    for i:=1 to mxCol do
-      begin
-        DBGridEh1.Columns[i].Title.Caption := Char(64+i);
-      end;
-  end
+     begin
+       cdsExcel.Filtered := false;
+       for i:=1 to mxCol do
+         begin
+           DBGridEh1.Columns[i].Title.Caption := Char(64+i);
+         end;
+     end
   else
-  begin
-    if cdsExcel.IsEmpty then Exit;
-    for i:=1 to mxCol do
-      begin
-        DBGridEh1.Columns[i].Title.Caption := cdsExcel.Fields[i].AsString;
-      end;
-    cdsExcel.Delete;
-  end;
+     begin
+       if cdsExcel.IsEmpty then Exit;
+       for i:=1 to mxCol do
+         begin
+           DBGridEh1.Columns[i].Title.Caption := cdsExcel.Fields[i].AsString;
+         end;
+       cdsExcel.Delete;
+     end;
   FSumCount:=cdsExcel.RecordCount;
 end;
 
@@ -390,18 +395,18 @@ procedure TfrmExcelFactory.edtFileNameClick(Sender: TObject);
 begin
   inherited;
   if OpenDialog1.Execute then
-  begin
-    edtFileName.Text := OpenDialog1.FileName;
-    FilePath := Trim(edtFileName.Text);
-    isFirstCheck:=true;
-  end;
+     begin
+       edtFileName.Text := OpenDialog1.FileName;
+       FilePath := Trim(edtFileName.Text);
+       isFirstCheck:=true;
+     end;
 end;
 
 procedure TfrmExcelFactory.FormCreate(Sender: TObject);
 begin
   inherited;
   vList := TStringList.Create;
-  vColumnList:=TStringList.Create;
+  vColumnList := TStringList.Create;
   StartRow := 1;
 end;
 
@@ -419,82 +424,82 @@ begin
   btnExport.Visible:=false;
   chkignore.Visible:=false;
   if rzPage.ActivePageIndex=5 then
-  begin
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='下一步';
-    rzPage.ActivePageIndex:=0;
-  end
+     begin
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='下一步';
+       rzPage.ActivePageIndex:=0;
+     end
   else if rzPage.ActivePageIndex=0 then
-  begin
-    //打开Excel
-    if FilePath='' then raise Exception.Create('请选择导入的Excel文件');
-    StartRow:=edtNum.Value;
-    OpenExecl(FilePath);
-    IsHeader;
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='下一步';
-    rzPage.ActivePageIndex:=1;
-  end
+     begin
+       //打开Excel
+       if FilePath='' then raise Exception.Create('请选择导入的Excel文件');
+       StartRow:=edtNum.Value;
+       OpenExecl(FilePath);
+       IsHeader;
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='下一步';
+       rzPage.ActivePageIndex:=1;
+     end
   else if rzPage.ActivePageIndex=1 then
-  begin
-    DecodeFormats2('');
-    CreateColumn2;
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='检测';
-    rzPage.ActivePageIndex:=2;
-  end
+     begin
+       DecodeFormats2('');
+       CreateColumn2;
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='检测';
+       rzPage.ActivePageIndex:=2;
+     end
   else if rzPage.ActivePageIndex=2 then
-  begin
-    LastcdsColumnIndex:=cdsColumn.RecNo;
-    CheckExcute;
-    CreateDbGridEhTitle;
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='执行';
-    if FExceptCount>0 then
-    begin
-      if FSumCount=FExceptCount then
-      begin
-        btnNext.Caption:='下一步';
-        chkignore.Visible:=False;
-      end else
-      begin
-        chkignore.Visible:=true;
-      end;
-      if btnNext.Caption='执行' then
-        if not chkignore.Checked then
-          btnNext.Enabled:=false
-        else
-          btnNext.Enabled:=true;
-      btnExport.Visible:=true;
-    end;
-    rzPage.ActivePageIndex:=3;
-  end
+     begin
+       LastcdsColumnIndex:=cdsColumn.RecNo;
+       CheckExcute;
+       CreateDbGridEhTitle;
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='执行';
+       if FExceptCount>0 then
+          begin
+            if FSumCount=FExceptCount then
+               begin
+                 btnNext.Caption:='下一步';
+                 chkignore.Visible:=False;
+               end
+             else
+               begin
+                 chkignore.Visible:=true;
+               end;
+             if btnNext.Caption='执行' then
+                if not chkignore.Checked then
+                   btnNext.Enabled:=false
+                else
+                   btnNext.Enabled:=true;
+             btnExport.Visible:=true;
+          end;
+       rzPage.ActivePageIndex:=3;
+     end
   else if rzPage.ActivePageIndex=3 then
-  begin
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='完成';
-    rzPage.ActivePageIndex:=4;
-    try
-      SaveExcel(FDataSet);
-    finally
-      DisplayResult;
-    end;
-  end
+     begin
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='完成';
+       rzPage.ActivePageIndex:=4;
+       try
+         SaveExcel(FDataSet);
+       finally
+         DisplayResult;
+       end;
+     end
   else if rzPage.ActivePageIndex=4 then
-  begin
-    //Close;
-    ModalResult := MROK;
-  end;
+    begin
+      ModalResult := MROK;
+    end;
 end;
 
 procedure TfrmExcelFactory.btnPrevClick(Sender: TObject);
@@ -504,74 +509,74 @@ begin
   btnExport.Visible:=false;
   chkignore.Visible:=false;
   if rzPage.ActivePageIndex=5 then
-  begin
-  end
+     begin
+     end
   else if rzPage.ActivePageIndex=4 then
-  begin
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='执行';
-    if FExceptCount>0 then
-    begin
-      if FSumCount=FExceptCount then
-      begin
-        btnNext.Caption:='下一步';
-        chkignore.Visible:=False;
-      end else
-      begin
-        chkignore.Visible:=true;
-      end;
-      if btnNext.Caption='执行' then
-        if not chkignore.Checked then
-          btnNext.Enabled:=false
-        else
-          btnNext.Enabled:=true;
-      btnExport.Visible:=true;
-    end;
-    rzPage.ActivePageIndex:=3;
-  end
+     begin
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='执行';
+       if FExceptCount>0 then
+          begin
+            if FSumCount=FExceptCount then
+               begin
+                 btnNext.Caption:='下一步';
+                 chkignore.Visible:=False;
+               end
+            else
+               begin
+                 chkignore.Visible:=true;
+               end;
+            if btnNext.Caption='执行' then
+               if not chkignore.Checked then
+                  btnNext.Enabled:=false
+               else
+                  btnNext.Enabled:=true;
+            btnExport.Visible:=true;
+          end;
+       rzPage.ActivePageIndex:=3;
+     end
   else if rzPage.ActivePageIndex=3 then
-  begin
-    cdsColumn.RecNo:=lastcdsColumnIndex;
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='检测';
-    rzPage.ActivePageIndex:=2;
-  end
+     begin
+       cdsColumn.RecNo:=lastcdsColumnIndex;
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='检测';
+       rzPage.ActivePageIndex:=2;
+     end
   else if rzPage.ActivePageIndex=2 then
-  begin
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='下一步';
-    rzPage.ActivePageIndex:=1;
-  end
+     begin
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='下一步';
+       rzPage.ActivePageIndex:=1;
+     end
   else if rzpage.ActivePageIndex=1 then
-  begin
-    btnPrev.Visible:=True;
-    btnPrev.Caption:='上一步';
-    btnNext.Visible:=True;
-    btnNext.Caption:='下一步';
-    rzPage.ActivePageIndex:=0;
-  end
+     begin
+       btnPrev.Visible:=true;
+       btnPrev.Caption:='上一步';
+       btnNext.Visible:=true;
+       btnNext.Caption:='下一步';
+       rzPage.ActivePageIndex:=0;
+     end
   else if rzPage.ActivePageIndex=0 then
-  begin
-    btnPrev.Visible:=False;
-    btnNext.Visible:=True;
-    btnNext.Caption:='开始';
-    rzPage.ActivePageIndex:=5;
-  end;
+     begin
+       btnPrev.Visible:=False;
+       btnNext.Visible:=true;
+       btnNext.Caption:='开始';
+       rzPage.ActivePageIndex:=5;
+     end;
 end;
 
 procedure TfrmExcelFactory.FormShow(Sender: TObject);
 begin
   inherited;
-  // CacheFactory.getAdvPngImage(adv03.Name,adv03.Picture);
   rzPage.ActivePageIndex:=5;
   btnPrev.Visible:=False;
-  btnNext.Visible:=True;
+  btnNext.Visible:=true;
   btnNext.Caption:='开始';
   dbState:=dsEdit;
 end;
@@ -586,38 +591,37 @@ begin
       if DBGridEh1.Columns[i+1].Visible then
          begin
            cdsColumn.Append;
-           //cdsColumn.FieldByName('ID').AsInteger := i+1;
            cdsColumn.FieldByName('FileTitle').AsString := DBGridEh1.Columns[i+1].Title.Caption;
            cdsColumn.FieldByName('FileName').AsString:=DBGridEh1.Columns[i+1].FieldName;
            if not chkHeader.Checked then
-             begin
-               if vList.IndexOfName(inttostr(i))>=0 then
-                  begin
-                    cdsColumn.FieldByName('FieldName').AsString := vList.Values[inttostr(i)];
-                    index := DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Index;
-                    for n:= 0 to cdsDropColumn.Properties.Items.Count -1 do
-                      begin
-                        if Integer(cdsDropColumn.Properties.Items.Objects[n])=index then
-                           begin
-                             cdsColumn.FieldByName('ID').AsInteger := index;
-                             cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Properties.Items[n];
-                             Break;
-                           end;
-                      end;
-                  end;
+              begin
+                if vList.IndexOfName(inttostr(i))>=0 then
+                   begin
+                     cdsColumn.FieldByName('FieldName').AsString := vList.Values[inttostr(i)];
+                     index := DataSet.FieldByName(cdsColumn.FieldByName('FieldName').AsString).Index;
+                     for n:= 0 to cdsDropColumn.Properties.Items.Count -1 do
+                       begin
+                         if Integer(cdsDropColumn.Properties.Items.Objects[n])=index then
+                            begin
+                              cdsColumn.FieldByName('ID').AsInteger := index;
+                              cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Properties.Items[n];
+                              break;
+                            end;
+                       end;
+                   end;
               end
-             else
+           else
               begin
                 for n := 0 to cdsDropColumn.Properties.Items.Count - 1 do
                   begin
                     if cdsColumn.FieldByName('FileTitle').AsString = cdsDropColumn.Properties.Items[n] then
-                      begin
-                        cdsColumn.FieldByName('ID').AsInteger := n;
-                        cdsDropColumn.ItemIndex := n;
-                        cdsColumn.FieldByName('FieldName').AsString := DataSet.Fields[Integer(cdsDropColumn.Properties.Items.Objects[cdsDropColumn.ItemIndex])].FieldName;
-                        cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Text;
-                        Break;
-                      end;
+                       begin
+                         cdsColumn.FieldByName('ID').AsInteger := n;
+                         cdsDropColumn.ItemIndex := n;
+                         cdsColumn.FieldByName('FieldName').AsString := DataSet.Fields[Integer(cdsDropColumn.Properties.Items.Objects[cdsDropColumn.ItemIndex])].FieldName;
+                         cdsColumn.FieldByName('DestTitle').AsString := cdsDropColumn.Text;
+                         break;
+                       end;
                   end;
               end;
            cdsColumn.Post;
@@ -632,34 +636,35 @@ begin
   cdsColumn.Close;
   cdsColumn.CreateDataSet;
   for i:=0 to vList.Count-1 do
-  begin
-    cdsColumn.Append;
-    cdsColumn.FieldByName('ID').AsInteger := i;
-    cdsColumn.FieldByName('FieldName').AsString:=vList.Names[i];
-    cdsColumn.FieldByName('DestTitle').AsString:=vList.ValueFromIndex[i];
-    if chkHeader.Checked then
     begin
-      for n:=0 to vColumnList.Count-1 do
-      begin
-        if vList.ValueFromIndex[i]=vColumnList.ValueFromIndex[n] then
-        begin
-          cdsDropColumn.ItemIndex := n;
-          cdsColumn.FieldByName('FileName').AsString:=vColumnList.Names[n];
-          cdsColumn.FieldByName('FileTitle').AsString:=vColumnList.ValueFromIndex[n];
-          break;
-        end;
-      end;
-    end else
-    begin
-      if i<vColumnList.Count-1 then
-      begin
-        cdsDropColumn.ItemIndex := i;
-        cdsColumn.FieldByName('FileName').AsString:=vColumnList.Names[i];
-        cdsColumn.FieldByName('FileTitle').AsString:=vColumnList.ValueFromIndex[i];
-      end;
+      cdsColumn.Append;
+      cdsColumn.FieldByName('ID').AsInteger := i;
+      cdsColumn.FieldByName('FieldName').AsString:=vList.Names[i];
+      cdsColumn.FieldByName('DestTitle').AsString:=vList.ValueFromIndex[i];
+      if chkHeader.Checked then
+         begin
+           for n:=0 to vColumnList.Count-1 do
+             begin
+               if vList.ValueFromIndex[i]=vColumnList.ValueFromIndex[n] then
+                  begin
+                    cdsDropColumn.ItemIndex := n;
+                    cdsColumn.FieldByName('FileName').AsString:=vColumnList.Names[n];
+                    cdsColumn.FieldByName('FileTitle').AsString:=vColumnList.ValueFromIndex[n];
+                    break;
+                  end;
+             end;
+         end
+      else
+         begin
+           if i < vColumnList.Count-1 then
+              begin
+                cdsDropColumn.ItemIndex := i;
+                cdsColumn.FieldByName('FileName').AsString:=vColumnList.Names[i];
+                cdsColumn.FieldByName('FileTitle').AsString:=vColumnList.ValueFromIndex[i];
+              end;
+         end;
+      cdsColumn.Post;
     end;
-    cdsColumn.Post;
-  end;
   cdsDropColumn.ItemIndex:=-1;
   cdsColumn.First;
 end;
@@ -667,7 +672,8 @@ end;
 procedure TfrmExcelFactory.cdsDropColumnPropertiesChange(Sender: TObject);
 begin
   inherited;
-  {if cdsDropColumn.Visible and cdsDropColumn.Focused then
+{
+  if cdsDropColumn.Visible and cdsDropColumn.Focused then
      begin
        if cdsDropColumn.ItemIndex >=0 then
        begin
@@ -685,24 +691,24 @@ begin
          cdsColumn.Post;
        end;
      end;
-    } 
+} 
     if cdsDropColumn.Visible and cdsDropColumn.Focused then
-     begin
-       if (cdsDropColumn.Text<>'') and (cdsDropColumn.ItemIndex >=0) then
        begin
-         cdsColumn.Edit;
-         cdsColumn.FieldByName('FileName').AsString :=vColumnList.Names[cdsDropColumn.ItemIndex];
-         cdsColumn.FieldByName('FileTitle').AsString := cdsDropColumn.Text;
-         cdsColumn.Post;
-       end
-       else
-       begin
-         cdsColumn.Edit;
-         cdsColumn.FieldByName('FileName').AsString := '';
-         cdsColumn.FieldByName('FileTitle').AsString := '';
-         cdsColumn.Post;
+         if (cdsDropColumn.Text<>'') and (cdsDropColumn.ItemIndex >=0) then
+            begin
+              cdsColumn.Edit;
+              cdsColumn.FieldByName('FileName').AsString :=vColumnList.Names[cdsDropColumn.ItemIndex];
+              cdsColumn.FieldByName('FileTitle').AsString := cdsDropColumn.Text;
+              cdsColumn.Post;
+            end
+         else
+            begin
+              cdsColumn.Edit;
+              cdsColumn.FieldByName('FileName').AsString := '';
+              cdsColumn.FieldByName('FileTitle').AsString := '';
+              cdsColumn.Post;
+            end;
        end;
-     end;
 end;
 
 function TfrmExcelFactory.IsChoosed(vIndex: integer): Boolean;
@@ -713,18 +719,17 @@ begin
   n:=cdsColumn.RecNo;
   cdsColumn.First;
   while not cdsColumn.Eof do
-  begin
-    if cdsColumn.FieldByName('FileName').AsString=vColumnList.Names[vIndex] then
     begin
-      result:=true;
-      break;
+      if cdsColumn.FieldByName('FileName').AsString=vColumnList.Names[vIndex] then
+         begin
+           result:=true;
+           break;
+         end;
+      cdsColumn.Next;
     end;
-    cdsColumn.Next;
-  end;
   cdsColumn.RecNo:=n;
   cdsColumn.EnableControls;
 end;
-
 
 procedure TfrmExcelFactory.DBGridEh1GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -753,55 +758,55 @@ function TfrmExcelFactory.CheckExcute: Boolean;
 begin
   cdsColumn.DisableControls;
   cdsExcel.DisableControls;
-
   cdsExcel.First;
   while not cdsExcel.Eof do
-  begin
-    cdsExcel.Edit;
-    cdsExcel.FieldByName('Msg').AsString:='';
-    cdsExcel.FieldByName('STATE').AsString:='0';
-    cdsExcel.FieldByName('CODE').AsString:='';
-    cdsExcel.Post;
-    cdsExcel.Next;
-  end;
+    begin
+      cdsExcel.Edit;
+      cdsExcel.FieldByName('Msg').AsString:='';
+      cdsExcel.FieldByName('STATE').AsString:='0';
+      cdsExcel.FieldByName('CODE').AsString:='';
+      cdsExcel.Post;
+      cdsExcel.Next;
+    end;
 
   FindColumn2('');
 
-  if selfCheck then
-     SelfCheckExcute;
+  if selfCheck then  SelfCheckExcute;
+
   FDataSet.EmptyDataSet;
 
   cdsExcel.First;
   while not cdsExcel.Eof do
-  begin
-    isNull:=false;
-    cdsExcel.Edit;
-    RzStatus1.Caption := '数据检测:'+InttoStr(cdsExcel.RecNo)+'/'+InttoStr(cdsExcel.RecordCount);
-    RzStatus1.Update;
-    DataSet.Append;
-    WriteToDataSet(DataSet);
-    if cdsExcel.FieldByName('Msg').AsString<>'' then
     begin
-      if cdsExcel.FieldByName('STATE').AsString='2' then      //STATE：0 默认；1 异常
-        cdsExcel.FieldByName('STATE').AsString:='3'
+      isNull:=false;
+      cdsExcel.Edit;
+      RzStatus1.Caption := '数据检测:'+InttoStr(cdsExcel.RecNo)+'/'+InttoStr(cdsExcel.RecordCount);
+      RzStatus1.Update;
+      DataSet.Append;
+      WriteToDataSet(DataSet);
+      if cdsExcel.FieldByName('Msg').AsString<>'' then
+         begin
+           if cdsExcel.FieldByName('STATE').AsString='2' then      //STATE：0 默认；1 异常
+              cdsExcel.FieldByName('STATE').AsString:='3'
+           else
+              cdsExcel.FieldByName('STATE').AsString:='1';
+           DataSet.Delete;
+         end
       else
-        cdsExcel.FieldByName('STATE').AsString:='1';
-      DataSet.Delete;
-    end else
-    begin
-      cdsExcel.FieldByName('STATE').AsString:='0';
-      DataSet.Post;
+         begin
+           cdsExcel.FieldByName('STATE').AsString:='0';
+           DataSet.Post;
+         end;
+      cdsExcel.Post;
+      cdsExcel.Next;
     end;
-    cdsExcel.Post;
-    cdsExcel.Next;
-  end;
 
   cdsColumn.EnableControls;
   cdsExcel.EnableControls;
 
   cdsExcel.Filtered:=False;
   cdsExcel.Filter:='STATE=''1'' or STATE=''3''';  
-  cdsExcel.Filtered:=True;
+  cdsExcel.Filtered:=true;
   FExceptCount:=cdsExcel.RecordCount;
 
   RzStatus2.Caption := '异常数据:'+inttostr(FExceptCount)+'条    总数据:'+inttostr(FSumCount)+'条';
@@ -814,9 +819,9 @@ procedure TfrmExcelFactory.CreateDbGridEhTitle;
 var i:integer;
 begin
   for i:=1 to DBGridEh1.Columns.Count-2 do
-  begin
-    DBGridEh3.Columns[i+1].Title:=DBGridEh1.Columns[i].Title;
-  end;
+    begin
+      DBGridEh3.Columns[i+1].Title:=DBGridEh1.Columns[i].Title;
+    end;
 end;
 
 procedure TfrmExcelFactory.SetSelfCheck(value: Boolean);
@@ -834,25 +839,25 @@ begin
   FExceptCount:=value;
 end;
 
-procedure TfrmExcelFactory.DBGridEh2Columns2BeforeShowControl(
-  Sender: TObject);
+procedure TfrmExcelFactory.DBGridEh2Columns2BeforeShowControl(Sender: TObject);
 var i:integer;
 begin
   inherited;
   if cdsColumn.FieldByName('FileName').AsString='' then
-  begin
-    cdsDropColumn.ItemIndex:=-1;
-  end
-  else begin
-    for i:=0 to vColumnList.Count-1 do
-    begin
-      if vColumnList.ValueFromIndex[i]=cdsColumn.FieldByName('DestTitle').AsString then
-      begin
-        cdsDropColumn.ItemIndex:=i;
-        exit;
-      end;
-    end;
-  end;
+     begin
+       cdsDropColumn.ItemIndex:=-1;
+     end
+  else
+     begin
+       for i:=0 to vColumnList.Count-1 do
+         begin
+           if vColumnList.ValueFromIndex[i]=cdsColumn.FieldByName('DestTitle').AsString then
+              begin
+                cdsDropColumn.ItemIndex:=i;
+                Exit;
+              end;
+         end;
+     end;
 end;
 
 function TfrmExcelFactory.Check(columnIndex:integer): Boolean;
@@ -869,12 +874,12 @@ procedure TfrmExcelFactory.chkignoreClick(Sender: TObject);
 begin
   inherited;
   if FExceptCount>0 then
-  begin
-    if chkignore.Checked then
-      btnNext.Enabled:=true
-    else if not chkignore.Checked then
-      btnNext.Enabled:=false;
-  end;
+     begin
+       if chkignore.Checked then
+          btnNext.Enabled:=true
+       else if not chkignore.Checked then
+          btnNext.Enabled:=false;
+     end;
 end; 
 
 procedure TfrmExcelFactory.btnExportClick(Sender: TObject);
@@ -884,46 +889,45 @@ begin
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if SaveDialog1.Execute then
-  begin
-    if FileExists(SaveDialog1.FileName) then
-    begin
-      if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-        exit;
-      DeleteFile(SaveDialog1.FileName);
-    end;
-
-    Stream := TMemoryStream.Create;
-    try
-      Stream.Position := 0;
-      if ExtractFileExt(SaveDialog1.FileName)='.xls' then
-      begin
-        with TDBGridEhExportAsXLS.Create do
-        begin
-          try
-            DBGridEh := DBGridEh3;
-            ExportToStream(Stream, True);
-          finally
-            Free;
+     begin
+       if FileExists(SaveDialog1.FileName) then
+          begin
+            if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
+               Exit;
+            DeleteFile(SaveDialog1.FileName);
           end;
-        end;
-      end
-      else
-      begin
-        with TDBGridEhExportAsHTML.Create do
-        begin
-          try
-            DBGridEh := DBGridEh3;
-            ExportToStream(Stream, True);
-          finally
-            Free;
-          end;
-        end;
-      end;
-      Stream.SaveToFile(SaveDialog1.FileName);
-    finally
-      Stream.Free;
-    end;
-  end;
+       Stream := TMemoryStream.Create;
+       try
+         Stream.Position := 0;
+         if ExtractFileExt(SaveDialog1.FileName)='.xls' then
+            begin
+              with TDBGridEhExportAsXLS.Create do
+                begin
+                  try
+                    DBGridEh := DBGridEh3;
+                    ExportToStream(Stream, true);
+                  finally
+                    Free;
+                  end;
+                end;
+            end
+         else
+            begin
+              with TDBGridEhExportAsHTML.Create do
+                begin
+                  try
+                    DBGridEh := DBGridEh3;
+                    ExportToStream(Stream, true);
+                  finally
+                    Free;
+                  end;
+                end;
+            end;
+         Stream.SaveToFile(SaveDialog1.FileName);
+       finally
+         Stream.Free;
+       end;
+     end;
 end;
 
 procedure TfrmExcelFactory.DisplayResult;
@@ -932,9 +936,7 @@ begin
   str:='从文件中导入数据条数：'+inttostr(FSumCount)+' 条；'+#13+
        '       有效数据条数：'+inttostr(FSumCount-FExceptCount)+' 条；'+#13+
        '       异常数据条数：'+inttostr(FExceptCount)+' 条；'+#13#10;
-
   labResult.Caption:=str;
-
 end;
 
 procedure TfrmExcelFactory.N1Click(Sender: TObject);
@@ -954,88 +956,87 @@ end;
 procedure TfrmExcelFactory.CreateStringList(var vList: TStringList);
 begin
   if vList=nil then
-  begin
-    vList:=TStringList.Create;
-    vList.Sorted:=true;
-    vList.Duplicates:=dupIgnore;
-  end
+     begin
+       vList := TStringList.Create;
+       vList.Sorted := true;
+       vList.Duplicates := dupIgnore;
+     end
   else
-    vList.Clear;
+     vList.Clear;
 end;
 
 function TfrmExcelFactory.DeleteDuplicateString(vStr: string;var vStrList: TStringList): string;
-var i:integer;
-    strResult:string;
+var
+  i:integer;
+  strResult:string;
 begin
   strResult:='';
-  if vStr='' then
-    strResult:='''''';
-    
+  if vStr='' then strResult:='''''';
+
   if vStrList=nil then
-  begin
-    vStrList:=TStringList.Create;
-    vStrList.Sorted:=true;
-    vStrList.Duplicates:= dupIgnore;
-  end
+     begin
+       vStrList:=TStringList.Create;
+       vStrList.Sorted:=true;
+       vStrList.Duplicates:= dupIgnore;
+     end
   else
-    vStrList.Clear;
+     vStrList.Clear;
 
   vStrList.DelimitedText:=vStr;
   for i:=0 to vStrList.Count-1 do
-  begin
-    if strResult='' then
-      strResult:=''''+vStrList[i]+''''
-    else
-    strResult:=strResult+','+''''+vStrList[i]+'''';
-  end;
+    begin
+      if strResult='' then
+         strResult:=''''+vStrList[i]+''''
+      else
+         strResult:=strResult+','+''''+vStrList[i]+'''';
+    end;
+
   result:=strResult;
 end;
 
-procedure TfrmExcelFactory.TransformtoString(vList: TStringList;
-  var vStr: widestring);
+procedure TfrmExcelFactory.TransformtoString(vList: TStringList; var vStr: widestring);
 var i:integer;
 begin
   vStr:='';
   for i:=0 to vList.Count-1 do
-  begin
-    if vStr='' then
-      vStr:=''''+vList[i]+''''
-    else
-      vStr:=vStr+','+''''+vList[i]+'''';;
-  end;
+    begin
+      if vStr='' then
+         vStr:=''''+vList[i]+''''
+      else
+         vStr:=vStr+','+''''+vList[i]+'''';;
+    end;
 end;
 
 procedure TfrmExcelFactory.TransformtoString(var vList: string;vStr: string);
 begin
-  if (vList='')  then
-    if ((vList='') and (vStr='')) then
-      vList:=vList+','
-    else
-      vList:=vStr
+  if vList = '' then
+     if (vList='') and (vStr='') then
+        vList:=vList+','
+     else
+        vList:=vStr
   else
-    vList:=vList+','+vStr;
+     vList:=vList+','+vStr;
 end;
 
 procedure TfrmExcelFactory.RzLabel41Click(Sender: TObject);
 begin
   inherited;
   if OpenDialog1.Execute then
-  begin
-    edtFileName.Text := OpenDialog1.FileName;
-    FilePath := Trim(edtFileName.Text);
-    isFirstCheck:=true;
-  end;
+     begin
+       edtFileName.Text := OpenDialog1.FileName;
+       FilePath := Trim(edtFileName.Text);
+       isFirstCheck:=true;
+     end;
 end;
 
 procedure TfrmExcelFactory.chkHeaderClick(Sender: TObject);
 begin
   inherited;
   if chkHeader.Checked then
-    RzPanel5.Enabled:=true
+     RzPanel5.Enabled:=true
   else
-    RzPanel5.Enabled:=false;
+     RzPanel5.Enabled:=false;
 end;
-
 
 procedure TfrmExcelFactory.DBGridEh2DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
@@ -1043,13 +1044,13 @@ procedure TfrmExcelFactory.DBGridEh2DrawColumnCell(Sender: TObject;
 begin
   inherited;
   if (Column.FieldName = 'DestTitle') then
-  begin
-    if IsRequiredFiled(cdsColumn.FieldByName('FieldName').AsString) then
-    begin
-      DBGridEh2.Canvas.Font.Color := clred;
-      DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    end;
-  end;
+     begin
+       if IsRequiredFiled(cdsColumn.FieldByName('FieldName').AsString) then
+          begin
+            DBGridEh2.Canvas.Font.Color := clred;
+            DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+          end;
+     end;
 end;
 
 function TfrmExcelFactory.IsRequiredFiled(strFiled: string): Boolean;
@@ -1067,9 +1068,8 @@ function TfrmExcelFactory.GetViwGoodsInfo(fields: string): string;
 var allFields:string;
 begin
   allFields:='TENANT_ID,SHOP_ID,GODS_ID,GODS_CODE,GODS_NAME ';
-  if fields<>'' then
-    allFields:=allFields+','+fields+' ';
-  result:=dllGlobal.GetViwGoodsInfo(allFields,false);
+  if fields<>'' then allFields:=allFields+','+fields+' ';
+  result := dllGlobal.GetViwGoodsInfo(allFields,false);
 end;
 
 end.

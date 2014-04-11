@@ -377,6 +377,7 @@ var strError:string;
 begin
   result := true;
   strError:='';
+
   if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString='') then
      begin
        result := False;
@@ -545,11 +546,12 @@ begin
 end;
 
 function TfrmCustomerExcel.SelfCheckExcute: boolean;
-var isSort:boolean;
-    rs:TZQuery;
-    FieldName,FileName:string;
-    preId:integer;
-    strPre,strNext:string;
+var
+  rs:TZQuery;
+  preId:integer;
+  isSort:boolean;
+  strPre,strNext:string;
+  FieldName,FileName:string;
 begin
   rs := TZQuery.Create(nil);
   try
@@ -562,56 +564,54 @@ begin
       FieldName:=cdsColumn.FieldByName('FieldName').AsString;
       FileName:=cdsColumn.FieldByName('FileName').AsString;
       if (FieldName <> '') and (FileName<>'') then
-      begin
-        if (FieldName='CUST_CODE') or (FieldName='SHOP_ID') or
-           (FieldName='SORT_ID') or (FieldName='PRICE_ID') or
-           (FieldName='REGION_ID') or (FieldName='IDN_TYPE') or
-           (FieldName='DEGREES') or (FieldName='OCCUPATION') then
-        begin
-          if (FieldName='CUST_CODE') then
-          begin
-            isSort:=true;
-            rs.SortedFields:=cdsColumn.FieldByName('FileName').AsString;
-          end;
+         begin
+           if (FieldName='CUST_CODE') or (FieldName='SHOP_ID') or (FieldName='SORT_ID') or (FieldName='PRICE_ID') or
+              (FieldName='REGION_ID') or (FieldName='IDN_TYPE') or (FieldName='DEGREES') or (FieldName='OCCUPATION') then
+              begin
+                if (FieldName='CUST_CODE') then
+                   begin
+                     isSort:=true;
+                     rs.SortedFields:=cdsColumn.FieldByName('FileName').AsString;
+                   end;
 
-          if isSort then
-          begin
-            rs.First;
-            strPre:=rs.FieldByName(FileName).AsString;
-            preId:=rs.FieldByName('ID').AsInteger;
-            //if strPre<>'' then
-            TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
-            rs.Next;
-            while not rs.Eof do
-            begin
-              strNext:=rs.FieldByName(FileName).AsString;
-              if (strPre<>'') and (strPre=strNext) then
+           if isSort then
               begin
-                cdsExcel.Locate('ID',rs.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据'+cdsColumn.FieldByName('DestTitle').asstring+'重复;';
-                cdsExcel.Post;
+                rs.First;
+                strPre:=rs.FieldByName(FileName).AsString;
+                preId:=rs.FieldByName('ID').AsInteger;
+                TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strPre);
+                rs.Next;
+                while not rs.Eof do
+                  begin
+                    strNext:=rs.FieldByName(FileName).AsString;
+                    if (strPre<>'') and (strPre=strNext) then
+                       begin
+                         cdsExcel.Locate('ID',rs.FieldByName('ID').AsInteger,[]);
+                         cdsExcel.Edit;
+                         cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+'与第'+inttostr(preId)+'条数据'+cdsColumn.FieldByName('DestTitle').asstring+'重复;';
+                         cdsExcel.Post;
+                       end
+                    else if (strPre<>strNext) then
+                       begin
+                         strPre:=strNext;
+                         preID:=rs.FieldByName('ID').AsInteger;
+                       end;
+                    TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
+                    rs.Next;
+                  end;
               end
-              else if (strPre<>strNext) then
+           else
               begin
-                strPre:=strNext;
-                preID:=rs.FieldByName('ID').AsInteger;
+                rs.First;
+                while not rs.Eof do
+                  begin
+                    strNext:=rs.FieldByName(FileName).AsString;
+                    if strNext<> '' then
+                    TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
+                    rs.Next;
+                  end;
               end;
-              TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
-              rs.Next;
-            end;
-          end else
-          begin
-            rs.First;
-            while not rs.Eof do
-            begin
-              strNext:=rs.FieldByName(FileName).AsString;
-              if strNext<> '' then
-              TransformtoString(FieldCheckSet[cdsColumn.FieldByName('ID').AsInteger],strNext);
-              rs.Next;
-            end;
-          end;
-        end;
+         end;
       end;
       cdsColumn.Next;
     end;
@@ -637,309 +637,308 @@ begin
     //*********************会员卡号*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','CUST_CODE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.SQL.Text:='select distinct CLIENT_CODE from VIW_CUSTOMER where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and CLIENT_CODE in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        rs.First;
-        while not rs.Eof do
-        begin
-          ss.Filtered:=false;
-          ss.Filter:=FieldName+'='''+rs.Fields[0].AsString+'''';
-          ss.Filtered:=true;
-          ss.First;
-          while not ss.Eof do
-          begin
-            cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-            cdsExcel.Edit;
-            cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'已存在;';
-            cdsExcel.Post;
-            ss.Next;
-          end;
-          ss.Filtered:=false;
-          rs.Next;
-        end;
-      end;
-    end;
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.SQL.Text:='select distinct CLIENT_CODE from VIW_CUSTOMER where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and CLIENT_CODE in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
+            begin
+              rs.First;
+              while not rs.Eof do
+                begin
+                  ss.Filtered:=false;
+                  ss.Filter:=FieldName+'='''+rs.Fields[0].AsString+'''';
+                  ss.Filtered:=true;
+                  ss.First;
+                  while not ss.Eof do
+                    begin
+                      cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                      cdsExcel.Edit;
+                      cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'已存在;';
+                      cdsExcel.Post;
+                      ss.Next;
+                    end;
+                  ss.Filtered:=false;
+                  rs.Next;
+                end;
+            end;
+       end;
 
     //*********************入会门店*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','SHOP_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.Close;
-      rs.SQL.Text:='select SHOP_NAME from CA_SHOP_INFO where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and SHOP_NAME in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        if rs.RecordCount=strList.Count then  //所有的分类都在库中
-        begin
-          FieldType[FieldIndex]:=1;
-        end
-        else if rs.RecordCount<strList.Count then  //部分分类在库中
-        begin
-          FieldType[FieldIndex]:=2;
-          for i:=0 to strList.Count-1 do
-          begin
-            if not rs.Locate('SHOP_NAME',strList[i],[]) then
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.Close;
+         rs.SQL.Text:='select SHOP_NAME from CA_SHOP_INFO where tenant_id='+token.tenantId+' and comm not in(''02'',''12'') and SHOP_NAME in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
             begin
-              ss.Filtered:=false;
-              ss.Filter:=FieldName+'='''+strList[i]+'''';
-              ss.Filtered:=true;
-              ss.First;
-              while not ss.Eof do
-              begin
-                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
-                cdsExcel.Post;
-                ss.Next;
-              end;
-              ss.Filtered:=false;
-            end;
-          end;
-        end
-      end
-      else                                  //库中没有文件中分类
-        FieldType[FieldIndex]:=0;
-    end;
+              if rs.RecordCount=strList.Count then  //所有的分类都在库中
+                 begin
+                   FieldType[FieldIndex]:=1;
+                 end
+              else if rs.RecordCount<strList.Count then  //部分分类在库中
+                 begin
+                   FieldType[FieldIndex]:=2;
+                   for i:=0 to strList.Count-1 do
+                     begin
+                       if not rs.Locate('SHOP_NAME',strList[i],[]) then
+                          begin
+                            ss.Filtered:=false;
+                            ss.Filter:=FieldName+'='''+strList[i]+'''';
+                            ss.Filtered:=true;
+                            ss.First;
+                            while not ss.Eof do
+                              begin
+                                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                                cdsExcel.Edit;
+                                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
+                                cdsExcel.Post;
+                                ss.Next;
+                              end;
+                            ss.Filtered:=false;
+                          end;
+                     end;
+                 end
+            end
+         else                                  //库中没有文件中分类
+            FieldType[FieldIndex]:=0;
+       end;
 
     //*********************会员等级*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','PRICE_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.Close;
-      rs.SQL.Text:=' select distinct CS.PRICE_NAME from VIW_CUSTOMER VC,PUB_PRICEGRADE CS where VC.TENANT_ID=CS.TENANT_ID and VC.PRICE_ID=CS.PRICE_ID and VC.tenant_id='+token.tenantId+
-                   ' and VC.comm not in(''02'',''12'') and CS.PRICE_NAME in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        if rs.RecordCount=strList.Count then  //所有的分类都在库中
-        begin
-          FieldType[FieldIndex]:=1;
-        end
-        else if rs.RecordCount<strList.Count then  //部分分类在库中
-        begin
-          FieldType[FieldIndex]:=2;
-          for i:=0 to strList.Count-1 do
-          begin
-            if not rs.Locate('PRICE_NAME',strList[i],[]) then
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.Close;
+         rs.SQL.Text:=' select distinct CS.PRICE_NAME from VIW_CUSTOMER VC,PUB_PRICEGRADE CS where VC.TENANT_ID=CS.TENANT_ID and VC.PRICE_ID=CS.PRICE_ID and VC.tenant_id='+token.tenantId+
+                      ' and VC.comm not in(''02'',''12'') and CS.PRICE_NAME in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
             begin
-              ss.Filtered:=false;
-              ss.Filter:=FieldName+'='''+strList[i]+'''';
-              ss.Filtered:=true;
-              ss.First;
-              while not ss.Eof do
-              begin
-                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
-                cdsExcel.Post;
-                ss.Next;
-              end;
-              ss.Filtered:=false;
-            end;
-          end;
-        end
-      end
-      else                                  //库中没有文件中分类
-        FieldType[FieldIndex]:=0;
-    end;
+              if rs.RecordCount=strList.Count then  //所有的分类都在库中
+                 begin
+                   FieldType[FieldIndex]:=1;
+                 end
+              else if rs.RecordCount<strList.Count then  //部分分类在库中
+                 begin
+                   FieldType[FieldIndex]:=2;
+                   for i:=0 to strList.Count-1 do
+                     begin
+                       if not rs.Locate('PRICE_NAME',strList[i],[]) then
+                          begin
+                            ss.Filtered:=false;
+                            ss.Filter:=FieldName+'='''+strList[i]+'''';
+                            ss.Filtered:=true;
+                            ss.First;
+                            while not ss.Eof do
+                              begin
+                                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                                cdsExcel.Edit;
+                                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
+                                cdsExcel.Post;
+                                ss.Next;
+                              end;
+                            ss.Filtered:=false;
+                          end;
+                     end;
+                 end
+            end
+         else                                  //库中没有文件中分类
+            FieldType[FieldIndex]:=0;
+       end;
 
     //*********************会员类别*****************************
 
     //*********************地区*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','REGION_ID',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.Close;
-      rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''8'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        if rs.RecordCount=strList.Count then  //所有的分类都在库中
-        begin
-          FieldType[FieldIndex]:=1;
-        end
-        else if rs.RecordCount<strList.Count then  //部分分类在库中
-        begin
-          FieldType[FieldIndex]:=2;
-          for i:=0 to strList.Count-1 do
-          begin
-            if not rs.Locate('CODE_NAME',strList[i],[]) then
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.Close;
+         rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''8'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
             begin
-              ss.Filtered:=false;
-              ss.Filter:=FieldName+'='''+strList[i]+'''';
-              ss.Filtered:=true;
-              ss.First;
-              while not ss.Eof do
-              begin
-                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
-                cdsExcel.Post;
-                ss.Next;
-              end;
-              ss.Filtered:=false;
-            end;
-          end;
-        end
-      end
-      else                                  //库中没有文件中分类
-        FieldType[FieldIndex]:=0;
-    end;
+              if rs.RecordCount=strList.Count then  //所有的分类都在库中
+                 begin
+                   FieldType[FieldIndex]:=1;
+                 end
+              else if rs.RecordCount<strList.Count then  //部分分类在库中
+                 begin
+                   FieldType[FieldIndex]:=2;
+                   for i:=0 to strList.Count-1 do
+                     begin
+                       if not rs.Locate('CODE_NAME',strList[i],[]) then
+                          begin
+                            ss.Filtered:=false;
+                            ss.Filter:=FieldName+'='''+strList[i]+'''';
+                            ss.Filtered:=true;
+                            ss.First;
+                            while not ss.Eof do
+                              begin
+                                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                                cdsExcel.Edit;
+                                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
+                                cdsExcel.Post;
+                                ss.Next;
+                              end;
+                            ss.Filtered:=false;
+                          end;
+                     end;
+                 end
+            end
+         else                                  //库中没有文件中分类
+            FieldType[FieldIndex]:=0;
+       end;
 
     //*********************证件类型*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','IDN_TYPE',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.Close;
-      rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''11'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        if rs.RecordCount=strList.Count then  //所有的分类都在库中
-        begin
-          FieldType[FieldIndex]:=1;
-        end
-        else if rs.RecordCount<strList.Count then  //部分分类在库中
-        begin
-          FieldType[FieldIndex]:=2;
-          for i:=0 to strList.Count-1 do
-          begin
-            if not rs.Locate('CODE_NAME',strList[i],[]) then
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.Close;
+         rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''11'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
             begin
-              ss.Filtered:=false;
-              ss.Filter:=FieldName+'='''+strList[i]+'''';
-              ss.Filtered:=true;
-              ss.First;
-              while not ss.Eof do
-              begin
-                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
-                cdsExcel.Post;
-                ss.Next;
-              end;
-              ss.Filtered:=false;
-            end;
-          end;
-        end
-      end
-      else                                  //库中没有文件中分类
-        FieldType[FieldIndex]:=0;
-    end;
+               if rs.RecordCount=strList.Count then  //所有的分类都在库中
+                  begin
+                    FieldType[FieldIndex]:=1;
+                  end
+               else if rs.RecordCount<strList.Count then  //部分分类在库中
+                  begin
+                    FieldType[FieldIndex]:=2;
+                    for i:=0 to strList.Count-1 do
+                      begin
+                        if not rs.Locate('CODE_NAME',strList[i],[]) then
+                           begin
+                             ss.Filtered:=false;
+                             ss.Filter:=FieldName+'='''+strList[i]+'''';
+                             ss.Filtered:=true;
+                             ss.First;
+                             while not ss.Eof do
+                               begin
+                                 cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                                 cdsExcel.Edit;
+                                 cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
+                                 cdsExcel.Post;
+                                 ss.Next;
+                               end;
+                             ss.Filtered:=false;
+                           end;
+                      end;
+                  end
+            end
+         else                                  //库中没有文件中分类
+            FieldType[FieldIndex]:=0;
+       end;
 
     //*********************学历*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','DEGREES',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.Close;
-      rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''14'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        if rs.RecordCount=strList.Count then  //所有的分类都在库中
-        begin
-          FieldType[FieldIndex]:=1;
-        end
-        else if rs.RecordCount<strList.Count then  //部分分类在库中
-        begin
-          FieldType[FieldIndex]:=2;
-          for i:=0 to strList.Count-1 do
-          begin
-            if not rs.Locate('CODE_NAME',strList[i],[]) then
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.Close;
+         rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''14'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
             begin
-              ss.Filtered:=false;
-              ss.Filter:=FieldName+'='''+strList[i]+'''';
-              ss.Filtered:=true;
-              ss.First;
-              while not ss.Eof do
-              begin
-                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
-                cdsExcel.Post;
-                ss.Next;
-              end;
-              ss.Filtered:=false;
-            end;
-          end;
-        end
-      end
-      else                                  //库中没有文件中分类
-        FieldType[FieldIndex]:=0;
-    end;
+              if rs.RecordCount=strList.Count then  //所有的分类都在库中
+                 begin
+                   FieldType[FieldIndex]:=1;
+                 end
+              else if rs.RecordCount<strList.Count then  //部分分类在库中
+                 begin
+                   FieldType[FieldIndex]:=2;
+                   for i:=0 to strList.Count-1 do
+                     begin
+                       if not rs.Locate('CODE_NAME',strList[i],[]) then
+                          begin
+                            ss.Filtered:=false;
+                            ss.Filter:=FieldName+'='''+strList[i]+'''';
+                            ss.Filtered:=true;
+                            ss.First;
+                            while not ss.Eof do
+                              begin
+                                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                                cdsExcel.Edit;
+                                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
+                                cdsExcel.Post;
+                                ss.Next;
+                              end;
+                            ss.Filtered:=false;
+                          end;
+                     end;
+                 end
+            end
+         else                                  //库中没有文件中分类
+            FieldType[FieldIndex]:=0;
+       end;
 
     //*********************职业*****************************
     FieldName:='';
     if (cdsColumn.Locate('FieldName','OCCUPATION',[])) and (cdsColumn.FieldByName('FileName').AsString<>'') then
-    begin
-      FieldName:=cdsColumn.FieldByName('FileName').AsString;
-      FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
-      strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
-      rs.Close;
-      rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''15'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
-      dataFactory.Open(rs);
-      if not rs.IsEmpty then
-      begin
-        if rs.RecordCount=strList.Count then  //所有的分类都在库中
-        begin
-          FieldType[FieldIndex]:=1;
-        end
-        else if rs.RecordCount<strList.Count then  //部分分类在库中
-        begin
-          FieldType[FieldIndex]:=2;
-          for i:=0 to strList.Count-1 do
-          begin
-            if not rs.Locate('CODE_NAME',strList[i],[]) then
+       begin
+         FieldName:=cdsColumn.FieldByName('FileName').AsString;
+         FieldIndex:=cdsColumn.FieldByName('ID').AsInteger;
+         strWhere:=DeleteDuplicateString(FieldCheckSet[FieldIndex],strList);
+         rs.Close;
+         rs.SQL.Text:='select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''15'' and COMM not in (''02'',''12'') and CODE_NAME in ('+strWhere+')';
+         dataFactory.Open(rs);
+         if not rs.IsEmpty then
             begin
-              ss.Filtered:=false;
-              ss.Filter:=FieldName+'='''+strList[i]+'''';
-              ss.Filtered:=true;
-              ss.First;
-              while not ss.Eof do
-              begin
-                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
-                cdsExcel.Edit;
-                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
-                cdsExcel.Post;
-                ss.Next;
-              end;
-              ss.Filtered:=false;
-            end;
-          end;
-        end
-      end
-      else                                  //库中没有文件中分类
-        FieldType[FieldIndex]:=0;
-    end;
+              if rs.RecordCount=strList.Count then  //所有的分类都在库中
+                 begin
+                   FieldType[FieldIndex]:=1;
+                 end
+              else if rs.RecordCount<strList.Count then  //部分分类在库中
+                 begin
+                   FieldType[FieldIndex]:=2;
+                   for i:=0 to strList.Count-1 do
+                     begin
+                       if not rs.Locate('CODE_NAME',strList[i],[]) then
+                          begin
+                            ss.Filtered:=false;
+                            ss.Filter:=FieldName+'='''+strList[i]+'''';
+                            ss.Filtered:=true;
+                            ss.First;
+                            while not ss.Eof do
+                              begin
+                                cdsExcel.Locate('ID',ss.FieldByName('ID').AsInteger,[]);
+                                cdsExcel.Edit;
+                                cdsExcel.FieldByName('Msg').AsString:=cdsExcel.FieldByName('Msg').AsString+cdsColumn.FieldByName('DestTitle').AsString+'不存在;';
+                                cdsExcel.Post;
+                                ss.Next;
+                              end;
+                            ss.Filtered:=false;
+                          end;
+                     end;
+                 end
+            end
+         else                                  //库中没有文件中分类
+            FieldType[FieldIndex]:=0;
+       end;
   finally
     rs.Free;
     ss.Free;
   end;
 end;
 
-class function TfrmCustomerExcel.ExcelFactory(Owner: TForm; vDataSet: TZQuery;Fields,Formats:string;
-  isSelfCheck: boolean): boolean;
+class function TfrmCustomerExcel.ExcelFactory(Owner: TForm; vDataSet: TZQuery;Fields,Formats:string; isSelfCheck: boolean): boolean;
 begin
   with TfrmCustomerExcel.Create(Owner) do
     begin
@@ -963,22 +962,22 @@ begin
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
-  begin
-    if FileExists(SaveDialog1.FileName) then
-    begin
-      if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-         Exit;
-      DeleteFile(SaveDialog1.FileName);
-    end;
-    try
-      if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls') then
-         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls'),pchar(SaveDialog1.FileName),false)
-      else
-         MessageBox(Handle, Pchar('没有找到导入模板！'),'友情提示..', MB_OK + MB_ICONQUESTION);
-    except
-      MessageBox(Handle, Pchar('下载导入模板失败！'),'友情提示..', MB_OK + MB_ICONQUESTION);
-    end;
-  end;
+     begin
+       if FileExists(SaveDialog1.FileName) then
+          begin
+            if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
+               Exit;
+            DeleteFile(SaveDialog1.FileName);
+          end;
+       try
+         if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls') then
+            CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls'),pchar(SaveDialog1.FileName),false)
+         else
+            MessageBox(Handle, Pchar('没有找到导入模板！'),'友情提示..', MB_OK + MB_ICONQUESTION);
+       except
+         MessageBox(Handle, Pchar('下载导入模板失败！'),'友情提示..', MB_OK + MB_ICONQUESTION);
+       end;
+     end;
 end;
 
 function TfrmCustomerExcel.IsRequiredFiled(strFiled: string): boolean;

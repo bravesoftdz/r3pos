@@ -13,8 +13,8 @@ uses
   Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, ufrmExcelFactory,
   Menus, RzPrgres;
 
-  const
-    FieldCount=26;
+const FieldCount=25;
+
 type
   TfrmCustomerExcel = class(TfrmExcelFactory)
     procedure RzLabel17Click(Sender: TObject);
@@ -35,17 +35,17 @@ type
     class function ExcelFactory(Owner: TForm;vDataSet:TZQuery;Fields,Formats:string;isSelfCheck:Boolean=false):Boolean;override;
   end;
 
-  const
-    FieldsString =
+const
+  FieldsString =
     'CUST_CODE=会员卡号,CUST_NAME=会员名称,PRICE_ID=会员等级,SEX=性别,REGION_ID=地区,'+
     'SHOP_ID=入会门店,MOVE_TELE=移动电话,BIRTHDAY=会员生日,FAMI_ADDR=地址,POSTALCODE=邮编,ID_NUMBER=证件号码,IDN_TYPE=证件类型,SND_DATE=入会日期,'+
     'CON_DATE=续会日期,QQ=QQ,MSN=MSN,END_DATE=有效截止日期,MONTH_PAY=月收入,DEGREES=学历,EMAIL=电子邮件,OFFI_TELE=办公电话,FAMI_TELE=家庭电话,'+
-    'OCCUPATION=职业,JOBUNIT=工作单位,REMARK=备注';
+    'OCCUPATION=职业,JOBUNIT=工作单位,REMARK=备注,INTEGRAL=积分';
 
-    FormatString =
+  FormatString =
     '0=CUST_CODE,1=CUST_NAME,2=PRICE_ID,3=SEX,4=REGION_ID,5=SHOP_ID,6=MOVE_TELE,7=BIRTHDAY,8=FAMI_ADDR,'+
     '9=POSTALCODE,10=ID_NUMBER,11=IDN_TYPE,12=SND_DATE,13=CON_DATE,14=QQ,15=MSN,16=END_DATE,17=MONTH_PAY,18=DEGREES,19=EMAIL,20=OFFI_TELE,'+
-    '21=FAMI_TELE,22=OCCUPATION,23=JOBUNIT,24=REMARK';
+    '21=FAMI_TELE,22=OCCUPATION,23=JOBUNIT,24=REMARK,25=INTEGRAL';
 
 implementation
 
@@ -60,14 +60,13 @@ begin
 end;
 
 function TfrmCustomerExcel.SaveExcel(dsExcel:TZQuery):Boolean;
-var Field:TField;
-    ss,ps,pr,cs:TZQuery;
-    str:string;
-    Params:TftParamList;
-    strWhere:string;
-    num:double;
+var
+  Field:TField;
+  ss,ps,pr,cs:TZQuery;
+  str:string;
+  strWhere:string;
 begin
-  if dsExcel.RecordCount=0 then exit;
+  if dsExcel.RecordCount=0 then Exit;
   ProgressBar1.Visible:=true;
   cs:=TZQuery.Create(nil);
   ss:=dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
@@ -401,18 +400,14 @@ begin
   end;
 end;
 
-
 procedure TfrmCustomerExcel.CreateParams;
-var rs:TZQuery;
-    str:string;
-    i:integer;
 begin
   inherited;
 end;
 
 function TfrmCustomerExcel.Check(columnIndex:integer): Boolean;
-var str,strError,fieldName:string;
-    num:double;
+var
+  str,strError,fieldName:string;
 begin
   strError:='';
   fieldName:=cdsColumn.FieldByName('FileName').AsString;
@@ -558,10 +553,9 @@ var isSort:Boolean;
     preId:integer;
     strPre,strNext:string;
 begin
+  rs := TZQuery.Create(nil);
   try
-    rs:=TZQuery.Create(nil);
-    rs.Data:=cdsExcel.Data;
-
+    rs.Data := cdsExcel.Data;
     ClearParams;
     cdsColumn.First;
     while not cdsColumn.Eof do
@@ -631,16 +625,17 @@ begin
 end;
 
 function TfrmCustomerExcel.OutCheckExcute: Boolean;
-var rs,ss:TZQuery;
-    FieldName,tempField,strError:string;
-    i,c,FieldIndex:integer;
-    strWhere:string;
-    strList:TStringList;
+var
+  rs,ss:TZQuery;
+  FieldName:string;
+  i,FieldIndex:integer;
+  strWhere:string;
+  strList:TStringList;
 begin
+  rs:=TZQuery.Create(nil);
+  ss:=TZQuery.Create(nil);
   try
-    rs:=TZQuery.Create(nil);
-    ss:=TZQuery.Create(nil);
-    ss.Data:=cdsExcel.Data;
+    ss.Data := cdsExcel.Data;
 
     //*********************会员卡号*****************************
     FieldName:='';
@@ -942,7 +937,6 @@ begin
       else                                  //库中没有文件中分类
         FieldType[FieldIndex]:=0;
     end;
-
   finally
     rs.Free;
     ss.Free;
@@ -959,11 +953,10 @@ begin
         DataSet:=vDataSet;
         CreateUseDataSet;
         DecodeFields2(FieldsString);
-        //DecodeFormats(FormatString);
         SelfCheck:=isSelfCheck;
         result := (ShowModal=MROK);
       finally
-        free;
+        Free;
       end;
     end;
 end;
@@ -971,7 +964,7 @@ end;
 procedure TfrmCustomerExcel.RzLabel17Click(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('是否要下载会员信息导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then exit;
+  if MessageBox(Handle,pchar('是否要下载会员信息导入模板？'),'友情提示..',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then Exit;
   saveDialog1.DefaultExt:='*.xls';
   saveDialog1.Filter:='Excel文档(*.xls)|*.xls';
   if saveDialog1.Execute then
@@ -979,14 +972,14 @@ begin
     if FileExists(SaveDialog1.FileName) then
     begin
       if MessageBox(Handle, Pchar(SaveDialog1.FileName + '已经存在，是否覆盖它？'), Pchar(Application.Title), MB_YESNO + MB_ICONQUESTION) <> 6 then
-        exit;
+         Exit;
       DeleteFile(SaveDialog1.FileName);
     end;
     try
       if FileExists(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls') then
-        CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls'),pchar(SaveDialog1.FileName),false)
+         CopyFile(pchar(ExtractFilePath(Application.ExeName)+'ExcelTemplate\会员信息导入表.xls'),pchar(SaveDialog1.FileName),false)
       else
-        MessageBox(Handle, Pchar('没有找到导入模板！'),'友情提示..', MB_OK + MB_ICONQUESTION);
+         MessageBox(Handle, Pchar('没有找到导入模板！'),'友情提示..', MB_OK + MB_ICONQUESTION);
     except
       MessageBox(Handle, Pchar('下载导入模板失败！'),'友情提示..', MB_OK + MB_ICONQUESTION);
     end;
@@ -997,7 +990,7 @@ function TfrmCustomerExcel.IsRequiredFiled(strFiled: string): Boolean;
 begin
   result:=false;
   if (strFiled='CUST_CODE') or (strFiled='CUST_NAME') or (strFiled='PRICE_ID') then
-    result:=true;
+     result:=true;
 end;
 
 end.

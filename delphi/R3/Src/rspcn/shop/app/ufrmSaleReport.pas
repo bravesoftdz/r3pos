@@ -511,7 +511,7 @@ begin
          RzLabel1.Caption := '"'+cdsReport1.FieldbyName('SORT_NAME').AsString+'" '+CodeName+'的销售流水'
      end;
 
-  RzBmpButton4.Caption := '展开明细';
+  // RzBmpButton4.Caption := '展开明细';
 end;
 
 procedure TfrmSaleReport.dateFlagPropertiesChange(Sender: TObject);

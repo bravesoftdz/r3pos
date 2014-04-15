@@ -201,7 +201,7 @@ begin
   dateFlag.Properties.ReadOnly := not all;
   D1.Properties.ReadOnly := not all;
   D2.Properties.ReadOnly := not all;
-  RzBmpButton4.Caption := '展开明细';
+  // RzBmpButton4.Caption := '展开明细';
 end;
 
 procedure TfrmStockReport.dateFlagPropertiesChange(Sender: TObject);

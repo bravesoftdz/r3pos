@@ -8,7 +8,7 @@ uses
   cxDropDownEdit, cxCalendar, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, ComCtrls, RzTreeVw, Grids, DBGridEh, cxButtonEdit, DB, Menus,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, ObjCommon, PrnDbgeh,
-  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd;
+  zrComboBoxList, RzBorder, cxCheckBox, RzBmpBtn, RzBckgnd, IniFiles;
 
 type
   TfrmGoodsStorage = class(TfrmWebToolForm)
@@ -215,8 +215,9 @@ type
     relationType:integer;
     AObj:TRecord_;
     storAmt:real;
-    FdbState: TDataSetState;
     FstorFlag: integer;
+    FdbState: TDataSetState;
+    isSyncUpperAmount:string;
     function  FindColumn(fieldname:string):TColumnEh;
     function  GetOpenWhere:string;
     procedure ReadInfo;
@@ -331,6 +332,7 @@ end;
 
 procedure TfrmGoodsStorage.showForm;
 var
+  F:TIniFile;
   rs:TZQuery;
   column:TColumnEh;
 begin
@@ -378,6 +380,13 @@ begin
        RzBmpButton7.Left := RzBmpButton7.Left - 120;
        RzPanel1.Left := RzPanel1.Left - 120;
      end;
+
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
+  try
+    isSyncUpperAmount := F.ReadString('soft','SYNC_UPPER_AMOUNT','0');
+  finally
+    F.Free;
+  end;
 end;
 
 procedure TfrmGoodsStorage.Open;
@@ -1061,6 +1070,13 @@ begin
 
   if (relationId=1000006) then
   begin
+    if isSyncUpperAmount = '1' then
+       begin
+         SetEditStyle(dsBrowse,edtUPPER_AMOUNT.Style);
+         edtBK_UPPER_AMOUNT.Color := edtUPPER_AMOUNT.Style.Color;
+         edtUPPER_AMOUNT.Properties.ReadOnly := true;
+       end;
+
     SetEditStyle(dsBrowse,edtCALC_UNITS.Style);
     edtBK_CALC_UNITS.Color := edtCALC_UNITS.Style.Color;
     edtCALC_UNITS.Properties.ReadOnly := true;

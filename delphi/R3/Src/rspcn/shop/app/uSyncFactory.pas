@@ -82,6 +82,8 @@ type
     procedure GetCloseAccDate;
     function  CheckNeedLoginSync:boolean;
     function  CheckNeedLoginSyncBizData:boolean;
+    // 下载合理库存
+    procedure SyncUpperAmount;
     // 检测数据备份
     function  CheckBackUpDBFile(PHWnd:THandle):boolean;
     // 登陆日志
@@ -581,6 +583,8 @@ begin
 
     InitSyncBasicList(SyncType);
     SyncList;
+
+    SyncUpperAmount;
   finally
     ReadTimeStamp;
   end
@@ -2570,10 +2574,11 @@ end;
 function TSyncFactory.CheckRemoteData(AppHandle:HWnd):integer;
 var
   rs:TZQuery;
-  sr: TSearchRec;
-  FileAttrs: integer;
   NeedRecovery:boolean;
-  recType,Folder,FileName:string;
+  recType:string;
+  // Folder,FileName
+  // sr: TSearchRec;
+  // FileAttrs: integer;
 begin
   result := 0;
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
@@ -3243,6 +3248,101 @@ begin
 
   MsgFactory.Load;
   MsgFactory.GetUnRead;
+end;
+
+procedure TSyncFactory.SyncUpperAmount;
+var
+  F:TIniFile;
+  rs,ss:TZQuery;
+  Params:TftParamList;
+  MaxTimeStamp,LastTimeStamp:int64;
+  rimComId,rimCustId,ZClassName,LicenseCode:string;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
+  try
+    if F.ReadString('soft','SYNC_UPPER_AMOUNT','0') = '0' then Exit;
+  finally
+    F.Free;
+  end;
+
+  ss := dllGlobal.GetZQueryFromName('CA_SHOP_INFO');
+  LicenseCode := ss.FieldByName('LICENSE_CODE').AsString;
+  rs := TZQuery.Create(nil);
+  ss := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    rs.SQL.Text := 'select COM_ID,CUST_ID from RM_CUST a where a.LICENSE_CODE=:LICENSE_CODE';
+    rs.ParamByName('LICENSE_CODE').AsString := LicenseCode;
+    try
+      TZQuery(rs).Data := dbHelp.OpenSQL(TZQuery(rs).SQL.Text,TftParamList.Encode(TZQuery(rs).Params));
+    except
+      Raise Exception.Create(StrPas(dataFactory.remote.getLastError));
+    end;
+    if rs.IsEmpty then Exit;
+    rimComId := rs.FieldByName('COM_ID').AsString;
+    rimCustId := rs.FieldByName('CUST_ID').AsString;
+  finally
+    rs.Free;
+  end;
+
+  ZClassName := 'TSyncSingleTableV60';
+  LastTimeStamp := GetSynTimeStamp('999999999','PUB_GOODSINFOEXT');
+  MaxTimeStamp := LastTimeStamp;
+
+  LogFile.AddLogFile(0,'开始下载<PUB_GOODSINFO_合理库存>上次时间:'+inttostr(LastTimeStamp));
+
+  SetTicket;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      ' select a.TENANT_ID,a.GODS_ID,b.WHSE_UP*(case when a.SMALLTO_CALC is null then 1 else a.SMALLTO_CALC end) as UPPER_AMOUNT,''10'' as COMM,b.TIME_STAMP '+
+      ' from   VIW_GOODSINFO a,RIM_CUST_ITEM_WHSE_QTY b '+
+      ' where  a.TENANT_ID=:TENANT_ID '+
+      '        and b.COM_ID=:COM_ID and b.CUST_ID=:CUST_ID '+
+      '        and a.SECOND_ID=b.ITEM_ID '+
+      '        and b.TIME_STAMP>:TIME_STAMP '+
+      ' order by b.TIME_STAMP asc ';
+    rs.ParamByName('TENANT_ID').AsInteger:=StrtoInt(token.tenantId);
+    rs.ParamByName('COM_ID').AsString:=rimComId;
+    rs.ParamByName('CUST_ID').AsString:=rimCustId;
+    rs.ParamByName('TIME_STAMP').Value:=LastTimeStamp;
+    try
+      TZQuery(rs).Data := dbHelp.OpenSQL(TZQuery(rs).SQL.Text,TftParamList.Encode(TZQuery(rs).Params));
+    except
+      Raise Exception.Create(StrPas(dataFactory.remote.getLastError));
+    end;
+
+    LogFile.AddLogFile(0,'下载<PUB_GOODSINFO_合理库存>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
+
+    if not rs.IsEmpty then
+       begin
+         rs.Last;
+         if StrtoInt64(rs.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+            MaxTimeStamp := StrtoInt64(rs.FieldByName('TIME_STAMP').AsString);
+
+         SetTicket;
+         ss.SyncDelta := rs.SyncDelta;
+         Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+         Params.ParamByName('SHOP_ID').AsString := token.shopId;
+         Params.ParamByName('KEY_FLAG').AsInteger := 1;
+         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSINFOEXT';
+         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID';
+         Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
+         Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+         Params.ParamByName('SYN_COMM').AsBoolean := false;
+         Params.ParamByName('Transed').AsBoolean := true;
+         dataFactory.UpdateBatch(ss,ZClassName,Params);
+
+         LogFile.AddLogFile(0,'下载<PUB_GOODSINFO_合理库存>保存时长:'+inttostr(GetTicket));
+
+         if MaxTimeStamp > LastTimeStamp then
+            SetSynTimeStamp('999999999','PUB_GOODSINFOEXT',MaxTimeStamp);
+       end;
+  finally
+    Params.Free;
+    ss.Free;
+    rs.Free;
+  end;
 end;
 
 initialization

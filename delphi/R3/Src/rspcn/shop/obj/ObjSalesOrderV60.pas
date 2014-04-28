@@ -395,7 +395,7 @@ begin
            rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('SALES_DATE').AsOldInteger;
            rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
            AGlobal.Open(rs);
-           if not rs.IsEmpty then Raise Exception.Create('当前收银员['+FieldbyName('SALES_DATE').AsString+']号已经结账不能再开单了'+#13+'取消结账请到[财务管理]->[结账管理]中撤销.');
+           if not rs.IsEmpty then Raise Exception.Create('当前收银员['+FieldbyName('SALES_DATE').AsString+']号已经结账不能再开单了');
          finally
            rs.Free;
          end;

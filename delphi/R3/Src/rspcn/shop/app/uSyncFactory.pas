@@ -1473,6 +1473,7 @@ begin
         if token.online then dataFactory.remote.DBLock(true);
         AddLogoutLog;
         if not token.online then Exit;
+        CommandPush.ExecuteCommand;
         hWnd := PHWnd;
         ShowForm;
         BringToFront;

@@ -485,6 +485,7 @@ inherited frmHangUpFile: TfrmHangUpFile
         CurrencySymbol = #65509
         DecimalNumber = 2
         DigitalNumber = 12
+        OnDblClick = DBGridEh1DblClick
         OnDrawColumnCell = DBGridEh1DrawColumnCell
         OnKeyPress = DBGridEh1KeyPress
         Columns = <

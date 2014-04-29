@@ -31,6 +31,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1DblClick(Sender: TObject);
   public
     procedure LoadFile(cName,path:string);
   end;
@@ -117,6 +118,13 @@ procedure TfrmHangUpFile.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then btnOkClick(nil);
+end;
+
+procedure TfrmHangUpFile.DBGridEh1DblClick(Sender: TObject);
+begin
+  inherited;
+  if cdsTable.IsEmpty then Exit;
+  ModalResult := MROK;
 end;
 
 end.

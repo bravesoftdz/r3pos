@@ -618,7 +618,6 @@ end;
 procedure TfrmPosOutOrder.SaveOrder;
 var
   ps:TZQuery;
-  Printed:boolean;
   PriceName:string;
 begin
   if dbState = dsBrowse then Exit;

@@ -100,6 +100,7 @@ type
     btnCancel: TRzBmpButton;
     RzLabel13: TRzLabel;
     fndCREA_USER: TcxTextEdit;
+    edtPrintDetail: TCheckBox;
     procedure BtnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -454,13 +455,13 @@ begin
        btnCloseDay.Tag := 1;
        if edtPrintTicket.Checked then
           begin
-            DevFactory.PrintCloseForDay(1, FormatDateTime('YYYYMMDD',reckDate), self.Font);
+            DevFactory.PrintCloseForDay(1, FormatDateTime('YYYYMMDD',reckDate), self.Font, edtPrintDetail.Checked);
           end;
        ModalResult := mrOk;
      end
   else if btnCloseDay.Tag = 1 then
      begin
-       DevFactory.PrintCloseForDay(1, FormatDateTime('YYYYMMDD',reckDate), self.Font);
+       DevFactory.PrintCloseForDay(1, FormatDateTime('YYYYMMDD',reckDate), self.Font, edtPrintDetail.Checked);
        ModalResult := mrOk;
      end;
 end;
@@ -468,7 +469,8 @@ end;
 procedure TfrmCloseForDay.RzPanel13Resize(Sender: TObject);
 begin
   inherited;
-  edtPrintTicket.Top := RzPanel13.Height - 50;
+  edtPrintTicket.Top := RzPanel13.Height - 58;
+  edtPrintDetail.Top := RzPanel13.Height - 33;
 end;
 
 procedure TfrmCloseForDay.SetPrintDate(const Value: TDate);

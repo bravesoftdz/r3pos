@@ -5,16 +5,13 @@ interface
 uses Windows,Classes,spComm,SysUtils,zPrinters,ZDataSet,DB,Graphics,Forms;
 
 type
-
   TDevFactory=class
   private
     FComm:TComm;
-
     CashBoxStart:Int64;
     FCashBox: integer;
     FCashComm: TComm;
     FCashBoxRate: integer;
-
     FTicket_PrintComm:integer;
     FTicket_Width: integer;
     FTicket_Title: string;
@@ -28,7 +25,6 @@ type
     FSaveCodePrintType: integer;
     FSaveCodePrintName: string;
     FCloseDayPrintFlag: integer;
-
     procedure SetTicket_PrintComm(const Value: integer);
     procedure SetTicket_Width(const Value: integer);
     procedure SetTicket_Title(const Value: string);
@@ -36,10 +32,8 @@ type
     procedure SetTicket_NullRow(const Value: integer);
     procedure SetTicket_Copy(const Value: integer);
     procedure SetTicket_PrintName(const Value: integer);
-
     procedure SetCashBox(const Value: integer);
     procedure SetCashBoxRate(const Value: integer);
-
     function  GetTitle: string;
     procedure SetPrintFormat(const Value: integer);
     procedure SetSavePrint(const Value: boolean);
@@ -61,18 +55,14 @@ type
     function  EncodeDivStr:string;
     function  PrintSaleTicketSQL(tenantId,id:string):string;
     procedure OpenCashBoxComm;
-    
   public
     F:TextFile;
-
     constructor Create;
     destructor  Destroy; override;
     procedure   InitComm;
-
     class procedure OpenCashBox(Font:TFont);
     procedure PrintSaleTicket(tid,sid:string;Font:TFont);
-    procedure PrintCloseForDay(SelectType:integer;ClsDay:string;Font:TFont); //打印交班结账
-
+    procedure PrintCloseForDay(SelectType:integer;ClsDay:string;Font:TFont;PrintDetail:boolean=false); //打印交班结账
     property Ticket_PrintComm:integer read FTicket_PrintComm write SetTicket_PrintComm;
     property Ticket_Width:integer read FTicket_Width write SetTicket_Width;
     property Ticket_Title:string read FTicket_Title write SetTicket_Title;
@@ -80,7 +70,6 @@ type
     property Ticket_NullRow:integer read FTicket_NullRow write SetTicket_NullRow;
     property Ticket_Copy:integer read FTicket_Copy write SetTicket_Copy;
     property Ticket_PrintName:integer read FTicket_PrintName write SetTicket_PrintName;
-
     property SaveCodePrint:boolean read FSaveCodePrint write SetSaveCodePrint;
     property SaveCodePrintType:integer read FSaveCodePrintType write SetSaveCodePrintType;
     property SaveCodePrintName:string read FSaveCodePrintName write SetSaveCodePrintName;
@@ -88,11 +77,9 @@ type
     property PrintFormat:integer read FPrintFormat write SetPrintFormat;
     //交班关账时打印类型 0只打金额 1打商品明细
     property CloseDayPrintFlag:integer read FCloseDayPrintFlag write SetCloseDayPrintFlag;
-
     property CashComm:TComm read FCashComm;
     property CashBox:integer read FCashBox write SetCashBox;
     property CashBoxRate:integer read FCashBoxRate write SetCashBoxRate;
-
     property Comm:TComm read FComm;
 end;
 
@@ -607,7 +594,7 @@ begin
   FSaveCodePrint := Value;
 end;
 
-procedure TDevFactory.PrintCloseForDay(SelectType:integer;ClsDay:string;Font:TFont);
+procedure TDevFactory.PrintCloseForDay(SelectType:integer;ClsDay:string;Font:TFont;PrintDetail:boolean);
 var
   rs,sale_rs,ForDay_rs:TZQuery;
   WhereStr:string;
@@ -660,7 +647,7 @@ begin
     end;
     DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Ticket_Width-1));
 
-    if DevFactory.CloseDayPrintFlag = 0 then
+    if PrintDetail then
        begin
          rs.SQL.Text :=
            ParseSQL(dataFactory.iDbType,

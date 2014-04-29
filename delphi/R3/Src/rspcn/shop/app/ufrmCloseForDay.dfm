@@ -2230,9 +2230,9 @@ inherited frmCloseForDay: TfrmCloseForDay
               object edtPrintTicket: TCheckBox
                 Left = 231
                 Top = 85
-                Width = 137
+                Width = 130
                 Height = 17
-                Caption = #26159#21542#25171#21360#23567#31080
+                Caption = #26159#21542#31435#21363#25171#21360#23567#31080
                 Color = 14606046
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
@@ -2242,6 +2242,22 @@ inherited frmCloseForDay: TfrmCloseForDay
                 ParentColor = False
                 ParentFont = False
                 TabOrder = 10
+              end
+              object edtPrintDetail: TCheckBox
+                Left = 231
+                Top = 110
+                Width = 130
+                Height = 17
+                Caption = #26159#21542#25171#21360#21830#21697#26126#32454
+                Color = 14606046
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -13
+                Font.Name = #23435#20307
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+                TabOrder = 11
               end
             end
             object RzPanel15: TRzPanel

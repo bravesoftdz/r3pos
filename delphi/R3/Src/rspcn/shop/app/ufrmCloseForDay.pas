@@ -3,15 +3,11 @@ unit ufrmCloseForDay;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmWebDialogForm, ExtCtrls, RzPanel, RzTabs, cxControls,
-  cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, DB, ZBase,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, cxMaskEdit,
-  cxButtonEdit, zrComboBoxList, cxCheckBox, cxMemo, cxDropDownEdit,
-  cxRadioGroup, cxSpinEdit, cxCalendar, RzLabel, Buttons, pngimage,
-  RzBckgnd, RzBorder, RzBmpBtn, Math, msxml, ufrmWebDialog, jpeg, RzForms,
-  Grids, DBGridEh, RzEdit, RzStatus,ComObj,IniFiles, Menus,
-  RzPrgres;
+  Windows, SysUtils, Variants, Forms, ufrmWebDialog, DB, ZAbstractRODataset,
+  ZAbstractDataset, ZDataset, StdCtrls, ExtCtrls, cxDropDownEdit, Grids,
+  DBGridEh, cxTextEdit, pngimage, cxCheckBox, cxControls, cxContainer,
+  cxEdit, cxMaskEdit, cxSpinEdit, RzStatus, RzBckgnd, RzTabs, RzBmpBtn,
+  RzForms, RzLabel, Graphics, Controls, Classes, RzPanel, ZBase;
 
 type
   TfrmCloseForDay = class(TfrmWebDialog)
@@ -246,15 +242,7 @@ end;
 function TfrmCloseForDay.reckDate: TDate;
 begin
   if PrintFlag = 0 then
-     begin
-       result := dllGlobal.sysDate;
-{
-      if dllGlobal.sysDate = (date()-1) then
-         result := dllGlobal.sysDate
-      else
-         result := Date();
-}
-     end
+     result := dllGlobal.sysDate
   else
      result := PrintDate;
 end;
@@ -267,11 +255,13 @@ begin
   AObj := TRecord_.Create;
   sv := TZQuery.Create(nil);
   try
+    sv.FieldDefs.Assign(cdsTable.FieldDefs);
+    sv.CreateDataSet;
     if not cdsTable.IsEmpty then
        begin
          sv.Append;
          AObj.ReadFromDataSet(cdsTable);
-         AObj.WriteToDataSet(cdsTable,false);
+         AObj.WriteToDataSet(sv,false);
          sv.Post;
        end;
     if not sv.Locate('CLSE_DATE',StrtoInt(FormatDatetime('YYYYMMDD',reckDate)),[]) then //如果当前没有数据补结0记录

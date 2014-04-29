@@ -230,8 +230,8 @@ type
     procedure RefreshMeaUnits;
     procedure SetShopOutPricePlace;
     procedure AddUnits(Sender: TObject);
+    function  GetAidAmt(DataSet: TZQuery): real;
     function  GetAidName(DataSet: TZQuery): string;
-    function  GetAidUnits(DataSet: TZQuery): string;
   public
     procedure OpenInfo(godsId:string;Relation:integer=0);
     procedure SaveInfo;
@@ -665,8 +665,9 @@ begin
        cdsList.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
        cdsList.FieldByName('BARCODE').AsString := edtBARCODE.Text;
        cdsList.FieldByName('AMOUNT').AsString := edtAMOUNT.Text;
+       cdsList.FieldByName('AID_AMT').AsFloat := GetAidAmt(cdsList);
        cdsList.FieldByName('AID_NAME').AsString := GetAidName(cdsList);
-       cdsList.FieldByName('AID_AMOUNT').AsString := GetAidUnits(cdsList);
+       cdsList.FieldByName('AID_AMOUNT').AsString := cdsList.FieldByName('AID_AMT').AsString + cdsList.FieldByName('AID_NAME').AsString;
        cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
        cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
        cdsList.FieldByName('SALE_MNY').AsFloat := cdsList.FieldByName('AMOUNT').AsFloat * cdsList.FieldByName('NEW_OUTPRICE').AsFloat;
@@ -2945,13 +2946,11 @@ begin
   AddUnits(Sender);
 end;
 
-function TfrmGoodsStorage.GetAidUnits(DataSet: TZQuery): string;
+function TfrmGoodsStorage.GetAidAmt(DataSet: TZQuery): real;
 var
-  str,UnitId,CalcUnit,SmallUnit,BigUnit,AidName: string;
   CalcAmt,SmalltoCalc,BigtoCalc: real;
+  UnitId,CalcUnit,SmallUnit,BigUnit: string;
 begin
-  str := '';
-  result := '';
   if DataSet.IsEmpty then Exit;
   if DataSet.FieldByName('AMOUNT').AsString = '' then Exit;
   UnitId := DataSet.FieldByName('UNIT_ID').AsString;
@@ -2961,22 +2960,20 @@ begin
   CalcAmt := DataSet.FieldByName('AMOUNT').AsFloat;
   SmalltoCalc := DataSet.FieldByName('SMALLTO_CALC').AsFloat;
   BigtoCalc := DataSet.FieldByName('BIGTO_CALC').AsFloat;
-  AidName := DataSet.FieldByName('AID_NAME').AsString;
   if UnitId = CalcUnit then
-     str := FormatFloat('#0.###',CalcAmt) + AidName
+     result := StrToFloat(FormatFloat('#0.###',CalcAmt))
   else if UnitId = SmallUnit then
-     str := FormatFloat('#0.###',CalcAmt/SmalltoCalc) + AidName
+     result := StrToFloat(FormatFloat('#0.###',CalcAmt/SmalltoCalc))
   else if UnitId = BigUnit then
-     str := FormatFloat('#0.###',CalcAmt/BigtoCalc) + AidName
+     result := StrToFloat(FormatFloat('#0.###',CalcAmt/BigtoCalc))
   else
-     str := FormatFloat('#0.###',CalcAmt) + AidName;
-  result := str;
+     result := StrToFloat(FormatFloat('#0.###',CalcAmt));
 end;
 
 function TfrmGoodsStorage.GetAidName(DataSet: TZQuery): string;
 var
-  UnitId:string;
   rs:TZQuery;
+  UnitId:string;
 begin
   if DataSet.IsEmpty then Exit;
   if DataSet.FieldByName('GODS_ID').AsString = '' then Exit;

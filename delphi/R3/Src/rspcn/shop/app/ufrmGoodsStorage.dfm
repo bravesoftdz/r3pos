@@ -2,7 +2,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
   Left = 250
   Top = 5
   Caption = #21830#21697#24211#23384
-  ClientHeight = 748
+  ClientHeight = 742
   ClientWidth = 1280
   Color = 12040119
   OnCreate = FormCreate
@@ -11,12 +11,12 @@ inherited frmGoodsStorage: TfrmGoodsStorage
   TextHeight = 15
   inherited ScrollBox: TScrollBox
     Width = 1280
-    Height = 701
+    Height = 695
     inherited webForm: TRzPanel
       Left = 0
       Top = 0
       Width = 1280
-      Height = 701
+      Height = 695
       Align = alClient
       object RzPanel11: TRzPanel
         Left = 0
@@ -1847,7 +1847,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
         Left = 0
         Top = 42
         Width = 1280
-        Height = 348
+        Height = 342
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1858,7 +1858,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
           Left = 10
           Top = 10
           Width = 1260
-          Height = 328
+          Height = 322
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1866,7 +1866,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 1
             Top = 1
             Width = 172
-            Height = 326
+            Height = 320
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1874,7 +1874,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = 298
+              Top = 292
               Width = 171
               Height = 27
               Align = alBottom
@@ -1916,7 +1916,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Left = 0
               Top = 0
               Width = 171
-              Height = 298
+              Height = 292
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1933,7 +1933,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 173
             Top = 1
             Width = 10
-            Height = 326
+            Height = 320
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1944,7 +1944,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
             Left = 183
             Top = 1
             Width = 1076
-            Height = 326
+            Height = 320
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1953,7 +1953,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
               Left = 1
               Top = 0
               Width = 1075
-              Height = 326
+              Height = 320
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -2070,6 +2070,10 @@ inherited frmGoodsStorage: TfrmGoodsStorage
                   Alignment = taRightJustify
                   EditButtons = <>
                   FieldName = 'AID_AMOUNT'
+                  Footer.Alignment = taRightJustify
+                  Footer.DisplayFormat = '#0.###'
+                  Footer.FieldName = 'AID_AMT'
+                  Footer.ValueType = fvtSum
                   Footers = <>
                   Title.Caption = #36741#21161#21333#20301
                   Width = 75
@@ -2203,7 +2207,7 @@ inherited frmGoodsStorage: TfrmGoodsStorage
       end
       object EditPanel: TRzPanel
         Left = 0
-        Top = 390
+        Top = 384
         Width = 1280
         Height = 311
         Align = alBottom

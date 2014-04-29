@@ -81,7 +81,6 @@ implementation
 procedure TToken.decode(_token: string);
 var
   rspcn:IXMLDOMElement;
-  userinfo:IXMLDOMNode;
   doc:IXMLDomDocument;
 begin
   doc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
@@ -105,7 +104,7 @@ begin
     idCard := rspcn.selectSingleNode('/rspcn/userInfo/idCard').text;
     mobile := rspcn.selectSingleNode('/rspcn/userInfo/mobile').text;
     online := (rspcn.selectSingleNode('/rspcn/userInfo/online').text='1');
-    LDate := strtoIntDef(rspcn.selectSingleNode('/rspcn/userInfo/lDate').text,0);
+    LDate := StrToIntDef(rspcn.selectSingleNode('/rspcn/userInfo/lDate').text,0);
     shoped := true;
     logined := true;
   except

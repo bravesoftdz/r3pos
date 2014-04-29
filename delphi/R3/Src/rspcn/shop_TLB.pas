@@ -12,7 +12,7 @@ unit shop_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2014/4/4 10:02:00 from Type Library described below.
+// File generated on 2014/4/29 11:29:33 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: D:\r3pos\R3\Src\rspcn\shop.tlb (1)

@@ -4,22 +4,22 @@ uses
   Forms,
   Windows,
   ufrmBrowerForm in 'ufrmBrowerForm.pas' {frmBrowerForm},
+  uUcFactory in 'uUcFactory.pas' {UcFactory: TDataModule},
+  uRspFactory in 'uRspFactory.pas' {rspFactory: TDataModule},
+  ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
+  ufrmPswdModify in 'ufrmPswdModify.pas' {frmPswdModify},
+  ufrmLogo in 'ufrmLogo.pas' {frmLogo},
   shop_TLB in 'shop_TLB.pas',
   NSHandler in 'NSHandler.pas',
-  uUcFactory in 'uUcFactory.pas' {UcFactory: TDataModule},
   uDLLFactory in 'uDLLFactory.pas',
   urlParser in 'urlParser.pas',
   udataFactory in 'udataFactory.pas',
   javaScriptExt in 'javaScriptExt.pas',
-  uRspFactory in 'uRspFactory.pas' {rspFactory: TDataModule},
   uTokenFactory in 'uTokenFactory.pas',
   webMultInst in 'webMultInst.pas',
   uAppMgr in 'uAppMgr.pas',
   ufrmUpdate in 'ufrmUpdate.pas',
-  ufrmWebDialog in 'ufrmWebDialog.pas' {frmWebDialog},
-  ufrmLogo in 'ufrmLogo.pas' {frmLogo},
-  uResFactory in 'uResFactory.pas',
-  ufrmPswdModify in 'ufrmPswdModify.pas' {frmPswdModify};
+  uResFactory in 'uResFactory.pas';
 
 {$R *.TLB}
 

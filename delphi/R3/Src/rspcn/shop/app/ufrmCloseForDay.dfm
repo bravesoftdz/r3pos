@@ -2,8 +2,8 @@ inherited frmCloseForDay: TfrmCloseForDay
   Left = 415
   Top = 180
   Caption = #20132#29677#32467#36134
-  ClientHeight = 287
-  ClientWidth = 431
+  ClientHeight = 305
+  ClientWidth = 430
   OldCreateOrder = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -47,13 +47,13 @@ inherited frmCloseForDay: TfrmCloseForDay
     TextStyle = tsShadow
   end
   inherited RzPanel1: TRzPanel
-    Width = 431
-    Height = 259
+    Width = 430
+    Height = 277
     object RzPanel2: TRzPanel
       Left = 1
       Top = 1
-      Width = 429
-      Height = 257
+      Width = 428
+      Height = 275
       Align = alClient
       BorderOuter = fsFlatRounded
       BorderWidth = 2
@@ -61,16 +61,16 @@ inherited frmCloseForDay: TfrmCloseForDay
       object RzPanel3: TRzPanel
         Left = 4
         Top = 4
-        Width = 421
-        Height = 204
+        Width = 420
+        Height = 222
         Align = alClient
         BorderOuter = fsFlat
         TabOrder = 0
         object rzPage: TRzPageControl
           Left = 1
           Top = 1
-          Width = 419
-          Height = 202
+          Width = 418
+          Height = 220
           ActivePage = TabSheet5
           Align = alClient
           Color = clWindow
@@ -1763,7 +1763,7 @@ inherited frmCloseForDay: TfrmCloseForDay
             object RzPanel11: TRzPanel
               Left = 0
               Top = 40
-              Width = 419
+              Width = 418
               Height = 37
               Align = alTop
               BorderOuter = fsFlat
@@ -1843,8 +1843,8 @@ inherited frmCloseForDay: TfrmCloseForDay
             object RzPanel13: TRzPanel
               Left = 0
               Top = 77
-              Width = 419
-              Height = 125
+              Width = 418
+              Height = 143
               Align = alClient
               BorderOuter = fsFlat
               Color = 14606046
@@ -1867,7 +1867,7 @@ inherited frmCloseForDay: TfrmCloseForDay
                 Left = 208
                 Top = 10
                 Width = 1
-                Height = 100
+                Height = 120
               end
               object labPAY_A: TRzLabel
                 Tag = 2
@@ -1992,7 +1992,6 @@ inherited frmCloseForDay: TfrmCloseForDay
                 Font.Name = #24494#36719#38597#40657
                 Font.Style = []
                 ParentFont = False
-                Visible = False
                 ShadowColor = 15987699
                 ShadowDepth = 1
                 TextStyle = tsShadow
@@ -2172,7 +2171,6 @@ inherited frmCloseForDay: TfrmCloseForDay
                 Style.Font.Name = #23435#20307
                 Style.Font.Style = [fsBold]
                 TabOrder = 6
-                Visible = False
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object edtPAY_H: TcxTextEdit
@@ -2249,7 +2247,7 @@ inherited frmCloseForDay: TfrmCloseForDay
             object RzPanel15: TRzPanel
               Left = 0
               Top = 0
-              Width = 419
+              Width = 418
               Height = 40
               Align = alTop
               BorderOuter = fsFlat
@@ -2258,7 +2256,7 @@ inherited frmCloseForDay: TfrmCloseForDay
               object lblCaption: TRzLabel
                 Left = 1
                 Top = 1
-                Width = 417
+                Width = 416
                 Height = 38
                 Align = alClient
                 Alignment = taCenter
@@ -3055,8 +3053,8 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object RzPanel4: TRzPanel
         Left = 4
-        Top = 208
-        Width = 421
+        Top = 226
+        Width = 420
         Height = 45
         Align = alBottom
         BorderOuter = fsFlat
@@ -3675,19 +3673,19 @@ inherited frmCloseForDay: TfrmCloseForDay
     end
   end
   inherited pnlAddressBar: TPanel
-    Width = 431
+    Width = 430
     DesignSize = (
-      431
+      430
       28)
     inherited Image3: TImage
-      Width = 423
+      Width = 422
     end
     inherited RzLabel1: TRzLabel
       Width = 7
       Caption = ''
     end
     inherited Image1: TImage
-      Left = 427
+      Left = 426
     end
     inherited RzFormShape1: TRzFormShape
       Width = 613
@@ -3706,14 +3704,14 @@ inherited frmCloseForDay: TfrmCloseForDay
       TextStyle = tsShadow
     end
     inherited btnClose: TRzBmpButton
-      Left = 400
+      Left = 399
     end
     inherited RzBmpButton4: TRzBmpButton
-      Left = 348
+      Left = 347
       Visible = False
     end
     inherited btnWindow: TRzBmpButton
-      Left = 374
+      Left = 373
       Visible = False
     end
   end

@@ -696,7 +696,10 @@ begin
 
   if cdsBarcode.Locate('BARCODE_TYPE','1',[]) then
      begin
-       edtBARCODE1.Text := cdsBarcode.FieldByName('BARCODE').AsString;
+       if cdsBarCode.FieldByName('COMM').AsString[2] <> '2' then
+          edtBARCODE1.Text := cdsBarcode.FieldByName('BARCODE').AsString
+       else
+          edtBARCODE1.Text := '';
      end
   else
      begin
@@ -705,7 +708,10 @@ begin
 
   if cdsBarcode.Locate('BARCODE_TYPE','2',[]) then
      begin
-       edtBARCODE2.Text := cdsBarcode.FieldByName('BARCODE').AsString;
+       if cdsBarCode.FieldByName('COMM').AsString[2] <> '2' then
+          edtBARCODE2.Text := cdsBarcode.FieldByName('BARCODE').AsString
+       else
+          edtBARCODE2.Text := '';
      end
   else
      begin

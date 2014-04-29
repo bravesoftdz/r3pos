@@ -1,18 +1,18 @@
-unit ObjMessage;
+unit ObjMessageV60;
 
 interface
 
 uses Dialogs,SysUtils,zBase,Classes,ZIntf,ObjCommon,DB,ZDataSet,math;
 
 type
-  TMessageList=class(TZFactory)
+  TMessageListV60=class(TZFactory)
   public
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
 
-  TMessage=class(TZFactory)
+  TMessageV60=class(TZFactory)
   public
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass;override;
@@ -20,7 +20,7 @@ type
 
 implementation
 
-function TMessageList.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+function TMessageListV60.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
 begin
@@ -39,7 +39,7 @@ begin
   end;
 end;
 
-function TMessageList.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function TMessageListV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
   Str:String;
@@ -64,7 +64,7 @@ begin
   end;
 end;
 
-procedure TMessageList.InitClass;
+procedure TMessageListV60.InitClass;
 var
   Str: string;
 begin
@@ -84,7 +84,7 @@ begin
   DeleteSQL.Text := Str;
 end;
 
-function TMessage.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function TMessageV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:String;
 begin
@@ -101,7 +101,7 @@ begin
   result := True;
 end;
 
-procedure TMessage.InitClass;
+procedure TMessageV60.InitClass;
 var
   Str: string;
 begin
@@ -121,9 +121,9 @@ begin
 end;
 
 initialization
-  RegisterClass(TMessageList);
-  RegisterClass(TMessage);
+  RegisterClass(TMessageListV60);
+  RegisterClass(TMessageV60);
 finalization
-  UnRegisterClass(TMessageList);
-  UnRegisterClass(TMessage);
+  UnRegisterClass(TMessageListV60);
+  UnRegisterClass(TMessageV60);
 end.

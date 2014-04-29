@@ -308,8 +308,8 @@ begin
       Params.ParamByName('MSG_ID').AsString := '';
       dataFactory.BeginBatch;
       try
-        dataFactory.AddBatch(hs,'TMessage',Params);
-        dataFactory.AddBatch(ls,'TMessageList',Params);
+        dataFactory.AddBatch(hs,'TMessageV60',Params);
+        dataFactory.AddBatch(ls,'TMessageListV60',Params);
         dataFactory.OpenBatch;
       except
         dataFactory.CancelBatch;
@@ -348,8 +348,8 @@ begin
          begin
            dataFactory.BeginBatch;
            try
-             dataFactory.AddBatch(hs,'TMessage');
-             dataFactory.AddBatch(ls,'TMessageList');
+             dataFactory.AddBatch(hs,'TMessageV60');
+             dataFactory.AddBatch(ls,'TMessageListV60');
              dataFactory.CommitBatch;
            except
              dataFactory.CancelBatch;

@@ -110,6 +110,8 @@ type
     procedure RecoverySync(PHWnd:THandle;BeginDate:string='');
     // 注册时同步
     procedure RegisterSync(PHWnd:THandle);
+    // 连锁版交班结账时候同步
+    procedure CloseForDaySync(PHWnd:THandle);
     // 灾难恢复时关账
     procedure RecoveryClose(CloseDate:string);
     // 数据库锁定
@@ -3343,6 +3345,33 @@ begin
     Params.Free;
     ss.Free;
     rs.Free;
+  end;
+end;
+
+procedure TSyncFactory.CloseForDaySync(PHWnd: THandle);
+begin
+  timered := true;
+  try
+    if dllApplication.mode = 'demo' then Exit;
+    if token.tenantId = '' then Exit;
+    with TfrmSyncData.Create(nil) do
+    begin
+      try
+        if token.online then dataFactory.remote.DBLock(true);
+        if not token.online then Exit;
+        hWnd := PHWnd;
+        ShowForm;
+        BringToFront;
+        Update;
+        SyncFactory.SyncBasic(2);
+        SyncFactory.SyncBizData;
+      finally
+        if token.online then dataFactory.remote.DBLock(false);
+        Free;
+      end;
+    end;
+  finally
+    timered := false;
   end;
 end;
 

@@ -857,18 +857,23 @@ begin
          Raise Exception.Create('请输入非0的小件单位换算系数！');
       if (edtSMALL_UNITS.Text<>'') and (trim(edtBARCODE1.Text)='') then
          Raise Exception.Create('请输入小件单位条码！');
-      if (edtSMALL_UNITS.Text='') and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) then
-         Raise Exception.Create('请选择小件单位！');
-      if (trim(edtBARCODE1.Text)='') and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) then
+      if (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) and (trim(edtBARCODE1.Text)='') then
          Raise Exception.Create('请输入小件单位条码！');
+      if (StrtoFloatDef(edtSMALLTO_CALC.Text,0)<>0) and (edtSMALL_UNITS.Text='') then
+         Raise Exception.Create('请选择小件单位！');
+      if (trim(edtBARCODE1.Text)<>'') and (edtSMALL_UNITS.Text='') then
+         Raise Exception.Create('请选择小件单位！');
+
       if (edtBIG_UNITS.Text<>'') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)=0) then
          Raise Exception.Create('请输入非0的大件单位换算系数！');
       if (edtBIG_UNITS.Text<>'') and (trim(edtBARCODE2.Text)='') then
          Raise Exception.Create('请输入大件单位条码！');
-      if (edtBIG_UNITS.Text='') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) then
-         Raise Exception.Create('请选择大件单位！');
-      if (trim(edtBARCODE2.Text)='') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) then
+      if (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) and (trim(edtBARCODE2.Text)='') then
          Raise Exception.Create('请输入大件单位条码！');
+      if (StrtoFloatDef(edtBIGTO_CALC.Text,0)<>0) and (edtBIG_UNITS.Text='') then
+         Raise Exception.Create('请选择大件单位！');
+      if (trim(edtBARCODE2.Text)<>'') and (edtBIG_UNITS.Text='') then
+         Raise Exception.Create('请选择大件单位！');
     end;
 
   if relationId = 1000006 then

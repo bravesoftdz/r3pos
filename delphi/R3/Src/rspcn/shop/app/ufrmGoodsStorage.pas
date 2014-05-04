@@ -668,8 +668,16 @@ begin
        cdsList.FieldByName('AID_AMT').AsFloat := GetAidAmt(cdsList);
        cdsList.FieldByName('AID_NAME').AsString := GetAidName(cdsList);
        cdsList.FieldByName('AID_AMOUNT').AsString := cdsList.FieldByName('AID_AMT').AsString + cdsList.FieldByName('AID_NAME').AsString;
-       cdsList.FieldByName('LOWER_AMOUNT').AsString := edtLOWER_AMOUNT.Text;
-       cdsList.FieldByName('UPPER_AMOUNT').AsString := edtUPPER_AMOUNT.Text;
+       if (relationId=1000006) and (isSyncUpperAmount='1') and (AObj.FieldByName('SMALLTO_CALC').AsString<>'') then //卷烟显示条单位
+          begin
+            cdsList.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0) * AObj.FieldByName('SMALLTO_CALC').AsFloat;
+            cdsList.FieldByName('UPPER_AMOUNT').AsFloat := StrtoFloatDef(edtUPPER_AMOUNT.Text,0) * AObj.FieldByName('SMALLTO_CALC').AsFloat;
+          end
+       else
+          begin
+            cdsList.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0);
+            cdsList.FieldByName('UPPER_AMOUNT').AsFloat := StrtoFloatDef(edtUPPER_AMOUNT.Text,0);
+          end;
        cdsList.FieldByName('SALE_MNY').AsFloat := cdsList.FieldByName('AMOUNT').AsFloat * cdsList.FieldByName('NEW_OUTPRICE').AsFloat;
        cdsList.FieldByName('STOCK_MNY').AsFloat := cdsList.FieldByName('AMOUNT').AsFloat * cdsList.FieldByName('NEW_INPRICE').AsFloat;
        cdsList.FieldByName('PROFIT_MNY').AsFloat := (cdsList.FieldByName('NEW_OUTPRICE').AsFloat - cdsList.FieldByName('NEW_INPRICE').AsFloat) * cdsList.FieldByName('AMOUNT').AsFloat;
@@ -776,8 +784,18 @@ begin
                edtSHOP_NEW_OUTPRICE2.Text:='';
           end;
       end;
-  edtLOWER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat);
-  edtUPPER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat);
+
+  if (relationId=1000006) and (isSyncUpperAmount='1') and (AObj.FieldByName('SMALLTO_CALC').AsString<>'') then //卷烟显示条单位
+     begin
+       edtLOWER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat / AObj.FieldByName('SMALLTO_CALC').AsFloat);
+       edtUPPER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat / AObj.FieldByName('SMALLTO_CALC').AsFloat);
+     end
+  else
+     begin
+       edtLOWER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat);
+       edtUPPER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat);
+     end;
+
   edtUNIT_ID_USING.Checked := (AObj.FieldbyName('SMALL_UNITS').AsString<>'') or (AObj.FieldbyName('BIG_UNITS').AsString<>'');
   if edtUNIT_ID_USING.Checked then
     begin
@@ -1019,8 +1037,16 @@ begin
   cdsGoodsExt.FieldByName('NEW_INPRICE').AsFloat  := StrtoFloatDef(edtNEW_INPRICE.Text,0);
   cdsGoodsExt.FieldByName('NEW_INPRICE1').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
   cdsGoodsExt.FieldByName('NEW_INPRICE2').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
-  cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0);
-  cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat := StrtoFloatDef(edtUPPER_AMOUNT.Text,0);
+  if (relationId=1000006) and (isSyncUpperAmount='1') and (AObj.FieldByName('SMALLTO_CALC').AsString<>'') then //卷烟显示条单位
+     begin
+       cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0) * AObj.FieldByName('SMALLTO_CALC').AsFloat;
+       cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat := StrtoFloatDef(edtUPPER_AMOUNT.Text,0) * AObj.FieldByName('SMALLTO_CALC').AsFloat;
+     end
+  else
+     begin
+       cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0);
+       cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat := StrtoFloatDef(edtUPPER_AMOUNT.Text,0);
+     end;
   cdsGoodsExt.Post;
 
   isDel := false;

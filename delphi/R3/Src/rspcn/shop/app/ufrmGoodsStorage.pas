@@ -776,8 +776,8 @@ begin
                edtSHOP_NEW_OUTPRICE2.Text:='';
           end;
       end;
-  edtLOWER_AMOUNT.Text := formatFloat('#0.###',cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat);
-  edtUPPER_AMOUNT.Text := formatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat);
+  edtLOWER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat);
+  edtUPPER_AMOUNT.Text := FormatFloat('#0.###',cdsGoodsExt.FieldByName('UPPER_AMOUNT').AsFloat);
   edtUNIT_ID_USING.Checked := (AObj.FieldbyName('SMALL_UNITS').AsString<>'') or (AObj.FieldbyName('BIG_UNITS').AsString<>'');
   if edtUNIT_ID_USING.Checked then
     begin
@@ -796,7 +796,7 @@ begin
   else
      storAmt:=0;
 
-  edtAMOUNT.Text := formatFloat('#0.###',storAmt);
+  edtAMOUNT.Text := FormatFloat('#0.###',storAmt);
 end;
 
 procedure TfrmGoodsStorage.WriteInfo;
@@ -1325,7 +1325,7 @@ begin
        cdsDetail.Edit;
        cdsDetail.FieldbyName('AMOUNT').AsFloat := cdsDetail.FieldbyName('AMOUNT').AsFloat - (StrtoFloatDef(edtAMOUNT.Text,0)-curAmt);
        cdsDetail.FieldbyName('CALC_AMOUNT').AsFloat := cdsDetail.FieldbyName('AMOUNT').AsFloat;
-       cdsDetail.FieldbyName('AMONEY').AsString := formatFloat('#0.00',cdsDetail.FieldbyName('AMOUNT').AsFloat*cdsDetail.FieldbyName('APRICE').AsFloat);
+       cdsDetail.FieldbyName('AMONEY').AsString := FormatFloat('#0.00',cdsDetail.FieldbyName('AMOUNT').AsFloat*cdsDetail.FieldbyName('APRICE').AsFloat);
        cdsDetail.FieldbyName('CALC_MONEY').AsString := cdsDetail.FieldbyName('AMONEY').AsString;
        cdsDetail.Post;
      end
@@ -1353,7 +1353,7 @@ begin
        cdsDetail.FieldbyName('PROPERTY_02').AsString := '#';
        cdsDetail.FieldbyName('AMOUNT').AsFloat := -(StrtoFloatDef(edtAMOUNT.Text,0)-curAmt);
        cdsDetail.FieldbyName('CALC_AMOUNT').AsFloat := cdsDetail.FieldbyName('AMOUNT').AsFloat;
-       cdsDetail.FieldbyName('AMONEY').AsString := formatFloat('#0.00',cdsDetail.FieldbyName('AMOUNT').AsFloat*cdsDetail.FieldbyName('APRICE').AsFloat);
+       cdsDetail.FieldbyName('AMONEY').AsString := FormatFloat('#0.00',cdsDetail.FieldbyName('AMOUNT').AsFloat*cdsDetail.FieldbyName('APRICE').AsFloat);
        cdsDetail.FieldbyName('CALC_MONEY').AsString := cdsDetail.FieldbyName('AMONEY').AsString;
        cdsDetail.Post;
      end;

@@ -109,7 +109,9 @@ type
     procedure RzPanel13Resize(Sender: TObject);
   private
     FPrintDate: TDate;
+    FParentHandle: THandle;
     procedure SetPrintDate(const Value: TDate);
+    procedure SetParentHandle(const Value: THandle);
   public
     PrintFlag: integer;
     Is_Print: Boolean;
@@ -122,8 +124,9 @@ type
     procedure Save;
     procedure InitForm;
     procedure ShowFee;
-    class function ShowClDy(Owner:TForm):Integer;
+    class function ShowClDy(Owner:TForm;PHandle:THandle):Integer;
     property PrintDate:TDate read FPrintDate write SetPrintDate;
+    property ParentHandle:THandle read FParentHandle write SetParentHandle;
   end;
 
 implementation
@@ -293,12 +296,13 @@ begin
   end;
 end;
 
-class function TfrmCloseForDay.ShowClDy(Owner: TForm): Integer;
+class function TfrmCloseForDay.ShowClDy(Owner:TForm;PHandle:THandle): Integer;
 begin
   result := 2;
   with TfrmCloseForDay.Create(Owner) do
     begin
       try
+        ParentHandle := PHandle;
         PrintFlag := 0;
         GetCloseForDay;
         Open;
@@ -445,7 +449,7 @@ begin
        if not token.online and ((VerName = '.NET') or (VerName = '.ONL')) then Raise Exception.Create('连锁版不允许离线结账!');
        if VerName = '.NET' then
           begin
-            SyncFactory.CloseForDaySync(self.Handle);
+            SyncFactory.CloseForDaySync(ParentHandle);
           end;
        CheckOffData;
        if not Is_Print and (MessageBox(Handle,'你今天没有营业数据是否继续结账？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
@@ -504,6 +508,11 @@ begin
   cdsTable.Params.ParamByName('CREA_USER').AsString := token.userId;
   cdsTable.Params.ParamByName('SALES_DATE').AsInteger := StrtoInt(FormatDateTime('YYYYMMDD',reckDate));
   dataFactory.Open(cdsTable);
+end;
+
+procedure TfrmCloseForDay.SetParentHandle(const Value: THandle);
+begin
+  FParentHandle := Value;
 end;
 
 end.

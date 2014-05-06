@@ -2078,6 +2078,7 @@ var
   Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
   MaxTimeStamp,LastTimeStamp:int64;
+  updateVersion,insertVersion:string;
   tbName,orderFields,dataFields:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
@@ -2124,6 +2125,15 @@ begin
       dataFactory.MoveToDefault;
     end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+
+  if (not ls.IsEmpty) and (SyncFlag = 0) then
+     begin
+       updateVersion := 'update SYS_DEFINE set VALUE=''V6'' where TENANT_ID='+token.tenantId+' and DEFINE=''APPVERSION'' ';
+       insertVersion := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values ('+token.tenantId+',''APPVERSION'',''V6'',0,''10'','+GetTimeStamp(dataFactory.remote.iDbType)+') ';
+       if dataFactory.remote.ExecSQL(updateVersion) <= 0 then
+          dataFactory.remote.ExecSQL(insertVersion);
+     end;
+
     SetTicket;
     ls.First;
     while not ls.Eof do

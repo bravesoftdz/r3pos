@@ -475,7 +475,7 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      str := str + ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
-  SelectSQL.Text := str + ' order by TIME_STAMP asc';
+  SelectSQL.Text := str + ' order by TIME_STAMP asc,CREA_DATE asc';
 end;
 
 { TSyncRckDaysCloseV60 }

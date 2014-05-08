@@ -1655,7 +1655,7 @@ begin
   edtBIG_UNITS.OnAddClick := AddUnits;
 
   cdsUnits.Close;
-  cdsUnits.FieldDefs := rs.FieldDefs;
+  cdsUnits.FieldDefs.Assign(rs.FieldDefs);
   cdsUnits.CreateDataSet;
 
   tmpObj := TRecord_.Create;

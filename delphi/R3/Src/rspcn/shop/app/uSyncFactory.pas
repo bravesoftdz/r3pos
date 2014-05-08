@@ -96,8 +96,8 @@ type
   public
     constructor Create;
     destructor  Destroy;override;
-    // 数据恢复日志
-    procedure AddRecoveryLog(info:string);
+    // 数据同步日志
+    procedure AddSyncLog(info:string);
     // 单表同步
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
     // 0:默认同步 1:注册同步 2:正常同步 3:恢复同步
@@ -1408,7 +1408,7 @@ begin
              firstLogin := true;
              TfrmSysDefine.AutoRegister;
              if token.tenantId = '' then Exit;
-             AddLoginLog('firstLogin');
+             AddLoginLog('FirstLogin');
              PlayerFactory.OpenPlayer;
              flag := SyncFactory.CheckRemoteData(PHWnd);
              if flag = 0 then // 没有还原
@@ -2249,7 +2249,11 @@ begin
     SyncRckDays(SyncFlag,BeginDate);
     SetProPosition(400);
     ProTitle := '<库存表>...';
-    if SyncFlag=0 then SyncStorage;
+    if SyncFlag=0 then
+       begin
+         SyncStorage;
+         AddSyncLog('SyncBiz');
+       end;
   finally
     ReadTimeStamp;
   end
@@ -2427,10 +2431,9 @@ begin
   finally
     dataFactory.MoveToDefault;
   end;
-  LoginId := '';
 end;
 
-procedure TSyncFactory.AddRecoveryLog(info:string);
+procedure TSyncFactory.AddSyncLog(info:string);
 begin
   if LoginId='' then Exit;
   if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;

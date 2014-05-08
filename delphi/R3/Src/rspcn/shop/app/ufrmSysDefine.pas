@@ -1933,7 +1933,7 @@ begin
                 dataFactory.Open(rs);
                 SyncFactory.RecoverySync(AppHandle);
                 MessageBox(AppHandle,'数据恢复成功...','友情提示..',MB_OK);
-                SyncFactory.AddRecoveryLog('FileRecovery');
+                SyncFactory.AddSyncLog('FileRecovery');
                 RtcSyncClose;
                 if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then
                    DeleteFile(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6');
@@ -2138,7 +2138,7 @@ begin
     end;
 
     SyncFactory.RecoveryClose(BeginDate);
-    SyncFactory.AddRecoveryLog('RemoteRecovery');
+    SyncFactory.AddSyncLog('RemoteRecovery');
     RtcSyncClose;
 
     if FileExists(ExtractFilePath(Application.ExeName)+'data\r3_bak.r6') then

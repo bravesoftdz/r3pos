@@ -87,7 +87,7 @@ type
     // 检测数据备份
     function  CheckBackUpDBFile(PHWnd:THandle):boolean;
     // 登陆日志
-    procedure AddLoginLog;
+    procedure AddLoginLog(info:string='');
     procedure AddLogoutLog;
     procedure SetLoginId(const Value: string);
     procedure Settimered(const Value: boolean);
@@ -1408,7 +1408,7 @@ begin
              firstLogin := true;
              TfrmSysDefine.AutoRegister;
              if token.tenantId = '' then Exit;
-             AddLoginLog;
+             AddLoginLog('firstLogin');
              PlayerFactory.OpenPlayer;
              flag := SyncFactory.CheckRemoteData(PHWnd);
              if flag = 0 then // 没有还原
@@ -2350,7 +2350,7 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TSyncFactory.AddLoginLog;
+procedure TSyncFactory.AddLoginLog(info:string);
   function GetProductInfo:string;
   var dllVersionInfo: TRzVersionInfo;
   begin
@@ -2411,7 +2411,7 @@ begin
        end;
     SQL :=
       'insert into CA_LOGIN_INFO (LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
-      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''',''-'','''+GetProductInfo+''','''+Flag+''','''+ConnectTo+''','''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
+      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+info+''','''+GetProductInfo+''','''+Flag+''','''+ConnectTo+''','''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
     dataFactory.ExecSQL(SQL);
   finally
     dataFactory.MoveToDefault;
@@ -2435,7 +2435,7 @@ begin
   if LoginId='' then Exit;
   if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
   try
-    dataFactory.ExecSQL('update CA_LOGIN_INFO set SYSTEM_INFO='''+info+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
+    dataFactory.ExecSQL('update CA_LOGIN_INFO set SYSTEM_INFO=SYSTEM_INFO'+GetStrJoin(dataFactory.iDbType)+'''_'+info+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
   finally
     dataFactory.MoveToDefault;
   end;

@@ -170,51 +170,51 @@ begin
            '<dataset>'+
            '<dataset_line>'+
            '<coNum>JAW801507685</coNum>'+
-           '<crtDate>20130603</crtDate>'+
+           '<crtDate>20140508</crtDate>'+
            '<qtySum>135.000000</qtySum>'+
            '<amtSum>12023.30</amtSum>'+
            '<status>06</status>'+
-           '<arrDate>20130603</arrDate>'+
+           '<arrDate>20140508</arrDate>'+
            '</dataset_line>'+
            '<dataset_line>'+
            '<coNum>JA0000003042198</coNum>'+
-           '<crtDate>20130603</crtDate>'+
+           '<crtDate>20140508</crtDate>'+
            '<qtySum>17.000000</qtySum>'+
            '<amtSum>765.00</amtSum>'+
            '<status>06</status>'+
-           '<arrDate>20130603</arrDate>'+
+           '<arrDate>20140508</arrDate>'+
            '</dataset_line>'+
            '<dataset_line>'+
            '<coNum>JAW801529304</coNum>'+
-           '<crtDate>20130603</crtDate>'+
+           '<crtDate>20140508</crtDate>'+
            '<qtySum>55.000000</qtySum>'+
            '<amtSum>6557.00</amtSum>'+
            '<status>06</status>'+
-           '<arrDate>20130603</arrDate>'+
+           '<arrDate>20140508</arrDate>'+
            '</dataset_line>'+
            '<dataset_line>'+
            '<coNum>JAW801551880</coNum>'+
-           '<crtDate>20130603</crtDate>'+
+           '<crtDate>20140508</crtDate>'+
            '<qtySum>52.000000</qtySum>'+
            '<amtSum>6930.00</amtSum>'+
            '<status>06</status>'+
-           '<arrDate>20130603</arrDate>'+
+           '<arrDate>20140508</arrDate>'+
            '</dataset_line>'+
            '<dataset_line>'+
            '<coNum>JAW801569020</coNum>'+
-           '<crtDate>20130603</crtDate>'+
+           '<crtDate>20140508</crtDate>'+
            '<qtySum>55.000000</qtySum>'+
            '<amtSum>5040.50</amtSum>'+
            '<status>06</status>'+
-           '<arrDate>20130603</arrDate>'+
+           '<arrDate>20140508</arrDate>'+
            '</dataset_line>'+
            '<dataset_line>'+
            '<coNum>JA0000003045225</coNum>'+
-           '<crtDate>20130603</crtDate>'+
+           '<crtDate>20140508</crtDate>'+
            '<qtySum>19.000000</qtySum>'+
            '<amtSum>855.00</amtSum>'+
            '<status>06</status>'+
-           '<arrDate>20130603</arrDate>'+
+           '<arrDate>20140508</arrDate>'+
            '</dataset_line>'+
            '</dataset>'+
            '</body>'+
@@ -342,6 +342,15 @@ begin
            '<dataset_line>'+
            '<coNum>'+vParam.ParamByName('INDE_ID').AsString+'</coNum>'+
            '<itemId>01158</itemId>'+
+           '<qtyNeed>1.000000</qtyNeed>'+
+           '<qtyOrd>1.000000</qtyOrd>'+
+           '<qtyVfy>1.000000</qtyVfy>'+
+           '<amt>63.000000</amt>'+
+           '<retAmt>0.000000</retAmt>'+
+           '</dataset_line>'+
+           '<dataset_line>'+
+           '<coNum>'+vParam.ParamByName('INDE_ID').AsString+'</coNum>'+
+           '<itemId>93879</itemId>'+
            '<qtyNeed>1.000000</qtyNeed>'+
            '<qtyOrd>1.000000</qtyOrd>'+
            '<qtyVfy>1.000000</qtyVfy>'+

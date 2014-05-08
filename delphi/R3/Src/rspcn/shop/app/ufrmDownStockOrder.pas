@@ -58,6 +58,7 @@ type
   public
     procedure Open;
     procedure Save;
+    procedure CheckGodsInfo(var ds: TZQuery);
     procedure showForm;override;
     procedure ajustPostion;override;
   end;
@@ -238,7 +239,7 @@ procedure TfrmDownStockOrder.Save;
   begin
     if toDataSet.IsEmpty then
       begin
-        toDataSet.FieldDefs := fromDataSet.FieldDefs;
+        toDataSet.FieldDefs.Assign(fromDataSet.FieldDefs);
         toDataSet.CreateDataSet;
       end;
     tmpObj := TRecord_.Create;
@@ -298,6 +299,8 @@ begin
       vParams.Free;
       cdsData.Free;
     end;
+
+    CheckGodsInfo(orderDetail);
 
     vParams := TftParamList.Create(nil);
     try
@@ -572,6 +575,9 @@ begin
            dataFactory.MoveToDefault;
          end;
        end;
+
+    CheckGodsInfo(cdsData);
+
     cdsData.First;
     while not cdsData.Eof do
       begin
@@ -674,6 +680,148 @@ begin
   inherited;
   if cdsTable.IsEmpty then Exit;
   toolDetailClick(nil);
+end;
+
+procedure TfrmDownStockOrder.CheckGodsInfo(var ds: TZQuery);
+var
+  i:integer;
+  str,tip:string;
+  gs,rs:TZQuery;
+  IsExists,ShowName:boolean;
+begin
+  i := 0;
+  ds.First;
+  while not ds.Eof do
+    begin
+      if trim(ds.FieldByName('GODS_ID').AsString)='' then
+         inc(i);
+      ds.Next;
+    end;
+
+  if i > 0 then
+     begin
+       if downOrderMode = '1' then
+          begin
+            ds.First;
+            while not ds.Eof do
+              begin
+                if trim(ds.FieldByName('GODS_ID').AsString) = '' then
+                   begin
+                     if str <> '' then str := str + ',';
+                     str := str + QuotedStr(ds.FieldByName('ITEM_ID').AsString);
+                   end;
+                ds.Next;
+              end;
+          end
+       else
+          begin
+            gs := TZQuery.Create(nil);
+            rs := TZQuery.Create(nil);
+            try
+              gs.SQL.Text := 'select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+token.tenantId+' and COMM not in (''02'',''12'') and RELATION_ID=1000006';
+              rs.SQL.Text := 'select ITEM_ID from RIM_SD_CO_LINE where CO_NUM='+QuotedStr(cdsTable.FieldByName('INDE_ID').AsString);
+              dataFactory.sqlite.Open(gs);
+              try
+                rs.Data := dataFactory.remote.OpenSQL(rs.SQL.Text,TftParamList.Encode(rs.Params));
+              except
+                Raise Exception.Create(StrPas(dataFactory.remote.getLastError));
+              end;
+
+              rs.First;
+              while not rs.Eof do
+                begin
+                  IsExists := false;
+
+                  if gs.Locate('SECOND_ID',rs.FieldByName('ITEM_ID').AsString,[]) then
+                     IsExists := true;
+
+                  if not IsExists then
+                     begin
+                       gs.First;
+                       while not gs.Eof do
+                         begin
+                           if gs.FieldByName('COMM_ID').AsString <> '' then
+                              begin
+                                if pos(',' + rs.FieldByName('ITEM_ID').AsString + ',', ',' + gs.FieldByName('COMM_ID').AsString + ',') > 0 then
+                                   begin
+                                     IsExists := true;
+                                     break;
+                                   end;
+                              end;
+                           gs.Next;
+                         end;
+                     end;
+
+                  if not IsExists then
+                     begin
+                       if str <> '' then str := str + ',';
+                       str := str + QuotedStr(rs.FieldByName('ITEM_ID').AsString);
+                     end;
+
+                  rs.Next;
+                end;
+            finally
+              rs.Free;
+              gs.Free;
+            end;
+          end;
+
+       rs := TZQuery.Create(nil);
+       try
+         try
+           rs.SQL.Text := 'select ITEM_ID,ITEM_CODE,ITEM_NAME from RIM_SD_ITEM where ITEM_ID in ('+str+')';
+           rs.Data := dataFactory.remote.OpenSQL(rs.SQL.Text,TftParamList.Encode(rs.Params));
+           rs.First;
+           while not rs.Eof do
+             begin
+               if tip <> '' then tip := tip + ',';
+               tip := tip + rs.FieldByName('ITEM_NAME').AsString;
+               rs.Next;
+             end;
+           tip := '新品：' + tip;
+           ShowName := true;
+         except
+           ShowName := false;
+         end;
+
+         if ShowName then
+            begin
+              if MessageBox(self.Handle,pchar('系统检测到当前下载的订单中有'+inttoStr(rs.RecordCount)+'个新品！'+#10#13+tip+#10#13+'是否删除新品继续到货确认？'),'友情提示..',MB_YESNO+MB_ICONQUESTION) = 6 then
+                 begin
+                   ds.First;
+                   while not ds.Eof do
+                     begin
+                       if trim(ds.FieldByName('GODS_ID').AsString) = '' then
+                          ds.Delete;
+                       ds.Next;
+                     end;
+                 end
+               else
+                  begin
+                    Raise Exception.Create('系统检测到当前下载的订单中有'+inttoStr(rs.RecordCount)+'个新品,无法到货确认！');
+                  end;
+            end
+         else
+            begin
+              if MessageBox(self.Handle,pchar('系统检测到当前下载的订单中有'+inttoStr(i)+'个新品！'+#10#13+'是否删除新品继续到货确认？'),'友情提示..',MB_YESNO+MB_ICONQUESTION) = 6 then
+                 begin
+                   ds.First;
+                   while not ds.Eof do
+                     begin
+                       if trim(ds.FieldByName('GODS_ID').AsString) = '' then
+                          ds.Delete;
+                       ds.Next;
+                     end;
+                 end
+              else
+                 begin
+                   Raise Exception.Create('系统检测到当前下载的订单中有'+inttoStr(i)+'个新品,无法到货确认！');
+                 end;
+            end;
+       finally
+         rs.Free;
+       end;
+     end;
 end;
 
 initialization

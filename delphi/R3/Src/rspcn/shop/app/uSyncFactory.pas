@@ -2260,7 +2260,7 @@ begin
     if SyncFlag=0 then
        begin
          SyncStorage;
-         AddSyncLog('SyncBiz');
+         AddSyncLog('UploadBiz');
        end;
   finally
     ReadTimeStamp;

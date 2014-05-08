@@ -96,6 +96,8 @@ type
   public
     constructor Create;
     destructor  Destroy;override;
+    // 数据恢复日志
+    procedure AddRecoveryLog(info:string);
     // 单表同步
     procedure SyncSingleTable(n:PSynTableInfo;timeStampNoChg:integer=1;SaveCtrl:boolean=true);
     // 0:默认同步 1:注册同步 2:正常同步 3:恢复同步
@@ -2368,10 +2370,12 @@ procedure TSyncFactory.AddLoginLog;
   function GetConnStr:string;
   var
     F:TIniFile;
+    srvrId:string;
     vList:TStringList;
   begin
     F := TIniFile.Create(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'db.cfg');
     try
+      srvrId := F.ReadString('db','srvrId','');
       result := F.ReadString('db','Connstr','');
     finally
       F.Free;
@@ -2381,7 +2385,7 @@ procedure TSyncFactory.AddLoginLog;
       vList.Delimiter := ';';
       vList.QuoteChar := '"';
       vList.DelimitedText := result;
-      result := vList.Values['hostname']+':'+vList.Values['port']+'<'+vList.Values['dbid']+'>';
+      result := vList.Values['hostname']+':'+vList.Values['port']+'<'+vList.Values['dbid']+'>'+'<'+srvrId+'>';
     finally
       vList.Free;
     end;
@@ -2424,6 +2428,17 @@ begin
     dataFactory.MoveToDefault;
   end;
   LoginId := '';
+end;
+
+procedure TSyncFactory.AddRecoveryLog(info:string);
+begin
+  if LoginId='' then Exit;
+  if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
+  try
+    dataFactory.ExecSQL('update CA_LOGIN_INFO set SYSTEM_INFO='''+info+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
+  finally
+    dataFactory.MoveToDefault;
+  end;
 end;
 
 procedure TSyncFactory.SetLoginId(const Value: string);

@@ -87,8 +87,10 @@ type
     // 检测数据备份
     function  CheckBackUpDBFile(PHWnd:THandle):boolean;
     // 登陆日志
+    function  GetLoginTimeStamp(iDbType:integer):string;
     procedure AddLoginLog(info:string='');
     procedure AddLogoutLog;
+
     procedure SetLoginId(const Value: string);
     procedure Settimered(const Value: boolean);
     procedure SettimerTerminted(const Value: boolean);
@@ -2360,6 +2362,17 @@ begin
   Application.ProcessMessages;
 end;
 
+function TSyncFactory.GetLoginTimeStamp(iDbType:integer):string;
+begin
+  case iDbType of
+    0:result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+    1:result := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
+    4:result := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
+    5:result := GetTimeStamp(iDbType);
+    else result := GetTimeStamp(iDbType);
+  end;
+end;
+
 procedure TSyncFactory.AddLoginLog(info:string);
   function GetProductInfo:string;
   var dllVersionInfo: TRzVersionInfo;
@@ -2421,7 +2434,7 @@ begin
        end;
     SQL :=
       'insert into CA_LOGIN_INFO (LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
-      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+info+''','''+GetProductInfo+''','''+Flag+''','''+ConnectTo+''','''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
+      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+info+''','''+GetProductInfo+''','''+Flag+''','''+ConnectTo+''','''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetLoginTimeStamp(dataFactory.iDbType)+')';
     dataFactory.ExecSQL(SQL);
   finally
     dataFactory.MoveToDefault;
@@ -2433,7 +2446,7 @@ begin
   if LoginId='' then Exit;
   if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
   try
-    dataFactory.ExecSQL('update CA_LOGIN_INFO set LOGOUT_DATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
+    dataFactory.ExecSQL('update CA_LOGIN_INFO set LOGOUT_DATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetLoginTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
   finally
     dataFactory.MoveToDefault;
   end;
@@ -2444,7 +2457,7 @@ begin
   if LoginId='' then Exit;
   if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
   try
-    dataFactory.ExecSQL('update CA_LOGIN_INFO set SYSTEM_INFO=SYSTEM_INFO'+GetStrJoin(dataFactory.iDbType)+'''_'+info+''',COMM='+GetCommStr(dataFactory.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
+    dataFactory.ExecSQL('update CA_LOGIN_INFO set SYSTEM_INFO=SYSTEM_INFO'+GetStrJoin(dataFactory.iDbType)+'''_'+info+''' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
   finally
     dataFactory.MoveToDefault;
   end;
@@ -2860,12 +2873,12 @@ begin
     begin
       if token.online then
          begin
-           sql := 'update CA_LOGIN_INFO set LOGOUT_DATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-SyncFactory.LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.remote.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.remote.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+SyncFactory.LoginId+'''';
+           sql := 'update CA_LOGIN_INFO set LOGOUT_DATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-SyncFactory.LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.remote.iDbType)+',TIME_STAMP='+SyncFactory.GetLoginTimeStamp(dataFactory.remote.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+SyncFactory.LoginId+'''';
            dataFactory.remote.ExecSQL(sql);
          end
       else
          begin
-           sql := 'update CA_LOGIN_INFO set LOGOUT_DATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-SyncFactory.LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.sqlite.iDbType)+',TIME_STAMP='+GetTimeStamp(dataFactory.sqlite.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+SyncFactory.LoginId+'''';
+           sql := 'update CA_LOGIN_INFO set LOGOUT_DATE='''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',CONNECT_TIMES='+inttostr((GetTickCount-SyncFactory.LoginStart) div 60000)+',COMM='+GetCommStr(dataFactory.sqlite.iDbType)+',TIME_STAMP='+SyncFactory.GetLoginTimeStamp(dataFactory.sqlite.iDbType)+' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+SyncFactory.LoginId+'''';
            dataFactory.sqlite.ExecSQL(sql);
          end;
     end;

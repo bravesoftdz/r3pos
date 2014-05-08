@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, Forms, SysUtils, Classes, ZDataSet, ZdbFactory, ZBase,
   ObjCommon, ZLogFile, Dialogs, DB, uFnUtil, math, Registry, Nb30, WinSock,
-  ActiveX;
+  ActiveX, RzStatus;
 
 const
   MSC_SET_MAX=WM_USER+1;
@@ -1406,6 +1406,7 @@ begin
              firstLogin := true;
              TfrmSysDefine.AutoRegister;
              if token.tenantId = '' then Exit;
+             AddLoginLog;
              PlayerFactory.OpenPlayer;
              flag := SyncFactory.CheckRemoteData(PHWnd);
              if flag = 0 then // 没有还原
@@ -2348,7 +2349,45 @@ begin
 end;
 
 procedure TSyncFactory.AddLoginLog;
-var SQL,Flag,ConnectTo:string;
+  function GetProductInfo:string;
+  var dllVersionInfo: TRzVersionInfo;
+  begin
+    dllVersionInfo := TRzVersionInfo.Create(nil);
+    try
+      try
+        dllVersionInfo.FilePath := ExtractFilePath(ParamStr(0))+'shop.dll';
+        result := 'R6<'+dllVersionInfo.FileVersion+'>';
+      except
+        result := 'R6';
+      end;
+    finally
+      dllVersionInfo.Free;
+    end;
+  end;
+
+  function GetConnStr:string;
+  var
+    F:TIniFile;
+    vList:TStringList;
+  begin
+    F := TIniFile.Create(ExtractShortPathName(ExtractFilePath(Application.ExeName))+'db.cfg');
+    try
+      result := F.ReadString('db','Connstr','');
+    finally
+      F.Free;
+    end;
+    vList := TStringList.Create;
+    try
+      vList.Delimiter := ';';
+      vList.QuoteChar := '"';
+      vList.DelimitedText := result;
+      result := vList.Values['hostname']+':'+vList.Values['port']+'<'+vList.Values['dbid']+'>';
+    finally
+      vList.Free;
+    end;
+  end;
+var
+  SQL,Flag,ConnectTo:string;
 begin
   if token.tenantId = '' then Exit;
   LoginStart := GetTickCount;
@@ -2357,7 +2396,7 @@ begin
     if token.online then
        begin
          Flag := '1';
-         ConnectTo := 'Remote';
+         ConnectTo := GetConnStr;
          dataFactory.MoveToRemote;
        end
     else
@@ -2367,8 +2406,8 @@ begin
          dataFactory.MoveToSqlite;
        end;
     SQL :=
-      'insert into CA_LOGIN_INFO(LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
-      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+GetSystemInfo+''',''R6'','''+Flag+''','''+ConnectTo+''','''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
+      'insert into CA_LOGIN_INFO (LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
+      'values('''+LoginId+''','+token.tenantId+','''+token.shopId+''','''+token.userId+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''',''-'','''+GetProductInfo+''','''+Flag+''','''+ConnectTo+''','''+FormatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(dataFactory.iDbType)+')';
     dataFactory.ExecSQL(SQL);
   finally
     dataFactory.MoveToDefault;

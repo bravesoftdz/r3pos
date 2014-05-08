@@ -1974,6 +1974,7 @@ end;
 procedure TfrmSysDefine.btnRecoveryClick(Sender: TObject);
 begin
   inherited;
+  if not token.online then Raise Exception.Create('离线登录时不能使用此功能...');
   if trim(edtBackUpFile.Text) = '' then Raise Exception.Create('请选择要恢复的备份文件...');
   if MessageBox(handle,'当前操作不可还原，恢复前请做好数据备份，是否立即恢复？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
      FileRecovery(trim(edtBackUpFile.Text),self.Handle);
@@ -1983,6 +1984,7 @@ procedure TfrmSysDefine.btnRecoveryRemoteClick(Sender: TObject);
 var recType:string;
 begin
   inherited;
+  if not token.online then Raise Exception.Create('离线登录时不能使用此功能...');
   if Recovery_1.Checked then
      begin
        recType := '1';

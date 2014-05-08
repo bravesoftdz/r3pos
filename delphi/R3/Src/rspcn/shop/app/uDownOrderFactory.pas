@@ -267,6 +267,7 @@ begin
   cdsTable.Close;
   cdsTable.FieldDefs.Clear;
   cdsTable.FieldDefs.Add('INDE_ID',ftstring,36,true);
+  cdsTable.FieldDefs.Add('ITEM_ID',ftstring,36,true);
   cdsTable.FieldDefs.Add('GODS_ID',ftstring,36,true);
   cdsTable.FieldDefs.Add('UNIT_ID',ftstring,36,true);
   cdsTable.FieldDefs.Add('AMOUNT',ftFloat,0,true);
@@ -463,6 +464,7 @@ begin
                 if gods.Eof then
                   begin
                     cdsTable.Append;
+                    cdsTable.FieldByName('ITEM_ID').AsString := rs.FieldByName('ITEM_ID').AsString;
                     cdsTable.FieldByName('INDE_ID').AsString := rs.FieldByName('INDE_ID').AsString;
                     cdsTable.FieldByName('UNIT_ID').AsString := '95331F4A-7AD6-45C2-B853-C278012C5525';
                     cdsTable.FieldByName('AMOUNT').AsFloat := rs.FieldByName('QTY_ORD').AsFloat;

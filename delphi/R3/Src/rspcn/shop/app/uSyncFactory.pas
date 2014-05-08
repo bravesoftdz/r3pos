@@ -2182,6 +2182,12 @@ begin
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
 
+      if (SyncFlag = 0) and cs_h.IsEmpty then
+         begin
+           LogFile.AddLogFile(0,'RCK_DAYS_CLOSE is null:'+Params.ParamByName('CREA_DATE').AsString);
+           Raise Exception.Create('数据上传出现错误，请稍后重试...');
+         end;
+
       if SyncFlag = 0 then
          dataFactory.MoveToRemote
       else

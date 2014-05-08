@@ -2453,11 +2453,13 @@ begin
 end;
 
 procedure TSyncFactory.AddSyncLog(info:string);
+var str:string;
 begin
   if LoginId='' then Exit;
   if token.online then dataFactory.MoveToRemote else dataFactory.MoveToSqlite;
   try
-    dataFactory.ExecSQL('update CA_LOGIN_INFO set SYSTEM_INFO=SYSTEM_INFO'+GetStrJoin(dataFactory.iDbType)+'''_'+info+''' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''');
+    str := 'update CA_LOGIN_INFO set SYSTEM_INFO=ifnull(SYSTEM_INFO,'''')'+GetStrJoin(dataFactory.iDbType)+'''_'+info+''' where TENANT_ID='+token.tenantId+' and LOGIN_ID='''+LoginId+'''';
+    dataFactory.ExecSQL(ParseSQL(dataFactory.iDbType, str));
   finally
     dataFactory.MoveToDefault;
   end;

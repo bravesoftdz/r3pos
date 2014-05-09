@@ -58,9 +58,10 @@ type
     procedure SetProPosition(position:integer);
   private
     ThreadLock:TRTLCriticalSection;
-    CloseAccDate:integer;
-    LoginSyncDate:integer;
-    LastLoginSyncDate,LastLogoutSyncDate:integer;
+    CloseAccDate:integer; // 数据恢复关账日期
+    LoginSyncDate:integer; // 登录同步日期
+    LastLoginSyncDate,LastLogoutSyncDate:integer; // 上次登录/退出同步日期
+    RckBeginDate:integer; // 日帐上传控制，只上传>=RckBeginDate之的日帐
     FLoginId: string;
     Ftimered: boolean;
     FtimerTerminted: boolean;
@@ -80,6 +81,7 @@ type
     procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
     procedure SyncStorage;
     procedure GetCloseAccDate;
+    procedure GetRckBeginDate;
     function  CheckNeedLoginSync:boolean;
     function  CheckNeedLoginSyncBizData:boolean;
     // 下载合理库存
@@ -164,6 +166,7 @@ begin
   ftimered := false;
   timerTerminted := false;
   CloseAccDate := -1;
+  RckBeginDate := -1;
   LoginSyncDate := 0;
   LastLoginSyncDate := 0;
   LastLogoutSyncDate := 0;
@@ -2133,6 +2136,7 @@ begin
 
     if (not ls.IsEmpty) and (SyncFlag = 0) then
        begin
+         GetRckBeginDate;
          updateVersion := 'update SYS_DEFINE set VALUE=''V6'' where TENANT_ID='+token.tenantId+' and DEFINE=''APPVERSION'' ';
          insertVersion := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values ('+token.tenantId+',''APPVERSION'',''V6'',0,''10'','+GetTimeStamp(dataFactory.remote.iDbType)+') ';
          if dataFactory.remote.ExecSQL(updateVersion) <= 0 then
@@ -2153,6 +2157,13 @@ begin
            Continue;
          end;
 }
+      // 小于开始日期的数据不上传
+      if (SyncFlag = 0) and (RckBeginDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger < RckBeginDate) then
+         begin
+           ls.Next;
+           Continue;
+         end;
+
       rs_h.Close;
       rs_d.Close;
 
@@ -2327,6 +2338,23 @@ begin
        CloseAccDate := 0
     else
        CloseAccDate := rs.Fields[0].AsInteger;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TSyncFactory.GetRckBeginDate;
+var rs:TZQuery;
+begin
+  if RckBeginDate >= 0 then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''RCK_BEGIN_DATE'' ';
+    rs.Data := dataFactory.remote.OpenSQL(rs.SQL.Text,TftParamList.Encode(rs.Params));
+    if rs.IsEmpty then
+       RckBeginDate := 0
+    else
+       RckBeginDate := rs.Fields[0].AsInteger;
   finally
     rs.Free;
   end;

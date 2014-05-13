@@ -146,6 +146,7 @@ type
     procedure fndGODS_IDAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure fndGODS_IDBeforeFilter(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -159,6 +160,7 @@ type
 
     //临时变量
     fndStr:string;
+    fndFilter:string;
     Locked:boolean;
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
@@ -403,12 +405,14 @@ end;
 procedure TfrmOrderForm.fndGODS_IDEnter(Sender: TObject);
 begin
   inherited;
+  fndFilter := '';
   fndGODS_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
 end;
 
 procedure TfrmOrderForm.fndGODS_IDExit(Sender: TObject);
 begin
   inherited;
+  fndFilter := '';
   if not fndGODS_ID.DropListed then fndGODS_ID.Visible := false;
 end;
 
@@ -1982,68 +1986,65 @@ begin
   if edtTable.FieldbyName('GODS_ID').AsString <> '' then
      begin
        if edtTable.FieldByName('BOM_ID').AsString = '' then
-       begin
-         if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
-            begin
-              fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
-              fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
-              Exit;
-            end;
-       end
+          begin
+            if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
+               begin
+                 fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+                 fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+                 Exit;
+               end;
+          end
        else
-       begin
-          MessageBox(Handle,pchar('礼盒包装不能单商品修改，请删除重新扫码'),'友情提示',MB_OK+MB_ICONINFORMATION);
-          fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
-          fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
-          Exit;
-       end;
+          begin
+            MessageBox(Handle,pchar('礼盒包装不能单商品修改，请删除重新扫码'),'友情提示',MB_OK+MB_ICONINFORMATION);
+            fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+            fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+            Exit;
+          end;
      end;
 
   if VarIsNull(fndGODS_ID.KeyValue) then
-  begin
-    EraseRecord;
-
-  end
+    begin
+      EraseRecord;
+    end
   else
-  begin
-    AObj := TRecord_.Create;
-    try
+    begin
+      AObj := TRecord_.Create;
+      try
+        rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
+        if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
+           begin
+             AObj.ReadField(edtTable);
+             AObj.ReadFromDataSet(rs,false);
+             AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
+             AObj.FieldbyName('IS_PRESENT').AsInteger := 0;
+             AObj.FieldbyName('LOCUS_NO').AsString := '';
+             AObj.FieldbyName('BATCH_NO').AsString := '#';
 
-      rs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
-      if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
-      begin
-        AObj.ReadField(edtTable);
-        AObj.ReadFromDataSet(rs,false);
-        AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
-        AObj.FieldbyName('IS_PRESENT').AsInteger := 0;
-        AObj.FieldbyName('LOCUS_NO').AsString := '';
-        AObj.FieldbyName('BATCH_NO').AsString := '#';
+             if CheckRepeat(AObj) then Exit;
 
-        if CheckRepeat(AObj) then Exit;
-
-        if defUnit=0 then
-           UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString)
+             if defUnit=0 then
+                UpdateRecord(AObj,edtTable.FieldByName('UNIT_ID').AsString)
+             else
+                UpdateRecord(AObj,rs.FieldByName('CALC_UNITS').AsString);
+           end
         else
-           UpdateRecord(AObj,rs.FieldByName('CALC_UNITS').AsString);
+           Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
+      finally
+        AObj.Free;
+      end;
 
-      end
-      else
-        Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
-    finally
-      AObj.Free;
+      if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) then
+         begin
+           if not PropertyEnabled then
+              begin
+                edtTable.FieldbyName('AMOUNT').AsFloat := 1;
+                AMountToCalc(1);
+              end
+           else
+              PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
+         end;
     end;
-    
-    if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) then
-       begin
-         if not PropertyEnabled then
-            begin
-              edtTable.FieldbyName('AMOUNT').AsFloat := 1;
-              AMountToCalc(1);
-            end
-         else
-            PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
-       end;
-  end;
   finally
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
     edtTable.EnableControls;
@@ -2874,6 +2875,12 @@ procedure TfrmOrderForm.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
   inherited;
+end;
+
+procedure TfrmOrderForm.fndGODS_IDBeforeFilter(Sender: TObject);
+begin
+  inherited;
+  fndFilter := fndGODS_ID.Text;
 end;
 
 end.

@@ -146,7 +146,6 @@ type
     procedure fndGODS_IDAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure fndGODS_IDBeforeFilter(Sender: TObject);
   private
     // 散装条码参数
     BulkiFlag:string;
@@ -160,7 +159,6 @@ type
 
     //临时变量
     fndStr:string;
-    fndFilter:string;
     Locked:boolean;
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
@@ -339,7 +337,7 @@ begin
   finally
     DBGridEh1.Columns.EndUpdate;
   end;
-  InputFlag := 0;
+  inputFlag := 0;
   CacheFactory.getAdvPngImage(adv01.Name,adv01.Picture);
   CacheFactory.getAdvPngImage(adv02.Name,adv02.Picture);
   help.down := false;
@@ -406,7 +404,6 @@ end;
 procedure TfrmOrderForm.fndGODS_IDEnter(Sender: TObject);
 begin
   inherited;
-  fndFilter := '';
   fndGODS_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
 end;
 
@@ -1829,13 +1826,13 @@ begin
       try
       if doShortCut(s) then
          begin
-           InputFlag := 0;
+           inputFlag := 0;
            DBGridEh1.Col := 1;
            edtInput.Text := '';
            Exit;
          end
       else
-      if InputFlag<>0 then Exit;
+      if inputFlag<>0 then Exit;
       if s='' then
          begin
            fndStr := '';
@@ -1894,7 +1891,7 @@ begin
     end;
     if Key=#27 then
       begin
-        InputFlag := 0;
+        inputFlag := 0;
         Key := #0;
       end;
   finally
@@ -1980,13 +1977,6 @@ begin
   inherited;
   // if not fndGODS_ID.Focused then Exit;
   if not edtTable.Active then Exit;
-
-  if (fndGODS_ID.AsString = '') and IsBarcode(fndFilter) then
-     begin
-       BarcodeInput(fndFilter);
-       Exit;
-     end;
-
   if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then Exit;
   edtTable.DisableControls;
   try
@@ -2376,7 +2366,7 @@ end;
 function TfrmOrderForm.doShortCut(s:string):boolean;
 begin
   result := true;
-  case InputFlag of //修改单价
+  case inputFlag of //修改单价
   4:begin
        if s<>'' then PriceToGods(s);
     end;
@@ -2882,12 +2872,6 @@ procedure TfrmOrderForm.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
   inherited;
-end;
-
-procedure TfrmOrderForm.fndGODS_IDBeforeFilter(Sender: TObject);
-begin
-  inherited;
-  fndFilter := fndGODS_ID.Text;
 end;
 
 function TfrmOrderForm.IsBarcode(str: string): boolean;

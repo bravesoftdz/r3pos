@@ -550,7 +550,6 @@ inherited frmOrderForm: TfrmOrderForm
               Buttons = [zbNew, zbFind]
               DropListStyle = lsFixed
               OnSaveValue = fndGODS_IDSaveValue
-              OnBeforeFilter = fndGODS_IDBeforeFilter
               MultiSelect = False
             end
             object fndUNIT_ID: TcxComboBox

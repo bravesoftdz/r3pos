@@ -2912,11 +2912,16 @@ begin
            dataFactory.sqlite.ExecSQL(sql);
          end;
     end;
-    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncSales;
-    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStock;
-    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncChange;
-    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncStorage;
-    if not SyncFactory.timerTerminted then SyncFactory.TimerSyncMessage;
+    if SyncFactory.timerTerminted then Exit;
+    SyncFactory.TimerSyncSales;
+    if SyncFactory.timerTerminted then Exit;
+    SyncFactory.TimerSyncStock;
+    if SyncFactory.timerTerminted then Exit;
+    SyncFactory.TimerSyncChange;
+    if SyncFactory.timerTerminted then Exit;
+    SyncFactory.TimerSyncStorage;
+    if SyncFactory.timerTerminted then Exit;
+    SyncFactory.TimerSyncMessage;
     except
     end;
   finally

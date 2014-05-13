@@ -1236,7 +1236,7 @@ begin
        lblUserName.Caption := '»¶Ó­Äú£¡'+token.username
     else
        lblUserName.Caption := '';;
-    if token.logined and not dllFactory.Inited and not frmUpdate.Visible then
+    if token.logined and not dllFactory.Inited and not frmUpdate.Visible and not dllFactory.isBusy then
        begin
          try
            dllFactory.Init(mainPanel.Handle);

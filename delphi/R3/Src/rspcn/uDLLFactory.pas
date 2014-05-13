@@ -626,22 +626,22 @@ var
 begin
   isBusy := true;
   try
-  appWnd := hWnd;
-  if not getTokenInfo then Exit;
-  idx := find('shop.dll');
-  if idx<0 then
-     begin
-       app := TDLLPlugin.Create('shop.dll');
-       app.appId := 'shop.dll';
-       flist.Add(app);
-       app.Init;
-     end
-  else
-     begin
-       app := TDLLPlugin(flist[idx]);
-       app.Init;
-     end;
-  Inited := true;
+    appWnd := hWnd;
+    if not getTokenInfo then Exit;
+    idx := find('shop.dll');
+    if idx < 0 then
+       begin
+         app := TDLLPlugin.Create('shop.dll');
+         app.appId := 'shop.dll';
+         flist.Add(app);
+         app.Init;
+       end
+    else
+       begin
+         app := TDLLPlugin(flist[idx]);
+         app.Init;
+       end;
+    Inited := true;
   finally
     isBusy := false;
   end;
@@ -662,15 +662,15 @@ var i:integer;
 begin
   isBusy := true;
   try
-  for i:=FList.Count-1 downto 0 do
-    begin
-      if not TDLLPlugin(FList[i]).eraseApp(synced) then
-         Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
-      TObject(FList[i]).Free;
-      FList.Delete(i); 
-    end;
-  Inited := false;
-  FList.Clear;
+    for i:=FList.Count-1 downto 0 do
+      begin
+        if not TDLLPlugin(FList[i]).eraseApp(synced) then
+           Raise Exception.Create(TDLLPlugin(FList[i]).getLastError);
+        TObject(FList[i]).Free;
+        FList.Delete(i);
+      end;
+    Inited := false;
+    FList.Clear;
   finally
     isBusy := false;
   end;

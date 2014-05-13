@@ -169,6 +169,7 @@ type
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
     procedure RefreshMeaUnits;
+    function  IsBarcode(str:string):boolean;
   protected
     RowID:integer;
     FinputMode: integer;
@@ -412,7 +413,6 @@ end;
 procedure TfrmOrderForm.fndGODS_IDExit(Sender: TObject);
 begin
   inherited;
-  fndFilter := '';
   if not fndGODS_ID.DropListed then fndGODS_ID.Visible := false;
 end;
 
@@ -1980,6 +1980,13 @@ begin
   inherited;
   // if not fndGODS_ID.Focused then Exit;
   if not edtTable.Active then Exit;
+
+  if (fndGODS_ID.AsString = '') and IsBarcode(fndFilter) then
+     begin
+       BarcodeInput(fndFilter);
+       Exit;
+     end;
+
   if edtTable.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then Exit;
   edtTable.DisableControls;
   try
@@ -2881,6 +2888,25 @@ procedure TfrmOrderForm.fndGODS_IDBeforeFilter(Sender: TObject);
 begin
   inherited;
   fndFilter := fndGODS_ID.Text;
+end;
+
+function TfrmOrderForm.IsBarcode(str: string): boolean;
+var i:integer;
+begin
+  result := true;
+  if Length(str) <> 13 then
+     begin
+       result := false;
+       Exit;
+     end;
+  for i:=0 to length(str)-1 do
+    begin
+      if str[i] in LeadBytes then
+         begin
+           result := false;
+           break;
+         end;
+    end;
 end;
 
 end.

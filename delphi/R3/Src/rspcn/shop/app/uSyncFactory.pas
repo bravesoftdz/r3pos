@@ -108,6 +108,8 @@ type
     procedure SyncBasic(SyncType:integer=0);
     // 检测文件是否是有效的数据文件
     function  CheckValidDBFile(src:string):boolean;
+    // 等待定时任务结束
+    procedure WaitForSync;
     // 登录时同步
     procedure LoginSync(PHWnd:THandle);
     // 退出时同步
@@ -163,7 +165,7 @@ uses udllDsUtil,udllGlobal,uTokenFactory,udataFactory,IniFiles,ufrmSyncData,
 constructor TSyncFactory.Create;
 begin
   InitializeCriticalSection(ThreadLock);
-  ftimered := false;
+  Ftimered := false;
   timerTerminted := false;
   CloseAccDate := -1;
   RckBeginDate := -1;
@@ -1390,6 +1392,7 @@ var
   firstLogin:boolean;
 begin
   timerTerminted := true;
+  WaitForSync;
   timered := true;
   try
     firstLogin := false;
@@ -1475,6 +1478,7 @@ end;
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
   timerTerminted := true;
+  WaitForSync;
   timered := true;
   try
     PlayerFactory.ClosePlayer;
@@ -1516,6 +1520,7 @@ end;
 procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
   timerTerminted := true;
+  WaitForSync;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -1545,6 +1550,7 @@ end;
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   timerTerminted := true;
+  WaitForSync;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -2980,6 +2986,7 @@ begin
        Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     dataFactory.sqlite.Open(ls,'TSyncSalesOrderListV60',Params);
+
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
 
     if timerTerminted then Exit;
@@ -3097,9 +3104,11 @@ begin
        Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     dataFactory.sqlite.Open(ls,'TSyncChangeOrderListV60',Params);
+
     if timerTerminted then Exit;
 
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'> 记录数:'+inttostr(ls.RecordCount));
+
     BeforeSyncBiz(ls,'CHANGE_DATE',0);
     ls.First;
     while not ls.Eof do
@@ -3191,7 +3200,9 @@ begin
        Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     dataFactory.sqlite.Open(ls,'TSyncStockOrderListV60',Params);
+
     if ls.RecordCount>0 then LogFile.AddLogFile(0,'上传定时同步<'+tbName+'>  记录数:'+inttostr(ls.RecordCount));
+
     if timerTerminted then Exit;
 
     BeforeSyncBiz(ls,'STOCK_DATE',0);
@@ -3480,6 +3491,7 @@ end;
 procedure TSyncFactory.CloseForDaySync(PHWnd: THandle);
 begin
   timerTerminted := true;
+  WaitForSync;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -3504,6 +3516,11 @@ begin
     timered := false;
     timerTerminted := false;
   end;
+end;
+
+procedure TSyncFactory.WaitForSync;
+begin
+  while timered do Application.ProcessMessages;
 end;
 
 initialization

@@ -1389,6 +1389,7 @@ var
   flag:integer;
   firstLogin:boolean;
 begin
+  timerTerminted := true;
   timered := true;
   try
     firstLogin := false;
@@ -1467,11 +1468,13 @@ begin
     end;
   finally
     timered := false;
+    timerTerminted := false;
   end;
 end;
 
 procedure TSyncFactory.LogoutSync(PHWnd: THandle);
 begin
+  timerTerminted := true;
   timered := true;
   try
     PlayerFactory.ClosePlayer;
@@ -1506,11 +1509,13 @@ begin
     end;
   finally
     timered := false;
+    timerTerminted := false;
   end;
 end;
 
 procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
+  timerTerminted := true;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -1533,11 +1538,13 @@ begin
     end;
   finally
     timered := false;
+    timerTerminted := false;
   end;
 end;
 
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
+  timerTerminted := true;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -1563,6 +1570,7 @@ begin
     end;
   finally
     timered := false;
+    timerTerminted := false;
   end;
 end;
 
@@ -3471,6 +3479,7 @@ end;
 
 procedure TSyncFactory.CloseForDaySync(PHWnd: THandle);
 begin
+  timerTerminted := true;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -3493,6 +3502,7 @@ begin
     end;
   finally
     timered := false;
+    timerTerminted := false;
   end;
 end;
 

@@ -167,7 +167,6 @@ type
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
     procedure RefreshMeaUnits;
-    function  IsBarcode(str:string):boolean;
   protected
     RowID:integer;
     FinputMode: integer;
@@ -2872,25 +2871,6 @@ procedure TfrmOrderForm.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
   inherited;
-end;
-
-function TfrmOrderForm.IsBarcode(str: string): boolean;
-var i:integer;
-begin
-  result := true;
-  if Length(str) <> 13 then
-     begin
-       result := false;
-       Exit;
-     end;
-  for i:=0 to length(str)-1 do
-    begin
-      if str[i] in LeadBytes then
-         begin
-           result := false;
-           break;
-         end;
-    end;
 end;
 
 end.

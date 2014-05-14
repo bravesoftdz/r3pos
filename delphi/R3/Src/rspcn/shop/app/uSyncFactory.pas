@@ -1520,7 +1520,6 @@ end;
 procedure TSyncFactory.RecoverySync(PHWnd:THandle;BeginDate:string='');
 begin
   timerTerminted := true;
-  WaitForSync;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;
@@ -1550,7 +1549,6 @@ end;
 procedure TSyncFactory.RegisterSync(PHWnd: THandle);
 begin
   timerTerminted := true;
-  WaitForSync;
   timered := true;
   try
     if dllApplication.mode = 'demo' then Exit;

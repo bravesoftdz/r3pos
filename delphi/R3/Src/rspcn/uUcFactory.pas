@@ -69,6 +69,8 @@ type
     function getConnStr:string;
     //获取db.cfg参数
     function getDBConfig(username,connstr:string):boolean;
+    //检测RM_CUST中用户状态
+    function CheckCustStatus(shopId:string;remote:TdbFactory):boolean;
     //检测版本升级
     function CheckUpgrade(tenantId,prodId,CurVeraion:string):TCaUpgrade;
     //检测模块权限
@@ -695,6 +697,8 @@ begin
          db.WriteString('db','Connstr',defStr);
        end;
 
+    if not CheckCustStatus(shopId,remote) then Raise Exception.Create('零售户状态无效...');
+
     case remote.iDbType of
       0:str := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
       1:str := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
@@ -898,6 +902,32 @@ begin
        result := pos(','+token.tenantId+'006,', roleIds) > 0;
        Exit;
      end;
+end;
+
+function TUcFactory.CheckCustStatus(shopId: string; remote: TdbFactory): boolean;
+var
+  F:TIniFile;
+  rs:TZQuery;
+begin
+  result := true;
+
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    if F.ReadString('soft','CheckCustStatus','0') = '0' then Exit;
+  finally
+    F.Free;
+  end;
+
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select CUST_ID,COM_ID,STATUS from RM_CUST a,CA_SHOP_INFO b where a.LICENSE_CODE=b.LICENSE_CODE and b.SHOP_ID=:SHOP_ID';
+    rs.ParamByName('SHOP_ID').AsString := shopId;
+    remote.Open(rs);
+    if (rs.FieldByName('STATUS').AsString<>'01') and (rs.FieldByName('STATUS').AsString<>'02') then
+       result := false;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

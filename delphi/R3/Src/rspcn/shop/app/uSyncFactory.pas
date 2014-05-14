@@ -2740,7 +2740,8 @@ begin
             except
               on E:Exception do
                  begin
-                   MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                   // MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                   Raise Exception.Create('数据恢复出错，原因：'+E.Message);
                  end;
             end;
           end;

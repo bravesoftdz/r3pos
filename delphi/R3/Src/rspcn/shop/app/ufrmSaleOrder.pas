@@ -95,6 +95,8 @@ type
     N7: TMenuItem;
     RzPanel13: TRzPanel;
     godsAmount: TRzPanel;
+    N8: TMenuItem;
+    N9: TMenuItem;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -150,6 +152,7 @@ type
     procedure toolDeleteClick(Sender: TObject);
     procedure N7Click(Sender: TObject);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure N9Click(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -235,7 +238,7 @@ implementation
 uses utokenFactory,udllDsUtil,udllShopUtil,uFnUtil,udllGlobal,udataFactory,
      uCacheFactory,ufrmSaveDesigner,ufrmPayMent,ufrmOrderPreview,uDevFactory,
      ufrmCustomerDialog,uCodePrinterFactory,ufrmCodeScan,uZebraPrinterFactory,
-     uPlayerFactory,ufrmHangUpFile;
+     uPlayerFactory,ufrmHangUpFile,ufrmCloseForDay;
 
 {$R *.dfm}
 
@@ -2766,6 +2769,22 @@ begin
        end;
   finally
     rs.Free;
+  end;
+end;
+
+procedure TfrmSaleOrder.N9Click(Sender: TObject);
+begin
+  inherited;
+  if dbState <> dsBrowse then
+     begin
+       ClearInvaid;
+       if not edtTable.IsEmpty then if (MessageBox(Handle,'当前单据尚未结账，是否继续？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
+     end;
+  CodeLisenter := false;
+  try
+    TfrmCloseForDay.ShowClDy(self, self.Handle)
+  finally
+    CodeLisenter := true;
   end;
 end;
 

@@ -3823,6 +3823,13 @@ inherited frmSaleOrder: TfrmSaleOrder
       Caption = #20817#25442#27492#21830#21697
       OnClick = N7Click
     end
+    object N8: TMenuItem
+      Caption = '-'
+    end
+    object N9: TMenuItem
+      Caption = #20132#29677#32467#36134
+      OnClick = N9Click
+    end
   end
   object cdsHeader: TZQuery [7]
     FieldDefs = <>

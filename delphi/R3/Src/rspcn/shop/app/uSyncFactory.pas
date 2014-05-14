@@ -1465,8 +1465,8 @@ begin
         SyncFactory.LoginSyncDate := token.lDate;
         SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
       finally
-        if token.online then dataFactory.remote.DBLock(false);
         Free;
+        if token.online then dataFactory.remote.DBLock(false);
       end;
     end;
   finally
@@ -1507,8 +1507,8 @@ begin
              RtcSyncFactory.SyncRtcData;
            end;
       finally
-        if token.online then dataFactory.remote.DBLock(false);
         Free;
+        if token.online then dataFactory.remote.DBLock(false);
       end;
     end;
   finally
@@ -1536,8 +1536,8 @@ begin
         SyncFactory.SyncBasic(3);
         SyncFactory.SyncBizData(1,BeginDate);
       finally
-        if token.online then dataFactory.remote.DBLock(false);
         Free;
+        if token.online then dataFactory.remote.DBLock(false);
       end;
     end;
   finally
@@ -1568,8 +1568,8 @@ begin
         SyncFactory.LoginSyncDate := token.lDate;
         SyncFactory.SetSynTimeStamp(token.tenantId,'LOGIN_SYNC',token.lDate,'#');
       finally
-        if token.online then dataFactory.remote.DBLock(false);
         Free;
+        if token.online then dataFactory.remote.DBLock(false);
       end;
     end;
   finally
@@ -3509,8 +3509,8 @@ begin
         SyncFactory.SyncBasic(2);
         SyncFactory.SyncBizData;
       finally
-        if token.online then dataFactory.remote.DBLock(false);
         Free;
+        if token.online then dataFactory.remote.DBLock(false);
       end;
     end;
   finally

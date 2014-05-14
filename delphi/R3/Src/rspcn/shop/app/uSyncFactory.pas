@@ -2926,6 +2926,9 @@ begin
            dataFactory.sqlite.ExecSQL(sql);
          end;
     end;
+
+    if not token.online then Exit;
+
     if SyncFactory.timerTerminted then Exit;
     SyncFactory.TimerSyncSales;
     if SyncFactory.timerTerminted then Exit;

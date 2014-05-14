@@ -2740,12 +2740,14 @@ begin
             except
               on E:Exception do
                  begin
-                   // MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
-                   Raise Exception.Create('数据恢复出错，原因：'+E.Message);
+                   result := -1;
+                   MessageBox(AppHandle,pchar('数据恢复出错，原因：'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+                   Raise;
                  end;
             end;
           end;
      end;
+
 {
   // 检测文件恢复
   try

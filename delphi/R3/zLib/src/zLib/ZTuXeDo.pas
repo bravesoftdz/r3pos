@@ -1115,7 +1115,6 @@ begin
     CancelBatch;
     ClearList(coList);
     coList.Free;
-    
     FTickCount:=GetTickCount-FTickCount;
     WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.OpenBatch('+FLogMsg+')');
   end;
@@ -1133,7 +1132,7 @@ begin
   except
     Raise Exception.Create('读取tperrno错误信息失败');
   end;
-  Raise Exception.Create('ErrNo:'+inttostr(errno)+'; '+s);
+  Raise Exception.Create('ErrNo:'+inttostr(errno)+';连接服务器失败,请检查您的网络!');
 end;
 
 function TZTuXeDo.CheckRaiseError: boolean;
@@ -1160,7 +1159,7 @@ begin
   else
      begin
        if (Pos(lowercase('Cannot open message catalog LIBWSC_CAT'),lowercase(s))>0) then _dbLock := false;
-       Raise Exception.Create('ErrNo:'+inttostr(errno)+'; '+s);
+       Raise Exception.Create('ErrNo:'+inttostr(errno)+';连接服务器失败,请检查您的网络!');
      end;
 end;
 
@@ -1258,7 +1257,7 @@ begin
          if (tpinit(nil) = -1) then RaiseError;
        end;
     for i:=0 to coList.Count -1 do
-        coEncode(PftPacked(coList[i]),ms);
+      coEncode(PftPacked(coList[i]),ms);
     sendlen := ms.Size;
     sendbuf := tpalloc('CARRAY', nil, sendlen+1);
     if sendbuf=nil then Raise Exception.Create('分配发送缓存区失败了');

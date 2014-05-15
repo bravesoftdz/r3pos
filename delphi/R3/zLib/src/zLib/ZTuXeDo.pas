@@ -1,7 +1,10 @@
 unit ZTuXeDo;
-                     
+
 interface
-uses Windows, Messages, SysUtils, Variants, Classes,Dialogs, ZDataSet, ZDbcIntfs,DB,ZdbHelp,ZBase,Registry;
+
+uses Windows,Messages,SysUtils,Variants,Classes,Dialogs,ZDataSet,ZDbcIntfs,DB,
+     ZdbHelp,ZBase,Registry;
+
   //=========================ATMI 函数 =================================//
   // 资料:http://wenku.baidu.com/view/dae80920af45b307e8719787.html     //
   // 代码:张森荣                  时间:2012-01-06                       //
@@ -74,7 +77,7 @@ type
       PackedCount: integer;
       PackedSeqNo:integer;
       SQL:string;
-      HasResult:Boolean;
+      HasResult:boolean;
       Params: OleVariant;
       Data: OleVariant;
   end;
@@ -175,7 +178,7 @@ type
   protected
     _dbLock:boolean;
     procedure RaiseError;
-    function  CheckRaiseError(TimeOutCount:integer): Boolean; //检查是否网络断开，若是返回True,否则抛异常
+    function  CheckRaiseError: boolean; //检查是否网络断开，若是返回True,否则抛异常
     procedure ClearBuf;
     procedure CheckPackedError(coPacket:PftPacked);
     procedure ClearList(coList:TList);
@@ -210,26 +213,26 @@ type
     function  iDbType:Integer;override;
 
     //数据包组织
-    function BeginBatch:Boolean;override;
-    function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):Boolean;override;
-    function OpenBatch:Boolean;override;
-    function CommitBatch:Boolean;override;
-    function CancelBatch:Boolean;override;
+    function BeginBatch:boolean;override;
+    function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):boolean;override;
+    function OpenBatch:boolean;override;
+    function CommitBatch:boolean;override;
+    function CancelBatch:boolean;override;
 
     //查询数据;
-    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; override;
-    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; override;
-    function Open(DataSet:TDataSet):Boolean;overload;override;
+    function Open(DataSet:TDataSet;AClassName:string;Params:TftParamList):boolean;overload; override;
+    function Open(DataSet:TDataSet;AClassName:string):boolean;overload; override;
+    function Open(DataSet:TDataSet):boolean;overload;override;
     //提交数据
-    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; override;
-    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; override;
-    function UpdateBatch(DataSet:TDataSet):Boolean;overload;override;
+    function UpdateBatch(DataSet:TDataSet;AClassName:string;Params:TftParamList):boolean;overload; override;
+    function UpdateBatch(DataSet:TDataSet;AClassName:string):boolean;overload; override;
+    function UpdateBatch(DataSet:TDataSet):boolean;overload;override;
 
     //返回执行影响记录数
     function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;override;
 
     //执行远程方式，返回结果
-    function ExecProc(AClassName:String;Params:TftParamList=nil):String;override;
+    function ExecProc(AClassName:string;Params:TftParamList=nil):string;override;
 
     //用户登录
     procedure GqqLogin(UserId:string;UserName:string);override;
@@ -490,7 +493,6 @@ implementation
     result := true;
   end;
 
-
 { TcoParamList }
 
 class function TcoParamList.coGetData(Params:TParams): OleVariant;
@@ -526,7 +528,7 @@ var
   i,w:integer;
   dInt:integer;
   dInt64:Int64;
-  dBool:Boolean;
+  dBool:boolean;
   dTime:TDatetime;
   dDouble:Extended;
   vType:TZSQLType;
@@ -636,15 +638,15 @@ begin
         Stream.Write(dBool,sizeof(dBool));
         if not dBool then
            begin
-              ms := TMemoryStream.Create;
-              try
-                coVToStream(Params[i].Value,ms);
-                w := ms.Size;
-                Stream.Write(w,sizeof(w));
-                Stream.CopyFrom(ms,w);
-              finally
-                ms.Free;
-              end;
+             ms := TMemoryStream.Create;
+             try
+               coVToStream(Params[i].Value,ms);
+               w := ms.Size;
+               Stream.Write(w,sizeof(w));
+               Stream.CopyFrom(ms,w);
+             finally
+               ms.Free;
+             end;
            end;
       end;
       else
@@ -659,7 +661,7 @@ var
   dInt:integer;
   dInt64:Int64;
   dDouble:Extended;
-  dBool:Boolean;
+  dBool:boolean;
   dTime:TDatetime;
   vType:TZSQLType;
   ms:TMemoryStream;
@@ -740,7 +742,7 @@ end;
 { TZTuXeDo }
 
 function TZTuXeDo.AddBatch(DataSet: TDataSet; AClassName: string;
-  Params: TftParamList): Boolean;
+  Params: TftParamList): boolean;
 var
   Factory:TZFactory;
 begin
@@ -751,7 +753,7 @@ begin
   if Assigned(Params) then  Factory.Params.Assign(Params);
 end;
 
-function TZTuXeDo.BeginBatch: Boolean;
+function TZTuXeDo.BeginBatch: boolean;
 begin
   if FList.Count > 0 then Raise Exception.Create('正在组织数据包，无法开始新的数据包。');
 end;
@@ -762,7 +764,7 @@ begin
   Raise Exception.Create('不支持客户端事务'); 
 end;
 
-function TZTuXeDo.CancelBatch: Boolean;
+function TZTuXeDo.CancelBatch: boolean;
 var
   i:integer;
 begin
@@ -770,7 +772,7 @@ begin
   FList.Clear;
 end;
 
-function TZTuXeDo.CommitBatch: Boolean;
+function TZTuXeDo.CommitBatch: boolean;
 var
   coPacket:PftPacked;
   i:integer;
@@ -778,7 +780,6 @@ var
 begin
   FLogMsg:='';
   FTickCount:=GetTickCount;
-
   result := false;
   coList := TList.Create;
   try
@@ -796,8 +797,7 @@ begin
         else
            coPacket.Params := null;
         coPacket.Data := TZQuery(TZFactory(fList[i]).DataSet).Delta;
-
-      FLogMsg:=FLogMsg+','+TZFactory(fList[i]).ZClassName;
+        FLogMsg:=FLogMsg+','+TZFactory(fList[i]).ZClassName;
       end;
     BSend(coList,'BCommit');
     ClearList(coList);
@@ -811,7 +811,6 @@ begin
   finally
     ClearList(coList);
     coList.Free;
-
     FTickCount:=GetTickCount-FTickCount;
     WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.BCommit('+FLogMsg+')');
   end;
@@ -883,8 +882,7 @@ begin
   fConnected := false;
 end;
 
-function TZTuXeDo.ExecProc(AClassName: String;
-  Params: TftParamList): String;
+function TZTuXeDo.ExecProc(AClassName: string; Params: TftParamList): string;
 var
   ObjName:string;
   coPacket:TftPacked;
@@ -897,9 +895,9 @@ begin
     coPacket.SQL := AClassName;
     coPacket.HasResult := true;
     if Params=nil then
-      coPacket.Params := null
+       coPacket.Params := null
     else
-      coPacket.Params := TcoParamList.coGetData(Params);
+       coPacket.Params := TcoParamList.coGetData(Params);
     coPacket.Data := null;
     Send(@coPacket,'ExecProc');
     Recv(@coPacket);
@@ -913,11 +911,9 @@ begin
   end;
 end;
 
-function TZTuXeDo.ExecSQL(const SQL: WideString;
-  ObjectFactory: TObject): Integer;
+function TZTuXeDo.ExecSQL(const SQL: WideString; ObjectFactory: TObject): Integer;
 var
   coPacket:TftPacked;
-  SQLList:TstringList;
 begin
   FTickCount:=GetTickCount;
   try
@@ -935,7 +931,6 @@ begin
     Recv(@coPacket);
     CheckPackedError(@coPacket);
     result := coPacket.Data;
-
   finally
     FTickCount:=GetTickCount-FTickCount;
     WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.ExecSQL(SQL='+SQL+')');
@@ -950,7 +945,6 @@ end;
 procedure TZTuXeDo.GqqLogin(UserId, UserName: string);
 begin
   inherited;
-
 end;
 
 function TZTuXeDo.iDbType: Integer;
@@ -958,22 +952,22 @@ var
   coPacket:TftPacked;
 begin
   if fiDbType<0 then
-  begin
-    coPacket.Sign := 1;
-    coPacket.PackedCount := 1;
-    coPacket.PackedSeqNo := 1;
-    coPacket.SQL := '';
-    coPacket.HasResult := true;
-    coPacket.Params := null;
-    coPacket.Data := null;
-    Send(@coPacket,'iDbType');
-    Recv(@coPacket);
-    CheckPackedError(@coPacket);
-    result := coPacket.Data;
-    fiDbType := result;
-  end
+     begin
+       coPacket.Sign := 1;
+       coPacket.PackedCount := 1;
+       coPacket.PackedSeqNo := 1;
+       coPacket.SQL := '';
+       coPacket.HasResult := true;
+       coPacket.Params := null;
+       coPacket.Data := null;
+       Send(@coPacket,'iDbType');
+       Recv(@coPacket);
+       CheckPackedError(@coPacket);
+       result := coPacket.Data;
+       fiDbType := result;
+     end
   else
-    result := fiDbType;
+     result := fiDbType;
 end;
 
 function TZTuXeDo.Initialize(const ConnStr: WideString): boolean;
@@ -989,7 +983,6 @@ begin
     Port := StrtoIntDef(vList.Values['port'],1024);
   	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port)));
    	tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
-    //dbid := StrtoIntDef(vList.Values['dbid'],1);
   finally
     vList.Free;
   end;
@@ -1000,15 +993,14 @@ begin
   Raise Exception.Create('不支持客户端事务'); 
 end;
 
-function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String;
-  Params: TftParamList): Boolean;
+function TZTuXeDo.Open(DataSet: TDataSet; AClassName: string; Params: TftParamList): boolean;
 var
   ObjName:string;
   coPacket:TftPacked;
 begin
   FTickCount:=GetTickCount;
   try
-    result:=False;
+    result:=false;
     coPacket.Sign := 1;
     coPacket.PackedCount := 1;
     coPacket.PackedSeqNo := 1;
@@ -1025,10 +1017,10 @@ begin
     TZQuery(DataSet).Data := coPacket.Data;
     //2012.08.29Add判断
     if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
-    begin
-      TZQuery(DataSet).Close;
-      Raise Exception.Create('执行[GOpen('+AClassName+')]返回无效空数据包...');
-    end;
+       begin
+         TZQuery(DataSet).Close;
+         Raise Exception.Create('执行[GOpen('+AClassName+')]返回无效空数据包...');
+       end;
     result:=TZQuery(DataSet).Active;
   finally
     ObjName:=AClassName;
@@ -1038,18 +1030,18 @@ begin
   end;
 end;
 
-function TZTuXeDo.Open(DataSet: TDataSet; AClassName: String): Boolean;
+function TZTuXeDo.Open(DataSet: TDataSet; AClassName: string): boolean;
 begin
   result := Open(DataSet,AClassName,nil);
 end;
 
-function TZTuXeDo.Open(DataSet: TDataSet): Boolean;
+function TZTuXeDo.Open(DataSet: TDataSet): boolean;
 var
   coPacket:TftPacked;
 begin
   FTickCount:=GetTickCount;
   try
-    result:=False;
+    result:=false;
     coPacket.Sign := 1;
     coPacket.PackedCount := 1;
     coPacket.PackedSeqNo := 1;
@@ -1063,19 +1055,18 @@ begin
     TZQuery(DataSet).Data := coPacket.Data;
     //2012.08.29Add判断
     if (TZQuery(DataSet).Active)and(TZQuery(DataSet).FieldCount=0) then
-    begin
-      TZQuery(DataSet).Close;
-      Raise Exception.Create('执行[Open()]返回无效空数据包...');
-    end;
+       begin
+         TZQuery(DataSet).Close;
+         Raise Exception.Create('执行[Open()]返回无效空数据包...');
+       end;
     result:=TZQuery(DataSet).Active;
-
   finally
     FTickCount:=GetTickCount-FTickCount;
     WriteToFile('[RunTime='+IntToStr(FTickCount)+'ms] TZTuXeDo.Open(SQL='+TZQuery(DataSet).SQL.Text+')');
   end;
 end;
 
-function TZTuXeDo.OpenBatch: Boolean;
+function TZTuXeDo.OpenBatch: boolean;
 var
   coPacket:PftPacked;
   i:integer;
@@ -1132,8 +1123,8 @@ end;
 
 procedure TZTuXeDo.RaiseError;
 var
-  errno:integer;
   s:string;
+  errno:integer;
 begin
   try
     errno := gettperrno;
@@ -1142,34 +1133,35 @@ begin
   except
     Raise Exception.Create('读取tperrno错误信息失败');
   end;
-  Raise Exception.Create(s);
+  Raise Exception.Create('ErrNo:'+inttostr(errno)+'; '+s);
 end;
 
-function TZTuXeDo.CheckRaiseError(TimeOutCount:integer): Boolean;
+function TZTuXeDo.CheckRaiseError: boolean;
 var
+  s:string;
   errno:integer;
-  errMsg:string;
 begin
-  result:=False;
+  result:=false;
   try
     errno := gettperrno;
-    errMsg:= StrPas(tpstrerror(errno));
+    s := StrPas(tpstrerror(errno));
   except
     Raise Exception.Create('读取tperrno错误信息失败');
   end;
-  if (Pos('Cannot open message catalog LIBWSC_CAT',errMsg)>0)and(TimeOutCount<500) then //判断是否未连接
-  begin
-    //先断开
-    tpterm();
-    //初始化连接
-    loadTuxedo;
-  	tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port) ));
-   	tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
-    //重新连接
-    Connect;
-    result:=true;
-  end else
-    Raise Exception.Create(errMsg);
+  if (_dbLock = true) and (errno = 12) then
+     begin
+       tpterm();
+       loadTuxedo;
+       tuxputenv(pchar('WSNADDR=//'+Host+':'+inttostr(Port) ));
+       tuxputenv(pchar('TUXDIR='+ExtractFilePath(ParamStr(0))+'debug\tuxedo11'));
+       Connect;
+       result:=true;
+     end
+  else
+     begin
+       if (Pos(lowercase('Cannot open message catalog LIBWSC_CAT'),lowercase(s))>0) then _dbLock := false;
+       Raise Exception.Create('ErrNo:'+inttostr(errno)+'; '+s);
+     end;
 end;
 
 procedure TZTuXeDo.RollbackTrans;
@@ -1178,8 +1170,7 @@ begin
   Raise Exception.Create('不支持客户端事务'); 
 end;
 
-function TZTuXeDo.UpdateBatch(DataSet: TDataSet; AClassName: String;
-  Params: TftParamList): Boolean;
+function TZTuXeDo.UpdateBatch(DataSet: TDataSet; AClassName: string; Params: TftParamList): boolean;
 var
   ObjName:string;
   coPacket:TftPacked;
@@ -1209,16 +1200,14 @@ begin
   end;
 end;
 
-function TZTuXeDo.UpdateBatch(DataSet: TDataSet;
-  AClassName: String): Boolean;
+function TZTuXeDo.UpdateBatch(DataSet: TDataSet; AClassName: string): boolean;
 begin
   result := UpdateBatch(DataSet,AClassName,nil);
 end;
 
 procedure TZTuXeDo.Send(coPacket: PftPacked;SvcName:string);
 var
-  LTickCount:integer;
-  ms : TMemoryStream;
+  ms: TMemoryStream;
 begin
   ClearBuf;
   ms := TMemoryStream.Create;
@@ -1236,34 +1225,29 @@ begin
     ms.Read(sendbuf^,ms.Size);
     recvlen := sendlen;
     recvbuf := tpalloc('CARRAY', nil, recvlen+1);
-
-    //2012-07-04 xhh第一次执行若是返回连接错误，则重新连接在执行
-    LTickCount:=GetTickCount;
     if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
-    begin
-      //LTickCount:=GetTickCount-LTickCount;
-      //if CheckRaiseError(LTickCount) then
-      //begin
-      //  if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
-          RaiseError;
-      //end
-    end;
+       begin
+         if CheckRaiseError then
+            begin
+              if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen,0)=-1 then
+                 RaiseError;
+            end;
+       end;
   finally
     if not _dbLock then tpterm();
     ms.Free;
   end;
 end;
 
-function TZTuXeDo.UpdateBatch(DataSet: TDataSet): Boolean;
+function TZTuXeDo.UpdateBatch(DataSet: TDataSet): boolean;
 begin
   Raise Exception.Create('不支持此项功能');
 end;
 
 procedure TZTuXeDo.BSend(coList: TList;SvcName:string);
 var
-  ms : TMemoryStream;
-  i:integer;
-  LTickCount:integer;
+  i: integer;
+  ms: TMemoryStream;
 begin
   ClearBuf;
   ms := TMemoryStream.Create;
@@ -1282,18 +1266,14 @@ begin
     ms.Read(sendbuf^,ms.Size);
     recvlen := sendlen;
     recvbuf := tpalloc('CARRAY', nil, recvlen+1);
-    //2012-07-04 xhh第一次执行若是返回连接错误，则重新连接在执行
-    LTickCount:=GetTickCount;
-   	if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
-    begin
-      //LTickCount:=GetTickCount-LTickCount;
-      //if CheckRaiseError(LTickCount) then //检测网络断开重连接在执行1次
-      //begin
-      //  if tpcall(pchar(SvcName),sendbuf,sendlen,@recvbuf,@recvlen,0)=-1 then
-        _dbLock := false;
-        RaiseError;
-      //end;
-    end;
+    if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen, 0)=-1 then
+       begin
+         if CheckRaiseError then
+            begin
+              if tpcall(pchar(SvcName), sendbuf, sendlen, @recvbuf, @recvlen, 0)=-1 then
+                 RaiseError;
+            end;
+       end;
   finally
     if not _dbLock then tpterm();
     ms.Free;
@@ -1428,4 +1408,3 @@ initialization
 finalization
   unLoadTuxedo;
 end.
-                                                                                            .

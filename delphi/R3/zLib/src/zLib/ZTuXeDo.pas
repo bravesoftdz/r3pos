@@ -1132,7 +1132,7 @@ begin
   except
     Raise Exception.Create('读取tperrno错误信息失败');
   end;
-  Raise Exception.Create('ErrNo:'+inttostr(errno)+';连接服务器失败,请检查您的网络!');
+  Raise Exception.Create('ErrNo：'+inttostr(errno)+'；连接服务器失败，请检查您的网络！');
 end;
 
 function TZTuXeDo.CheckRaiseError: boolean;
@@ -1159,7 +1159,7 @@ begin
   else
      begin
        if (Pos(lowercase('Cannot open message catalog LIBWSC_CAT'),lowercase(s))>0) then _dbLock := false;
-       Raise Exception.Create('ErrNo:'+inttostr(errno)+';连接服务器失败,请检查您的网络!');
+       Raise Exception.Create('ErrNo：'+inttostr(errno)+'；连接服务器失败，请检查您的网络！');
      end;
 end;
 

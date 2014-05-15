@@ -225,10 +225,10 @@ type
     RzPanel79: TRzPanel;
     RzLabel49: TRzLabel;
     edtINPUT_MODE: TcxComboBox;
-    edtBK_INDUSTRY_TYPE: TRzPanel;
+    edtBK_BARCODE_MODE: TRzPanel;
     RzPanel81: TRzPanel;
     RzLabel50: TRzLabel;
-    edtINDUSTRY_TYPE: TcxComboBox;
+    edtBARCODE_MODE: TcxComboBox;
     RzLabel51: TRzLabel;
     RzPanel13: TRzPanel;
     RzPanel82: TRzPanel;
@@ -835,14 +835,12 @@ begin
     if FirstLogin then
        begin
          edtINPUT_MODE.ItemIndex := 0;
-         edtINDUSTRY_TYPE.ItemIndex := 0;
+         edtBARCODE_MODE.ItemIndex := 0;
        end
     else
        begin
          edtINPUT_MODE.ItemIndex := strtointdef(dllGlobal.GetParameter('INPUT_MODE'),0);
-         i := TdsItems.FindItems(edtINDUSTRY_TYPE.Properties.Items,'CODE_ID',dllGlobal.GetParameter('INDUSTRY_TYPE'));
-         if i < 0 then i := 0;
-         edtINDUSTRY_TYPE.ItemIndex := i;
+         edtBARCODE_MODE.ItemIndex := strtointdef(dllGlobal.GetParameter('BARCODE_MODE'),0);
        end;
     CheckInfoPercent;
   end;
@@ -983,8 +981,8 @@ begin
     dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
     if edtINPUT_MODE.ItemIndex >= 0 then
        SetValue(tmpSysDefine,'INPUT_MODE',inttostr(edtINPUT_MODE.ItemIndex));
-    if edtINDUSTRY_TYPE.ItemIndex >= 0 then
-       SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
+    if edtBARCODE_MODE.ItemIndex >= 0 then
+       SetValue(tmpSysDefine,'BARCODE_MODE',inttostr(edtBARCODE_MODE.ItemIndex));
     dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60')
   finally
     Params.Free;
@@ -1001,8 +999,8 @@ begin
       dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
       if edtINPUT_MODE.ItemIndex >= 0 then
          SetValue(tmpSysDefine,'INPUT_MODE',inttostr(edtINPUT_MODE.ItemIndex));
-      if edtINDUSTRY_TYPE.ItemIndex >= 0 then
-         SetValue(tmpSysDefine,'INDUSTRY_TYPE',TRecord_(edtINDUSTRY_TYPE.Properties.Items.Objects[edtINDUSTRY_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString);
+      if edtBARCODE_MODE.ItemIndex >= 0 then
+         SetValue(tmpSysDefine,'BARCODE_MODE',inttostr(edtBARCODE_MODE.ItemIndex));
       dataFactory.UpdateBatch(tmpSysDefine, 'TSysDefineV60')
     finally
       dataFactory.MoveToDefault;
@@ -2257,7 +2255,7 @@ begin
   if trim(edtREGION_ID.AsString) <> '' then inc(i);
   if trim(edtLINKMAN.Text) <> '' then inc(i);
   if trim(edtTELEPHONE.Text) <> '' then inc(i);
-  if edtINDUSTRY_TYPE.ItemIndex >= 0 then inc(i);
+  if edtBARCODE_MODE.ItemIndex >= 0 then inc(i);
   if edtINPUT_MODE.ItemIndex >= 0 then inc(i);
   if trim(edtXSM_CODE.Text) <> '' then inc(i);
   if trim(edtXSM_PSWD.Text) <> '' then inc(i);

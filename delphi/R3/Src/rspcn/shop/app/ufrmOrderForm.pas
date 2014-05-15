@@ -147,6 +147,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
+    // 扫码模式
+    BarcodeMode:integer;
     // 散装条码参数
     BulkiFlag:string;
     BulkId:integer;
@@ -654,8 +656,10 @@ var
   r:boolean;
 begin
   if UNIT_ID='' then UNIT_ID := AObj.FieldbyName('UNIT_ID').AsString;
-  //r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt,null,null]),[]);
-  r := false;
+  if BarcodeMode = 0 then
+     r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,0,null,null]),[])
+  else
+     r := false;
   if not r then begin
   inc(RowID);
   if (edtTable.FieldbyName('GODS_ID').AsString='') and (edtTable.FieldbyName('SEQNO').AsString<>'') then
@@ -772,31 +776,33 @@ begin
   edtProperty.CreateDataSet;
   edtTable.CreateDataSet;
   edtTable.DisableControls;
-  // hasPrice := (edtTable.FindField('APRICE')<>nil);
+  hasPrice := (edtTable.FindField('APRICE')<>nil);
   try
   RowID := 0;
   DataSet.First;
   while not DataSet.Eof do
     begin
-{
-      if hasPrice then
-         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
-                        DataSet.FieldbyName('BATCH_NO').AsString,
-                        DataSet.FieldbyName('UNIT_ID').AsString,
-                        DataSet.FieldbyName('BOM_ID').Value,
-                        DataSet.FieldbyName('LOCUS_NO').Value,
-                        DataSet.FieldbyName('IS_PRESENT').AsInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+      if BarcodeMode = 0 then
+         begin
+           if hasPrice then
+              r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
+                   VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
+                             DataSet.FieldbyName('BATCH_NO').AsString,
+                             DataSet.FieldbyName('UNIT_ID').AsString,
+                             DataSet.FieldbyName('BOM_ID').Value,
+                             DataSet.FieldbyName('LOCUS_NO').Value,
+                             DataSet.FieldbyName('IS_PRESENT').AsInteger,DataSet.FieldbyName('APRICE').AsCurrency]),[])
+           else
+              r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
+                   VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
+                             DataSet.FieldbyName('BATCH_NO').AsString,
+                             DataSet.FieldbyName('UNIT_ID').AsString,
+                             DataSet.FieldbyName('BOM_ID').Value,
+                             DataSet.FieldbyName('LOCUS_NO').Value,
+                             DataSet.FieldbyName('IS_PRESENT').AsInteger]),[]);
+         end
       else
-         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
-              VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
-                        DataSet.FieldbyName('BATCH_NO').AsString,
-                        DataSet.FieldbyName('UNIT_ID').AsString,
-                        DataSet.FieldbyName('BOM_ID').Value,
-                        DataSet.FieldbyName('LOCUS_NO').Value,
-                        DataSet.FieldbyName('IS_PRESENT').AsInteger]),[]);
-}
-      r := false;
+         r := false;
       if r then
       begin
         edtTable.Edit;
@@ -897,7 +903,7 @@ begin
   bs := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   DataSet.First;
   while not DataSet.Eof do DataSet.Delete;
-  // hasPrice := (edtTable.FindField('APRICE')<>nil);
+  hasPrice := (edtTable.FindField('APRICE')<>nil);
   edtTable.First;
   while not edtTable.Eof do
     begin
@@ -908,28 +914,28 @@ begin
          ((bs.FieldbyName('SORT_ID8').AsString = '') or (bs.FieldbyName('SORT_ID8').AsString = '#'))
       then
          begin
-{
-           if HasPrice then
-              lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID;APRICE',
-                   VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
-                            edtTable.FieldbyName('BATCH_NO').AsString,
-                            edtTable.FieldbyName('UNIT_ID').AsString,
-                            edtTable.FieldbyName('IS_PRESENT').AsInteger,
-                            edtTable.FieldbyName('LOCUS_NO').Value,
-                            edtTable.FieldbyName('BOM_ID').Value,
-                            edtTable.FieldbyName('APRICE').AsCurrency]),[])
-           else
-              lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',
-                   VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
-                            edtTable.FieldbyName('BATCH_NO').AsString,
-                            edtTable.FieldbyName('UNIT_ID').AsString,
-                            edtTable.FieldbyName('IS_PRESENT').AsInteger,
-                            edtTable.FieldbyName('LOCUS_NO').Value,
-                            edtTable.FieldbyName('BOM_ID').Value
-                            ]),[]);
-
-           if lc then Raise Exception.Create('"'+edtTable.FieldbyName('GODS_NAME').AsString+'"货品重复录入,请核对输入是否正确.');
-}
+           if BarcodeMode = 0 then
+              begin
+                if HasPrice then
+                   lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID;APRICE',
+                        VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
+                                 edtTable.FieldbyName('BATCH_NO').AsString,
+                                 edtTable.FieldbyName('UNIT_ID').AsString,
+                                 edtTable.FieldbyName('IS_PRESENT').AsInteger,
+                                 edtTable.FieldbyName('LOCUS_NO').Value,
+                                 edtTable.FieldbyName('BOM_ID').Value,
+                                 edtTable.FieldbyName('APRICE').AsCurrency]),[])
+                else
+                   lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',
+                        VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
+                                 edtTable.FieldbyName('BATCH_NO').AsString,
+                                 edtTable.FieldbyName('UNIT_ID').AsString,
+                                 edtTable.FieldbyName('IS_PRESENT').AsInteger,
+                                 edtTable.FieldbyName('LOCUS_NO').Value,
+                                 edtTable.FieldbyName('BOM_ID').Value
+                                 ]),[]);
+                if lc then Raise Exception.Create('"'+edtTable.FieldbyName('GODS_NAME').AsString+'"货品重复录入,请核对输入是否正确.');
+              end;
            DataSet.Append;
            inc(r);
            for i:=0 to edtTable.Fields.Count -1 do
@@ -2865,6 +2871,8 @@ begin
      Bulk2Len := StrtoIntDef(dllGlobal.GetParameter('BUIK_LEN2'),4)+1;
   Bulk1Dec := StrtoIntDef(dllGlobal.GetParameter('BUIK_DEC1'),2);
   Bulk2Dec := StrtoIntDef(dllGlobal.GetParameter('BUIK_DEC2'),2);
+
+  BarcodeMode := StrtoIntDef(dllGlobal.GetParameter('BARCODE_MODE'),0);
 end;
 
 procedure TfrmOrderForm.FormDestroy(Sender: TObject);

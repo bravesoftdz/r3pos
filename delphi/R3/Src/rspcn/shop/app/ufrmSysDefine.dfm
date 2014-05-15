@@ -6574,7 +6574,7 @@ inherited frmSysDefine: TfrmSysDefine
                 TabOrder = 1
               end
             end
-            object edtBK_INDUSTRY_TYPE: TRzPanel
+            object edtBK_BARCODE_MODE: TRzPanel
               Left = 45
               Top = 150
               Width = 260
@@ -6601,7 +6601,7 @@ inherited frmSysDefine: TfrmSysDefine
                   Height = 27
                   Align = alClient
                   Alignment = taCenter
-                  Caption = #34892#19994#31867#22411
+                  Caption = #25195#30721#27169#24335
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -15
@@ -6615,13 +6615,16 @@ inherited frmSysDefine: TfrmSysDefine
                   TextStyle = tsShadow
                 end
               end
-              object edtINDUSTRY_TYPE: TcxComboBox
+              object edtBARCODE_MODE: TcxComboBox
                 Left = 105
                 Top = 4
                 Width = 153
                 Height = 23
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #27719#24635#35760#24405#27169#24335
+                  #27969#27700#35760#24405#27169#24335)
                 Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
               end

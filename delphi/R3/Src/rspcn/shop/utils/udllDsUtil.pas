@@ -14,18 +14,31 @@ type
  public
    class procedure ClearItems(Items:TStrings);
    class function  FindItems(Items:TStrings;KeyField:string;KeyValue:string):Integer;
-   class procedure AddDataSetToItems(DataSet:TDataSet;Items:TStrings;NameField:String);
+   class procedure AddDataSetToItems(DataSet:TDataSet;Items:TStrings;NameField:string);
  end;
 
  TSequence=class
  public
    class function GetTimeStamp(iDbType:Integer):string;  //根据iDbType返回数据库时间戳函数
-   class function GetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):String;overload;
-   class function TryGetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):String;overload;
-   class function GetSequence(AFactor:TdbFactory;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;overload;
-   class function GetMaxID(FlagText:String;FieldName,TableName:String;nLen:String;CondiStr:String=''):String;overload;
-   class function GetIntegerID(Factor:TdbFactory;FieldName,TableName:String;CondiStr:String=''):Integer;
+   class function GetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):string;overload;
+   class function TryGetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):string;overload;
+   class function GetSequence(AFactor:TdbFactory;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):string;overload;
+   class function GetMaxID(FlagText:string;FieldName,TableName:string;nLen:string;CondiStr:string=''):string;overload;
+   class function GetIntegerID(Factor:TdbFactory;FieldName,TableName:string;CondiStr:string=''):Integer;
    class function NewId():string;
+ end;
+
+ TBatchSQLFactory=class
+ private
+   RsExeSQL:TZQuery;
+   function DoCreateDataSet:Boolean;
+   function GetFieldSQL(Sql:string;FieldIdx: integer):string;
+ public
+   constructor Create;virtual;
+   destructor  Destroy;override;
+   function DoClearSQL:Boolean;
+   function AppendSQL(SQLStr: WideString): Boolean;
+   function DoExecSQLComand(vFactor:TdbFactory):Boolean;
  end;
 
 implementation
@@ -45,7 +58,7 @@ end;
 
 { TdsItems }
 
-class procedure TdsItems.AddDataSetToItems(DataSet: TDataSet; Items: TStrings;NameField:String);
+class procedure TdsItems.AddDataSetToItems(DataSet: TDataSet; Items: TStrings;NameField:string);
 var AObj:TRecord_;
 begin
   ClearItems(Items);
@@ -103,7 +116,7 @@ begin
   end;
 end;
 
-class function TSequence.GetIntegerID(Factor: TdbFactory; FieldName, TableName, CondiStr: String): Integer;
+class function TSequence.GetIntegerID(Factor: TdbFactory; FieldName, TableName, CondiStr: string): Integer;
 var DataSet:TZQuery;
 begin
   DataSet:=TZQuery.Create(nil);
@@ -124,9 +137,9 @@ begin
   end;
 end;
 
-class function TSequence.GetMaxID(FlagText: String; FieldName, TableName, nLen, CondiStr: String): String;
+class function TSequence.GetMaxID(FlagText: string; FieldName, TableName, nLen, CondiStr: string): string;
 var
-  ss:String;
+  ss:string;
   TmpLen:Integer;
   DataSet:TZQuery;
 begin
@@ -162,7 +175,7 @@ begin
   end;
 end;
 
-class function TSequence.GetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen: Integer;Number:Integer=1): String;
+class function TSequence.GetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen: Integer;Number:Integer=1): string;
   function GetFormat:string;
   var i:Integer;
     begin
@@ -227,7 +240,7 @@ begin
   end;
 end;
 
-class function TSequence.GetSequence(AFactor: TdbFactory; SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen: Integer): String;
+class function TSequence.GetSequence(AFactor: TdbFactory; SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen: Integer): string;
   function GetFormat:string;
   var i:Integer;
   begin
@@ -303,7 +316,7 @@ begin
     result :=token.shopId+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
-class function TSequence.TryGetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen, Number: Integer): String;
+class function TSequence.TryGetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen, Number: Integer): string;
   function GetFormat:string;
   var i:Integer;
   begin
@@ -366,6 +379,105 @@ begin
   finally
     Temp.Free;
   end;
+end;
+
+{ TBatchSQLFactory }
+
+constructor TBatchSQLFactory.Create;
+begin
+  RsExeSQL:=TZQuery.Create(nil);
+  DoCreateDataSet;
+end;
+
+destructor TBatchSQLFactory.Destroy;
+begin
+  RsExeSQL.Close;
+  RsExeSQL.Free;
+  inherited;
+end;
+
+function TBatchSQLFactory.AppendSQL(SQLStr: WideString): Boolean;
+var
+  RecNo:integer;
+  Sql:WideString;
+begin
+  result:=false;
+  Sql:=trim(SQLStr);
+  RecNo:=RsExeSQL.RecordCount+1;
+  RsExeSQL.Append;
+  RsExeSQL.FieldByName('SEQ_NO').AsInteger:=RecNo;
+  RsExeSQL.FieldByName('SQL01').AsString:=GetFieldSQL(Sql, 1);
+  RsExeSQL.FieldByName('SQL02').AsString:=GetFieldSQL(Sql, 2);
+  RsExeSQL.FieldByName('SQL03').AsString:=GetFieldSQL(Sql, 3);
+  RsExeSQL.FieldByName('SQL04').AsString:=GetFieldSQL(Sql, 4);
+  RsExeSQL.FieldByName('SQL05').AsString:=GetFieldSQL(Sql, 5);
+  RsExeSQL.FieldByName('SQL06').AsString:=GetFieldSQL(Sql, 6);
+  RsExeSQL.FieldByName('SQL07').AsString:=GetFieldSQL(Sql, 7);
+  RsExeSQL.FieldByName('SQL08').AsString:=GetFieldSQL(Sql, 8);
+  RsExeSQL.FieldByName('SQL09').AsString:=GetFieldSQL(Sql, 9);
+  RsExeSQL.FieldByName('SQL10').AsString:=GetFieldSQL(Sql,10);
+  RsExeSQL.FieldByName('SQL11').AsString:=GetFieldSQL(Sql,11);
+  RsExeSQL.FieldByName('SQL12').AsString:=GetFieldSQL(Sql,12);
+  RsExeSQL.FieldByName('SQL13').AsString:=GetFieldSQL(Sql,13);
+  RsExeSQL.FieldByName('SQL14').AsString:=GetFieldSQL(Sql,14);
+  RsExeSQL.FieldByName('SQL15').AsString:=GetFieldSQL(Sql,15);
+  RsExeSQL.FieldByName('SQL16').AsString:=GetFieldSQL(Sql,16);
+  RsExeSQL.Post;
+  result:=true;
+end;
+
+function TBatchSQLFactory.DoClearSQL: Boolean;
+begin
+  result:=false;
+  RsExeSQL.First;
+  while not RsExeSQL.Eof do
+    begin
+      RsExeSQL.Delete;
+    end;
+  result:=true;
+end;
+
+function TBatchSQLFactory.DoCreateDataSet: Boolean;
+begin
+  result:=false;
+  RsExeSQL.Close;
+  RsExeSQL.FieldDefs.Add('SEQ_NO',ftInteger,0,true);
+  RsExeSQL.FieldDefs.Add('SQL01',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL02',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL03',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL04',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL05',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL06',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL07',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL08',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL09',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL10',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL11',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL12',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL13',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL14',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL15',ftstring,250,true);
+  RsExeSQL.FieldDefs.Add('SQL16',ftstring,250,true);
+  RsExeSQL.CreateDataSet;
+  result:=RsExeSQL.Active;
+end;
+
+function TBatchSQLFactory.DoExecSQLComand(vFactor: TdbFactory): Boolean;
+begin
+  result:=false;
+  if RsExeSQL.State in [dsInsert,dsEdit] then RsExeSQL.Post;
+  if (RsExeSQL.RecordCount>0) and (vFactor<>nil) and (vFactor.Connected) then
+     begin
+       result:=vFactor.UpdateBatch(RsExeSQL,'TDoBatchExecSQL');
+     end;
+end;
+
+function TBatchSQLFactory.GetFieldSQL(Sql: string; FieldIdx: integer): string;
+var BegIdx:integer;
+begin
+  result:='';
+  BegIdx:=(FieldIdx-1)*250+1;
+  if Length(Sql)>=BegIdx then result := Copy(Sql,BegIdx,250);
 end;
 
 end.

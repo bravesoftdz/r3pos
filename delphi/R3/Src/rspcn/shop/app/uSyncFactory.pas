@@ -3502,8 +3502,14 @@ begin
 end;
 
 procedure TSyncFactory.WaitForSync;
+var _Start:int64;
 begin
-  while timered do Application.ProcessMessages;
+  _Start := GetTickCount;
+  while timered do
+    begin
+      Application.ProcessMessages;
+      if (GetTickCount-_Start) > 1000*10 then Raise Exception.Create('同步等待超时，请稍后重试...');
+    end;
 end;
 
 procedure TSyncFactory.InitGodsInfo;

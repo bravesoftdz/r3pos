@@ -1424,11 +1424,11 @@ begin
              if flag = 0 then // 没有还原
                 begin
                   RspSyncFactory.SyncAll;
-                  RspSyncFactory.copyGoodsSort;
                   SyncFactory.InitTenant;
                   SyncFactory.SyncBasic(1);
                   TfrmSysDefine.SaveRegister;
                   SyncFactory.InitGodsInfo;
+                  RspSyncFactory.copyGoodsSort;
                 end
              else if flag = 1 then // 文件还原
                 begin

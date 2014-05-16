@@ -510,7 +510,7 @@ begin
   if trim(searchTxt) <> '' then
      begin
        if result <> '' then result := result +' and ';
-       result := result + '(jp.GODS_NAME like ''%'+trim(searchTxt)+'%'' or jp.GODS_CODE like ''%'+trim(searchTxt)+'%'' or jp.BARCODE like ''%'+trim(searchTxt)+'%'')';
+       result := result + '(jp.GODS_NAME like ''%'+trim(searchTxt)+'%'' or jp.GODS_CODE like ''%'+trim(searchTxt)+'%'' or jp.GODS_ID in (select GODS_ID from PUB_BARCODE where BARCODE like ''%'+trim(searchTxt)+'%''))';
      end;
   case storFlag of
   0:begin

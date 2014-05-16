@@ -3510,9 +3510,9 @@ procedure TSyncFactory.InitGodsInfo;
 var
   i:integer;
   rs:TZQuery;
-  FileName,str:string;
+  FileName,str1,str2:string;
   SQLList:TStringList;
-  BatchSQLFactor:TBatchSQLFactory;
+  BatchSQLFactor,SqlliteFactor:TBatchSQLFactory;
 begin
   FileName := ExtractFilePath(Application.ExeName)+'InitGods.dat';
 
@@ -3544,24 +3544,43 @@ begin
 
   SQLList := TStringList.Create;
   BatchSQLFactor := TBatchSQLFactory.Create;
+  SqlliteFactor := TBatchSQLFactory.Create;
   try
     SQLList.LoadFromFile(FileName);
     SQLList.Delimiter := ';';
     for i := 0 to SQLList.Count - 1 do
       begin
-        str := trim(SQLList.Strings[i]);
-        if str <> '' then
+        str1 := trim(SQLList.Strings[i]);
+        str2 := trim(SQLList.Strings[i]);
+        if str1 <> '' then
            begin
-             str := stringreplace(str,':TENANT_ID',token.tenantId,[rfReplaceAll]);
-             str := stringreplace(str,':SHOP_ID',''''+token.shopId+'''',[rfReplaceAll]);
-             str := stringreplace(str,':TIME_STAMP',GetTimeStamp(dataFactory.iDbType),[rfReplaceAll]);
-             BatchSQLFactor.AppendSQL(ParseSQL(dataFactory.iDbType, str));
+             str1 := stringreplace(str1,':TENANT_ID',token.tenantId,[rfReplaceAll]);
+             str1 := stringreplace(str1,':SHOP_ID',''''+token.shopId+'''',[rfReplaceAll]);
+             str1 := stringreplace(str1,':TIME_STAMP',GetTimeStamp(dataFactory.iDbType),[rfReplaceAll]);
+             BatchSQLFactor.AppendSQL(ParseSQL(dataFactory.iDbType, str1));
+           end;
+        if str2 <> '' then
+           begin
+             str2 := stringreplace(str2,':TENANT_ID',token.tenantId,[rfReplaceAll]);
+             str2 := stringreplace(str2,':SHOP_ID',''''+token.shopId+'''',[rfReplaceAll]);
+             str2 := stringreplace(str2,':TIME_STAMP',GetTimeStamp(dataFactory.sqlite.iDbType),[rfReplaceAll]);
+             SqlliteFactor.AppendSQL(ParseSQL(dataFactory.sqlite.iDbType, str2));
            end;
       end;
     BatchSQLFactor.DoExecSQLComand(dataFactory);
+    if dataFactory.iDbType <> 5 then
+       begin
+         dataFactory.MoveToSqlite;
+         try
+           SqlliteFactor.DoExecSQLComand(dataFactory);
+         finally
+           dataFactory.MoveToDefault;
+         end;
+       end;
   finally
     SQLList.Free;
     BatchSQLFactor.Free;
+    SqlliteFactor.Free;
   end;
 end;
 

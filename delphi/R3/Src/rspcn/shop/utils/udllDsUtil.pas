@@ -31,14 +31,14 @@ type
  TBatchSQLFactory=class
  private
    RsExeSQL:TZQuery;
-   function DoCreateDataSet:Boolean;
+   function DoCreateDataSet:boolean;
    function GetFieldSQL(Sql:string;FieldIdx: integer):string;
  public
    constructor Create;virtual;
    destructor  Destroy;override;
-   function DoClearSQL:Boolean;
-   function AppendSQL(SQLStr: WideString): Boolean;
-   function DoExecSQLComand(vFactor:TdbFactory):Boolean;
+   function DoClearSQL:boolean;
+   function AppendSQL(SQLStr: WideString): boolean;
+   function DoExecSQLComand(vFactor:TdataFactory):boolean;
  end;
 
 implementation
@@ -185,7 +185,7 @@ class function TSequence.GetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string; nLen
     end;
 var Temp:TZQuery;
     Str,flag:string;
-    InTrans:Boolean;
+    InTrans:boolean;
 begin
   InTrans := dataFactory.InTransaction;
   Temp := TZQuery.Create(nil);
@@ -326,7 +326,7 @@ class function TSequence.TryGetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string; n
   end;
 var Temp:TZQuery;
     Str,flag:string;
-    InTrans:Boolean;
+    InTrans:boolean;
 begin
   InTrans := dataFactory.InTransaction;
   Temp := TZQuery.Create(nil);
@@ -396,7 +396,7 @@ begin
   inherited;
 end;
 
-function TBatchSQLFactory.AppendSQL(SQLStr: WideString): Boolean;
+function TBatchSQLFactory.AppendSQL(SQLStr: WideString): boolean;
 var
   RecNo:integer;
   Sql:WideString;
@@ -426,7 +426,7 @@ begin
   result:=true;
 end;
 
-function TBatchSQLFactory.DoClearSQL: Boolean;
+function TBatchSQLFactory.DoClearSQL: boolean;
 begin
   result:=false;
   RsExeSQL.First;
@@ -437,7 +437,7 @@ begin
   result:=true;
 end;
 
-function TBatchSQLFactory.DoCreateDataSet: Boolean;
+function TBatchSQLFactory.DoCreateDataSet: boolean;
 begin
   result:=false;
   RsExeSQL.Close;
@@ -462,11 +462,11 @@ begin
   result:=RsExeSQL.Active;
 end;
 
-function TBatchSQLFactory.DoExecSQLComand(vFactor: TdbFactory): Boolean;
+function TBatchSQLFactory.DoExecSQLComand(vFactor: TdataFactory): boolean;
 begin
   result:=false;
   if RsExeSQL.State in [dsInsert,dsEdit] then RsExeSQL.Post;
-  if (RsExeSQL.RecordCount>0) and (vFactor<>nil) and (vFactor.Connected) then
+  if RsExeSQL.RecordCount > 0 then
      begin
        result:=vFactor.UpdateBatch(RsExeSQL,'TDoBatchExecSQL');
      end;

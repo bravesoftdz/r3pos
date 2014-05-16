@@ -68,6 +68,7 @@ type
     function  CheckRemoteData(AppHandle:HWnd):integer;//0:未还原 1:文件还原 2:服务端还原
     procedure BackUpDBFile;
     procedure InitTenant;
+    procedure InitGodsInfo;
     // 0:默认同步 1:注册同步 2:正常同步 3:恢复同步
     procedure InitSyncRelationList(SyncType:integer=0);
     procedure InitSyncBasicList(SyncType:integer=0);
@@ -3502,6 +3503,64 @@ end;
 procedure TSyncFactory.WaitForSync;
 begin
   while timered do Application.ProcessMessages;
+end;
+
+procedure TSyncFactory.InitGodsInfo;
+var
+  i:integer;
+  rs:TZQuery;
+  FileName,str:string;
+  SQLList:TStringList;
+  BatchSQLFactor:TBatchSQLFactory;
+begin
+  FileName := ExtractFilePath(Application.ExeName)+'InitGods.dat';
+  if not FileExists(FileName) then Exit;
+
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToRemote;
+  try
+    rs.SQL.Text := 'select count(1) from PUB_GOODSINFO where TENANT_ID=:TENANT_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then Exit;
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
+
+  rs := TZQuery.Create(nil);
+  dataFactory.MoveToSqlite;
+  try
+    rs.SQL.Text := 'select count(1) from PUB_GOODSINFO where TENANT_ID=:TENANT_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    dataFactory.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then Exit;
+  finally
+    dataFactory.MoveToDefault;
+    rs.Free;
+  end;
+
+  SQLList := TStringList.Create;
+  BatchSQLFactor := TBatchSQLFactory.Create;
+  try
+    SQLList.LoadFromFile(FileName);
+    SQLList.Delimiter := ';';
+    for i := 0 to SQLList.Count - 1 do
+      begin
+        str := trim(SQLList.Strings[i]);
+        if str <> '' then
+           begin
+             str := stringreplace(str,':TENANT_ID',token.tenantId,[rfReplaceAll]);
+             str := stringreplace(str,':SHOP_ID',''''+token.shopId+'''',[rfReplaceAll]);
+             str := stringreplace(str,':TIME_STAMP',GetTimeStamp(dataFactory.iDbType),[rfReplaceAll]);
+             BatchSQLFactor.AppendSQL(ParseSQL(dataFactory.iDbType, str));
+           end;
+      end;
+    BatchSQLFactor.DoExecSQLComand(dataFactory);
+  finally
+    SQLList.Free;
+    BatchSQLFactor.Free;
+  end;
 end;
 
 initialization

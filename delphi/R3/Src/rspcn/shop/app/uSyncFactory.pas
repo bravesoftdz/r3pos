@@ -3515,6 +3515,7 @@ var
   BatchSQLFactor:TBatchSQLFactory;
 begin
   FileName := ExtractFilePath(Application.ExeName)+'InitGods.dat';
+
   if not FileExists(FileName) then Exit;
 
   rs := TZQuery.Create(nil);

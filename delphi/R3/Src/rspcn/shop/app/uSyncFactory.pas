@@ -1744,7 +1744,7 @@ procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
 var
   Params:TftParamList;
   MaxTimeStamp,LastTimeStamp:int64;
-  ls,rs_h,rs_d,rs_s,cs_h,cs_d,cs_s:TZQuery;
+  ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
   tbName,orderFields,dataFields,glideFields:string;
 begin
   if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
@@ -1758,10 +1758,8 @@ begin
   ls := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
-  rs_s := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
-  cs_s := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
@@ -1832,17 +1830,14 @@ begin
 }
       rs_h.Close;
       rs_d.Close;
-      rs_s.Close;
       cs_h.Close;
       cs_d.Close;
-      cs_s.Close;
 
       Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SALES_ID';
       Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
 
       if orderFields = '' then orderFields := GetTableFields('SAL_SALESORDER');
       if dataFields = ''  then dataFields  := GetTableFields('SAL_SALESDATA');
-      if glideFields = '' then glideFields := GetTableFields('SAL_IC_GLIDE');
 
       if SyncFlag = 0 then
          dataFactory.MoveToSqlite
@@ -1855,8 +1850,6 @@ begin
           dataFactory.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
           Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
           dataFactory.AddBatch(rs_d,'TSyncSalesDataV60',Params);
-          Params.ParamByName('TABLE_FIELDS').AsString := glideFields;
-          dataFactory.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
           dataFactory.OpenBatch;
         except
           dataFactory.CancelBatch;
@@ -1868,7 +1861,6 @@ begin
 
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
-      cs_s.SyncDelta := rs_s.SyncDelta;
 
       if SyncFlag = 0 then
          dataFactory.MoveToRemote
@@ -1879,7 +1871,6 @@ begin
         try
           dataFactory.AddBatch(cs_h,'TSyncSalesOrderV60',Params);
           dataFactory.AddBatch(cs_d,'TSyncSalesDataV60',Params);
-          dataFactory.AddBatch(cs_s,'TSyncSalesICDataV60',Params);
           dataFactory.CommitBatch;
         except
           dataFactory.CancelBatch;
@@ -1897,19 +1888,7 @@ begin
         rs_h.Delete;
         dataFactory.MoveToSqlite;
         try
-          dataFactory.BeginBatch;
-          try
-            dataFactory.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
-            if not rs_s.IsEmpty then
-               begin
-                 rs_s.Delete;
-                 dataFactory.AddBatch(rs_s,'TSyncSalesICDataV60',Params);
-               end;
-            dataFactory.CommitBatch;
-          except
-            dataFactory.CancelBatch;
-            Raise;
-          end;
+          dataFactory.UpdateBatch(rs_h,'TSyncSalesOrderV60',Params)
         finally
           dataFactory.MoveToDefault;
         end;
@@ -1924,10 +1903,8 @@ begin
     ls.Free;
     rs_h.Free;
     rs_d.Free;
-    rs_s.Free;
     cs_h.Free;
     cs_d.Free;
-    cs_s.Free;
   end;
 end;
 

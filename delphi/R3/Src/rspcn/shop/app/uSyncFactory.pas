@@ -1428,6 +1428,7 @@ begin
                   SyncFactory.InitTenant;
                   SyncFactory.SyncBasic(1);
                   TfrmSysDefine.SaveRegister;
+                  SyncFactory.InitGodsInfo;
                 end
              else if flag = 1 then // 文件还原
                 begin
@@ -3517,7 +3518,7 @@ begin
   if not FileExists(FileName) then Exit;
 
   rs := TZQuery.Create(nil);
-  dataFactory.MoveToRemote;
+  dataFactory.MoveToSqlite;
   try
     rs.SQL.Text := 'select count(1) from PUB_GOODSINFO where TENANT_ID=:TENANT_ID';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
@@ -3529,7 +3530,7 @@ begin
   end;
 
   rs := TZQuery.Create(nil);
-  dataFactory.MoveToSqlite;
+  dataFactory.MoveToRemote;
   try
     rs.SQL.Text := 'select count(1) from PUB_GOODSINFO where TENANT_ID=:TENANT_ID';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);

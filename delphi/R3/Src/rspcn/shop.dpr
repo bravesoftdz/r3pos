@@ -3,6 +3,11 @@ program shop;
 uses
   Forms,
   Windows,
+  EncDec in '..\..\Pub\EncDec.pas',
+  Des in '..\..\Pub\des.pas',
+  uFnUtil in '..\..\Pub\uFnUtil.pas',
+  udbUtil in '..\..\Pub\udbUtil.pas',
+  ZipUtils in '..\..\Pub\ZipUtils.pas',
   ufrmBrowerForm in 'ufrmBrowerForm.pas' {frmBrowerForm},
   uUcFactory in 'uUcFactory.pas' {UcFactory: TDataModule},
   uRspFactory in 'uRspFactory.pas' {rspFactory: TDataModule},

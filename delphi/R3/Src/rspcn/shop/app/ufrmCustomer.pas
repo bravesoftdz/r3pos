@@ -273,7 +273,6 @@ procedure TfrmCustomer.serachTextChange(Sender: TObject);
 begin
   inherited;
   if serachText.Focused then searchTxt := serachText.Text;
-
 end;
 
 procedure TfrmCustomer.serachTextEnter(Sender: TObject);
@@ -281,14 +280,12 @@ begin
   inherited;
   serachText.Text := searchTxt;
   serachText.SelectAll;
-
 end;
 
 procedure TfrmCustomer.serachTextExit(Sender: TObject);
 begin
   inherited;
   if searchTxt='' then serachText.Text := serachText.Hint;
-
 end;
 
 procedure TfrmCustomer.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -298,7 +295,6 @@ var
   ARect:TRect;
   br:TBrush;
   pn:TPen;
-  b,s:string;
 begin
   rowToolNav.Visible := not cdsList.IsEmpty;
   br := TBrush.Create;
@@ -523,6 +519,7 @@ begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
   btnSave.Visible := dbState <> dsBrowse;
+  RzPanel31.Visible := dbState <> dsInsert;
 end;
 
 procedure TfrmCustomer.ReadInfo;

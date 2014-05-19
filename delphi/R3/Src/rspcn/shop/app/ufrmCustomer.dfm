@@ -1218,7 +1218,7 @@ inherited frmCustomer: TfrmCustomer
         Left = 0
         Top = 44
         Width = 1280
-        Height = 301
+        Height = 337
         Align = alClient
         BorderOuter = fsNone
         BorderColor = 15461355
@@ -1229,7 +1229,7 @@ inherited frmCustomer: TfrmCustomer
           Left = 10
           Top = 10
           Width = 1260
-          Height = 281
+          Height = 317
           Align = alClient
           BorderOuter = fsStatus
           TabOrder = 0
@@ -1237,7 +1237,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 1
             Top = 1
             Width = 172
-            Height = 279
+            Height = 315
             Align = alLeft
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -1245,7 +1245,7 @@ inherited frmCustomer: TfrmCustomer
             TabOrder = 0
             object RzPanel5: TRzPanel
               Left = 0
-              Top = 251
+              Top = 287
               Width = 171
               Height = 27
               Align = alBottom
@@ -1286,7 +1286,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 0
               Top = 0
               Width = 171
-              Height = 251
+              Height = 287
               SelectionPen.Color = clBtnShadow
               Align = alClient
               BorderStyle = bsNone
@@ -1302,7 +1302,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 173
             Top = 1
             Width = 10
-            Height = 279
+            Height = 315
             Align = alLeft
             Anchors = [akTop, akBottom]
             BorderOuter = fsNone
@@ -1313,7 +1313,7 @@ inherited frmCustomer: TfrmCustomer
             Left = 183
             Top = 1
             Width = 1076
-            Height = 279
+            Height = 315
             Align = alClient
             BorderOuter = fsFlat
             BorderSides = [sdLeft]
@@ -1322,7 +1322,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 1
               Top = 0
               Width = 1075
-              Height = 279
+              Height = 315
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -1422,19 +1422,6 @@ inherited frmCustomer: TfrmCustomer
                   Alignment = taRightJustify
                   DisplayFormat = '#0.###'
                   EditButtons = <>
-                  FieldName = 'BALANCE'
-                  Footer.Alignment = taRightJustify
-                  Footer.DisplayFormat = '#0.###'
-                  Footer.ValueType = fvtSum
-                  Footers = <>
-                  ReadOnly = True
-                  Title.Caption = #20313#39069
-                  Width = 56
-                end
-                item
-                  Alignment = taRightJustify
-                  DisplayFormat = '#0.###'
-                  EditButtons = <>
                   FieldName = 'INTEGRAL'
                   Footer.DisplayFormat = '#0.###'
                   Footer.ValueType = fvtSum
@@ -1523,9 +1510,9 @@ inherited frmCustomer: TfrmCustomer
       end
       object EditPanel: TRzPanel
         Left = 0
-        Top = 345
+        Top = 381
         Width = 1280
-        Height = 346
+        Height = 310
         Align = alBottom
         BorderInner = fsStatus
         BorderOuter = fsNone
@@ -1536,7 +1523,7 @@ inherited frmCustomer: TfrmCustomer
         Visible = False
         DesignSize = (
           1280
-          346)
+          310)
         object RzBorder1: TRzBorder
           Left = 139
           Top = 173
@@ -1586,9 +1573,109 @@ inherited frmCustomer: TfrmCustomer
           Font.Style = []
           ParentFont = False
         end
+        object RzPanel33: TRzPanel
+          Left = 383
+          Top = 261
+          Width = 75
+          Height = 22
+          BorderOuter = fsFlat
+          FlatColor = clGray
+          TabOrder = 16
+          Visible = False
+          object RzBackground14: TRzBackground
+            Left = 1
+            Top = 1
+            Width = 73
+            Height = 20
+            Active = True
+            Align = alClient
+            FrameColor = 9145227
+            GradientColorStart = clWhite
+            GradientColorStop = 14277081
+            ImageStyle = isStretch
+            ShowGradient = True
+            ShowImage = False
+            ShowTexture = False
+          end
+          object RzLabel13: TRzLabel
+            Left = 1
+            Top = 1
+            Width = 73
+            Height = 20
+            Align = alClient
+            Alignment = taCenter
+            Caption = #31435#21363#20805#20540
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clNavy
+            Font.Height = -13
+            Font.Name = #23435#20307
+            Font.Style = [fsUnderline]
+            ParentFont = False
+            Transparent = True
+            Layout = tlCenter
+            OnClick = RzLabel13Click
+            ShadowColor = 16250871
+            ShadowDepth = 1
+            TextStyle = tsShadow
+          end
+        end
+        object RzPanel19: TRzPanel
+          Left = 142
+          Top = 256
+          Width = 235
+          Height = 31
+          BorderOuter = fsStatus
+          BorderWidth = 1
+          Color = 15461355
+          FlatColor = 9145227
+          TabOrder = 14
+          object RzPanel20: TRzPanel
+            Left = 2
+            Top = 2
+            Width = 103
+            Height = 27
+            Align = alLeft
+            BorderOuter = fsFlat
+            BorderSides = [sdRight]
+            FlatColor = clGray
+            TabOrder = 0
+            object RzLabel8: TRzLabel
+              Left = 0
+              Top = 0
+              Width = 102
+              Height = 27
+              Align = alClient
+              Alignment = taCenter
+              Caption = #21487#29992#20313#39069
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -15
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              Transparent = True
+              Layout = tlCenter
+              ShadowColor = 16250871
+              ShadowDepth = 1
+              TextStyle = tsShadow
+            end
+          end
+          object cmbBALANCE: TcxTextEdit
+            Tag = 1
+            Left = 105
+            Top = 4
+            Width = 128
+            Height = 23
+            Enabled = False
+            ParentColor = True
+            Style.Edges = []
+            TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+        end
         object btnSave: TRzBmpButton
           Left = 1092
-          Top = 291
+          Top = 257
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
           Bitmaps.Up.Data = {
@@ -1805,7 +1892,7 @@ inherited frmCustomer: TfrmCustomer
         end
         object RzBmpButton5: TRzBmpButton
           Left = 1178
-          Top = 291
+          Top = 257
           Width = 72
           Bitmaps.TransparentColor = clFuchsia
           Bitmaps.Up.Data = {
@@ -2530,60 +2617,6 @@ inherited frmCustomer: TfrmCustomer
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
-        object RzPanel19: TRzPanel
-          Left = 142
-          Top = 292
-          Width = 235
-          Height = 31
-          BorderOuter = fsStatus
-          BorderWidth = 1
-          Color = 15461355
-          FlatColor = 9145227
-          TabOrder = 14
-          object RzPanel20: TRzPanel
-            Left = 2
-            Top = 2
-            Width = 103
-            Height = 27
-            Align = alLeft
-            BorderOuter = fsFlat
-            BorderSides = [sdRight]
-            FlatColor = clGray
-            TabOrder = 0
-            object RzLabel8: TRzLabel
-              Left = 0
-              Top = 0
-              Width = 102
-              Height = 27
-              Align = alClient
-              Alignment = taCenter
-              Caption = #21487#29992#20313#39069
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -15
-              Font.Name = #23435#20307
-              Font.Style = []
-              ParentFont = False
-              Transparent = True
-              Layout = tlCenter
-              ShadowColor = 16250871
-              ShadowDepth = 1
-              TextStyle = tsShadow
-            end
-          end
-          object cmbBALANCE: TcxTextEdit
-            Tag = 1
-            Left = 105
-            Top = 4
-            Width = 128
-            Height = 23
-            Enabled = False
-            ParentColor = True
-            Style.Edges = []
-            TabOrder = 1
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          end
-        end
         object edtBK_QQ: TRzPanel
           Left = 142
           Top = 183
@@ -2854,52 +2887,6 @@ inherited frmCustomer: TfrmCustomer
             Transparent = True
             Layout = tlCenter
             OnClick = RzLabel12Click
-            ShadowColor = 16250871
-            ShadowDepth = 1
-            TextStyle = tsShadow
-          end
-        end
-        object RzPanel33: TRzPanel
-          Left = 383
-          Top = 296
-          Width = 75
-          Height = 22
-          BorderOuter = fsFlat
-          FlatColor = clGray
-          TabOrder = 16
-          Visible = False
-          object RzBackground14: TRzBackground
-            Left = 1
-            Top = 1
-            Width = 73
-            Height = 20
-            Active = True
-            Align = alClient
-            FrameColor = 9145227
-            GradientColorStart = clWhite
-            GradientColorStop = 14277081
-            ImageStyle = isStretch
-            ShowGradient = True
-            ShowImage = False
-            ShowTexture = False
-          end
-          object RzLabel13: TRzLabel
-            Left = 1
-            Top = 1
-            Width = 73
-            Height = 20
-            Align = alClient
-            Alignment = taCenter
-            Caption = #31435#21363#20805#20540
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clNavy
-            Font.Height = -13
-            Font.Name = #23435#20307
-            Font.Style = [fsUnderline]
-            ParentFont = False
-            Transparent = True
-            Layout = tlCenter
-            OnClick = RzLabel13Click
             ShadowColor = 16250871
             ShadowDepth = 1
             TextStyle = tsShadow

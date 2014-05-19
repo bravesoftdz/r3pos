@@ -757,7 +757,8 @@ begin
      end;
   if not cdsGoodsExt.IsEmpty then
      begin
-       edtNEW_INPRICE.Text := cdsGoodsExt.FieldbyName('NEW_INPRICE').AsString;
+       if cdsGoodsExt.FieldbyName('NEW_INPRICE').AsString <> '' then
+          edtNEW_INPRICE.Text := cdsGoodsExt.FieldbyName('NEW_INPRICE').AsString;
      end;
   //店内售价
   edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
@@ -1039,9 +1040,27 @@ begin
   if cdsGoodsExt.IsEmpty then cdsGoodsExt.Append else cdsGoodsExt.Edit;
   cdsGoodsExt.FieldByName('TENANT_ID').AsInteger := StrtoInt(token.tenantId);
   cdsGoodsExt.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
-  cdsGoodsExt.FieldByName('NEW_INPRICE').AsFloat  := StrtoFloatDef(edtNEW_INPRICE.Text,0);
-  cdsGoodsExt.FieldByName('NEW_INPRICE1').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
-  cdsGoodsExt.FieldByName('NEW_INPRICE2').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
+  if relationId=1000006 then
+     begin
+       if FnNumber.CompareFloat(cdsGodsRelation.FieldbyName('NEW_INPRICE').AsFloat,StrtoFloatDef(edtNEW_INPRICE.Text,0)) <> 0 then
+          begin
+            cdsGoodsExt.FieldByName('NEW_INPRICE').AsFloat  := StrtoFloatDef(edtNEW_INPRICE.Text,0);
+            cdsGoodsExt.FieldByName('NEW_INPRICE1').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
+            cdsGoodsExt.FieldByName('NEW_INPRICE2').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
+          end
+       else
+          begin
+            cdsGoodsExt.FieldByName('NEW_INPRICE').Value  := null;
+            cdsGoodsExt.FieldByName('NEW_INPRICE1').Value := null;
+            cdsGoodsExt.FieldByName('NEW_INPRICE2').Value := null;
+          end;
+     end
+  else
+     begin
+       cdsGoodsExt.FieldByName('NEW_INPRICE').AsFloat  := StrtoFloatDef(edtNEW_INPRICE.Text,0);
+       cdsGoodsExt.FieldByName('NEW_INPRICE1').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
+       cdsGoodsExt.FieldByName('NEW_INPRICE2').AsFloat := StrtoFloatDef(edtNEW_INPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
+     end;
   if (relationId=1000006) and (isSyncUpperAmount='1') and (AObj.FieldByName('SMALLTO_CALC').AsString<>'') then //卷烟显示条单位
      begin
        cdsGoodsExt.FieldByName('LOWER_AMOUNT').AsFloat := StrtoFloatDef(edtLOWER_AMOUNT.Text,0) * AObj.FieldByName('SMALLTO_CALC').AsFloat;

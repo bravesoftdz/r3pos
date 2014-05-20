@@ -357,6 +357,15 @@ inherited frmOrderForm: TfrmOrderForm
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
+                object MediaPlayer: TMediaPlayer
+                  Left = 420
+                  Top = 10
+                  Width = 29
+                  Height = 30
+                  VisibleButtons = []
+                  Visible = False
+                  TabOrder = 0
+                end
               end
             end
           end

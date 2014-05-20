@@ -8,7 +8,8 @@ uses
   RzLabel, cxControls, cxContainer, cxEdit, cxTextEdit, cxDropDownEdit,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, RzButton, RzBmpBtn,
   RzTabs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ZBase, Math,
-  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList;
+  Menus, RzBorder, pngimage, RzBckgnd, IniFiles, ComCtrls, ToolWin, ImgList,
+  MPlayer;
 
 const
 
@@ -96,6 +97,7 @@ type
     Images: TImageList;
     toolPresent: TToolButton;
     ImportExcel: TMenuItem;
+    MediaPlayer: TMediaPlayer;
     procedure helpClick(Sender: TObject);
     procedure edtInputExit(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
@@ -162,13 +164,15 @@ type
     //临时变量
     fndStr:string;
     Locked:boolean;
-    // 最近输的货品
+    //最近输的货品
     vgds,vP1,vP2,vBtNo:string;
     FdefUnit: integer;
     procedure SetdefUnit(const Value: integer);
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
     procedure RefreshMeaUnits;
+    //播放音频
+    procedure PlaySend(filename:string);
   protected
     RowID:integer;
     FinputMode: integer;
@@ -1613,6 +1617,7 @@ begin
         begin
           if (length(fndStr)>7) and (fnString.IsNumberChar(fndStr)) then //是13位条码
              begin
+               PlaySend(ExtractFilePath(ParamStr(0))+'built-in\msg.wav');
                if (MessageBox(handle,'您没有经营过此商品，是否立即新增？','友情提示',MB_YESNO+MB_ICONQUESTION)=6) and TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
                   begin
                      if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
@@ -2879,6 +2884,15 @@ procedure TfrmOrderForm.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
   inherited;
+end;
+
+procedure TfrmOrderForm.PlaySend(filename: string);
+begin
+  if not FileExists(filename) then Exit;
+  MediaPlayer.Close;
+  MediaPlayer.FileName := filename;
+  MediaPlayer.Open;
+  MediaPlayer.Play;
 end;
 
 end.

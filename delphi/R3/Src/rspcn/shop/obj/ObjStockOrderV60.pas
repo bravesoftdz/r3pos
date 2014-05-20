@@ -377,10 +377,17 @@ end;
 
 function TSyncStockOrderV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text :=
-    ' select j.*,a.ABLE_ID from ('+
-    ' select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID ) j '+
-    ' left outer join ACC_PAYABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.STOCK_ID=a.STOCK_ID';
+  if Params.FindParam('IDS') <> nil then
+     SelectSQL.Text :=
+       ' select j.*,a.ABLE_ID from ('+
+       ' select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID in ('+Params.ParamByName('IDS').AsString+')) j '+
+       ' left outer join ACC_PAYABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.STOCK_ID=a.STOCK_ID '+
+       ' order by j.TIME_STAMP asc '
+  else
+     SelectSQL.Text :=
+       ' select j.*,a.ABLE_ID from ('+
+       ' select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID ) j '+
+       ' left outer join ACC_PAYABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.STOCK_ID=a.STOCK_ID';
 end;
 
 function TSyncStockOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -513,7 +520,10 @@ end;
 
 function TSyncStockDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.INVOICE_FLAG from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
+  if Params.FindParam('IDS') <> nil then
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.INVOICE_FLAG from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID in ('+Params.ParamByName('IDS').AsString+')'
+  else
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.INVOICE_FLAG from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
 end;
 
 function TSyncStockDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -550,15 +560,16 @@ begin
   try
     if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
     begin
-      {case AGlobal.iDbType of
-      0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
-      1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
-      4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
-      end; }
-      rs.SQL.Text :=
-         ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
-         ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+
-         ' from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
+      if Params.FindParam('IDS') <> nil then
+         rs.SQL.Text :=
+           ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
+           ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+
+           ' from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID in ('+Params.ParamByName('IDS').AsString+')'
+      else
+         rs.SQL.Text :=
+           ' select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.CALC_MONEY,'+
+           ' case when b.INVOICE_FLAG = ''3'' then a.TAX_RATE else 0 end as TAX_RATE '+
+           ' from STK_STOCKDATA a,STK_STOCKORDER b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.TENANT_ID=:TENANT_ID and a.STOCK_ID=:STOCK_ID';
       rs.Params.AssignValues(Params);
       AGlobal.Open(rs);
       rs.First;
@@ -574,7 +585,10 @@ begin
           rs.Next;
         end;
     end;
-    AGlobal.ExecSQL('delete from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params);
+    if Params.FindParam('IDS') <> nil then
+       AGlobal.ExecSQL('delete from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID in ('+Params.ParamByName('IDS').AsString+')',Params)
+    else
+       AGlobal.ExecSQL('delete from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params)
   finally
     rs.Free;
   end;

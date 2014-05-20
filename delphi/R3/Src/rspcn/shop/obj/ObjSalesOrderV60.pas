@@ -533,11 +533,19 @@ end;
 
 function TSyncSalesOrderV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text :=
-     'select j.*,a.ABLE_ID,b.NEAR_BUY_DATE,b.FREQUENCY from '+
-     '(select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) j '+
-     'left outer join ACC_RECVABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.SALES_ID=a.SALES_ID '+
-     'left outer join PUB_IC_INFO b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID and b.UNION_ID=''#'' ';
+  if Params.FindParam('IDS') <> nil then
+     SelectSQL.Text :=
+       'select j.*,a.ABLE_ID,b.NEAR_BUY_DATE,b.FREQUENCY from '+
+       '(select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID in ('+Params.ParamByName('IDS').AsString+')) j '+
+       'left outer join ACC_RECVABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.SALES_ID=a.SALES_ID '+
+       'left outer join PUB_IC_INFO b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID and b.UNION_ID=''#'' '+
+       'order by j.TIME_STAMP asc '
+  else
+     SelectSQL.Text :=
+       'select j.*,a.ABLE_ID,b.NEAR_BUY_DATE,b.FREQUENCY from '+
+       '(select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) j '+
+       'left outer join ACC_RECVABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.SALES_ID=a.SALES_ID '+
+       'left outer join PUB_IC_INFO b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID and b.UNION_ID=''#'' ';
 end;
 
 function TSyncSalesOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -760,7 +768,10 @@ end;
 
 function TSyncSalesDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+  if Params.FindParam('IDS') <> nil then
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID in ('+Params.ParamByName('IDS').AsString+')'
+  else
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
 end;
 
 function TSyncSalesDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -794,14 +805,14 @@ begin
   try
     if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
     begin
-      {case AGlobal.iDbType of
-      0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
-      1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
-      4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
-      end;}
-      rs.SQL.Text :=
-         'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
-         'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
+      if Params.FindParam('IDS') <> nil then
+         rs.SQL.Text :=
+           'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
+           'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID in ('+Params.ParamByName('IDS').AsString+')'
+      else
+         rs.SQL.Text :=
+           'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE '+
+           'from SAL_SALESDATA a where a.TENANT_ID=:TENANT_ID and a.SALES_ID=:SALES_ID';
       rs.Params.AssignValues(Params); 
       AGlobal.Open(rs);
       rs.First;
@@ -817,7 +828,10 @@ begin
           rs.Next;
         end;
     end;
-    AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);
+    if Params.FindParam('IDS') <> nil then
+       AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID in ('+Params.ParamByName('IDS').AsString+')',Params)
+    else
+       AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);
   finally
     rs.Free;
   end;

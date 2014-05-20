@@ -14,6 +14,7 @@ const
   MSC_SET_CLOSE=WM_USER+4;
 
   MAX_SYNC_RECORD_COUNT = 500;
+  MAX_SYNC_ORDER_COUNT  = 100;
 
 type
   PSynTableInfo=^TSynTableInfo;
@@ -74,12 +75,20 @@ type
     procedure InitSyncBasicList(SyncType:integer=0);
     procedure SyncList;
 
-    procedure SyncBizData(SyncFlag:integer=0;BeginDate:string='');
+    procedure SyncBizData(SyncFlag:integer=0;BeginDate:string='');// 0:上传 1:下载
     procedure BeforeSyncBiz(DataSet:TZQuery;FieldName:string;SyncFlag:integer);
-    procedure SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');// 0:上传 1:下载
-    procedure SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
-    procedure SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
-    procedure SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
+    procedure UploadStockOrder;
+    procedure UploadSalesOrder;
+    procedure UploadChangeOrder;
+    procedure UploadRckDays;
+
+    // 数据恢复时批量下载
+    procedure CreateBatch(var rs: TZQuery; src: TZQuery; FieldName: string; FieldType: TFieldType);
+    procedure DownloadSalesOrder(BeginDate:string='');
+    procedure DownloadStockOrder(BeginDate:string='');
+    procedure DownloadChangeOrder(BeginDate:string='');
+    procedure DownloadRckDays(BeginDate:string='');
+
     procedure SyncStorage;
     procedure GetCloseAccDate;
     procedure GetRckBeginDate;
@@ -1580,15 +1589,13 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncStockOrder(SyncFlag:integer=0;BeginDate:string='');
+procedure TSyncFactory.UploadStockOrder;
 var
   Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
   MaxTimeStamp,LastTimeStamp:int64;
   tbName,orderFields,dataFields:string;
 begin
-  if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
-
   tbName := 'STK_STOCKORDER';
   LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := LastTimeStamp;
@@ -1608,60 +1615,32 @@ begin
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
 
-    if SyncFlag = 0 then
-       Params.ParamByName('SYN_COMM').AsBoolean := true
+    if dllGlobal.GetSFVersion = '.LCL' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
     else
-       Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-    if (SyncFlag <> 0) and (BeginDate <> '') then
-       begin
-         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
-       end;
-
-    //更新库存控制
-    if SyncFlag = 0 then
-       begin
-         if dllGlobal.GetSFVersion = '.LCL' then
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
-         else
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
-       end
-    else
-       begin
-         if BeginDate = '' then
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
-         else
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
-       end;
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     SetTicket;
-    if SyncFlag = 0 then
-       dataFactory.MoveToSqlite
-    else
-       dataFactory.MoveToRemote;
+
+    dataFactory.MoveToSqlite;
     try
       dataFactory.Open(ls,'TSyncStockOrderListV60',Params);
     finally
       dataFactory.MoveToDefault;
     end;
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
-    BeforeSyncBiz(ls,'STOCK_DATE',SyncFlag);
+    BeforeSyncBiz(ls,'STOCK_DATE',0);
     SetTicket;
+
     ls.First;
     while not ls.Eof do
     begin
       ProTitle := '<进货单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100 div ls.RecordCount * ls.RecNo);
-{
-      // 小于关账日期的单据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('STOCK_DATE').AsInteger <= CloseAccDate) then
-         begin
-           ls.Next;
-           Continue;
-         end;
-}
+
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -1673,10 +1652,7 @@ begin
       if orderFields = '' then orderFields := GetTableFields('STK_STOCKORDER');
       if dataFields = ''  then dataFields  := GetTableFields('STK_STOCKDATA','a');
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToSqlite
-      else
-         dataFactory.MoveToRemote;
+      dataFactory.MoveToSqlite;
       try
         dataFactory.BeginBatch;
         try
@@ -1696,10 +1672,7 @@ begin
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToRemote
-      else
-         dataFactory.MoveToSqlite;
+      dataFactory.MoveToRemote;
       try
         dataFactory.BeginBatch;
         try
@@ -1717,20 +1690,19 @@ begin
       if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
          MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
-      if SyncFlag = 0 then
-      begin
-        rs_h.Delete;
-        dataFactory.MoveToSqlite;
-        try
-          dataFactory.UpdateBatch(rs_h,'TSyncStockOrderV60',Params);
-        finally
-          dataFactory.MoveToDefault;
-        end;
+      rs_h.Delete;
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.UpdateBatch(rs_h,'TSyncStockOrderV60',Params);
+      finally
+        dataFactory.MoveToDefault;
       end;
 
       ls.Next;
     end;
+
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     Params.Free;
@@ -1742,15 +1714,13 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncSalesOrder(SyncFlag:integer=0;BeginDate:string='');
+procedure TSyncFactory.UploadSalesOrder;
 var
   Params:TftParamList;
   MaxTimeStamp,LastTimeStamp:int64;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
   tbName,orderFields,dataFields,glideFields:string;
 begin
-  if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
-
   tbName := 'SAL_SALESORDER';
   LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := LastTimeStamp;
@@ -1770,66 +1740,32 @@ begin
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
 
-    if SyncFlag = 0 then
-       Params.ParamByName('SYN_COMM').AsBoolean := true
+    if dllGlobal.GetSFVersion = '.LCL' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
     else
-       Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-    if (SyncFlag <> 0) and (BeginDate <> '') then
-       begin
-         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
-       end;
-
-    //更新库存控制
-    if SyncFlag = 0 then
-       begin
-         if dllGlobal.GetSFVersion = '.LCL' then
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
-         else
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
-       end
-    else
-       begin
-         if BeginDate = '' then
-            begin
-              Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
-              Params.ParamByName('UPDATE_INTEGRAL').AsBoolean := false;
-            end
-         else
-            begin
-              Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
-              Params.ParamByName('UPDATE_INTEGRAL').AsBoolean := false;
-            end;
-       end;
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     SetTicket;
-    if SyncFlag = 0 then
-       dataFactory.MoveToSqlite
-    else
-       dataFactory.MoveToRemote;
+
+    dataFactory.MoveToSqlite;
     try
       dataFactory.Open(ls,'TSyncSalesOrderListV60',Params);
     finally
       dataFactory.MoveToDefault;
     end;
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
-    BeforeSyncBiz(ls,'SALES_DATE',SyncFlag);
+    BeforeSyncBiz(ls,'SALES_DATE',0);
     SetTicket;
+
     ls.First;
     while not ls.Eof do
     begin
       ProTitle := '<销售单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
-{
-      // 小于关账日期的单据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('SALES_DATE').AsInteger <= CloseAccDate) then
-         begin
-           ls.Next;
-           Continue;
-         end;
-}
+
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -1841,10 +1777,7 @@ begin
       if orderFields = '' then orderFields := GetTableFields('SAL_SALESORDER');
       if dataFields = ''  then dataFields  := GetTableFields('SAL_SALESDATA');
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToSqlite
-      else
-         dataFactory.MoveToRemote;
+      dataFactory.MoveToSqlite;
       try
         dataFactory.BeginBatch;
         try
@@ -1864,10 +1797,7 @@ begin
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToRemote
-      else
-         dataFactory.MoveToSqlite;
+      dataFactory.MoveToRemote;
       try
         dataFactory.BeginBatch;
         try
@@ -1885,20 +1815,19 @@ begin
       if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
          MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
-      if SyncFlag = 0 then
-      begin
-        rs_h.Delete;
-        dataFactory.MoveToSqlite;
-        try
-          dataFactory.UpdateBatch(rs_h,'TSyncSalesOrderV60',Params)
-        finally
-          dataFactory.MoveToDefault;
-        end;
+      rs_h.Delete;
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.UpdateBatch(rs_h,'TSyncSalesOrderV60',Params)
+      finally
+        dataFactory.MoveToDefault;
       end;
 
       ls.Next;
     end;
+
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     Params.Free;
@@ -1910,15 +1839,13 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncChangeOrder(SyncFlag:integer=0;BeginDate:string='');
+procedure TSyncFactory.UploadChangeOrder;
 var
   Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
   MaxTimeStamp,LastTimeStamp:int64;
   tbName,orderFields,dataFields:string;
 begin
-  if (SyncFlag <> 0) and (dllGlobal.GetSFVersion <> '.LCL') then Exit;
-
   tbName := 'STO_CHANGEORDER';
   LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := LastTimeStamp;
@@ -1938,60 +1865,32 @@ begin
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
 
-    if SyncFlag = 0 then
-       Params.ParamByName('SYN_COMM').AsBoolean := true
+    if dllGlobal.GetSFVersion = '.LCL' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
     else
-       Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-    if (SyncFlag <> 0) and (BeginDate <> '') then
-       begin
-         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
-       end;
-
-    //更新库存控制
-    if SyncFlag = 0 then
-       begin
-         if dllGlobal.GetSFVersion = '.LCL' then
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false
-         else
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
-       end
-    else
-       begin
-         if BeginDate = '' then
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
-         else
-            Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
-       end;
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
 
     SetTicket;
-    if SyncFlag = 0 then
-       dataFactory.MoveToSqlite
-    else
-       dataFactory.MoveToRemote;
+
+    dataFactory.MoveToSqlite;
     try
       dataFactory.Open(ls,'TSyncChangeOrderListV60',Params);
     finally
       dataFactory.MoveToDefault;
     end;
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
-    BeforeSyncBiz(ls,'CHANGE_DATE',SyncFlag);
+    BeforeSyncBiz(ls,'CHANGE_DATE',0);
     SetTicket;
+
     ls.First;
     while not ls.Eof do
     begin
       ProTitle := '<损益单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
-{
-      // 小于关账日期的单据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CHANGE_DATE').AsInteger <= CloseAccDate) then
-         begin
-           ls.Next;
-           Continue;
-         end;
-}
+
       rs_h.Close;
       rs_d.Close;
       cs_h.Close;
@@ -2003,10 +1902,7 @@ begin
       if orderFields = '' then orderFields := GetTableFields('STO_CHANGEORDER');
       if dataFields = ''  then dataFields  := GetTableFields('STO_CHANGEDATA','a');
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToSqlite
-      else
-         dataFactory.MoveToRemote;
+      dataFactory.MoveToSqlite;
       try
         dataFactory.BeginBatch;
         try
@@ -2026,10 +1922,7 @@ begin
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToRemote
-      else
-         dataFactory.MoveToSqlite;
+      dataFactory.MoveToRemote;
       try
         dataFactory.BeginBatch;
         try
@@ -2047,20 +1940,19 @@ begin
       if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
          MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
-      if SyncFlag = 0 then
-      begin
-        rs_h.Delete;
-        dataFactory.MoveToSqlite;
-        try
-          dataFactory.UpdateBatch(rs_h,'TSyncChangeOrderV60',Params);
-        finally
-          dataFactory.MoveToDefault;
-        end;
+      rs_h.Delete;
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.UpdateBatch(rs_h,'TSyncChangeOrderV60',Params);
+      finally
+        dataFactory.MoveToDefault;
       end;
 
       ls.Next;
     end;
+
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     Params.Free;
@@ -2072,7 +1964,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncRckDays(SyncFlag:integer=0;BeginDate:string='');
+procedure TSyncFactory.UploadRckDays;
 var
   Params:TftParamList;
   ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
@@ -2080,8 +1972,6 @@ var
   updateVersion,insertVersion:string;
   tbName,orderFields,dataFields:string;
 begin
-  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
-
   tbName := 'RCK_DAYS_CLOSE';
   LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
   MaxTimeStamp := LastTimeStamp; 
@@ -2101,31 +1991,20 @@ begin
     Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
     Params.ParamByName('KEY_FLAG').AsInteger := 0;
     Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-
-    if SyncFlag = 0 then
-       Params.ParamByName('SYN_COMM').AsBoolean := true
-    else
-       Params.ParamByName('SYN_COMM').AsBoolean := false;
-
-    if (SyncFlag <> 0) and (BeginDate <> '') then
-       begin
-         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
-         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
-       end;
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
 
     SetTicket;
-    if SyncFlag = 0 then
-       dataFactory.MoveToSqlite
-    else
-       dataFactory.MoveToRemote;
+
+    dataFactory.MoveToSqlite;
     try
       dataFactory.Open(ls,'TSyncRckDaysCloseListV60',Params);
     finally
       dataFactory.MoveToDefault;
     end;
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
 
-    if (not ls.IsEmpty) and (SyncFlag = 0) then
+    if not ls.IsEmpty then
        begin
          GetRckBeginDate;
          updateVersion := 'update SYS_DEFINE set VALUE=''V6'' where TENANT_ID='+token.tenantId+' and DEFINE=''APPVERSION'' ';
@@ -2135,21 +2014,15 @@ begin
        end;
 
     SetTicket;
+
     ls.First;
     while not ls.Eof do
     begin
       ProTitle := '<日台账>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
       SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
-{
-      // 小于关账日期的数据不下载
-      if (SyncFlag <> 0) and (CloseAccDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger <= CloseAccDate) then
-         begin
-           ls.Next;
-           Continue;
-         end;
-}
+
       // 小于开始日期的数据不上传
-      if (SyncFlag = 0) and (RckBeginDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger < RckBeginDate) then
+      if (RckBeginDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger < RckBeginDate) then
          begin
            ls.Next;
            Continue;
@@ -2163,10 +2036,7 @@ begin
       if orderFields = '' then orderFields := GetTableFields('RCK_DAYS_CLOSE');
       if dataFields = ''  then dataFields  := GetTableFields('RCK_STOCKS_DATA');
 
-      if SyncFlag = 0 then
-         dataFactory.MoveToSqlite
-      else
-         dataFactory.MoveToRemote;
+      dataFactory.MoveToSqlite;
       try
         dataFactory.BeginBatch;
         try
@@ -2186,16 +2056,7 @@ begin
       cs_h.SyncDelta := rs_h.SyncDelta;
       cs_d.SyncDelta := rs_d.SyncDelta;
 
-      if (SyncFlag = 0) and cs_h.IsEmpty then
-         begin
-           LogFile.AddLogFile(0,'RCK_DAYS_CLOSE is null:'+Params.ParamByName('CREA_DATE').AsString);
-           Raise Exception.Create('数据上传出现错误，请稍后重试...');
-         end;
-
-      if SyncFlag = 0 then
-         dataFactory.MoveToRemote
-      else
-         dataFactory.MoveToSqlite;
+      dataFactory.MoveToRemote;
       try
         dataFactory.BeginBatch;
         try
@@ -2215,20 +2076,19 @@ begin
       if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
          MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
 
-      if SyncFlag = 0 then
-      begin
-        rs_h.Delete;
-        dataFactory.MoveToSqlite;
-        try
-          dataFactory.UpdateBatch(rs_h,'TSyncRckDaysCloseV60',Params);
-        finally
-          dataFactory.MoveToDefault;
-        end;
+      rs_h.Delete;
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.UpdateBatch(rs_h,'TSyncRckDaysCloseV60',Params);
+      finally
+        dataFactory.MoveToDefault;
       end;
 
       ls.Next;
     end;
+
     if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     Params.Free;
@@ -2246,18 +2106,35 @@ begin
     SetProMax(400);
     ProTitle := '正在准备数据...';
     GetCloseAccDate;
+
     ProTitle := '<进货单>...';
-    SyncStockOrder(SyncFlag,BeginDate);
+    if SyncFlag = 0 then
+       UploadStockOrder
+    else
+       DownloadStockOrder(BeginDate);
     SetProPosition(100);
+
     ProTitle := '<销售单>...';
-    SyncSalesOrder(SyncFlag,BeginDate);
+    if SyncFlag = 0 then
+       UploadSalesOrder
+    else
+       DownloadSalesOrder(BeginDate);
     SetProPosition(200);
+
     ProTitle := '<损益单>...';
-    SyncChangeOrder(SyncFlag,BeginDate);
+    if SyncFlag = 0 then
+       UploadChangeOrder
+    else
+       DownloadChangeOrder(BeginDate);
     SetProPosition(300);
+
     ProTitle := '<日台账>...';
-    SyncRckDays(SyncFlag,BeginDate);
+    if SyncFlag = 0 then
+       UploadRckDays
+    else
+       DownloadRckDays(BeginDate);
     SetProPosition(400);
+
     ProTitle := '<库存表>...';
     if SyncFlag=0 then
        begin
@@ -3587,6 +3464,557 @@ begin
     SQLList.Free;
     BatchSQLFactor.Free;
     SqlliteFactor.Free;
+  end;
+end;
+
+procedure TSyncFactory.CreateBatch(var rs: TZQuery; src: TZQuery; FieldName: string; FieldType: TFieldType);
+var
+  i:integer;
+  ids:string;
+begin
+  rs.FieldDefs.Clear;
+  rs.FieldDefs.Add('TENANT_ID', ftInteger);
+  rs.FieldDefs.Add('IDS', ftString, 10000);
+  rs.CreateDataSet;
+  i := 0;
+  ids := '';
+  src.First;
+  while not src.Eof do
+    begin
+      if ids <> '' then ids := ids + ',';
+      ids := ids + src.FieldByName(FieldName).AsString;
+      inc(i);
+      src.Next;
+      if (i >= MAX_SYNC_ORDER_COUNT) or (src.Eof) then
+         begin
+           rs.Append;
+           rs.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+           if FieldType = ftString then
+              begin
+                ids := stringreplace(ids,',',''',''',[rfReplaceAll]);
+                ids := '''' + ids + '''';
+              end;
+           rs.FieldByName('IDS').AsString := ids;
+           rs.Post;
+           i := 0;
+           ids := '';
+         end;
+    end;
+end;
+
+procedure TSyncFactory.DownloadSalesOrder(BeginDate: string);
+var
+  Params:TftParamList;
+  MaxTimeStamp,LastTimeStamp:int64;
+  bl,ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  tbName,orderFields,dataFields,glideFields:string;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'SAL_SALESORDER';
+  LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := LastTimeStamp;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>批量下载 上次时间:'+inttostr(LastTimeStamp));
+
+  bl := TZQuery.Create(nil);
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if BeginDate <> '' then
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
+
+    if BeginDate = '' then
+       begin
+         Params.ParamByName('UPDATE_STORAGE').AsBoolean := true;
+         Params.ParamByName('UPDATE_INTEGRAL').AsBoolean := false;
+       end
+    else
+       begin
+         Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
+         Params.ParamByName('UPDATE_INTEGRAL').AsBoolean := false;
+       end;
+
+    SetTicket;
+
+    dataFactory.MoveToRemote;
+    try
+      dataFactory.Open(ls,'TSyncSalesOrderListV60',Params);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    BeforeSyncBiz(ls,'SALES_DATE',1);
+    CreateBatch(bl, ls, 'SALES_ID', ftString);
+    SetTicket;
+
+    bl.First;
+    while not bl.Eof do
+    begin
+      ProTitle := '<销售单>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
+      SetProPosition(100+(100 div bl.RecordCount * bl.RecNo));
+
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+
+      Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SALES_ID';
+      Params.ParamByName('IDS').AsString := bl.FieldbyName('IDS').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('SAL_SALESORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('SAL_SALESDATA');
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+          dataFactory.AddBatch(rs_h,'TSyncSalesOrderV60',Params);
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+          dataFactory.AddBatch(rs_d,'TSyncSalesDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          dataFactory.AddBatch(cs_h,'TSyncSalesOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TSyncSalesDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      rs_h.Last;
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+
+      bl.Next;
+    end;
+
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    Params.Free;
+    bl.Free;
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.DownloadStockOrder(BeginDate: string);
+var
+  Params:TftParamList;
+  bl,ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  MaxTimeStamp,LastTimeStamp:int64;
+  tbName,orderFields,dataFields:string;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'STK_STOCKORDER';
+  LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := LastTimeStamp;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>批量下载 上次时间:'+inttostr(LastTimeStamp));
+
+  bl := TZQuery.Create(nil);
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if BeginDate <> '' then
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
+
+    if BeginDate = '' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
+    else
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
+
+    SetTicket;
+
+    dataFactory.MoveToRemote;
+    try
+      dataFactory.Open(ls,'TSyncStockOrderListV60',Params);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    BeforeSyncBiz(ls,'STOCK_DATE',1);
+    CreateBatch(bl, ls, 'STOCK_ID', ftString);
+    SetTicket;
+
+    bl.First;
+    while not bl.Eof do
+    begin
+      ProTitle := '<进货单>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
+      SetProPosition(100 div bl.RecordCount * bl.RecNo);
+
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+
+      Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;STOCK_ID';
+      Params.ParamByName('IDS').AsString := bl.FieldbyName('IDS').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('STK_STOCKORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('STK_STOCKDATA','a');
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+          dataFactory.AddBatch(rs_h,'TSyncStockOrderV60',Params);
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+          dataFactory.AddBatch(rs_d,'TSyncStockDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          dataFactory.AddBatch(cs_h,'TSyncStockOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TSyncStockDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      rs_h.Last;
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+
+      bl.Next;
+    end;
+
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    Params.Free;
+    bl.Free;
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.DownloadChangeOrder(BeginDate: string);
+var
+  Params:TftParamList;
+  bl,ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  MaxTimeStamp,LastTimeStamp:int64;
+  tbName,orderFields,dataFields:string;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'STO_CHANGEORDER';
+  LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := LastTimeStamp;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>批量下载 上次时间:'+inttostr(LastTimeStamp));
+
+  bl := TZQuery.Create(nil);
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if BeginDate <> '' then
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
+
+    if BeginDate = '' then
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := true
+    else
+       Params.ParamByName('UPDATE_STORAGE').AsBoolean := false;
+
+    SetTicket;
+
+    dataFactory.MoveToRemote;
+    try
+      dataFactory.Open(ls,'TSyncChangeOrderListV60',Params);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    BeforeSyncBiz(ls,'CHANGE_DATE',1);
+    CreateBatch(bl, ls, 'CHANGE_ID', ftString);
+    SetTicket;
+
+    bl.First;
+    while not bl.Eof do
+    begin
+      ProTitle := '<损益单>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
+      SetProPosition(200+(100 div bl.RecordCount * bl.RecNo));
+
+      rs_h.Close;
+      rs_d.Close;
+      cs_h.Close;
+      cs_d.Close;
+
+      Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;CHANGE_ID';
+      Params.ParamByName('IDS').AsString := bl.FieldbyName('IDS').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('STO_CHANGEORDER');
+      if dataFields = ''  then dataFields  := GetTableFields('STO_CHANGEDATA','a');
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+          dataFactory.AddBatch(rs_h,'TSyncChangeOrderV60',Params);
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+          dataFactory.AddBatch(rs_d,'TSyncChangeDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          dataFactory.AddBatch(cs_h,'TSyncChangeOrderV60',Params);
+          dataFactory.AddBatch(cs_d,'TSyncChangeDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      rs_h.Last;
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+
+      bl.Next;
+    end;
+
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    Params.Free;
+    bl.Free;
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.DownloadRckDays(BeginDate: string);
+var
+  Params:TftParamList;
+  bl,ls,rs_h,rs_d,cs_h,cs_d:TZQuery;
+  MaxTimeStamp,LastTimeStamp:int64;
+  updateVersion,insertVersion:string;
+  tbName,orderFields,dataFields:string;
+begin
+  if dllGlobal.GetSFVersion <> '.LCL' then Exit;
+
+  tbName := 'RCK_DAYS_CLOSE';
+  LastTimeStamp := GetSynTimeStamp(token.tenantId,tbName,token.shopId);
+  MaxTimeStamp := LastTimeStamp; 
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>批量下载 上次时间:'+inttostr(LastTimeStamp));
+
+  bl := TZQuery.Create(nil);
+  ls := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+    Params.ParamByName('SHOP_ID').AsString := token.shopId;
+    Params.ParamByName('TABLE_NAME').AsString := tbName;
+    Params.ParamByName('TIME_STAMP').Value := LastTimeStamp;
+    Params.ParamByName('KEY_FLAG').AsInteger := 0;
+    Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+
+    if BeginDate <> '' then
+       begin
+         Params.ParamByName('BEGIN_DATE').AsInteger := strtoint(BeginDate);
+         Params.ParamByName('SYS_BEGIN_DATE').AsInteger := CloseAccDate;
+       end;
+
+    SetTicket;
+
+    dataFactory.MoveToRemote;
+    try
+      dataFactory.Open(ls,'TSyncRckDaysCloseListV60',Params);
+    finally
+      dataFactory.MoveToDefault;
+    end;
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    CreateBatch(bl, ls, 'CREA_DATE', ftInteger);
+    SetTicket;
+
+    bl.First;
+    while not bl.Eof do
+    begin
+      ProTitle := '<日台账>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
+      SetProPosition(300+(100 div bl.RecordCount * bl.RecNo));
+
+      rs_h.Close;
+      rs_d.Close;
+
+      Params.ParamByName('IDS').AsString := bl.FieldbyName('IDS').AsString;
+
+      if orderFields = '' then orderFields := GetTableFields('RCK_DAYS_CLOSE');
+      if dataFields = ''  then dataFields  := GetTableFields('RCK_STOCKS_DATA');
+
+      dataFactory.MoveToRemote;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('TABLE_FIELDS').AsString := orderFields;
+          dataFactory.AddBatch(rs_h,'TSyncRckDaysCloseV60',Params);
+          Params.ParamByName('TABLE_FIELDS').AsString := dataFields;
+          dataFactory.AddBatch(rs_d,'TSyncRckStocksDataV60',Params);
+          dataFactory.OpenBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      cs_h.SyncDelta := rs_h.SyncDelta;
+      cs_d.SyncDelta := rs_d.SyncDelta;
+
+      dataFactory.MoveToSqlite;
+      try
+        dataFactory.BeginBatch;
+        try
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SHOP_ID;CREA_DATE';
+          dataFactory.AddBatch(cs_h,'TSyncRckDaysCloseV60',Params);
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SHOP_ID;BILL_DATE';
+          dataFactory.AddBatch(cs_d,'TSyncRckStocksDataV60',Params);
+          dataFactory.CommitBatch;
+        except
+          dataFactory.CancelBatch;
+          Raise;
+        end;
+      finally
+        dataFactory.MoveToDefault;
+      end;
+
+      rs_h.Last;
+      if StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString) > MaxTimeStamp then
+         MaxTimeStamp := StrtoInt64(rs_h.FieldByName('TIME_STAMP').AsString);
+
+      bl.Next;
+    end;
+
+    if not ls.IsEmpty then SetSynTimeStamp(token.tenantId,tbName,MaxTimeStamp,token.shopId);
+
+    LogFile.AddLogFile(0,'批量下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    Params.Free;
+    bl.Free;
+    ls.Free;
+    rs_h.Free;
+    rs_d.Free;
+    cs_h.Free;
+    cs_d.Free;
   end;
 end;
 

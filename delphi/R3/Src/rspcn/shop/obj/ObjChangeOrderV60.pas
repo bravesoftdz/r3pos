@@ -387,7 +387,10 @@ end;
 
 function TSyncChangeOrderV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
+  if Params.FindParam('IDS') <> nil then
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID in ('+Params.ParamByName('IDS').AsString+') order by TIME_STAMP asc '
+  else
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+' from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
 end;
 
 function TSyncChangeOrderV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -454,7 +457,10 @@ end;
 
 function TSyncChangeDataV60.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 begin
-  SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+  if Params.FindParam('IDS') <> nil then
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID in ('+Params.ParamByName('IDS').AsString+')'
+  else
+     SelectSQL.Text := 'select '+Params.ParamByName('TABLE_FIELDS').AsString+',b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
 end;
 
 function TSyncChangeDataV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -498,14 +504,14 @@ begin
   try
     if (Params.FindParam('UPDATE_STORAGE')=nil) or Params.ParamByName('UPDATE_STORAGE').AsBoolean then
     begin
-      {case AGlobal.iDbType of
-      0:AGlobal.ExecSQL('select count(*) from STO_STORAGE with(UPDLOCK) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID',self);
-      1:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID for update',self);
-      4:AGlobal.ExecSQL('select count(*) from STO_STORAGE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID WITH RS USE AND KEEP UPDATE LOCKS',self);
-      end; }
-      rs.SQL.Text :=
-         'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
-         'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+      if Params.FindParam('IDS') <> nil then
+         rs.SQL.Text :=
+           'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
+           'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID in ('+Params.ParamByName('IDS').AsString+')'
+      else
+         rs.SQL.Text :=
+           'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGEDATA a,STO_CHANGEORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
+           'and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
       rs.Params.AssignValues(Params); 
       AGlobal.Open(rs);
       rs.First;
@@ -530,7 +536,10 @@ begin
           rs.Next;
         end;
     end;
-    AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
+    if Params.FindParam('IDS') <> nil then
+       AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID in ('+Params.ParamByName('IDS').AsString+')',Params)
+    else
+       AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
   finally
     rs.Free;
   end;

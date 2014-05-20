@@ -1228,11 +1228,12 @@ begin
   if edtSORT_ID1.Properties.ReadOnly then Exit;
   Obj := TRecord_.Create;
   try
+    frmSortDropFrom.ShowCgtSort := false;
     if frmSortDropFrom.DropForm(edtSORT_ID1,obj) then
-    begin
-      ESortId := Obj.FieldbyName('SORT_ID').AsString;
-      edtSORT_ID1.Text := Obj.FieldbyName('SORT_NAME').AsString;
-    end;
+       begin
+         ESortId := Obj.FieldbyName('SORT_ID').AsString;
+         edtSORT_ID1.Text := Obj.FieldbyName('SORT_NAME').AsString;
+       end;
   finally
     Obj.Free;
   end;

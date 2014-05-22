@@ -736,7 +736,7 @@ begin
        cdsTenant.FieldByName('SRVR_ID').AsString := rspFactory.GetNodeValue(caTenant,'srvrId');
        cdsTenant.FieldByName('PROD_ID').AsString := rspFactory.GetNodeValue(caTenant,'prodId');
        cdsTenant.FieldByName('AUDIT_STATUS').AsString := rspFactory.GetNodeValue(caTenant,'auditStatus');
-       cdsTenant.FieldByName('CREA_DATE').AsString := rspFactory.GetNodeValue(caTenant,'creaDate');
+       if cdsTenant.FindField('CREA_DATE') <> nil then cdsTenant.FieldByName('CREA_DATE').AsString := rspFactory.GetNodeValue(caTenant,'creaDate');
        cdsTenant.Post;
 
        if cdsShopInfo.IsEmpty then cdsShopInfo.Append else cdsShopInfo.Edit;
@@ -825,7 +825,6 @@ begin
 end;
 
 procedure TfrmSysDefine.ReadFromObject(PageIndex:integer);
-var i:integer;
 begin
   if PageIndex = 0 then
   begin

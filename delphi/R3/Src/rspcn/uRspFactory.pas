@@ -332,6 +332,7 @@ try
                    else
                      f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
                    end;
+{                  // r6暂时没有选择应用服务器的功能，每次登陆都取默认地址 20140312
                    if srvrId=GetNodeValue(ServerInfo,'srvrId') then isSrvr := true;
                    if not finded then
                      begin
@@ -341,6 +342,7 @@ try
                            finded := true;
                          end;
                      end;
+}
                    if defSrvrId=GetNodeValue(ServerInfo,'srvrId') then
                      begin
                        defStr := 'connmode='+GetNodeValue(ServerInfo,'connMode')+';hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(dbId);

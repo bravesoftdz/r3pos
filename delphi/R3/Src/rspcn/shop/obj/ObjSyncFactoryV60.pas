@@ -490,16 +490,8 @@ end;
 
 function TSyncRckDaysCloseV60.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if Params.FindParam('IDS') <> nil then
-     begin
-       AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE in ('+Params.ParamByName('IDS').AsString+')',Params);
-       AGlobal.ExecSQL('delete from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE in ('+Params.ParamByName('IDS').AsString+')',Params);
-     end
-  else
-     begin
-       AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE',Params);
-       AGlobal.ExecSQL('delete from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE=:CREA_DATE',Params);
-     end;
+  AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE  where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE',Params);
+  AGlobal.ExecSQL('delete from RCK_STOCKS_DATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and BILL_DATE=:CREA_DATE',Params);
   if not Init then Params.ParamByName('TABLE_NAME').AsString := 'RCK_DAYS_CLOSE';
   InitSQL(AGlobal,false);
   FillParams(InsertQuery);

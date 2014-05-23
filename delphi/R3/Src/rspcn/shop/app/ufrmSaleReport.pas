@@ -169,7 +169,7 @@ begin
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.CLIENT_ID';
 
        cdsReport1.SQL.Text :=
-         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.CLIENT_CODE,ifnull(b.CLIENT_NAME,''普通客户'') CLIENT_NAME from ('+cdsReport1.SQL.Text+') j '+
+         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) * 1.000 / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.CLIENT_CODE,ifnull(b.CLIENT_NAME,''普通客户'') CLIENT_NAME from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_CUSTOMER b on j.TENANT_ID=b.TENANT_ID and j.CLIENT_ID=b.CLIENT_ID order by b.CLIENT_CODE';
      end
   else if edtReportType.ItemIndex = 1 then
@@ -190,7 +190,7 @@ begin
 
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.GODS_ID';
        cdsReport1.SQL.Text :=
-         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,b.SORT_ID1 from ('+cdsReport1.SQL.Text+') j '+
+         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) * 1.000 / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.GODS_NAME,b.GODS_CODE,b.BARCODE,b.CALC_UNITS as UNIT_ID,b.SORT_ID1 from ('+cdsReport1.SQL.Text+') j '+
          'left outer join ('+dllGlobal.GetViwGoodsInfo('TENANT_ID,GODS_ID,GODS_CODE,GODS_NAME,BARCODE,RELATION_ID,SORT_ID1,CALC_UNITS',true)+') b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID ';
 
        if FSortId <> '' then
@@ -253,7 +253,7 @@ begin
 
        cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by a.TENANT_ID,a.CREA_USER';
        cdsReport1.SQL.Text :=
-         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.ACCOUNT,b.USER_NAME from ('+cdsReport1.SQL.Text+') j '+
+         'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) * 1.000 / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,b.ACCOUNT,b.USER_NAME from ('+cdsReport1.SQL.Text+') j '+
          'left outer join VIW_USERS b on j.TENANT_ID=b.TENANT_ID and j.CREA_USER=b.USER_ID order by b.ACCOUNT';
      end
   else if edtReportType.ItemIndex > 2 then
@@ -298,13 +298,13 @@ begin
        if CodeId = '3' then
           begin
             cdsReport1.SQL.Text :=
-              'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,ifnull(b.CLIENT_NAME,''未定义'') SORT_NAME from ('+cdsReport1.SQL.Text+') j '+
+              'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) * 1.000 / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,ifnull(b.CLIENT_NAME,''未定义'') SORT_NAME from ('+cdsReport1.SQL.Text+') j '+
               'left outer join VIW_CLIENTINFO b on j.TENANT_ID=b.TENANT_ID and j.SORT_ID=b.CLIENT_ID ';
           end
        else
           begin
             cdsReport1.SQL.Text :=
-              'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,ifnull(b.SORT_NAME,''未定义'') SORT_NAME from ('+cdsReport1.SQL.Text+') j '+
+              'select j.*,case when j.CALC_AMOUNT<>0 then cast(j.CALC_MONEY as decimal(18,3)) * 1.000 / cast(j.CALC_AMOUNT as decimal(18,3)) else 0 end as APRICE,ifnull(b.SORT_NAME,''未定义'') SORT_NAME from ('+cdsReport1.SQL.Text+') j '+
               'left outer join VIW_GOODSSORT b on j.TENANT_ID=b.TENANT_ID and b.SORT_TYPE='+CodeId+' and j.SORT_ID=b.SORT_ID ';
           end;
      end;

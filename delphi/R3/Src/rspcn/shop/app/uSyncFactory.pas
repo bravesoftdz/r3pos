@@ -1639,7 +1639,7 @@ begin
     while not ls.Eof do
     begin
       ProTitle := '<进货单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
-      SetProPosition(100 div ls.RecordCount * ls.RecNo);
+      SetProPosition(Trunc(100 / ls.RecordCount * ls.RecNo));
 
       rs_h.Close;
       rs_d.Close;
@@ -1764,7 +1764,7 @@ begin
     while not ls.Eof do
     begin
       ProTitle := '<销售单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
-      SetProPosition(100+(100 div ls.RecordCount * ls.RecNo));
+      SetProPosition(100 + Trunc(100 / ls.RecordCount * ls.RecNo));
 
       rs_h.Close;
       rs_d.Close;
@@ -1889,7 +1889,7 @@ begin
     while not ls.Eof do
     begin
       ProTitle := '<损益单>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
-      SetProPosition(200+(100 div ls.RecordCount * ls.RecNo));
+      SetProPosition(200 + Trunc(100 / ls.RecordCount * ls.RecNo));
 
       rs_h.Close;
       rs_d.Close;
@@ -2019,7 +2019,7 @@ begin
     while not ls.Eof do
     begin
       ProTitle := '<日台账>...共'+inttostr(ls.RecordCount)+'笔，当前第'+inttostr(ls.RecNo)+'笔';
-      SetProPosition(300+(100 div ls.RecordCount * ls.RecNo));
+      SetProPosition(300 + Trunc(100 / ls.RecordCount * ls.RecNo));
 
       // 小于开始日期的数据不上传
       if (RckBeginDate > 0) and (ls.FieldByName('CREA_DATE').AsInteger < RckBeginDate) then
@@ -3568,7 +3568,7 @@ begin
     while not bl.Eof do
     begin
       ProTitle := '<销售单>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
-      SetProPosition(100+(100 div bl.RecordCount * bl.RecNo));
+      SetProPosition(100 + Trunc(100 / bl.RecordCount * bl.RecNo));
 
       rs_h.Close;
       rs_d.Close;
@@ -3697,7 +3697,7 @@ begin
     while not bl.Eof do
     begin
       ProTitle := '<进货单>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
-      SetProPosition(100 div bl.RecordCount * bl.RecNo);
+      SetProPosition(Trunc(100 / bl.RecordCount * bl.RecNo));
 
       rs_h.Close;
       rs_d.Close;
@@ -3826,7 +3826,7 @@ begin
     while not bl.Eof do
     begin
       ProTitle := '<损益单>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
-      SetProPosition(200+(100 div bl.RecordCount * bl.RecNo));
+      SetProPosition(200 + Trunc(100 / bl.RecordCount * bl.RecNo));
 
       rs_h.Close;
       rs_d.Close;
@@ -3950,7 +3950,7 @@ begin
     while not bl.Eof do
     begin
       ProTitle := '<日台账>...共'+inttostr(bl.RecordCount)+'笔，当前第'+inttostr(bl.RecNo)+'笔';
-      SetProPosition(300+(100 div bl.RecordCount * bl.RecNo));
+      SetProPosition(300 + Trunc(100 / bl.RecordCount * bl.RecNo));
 
       rs_h.Close;
       rs_d.Close;

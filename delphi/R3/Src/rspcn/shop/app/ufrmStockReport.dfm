@@ -750,12 +750,12 @@ inherited frmStockReport: TfrmStockReport
         object barcode: TRzPanel
           Left = 180
           Top = 20
-          Width = 173
+          Width = 157
           Height = 29
           BorderOuter = fsNone
           TabOrder = 3
           DesignSize = (
-            173
+            157
             29)
           object barcode_input_left: TImage
             Left = 0
@@ -788,7 +788,7 @@ inherited frmStockReport: TfrmStockReport
               999999990000}
           end
           object barcode_input_right: TImage
-            Left = 168
+            Left = 152
             Top = 0
             Width = 5
             Height = 29
@@ -816,7 +816,7 @@ inherited frmStockReport: TfrmStockReport
           object barcode_input_line: TImage
             Left = 6
             Top = 0
-            Width = 162
+            Width = 146
             Height = 29
             Hint = #25195#30721#38144#21806#35831#25353' pause '#20581
             Align = alClient
@@ -848,7 +848,7 @@ inherited frmStockReport: TfrmStockReport
           object edtCLIENT_ID: TzrComboBoxList
             Left = 8
             Top = 4
-            Width = 161
+            Width = 145
             Height = 23
             Anchors = [akLeft, akTop, akRight]
             Properties.AutoSelect = False
@@ -1041,15 +1041,15 @@ inherited frmStockReport: TfrmStockReport
           end
         end
         object RzPanel14: TRzPanel
-          Left = 360
+          Left = 344
           Top = 20
-          Width = 101
+          Width = 117
           Height = 29
           Anchors = [akLeft, akTop, akRight]
           BorderOuter = fsNone
           TabOrder = 5
           DesignSize = (
-            101
+            117
             29)
           object Image4: TImage
             Left = 0
@@ -1082,7 +1082,7 @@ inherited frmStockReport: TfrmStockReport
               999999990000}
           end
           object Image5: TImage
-            Left = 96
+            Left = 112
             Top = 0
             Width = 5
             Height = 29
@@ -1110,7 +1110,7 @@ inherited frmStockReport: TfrmStockReport
           object Image6: TImage
             Left = 6
             Top = 0
-            Width = 90
+            Width = 106
             Height = 29
             Hint = #25195#30721#38144#21806#35831#25353' pause '#20581
             Align = alClient
@@ -1142,7 +1142,7 @@ inherited frmStockReport: TfrmStockReport
           object edtGODS_ID: TzrComboBoxList
             Left = 6
             Top = 4
-            Width = 90
+            Width = 106
             Height = 23
             TabStop = False
             Anchors = [akLeft, akTop, akRight]

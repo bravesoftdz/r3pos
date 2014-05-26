@@ -59,6 +59,11 @@ type
     Image2: TImage;
     Image3: TImage;
     sortDrop: TcxButtonEdit;
+    RzPanel14: TRzPanel;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
+    edtGODS_ID: TzrComboBoxList;
     procedure dateFlagPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -79,6 +84,8 @@ type
     procedure sortDropExit(Sender: TObject);
     procedure sortDropPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure edtGODS_IDExit(Sender: TObject);
+    procedure edtGODS_IDClearValue(Sender: TObject);
   private
     FSortId:string;
     WTitle1:TStringList;
@@ -119,6 +126,11 @@ begin
        cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
      end;
 
+  if edtGODS_ID.AsString <> '' then
+     begin
+       cdsReport1.SQL.Text := cdsReport1.SQL.Text + ' and GODS_ID=:GODS_ID';
+     end;
+
   cdsReport1.SQL.Text := cdsReport1.SQL.Text +' group by TENANT_ID,GODS_ID';
 
   cdsReport1.SQL.Text :=
@@ -142,6 +154,7 @@ begin
   cdsReport1.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
   if cdsReport1.Params.FindParam('SHOP_ID')<>nil then cdsReport1.ParamByName('SHOP_ID').AsString := token.shopId;
   if cdsReport1.Params.FindParam('CLIENT_ID')<>nil then cdsReport1.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+  if cdsReport1.Params.FindParam('GODS_ID')<>nil then cdsReport1.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
   dataFactory.Open(cdsReport1);
 end;
 
@@ -161,13 +174,26 @@ begin
   if FnString.TrimRight(token.shopId,4)<>'0001' then
      cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and SHOP_ID=:SHOP_ID';
 
-  if edtCLIENT_ID.AsString <> '' then
-     begin
-       cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
-     end;
-
   if not all then
-     cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
+     begin
+       edtGODS_ID.KeyValue := cdsReport1.FieldbyName('GODS_ID').AsString;
+       edtGODS_ID.Text := cdsReport1.FieldbyName('GODS_NAME').AsString;
+       cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
+       cdsReport2.ParamByName('GODS_ID').AsString := cdsReport1.FieldbyName('GODS_ID').AsString;
+     end
+  else
+     begin
+       if edtCLIENT_ID.AsString <> '' then
+          begin
+            cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and CLIENT_ID=:CLIENT_ID';
+            cdsReport2.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+          end;
+       if edtGODS_ID.AsString <> '' then
+          begin
+            cdsReport2.SQL.Text := cdsReport2.SQL.Text + ' and GODS_ID=:GODS_ID';
+            cdsReport2.ParamByName('GODS_ID').AsString := edtGODS_ID.AsString;
+          end;
+    end;
 
   cdsReport2.SQL.Text := cdsReport2.SQL.Text +' ';
   cdsReport2.SQL.Text :=
@@ -191,8 +217,7 @@ begin
   cdsReport2.ParamByName('D1').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D1.Date));
   cdsReport2.ParamByName('D2').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',D2.Date));
   if cdsReport2.Params.FindParam('SHOP_ID')<>nil then cdsReport2.ParamByName('SHOP_ID').AsString := token.shopId;
-  if cdsReport2.Params.FindParam('CLIENT_ID')<>nil then cdsReport2.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
-  if cdsReport2.Params.FindParam('GODS_ID')<>nil then cdsReport2.ParamByName('GODS_ID').AsString := cdsReport1.FieldbyName('GODS_ID').AsString;
+
   dataFactory.Open(cdsReport2);
 
   RzPanel5.Visible := not all;
@@ -244,6 +269,7 @@ begin
   inherited;
   dateFlag.ItemIndex := 1;
   edtCLIENT_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
+  edtGODS_ID.DataSet := dllGlobal.GetZQueryFromName('PUB_GOODSINFO');
   
   rs := dllGlobal.GetZQueryFromName('PUB_GOODSSORT');
   Column := FindColumn(DBGridEH1,'SORT_ID1');
@@ -516,6 +542,23 @@ begin
   finally
     Obj.Free;
   end;
+end;
+
+procedure TfrmStockReport.edtGODS_IDExit(Sender: TObject);
+begin
+  inherited;
+  if trim(edtGODS_ID.Text)='' then
+     begin
+       edtGODS_ID.KeyValue := null;
+       edtGODS_ID.Text := '全部商品';
+     end;
+end;
+
+procedure TfrmStockReport.edtGODS_IDClearValue(Sender: TObject);
+begin
+  inherited;
+  edtGODS_ID.KeyValue := null;
+  edtGODS_ID.Text := '全部商品';
 end;
 
 initialization

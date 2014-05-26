@@ -619,10 +619,10 @@ begin
 
        if dataFactory.iDbType = 5 then
           begin
-            dataFactory.MoveToRemote;
             tmpTenant := TZQuery.Create(nil);
             tmpShopInfo := TZQuery.Create(nil);
             Params := TftParamList.Create(nil);
+            dataFactory.MoveToRemote;
             try
               Params.ParamByName('TENANT_ID').AsInteger := strtoint(tid);
               Params.ParamByName('SHOP_ID').AsString := sid;
@@ -904,9 +904,9 @@ begin
     tmpShopInfo := TZQuery.Create(nil);
     Params := TftParamList.Create(nil);
     if dataFactory.iDbType = 5 then
-      dataFactory.MoveToRemote
+       dataFactory.MoveToRemote
     else
-      dataFactory.MoveToSqlite;
+       dataFactory.MoveToSqlite;
     try
       Params.ParamByName('TENANT_ID').AsInteger := cdsTenant.FieldByName('TENANT_ID').AsInteger;
       Params.ParamByName('SHOP_ID').AsString := cdsShopInfo.FieldByName('SHOP_ID').AsString;
@@ -951,10 +951,10 @@ begin
         Raise;
       end;
     finally
+      dataFactory.MoveToDefault;
       Params.Free;
       tmpTenant.Free;
       tmpShopInfo.Free;
-      dataFactory.MoveToDefault;
     end;
   end;
 
@@ -1174,9 +1174,9 @@ begin
   //保存本地
   if dataFactory.iDbType <> 5 then
   begin
-    dataFactory.MoveToSqlite;
     Params := TftParamList.Create(nil);
     tmpSysDefine := TZQuery.Create(nil);
+    dataFactory.MoveToSqlite;
     try
       Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
       dataFactory.Open(tmpSysDefine, 'TSysDefineV60', Params);
@@ -1469,9 +1469,9 @@ begin
   // 本地保存
   if dataFactory.iDbType <> 5 then
   begin
-    dataFactory.MoveToSqlite;
     tmpUsers := TZQuery.Create(nil);
     Params := TftParamList.Create(nil);
+    dataFactory.MoveToSqlite;
     try
       Params.ParamByName('USER_ID').AsString := CurUserId;
       Params.ParamByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
@@ -1503,9 +1503,9 @@ begin
 
       dataFactory.UpdateBatch(tmpUsers,'TUsersV60');
     finally
+      dataFactory.MoveToDefault;
       tmpUsers.Free;
       Params.Free;
-      dataFactory.MoveToDefault;
     end;
   end;
 
@@ -2024,8 +2024,8 @@ begin
     dataFactory.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('服务器没有检测到业务数据，不需要进行数据恢复...');
   finally
-    rs.Free;
     dataFactory.MoveToDefault;
+    rs.Free;
   end;
 
   if recType = '1' then
@@ -2166,15 +2166,15 @@ procedure TfrmSysDefine.RtcSyncClose;
 var
   vParams:TftParamList;
 begin
-  dataFactory.MoveToSqlite;
   vParams:=TftParamList.Create(nil);
+  dataFactory.MoveToSqlite;
   try
     vParams.ParamByName('TENANT_ID').AsInteger:=strtoint(token.tenantId);
     vParams.ParamByName('SHOP_ID').AsString:=token.shopId;
     dataFactory.ExecProc('TRtcSyncClose',vParams);
   finally
-    vParams.Free;
     dataFactory.MoveToDefault;
+    vParams.Free;
   end;
 end;
 

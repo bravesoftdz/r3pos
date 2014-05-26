@@ -467,8 +467,8 @@ begin
 {
   if (not Finded) and (dataFactory.iDbType = 5) then
     begin
-      dataFactory.MoveToRemote;
       hasGoods := TZQuery.Create(nil);
+      dataFactory.MoveToRemote;
       try
         hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where  TENANT_ID = ' + FY_TENANT_ID + ' and BARCODE = '''+barcode+''' ';
         dataFactory.Open(hasGoods);
@@ -490,8 +490,8 @@ begin
               end;
           end;
       finally
-        hasGoods.Free;
         dataFactory.MoveToDefault;
+        hasGoods.Free;
       end;
     end;
 }
@@ -2180,8 +2180,8 @@ begin
     cdsUnits.Post;
     dataFactory.UpdateBatch(cdsUnits,'TMeaUnitsV60');
   finally
-    cdsUnits.Free;
     dataFactory.MoveToDefault;
+    cdsUnits.Free;
   end;
   RefreshUnits;
 end;

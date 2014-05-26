@@ -143,10 +143,10 @@ begin
   // ±¾µØ±£´æ
   if dataFactory.iDbType <> 5 then
   begin
-     dataFactory.MoveToSqlite;
      tmpSort := TZQuery.Create(nil);
      Params := TftParamList.Create(nil);
      tmpObj := TRecord_.Create;
+     dataFactory.MoveToSqlite;
      try
        Params.ParamByName('TENANT_ID').AsInteger := cdsSort.FieldByName('TENANT_ID').AsInteger;
        Params.ParamByName('SORT_TYPE').AsInteger := cdsSort.FieldByName('SORT_TYPE').AsInteger;

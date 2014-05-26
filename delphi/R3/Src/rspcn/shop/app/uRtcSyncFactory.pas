@@ -102,8 +102,8 @@ begin
     else
        result := rs.Fields[0].Value;
   finally
-    rs.Free;
     dataFactory.MoveToDefault;
+    rs.Free;
   end;
 end;
 

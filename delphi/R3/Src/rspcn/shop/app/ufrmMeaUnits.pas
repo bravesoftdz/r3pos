@@ -120,10 +120,10 @@ begin
   // ±¾µØ±£´æ
   if dataFactory.iDbType <> 5 then
   begin
-     dataFactory.MoveToSqlite;
      tmpUnits := TZQuery.Create(nil);
      Params := TftParamList.Create(nil);
      tmpObj := TRecord_.Create;
+     dataFactory.MoveToSqlite;
      try
        Params.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
        Params.ParamByName('UNIT_ID').AsString := id;

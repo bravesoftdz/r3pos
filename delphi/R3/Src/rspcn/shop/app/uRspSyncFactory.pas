@@ -151,8 +151,8 @@ begin
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
-            Params.Free;
             dataFactory.MoveToDefault;
+            Params.Free;
           end;
         end;
       end;
@@ -240,8 +240,8 @@ begin
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
-            Params.Free;
             dataFactory.MoveToDefault;
+            Params.Free;
           end;
         end;
       end;
@@ -336,8 +336,8 @@ begin
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
-            Params.Free;
             dataFactory.MoveToDefault;
+            Params.Free;
           end;
         end;
       end;
@@ -748,8 +748,8 @@ begin
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(rs_l,'TSyncSingleTableV60',Params);
           finally
-            Params.Free;
             dataFactory.MoveToDefault;
+            Params.Free;
           end;
         end;
       end;
@@ -885,8 +885,8 @@ begin
             Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
             dataFactory.UpdateBatch(ss_l,'TSyncSingleTableV60',Params);
           finally
-            Params.Free;
             dataFactory.MoveToDefault;
+            Params.Free;
           end;
         end;
       end;

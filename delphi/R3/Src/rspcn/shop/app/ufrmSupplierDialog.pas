@@ -160,8 +160,11 @@ begin
   begin
     if rs.Locate('FLAG;SHOP_ID;CLIENT_CODE',VarArrayof(['0',token.shopId,Trim(edtCLIENT_CODE.Text)]),[]) then
     begin
-      if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
-      raise  Exception.Create('供应商编号已经存在，不能重复！');
+      if rs.FieldByName('CLIENT_ID').AsString <> AObj.FieldByName('CLIENT_ID').AsString then
+         begin
+           if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
+           Raise Exception.Create('供应商编号已经存在，不能重复！');
+         end;
     end;
   end;
 
@@ -173,8 +176,11 @@ begin
   begin
     if rs.Locate('FLAG;SHOP_ID;CLIENT_NAME',VarArrayof(['0',token.shopId,Trim(edtCLIENT_NAME.Text)]),[]) then
     begin
-      if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
-      raise  Exception.Create('供应商名称已经存在，不能重复！');
+      if rs.FieldByName('CLIENT_ID').AsString <> AObj.FieldByName('CLIENT_ID').AsString then
+         begin
+           if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
+           Raise Exception.Create('供应商名称已经存在，不能重复！');
+         end;
     end;
   end;
 

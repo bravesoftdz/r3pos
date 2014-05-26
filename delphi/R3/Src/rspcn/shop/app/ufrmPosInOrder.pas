@@ -9,7 +9,8 @@ uses
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, PrnDbgeh,ufrmDBGridPreview,
-  ComCtrls, ToolWin, ImgList, FR_Class, BaseGrid, AdvGrid, IniFiles;
+  ComCtrls, ToolWin, ImgList, FR_Class, BaseGrid, AdvGrid, IniFiles,
+  MPlayer;
 
 type
   TfrmPosInOrder = class(TfrmOrderForm)
@@ -155,6 +156,7 @@ type
     procedure btnPickUpClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure edtCLIENT_IDDblClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -2111,6 +2113,33 @@ begin
        end;
   except
   end;
+end;
+
+procedure TfrmPosInOrder.edtCLIENT_IDDblClick(Sender: TObject);
+var
+  rs:TZQuery;
+  SObj:TRecord_;
+begin
+  inherited;
+  if edtCLIENT_ID.AsString = '' then Exit;
+  rs := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
+  if rs.Locate('CLIENT_ID', edtCLIENT_ID.AsString, []) then
+     begin
+       if rs.FieldByName('FLAG').AsString = '0' then
+          begin
+            SObj := TRecord_.Create;
+            try
+              if TfrmSupplierDialog.ShowDialog(self, edtCLIENT_ID.AsString, SObj) then
+                 begin
+                   edtCLIENT_ID.KeyValue := SObj.FieldByName('CLIENT_ID').AsString;
+                   edtCLIENT_ID.Text := SObj.FieldByName('CLIENT_NAME').AsString;
+                   AObj.FieldByName('CLIENT_ID').AsString := SObj.FieldByName('CLIENT_ID').AsString;
+                 end;
+            finally
+              SObj.Free;
+            end;
+          end;
+     end;
 end;
 
 initialization

@@ -9,7 +9,7 @@ uses
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi, objCommon,
-  PrnDbgeh,ufrmDBGridPreview, ComCtrls, ToolWin, ImgList, FR_Class;
+  PrnDbgeh,ufrmDBGridPreview, ComCtrls, ToolWin, ImgList, FR_Class, MPlayer;
 
 type
   TfrmSaleOrder = class(TfrmOrderForm)
@@ -2393,7 +2393,8 @@ begin
        AObj.FieldByName('PAY_A').AsFloat := r;
        AObj.FieldByName('PAY_B').AsFloat := 0;
        AObj.FieldByName('PAY_C').AsFloat := 0;
-       AObj.FieldByName('PAY_D').AsFloat := (totalFee-AObj.FieldByName('PAY_DIBS').AsFloat)-r;
+       // AObj.FieldByName('PAY_D').AsFloat := (totalFee-AObj.FieldByName('PAY_DIBS').AsFloat)-r;
+       AObj.FieldByName('PAY_D').AsFloat := 0;
        AObj.FieldByName('PAY_E').AsFloat := 0;
        AObj.FieldByName('PAY_F').AsFloat := 0;
        AObj.FieldByName('PAY_G').AsFloat := 0;

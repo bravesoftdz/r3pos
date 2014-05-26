@@ -56,7 +56,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   Top = 23
                   ShadowColor = 15921906
                 end
-                object RzLabel1: TRzLabel
+                object RzLabel1: TRzLabel [3]
                   Tag = 5
                   Left = 173
                   Top = 2
@@ -75,7 +75,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel2: TRzLabel
+                object RzLabel2: TRzLabel [4]
                   Tag = 6
                   Left = 31
                   Top = 43
@@ -94,7 +94,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel3: TRzLabel
+                object RzLabel3: TRzLabel [5]
                   Tag = 7
                   Left = 165
                   Top = 60
@@ -112,7 +112,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel12: TRzLabel
+                object RzLabel12: TRzLabel [6]
                   Tag = 10
                   Left = 173
                   Top = 44
@@ -131,7 +131,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel4: TRzLabel
+                object RzLabel4: TRzLabel [7]
                   Tag = 9
                   Left = 173
                   Top = 23
@@ -150,7 +150,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel5: TRzLabel
+                object RzLabel5: TRzLabel [8]
                   Tag = 8
                   Left = 289
                   Top = 58
@@ -168,7 +168,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel13: TRzLabel
+                object RzLabel13: TRzLabel [9]
                   Tag = 11
                   Left = 319
                   Top = 2
@@ -187,7 +187,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel14: TRzLabel
+                object RzLabel14: TRzLabel [10]
                   Tag = 12
                   Left = 319
                   Top = 23
@@ -206,7 +206,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                   ShadowDepth = 1
                   TextStyle = tsShadow
                 end
-                object RzLabel15: TRzLabel
+                object RzLabel15: TRzLabel [11]
                   Tag = 13
                   Left = 318
                   Top = 44
@@ -440,6 +440,7 @@ inherited frmPosInOrder: TfrmPosInOrder
                 Style.HotTrack = False
                 Style.ButtonTransparency = ebtInactive
                 TabOrder = 1
+                OnDblClick = edtCLIENT_IDDblClick
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'

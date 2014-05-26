@@ -9,7 +9,7 @@ uses
   zrComboBoxList, Grids, DBGridEh, StdCtrls, RzLabel, ExtCtrls, RzBmpBtn,
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, PrnDbgeh,ufrmDBGridPreview,
-  ComCtrls, ToolWin, ImgList, FR_Class;
+  ComCtrls, ToolWin, ImgList, FR_Class, MPlayer;
 
 type
   TfrmStockOrder = class(TfrmOrderForm)
@@ -142,6 +142,7 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure edtCLIENT_IDDblClick(Sender: TObject);
   private
     AObj:TRecord_;
     //默认发票类型
@@ -1639,7 +1640,8 @@ begin
        AObj.FieldByName('PAY_A').AsFloat := r;
        AObj.FieldByName('PAY_B').AsFloat := 0;
        AObj.FieldByName('PAY_C').AsFloat := 0;
-       AObj.FieldByName('PAY_D').AsFloat := (totalFee-AObj.FieldByName('PAY_ZERO').AsFloat)-r;
+       // AObj.FieldByName('PAY_D').AsFloat := (totalFee-AObj.FieldByName('PAY_ZERO').AsFloat)-r;
+       AObj.FieldByName('PAY_D').AsFloat := 0;
        AObj.FieldByName('PAY_E').AsFloat := 0;
        AObj.FieldByName('PAY_F').AsFloat := 0;
        AObj.FieldByName('PAY_G').AsFloat := 0;
@@ -1825,6 +1827,33 @@ procedure TfrmStockOrder.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
   getGodsInfo(edtTable.FieldByName('GODS_ID').AsString);
+end;
+
+procedure TfrmStockOrder.edtCLIENT_IDDblClick(Sender: TObject);
+var
+  rs:TZQuery;
+  SObj:TRecord_;
+begin
+  inherited;
+  if edtCLIENT_ID.AsString = '' then Exit;
+  rs := dllGlobal.GetZQueryFromName('PUB_CLIENTINFO');
+  if rs.Locate('CLIENT_ID', edtCLIENT_ID.AsString, []) then
+     begin
+       if rs.FieldByName('FLAG').AsString = '0' then
+          begin
+            SObj := TRecord_.Create;
+            try
+              if TfrmSupplierDialog.ShowDialog(self, edtCLIENT_ID.AsString, SObj) then
+                 begin
+                   edtCLIENT_ID.KeyValue := SObj.FieldByName('CLIENT_ID').AsString;
+                   edtCLIENT_ID.Text := SObj.FieldByName('CLIENT_NAME').AsString;
+                   AObj.FieldByName('CLIENT_ID').AsString := SObj.FieldByName('CLIENT_ID').AsString;
+                 end;
+            finally
+              SObj.Free;
+            end;
+          end;
+     end;
 end;
 
 initialization

@@ -760,30 +760,31 @@ begin
        if cdsGoodsExt.FieldbyName('NEW_INPRICE').AsString <> '' then
           edtNEW_INPRICE.Text := cdsGoodsExt.FieldbyName('NEW_INPRICE').AsString;
      end;
+
   //店内售价
   edtSHOP_NEW_OUTPRICE.Text := edtNEW_OUTPRICE.Text;
-  if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
-     edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloatDef(edtSMALLTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
-  if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-     edtSHOP_NEW_OUTPRICE1.Text:='';
-  if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
-     edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloatDef(edtBIGTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
-  if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-     edtSHOP_NEW_OUTPRICE2.Text:='';
+
+  if edtSMALL_UNITS.AsString <> '' then
+     begin
+       if (edtSMALLTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+          edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloatDef(edtSMALLTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
+     end;
+
+  if edtBIG_UNITS.AsString <> '' then
+     begin
+       if (edtBIGTO_CALC.Text<>'') and (edtSHOP_NEW_OUTPRICE.Text<>'') then
+          edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloatDef(edtBIGTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
+     end;
 
   if not cdsGoodsPrice.IsEmpty then
       begin
         cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]);
         if (cdsGoodsPrice.FieldByName('COMM').AsString<>'02') and (cdsGoodsPrice.FieldByName('COMM').AsString<>'12') then
-          begin
-            edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
-            edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
-            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-               edtSHOP_NEW_OUTPRICE1.Text:='';
-            edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
-            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-               edtSHOP_NEW_OUTPRICE2.Text:='';
-          end;
+           begin
+             edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
+             edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
+             edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
+           end;
       end;
 
   if (relationId=1000006) and (isSyncUpperAmount='1') and (AObj.FieldByName('SMALLTO_CALC').AsString<>'') then //卷烟显示条单位
@@ -798,6 +799,7 @@ begin
      end;
 
   edtUNIT_ID_USING.Checked := (AObj.FieldbyName('SMALL_UNITS').AsString<>'') or (AObj.FieldbyName('BIG_UNITS').AsString<>'');
+
   if edtUNIT_ID_USING.Checked then
     begin
       SetShopOutPricePlace;
@@ -1255,8 +1257,6 @@ begin
           edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=false;
           t_label.Caption:=edtSMALL_UNITS.Text+'价';
           edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloatDef(edtSMALLTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
-          if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-             edtSHOP_NEW_OUTPRICE1.Text:='';
         end
       else
         begin
@@ -1270,8 +1270,6 @@ begin
           edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly:=false;
           x_label.Caption:=edtBIG_UNITS.Text+'价';
           edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloatDef(edtBIGTO_CALC.Text,0)*StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0));
-          if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-             edtSHOP_NEW_OUTPRICE2.Text:='';
         end
       else
         begin
@@ -1285,15 +1283,11 @@ begin
       begin
         cdsGoodsPrice.Locate('SHOP_ID',token.shopId,[]);
         if (cdsGoodsPrice.FieldByName('COMM').AsString<>'02') and (cdsGoodsPrice.FieldByName('COMM').AsString<>'12') then
-          begin
-            edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
-            edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
-            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)=0 then
-               edtSHOP_NEW_OUTPRICE1.Text:='';
-            edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
-            if StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)=0 then
-               edtSHOP_NEW_OUTPRICE2.Text:='';
-          end;
+           begin
+             edtSHOP_NEW_OUTPRICE.Text := cdsGoodsPrice.FieldbyName('NEW_OUTPRICE').AsString;
+             edtSHOP_NEW_OUTPRICE1.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE1').AsString;
+             edtSHOP_NEW_OUTPRICE2.Text:= cdsGoodsPrice.FieldbyName('NEW_OUTPRICE2').AsString;
+           end;
       end;
 
       SetShopOutPricePlace;

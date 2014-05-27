@@ -190,8 +190,7 @@ type
     procedure WebUpdater1Error(Sender: TObject; ErrorCode: TErrorMessage;
       Parameter, ErrMessage: String);
   private
-    function BarcodeFactory(rs:TZQuery;code:string):boolean;
-
+    function  BarcodeFactory(rs:TZQuery;code:string):boolean;
     function  GetFinded:boolean;
     function  CanFocus(Control:TControl):boolean;
     function  CheckUnit(unitName:string):string;
@@ -202,7 +201,6 @@ type
     procedure RefreshUnitsList;
     procedure AddUnits(Sender: TObject);
     procedure SetLocalFinded(const Value: boolean);
-    procedure SetRemoteFinded(const Value: boolean);
     procedure SetRspFinded(const Value: boolean);
     procedure HideGodsCode;
     procedure ShowGodsCode;
@@ -211,7 +209,6 @@ type
   public
     AObj:TRecord_;
     FLocalFinded:boolean;
-    FRemoteFinded:boolean;
     FRspFinded:boolean;
     Simple:boolean;
     function  checkBarcode:boolean;
@@ -227,7 +224,6 @@ type
     function  BarCodeSimpleInit(barcode:string):boolean;
     class function ShowDialog(Owner:TForm;barcode:string;var GodsId:string):boolean;
     property  LocalFinded:boolean read FLocalFinded write SetLocalFinded;
-    property  RemoteFinded:boolean read FRemoteFinded write SetRemoteFinded;
     property  RspFinded:boolean read FRspFinded write SetRspFinded;
     property  Finded:boolean read GetFinded;
   end;
@@ -272,7 +268,6 @@ begin
   if rzPage.ActivePageIndex = 0 then
      begin
        LocalFinded := false;
-       RemoteFinded := false;
        RspFinded := false;
        edtSORT_ID.Text := '';
        edtSHOP_NEW_OUTPRICE.Text := '';
@@ -395,7 +390,7 @@ end;
 
 function TfrmInitGoods.GetFinded: boolean;
 begin
-  result := RspFinded or RemoteFinded or LocalFinded;
+  result := RspFinded or LocalFinded;
 end;
 
 function TfrmInitGoods.CanFocus(Control: TControl): boolean;
@@ -463,38 +458,6 @@ begin
     hasGoods.Free;
   end;
 
-  // 查询服务端商品
-{
-  if (not Finded) and (dataFactory.iDbType = 5) then
-    begin
-      hasGoods := TZQuery.Create(nil);
-      dataFactory.MoveToRemote;
-      try
-        hasGoods.SQL.Text := 'select GODS_ID from PUB_BARCODE where  TENANT_ID = ' + FY_TENANT_ID + ' and BARCODE = '''+barcode+''' ';
-        dataFactory.Open(hasGoods);
-        if not hasGoods.IsEmpty then
-          begin
-            godsId := hasGoods.FieldByName('GODS_ID').AsString;
-            hasGoods.Close;
-            hasGoods.SQL.Text := 'select GODS_ID from PUB_GOODSINFO where TENANT_ID = ' + FY_TENANT_ID + ' and GODS_ID = ''' + godsId + '''';
-            dataFactory.Open(hasGoods);
-            if not hasGoods.IsEmpty then
-              begin
-                RemoteFinded := true;
-                godsId := hasGoods.FieldByName('GODS_ID').AsString;
-              end
-            else
-              begin
-                RemoteFinded := false;
-                godsId := '';
-              end;
-          end;
-      finally
-        dataFactory.MoveToDefault;
-        hasGoods.Free;
-      end;
-    end;
-}
   // 查询RSP商品
   if not Finded then
      begin
@@ -511,17 +474,7 @@ begin
             end;
         end;
      end;
-{
-  if not Finded then
-    begin
-      try
-        RspSyncFactory.downloadGoodsSort;
-      except
-        on E:Exception do
-           Raise Exception.Create('下载商品分类失败，原因：'+E.Message);
-      end;
-    end;
-}
+
   OpenDataSet(FY_TENANT_ID, godsId);
 
   if LocalFinded then
@@ -563,104 +516,7 @@ begin
                end;
           end;
      end;
-{
-  if RemoteFinded then
-    begin
-      tmpGoodsInfo := TZQuery.Create(nil);
-      tmpBarCode := TZQuery.Create(nil);
-      Params := TftParamList.Create(nil);
-      dataFactory.MoveToRemote;
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-        Params.ParamByName('GODS_ID').AsString := godsId;
-        dataFactory.Open(tmpGoodsInfo,'TGoodsInfoV60',Params);
-        dataFactory.Open(tmpBarCode,'TBarCodeV60',Params);
 
-        cdsGoodsInfo.Edit;
-        tmpObj := TRecord_.Create;
-        try
-          tmpObj.ReadFromDataSet(tmpGoodsInfo);
-          tmpObj.WriteToDataSet(cdsGoodsInfo);
-        finally
-          tmpObj.Free;
-        end;
-
-        tmpObj := TRecord_.Create;
-        try
-          if tmpBarCode.Locate('BARCODE_TYPE','0',[]) then
-            begin
-              if cdsBarCode.Locate('BARCODE_TYPE','0',[]) then
-                cdsBarCode.Edit
-              else
-                cdsBarCode.Append;
-              tmpObj.ReadFromDataSet(tmpBarCode);
-              tmpObj.WriteToDataSet(cdsBarCode);
-            end
-          else
-            begin
-              if cdsBarCode.Locate('BARCODE_TYPE','0',[]) then
-                cdsBarCode.Delete;
-            end;
-
-          if tmpBarCode.Locate('BARCODE_TYPE','1',[]) then
-            begin
-              if cdsBarCode.Locate('BARCODE_TYPE','1',[]) then
-                cdsBarCode.Edit
-              else
-                cdsBarCode.Append;
-              tmpObj.ReadFromDataSet(tmpBarCode);
-              tmpObj.WriteToDataSet(cdsBarCode);
-            end
-          else
-            begin
-              if cdsBarCode.Locate('BARCODE_TYPE','1',[]) then
-                cdsBarCode.Delete;
-            end;
-
-          if tmpBarCode.Locate('BARCODE_TYPE','2',[]) then
-            begin
-              if cdsBarCode.Locate('BARCODE_TYPE','2',[]) then
-                cdsBarCode.Edit
-              else
-                cdsBarCode.Append;
-              tmpObj.ReadFromDataSet(tmpBarCode);
-              tmpObj.WriteToDataSet(cdsBarCode);
-            end
-          else
-            begin
-              if cdsBarCode.Locate('BARCODE_TYPE','2',[]) then
-                cdsBarCode.Delete;
-            end;
-        finally
-          tmpObj.Free;
-        end;
-      finally
-        dataFactory.MoveToDefault;
-        tmpGoodsInfo.Free;
-        tmpBarCode.Free;
-        Params.Free;
-      end;
-
-      if cdsGoodsRelation.IsEmpty then
-        begin
-          cdsGoodsRelation.Append;
-          cdsGoodsRelation.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          cdsGoodsRelation.FieldByName('SORT_ID1').AsString := '#';
-        end
-      else
-        cdsGoodsRelation.Edit;
-      cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-      cdsGoodsRelation.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-      cdsGoodsRelation.FieldByName('RELATION_ID').AsInteger := strtoint(FY_RELATION_ID);
-      cdsGoodsRelation.FieldByName('NEW_INPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_INPRICE').AsFloat;
-      cdsGoodsRelation.FieldByName('NEW_OUTPRICE').AsFloat := cdsGoodsInfo.FieldByName('NEW_OUTPRICE').AsFloat;
-      cdsGoodsRelation.FieldByName('ZOOM_RATE').AsFloat := 1.000;
-
-      PostDataSet;
-
-      DownloadUnits;
-    end;
-}
   if RspFinded then
      begin
        if cdsGoodsInfo.IsEmpty then
@@ -848,7 +704,7 @@ begin
 
   if Finded then
      begin
-       SetReadOnly;
+       // SetReadOnly;
 
        if cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_TENANT_ID then
           begin
@@ -937,14 +793,8 @@ begin
        else
           begin
             edtBARCODE1.Properties.ReadOnly := true;
-            edtBARCODE2.Properties.ReadOnly := true;
-            edtBARCODE3.Properties.ReadOnly := true;
             SetEditStyle(dsBrowse, edtBARCODE1.Style);
-            SetEditStyle(dsBrowse, edtBARCODE2.Style);
-            SetEditStyle(dsBrowse, edtBARCODE3.Style);
             edtBK_BARCODE1.Color := edtBARCODE1.Style.Color;
-            edtBK_BARCODE2.Color := edtBARCODE2.Style.Color;
-            edtBK_BARCODE3.Color := edtBARCODE3.Style.Color;
           end
      end
   else
@@ -1310,110 +1160,6 @@ begin
        cdsGoodsPrice.Post;
      end;
 
-  // 远程保存非烟商品
-{
-  if RspFinded and (dataFactory.iDbType = 5) then
-     begin
-       tmpGoodsInfo := TZQuery.Create(nil);
-       tmpBarCode := TZQuery.Create(nil);
-       dataFactory.MoveToRemote;
-       try
-         Params := TftParamList.Create(nil);
-         tmpGoodsInfo.Close;
-         try
-           Params.ParamByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
-           Params.ParamByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-           dataFactory.Open(tmpGoodsInfo,'TGoodsInfoV60',Params);
-         finally
-           Params.Free;
-         end;
-
-         Params := TftParamList.Create(nil);
-         tmpBarCode.Close;
-         try
-           Params.ParamByName('TENANT_ID').AsInteger := cdsBarCode.FieldByName('TENANT_ID').AsInteger;
-           Params.ParamByName('GODS_ID').AsString := cdsBarCode.FieldByName('GODS_ID').AsString;
-           dataFactory.Open(tmpBarCode,'TBarCodeV60',Params);
-         finally
-           Params.Free;
-         end;
-
-         tmpObj := TRecord_.Create;
-         try
-           if tmpGoodsInfo.IsEmpty then tmpGoodsInfo.Append
-           else tmpGoodsInfo.Edit;
-           tmpObj.ReadFromDataSet(cdsGoodsInfo);
-           tmpObj.WriteToDataSet(tmpGoodsInfo, false);
-         finally
-           tmpObj.Free;
-         end;
-
-         tmpObj := TRecord_.Create;
-         try
-           if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
-             begin
-               if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
-                 tmpBarCode.Edit
-               else
-                 tmpBarCode.Append;
-               tmpObj.ReadFromDataSet(cdsBarCode);
-               tmpObj.WriteToDataSet(tmpBarCode, false);
-             end
-           else
-             begin
-               if tmpBarCode.Locate('BARCODE_TYPE', '0', []) then
-                 tmpBarCode.Delete;
-             end;
-
-           if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
-             begin
-               if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
-                 tmpBarCode.Edit
-               else
-                 tmpBarCode.Append;
-               tmpObj.ReadFromDataSet(cdsBarCode);
-               tmpObj.WriteToDataSet(tmpBarCode, false);
-             end
-           else
-             begin
-               if tmpBarCode.Locate('BARCODE_TYPE', '1', []) then
-                  tmpBarCode.Delete;
-             end;
-
-           if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
-             begin
-               if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
-                 tmpBarCode.Edit
-               else
-                 tmpBarCode.Append;
-               tmpObj.ReadFromDataSet(cdsBarCode);
-               tmpObj.WriteToDataSet(tmpBarCode, false);
-             end
-           else
-             begin
-               if tmpBarCode.Locate('BARCODE_TYPE', '2', []) then
-                 tmpBarCode.Delete;
-             end;
-         finally
-           tmpObj.Free;
-         end;
-
-        dataFactory.BeginBatch;
-         try
-           dataFactory.AddBatch(tmpGoodsInfo,'TGoodsInfoV60',nil);
-           dataFactory.AddBatch(tmpBarCode,'TBarCodeV60',nil);
-           dataFactory.CommitBatch;
-         except
-           dataFactory.CancelBatch;
-           Raise;
-         end;
-       finally
-         dataFactory.MoveToDefault;
-         tmpGoodsInfo.Free;
-         tmpBarCode.Free;
-       end;
-     end;
-}
   dataFactory.BeginBatch;
   try
     dataFactory.AddBatch(cdsGoodsInfo,'TGoodsInfoV60',nil);
@@ -1579,7 +1325,6 @@ begin
        end;
      end;
   LocalFinded := false;
-  RemoteFinded := false;
   RspFinded := false;
   edtInput.Text := '';
   dllGlobal.Refresh('PUB_GOODSINFO');
@@ -2035,11 +1780,6 @@ end;
 procedure TfrmInitGoods.SetLocalFinded(const Value: boolean);
 begin
   FLocalFinded := Value;
-end;
-
-procedure TfrmInitGoods.SetRemoteFinded(const Value: boolean);
-begin
-  FRemoteFinded := Value;
 end;
 
 procedure TfrmInitGoods.SetRspFinded(const Value: boolean);

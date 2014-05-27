@@ -966,6 +966,10 @@ begin
 
   udllShopUtil.WriteToObject(AObj,self);
   AObj.FieldByName('BARCODE').AsString := edtBARCODE1.Text;
+  if AObj.FieldByName('SMALL_UNITS').AsString = '' then
+     AObj.FieldByName('SMALLTO_CALC').NewValue := null;
+  if AObj.FieldByName('BIG_UNITS').AsString = '' then
+     AObj.FieldByName('BIGTO_CALC').NewValue := null;
   AObj.WriteToDataSet(cdsGoodsInfo);
 
   if cdsGoodsRelation.IsEmpty then

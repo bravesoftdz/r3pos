@@ -1103,13 +1103,13 @@ begin
        cdsGoodsPrice.FieldByName('PRICE_METHOD').AsString := '1';
        cdsGoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0);
        if (edtSHOP_NEW_OUTPRICE1.Text<>'') and (edtBK_SMALL_UNITS.Visible) and (edtSMALL_UNITS.Text<>'') then
-        cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat :=StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat :=StrtoFloatDef(edtSHOP_NEW_OUTPRICE1.Text,0)
        else
-        cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
-      if (edtSHOP_NEW_OUTPRICE2.Text<>'') and (edtBK_BIG_UNITS.Visible) and (edtBIG_UNITS.Text<>'') then
-        cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)
-      else
-       cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtSMALLTO_CALC.TEXT,0);
+       if (edtSHOP_NEW_OUTPRICE2.Text<>'') and (edtBK_BIG_UNITS.Visible) and (edtBIG_UNITS.Text<>'') then
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE2.Text,0)
+       else
+          cdsGoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat := StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)*StrtoFloatDef(edtBIGTO_CALC.TEXT,0);
        cdsGoodsPrice.Post;
      end;
   WriteOweOrder;
@@ -2885,7 +2885,7 @@ begin
      (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0)then
     begin
        edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly:=false;
-       edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(strtofloat(edtBIGTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
+       edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloat(edtBIGTO_CALC.Text)*StrtoFloat(edtSHOP_NEW_OUTPRICE.Text));
     end;
   x_label.Caption:=edtBIG_UNITS.Text+'¼Û';
   SetShopOutPricePlace;
@@ -2900,7 +2900,7 @@ begin
       (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
     begin
       edtSHOP_NEW_OUTPRICE1.Properties.ReadOnly:=false;
-      edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(strtofloat(edtSMALLTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
+      edtSHOP_NEW_OUTPRICE1.Text:=FloattoStr(StrtoFloat(edtSMALLTO_CALC.Text)*StrtoFloat(edtSHOP_NEW_OUTPRICE.Text));
     end
   else
     begin
@@ -2918,7 +2918,7 @@ begin
       (StrtoFloatDef(edtSHOP_NEW_OUTPRICE.Text,0)<>0) then
     begin
       edtSHOP_NEW_OUTPRICE2.Properties.ReadOnly:=false;
-      edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(strtofloat(edtBIGTO_CALC.Text)*strtofloat(edtSHOP_NEW_OUTPRICE.Text));
+      edtSHOP_NEW_OUTPRICE2.Text:=FloattoStr(StrtoFloat(edtBIGTO_CALC.Text)*StrtoFloat(edtSHOP_NEW_OUTPRICE.Text));
     end
   else
     begin

@@ -3066,43 +3066,36 @@ inherited frmInitGoods: TfrmInitGoods
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 106
-    Top = 440
+    Left = 298
+    Top = 328
   end
   object cdsGoodsInfo: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 138
-    Top = 440
+    Left = 330
+    Top = 328
   end
   object cdsGoodsRelation: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 170
-    Top = 440
+    Left = 362
+    Top = 328
   end
   object cdsBarCode: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 202
-    Top = 440
-  end
-  object edtTable: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 238
-    Top = 440
+    Left = 394
+    Top = 328
   end
   object cdsUnits: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 45
-    Top = 383
+    Left = 237
+    Top = 327
   end
   object WebUpdater1: TWebUpdater
     About = 'Application Updater by bsalsa : bsalsa@gmail.com'
@@ -3131,7 +3124,8 @@ inherited frmInitGoods: TfrmInitGoods
     UpdatesFolder = 'barcode\'
     WebInfoFileName = 'barcode.xml'
     WebURL = 'http://'
-    Left = 75
-    Top = 383
+    hWnd = 0
+    Left = 267
+    Top = 327
   end
 end

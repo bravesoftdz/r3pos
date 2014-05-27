@@ -124,7 +124,6 @@ type
     cdsGoodsInfo: TZQuery;
     cdsGoodsRelation: TZQuery;
     cdsBarCode: TZQuery;
-    edtTable: TZQuery;
     RzLabel26: TRzLabel;
     red1: TLabel;
     red2: TLabel;
@@ -195,7 +194,6 @@ type
     function  CanFocus(Control:TControl):boolean;
     function  CheckUnit(unitName:string):string;
     function  GetGoodsInfo:boolean;
-    procedure UploadGoodsInfo;
     function  IsChinese(str:string):boolean;
     procedure RefreshUnits;
     procedure RefreshUnitsList;
@@ -334,7 +332,6 @@ begin
        else
           begin
             WriteToObject;
-            if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
             Save;
             if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK) else ModalResult := MROK;
             rzPage.ActivePageIndex := 0;
@@ -347,7 +344,6 @@ begin
      begin
        CheckInput2;
        WriteToObject;
-       if (not Finded) and (edtGOODS_OPTION1.Checked) then UploadGoodsInfo;
        Save;
        if (not Simple) then MessageBox(Handle,'商品添加成功！','友情提示..',MB_OK) else ModalResult := MROK;
        rzPage.ActivePageIndex := 0;
@@ -585,8 +581,6 @@ begin
 
   if Finded and (cdsGoodsInfo.FieldByName('TENANT_ID').AsString <> FY_TENANT_ID) then
      Raise Exception.Create('卷烟商品不允许新增！'); 
-
-  edtTable.Data := cdsGoodsInfo.Data;
 end;
 
 procedure TfrmInitGoods.OpenDataSet(tenantId, godsId: string);
@@ -979,122 +973,117 @@ begin
   else
      cdsGoodsRelation.Edit;
 
-  if not Finded then
-     begin
-       if cdsGoodsInfo.IsEmpty then
-          cdsGoodsInfo.Append
-       else
-          cdsGoodsInfo.Edit;
-
-       if edtGOODS_OPTION1.Checked then //供应链商品
-          begin
-            cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
-            cdsGoodsInfo.FieldByName('BARCODE').AsString := edtBARCODE1.Text;
-          end
-       else //无条码商品,自编条码
-          begin
-            cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-            cdsGoodsInfo.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
-            if trim(edtGODS_CODE.Text) = '' then
-               begin
-                 if trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,6)) <> '' then
-                    edtGODS_CODE.Text := trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,6))
-                 else
-                    edtGODS_CODE.Text := cdsGoodsInfo.FieldByName('BARCODE').AsString;
-                 cdsGoodsInfo.FieldByName('GODS_CODE').AsString := trim(edtGODS_CODE.Text);
-               end;
-          end;
-
-       cdsGoodsInfo.FieldByName('GODS_ID').AsString := TSequence.NewId;
-       cdsGoodsInfo.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(edtGODS_NAME.Text,3);
-       cdsGoodsInfo.FieldByName('GODS_TYPE').AsInteger := 1;
-       cdsGoodsInfo.FieldByName('USING_PRICE').AsInteger := 1;
-       cdsGoodsInfo.FieldByName('HAS_INTEGRAL').AsInteger := 1;
-       cdsGoodsInfo.FieldByName('USING_BATCH_NO').AsInteger := 2;
-       cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := 1;
-       cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := 2;
-       cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
-
-       if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
-          cdsBarCode.Edit
-       else
-          begin
-            cdsBarCode.Append;
-            cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          end;
-       cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
-       cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-       cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
-       cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
-       cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('CALC_UNITS').AsString;
-       cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '0';
-       cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
-       cdsBarCode.FieldByName('BARCODE').AsString := cdsGoodsInfo.FieldByName('BARCODE').AsString;
-
-       if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
-          begin
-            if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
-               cdsBarCode.Edit
-            else
-               begin
-                 cdsBarCode.Append;
-                 cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-               end;
-            cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
-            cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-            cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
-            cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
-            cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
-            cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
-            cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
-            if edtGOODS_OPTION1.Checked then //供应链商品
-               cdsBarCode.FieldByName('BARCODE').AsString := edtBARCODE2.Text
-            else //无条码商品,自编条码
-               cdsBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
-          end;
-
-       if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
-          begin
-            if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
-               cdsBarCode.Edit
-            else
-               begin
-                 cdsBarCode.Append;
-                 cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-               end;
-            cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
-            cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-            cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
-            cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
-            cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
-            cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
-            cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
-            if edtGOODS_OPTION1.Checked then //供应链商品
-               cdsBarCode.FieldByName('BARCODE').AsString := edtBARCODE3.Text
-            else //无条码商品,自编条码
-               cdsBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
-          end;
-
-       if edtGOODS_OPTION1.Checked then //供应链商品
-          begin
-            cdsGoodsRelation.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-            cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
-            cdsGoodsRelation.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
-            cdsGoodsRelation.FieldByName('RELATION_ID').AsInteger := strtoint(FY_RELATION_ID);
-            cdsGoodsRelation.FieldByName('ZOOM_RATE').AsFloat := 1.000;
-          end;
-
-       // 管理单位
-       if edtMoreUnits.Checked and edtDefault1.Checked then
-          cdsGoodsInfo.FieldByName('UNIT_ID').AsString := edtSMALL_UNITS.AsString
-       else if edtMoreUnits.Checked and edtDefault2.Checked then
-          cdsGoodsInfo.FieldByName('UNIT_ID').AsString := edtBIG_UNITS.AsString
-       else
-          cdsGoodsInfo.FieldByName('UNIT_ID').AsString := edtCALC_UNITS.AsString;
-     end;
+  if cdsGoodsInfo.IsEmpty then
+     cdsGoodsInfo.Append
+  else
+     cdsGoodsInfo.Edit;
 
   if edtGOODS_OPTION1.Checked then //供应链商品
      begin
+       cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(FY_TENANT_ID);
+       cdsGoodsInfo.FieldByName('BARCODE').AsString := edtBARCODE1.Text;
+     end
+  else //无条码商品,自编条码
+     begin
+       cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+       cdsGoodsInfo.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
+       if trim(edtGODS_CODE.Text) = '' then
+          begin
+            if trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,6)) <> '' then
+               edtGODS_CODE.Text := trim(Copy(cdsGoodsInfo.FieldByName('BARCODE').AsString,2,6))
+            else
+               edtGODS_CODE.Text := cdsGoodsInfo.FieldByName('BARCODE').AsString;
+            cdsGoodsInfo.FieldByName('GODS_CODE').AsString := trim(edtGODS_CODE.Text);
+          end;
+     end;
+
+  if (not Finded) and (cdsGoodsInfo.FieldByName('GODS_ID').AsString = '') then
+     cdsGoodsInfo.FieldByName('GODS_ID').AsString := TSequence.NewId;
+
+  cdsGoodsInfo.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(edtGODS_NAME.Text,3);
+  cdsGoodsInfo.FieldByName('GODS_TYPE').AsInteger := 1;
+  cdsGoodsInfo.FieldByName('USING_PRICE').AsInteger := 1;
+  cdsGoodsInfo.FieldByName('HAS_INTEGRAL').AsInteger := 1;
+  cdsGoodsInfo.FieldByName('USING_BATCH_NO').AsInteger := 2;
+  cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := 1;
+  cdsGoodsInfo.FieldByName('USING_LOCUS_NO').AsInteger := 2;
+  cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
+
+  if cdsBarCode.Locate('BARCODE_TYPE', '0', []) then
+     cdsBarCode.Edit
+  else
+     begin
+       cdsBarCode.Append;
+       cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+     end;
+  cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+  cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+  cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+  cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+  cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('CALC_UNITS').AsString;
+  cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '0';
+  cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
+  cdsBarCode.FieldByName('BARCODE').AsString := cdsGoodsInfo.FieldByName('BARCODE').AsString;
+
+  if cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString <> '' then
+      begin
+        if cdsBarCode.Locate('BARCODE_TYPE', '1', []) then
+           cdsBarCode.Edit
+        else
+           begin
+             cdsBarCode.Append;
+             cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+           end;
+        cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+        cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+        cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+        cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+        cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('SMALL_UNITS').AsString;
+        cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '1';
+        cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
+        if edtGOODS_OPTION1.Checked then //供应链商品
+           cdsBarCode.FieldByName('BARCODE').AsString := edtBARCODE2.Text
+        else //无条码商品,自编条码
+           cdsBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
+      end;
+
+   if cdsGoodsInfo.FieldByName('BIG_UNITS').AsString <> '' then
+      begin
+        if cdsBarCode.Locate('BARCODE_TYPE', '2', []) then
+           cdsBarCode.Edit
+        else
+           begin
+             cdsBarCode.Append;
+             cdsBarCode.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+           end;
+        cdsBarCode.FieldByName('TENANT_ID').AsInteger := cdsGoodsInfo.FieldByName('TENANT_ID').AsInteger;
+        cdsBarCode.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+        cdsBarCode.FieldByName('PROPERTY_01').AsString := '#';
+        cdsBarCode.FieldByName('PROPERTY_02').AsString := '#';
+        cdsBarCode.FieldByName('UNIT_ID').AsString := cdsGoodsInfo.FieldByName('BIG_UNITS').AsString;
+        cdsBarCode.FieldByName('BARCODE_TYPE').AsString := '2';
+        cdsBarCode.FieldByName('BATCH_NO').AsString := '#';
+        if edtGOODS_OPTION1.Checked then //供应链商品
+           cdsBarCode.FieldByName('BARCODE').AsString := edtBARCODE3.Text
+        else //无条码商品,自编条码
+           cdsBarCode.FieldByName('BARCODE').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',token.tenantId,'',6),'#','#');
+      end;
+
+   // 管理单位
+   if edtMoreUnits.Checked and edtDefault1.Checked then
+      cdsGoodsInfo.FieldByName('UNIT_ID').AsString := edtSMALL_UNITS.AsString
+   else if edtMoreUnits.Checked and edtDefault2.Checked then
+      cdsGoodsInfo.FieldByName('UNIT_ID').AsString := edtBIG_UNITS.AsString
+   else
+      cdsGoodsInfo.FieldByName('UNIT_ID').AsString := edtCALC_UNITS.AsString;
+
+  if edtGOODS_OPTION1.Checked then //供应链商品
+     begin
+       cdsGoodsRelation.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+       cdsGoodsRelation.FieldByName('TENANT_ID').AsInteger := strtoint(token.tenantId);
+       cdsGoodsRelation.FieldByName('GODS_ID').AsString := cdsGoodsInfo.FieldByName('GODS_ID').AsString;
+       cdsGoodsRelation.FieldByName('RELATION_ID').AsInteger := strtoint(FY_RELATION_ID);
+       cdsGoodsRelation.FieldByName('ZOOM_RATE').AsFloat := 1.000;
        cdsGoodsRelation.FieldByName('GODS_CODE').AsString := cdsGoodsInfo.FieldByName('GODS_CODE').AsString;
        cdsGoodsRelation.FieldByName('GODS_NAME').AsString := cdsGoodsInfo.FieldByName('GODS_NAME').AsString;
        cdsGoodsRelation.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(cdsGoodsRelation.FieldByName('GODS_NAME').AsString,3);
@@ -1114,12 +1103,6 @@ begin
      end;
 
   PostDataSet;
-
-  if Finded then cdsGoodsInfo.Data := edtTable.Data;
-end;
-
-procedure TfrmInitGoods.UploadGoodsInfo;
-begin
 end;
 
 procedure TfrmInitGoods.Save;
@@ -1353,6 +1336,8 @@ begin
      cdsBarCode.Post;
   if cdsGoodsRelation.State in [dsEdit,dsInsert] then
      cdsGoodsRelation.Post;
+  if cdsGoodsPrice.State in [dsEdit,dsInsert] then
+     cdsGoodsPrice.Post;
 end;
 
 procedure TfrmInitGoods.RefreshUnits;

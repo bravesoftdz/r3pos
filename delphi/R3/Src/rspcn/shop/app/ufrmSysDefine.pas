@@ -2000,7 +2000,7 @@ end;
 procedure TfrmSysDefine.RemoteRecovery(recType:string;AppHandle:HWnd);
 var
   rs:TZQuery;
-  str,BeginDate,MaxDate:string;
+  str,BeginDate,MaxDate,RckDate:string;
 begin
   if dllGlobal.GetSFVersion <> '.LCL' then Exit;
 
@@ -2082,15 +2082,32 @@ begin
       rs.Free;
     end;
 
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where CREA_DATE >= '+BeginDate+' and CREA_DATE <= '+MaxDate;
+      dataFactory.Open(rs);
+      if rs.IsEmpty then
+         RckDate := BeginDate
+      else
+         begin
+           if trim(rs.Fields[0].AsString) = '' then
+              RckDate := BeginDate
+           else
+              RckDate := FormatDatetime('YYYYMM01',FnTime.fnStrtoDate(rs.Fields[0].AsString));
+         end;
+    finally
+      rs.Free;
+    end;
+
     str :=
        'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,'+
-       'sum(case when BILL_DATE<='+BeginDate+' and BILL_TYPE in (0,1) then BAL_AMOUNT when BILL_DATE<'+BeginDate+' then IN_AMOUNT-OUT_AMOUNT else 0 end) as BEG_AMOUNT,'+
-       'sum(case when BILL_DATE<='+BeginDate+' and BILL_TYPE in (0,1) then BAL_MONEY  when BILL_DATE<'+BeginDate+' then IN_MONEY-OUT_MONEY else 0 end) as BEG_MONEY,'+
-       'sum(case when BILL_DATE>='+BeginDate+' then IN_AMOUNT else 0 end) as IN_AMOUNT,'+
-       'sum(case when BILL_DATE>='+BeginDate+' then IN_MONEY else 0 end) as IN_MONEY,'+
-       'sum(case when BILL_DATE>='+BeginDate+' then OUT_AMOUNT else 0 end) as OUT_AMOUNT,'+
-       'sum(case when BILL_DATE>='+BeginDate+' then OUT_MONEY else 0 end) as OUT_MONEY '+
-       'from RCK_STOCKS_DATA where TENANT_ID='+token.tenantId+' and BILL_DATE>='+BeginDate+' and BILL_DATE<='+MaxDate;
+       'sum(case when BILL_DATE<='+RckDate+' and BILL_TYPE in (0,1) then BAL_AMOUNT when BILL_DATE<'+RckDate+' then IN_AMOUNT-OUT_AMOUNT else 0 end) as BEG_AMOUNT,'+
+       'sum(case when BILL_DATE<='+RckDate+' and BILL_TYPE in (0,1) then BAL_MONEY  when BILL_DATE<'+RckDate+' then IN_MONEY-OUT_MONEY else 0 end) as BEG_MONEY,'+
+       'sum(case when BILL_DATE>='+RckDate+' then IN_AMOUNT else 0 end) as IN_AMOUNT,'+
+       'sum(case when BILL_DATE>='+RckDate+' then IN_MONEY else 0 end) as IN_MONEY,'+
+       'sum(case when BILL_DATE>='+RckDate+' then OUT_AMOUNT else 0 end) as OUT_AMOUNT,'+
+       'sum(case when BILL_DATE>='+RckDate+' then OUT_MONEY else 0 end) as OUT_MONEY '+
+       'from RCK_STOCKS_DATA where TENANT_ID='+token.tenantId+' and BILL_DATE>='+RckDate+' and BILL_DATE<='+MaxDate;
     str := str + ' and SHOP_ID='''+token.shopId+'''';
     str := str + ' group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
     str :=

@@ -2594,6 +2594,8 @@ begin
                 end;
              if SObj.FieldByName('RELATION_ID').AsInteger=0 then
                 begin
+                  AObj.FieldByName('USING_BARTER').AsInteger := SObj.FieldByName('USING_BARTER').AsInteger;
+                  AObj.FieldByName('BARTER_INTEGRAL').AsInteger := SObj.FieldByName('BARTER_INTEGRAL').AsInteger;
                   cdsGoodsInfo.Edit;
                   cdsGoodsInfo.FieldByName('USING_BARTER').AsInteger := SObj.FieldByName('USING_BARTER').AsInteger;
                   cdsGoodsInfo.FieldByName('BARTER_INTEGRAL').AsInteger := SObj.FieldByName('BARTER_INTEGRAL').AsInteger;

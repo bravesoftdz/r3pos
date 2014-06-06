@@ -1618,19 +1618,24 @@ begin
           if (length(fndStr)>7) and (fnString.IsNumberChar(fndStr)) then //是13位条码
              begin
                PlaySend(ExtractFilePath(ParamStr(0))+'built-in\msg.wav');
-               if (MessageBox(handle,'您没有经营过此商品，是否立即新增？','友情提示',MB_YESNO+MB_ICONQUESTION)=6) and TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
-                  begin
-                     if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
-                     vgds := rs.FieldbyName('GODS_ID').AsString;
-                     vP1 := rs.FieldbyName('PROPERTY_01').AsString;
-                     vP2 := rs.FieldbyName('PROPERTY_02').AsString;
-                     if vP1='' then vP1 := '#';
-                     if vP2='' then vP2 := '#';
-                     uid := rs.FieldbyName('UNIT_ID').AsString;
-                     vBtNo := rs.FieldbyName('BATCH_NO').AsString;
-                  end
-               else
-                  Exit;    
+               CodeLisenter := false;
+               try
+                 if (MessageBox(handle,'您没有经营过此商品，是否立即新增？','友情提示',MB_YESNO+MB_ICONQUESTION)=6) and TfrmInitGoods.ShowDialog(self,fndStr,vgds) then
+                    begin
+                       if not dllGlobal.GetGodsFromBarcode(rs,fndStr) then Exit;
+                       vgds := rs.FieldbyName('GODS_ID').AsString;
+                       vP1 := rs.FieldbyName('PROPERTY_01').AsString;
+                       vP2 := rs.FieldbyName('PROPERTY_02').AsString;
+                       if vP1='' then vP1 := '#';
+                       if vP2='' then vP2 := '#';
+                       uid := rs.FieldbyName('UNIT_ID').AsString;
+                       vBtNo := rs.FieldbyName('BATCH_NO').AsString;
+                    end
+                 else
+                    Exit;
+               finally
+                 CodeLisenter := true;
+               end;
              end
           else
              begin

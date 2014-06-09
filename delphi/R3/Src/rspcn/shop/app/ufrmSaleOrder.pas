@@ -1224,7 +1224,14 @@ begin
   w := 0;
   payInfo := '';
   payment.Caption := '本次收款';
+
+  if fee=0 then
+     AObj.FieldByName('PAY_A').AsFloat := (TotalFee-payDibs)-AObj.FieldByName('PAY_D').AsFloat
+  else
+     AObj.FieldByName('PAY_A').AsFloat := (TotalFee-payDibs)-fee-AObj.FieldByName('PAY_D').AsFloat;
+
   AObj.FieldByName('CASH_MNY').AsFloat := AObj.FieldByName('PAY_A').AsFloat;
+
   if AObj.FieldByName('PAY_A').AsFloat<>0 then
      begin
        s[1] := '1';

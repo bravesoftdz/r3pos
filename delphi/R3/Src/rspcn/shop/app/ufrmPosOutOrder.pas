@@ -10,7 +10,7 @@ uses
   RzBorder, RzTabs, RzStatus, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, ZBase, Math, Menus, pngimage, RzBckgnd, jpeg, dllApi,objCommon,
   PrnDbgeh,ufrmDBGridPreview, ComCtrls, ToolWin, ImgList, FR_Class,
-  BaseGrid, AdvGrid, IniFiles;
+  BaseGrid, AdvGrid, IniFiles, MPlayer;
 
 type
   TfrmPosOutOrder = class(TfrmOrderForm)
@@ -1107,7 +1107,14 @@ begin
   s := '0000000000';
   w := 0;
   payInfo := '';
+
+  if fee=0 then
+     AObj.FieldByName('PAY_A').AsFloat := (TotalFee-payDibs)-AObj.FieldByName('PAY_D').AsFloat
+  else
+     AObj.FieldByName('PAY_A').AsFloat := (TotalFee-payDibs)-fee-AObj.FieldByName('PAY_D').AsFloat;
+
   AObj.FieldByName('CASH_MNY').AsFloat := AObj.FieldByName('PAY_A').AsFloat;
+
   if AObj.FieldByName('PAY_A').AsFloat<>0 then
      begin
        s[1] := '1';

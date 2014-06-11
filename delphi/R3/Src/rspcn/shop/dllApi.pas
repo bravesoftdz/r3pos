@@ -410,7 +410,19 @@ begin
 end;
 
 procedure TdllApplication.onTimer(Sender: TObject);
+var
+  srvrDate:TDateTime;
 begin
+  if token.online then
+     begin
+       token.srvrTimeStamp := token.srvrTimeStamp + 30*60;
+       srvrDate := token.srvrTimeStamp/86400.0+40542.0+2;
+       if FormatDateTime('YYYYMMDD',srvrDate) > FormatDateTime('YYYYMMDD',dllGlobal.SysDate) then
+          begin
+            if Assigned(SyncFactory) then SyncFactory.LogoutSync(dllApplication.handle);
+            token.lDate := StrtoInt(FormatDatetime('YYYYMMDD',srvrDate));
+          end;
+     end;
   if Assigned(SyncFactory) then
      begin
        SyncFactory.TimerSync;

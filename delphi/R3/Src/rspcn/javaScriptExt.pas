@@ -111,6 +111,7 @@ begin
              token.xsmPWD := password;
              token.userId := username;
              token.username := username;
+             token.srvrTimeStamp := rspFactory.timestamp;
              token.Logined := true;
              DllFactory.Inited := false;
              token.online := online;
@@ -213,6 +214,7 @@ begin
     token.licenseCode := rs.FieldbyName('LICENSE_CODE').AsString;
     token.legal := rs.FieldbyName('LINKMAN').AsString;
     token.mobile := rs.FieldbyName('TELEPHONE').AsString;
+    token.srvrTimeStamp := rspFactory.timestamp;
     if online then SaveTimeStamp else checkTimeStamp;
     token.Logined := true;
     DllFactory.Inited := false;

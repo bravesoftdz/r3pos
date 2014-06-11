@@ -27,6 +27,7 @@ type
     Fusername: string;
     FlDate: integer;
     FroleIds: string;
+    FsrvrTimeStamp: int64;
     procedure Setaccount(const Value: string);
     procedure Setaddress(const Value: string);
     procedure SetidCard(const Value: string);
@@ -47,6 +48,7 @@ type
     procedure Setusername(const Value: string);
     procedure SetlDate(const Value: integer);
     procedure SetroleIds(const Value: string);
+    procedure SetsrvrTimeStamp(const Value: int64);
   public
     function encode:string;
     function encodeJson:string;
@@ -72,6 +74,7 @@ type
     property shoped:boolean read Fshoped write Setshoped;
     property logined:boolean read Flogined write Setlogined;
     property lDate:integer read FlDate write SetlDate;
+    property srvrTimeStamp:int64 read FsrvrTimeStamp write SetsrvrTimeStamp;
   end;
 
 var token:TToken;
@@ -104,7 +107,8 @@ begin
     idCard := rspcn.selectSingleNode('/rspcn/userInfo/idCard').text;
     mobile := rspcn.selectSingleNode('/rspcn/userInfo/mobile').text;
     online := (rspcn.selectSingleNode('/rspcn/userInfo/online').text='1');
-    LDate := StrToIntDef(rspcn.selectSingleNode('/rspcn/userInfo/lDate').text,0);
+    lDate := StrToIntDef(rspcn.selectSingleNode('/rspcn/userInfo/lDate').text,0);
+    srvrTimeStamp := StrToIntDef(rspcn.selectSingleNode('/rspcn/userInfo/srvrTimeStamp').text,0);
     shoped := true;
     logined := true;
   except
@@ -179,6 +183,9 @@ begin
     rspcn.appendChild(userinfo);
     node := doc.createElement('lDate');
     node.text := inttostr(lDate);
+    userinfo.appendChild(node);
+    node := doc.createElement('srvrTimeStamp');
+    node.text := inttostr(srvrTimeStamp);
     userinfo.appendChild(node);
     result := doc.xml;
   except
@@ -273,6 +280,11 @@ end;
 procedure TToken.SetshopName(const Value: string);
 begin
   FshopName := Value;
+end;
+
+procedure TToken.SetsrvrTimeStamp(const Value: int64);
+begin
+  FsrvrTimeStamp := Value;
 end;
 
 procedure TToken.SettenantId(const Value: string);

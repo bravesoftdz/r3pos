@@ -133,6 +133,8 @@ begin
       Precision := StrToIntDef(Temp, 0);
   end;
 
+  TypeName := trim(TypeName);
+
   if StartsWith(TypeName, 'BOOL') then
     Result := stBoolean
   else if TypeName = 'TINYINT' then
@@ -149,8 +151,7 @@ begin
     Result := stDouble
   else if StartsWith(TypeName, 'FLOAT') then
     Result := stDouble
-  else if (TypeName = 'NUMERIC') or (TypeName = 'DECIMAL')
-    or (TypeName = 'NUMBER') then
+  else if (TypeName = 'NUMERIC') or (TypeName = 'DECIMAL') or (TypeName = 'NUMBER') then
   begin
    { if Decimals = 0 then
       Result := stInteger

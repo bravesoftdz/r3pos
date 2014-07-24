@@ -286,7 +286,7 @@ implementation
          if @gettperrno=nil then Raise Exception.Create('wtuxws32.dll无效dll');
        end
     else
-       Raise Exception.Create('没有找到运行时所需的wtuxws32.dll');
+       Raise Exception.Create('依赖的系统服务未安装...');
   end;
   procedure unloadTuxedo; //释放运行环境
   begin
